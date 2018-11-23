@@ -94,6 +94,8 @@ ipch/
 *.cachefile
 *.VC.db
 *.VC.VC.opendb
+*.lastbuildstate
+.tlog
 
 # Visual Studio profiler
 *.psess
