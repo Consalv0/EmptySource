@@ -28,11 +28,11 @@
     <Filter Include="Header Files\External\GLAD">
       <UniqueIdentifier>{68600d9b-8bbc-4e1c-8b10-00a387caa922}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GLSL Source">
-      <UniqueIdentifier>{81659dac-8b3c-41ea-9e4d-f2ccd577285b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{3a6cfacd-6be6-4a4a-9b76-2fae258ad588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{81659dac-8b3c-41ea-9e4d-f2ccd577285b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +57,24 @@
     <ClInclude Include="Source\EmptySource\include\SApplication.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\SMath.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\FVector2.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\FVector3.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\FMatrix3x3.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\FMatrix4x4.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\FVector4.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -71,10 +89,28 @@
     <ClCompile Include="Source\EmptySource\source\SApplication.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\FVector2.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\include\FVector3.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\FMatrix3x3.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\FMatrix4x4.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\FVector4.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\GLSL Source\UnlitBase.glslv">
-      <Filter>GLSL Source</Filter>
+    <None Include="Data\Shaders\UnlitBase.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\UnlitBase.vertex.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

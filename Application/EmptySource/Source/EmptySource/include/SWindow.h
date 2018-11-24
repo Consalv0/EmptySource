@@ -2,11 +2,10 @@
 
 // Window modes
 #define ES_WINDOW_MODE_WINDOWED             0
-#define ES_WINDOW_MODE_WINDOWEDFULLSCREEN   1
-#define ES_WINDOW_MODE_FULLSCREEN           2
+#define ES_WINDOW_MODE_FULLSCREEN           1
 
 /*
-** Used to cointain the properties and functions of a glfw window
+** Cointaina the properties and functions of a glfw window
 */
 struct SWindow {
 private:
@@ -23,7 +22,15 @@ public:
 	
 	//* Window Window
 	struct GLFWwindow* Window;
-	
+
+	//* Get the width in pixels of the window
+	int GetWidth();
+	//* Get the height in pixels of the window
+	int GetHeight();
+
+	//* Get the aspect of width divided by height in pixels of the window
+	float AspectRatio();
+
 	//* Creates the main Rendering Window
 	bool Create();
 	//* Creates the main Rendering Window with a Name, Width and Height
