@@ -10,18 +10,32 @@ SWindow::SWindow() {
 	Mode = ES_WINDOW_MODE_WINDOWED;
 }
 
+int SWindow::GetWidth() {
+	return Width;
+}
+
+int SWindow::GetHeight() {
+	return Height;
+}
+
+float SWindow::AspectRatio() {
+	return (float)Width / (float)Height;
+}
+
 bool SWindow::Create() {
 	if (!glfwInit()) {
 		printf("Error :: Failed to initialize GLFW\n");
 		return false;
 	} 
+	
+	GLFWmonitor* PrimaryMonitor = glfwGetPrimaryMonitor();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	Window = glfwCreateWindow(Width, Height, Name, nullptr, nullptr);
+	Window = glfwCreateWindow(Width, Height, Name, Mode == 1 ? PrimaryMonitor : nullptr, nullptr);
 
 	printf("Window: \"%s\" initialized!\n", Name);
 

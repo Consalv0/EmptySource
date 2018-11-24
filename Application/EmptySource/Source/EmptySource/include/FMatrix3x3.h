@@ -1,0 +1,23 @@
+#pragma once
+
+struct FVector3;
+
+struct FMatrix3x3 {
+public:
+	float
+		m00, m01, m02,
+		m10, m11, m12,
+		m20, m21, m22;
+
+	FMatrix3x3();
+	FMatrix3x3(const FVector3& Row0, const FVector3& Row1, const FVector3& Row2);
+
+	static FMatrix3x3 Identity();
+
+	void Transpose();
+
+	FVector3 Row(const int& i) const;
+	FVector3 Column(const int& i) const;
+	FMatrix3x3 operator*(const FMatrix3x3& Other) const;
+	FVector3 operator*(const FVector3& Vector) const;
+};

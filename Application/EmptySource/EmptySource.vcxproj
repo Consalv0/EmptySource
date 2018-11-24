@@ -121,7 +121,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\EmptySource\include\EmptyHeaders.h" />
+    <ClInclude Include="Source\EmptySource\include\FMatrix3x3.h" />
+    <ClInclude Include="Source\EmptySource\include\FMatrix4x4.h" />
+    <ClInclude Include="Source\EmptySource\include\FVector2.h" />
+    <ClInclude Include="Source\EmptySource\include\FVector3.h" />
+    <ClInclude Include="Source\EmptySource\include\FVector4.h" />
     <ClInclude Include="Source\EmptySource\include\SApplication.h" />
+    <ClInclude Include="Source\EmptySource\include\SMath.h" />
     <ClInclude Include="Source\EmptySource\include\SWindow.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
@@ -129,13 +135,19 @@
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\EmptySource\include\FVector3.cpp" />
+    <ClCompile Include="Source\EmptySource\source\FMatrix3x3.cpp" />
+    <ClCompile Include="Source\EmptySource\source\FMatrix4x4.cpp" />
+    <ClCompile Include="Source\EmptySource\source\FVector2.cpp" />
+    <ClCompile Include="Source\EmptySource\source\FVector4.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
     <ClCompile Include="Source\EmptySource\source\SApplication.cpp" />
     <ClCompile Include="Source\EmptySource\source\SWindow.cpp" />
     <ClCompile Include="Source\External\GLAD\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\GLSL Source\UnlitBase.glslv" />
+    <None Include="Data\Shaders\UnlitBase.fragment.glsl" />
+    <None Include="Data\Shaders\UnlitBase.vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
