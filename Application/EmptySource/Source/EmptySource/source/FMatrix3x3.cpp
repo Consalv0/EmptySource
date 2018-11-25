@@ -27,8 +27,12 @@ FMatrix3x3 FMatrix3x3::Identity() {
 }
 
 void FMatrix3x3::Transpose() {
-	FMatrix3x3 newMatrix = FMatrix3x3(Column(0), Column(1), Column(2));
-	*this = newMatrix;
+	FMatrix3x3 Result = FMatrix3x3(Column(0), Column(1), Column(2));
+	*this = Result;
+}
+
+FMatrix3x3 FMatrix3x3::Transposed() const {
+	return FMatrix3x3(Column(0), Column(1), Column(2));
 }
 
 FVector3 FMatrix3x3::Row(const int & i) const {

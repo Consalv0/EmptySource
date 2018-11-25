@@ -19,6 +19,7 @@ public:
 	static FMatrix3x3 Identity();
 
 	void Transpose();
+	FMatrix3x3 Transposed() const;
 
 	FVector3 Row(const int& i) const;
 	FVector3 Column(const int& i) const;
