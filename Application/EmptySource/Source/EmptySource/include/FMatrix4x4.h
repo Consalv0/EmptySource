@@ -12,7 +12,7 @@ public:
 			m20, m21, m22, m23,
 			m30, m31, m32, m33;
 	};
-	
+
 	FMatrix4x4();
 	FMatrix4x4(const FVector4& Row0, const FVector4& Row1, const FVector4& Row2, const FVector4 Row3);
 

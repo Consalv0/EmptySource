@@ -2,12 +2,18 @@
 #include <math.h>
 #include <stdexcept>
 #include "..\include\FVector3.h"
+#include "..\include\FVector4.h"
 #include "..\include\FMatrix3x3.h"
+#include "..\include\FMatrix4x4.h"
 
 FMatrix3x3::FMatrix3x3() {
 	m00 = 1; m01 = 0; m02 = 0;
 	m10 = 0; m11 = 1; m12 = 0;
 	m20 = 0; m21 = 0; m22 = 1;
+}
+
+FMatrix3x3::FMatrix3x3(const FMatrix4x4 & Matrix) {
+	FMatrix3x3(Matrix.Row(0), Matrix.Row(1), Matrix.Row(2));
 }
 
 FMatrix3x3::FMatrix3x3(const FVector3 & Row0, const FVector3 & Row1, const FVector3 & Row2) {

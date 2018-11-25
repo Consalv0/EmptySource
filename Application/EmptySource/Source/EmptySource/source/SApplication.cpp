@@ -270,7 +270,7 @@ void SApplication::MainLoop() {
 
 	FVector4 Holi = FVector4(1, 2, 3, 4);
 	FVector2 Holi2 = Holi;
-	Holi = Holi+Holi2;
+	Holi = Holi2*Holi;
 
 	// MVP matrix
 	FMatrix4x4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
@@ -355,8 +355,8 @@ void SApplication::MainLoop() {
 		return;
 	}
 
-	// Link the program
-	printf("Linking program\n");
+	// Link the shader program
+	printf("Linking shader program\n");
 	GLuint ProgramID = glCreateProgram();
 	glAttachShader(ProgramID, VertexShaderID);
 	glAttachShader(ProgramID, FragmentShaderID);

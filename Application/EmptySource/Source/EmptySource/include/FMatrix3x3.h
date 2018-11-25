@@ -1,6 +1,7 @@
 #pragma once
 
 struct FVector3;
+struct FMatrix4x4;
 
 struct FMatrix3x3 {
 public:
@@ -12,6 +13,7 @@ public:
 	};
 
 	FMatrix3x3();
+	FMatrix3x3(const FMatrix4x4& Matrix);
 	FMatrix3x3(const FVector3& Row0, const FVector3& Row1, const FVector3& Row2);
 
 	static FMatrix3x3 Identity();

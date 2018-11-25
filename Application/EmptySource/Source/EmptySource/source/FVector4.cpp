@@ -10,8 +10,8 @@ FVector4::FVector4()
 	: x(0), y(0), z(0), w(0) {
 }
 
-FVector4::FVector4(const FVector4& vector)
-	: x(vector.x), y(vector.y), z(vector.z), w(vector.w) {
+FVector4::FVector4(const FVector4& Vector)
+	: x(Vector.x), y(Vector.y), z(Vector.z), w(Vector.w) {
 };
 
 FVector4::FVector4(const float& x, const float& y, const float& z)
@@ -22,16 +22,16 @@ FVector4::FVector4(const float& x, const float& y, const float& z, const float& 
 	: x(x), y(y), z(z), w(w) {
 }
 
-FVector4::FVector4(const FVector2& vector)
-	: x(vector.x), y(vector.y), z(0), w(0) {
+FVector4::FVector4(const FVector2& Vector)
+	: x(Vector.x), y(Vector.y), z(0), w(0) {
 };
 
-FVector4::FVector4(const FVector3& vector)
-	: x(vector.x), y(vector.y), z(vector.z), w(0) {
+FVector4::FVector4(const FVector3& Vector)
+	: x(Vector.x), y(Vector.y), z(Vector.z), w(0) {
 };
 
-FVector4::FVector4(const float& value)
-	: x(value), y(value), z(value) {
+FVector4::FVector4(const float& Value)
+	: x(Value), y(Value), z(Value) {
 }
 
 float FVector4::Magnitude() const {
@@ -56,8 +56,8 @@ FVector4 FVector4::Normalized() const {
 	return result /= Magnitude();
 }
 
-float FVector4::Dot(const FVector4& other) const {
-	return x * other.x + y * other.y + z * other.z + w * other.w;
+float FVector4::Dot(const FVector4& Other) const {
+	return x * Other.x + y * Other.y + z * Other.z + w * Other.w;
 }
 
 FVector3 FVector4::Vector3() const {
@@ -68,73 +68,101 @@ FVector2 FVector4::Vector2() const {
 	return FVector2(*this);
 }
 
-FVector4 FVector4::Lerp(const FVector4 & start, const FVector4 & end, float t) {
+const float * FVector4::PoiterToValue() const {
+	return &x;
+}
+
+FVector4 FVector4::Lerp(const FVector4 & Start, const FVector4 & End, float t) {
 	return FVector4(
-		(start.x * (1.0F - t)) + (end.x * t),
-		(start.y * (1.0F - t)) + (end.y * t),
-		(start.z * (1.0F - t)) + (end.z * t),
-		(start.w * (1.0F - t)) + (end.w * t)
+		(Start.x * (1.0F - t)) + (End.x * t),
+		(Start.y * (1.0F - t)) + (End.y * t),
+		(Start.z * (1.0F - t)) + (End.z * t),
+		(Start.w * (1.0F - t)) + (End.w * t)
 	);
 }
 
-bool FVector4::operator==(const FVector4& other) {
-	return (x == other.x && y == other.y && z == other.z && w == other.w);
+bool FVector4::operator==(const FVector4& Other) {
+	return (x == Other.x && y == Other.y && z == Other.z && w == Other.w);
 }
 
-bool FVector4::operator!=(const FVector4& other) {
-	return (x != other.x || y != other.y || z != other.z || w != other.w);
+bool FVector4::operator!=(const FVector4& Other) {
+	return (x != Other.x || y != Other.y || z != Other.z || w != Other.w);
 }
 
-FVector4 FVector4::operator+(const FVector4& other) const {
-	return FVector4(x + other.x, y + other.y, z + other.z, w + other.w);
+FVector4 FVector4::operator+(const FVector4& Other) const {
+	return FVector4(x + Other.x, y + Other.y, z + Other.z, w + Other.w);
 }
 
-FVector4 FVector4::operator-(const FVector4& other) const {
-	return FVector4(x - other.x, y - other.y, z - other.z, w - other.w);
+FVector4 FVector4::operator-(const FVector4& Other) const {
+	return FVector4(x - Other.x, y - Other.y, z - Other.z, w - Other.w);
 }
 
 FVector4 FVector4::operator-(void) const {
 	return FVector4(-x, -y, -z, -w);
 }
 
-FVector4 FVector4::operator*(const float& value) const {
-	return FVector4(x * value, y * value, z * value, w * value);
+FVector4 FVector4::operator*(const float& Value) const {
+	return FVector4(x * Value, y * Value, z * Value, w * Value);
 }
 
-FVector4 FVector4::operator/(const float& value) const {
-	if (value == 0) throw std::exception("Can't divide by zero");
-	return FVector4(x / value, y / value, z / value, w / value);
+FVector4 FVector4::operator/(const float& Value) const {
+	if (Value == 0) throw std::exception("Can't divide by zero");
+	return FVector4(x / Value, y / Value, z / Value, w / Value);
 }
 
-FVector4& FVector4::operator+=(const FVector4& other) {
-	x += other.x;
-	y += other.y;
-	z += other.z;
-	w += other.w;
+FVector4 FVector4::operator*(const FVector4 & Other) const {
+	return FVector4(x * Other.x, y * Other.y, z * Other.z, w * Other.w);
+}
+
+FVector4 FVector4::operator/(const FVector4 & Other) const {
+	return FVector4(x / Other.x, y / Other.y, z / Other.z, w / Other.w);
+}
+
+FVector4& FVector4::operator+=(const FVector4& Other) {
+	x += Other.x;
+	y += Other.y;
+	z += Other.z;
+	w += Other.w;
 	return *this;
 }
 
-FVector4& FVector4::operator-=(const FVector4& other) {
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
-	w -= other.w;
+FVector4& FVector4::operator-=(const FVector4& Other) {
+	x -= Other.x;
+	y -= Other.y;
+	z -= Other.z;
+	w -= Other.w;
 	return *this;
 }
 
-FVector4& FVector4::operator*=(const float& value) {
-	x *= value;
-	y *= value;
-	z *= value;
-	w *= value;
+FVector4 & FVector4::operator*=(const FVector4 & Other) {
+	x *= Other.x;
+	y *= Other.y;
+	z *= Other.z;
+	w *= Other.w;
 	return *this;
 }
 
-FVector4& FVector4::operator/=(const float& value) {
-	if (value == 0) throw std::exception("Can't divide by zero");
-	x /= value;
-	y /= value;
-	z /= value;
-	w /= value;
+FVector4 & FVector4::operator/=(const FVector4 & Other) {
+	x /= Other.x;
+	y /= Other.y;
+	z /= Other.z;
+	w /= Other.w;
+	return *this;
+}
+
+FVector4& FVector4::operator*=(const float& Value) {
+	x *= Value;
+	y *= Value;
+	z *= Value;
+	w *= Value;
+	return *this;
+}
+
+FVector4& FVector4::operator/=(const float& Value) {
+	if (Value == 0) throw std::exception("Can't divide by zero");
+	x /= Value;
+	y /= Value;
+	z /= Value;
+	w /= Value;
 	return *this;
 }
