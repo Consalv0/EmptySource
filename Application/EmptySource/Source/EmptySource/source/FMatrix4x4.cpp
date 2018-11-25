@@ -61,13 +61,12 @@ FMatrix4x4 FMatrix4x4::LookAt(const FVector3 & Eye, const FVector3 & Target, con
 }
 
 void FMatrix4x4::Transpose() {
-	FMatrix4x4 Result = FMatrix4x4(Result.Column(0), Result.Column(1), Result.Column(2), Result.Column(3));
+	FMatrix4x4 Result = FMatrix4x4(Column(0), Column(1), Column(2), Column(3));
 	*this = Result;
 }
 
 FMatrix4x4 FMatrix4x4::Transposed() const {
-	FMatrix4x4 Result = FMatrix4x4(Result.Column(0), Result.Column(1), Result.Column(2), Result.Column(3));
-	return Result;
+	return FMatrix4x4(Column(0), Column(1), Column(2), Column(3));
 }
 
 FVector4 FMatrix4x4::Row(const int & i) const {
