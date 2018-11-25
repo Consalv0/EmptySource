@@ -81,6 +81,26 @@ FVector4 FVector4::Lerp(const FVector4 & Start, const FVector4 & End, float t) {
 	);
 }
 
+float & FVector4::operator[](unsigned int i) {
+	switch (i) {
+		case 0:  return x;
+		case 1:  return y; 
+		case 2:  return z; 
+		case 3:  return w; 
+		default: return w;
+	}
+}
+
+float const & FVector4::operator[](unsigned int i) const {
+	switch (i) {
+		case 0:  return x;
+		case 1:  return y;
+		case 2:  return z;
+		case 3:  return w;
+		default: return w;
+	}
+}
+
 bool FVector4::operator==(const FVector4& Other) {
 	return (x == Other.x && y == Other.y && z == Other.z && w == Other.w);
 }
