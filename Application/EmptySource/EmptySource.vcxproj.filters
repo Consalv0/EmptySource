@@ -75,6 +75,9 @@
     <ClInclude Include="Source\EmptySource\include\FVector4.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\SMesh.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -102,6 +105,9 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\FVector4.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\SMesh.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

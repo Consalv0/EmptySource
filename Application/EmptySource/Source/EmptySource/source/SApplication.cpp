@@ -250,7 +250,7 @@ void SApplication::MainLoop() {
 		200.0F						// Far plane
 	);
 
-	FVector3 EyePosition = FVector3(0, 5, 5);
+	FVector3 EyePosition = FVector3(2, 4, 4);
 
 	// Camera rotation, position Matrix
 	FMatrix4x4 ViewMatrix = FMatrix4x4::LookAt(
