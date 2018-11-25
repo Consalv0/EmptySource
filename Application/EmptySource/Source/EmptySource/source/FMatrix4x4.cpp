@@ -151,3 +151,7 @@ FVector3 FMatrix4x4::operator*(const FVector3 & Vector) const {
 
 	return Result;
 }
+
+const float * FMatrix4x4::PoiterToValue(void) const {
+	return &m00;
+}

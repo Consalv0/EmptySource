@@ -66,7 +66,7 @@ void SApplication::MainLoop() {
 
 	// Activate Z-buffer
 	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if its closer to the camera, HUMMMMMMM
+	// Accept fragment if its closer to the camera
 	glDepthFunc(GL_LESS);
 	// Draw Mode
 	glPolygonMode(GL_FRONT, GL_FILL);
@@ -232,7 +232,7 @@ void SApplication::MainLoop() {
 	GLuint VertexBuffer;
 	// Generate 1 buffer, put the resulting identifier in VertexBuffer
 	glGenBuffers(1, &VertexBuffer);
-	// The following commands will talk about our 'VertexBuffer' buffer
+	// The following commands will talk about our 'VertexBuffer'
 	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(TemporalVertexBufferScene), TemporalVertexBufferScene, GL_STATIC_DRAW);
@@ -247,29 +247,33 @@ void SApplication::MainLoop() {
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(TemporalTextureCoordsBufferScene), TemporalTextureCoordsBufferScene, GL_STATIC_DRAW);
 
-	/////////// Creating MVP (Model, View, Poryection) Matrix //////////////
-	// Perpective matrix (Projection)
-	FMatrix4x4 Projection = FMatrix4x4::Perspective(
+	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
+	// Perpective matrix (ProjectionMatrix)
+	FMatrix4x4 ProjectionMatrix = FMatrix4x4::Perspective(
 		45.0F * 0.015708F,			// Aperute angle
 		MainWindow->AspectRatio(),	// Aspect ratio
 		0.1F,						// Near plane
 		200.0F						// Far plane
 	);
 
-	FVector3 EyePosition = FVector3(0, 0, -10);
+	FVector3 EyePosition = FVector3(0, 5, -5);
 
 	// Camera rotation, position Matrix
-	FMatrix4x4 View = FMatrix4x4::LookAt(
+	FMatrix4x4 ViewMatrix = FMatrix4x4::LookAt(
 		EyePosition,        // Camera position
 		FVector3(0, 0, 0),	// Look position
 		FVector3(0, 1, 0)	// Up vector
 	);
 
-	// Model matrix
-	FMatrix4x4 Model = FMatrix4x4::Identity();
+	// ModelMatrix matrix
+	FMatrix4x4 ModelMatrix = FMatrix4x4::Identity();
+
+	FVector4 Holi = FVector4(1, 2, 3, 4);
+	FVector2 Holi2 = Holi;
+	Holi = Holi+Holi2;
 
 	// MVP matrix
-	FMatrix4x4 MVP = Projection * View * Model;
+	FMatrix4x4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
 	///////// Create and compile our GLSL program from the shaders //////////////
 	// Create the shaders
@@ -380,12 +384,30 @@ void SApplication::MainLoop() {
 		glDeleteShader(FragmentShaderID);
 	}
 
+	///////// Give Uniforms to GLSL /////////////
+	// Get the ID of the uniforms
+	GLuint    ProjectionMatrixID = glGetUniformLocation(ProgramID, "_ProjectionMatrix");
+	GLuint          ViewMatrixID = glGetUniformLocation(ProgramID, "_ViewMatrix");
+	GLuint         ModelMatrixID = glGetUniformLocation(ProgramID, "_ModelMatrix");
+
 	//////////////////////////////////////////
 
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(ProgramID);
-		//////// Drawing Model ////////
+
+		//////// Drawing ModelMatrix ////////
+		ProjectionMatrix = FMatrix4x4::Perspective(
+			45.0F * 0.015708F,			// Aperute angle
+			MainWindow->AspectRatio(),	// Aspect ratio
+			0.1F,						// Near plane
+			200.0F						// Far plane
+		);
+
+		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PoiterToValue() );
+		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PoiterToValue() );
+		glUniformMatrix4fv(      ModelMatrixID, 1, GL_FALSE,      ModelMatrix.PoiterToValue() );
+
 		// 1st attribute buffer : vertices
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);

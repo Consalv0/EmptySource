@@ -61,7 +61,20 @@ float FVector4::Dot(const FVector4& other) const {
 }
 
 FVector3 FVector4::Vector3() const {
-	return FVector3(x, y, z);
+	return FVector3(*this);
+}
+
+FVector2 FVector4::Vector2() const {
+	return FVector2(*this);
+}
+
+FVector4 FVector4::Lerp(const FVector4 & start, const FVector4 & end, float t) {
+	return FVector4(
+		(start.x * (1.0F - t)) + (end.x * t),
+		(start.y * (1.0F - t)) + (end.y * t),
+		(start.z * (1.0F - t)) + (end.z * t),
+		(start.w * (1.0F - t)) + (end.w * t)
+	);
 }
 
 bool FVector4::operator==(const FVector4& other) {
@@ -70,14 +83,6 @@ bool FVector4::operator==(const FVector4& other) {
 
 bool FVector4::operator!=(const FVector4& other) {
 	return (x != other.x || y != other.y || z != other.z || w != other.w);
-}
-
-FVector4 FVector4::operator+(const FVector3& other) const {
-	return FVector4(x + other.x, y + other.y, z + other.z, w);
-}
-
-FVector4 FVector4::operator-(const FVector3& other) const {
-	return FVector4(x - other.x, y - other.y, z - other.z, w);
 }
 
 FVector4 FVector4::operator+(const FVector4& other) const {
@@ -99,20 +104,6 @@ FVector4 FVector4::operator*(const float& value) const {
 FVector4 FVector4::operator/(const float& value) const {
 	if (value == 0) throw std::exception("Can't divide by zero");
 	return FVector4(x / value, y / value, z / value, w / value);
-}
-
-FVector4& FVector4::operator+=(const FVector3& other) {
-	x += other.x;
-	y += other.y;
-	z += other.z;
-	return *this;
-}
-
-FVector4& FVector4::operator-=(const FVector3& other) {
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
-	return *this;
 }
 
 FVector4& FVector4::operator+=(const FVector4& other) {

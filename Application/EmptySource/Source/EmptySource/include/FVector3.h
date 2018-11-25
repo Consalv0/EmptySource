@@ -1,14 +1,16 @@
 #pragma once
 
 struct FVector2;
+struct FVector4;
 
 struct FVector3 {
 public:
-	float x, y, z;
+	struct { float x, y, z; };
 
 	FVector3();
 	FVector3(const FVector2& vector);
 	FVector3(const FVector3& vector);
+	FVector3(const FVector4& vector);
 	FVector3(const float& value);
 	FVector3(const float& x, const float& y, const float& z);
 	FVector3(const float& x, const float& y);
@@ -20,13 +22,12 @@ public:
 	FVector3 Cross(const FVector3& other) const;
 	float Dot(const FVector3& other) const;
 
+	FVector2 Vector2() const;
 	static FVector3 Lerp(const FVector3& start, const FVector3& end, float t);
 
 	bool operator==(const FVector3& other);
 	bool operator!=(const FVector3& other);
-
-	FVector3 operator+(const FVector2& other) const;
-	FVector3 operator-(const FVector2& other) const;
+	
 	FVector3 operator+(const FVector3& other) const;
 	FVector3 operator-(const FVector3& other) const;
 	FVector3 operator-(void) const;
@@ -34,8 +35,6 @@ public:
 	FVector3 operator/(const float& value) const;
 	FVector3 operator*(const FVector3& other) const;
 	
-	FVector3& operator+=(const FVector2& other);
-	FVector3& operator-=(const FVector2& other);
 	FVector3& operator+=(const FVector3& other);
 	FVector3& operator-=(const FVector3& other);
 	FVector3& operator*=(const float& value);

@@ -82,3 +82,7 @@ FVector3 FMatrix3x3::operator*(const FVector3& Vector) const {
 
 	return result;
 }
+
+const float * FMatrix3x3::PoiterToValue(void) const {
+	return &m00;
+}

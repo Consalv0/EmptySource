@@ -1,11 +1,16 @@
 #pragma once
 
+struct FVector3;
+struct FVector4;
+
 struct FVector2 {
 public:
-	float x, y;
+	struct { float x, y; };
 
 	FVector2();
 	FVector2(const FVector2& Vector);
+	FVector2(const FVector3& vector);
+	FVector2(const FVector4& vector);
 	FVector2(const float& Value);
 	FVector2(const float& x, const float& y);
 
@@ -16,6 +21,8 @@ public:
 	void Normalize();
 	float Cross(const FVector2& Other) const;
 	float Dot(const FVector2& Other) const;
+
+	static FVector2 Lerp(const FVector2& Start, const FVector2& End, float t);
 
 	bool operator==(const FVector2& Other);
 	bool operator!=(const FVector2& Other);
