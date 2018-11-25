@@ -63,13 +63,7 @@ void SApplication::MainLoop() {
 	GLuint TemporalVAO;
 	glGenVertexArrays(1, &TemporalVAO);
 	glBindVertexArray(TemporalVAO);
-
-	// Activate Z-buffer
-	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if its closer to the camera
-	glDepthFunc(GL_LESS);
-	// Draw Mode
-	glPolygonMode(GL_FRONT, GL_FILL);
+	// glDeleteVertexArrays(1, &TemporalVAO);
 
 	/*
 	* An array of 3 vectors which represents 3 vertices
@@ -256,7 +250,7 @@ void SApplication::MainLoop() {
 		200.0F						// Far plane
 	);
 
-	FVector3 EyePosition = FVector3(0, 5, -5);
+	FVector3 EyePosition = FVector3(0, 5, 5);
 
 	// Camera rotation, position Matrix
 	FMatrix4x4 ViewMatrix = FMatrix4x4::LookAt(
@@ -267,10 +261,6 @@ void SApplication::MainLoop() {
 
 	// ModelMatrix matrix
 	FMatrix4x4 ModelMatrix = FMatrix4x4::Identity();
-
-	FVector4 Holi = FVector4(1, 2, 3, 4);
-	FVector2 Holi2 = Holi;
-	Holi = Holi2*Holi;
 
 	// MVP matrix
 	FMatrix4x4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
@@ -391,6 +381,14 @@ void SApplication::MainLoop() {
 	GLuint         ModelMatrixID = glGetUniformLocation(ProgramID, "_ModelMatrix");
 
 	//////////////////////////////////////////
+
+	// Activate Z-buffer
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if its closer to the camera
+	glDepthFunc(GL_LESS);
+	// Draw Mode
+	glPolygonMode(GL_FRONT, GL_FILL);
+
 
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -79,6 +79,24 @@ FVector3 FVector3::Lerp(const FVector3 & start, const FVector3 & end, float t) {
 	return FVector3((start.x * (1.0F - t)) + (end.x * t), (start.y * (1.0F - t)) + (end.y * t), (start.z * (1.0F - t)) + (end.z * t));
 }
 
+float & FVector3::operator[](unsigned int i) {
+	switch (i) {
+		case 0: return x;
+		case 1: return y;
+		case 2: return z;
+		default: return z;
+	}
+}
+
+float const & FVector3::operator[](unsigned int i) const {
+	switch (i) {
+		case 0: return x;
+		case 1: return y;
+		case 2: return z;
+		default: return z;
+	}
+}
+
 FVector3 FVector3::operator * (const FVector3& Other) const {
 	return FVector3(
 		x * Other.x,

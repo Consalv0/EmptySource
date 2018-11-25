@@ -5,7 +5,10 @@ struct FVector4;
 
 struct FVector3 {
 public:
-	struct { float x, y, z; };
+	union {
+		struct { float x, y, z; };
+		struct { float r, g, b; };
+	};
 
 	FVector3();
 	FVector3(const FVector2& Vector);
@@ -22,9 +25,12 @@ public:
 	FVector3 Cross(const FVector3& Other) const;
 	float Dot(const FVector3& Other) const;
 
-	FVector2 Vector2() const;
-	const float* PoiterToValue() const;
 	static FVector3 Lerp(const FVector3& start, const FVector3& end, float t);
+
+	FVector2 Vector2() const;
+	float & operator[](unsigned int i);
+	float const& operator[](unsigned int i) const;
+	const float* PoiterToValue() const;
 
 	bool operator==(const FVector3& Other);
 	bool operator!=(const FVector3& Other);

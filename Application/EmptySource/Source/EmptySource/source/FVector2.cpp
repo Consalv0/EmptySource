@@ -63,6 +63,22 @@ FVector2 FVector2::Lerp(const FVector2 & Start, const FVector2 & End, float t) {
 	return FVector2((Start.x * (1.0F - t)) + (End.x * t), (Start.y * (1.0F - t)) + (End.y * t));
 }
 
+float & FVector2::operator[](unsigned int i) {
+	switch (i) {
+		case 0: return x;
+		case 1: return y;
+		default: return y;
+	}
+}
+
+float const & FVector2::operator[](unsigned int i) const {
+	switch (i) {
+		case 0: return x;
+		case 1: return y;
+		default: return y;
+	}
+}
+
 bool FVector2::operator==(const FVector2& Other) {
 	return (x == Other.x && y == Other.y);
 }
