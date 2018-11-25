@@ -3,12 +3,22 @@
 #include <math.h>
 #include <stdexcept>
 #include "..\include\FVector2.h"
+#include "..\include\FVector3.h"
+#include "..\include\FVector4.h"
 
 FVector2::FVector2()
 	: x(0), y(0) {
 }
 
 FVector2::FVector2(const FVector2& vector)
+	: x(vector.x), y(vector.y) {
+}
+
+FVector2::FVector2(const FVector3 & vector)
+	: x(vector.x), y(vector.y) {
+}
+
+FVector2::FVector2(const FVector4 & vector)
 	: x(vector.x), y(vector.y) {
 }
 
@@ -43,6 +53,10 @@ float FVector2::Cross(const FVector2& other) const {
 
 float FVector2::Dot(const FVector2& other) const {
 	return x * other.x + y * other.y;
+}
+
+FVector2 FVector2::Lerp(const FVector2 & Start, const FVector2 & End, float t) {
+	return FVector2((Start.x * (1.0F - t)) + (End.x * t), (Start.y * (1.0F - t)) + (End.y * t));
 }
 
 bool FVector2::operator==(const FVector2& other) {

@@ -5,11 +5,13 @@ struct FVector4;
 struct FMatrix4x4 {
 
 public:
-	float
-		m00, m01, m02, m03,
-		m10, m11, m12, m13,
-		m20, m21, m22, m23,
-		m30, m31, m32, m33;
+	struct {
+		float
+			m00, m01, m02, m03,
+			m10, m11, m12, m13,
+			m20, m21, m22, m23,
+			m30, m31, m32, m33;
+	};
 	
 	FMatrix4x4();
 	FMatrix4x4(const FVector4& Row0, const FVector4& Row1, const FVector4& Row2, const FVector4 Row3);
@@ -28,4 +30,5 @@ public:
 	FVector4 operator*(const FVector4& Vector) const;
 	FVector3 operator*(const FVector3& Vector) const;
 
+	const float* PoiterToValue(void) const;
 };

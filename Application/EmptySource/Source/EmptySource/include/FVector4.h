@@ -5,7 +5,7 @@ struct FVector3;
 
 struct FVector4 {
 public:
-	float x, y, z, w;
+	struct { float x, y, z, w; };
 
 	FVector4();
 	FVector4(const FVector2& vector);
@@ -19,23 +19,21 @@ public:
 	float MagnitudeSquared() const;
 	void Normalize();
 	FVector4 Normalized() const;
-	
 	float Dot(const FVector4& other) const;
+
 	FVector3 Vector3() const;
+	FVector2 Vector2() const;
+	static FVector4 Lerp(const FVector4& start, const FVector4& end, float t);
 
 	bool operator==(const FVector4& other);
 	bool operator!=(const FVector4& other);
 	
-	FVector4 operator+(const FVector3& other) const;
-	FVector4 operator-(const FVector3& other) const;
 	FVector4 operator+(const FVector4& other) const;
 	FVector4 operator-(const FVector4& other) const;
 	FVector4 operator-(void) const;
 	FVector4 operator*(const float& value) const;
 	FVector4 operator/(const float& value) const;
 	
-	FVector4& operator+=(const FVector3& other);
-	FVector4& operator-=(const FVector3& other);
 	FVector4& operator+=(const FVector4& other);
 	FVector4& operator-=(const FVector4& other);
 	FVector4& operator*=(const float& value);
