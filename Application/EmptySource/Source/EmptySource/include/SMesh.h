@@ -8,18 +8,23 @@ struct FVector2;
 struct FVector3;
 struct FVector4;
 
+typedef vector<IVector3> SMeshTriangles;
+typedef vector<FVector3> SMeshVector3D;
+typedef vector<FVector2> SMeshUVs;
+typedef vector<FVector4> SMeshColors;
+
 class SMesh {
 public:
-	vector<IVector3> Triangles;
-	vector<FVector3> Vertices, Normals, Tangents;
-	vector<FVector2> TextureCoords;
-	vector<FVector4> Colors;
+	SMeshTriangles Triangles;
+	SMeshVector3D  Vertices; 
+	SMeshVector3D  Normals;
+	SMeshVector3D  Tangents;
+	SMeshUVs       UV0;
+	SMeshColors    Colors;
 
 	SMesh();
-	SMesh(
-		const vector<IVector3> Triangles, const vector<FVector3> Vertices,
-		const vector<FVector3> Normals, const vector<FVector2> TextureCoords, const vector<FVector4> Colors
-	);
+	SMesh(const SMeshTriangles Triangles, const SMeshVector3D Vertices, const SMeshVector3D Normals, const SMeshUVs UV0, const SMeshColors Colors);
+	SMesh(const SMeshTriangles Triangles, const SMeshVector3D Vertices, const SMeshVector3D Normals, const SMeshVector3D Tangents, const SMeshUVs UV0, const SMeshColors Colors);
 
 private:
 };

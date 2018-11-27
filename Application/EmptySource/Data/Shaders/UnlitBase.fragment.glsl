@@ -7,8 +7,8 @@ uniform mat4 _WorldNormalMatrix;
 
 in vec4 VertexPosition;
 in vec3 NormalDirection;
-in vec3 Color;
 in vec2 TextureCoords;
+in vec4 Color;
 
 out vec4 FragColor; 
  
