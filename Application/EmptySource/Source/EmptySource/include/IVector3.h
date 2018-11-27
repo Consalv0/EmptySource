@@ -21,10 +21,10 @@ public:
 	IVector3(const int& x, const int& y);
 
 	float Magnitude() const;
-	float MagnitudeSquared() const;
+	int MagnitudeSquared() const;
 
 	IVector3 Cross(const IVector3& Other) const;
-	float Dot(const IVector3& Other) const;
+	int Dot(const IVector3& Other) const;
 
 	FVector3 FloatVector3() const;
 	int & operator[](unsigned int i);
