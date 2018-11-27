@@ -129,219 +129,175 @@ void SApplication::MainLoop() {
 	// glDeleteVertexArrays(1, &TemporalVAO);
 
 	/*
-	* An array of 3 vectors which represents 3 vertices
-	* The first vertex is (-1, -1, 0). This means that unless we transform it in some way,
+	* If the first vertex is (-1, -1, 0). This means that unless we transform it in some way,
 	* it will be displayed at (-1, -1) on the screen. What does this mean? The screen origin is in the middle,
 	* X is on the right, as usual, and Y is up. 
 	*/
-	static const GLfloat TemporalVertexBufferScene[] = {
-		// Front Face
-		 0.5F, -0.5F, -0.5F, // 1
-		-0.5F, -0.5F, -0.5F, // 2
-		-0.5F,  0.5F, -0.5F, // 6
-		-0.5F,  0.5F, -0.5F, // 6
-		 0.5F,  0.5F, -0.5F, // 3
-		 0.5F, -0.5F, -0.5F, // 1
-
-		// Back Face
-		-0.5F,  0.5F,  0.5F, // 5
-		 0.5F,  0.5F,  0.5F, // 4
-		 0.5F, -0.5F,  0.5F, // 8
-		 0.5F, -0.5F,  0.5F, // 8
-		-0.5F, -0.5F,  0.5F, // 7
-		-0.5F,  0.5F,  0.5F, // 5
-
-		// Right Face
-		 0.5F, -0.5F, -0.5F, // 1
-		 0.5F,  0.5F, -0.5F, // 3
-		 0.5F,  0.5F,  0.5F, // 4
-		 0.5F,  0.5F,  0.5F, // 4
-		 0.5F, -0.5F,  0.5F, // 8
-		 0.5F, -0.5F, -0.5F, // 1
-
-		// Left Face
-		-0.5F,  0.5F,  0.5F, // 5
-		-0.5F, -0.5F,  0.5F, // 7
-		-0.5F, -0.5F, -0.5F, // 2
-		-0.5F, -0.5F, -0.5F, // 2
-		-0.5F,  0.5F, -0.5F, // 6
-		-0.5F,  0.5F,  0.5F, // 5
-
-		// Up Face
-		-0.5F,  0.5F,  0.5F, // 5
-		 0.5F,  0.5F,  0.5F, // 4
-		 0.5F,  0.5F, -0.5F, // 3
-		 0.5F,  0.5F, -0.5F, // 3
-		-0.5F,  0.5F, -0.5F, // 6
-		-0.5F,  0.5F,  0.5F, // 5
-
-		// Down Face
-		 0.5F, -0.5F, -0.5F, // 1
-		-0.5F, -0.5F, -0.5F, // 2
-		-0.5F,  0.5F, -0.5F, // 7
-		-0.5F, -0.5F,  0.5F, // 7
-		 0.5F, -0.5F,  0.5F, // 8
-		 0.5F, -0.5F, -0.5F, // 1
-	};
-
-	static const GLfloat TemporalTextureCoordsBufferScene[] = {
-		// Front Face
-		 1.0F, -1.0F, -1.0F, // 1
-		-1.0F, -1.0F, -1.0F, // 2
-		-1.0F,  1.0F, -1.0F, // 6
-		-1.0F,  1.0F, -1.0F, // 6
-		 1.0F,  1.0F, -1.0F, // 3
-		 1.0F, -1.0F, -1.0F, // 1
-							 
-		// Back Face		 
-		-1.0F,  1.0F,  1.0F, // 5
-		 1.0F,  1.0F,  1.0F, // 4
-		 1.0F, -1.0F,  1.0F, // 8
-		 1.0F, -1.0F,  1.0F, // 8
-		-1.0F, -1.0F,  1.0F, // 7
-		-1.0F,  1.0F,  1.0F, // 5
-							 
-		// Right Face		 
-		 1.0F, -1.0F, -1.0F, // 1
-		 1.0F,  1.0F, -1.0F, // 3
-		 1.0F,  1.0F,  1.0F, // 4
-		 1.0F,  1.0F,  1.0F, // 4
-		 1.0F, -1.0F,  1.0F, // 8
-		 1.0F, -1.0F, -1.0F, // 1
-							 
-		// Left Face		 
-		-1.0F,  1.0F,  1.0F, // 5
-		-1.0F, -1.0F,  1.0F, // 7
-		-1.0F, -1.0F, -1.0F, // 2
-		-1.0F, -1.0F, -1.0F, // 2
-		-1.0F,  1.0F, -1.0F, // 6
-		-1.0F,  1.0F,  1.0F, // 5
-
-		// Up Face
-		-1.0F,  1.0F,  1.0F, // 5
-		 1.0F,  1.0F,  1.0F, // 4
-		 1.0F,  1.0F, -1.0F, // 3
-		 1.0F,  1.0F, -1.0F, // 3
-		-1.0F,  1.0F, -1.0F, // 6
-		-1.0F,  1.0F,  1.0F, // 5
-
-		// Down Face
-		 1.0F, -1.0F, -1.0F, // 1
-		-1.0F, -1.0F, -1.0F, // 2
-		-1.0F, -1.0F,  1.0F, // 7
-		-1.0F, -1.0F,  1.0F, // 7
-		 1.0F, -1.0F,  1.0F, // 8
-		 1.0F, -1.0F, -1.0F, // 1
-	};
-
-	static const GLfloat TemporalNormalsBufferScene[] = {
-		// Front Face
-		 0.0F,  0.0F, -1.0F, // 1
-		 0.0F,  0.0F, -1.0F, // 2
-		 0.0F,  0.0F, -1.0F, // 6
-		 0.0F,  0.0F, -1.0F, // 6
-		 0.0F,  0.0F, -1.0F, // 3
-		 0.0F,  0.0F, -1.0F, // 1
-							 
-		// Back Face		 
-		 0.0F,  0.0F,  1.0F, // 5
-		 0.0F,  0.0F,  1.0F, // 4
-		 0.0F,  0.0F,  1.0F, // 8
-		 0.0F,  0.0F,  1.0F, // 8
-		 0.0F,  0.0F,  1.0F, // 7
-		 0.0F,  0.0F,  1.0F, // 5
-							 
-		// Right Face		 
-		 1.0F,  0.0F,  0.0F, // 1
-		 1.0F,  0.0F,  0.0F, // 3
-		 1.0F,  0.0F,  0.0F, // 4
-		 1.0F,  0.0F,  0.0F, // 4
-		 1.0F,  0.0F,  0.0F, // 8
-		 1.0F,  0.0F,  0.0F, // 1
-							 
-		// Left Face		 
-		-1.0F,  0.0F,  0.0F, // 5
-		-1.0F,  0.0F,  0.0F, // 7
-		-1.0F,  0.0F,  0.0F, // 2
-		-1.0F,  0.0F,  0.0F, // 2
-		-1.0F,  0.0F,  0.0F, // 6
-		-1.0F,  0.0F,  0.0F, // 5
-							 
-		// Up Face			 
-		 0.0F,  1.0F,  0.0F, // 5
-		 0.0F,  1.0F,  0.0F, // 4
-		 0.0F,  1.0F,  0.0F, // 3
-		 0.0F,  1.0F,  0.0F, // 3
-		 0.0F,  1.0F,  0.0F, // 6
-		 0.0F,  1.0F,  0.0F, // 5
-							 
-		// Down Face		 
-		 0.0F, -1.0F,  0.0F, // 1
-		 0.0F, -1.0F,  0.0F, // 2
-		 0.0F, -1.0F,  0.0F, // 7
-		 0.0F, -1.0F,  0.0F, // 7
-		 0.0F, -1.0F,  0.0F, // 8
-		 0.0F, -1.0F,  0.0F, // 1
-	};
-
 	SMesh TemporalMesh;
-	
-	static const SArray<IVector3> TemporalTriangles {
+	static const SMeshTriangles TemporalTriangles {
 		// Front Face
-		IVector3(0, 1, 5),
-		IVector3(5, 2, 0),
+		{  0,  1,  2 }, {  2,  3,  0 },
 		// Back Face
-		IVector3(4, 3, 7),
-		IVector3(7, 6, 4),
+		{  4,  5,  6 }, {  6,  7,  4 },
 		// Right Face
-		IVector3(0, 2, 3),
-		IVector3(3, 7, 0),
+		{  8,  9, 10 }, { 10, 11,  8 },
 		// Left Face
-		IVector3(4, 6, 1),
-		IVector3(1, 5, 4),
+		{ 12, 13, 14 }, { 14, 15, 12 },
 		// Up Face
-		IVector3(4, 3, 2),
-		IVector3(2, 5, 4),
+		{ 16, 17, 18 }, { 18, 19, 16 },
 		// Down Face
-		IVector3(0, 1, 6),
-		IVector3(6, 7, 0),
+		{ 20, 21, 22 }, { 22, 23, 20 },
 	};
-	static const SArray<FVector3> TemporalVertices {
-		FVector3( 0.5F, -0.5F, -0.5F), // 0
-		FVector3(-0.5F, -0.5F, -0.5F), // 1
-		FVector3( 0.5F,  0.5F, -0.5F), // 2
-		FVector3( 0.5F,  0.5F,  0.5F), // 3
-		FVector3(-0.5F,  0.5F,  0.5F), // 4
-		FVector3(-0.5F,  0.5F, -0.5F), // 5
-		FVector3(-0.5F, -0.5F,  0.5F), // 6
-		FVector3( 0.5F, -0.5F,  0.5F), // 7
-	};
-	static const SArray<FVector3> TemporalNormals {
+	static const SMeshVector3D TemporalVertices {
 		// Front Face
-		FVector3( 0.F,  0.F, -1.F), // 0
+		{ 0.5F, -0.5F, -0.5F }, // 1 : 1
+		{-0.5F, -0.5F, -0.5F }, // 2 : 2
+		{-0.5F,  0.5F, -0.5F }, // 6 : 3
+		{ 0.5F,  0.5F, -0.5F }, // 3 : 5
+
 		// Back Face
-		FVector3( 0.F,  0.F,  1.F), // 1
+		{ -0.5F,  0.5F,  0.5F }, // 5 : 7
+		{  0.5F,  0.5F,  0.5F }, // 4 : 8
+		{  0.5F, -0.5F,  0.5F }, // 8 : 10
+		{ -0.5F, -0.5F,  0.5F }, // 7 : 11
+
 		// Right Face
-		FVector3( 1.F,  0.F,  0.F), // 2
+		{ 0.5F, -0.5F, -0.5F }, // 1 : 13
+		{ 0.5F,  0.5F, -0.5F }, // 3 : 14
+		{ 0.5F,  0.5F,  0.5F }, // 4 : 16
+		{ 0.5F, -0.5F,  0.5F }, // 8 : 17
+
 		// Left Face
-		FVector3(-1.F,  0.F,  0.F), // 3
+		{-0.5F,  0.5F,  0.5F }, // 5 : 19
+		{-0.5F, -0.5F,  0.5F }, // 7 : 20
+		{-0.5F, -0.5F, -0.5F }, // 2 : 22
+		{-0.5F,  0.5F, -0.5F }, // 6 : 23
+
 		// Up Face
-		FVector3( 0.F,  1.F,  0.F), // 4
+		{-0.5F,  0.5F,  0.5F }, // 5 : 25
+		{ 0.5F,  0.5F,  0.5F }, // 4 : 26
+		{ 0.5F,  0.5F, -0.5F }, // 3 : 28
+		{-0.5F,  0.5F, -0.5F }, // 6 : 29
+
 		// Down Face
-		FVector3( 0.F, -1.F,  0.F), // 5
+		{ 0.5F, -0.5F, -0.5F }, // 1 : 31
+		{-0.5F, -0.5F, -0.5F }, // 2 : 32
+		{-0.5F, -0.5F,  0.5F }, // 7 : 34
+		{ 0.5F, -0.5F,  0.5F }, // 8 : 35
 	};
-	static const SArray<FVector2> TemporalTextureCoords {
-		FVector2( 1.0F, -1.0F), // 0
-		FVector2(-1.0F, -1.0F), // 1
-		FVector2( 1.0F,  1.0F), // 2
-		FVector2(-1.0F,  1.0F), // 3
-		FVector2(-1.0F,  1.0F), // 4
-		FVector2(-1.0F,  1.0F), // 5
-		FVector2(-1.0F, -1.0F), // 6
-		FVector2( 1.0F, -1.0F), // 7
+	static const SMeshVector3D TemporalNormals {
+		// Front Face
+		{ 0.0F,  0.0F, -1.0F }, // 1
+		{ 0.0F,  0.0F, -1.0F }, // 2
+		{ 0.0F,  0.0F, -1.0F }, // 6
+		{ 0.0F,  0.0F, -1.0F }, // 3
+
+		// Back Face		 
+		{ 0.0F,  0.0F,  1.0F }, // 5
+		{ 0.0F,  0.0F,  1.0F }, // 4
+		{ 0.0F,  0.0F,  1.0F }, // 8
+		{ 0.0F,  0.0F,  1.0F }, // 7
+
+		// Right Face		 
+		{ 1.0F,  0.0F,  0.0F }, // 1
+		{ 1.0F,  0.0F,  0.0F }, // 3
+		{ 1.0F,  0.0F,  0.0F }, // 4
+		{ 1.0F,  0.0F,  0.0F }, // 8
+
+		// Left Face		 
+		{-1.0F,  0.0F,  0.0F }, // 5
+		{-1.0F,  0.0F,  0.0F }, // 7
+		{-1.0F,  0.0F,  0.0F }, // 2
+		{-1.0F,  0.0F,  0.0F }, // 6
+
+		// Up Face			 
+		{ 0.0F,  1.0F,  0.0F }, // 5
+		{ 0.0F,  1.0F,  0.0F }, // 4
+		{ 0.0F,  1.0F,  0.0F }, // 3
+		{ 0.0F,  1.0F,  0.0F }, // 6
+
+		// Down Face		 
+		{ 0.0F, -1.0F,  0.0F }, // 2
+		{ 0.0F, -1.0F,  0.0F }, // 1
+		{ 0.0F, -1.0F,  0.0F }, // 7
+		{ 0.0F, -1.0F,  0.0F }, // 8
+	};
+	static const SMeshUVs      TemporalTextureCoords {
+		// Front Face
+		{ 1.0F, -1.0F }, // 1
+		{-1.0F, -1.0F }, // 2
+		{-1.0F,  1.0F }, // 6
+		{ 1.0F,  1.0F }, // 3
+
+		// Back Face
+		{-1.0F,  1.0F }, // 5
+		{ 1.0F,  1.0F }, // 4
+		{ 1.0F, -1.0F }, // 8
+		{-1.0F, -1.0F }, // 7
+
+		// Right Face
+		{ 1.0F, -1.0F }, // 1
+		{ 1.0F,  1.0F }, // 3
+		{ 1.0F,  1.0F }, // 4
+		{ 1.0F, -1.0F }, // 8
+
+		// Left Face
+		{-1.0F,  1.0F }, // 5
+		{-1.0F, -1.0F }, // 7
+		{-1.0F, -1.0F }, // 2
+		{-1.0F,  1.0F }, // 6
+		
+		// Up Face
+		{-1.0F,  1.0F }, // 5
+		{ 1.0F,  1.0F }, // 4
+		{ 1.0F,  1.0F }, // 3
+		{-1.0F,  1.0F }, // 6
+		
+		// Down Face
+		{ 1.0F, -1.0F }, // 1
+		{-1.0F, -1.0F }, // 2
+		{-1.0F, -1.0F }, // 7
+		{ 1.0F, -1.0F }, // 8
+	};
+	static const SMeshColors   TemporalColors {
+		// Front Face
+		{ 0.0F, 0.0F, 1.0F, 1.0F },
+		{ 0.0F, 0.0F, 1.0F, 1.0F },
+		{ 0.0F, 0.0F, 1.0F, 1.0F },
+		{ 0.0F, 0.0F, 1.0F, 1.0F },
+
+		// Back Face
+		{ 0.0F, 1.0F, 0.0F, 1.0F },
+		{ 0.0F, 1.0F, 0.0F, 1.0F },
+		{ 0.0F, 1.0F, 0.0F, 1.0F },
+		{ 0.0F, 1.0F, 0.0F, 1.0F },
+
+		// Right Face
+		{ 1.0F, 0.0F, 0.0F, 1.0F },
+		{ 1.0F, 0.0F, 0.0F, 1.0F },
+		{ 1.0F, 0.0F, 0.0F, 1.0F },
+		{ 1.0F, 0.0F, 0.0F, 1.0F },
+
+		// Left Face
+		{ 0.0F, 1.0F, 1.0F, 1.0F },
+		{ 0.0F, 1.0F, 1.0F, 1.0F },
+		{ 0.0F, 1.0F, 1.0F, 1.0F },
+		{ 0.0F, 1.0F, 1.0F, 1.0F },
+
+		// Up Face
+		{ 1.0F, 1.0F, 0.0F, 1.0F },
+		{ 1.0F, 1.0F, 0.0F, 1.0F },
+		{ 1.0F, 1.0F, 0.0F, 1.0F },
+		{ 1.0F, 1.0F, 0.0F, 1.0F },
+
+		// Down Face
+		{ 1.0F, 1.0F, 1.0F, 1.0F },
+		{ 1.0F, 1.0F, 1.0F, 1.0F },
+		{ 1.0F, 1.0F, 1.0F, 1.0F },
+		{ 1.0F, 1.0F, 1.0F, 1.0F },
 	};
 
-	TemporalMesh = SMesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, SArray<FVector4>());
+	TemporalMesh = SMesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, TemporalColors);
 
 	// Generate a Element Buffer for the indices
 	GLuint ElementBuffer;
@@ -374,7 +330,14 @@ void SApplication::MainLoop() {
 	GLuint TextureCoordsBuffer;
 	glGenBuffers(1, &TextureCoordsBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.TextureCoords.size() * sizeof(FVector2), &TemporalMesh.TextureCoords[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.UV0.size() * sizeof(FVector2), &TemporalMesh.UV0[0], GL_STATIC_DRAW);
+
+	///////// Give Texture Coords to OpenGL //////////////
+	// This will identify our uv's buffer
+	GLuint ColorsBuffer;
+	glGenBuffers(1, &ColorsBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, ColorsBuffer);
+	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Colors.size() * sizeof(FVector4), &TemporalMesh.Colors[0], GL_STATIC_DRAW);
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
 	// Perpective matrix (ProjectionMatrix)
@@ -540,7 +503,7 @@ void SApplication::MainLoop() {
 
 		double x, y;
 		glfwGetCursorPos(MainWindow->Window, &x, &y);
-		EyePosition = FVector3(sinf(float(x) * 0.01F) * 2, cosf(float(y) * 0.01F) * 4, 4);
+		EyePosition = FVector3(sinf(float(x) * 0.01F) * 2, cosf(float(y) * 0.01F) * 4, cosf(float(y) * 0.01F) * 4);
 
 		// Camera rotation, position Matrix
 		ViewMatrix = FMatrix4x4::LookAt(
@@ -556,7 +519,7 @@ void SApplication::MainLoop() {
 		
 		glBindVertexArray(TemporalVAO);
 
-		// 1st attribute buffer : vertices
+		// 0ro attribute buffer : vertices
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 		glVertexAttribPointer(
@@ -568,7 +531,7 @@ void SApplication::MainLoop() {
 			(void*)0            // array buffer offset
 		);
 
-		// 2st attribute buffer : normals
+		// 1st attribute buffer : normals
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, NormalBuffer);
 		glVertexAttribPointer(
@@ -580,7 +543,7 @@ void SApplication::MainLoop() {
 			(void*)0            // array buffer offset
 		);
 
-		// 3st attribute buffer : textureCoords
+		// 2st attribute buffer : textureCoords
 		glEnableVertexAttribArray(2);
 		glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsBuffer);
 		glVertexAttribPointer(
@@ -592,20 +555,33 @@ void SApplication::MainLoop() {
 			(void*)0            // array buffer offset
 		);
 
+		// 3th attribute buffer : colors
+		glEnableVertexAttribArray(3);
+		glBindBuffer(GL_ARRAY_BUFFER, ColorsBuffer);
+		glVertexAttribPointer(
+			3,                  // attribute 1
+			4,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
 		
 		// Draw the triangles !
 		glDrawElements(
-			GL_TRIANGLES,	 // mode
-			12 * 3,			 // count
-			GL_UNSIGNED_INT, // type
-			(void*)0		 // element array buffer offset
+			GL_TRIANGLES,	                        // mode
+			(int)TemporalMesh.Triangles.size() * 3,	// count
+			GL_UNSIGNED_INT,                        // type
+			(void*)0		                        // element array buffer offset
 		);
 		// glDrawArrays(GL_TRIANGLES, 0, sizeof(TemporalMesh.Vertices) * sizeof(FVector3)); // Starting from vertex 0; to vertices total
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(3);
 
 		glfwSwapBuffers(MainWindow->Window);
 		glfwPollEvents();
