@@ -23,17 +23,7 @@ float SWindow::AspectRatio() {
 }
 
 bool SWindow::Create() {
-	if (!glfwInit()) {
-		printf("Error :: Failed to initialize GLFW\n");
-		return false;
-	} 
-	
 	GLFWmonitor* PrimaryMonitor = glfwGetPrimaryMonitor();
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	Window = glfwCreateWindow(Width, Height, Name, Mode == 1 ? PrimaryMonitor : nullptr, nullptr);
 

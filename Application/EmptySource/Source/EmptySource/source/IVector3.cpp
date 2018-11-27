@@ -12,11 +12,11 @@ IVector3::IVector3()
 }
 
 IVector3::IVector3(const FVector2& Vector)
-	: x(Vector.x), y(Vector.y), z(0) {
+	: x((int)Vector.x), y((int)Vector.y), z(0) {
 }
 
 IVector3::IVector3(const FVector3 & Vector)
-	: x(Vector.x), y(Vector.y), z(Vector.z) {
+	: x((int)Vector.x), y((int)Vector.y), z((int)Vector.z) {
 }
 
 IVector3::IVector3(const IVector3& Vector)
@@ -24,7 +24,7 @@ IVector3::IVector3(const IVector3& Vector)
 }
 
 IVector3::IVector3(const FVector4 & Vector)
-	: x(Vector.x), y(Vector.y), z(Vector.z) {
+	: x((int)Vector.x), y((int)Vector.y), z((int)Vector.z) {
 }
 
 IVector3::IVector3(const int& x, const int& y, const int& z)
@@ -40,10 +40,10 @@ IVector3::IVector3(const int& Value)
 }
 
 float IVector3::Magnitude() const {
-	return sqrtf(x * x + y * y + z * z);
+	return sqrtf(x * float(x) + y * float(y) + z * float(z));
 }
 
-float IVector3::MagnitudeSquared() const {
+int IVector3::MagnitudeSquared() const {
 	return x * x + y * y + z * z;
 }
 
@@ -55,12 +55,12 @@ IVector3 IVector3::Cross(const IVector3& Other) const {
 	);
 }
 
-float IVector3::Dot(const IVector3& Other) const {
+int IVector3::Dot(const IVector3& Other) const {
 	return (x * Other.x) + (y * Other.y) + (z * Other.z);
 }
 
 FVector3 IVector3::FloatVector3() const {
-	return FVector3(x, y, z);
+	return FVector3(float(x), float(y), float(z));
 }
 
 const int * IVector3::PoiterToValue() const {

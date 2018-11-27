@@ -19,15 +19,18 @@ public:
 
 	void Transpose();
 	FMatrix4x4 Transposed() const;
+	FMatrix4x4 Inversed() const;
 
 	FVector4 Row(const int& i) const;
 	FVector4 Column(const int& i) const;
 
 	FVector4 & operator[](unsigned int i);
 	FVector4 const& operator[](unsigned int i) const;
-	const float* PoiterToValue(void) const;
+	const float* PointerToValue(void) const;
 	
 	FMatrix4x4 operator*(const FMatrix4x4& Other) const;
 	FVector4 operator*(const FVector4& Vector) const;
 	FVector3 operator*(const FVector3& Vector) const;
+	FMatrix4x4 operator*(const float& Value) const;
+	FMatrix4x4 operator/(const float& Value) const;
 };

@@ -74,6 +74,63 @@ FMatrix4x4 FMatrix4x4::Transposed() const {
 	return FMatrix4x4(Column(0), Column(1), Column(2), Column(3));
 }
 
+FMatrix4x4 FMatrix4x4::Inversed() const {
+	float Coef00 = m2[2] * m3[3] - m3[2] * m2[3];
+	float Coef02 = m1[2] * m3[3] - m3[2] * m1[3];
+	float Coef03 = m1[2] * m2[3] - m2[2] * m1[3];
+
+	float Coef04 = m2[1] * m3[3] - m3[1] * m2[3];
+	float Coef06 = m1[1] * m3[3] - m3[1] * m1[3];
+	float Coef07 = m1[1] * m2[3] - m2[1] * m1[3];
+
+	float Coef08 = m2[1] * m3[2] - m3[1] * m2[2];
+	float Coef10 = m1[1] * m3[2] - m3[1] * m1[2];
+	float Coef11 = m1[1] * m2[2] - m2[1] * m1[2];
+
+	float Coef12 = m2[0] * m3[3] - m3[0] * m2[3];
+	float Coef14 = m1[0] * m3[3] - m3[0] * m1[3];
+	float Coef15 = m1[0] * m2[3] - m2[0] * m1[3];
+
+	float Coef16 = m2[0] * m3[2] - m3[0] * m2[2];
+	float Coef18 = m1[0] * m3[2] - m3[0] * m1[2];
+	float Coef19 = m1[0] * m2[2] - m2[0] * m1[2];
+
+	float Coef20 = m2[0] * m3[1] - m3[0] * m2[1];
+	float Coef22 = m1[0] * m3[1] - m3[0] * m1[1];
+	float Coef23 = m1[0] * m2[1] - m2[0] * m1[1];
+
+	FVector4 Fac0(Coef00, Coef00, Coef02, Coef03);
+	FVector4 Fac1(Coef04, Coef04, Coef06, Coef07);
+	FVector4 Fac2(Coef08, Coef08, Coef10, Coef11);
+	FVector4 Fac3(Coef12, Coef12, Coef14, Coef15);
+	FVector4 Fac4(Coef16, Coef16, Coef18, Coef19);
+	FVector4 Fac5(Coef20, Coef20, Coef22, Coef23);
+
+	FVector4 Vec0(m1[0], m0[0], m0[0], m0[0]);
+	FVector4 Vec1(m1[1], m0[1], m0[1], m0[1]);
+	FVector4 Vec2(m1[2], m0[2], m0[2], m0[2]);
+	FVector4 Vec3(m1[3], m0[3], m0[3], m0[3]);
+
+	FVector4 Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
+	FVector4 Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
+	FVector4 Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
+	FVector4 Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
+
+	FVector4 SignA(+1, -1, +1, -1);
+	FVector4 SignB(-1, +1, -1, +1);
+
+	FMatrix4x4 Result(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
+
+	// FVector4 Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
+
+	FVector4 Dot0(Row(0) * Result.Column(0));
+	float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
+
+	float OneOverDeterminant = float(1) / Dot1;
+
+	return Result * OneOverDeterminant;
+}
+
 FVector4 FMatrix4x4::Row(const int & i) const {
 	switch (i) {
 		case 0: return m0;
@@ -165,6 +222,28 @@ FVector3 FMatrix4x4::operator*(const FVector3 & Vector) const {
 	return Result;
 }
 
-const float * FMatrix4x4::PoiterToValue(void) const {
+FMatrix4x4 FMatrix4x4::operator*(const float & Value) const {
+	FMatrix4x4 Result(*this);
+
+	Result.m0 *= Value;
+	Result.m1 *= Value;
+	Result.m2 *= Value;
+	Result.m3 *= Value;
+	
+	return Result;
+}
+
+FMatrix4x4 FMatrix4x4::operator/(const float & Value) const {
+	FMatrix4x4 Result(*this);
+
+	Result.m0 /= Value;
+	Result.m1 /= Value;
+	Result.m2 /= Value;
+	Result.m3 /= Value;
+
+	return Result;
+}
+
+const float * FMatrix4x4::PointerToValue(void) const {
 	return &m0[0];
 }
