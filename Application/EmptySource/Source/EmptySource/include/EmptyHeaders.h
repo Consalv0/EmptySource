@@ -26,6 +26,10 @@
 #include <conio.h>
 #include <memory>
 
+#include <vector>
+template<class T>
+using SArray = std::vector<T>;
+
 // Shader Locations
 #define ES_LOCATION_VERTEX 0
 #define ES_LOCATION_NORMAL 1
