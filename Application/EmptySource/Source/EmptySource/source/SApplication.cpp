@@ -3,6 +3,7 @@
 #include "..\include\SApplication.h"
 
 #include "..\include\SMath.h"
+#include "..\include\SMesh.h"
 
 SApplication::SApplication() {
 	MainWindow = NULL;
@@ -29,10 +30,66 @@ void SApplication::GetGraphicsVersionInformation() {
 	printf("GLSL Version         : %s\n", glslVersion);
 }
 
+static void APIENTRY glDebugOutput(GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam)
+{
+	// ignore non-significant error/warning codes
+	if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+
+	std::cout << "GL_";
+
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API:             std::cout << "API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "System"; break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "ShaderCompiler"; break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "ThirdParty"; break;
+	case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Application"; break;
+	case GL_DEBUG_SOURCE_OTHER:           std::cout << "Other"; break;
+	} std::cout << "<";
+
+	switch (type)
+	{
+	case GL_DEBUG_TYPE_ERROR:               std::cout << "Error"; break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Deprecated"; break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Undefined"; break;
+	case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Portability"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Performance"; break;
+	case GL_DEBUG_TYPE_MARKER:              std::cout << "Marker"; break;
+	case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "PushGroup"; break;
+	case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "PopGroup"; break;
+	case GL_DEBUG_TYPE_OTHER:               std::cout << "Other"; break;
+	} std::cout << "><";
+
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Critical"; break;
+	case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Moderate"; break;
+	case GL_DEBUG_SEVERITY_LOW:          std::cout << "Mild"; break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Notification"; break;
+	} std::cout << "><" << id << "> " << message << std::endl;
+}
+
 int SApplication::Initalize() {
 	if (MainWindow != NULL) return 0;
+
+	if (!glfwInit()) {
+		printf("Error :: Failed to initialize GLFW\n");
+		return -1;
+	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	
-	glfwSetErrorCallback(&SApplication::glfwPrintError);
+	glfwSetErrorCallback(&SApplication::glfwPrintError); 
 	printf("Initalizing Application:\n");
 
 	MainWindow = new SWindow();
@@ -52,6 +109,12 @@ int SApplication::Initalize() {
 		printf("Error :: Unable to load OpenGL functions!\n");
 		return -1;
 	}
+
+	glEnable(GL_DEBUG_OUTPUT);
+	// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(glDebugOutput, nullptr);
+	// Enable all messages, all sources, all levels, and all IDs:
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
 	return 1;
 }
@@ -115,7 +178,7 @@ void SApplication::MainLoop() {
 		// Down Face
 		 0.5F, -0.5F, -0.5F, // 1
 		-0.5F, -0.5F, -0.5F, // 2
-		-0.5F, -0.5F,  0.5F, // 7
+		-0.5F,  0.5F, -0.5F, // 7
 		-0.5F, -0.5F,  0.5F, // 7
 		 0.5F, -0.5F,  0.5F, // 8
 		 0.5F, -0.5F, -0.5F, // 1
@@ -221,6 +284,71 @@ void SApplication::MainLoop() {
 		 0.0F, -1.0F,  0.0F, // 1
 	};
 
+	SMesh TemporalMesh;
+	
+	static const SArray<IVector3> TemporalTriangles {
+		// Front Face
+		IVector3(0, 1, 5),
+		IVector3(5, 2, 0),
+		// Back Face
+		IVector3(4, 3, 7),
+		IVector3(7, 6, 4),
+		// Right Face
+		IVector3(0, 2, 3),
+		IVector3(3, 7, 0),
+		// Left Face
+		IVector3(4, 6, 1),
+		IVector3(1, 5, 4),
+		// Up Face
+		IVector3(4, 3, 2),
+		IVector3(2, 5, 4),
+		// Down Face
+		IVector3(0, 1, 6),
+		IVector3(6, 7, 0),
+	};
+	static const SArray<FVector3> TemporalVertices {
+		FVector3( 0.5F, -0.5F, -0.5F), // 0
+		FVector3(-0.5F, -0.5F, -0.5F), // 1
+		FVector3( 0.5F,  0.5F, -0.5F), // 2
+		FVector3( 0.5F,  0.5F,  0.5F), // 3
+		FVector3(-0.5F,  0.5F,  0.5F), // 4
+		FVector3(-0.5F,  0.5F, -0.5F), // 5
+		FVector3(-0.5F, -0.5F,  0.5F), // 6
+		FVector3( 0.5F, -0.5F,  0.5F), // 7
+	};
+	static const SArray<FVector3> TemporalNormals {
+		// Front Face
+		FVector3( 0.F,  0.F, -1.F), // 0
+		// Back Face
+		FVector3( 0.F,  0.F,  1.F), // 1
+		// Right Face
+		FVector3( 1.F,  0.F,  0.F), // 2
+		// Left Face
+		FVector3(-1.F,  0.F,  0.F), // 3
+		// Up Face
+		FVector3( 0.F,  1.F,  0.F), // 4
+		// Down Face
+		FVector3( 0.F, -1.F,  0.F), // 5
+	};
+	static const SArray<FVector2> TemporalTextureCoords {
+		FVector2( 1.0F, -1.0F), // 0
+		FVector2(-1.0F, -1.0F), // 1
+		FVector2( 1.0F,  1.0F), // 2
+		FVector2(-1.0F,  1.0F), // 3
+		FVector2(-1.0F,  1.0F), // 4
+		FVector2(-1.0F,  1.0F), // 5
+		FVector2(-1.0F, -1.0F), // 6
+		FVector2( 1.0F, -1.0F), // 7
+	};
+
+	TemporalMesh = SMesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, SArray<FVector4>());
+
+	// Generate a Element Buffer for the indices
+	GLuint ElementBuffer;
+	glGenBuffers(1, &ElementBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, TemporalMesh.Triangles.size() * sizeof(IVector3), &TemporalMesh.Triangles[0], GL_STATIC_DRAW);
+
 	///////// Give Vertices to OpenGL (This must be done once) //////////////
 	// This will identify our vertex buffer
 	GLuint VertexBuffer;
@@ -229,7 +357,7 @@ void SApplication::MainLoop() {
 	// The following commands will talk about our 'VertexBuffer'
 	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(TemporalVertexBufferScene), TemporalVertexBufferScene, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Vertices.size() * sizeof(FVector3), &TemporalMesh.Vertices[0], GL_STATIC_DRAW);
 
 	///////// Give Normals to OpenGL //////////////
 	// This will identify our normal buffer
@@ -239,7 +367,14 @@ void SApplication::MainLoop() {
 	// The following commands will talk about our 'NormalBuffer' buffer
 	glBindBuffer(GL_ARRAY_BUFFER, NormalBuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(TemporalTextureCoordsBufferScene), TemporalTextureCoordsBufferScene, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Normals.size() * sizeof(FVector3), &TemporalMesh.Normals[0], GL_STATIC_DRAW);
+
+	///////// Give Texture Coords to OpenGL //////////////
+	// This will identify our uv's buffer
+	GLuint TextureCoordsBuffer;
+	glGenBuffers(1, &TextureCoordsBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsBuffer);
+	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.TextureCoords.size() * sizeof(FVector2), &TemporalMesh.TextureCoords[0], GL_STATIC_DRAW);
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
 	// Perpective matrix (ProjectionMatrix)
@@ -379,6 +514,7 @@ void SApplication::MainLoop() {
 	GLuint    ProjectionMatrixID = glGetUniformLocation(ProgramID, "_ProjectionMatrix");
 	GLuint          ViewMatrixID = glGetUniformLocation(ProgramID, "_ViewMatrix");
 	GLuint         ModelMatrixID = glGetUniformLocation(ProgramID, "_ModelMatrix");
+	GLuint         WorldNormalID = glGetUniformLocation(ProgramID, "_WorldNormalMatrix");
 
 	//////////////////////////////////////////
 
@@ -387,7 +523,7 @@ void SApplication::MainLoop() {
 	// Accept fragment if its closer to the camera
 	glDepthFunc(GL_LESS);
 	// Draw Mode
-	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
 	do {
@@ -402,9 +538,23 @@ void SApplication::MainLoop() {
 			200.0F						// Far plane
 		);
 
-		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PoiterToValue() );
-		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PoiterToValue() );
-		glUniformMatrix4fv(      ModelMatrixID, 1, GL_FALSE,      ModelMatrix.PoiterToValue() );
+		double x, y;
+		glfwGetCursorPos(MainWindow->Window, &x, &y);
+		EyePosition = FVector3(sinf(float(x) * 0.01F) * 2, cosf(float(y) * 0.01F) * 4, 4);
+
+		// Camera rotation, position Matrix
+		ViewMatrix = FMatrix4x4::LookAt(
+			EyePosition,        // Camera position
+			FVector3(0, 0, 0),	// Look position
+			FVector3(0, 1, 0)	// Up vector
+		);
+
+		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE,                    ProjectionMatrix.PointerToValue() );
+		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,                          ViewMatrix.PointerToValue() );
+		glUniformMatrix4fv(      ModelMatrixID, 1, GL_FALSE,                         ModelMatrix.PointerToValue() ); 
+		glUniformMatrix4fv(      WorldNormalID, 1, GL_FALSE, ModelMatrix.Inversed().Transposed().PointerToValue() );
+		
+		glBindVertexArray(TemporalVAO);
 
 		// 1st attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -430,10 +580,32 @@ void SApplication::MainLoop() {
 			(void*)0            // array buffer offset
 		);
 
-		// Draw the model !
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(TemporalVertexBufferScene)); // Starting from vertex 0; to vertices total
+		// 3st attribute buffer : textureCoords
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsBuffer);
+		glVertexAttribPointer(
+			2,                  // attribute 1
+			2,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
+		// Index buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+		
+		// Draw the triangles !
+		glDrawElements(
+			GL_TRIANGLES,	 // mode
+			12 * 3,			 // count
+			GL_UNSIGNED_INT, // type
+			(void*)0		 // element array buffer offset
+		);
+		// glDrawArrays(GL_TRIANGLES, 0, sizeof(TemporalMesh.Vertices) * sizeof(FVector3)); // Starting from vertex 0; to vertices total
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
 
 		glfwSwapBuffers(MainWindow->Window);
 		glfwPollEvents();
