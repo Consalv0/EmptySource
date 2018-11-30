@@ -16,6 +16,7 @@ public:
 	static FMatrix4x4 Identity();
 	static FMatrix4x4 Perspective(const float& Aperture, const float& Aspect, const float& Near, const float& Far);
 	static FMatrix4x4 LookAt(const FVector3& Position, const FVector3& Direction, const FVector3& Up);
+	static FMatrix4x4 Translate(const FVector3& Vector);
 
 	void Transpose();
 	FMatrix4x4 Transposed() const;

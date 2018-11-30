@@ -65,6 +65,12 @@ FMatrix4x4 FMatrix4x4::LookAt(const FVector3 & Eye, const FVector3 & Target, con
 	return Result;
 }
 
+FMatrix4x4 FMatrix4x4::Translate(const FVector3 & Vector) {
+	FMatrix4x4 Result = FMatrix4x4();
+	Result[3] = Result[0] * Vector[0] + Result[1] * Vector[1] + Result[2] * Vector[2] + Result[3];
+	return Result;
+}
+
 void FMatrix4x4::Transpose() {
 	FMatrix4x4 Result = FMatrix4x4(Column(0), Column(1), Column(2), Column(3));
 	*this = Result;

@@ -30,7 +30,7 @@ public:
 	FVector2 Vector2() const;
 	float & operator[](unsigned int i);
 	float const& operator[](unsigned int i) const;
-	const float* PoiterToValue() const;
+	const float* PointerToValue() const;
 
 	bool operator==(const FVector3& Other);
 	bool operator!=(const FVector3& Other);

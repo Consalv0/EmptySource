@@ -5,31 +5,25 @@
 
 SMesh::SMesh() {
 	Triangles = SMeshTriangles();
-	Vertices = Normals = Tangents = SMeshVector3D();
-	UV0 = SMeshUVs();
-	Colors = SMeshColors();
+	Vertices = SMeshVertices();
 }
 
 SMesh::SMesh( 
 	const SMeshTriangles triangles, const SMeshVector3D vertices,
-	const SMeshVector3D normals, const SMeshUVs textureCoords, const SMeshColors colors)
+	const SMeshVector3D normals, const SMeshUVs uv0, const SMeshColors colors)
 {
-	    Triangles =     triangles; 
-	     Vertices =      vertices; 
-	      Normals =       normals;
-			  UV0 = textureCoords;
-	       Colors =        colors;
-		 Tangents =   SMeshVector3D();
+	Triangles = triangles;
+	for (int vCount = 0; vCount < vertices.size(); vCount++) {
+		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], FVector3(), uv0[vCount], FVector2(), colors[vCount] }));
+	}
 }
 
 SMesh::SMesh(
 	const SMeshTriangles triangles, const SMeshVector3D vertices,
-	const SMeshVector3D normals, const SMeshVector3D tangents, const SMeshUVs textureCoords, const SMeshColors colors)
+	const SMeshVector3D normals, const SMeshVector3D tangents, const SMeshUVs uv0, const SMeshColors colors)
 {
 	Triangles = triangles;
-	Vertices = vertices;
-	Normals = normals;
-	Tangents = tangents;
-	UV0 = textureCoords;
-	Colors = colors;
+	for (int vCount = 0; vCount < vertices.size(); vCount++) {
+		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], tangents[vCount], uv0[vCount], FVector2(), colors[vCount] }));
+	}
 }
