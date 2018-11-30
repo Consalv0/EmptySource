@@ -1,6 +1,8 @@
 
 #include "EmptySource/include/EmptyHeaders.h"
+#include "EmptySource/include/SMath.h"
 #include "..\include\SWindow.h"
+
 
 SWindow::SWindow() {
 	Window = NULL;
@@ -8,6 +10,7 @@ SWindow::SWindow() {
 	Width = 1080;
 	Height = 720;
 	Mode = ES_WINDOW_MODE_WINDOWED;
+	FrameCount = 0;
 }
 
 int SWindow::GetWidth() {
@@ -23,9 +26,9 @@ float SWindow::AspectRatio() {
 }
 
 bool SWindow::Create() {
-	GLFWmonitor* PrimaryMonitor = glfwGetPrimaryMonitor();
+	GLFWmonitor* PrimaryMonitor = Mode == 1 ? glfwGetPrimaryMonitor() : nullptr;
 
-	Window = glfwCreateWindow(Width, Height, Name, Mode == 1 ? PrimaryMonitor : nullptr, nullptr);
+	Window = glfwCreateWindow(Width, Height, Name, PrimaryMonitor, nullptr);
 
 	printf("Window: \"%s\" initialized!\n", Name);
 
@@ -33,6 +36,12 @@ bool SWindow::Create() {
 }
 
 bool SWindow::Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height) {
+	
+	if (IsCreated()) {
+		printf("Error :: Window Already Created!\n");
+		return false;
+	}
+
 	this->Width = Width;
 	this->Height = Height;
 	this->Name = Name;
@@ -56,6 +65,31 @@ void SWindow::MakeContext() {
 	glfwSetWindowSizeCallback(Window, WindowResizeFunc);
 }
 
+bool SWindow::IsCreated() {
+	return Window != NULL;
+}
+
+unsigned long SWindow::GetFrameCount() {
+	return FrameCount;
+}
+
+FVector2 SWindow::GetMousePosition() {
+	double x, y;
+	glfwGetCursorPos(Window, &x, &y);
+	return FVector2(float(x), float(y));
+}
+
+bool SWindow::GetKeyPressed(unsigned int Key) {
+	return glfwGetKey(Window, Key) != GLFW_PRESS;
+}
+
+void SWindow::EndOfFrame() {
+	glfwSwapBuffers(Window);
+	glfwPollEvents();
+
+	FrameCount++;
+}
+
 void SWindow::InitializeInputs() {
 	if (Window == NULL) {
 		printf("Error :: Unable to set input mode!\n");
@@ -65,7 +99,7 @@ void SWindow::InitializeInputs() {
 	glfwSetInputMode(Window, GLFW_STICKY_KEYS, GL_TRUE);
 }
 
-void SWindow::Destroy() {
+void SWindow::Terminate() {
 	if (Window != NULL) {
 		glfwDestroyWindow(Window);
 		printf("Window: \"%s\" closed!\n", Name);
