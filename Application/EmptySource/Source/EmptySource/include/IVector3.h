@@ -29,7 +29,7 @@ public:
 	FVector3 FloatVector3() const;
 	int & operator[](unsigned int i);
 	int const& operator[](unsigned int i) const;
-	const int* PoiterToValue() const;
+	const int* PointerToValue() const;
 
 	bool operator==(const IVector3& Other);
 	bool operator!=(const IVector3& Other);

@@ -24,7 +24,7 @@ public:
 
 	FVector3 & operator[](unsigned int i);
 	FVector3 const& operator[](unsigned int i) const;
-	const float* PoiterToValue(void) const;
+	const float* PointerToValue(void) const;
 
 	FMatrix3x3 operator*(const FMatrix3x3& Other) const;
 	FVector3 operator*(const FVector3& Vector) const;

@@ -63,7 +63,7 @@ FVector3 IVector3::FloatVector3() const {
 	return FVector3(float(x), float(y), float(z));
 }
 
-const int * IVector3::PoiterToValue() const {
+const int * IVector3::PointerToValue() const {
 	return &x;
 }
 

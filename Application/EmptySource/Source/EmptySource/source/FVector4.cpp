@@ -68,7 +68,7 @@ FVector2 FVector4::Vector2() const {
 	return FVector2(*this);
 }
 
-const float * FVector4::PoiterToValue() const {
+const float * FVector4::PointerToValue() const {
 	return &x;
 }
 

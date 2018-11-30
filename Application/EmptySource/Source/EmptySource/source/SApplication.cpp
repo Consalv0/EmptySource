@@ -299,12 +299,6 @@ void SApplication::MainLoop() {
 
 	TemporalMesh = SMesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, TemporalColors);
 
-	// Generate a Element Buffer for the indices
-	GLuint ElementBuffer;
-	glGenBuffers(1, &ElementBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, TemporalMesh.Triangles.size() * sizeof(IVector3), &TemporalMesh.Triangles[0], GL_STATIC_DRAW);
-
 	///////// Give Vertices to OpenGL (This must be done once) //////////////
 	// This will identify our vertex buffer
 	GLuint VertexBuffer;
@@ -313,31 +307,67 @@ void SApplication::MainLoop() {
 	// The following commands will talk about our 'VertexBuffer'
 	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Vertices.size() * sizeof(FVector3), &TemporalMesh.Vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Vertices.size() * sizeof(Vertex), &TemporalMesh.Vertices[0], GL_STATIC_DRAW);
 
-	///////// Give Normals to OpenGL //////////////
-	// This will identify our normal buffer
-	GLuint NormalBuffer;
-	// Generate 1 buffer, put the resulting identifier in NormalBuffer
-	glGenBuffers(1, &NormalBuffer);
-	// The following commands will talk about our 'NormalBuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, NormalBuffer);
-	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Normals.size() * sizeof(FVector3), &TemporalMesh.Normals[0], GL_STATIC_DRAW);
+	// Generate a Element Buffer for the indices
+	GLuint ElementBuffer;
+	glGenBuffers(1, &ElementBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, TemporalMesh.Triangles.size() * sizeof(IVector3), &TemporalMesh.Triangles[0], GL_STATIC_DRAW);
 
-	///////// Give Texture Coords to OpenGL //////////////
-	// This will identify our uv's buffer
-	GLuint TextureCoordsBuffer;
-	glGenBuffers(1, &TextureCoordsBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.UV0.size() * sizeof(FVector2), &TemporalMesh.UV0[0], GL_STATIC_DRAW);
+	// set the vertex attribute pointers
+	// vertex Positions
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	// vertex normals
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+	// vertex tangent
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+	// vertex texture coords
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV0));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
+	// vertex color
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
 
-	///////// Give Texture Coords to OpenGL //////////////
-	// This will identify our uv's buffer
-	GLuint ColorsBuffer;
-	glGenBuffers(1, &ColorsBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, ColorsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, TemporalMesh.Colors.size() * sizeof(FVector4), &TemporalMesh.Colors[0], GL_STATIC_DRAW);
+	SArray<FMatrix4x4> Matrices;
+
+	Matrices.push_back(FMatrix4x4());
+	srand((unsigned int)glfwGetTime());
+	for (size_t i = 0; i < 100000; i++) {
+		Matrices.push_back(FMatrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 }));
+	}
+
+	///////// Give Matrices to OpenGL //////////////
+	GLuint ModelMatrixBuffer;
+	glGenBuffers(1, &ModelMatrixBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+	glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(FMatrix4x4), &Matrices[0], GL_STATIC_DRAW);
+
+	// set transformation matrices as an instance vertex attribute (with divisor 1)
+	// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
+	// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
+	// -----------------------------------------------------------------------------------------------------------------------------------
+	// set attribute pointers for matrix (4 times vec4)
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)0);
+	glEnableVertexAttribArray(7);
+	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)(sizeof(FVector4)));
+	glEnableVertexAttribArray(8);
+	glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)(2 * sizeof(FVector4)));
+	glEnableVertexAttribArray(9);
+	glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)(3 * sizeof(FVector4)));
+
+	glVertexAttribDivisor(6, 1);
+	glVertexAttribDivisor(7, 1);
+	glVertexAttribDivisor(8, 1);
+	glVertexAttribDivisor(9, 1);
+
+	glBindVertexArray(0);
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
 	// Perpective matrix (ProjectionMatrix)
@@ -359,8 +389,8 @@ void SApplication::MainLoop() {
 
 	// ModelMatrix matrix
 	FMatrix4x4 ModelMatrix = FMatrix4x4::Identity();
-
 	// MVP matrix
+
 	FMatrix4x4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
 	///////// Create and compile our GLSL program from the shaders //////////////
@@ -476,8 +506,8 @@ void SApplication::MainLoop() {
 	// Get the ID of the uniforms
 	GLuint    ProjectionMatrixID = glGetUniformLocation(ProgramID, "_ProjectionMatrix");
 	GLuint          ViewMatrixID = glGetUniformLocation(ProgramID, "_ViewMatrix");
-	GLuint         ModelMatrixID = glGetUniformLocation(ProgramID, "_ModelMatrix");
-	GLuint         WorldNormalID = glGetUniformLocation(ProgramID, "_WorldNormalMatrix");
+	// GLuint         ModelMatrixID = glGetUniformLocation(ProgramID, "_ModelMatrix");
+	// GLuint         WorldNormalID = glGetUniformLocation(ProgramID, "_WorldNormalMatrix");
 
 	//////////////////////////////////////////
 
@@ -487,7 +517,6 @@ void SApplication::MainLoop() {
 	glDepthFunc(GL_LESS);
 	// Draw Mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -514,74 +543,22 @@ void SApplication::MainLoop() {
 
 		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE,                    ProjectionMatrix.PointerToValue() );
 		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,                          ViewMatrix.PointerToValue() );
-		glUniformMatrix4fv(      ModelMatrixID, 1, GL_FALSE,                         ModelMatrix.PointerToValue() ); 
-		glUniformMatrix4fv(      WorldNormalID, 1, GL_FALSE, ModelMatrix.Inversed().Transposed().PointerToValue() );
+		// glUniformMatrix4fv(      ModelMatrixID, 1, GL_FALSE,                         ModelMatrix.PointerToValue() ); 
+		// glUniformMatrix4fv(      WorldNormalID, 1, GL_FALSE, ModelMatrix.Inversed().Transposed().PointerToValue() );
 		
 		glBindVertexArray(TemporalVAO);
-
-		// 0ro attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 1st attribute buffer : normals
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, NormalBuffer);
-		glVertexAttribPointer(
-			1,                  // attribute 1
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 2st attribute buffer : textureCoords
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, TextureCoordsBuffer);
-		glVertexAttribPointer(
-			2,                  // attribute 1
-			2,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 3th attribute buffer : colors
-		glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, ColorsBuffer);
-		glVertexAttribPointer(
-			3,                  // attribute 1
-			4,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
 		
 		// Draw the triangles !
-		glDrawElements(
+		glDrawElementsInstanced (
 			GL_TRIANGLES,	                        // mode
 			(int)TemporalMesh.Triangles.size() * 3,	// count
 			GL_UNSIGNED_INT,                        // type
-			(void*)0		                        // element array buffer offset
+			(void*)0,		                        // element array buffer offset
+			(GLsizei)Matrices.size()                                       // element count
 		);
 		// glDrawArrays(GL_TRIANGLES, 0, sizeof(TemporalMesh.Vertices) * sizeof(FVector3)); // Starting from vertex 0; to vertices total
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(3);
+		
+		glBindVertexArray(0);
 
 		glfwSwapBuffers(MainWindow->Window);
 		glfwPollEvents();

@@ -55,7 +55,7 @@ float FVector2::Dot(const FVector2& Other) const {
 	return x * Other.x + y * Other.y;
 }
 
-const float * FVector2::PoiterToValue() const {
+const float * FVector2::PointerToValue() const {
 	return &x;
 }
 

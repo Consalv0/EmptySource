@@ -71,7 +71,7 @@ FVector2 FVector3::Vector2() const {
 	return FVector2(x, y);
 }
 
-const float * FVector3::PoiterToValue() const {
+const float * FVector3::PointerToValue() const {
 	return &x;
 }
 
