@@ -7,13 +7,68 @@
 
 SApplication::SApplication() {
 	MainWindow = NULL;
+	bInitialized = false;
 }
 
-void SApplication::glfwPrintError(int id, const char* desc) {
+void SApplication::GLFWError(int id, const char* desc) {
 	fprintf(stderr, desc);
 }
 
-void SApplication::GetGraphicsVersionInformation() {
+void APIENTRY SApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
+{
+	// ignore non-significant error/warning codes
+	if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;
+
+	std::cout << "GL_";
+
+	switch (ErrorSource)
+	{
+	case GL_DEBUG_SOURCE_API:             std::cout << "API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "System"; break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "ShaderCompiler"; break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "ThirdParty"; break;
+	case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Application"; break;
+	case GL_DEBUG_SOURCE_OTHER:           std::cout << "Other"; break;
+	} std::cout << "<";
+
+	switch (ErrorType)
+	{
+	case GL_DEBUG_TYPE_ERROR:               std::cout << "Error"; break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Deprecated"; break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Undefined"; break;
+	case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Portability"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Performance"; break;
+	case GL_DEBUG_TYPE_MARKER:              std::cout << "Marker"; break;
+	case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "PushGroup"; break;
+	case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "PopGroup"; break;
+	case GL_DEBUG_TYPE_OTHER:               std::cout << "Other"; break;
+	} std::cout << "><";
+
+	switch (ErrorSeverity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Critical"; break;
+	case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Moderate"; break;
+	case GL_DEBUG_SEVERITY_LOW:          std::cout << "Mild"; break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Notification"; break;
+	} std::cout << "><" << ErrorID << "> " << ErrorMessage << std::endl;
+}
+
+bool SApplication::InitalizeGLAD() {
+	if (!gladLoadGL()) {
+		printf("Error :: Unable to load OpenGL functions!\n");
+		return false;
+	}
+
+	glEnable(GL_DEBUG_OUTPUT);
+	// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(OGLError, nullptr);
+	// Enable all messages, all sources, all levels, and all IDs:
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+	return true;
+}
+
+void SApplication::GraphicsInformation() {
 	const GLubyte    *renderer = glGetString(GL_RENDERER);
 	const GLubyte      *vendor = glGetString(GL_VENDOR);
 	const GLubyte     *version = glGetString(GL_VERSION);
@@ -30,93 +85,40 @@ void SApplication::GetGraphicsVersionInformation() {
 	printf("GLSL Version         : %s\n", glslVersion);
 }
 
-static void APIENTRY glDebugOutput(GLenum source,
-	GLenum type,
-	GLuint id,
-	GLenum severity,
-	GLsizei length,
-	const GLchar* message,
-	const void* userParam)
-{
-	// ignore non-significant error/warning codes
-	if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
-
-	std::cout << "GL_";
-
-	switch (source)
-	{
-	case GL_DEBUG_SOURCE_API:             std::cout << "API"; break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "System"; break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "ShaderCompiler"; break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "ThirdParty"; break;
-	case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Application"; break;
-	case GL_DEBUG_SOURCE_OTHER:           std::cout << "Other"; break;
-	} std::cout << "<";
-
-	switch (type)
-	{
-	case GL_DEBUG_TYPE_ERROR:               std::cout << "Error"; break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Deprecated"; break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Undefined"; break;
-	case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Portability"; break;
-	case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Performance"; break;
-	case GL_DEBUG_TYPE_MARKER:              std::cout << "Marker"; break;
-	case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "PushGroup"; break;
-	case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "PopGroup"; break;
-	case GL_DEBUG_TYPE_OTHER:               std::cout << "Other"; break;
-	} std::cout << "><";
-
-	switch (severity)
-	{
-	case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Critical"; break;
-	case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Moderate"; break;
-	case GL_DEBUG_SEVERITY_LOW:          std::cout << "Mild"; break;
-	case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Notification"; break;
-	} std::cout << "><" << id << "> " << message << std::endl;
-}
-
-int SApplication::Initalize() {
-	if (MainWindow != NULL) return 0;
-
+bool SApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
 		printf("Error :: Failed to initialize GLFW\n");
-		return -1;
+		return false;
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, VersionMajor);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, VersionMinor);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	
-	glfwSetErrorCallback(&SApplication::glfwPrintError); 
-	printf("Initalizing Application:\n");
+
+	glfwSetErrorCallback(&SApplication::GLFWError);
+	return true;
+}
+
+void SApplication::Initalize() {
+	if (bInitialized) return;
+	if (InitializeGLFW(4, 6) == false) return; 
 
 	MainWindow = new SWindow();
 
-	if (MainWindow->Create("EmptySource - Debug", ES_WINDOW_MODE_WINDOWED, 1366, 768) || MainWindow->Window == NULL) {
+	if (MainWindow->Create("EmptySource - Debug", ES_WINDOW_MODE_WINDOWED, 1366, 768)) {
 		printf("Error :: Application Window couldn't be created!\n");
-		printf("\nPress any key to close...\n");
 		glfwTerminate();
-		_getch();
-		return -1;
+		return;
 	}
 
 	MainWindow->MakeContext();
 	MainWindow->InitializeInputs();
 
-	if (!gladLoadGL()) {
-		printf("Error :: Unable to load OpenGL functions!\n");
-		return -1;
-	}
+	if (InitalizeGLAD() == false) return;
 
-	glEnable(GL_DEBUG_OUTPUT);
-	// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(glDebugOutput, nullptr);
-	// Enable all messages, all sources, all levels, and all IDs:
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-
-	return 1;
+	bInitialized = true;
 }
 
 void SApplication::MainLoop() {
@@ -530,9 +532,8 @@ void SApplication::MainLoop() {
 			200.0F						// Far plane
 		);
 
-		double x, y;
-		glfwGetCursorPos(MainWindow->Window, &x, &y);
-		EyePosition = FVector3(sinf(float(x) * 0.01F) * 2, cosf(float(y) * 0.01F) * 4, cosf(float(y) * 0.01F) * 4);
+		FVector2 CursorPosition = MainWindow->GetMousePosition();
+		EyePosition = FVector3(sinf(float(CursorPosition.x) * 0.01F) * 2, cosf(float(CursorPosition.y) * 0.01F) * 4, cosf(float(CursorPosition.y) * 0.01F) * 4);
 
 		// Camera rotation, position Matrix
 		ViewMatrix = FMatrix4x4::LookAt(
@@ -560,16 +561,14 @@ void SApplication::MainLoop() {
 		
 		glBindVertexArray(0);
 
-		glfwSwapBuffers(MainWindow->Window);
-		glfwPollEvents();
+		MainWindow->EndOfFrame();
 
 	} while (
-		MainWindow->ShouldClose() == false && 
-		glfwGetKey(MainWindow->Window, GLFW_KEY_ESCAPE) != GLFW_PRESS
+		MainWindow->ShouldClose() == false && MainWindow->GetKeyPressed(GLFW_KEY_ESCAPE)
 	);
 }
 
 void SApplication::Close() {
-	MainWindow->Destroy();
+	MainWindow->Terminate();
 	glfwTerminate();
 };

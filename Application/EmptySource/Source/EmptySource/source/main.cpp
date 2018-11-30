@@ -14,13 +14,15 @@ extern "C" {
  SApplication Application;
 
 int main() {
+	printf("Initalizing Application:\n");
 	Application.Initalize();
 	printf("...............\n");
-	Application.GetGraphicsVersionInformation();
+	Application.GraphicsInformation();
 	printf("...............\n");
 
 	Application.MainLoop();
 	Application.Close();
 
+	printf("\nPress any key to close...\n");
 	_getch();
 }
