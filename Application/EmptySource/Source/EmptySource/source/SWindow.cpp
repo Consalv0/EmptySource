@@ -1,5 +1,5 @@
 
-#include "EmptySource/include/EmptyHeaders.h"
+#include "EmptySource/include/SCore.h"
 #include "EmptySource/include/SMath.h"
 #include "..\include\SWindow.h"
 
@@ -30,7 +30,7 @@ bool SWindow::Create() {
 
 	Window = glfwCreateWindow(Width, Height, Name, PrimaryMonitor, nullptr);
 
-	printf("Window: \"%s\" initialized!\n", Name);
+	wprintf(L"Window: \"%s\" initialized!\n", FChar(Name));
 
 	return false;
 }
@@ -38,7 +38,7 @@ bool SWindow::Create() {
 bool SWindow::Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height) {
 	
 	if (IsCreated()) {
-		printf("Error :: Window Already Created!\n");
+		wprintf(L"Error :: Window Already Created!\n");
 		return false;
 	}
 
@@ -79,8 +79,8 @@ FVector2 SWindow::GetMousePosition() {
 	return FVector2(float(x), float(y));
 }
 
-bool SWindow::GetKeyPressed(unsigned int Key) {
-	return glfwGetKey(Window, Key) != GLFW_PRESS;
+bool SWindow::GetKeyDown(unsigned int Key) {
+	return glfwGetKey(Window, Key) == GLFW_PRESS;
 }
 
 void SWindow::EndOfFrame() {
@@ -92,7 +92,7 @@ void SWindow::EndOfFrame() {
 
 void SWindow::InitializeInputs() {
 	if (Window == NULL) {
-		printf("Error :: Unable to set input mode!\n");
+		wprintf(L"Error :: Unable to set input mode!\n");
 		return;
 	}
 	// Ensure we can capture the escape key being pressed below
@@ -102,7 +102,7 @@ void SWindow::InitializeInputs() {
 void SWindow::Terminate() {
 	if (Window != NULL) {
 		glfwDestroyWindow(Window);
-		printf("Window: \"%s\" closed!\n", Name);
+		wprintf(L"Window: \"%s\" closed!\n", FChar(Name));
 	}
 }
 

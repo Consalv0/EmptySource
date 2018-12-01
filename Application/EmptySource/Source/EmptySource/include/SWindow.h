@@ -12,7 +12,7 @@ private:
 	//* GLFW Window
 	struct GLFWwindow* Window;
 
-	//* Name displayed in window
+	//* Name displayed in header window
 	const char* Name;
 	unsigned int Width = 1080;
 	unsigned int Height = 720;
@@ -39,7 +39,7 @@ public:
 	//* Get the aspect of width divided by height in pixels of the window
 	float AspectRatio();
 
-	//* Creates the main Rendering Window with a Name, Width and Height
+	//* Creates a Window with a Name, Width and Height
 	bool Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height);
 
 	//* Wrapper for glfwShouldClose, asks if window should be closed
@@ -51,14 +51,14 @@ public:
 	//* Returns true if window has been created
 	bool IsCreated();
 
-	//* Total frames drawed
+	//* Total frames drawed since the creation of this window
 	unsigned long GetFrameCount();
 
-	//* Get mouse position respect this window
+	//* Get mouse position in screen coordinates relative to the upper left position of this window
 	struct FVector2 GetMousePosition();
 
 	//* Get key pressed
-	bool GetKeyPressed(unsigned int Key);
+	bool GetKeyDown(unsigned int Key);
 
 	//* Window end of frame call
 	void EndOfFrame();

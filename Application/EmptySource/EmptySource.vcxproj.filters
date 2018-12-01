@@ -51,9 +51,6 @@
     <ClInclude Include="Source\EmptySource\include\SWindow.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\EmptyHeaders.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\SApplication.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -79,6 +76,15 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\IVector3.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\SShader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\SCore.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\SFileManager.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -114,6 +120,12 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\IVector3.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\SShader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\SFileManager.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

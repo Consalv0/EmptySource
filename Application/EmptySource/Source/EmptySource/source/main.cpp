@@ -1,4 +1,4 @@
-#include "EmptySource/include/EmptyHeaders.h"
+#include "EmptySource/include/SCore.h"
 #include "EmptySource/include/SApplication.h"
 
 #ifdef _WIN32
@@ -14,15 +14,17 @@ extern "C" {
  SApplication Application;
 
 int main() {
-	printf("Initalizing Application:\n");
+	_setmode(_fileno(stdout), _O_U16TEXT);
+
+	wprintf(L"Initalizing Application:\n");
 	Application.Initalize();
-	printf("...............\n");
+	wprintf(L"...............\n");
 	Application.GraphicsInformation();
-	printf("...............\n");
+	wprintf(L"...............\n");
 
 	Application.MainLoop();
 	Application.Close();
 
-	printf("\nPress any key to close...\n");
+	wprintf(L"\nPress any key to close...\n");
 	_getch();
 }
