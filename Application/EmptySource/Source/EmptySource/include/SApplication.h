@@ -17,6 +17,9 @@ private:
 	
 	//* Initialize GLAD OpenGL Functions
 	static bool InitalizeGLAD();
+
+	//* Creates the main window for rendering
+	bool InitializeWindow();
 	
 public:
 

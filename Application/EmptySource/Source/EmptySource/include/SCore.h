@@ -15,25 +15,28 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <io.h>
+#include <fcntl.h>
 
 // Include standar headers
-#include <iostream>
 #include <vector>
-#include <string>
-#include <sstream>
-#include <fstream>
+#include <map>
 #include <iomanip>
 #include <conio.h>
 #include <memory>
+
+#include <string>
+#include <locale> 
+#include <codecvt>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
 #include <vector>
 template<class T>
 using SArray = std::vector<T>;
 
-// Shader Locations
-#define ES_LOCATION_VERTEX 0
-#define ES_LOCATION_NORMAL 1
-#define ES_LOCATION_TEXCOORD 2
-#define ES_LOCATION_TANGENT 3
-#define ES_LOCATION_JOINTIDS 4
-#define ES_LOCATION_WEIGHTS 5
+#ifndef FSTRING
+#define FString(STRING) std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(STRING)
+#define FChar(STRING) std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(STRING).c_str()
+#endif // !FSTRING
