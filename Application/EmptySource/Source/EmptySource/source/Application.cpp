@@ -1,19 +1,19 @@
-﻿#include "..\include\SCore.h"
-#include "..\include\SMath.h"
+﻿#include "..\include\Core.h"
+#include "..\include\Math\Math.h"
 
-#include "..\include\SFileManager.h"
+#include "..\include\FileManager.h"
 
-#include "..\include\SWindow.h"
-#include "..\include\SApplication.h"
-#include "..\include\SMesh.h"
-#include "..\include\SShader.h"
+#include "..\include\Window.h"
+#include "..\include\Application.h"
+#include "..\include\Mesh.h"
+#include "..\include\Shader.h"
 
-SApplication::SApplication() {
+CoreApplication::CoreApplication() {
 	MainWindow = NULL;
 	bInitialized = false;
 }
 
-bool SApplication::InitalizeGLAD() {
+bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
 		wprintf(L"Error :: Unable to load OpenGL functions!\n");
 		return false;
@@ -28,8 +28,8 @@ bool SApplication::InitalizeGLAD() {
 	return true;
 }
 
-bool SApplication::InitializeWindow() {
-	MainWindow = new SWindow();
+bool CoreApplication::InitializeWindow() {
+	MainWindow = new ApplicationWindow();
 
 	if (MainWindow->Create("EmptySource - Debug", ES_WINDOW_MODE_WINDOWED, 1366, 768)) {
 		wprintf(L"Error :: Application Window couldn't be created!\n");
@@ -43,7 +43,7 @@ bool SApplication::InitializeWindow() {
 	return true;
 }
 
-void SApplication::PrintGraphicsInformation() {
+void CoreApplication::PrintGraphicsInformation() {
 	const GLubyte    *renderer = glGetString(GL_RENDERER);
 	const GLubyte      *vendor = glGetString(GL_VENDOR);
 	const GLubyte     *version = glGetString(GL_VERSION);
@@ -60,7 +60,7 @@ void SApplication::PrintGraphicsInformation() {
 	wprintf(L"GLSL Version         : %s\n", FChar((const char*)glslVersion));
 }
 
-bool SApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
+bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
 		wprintf(L"Error :: Failed to initialize GLFW\n");
 		return false;
@@ -72,11 +72,11 @@ bool SApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int Versio
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	glfwSetErrorCallback(&SApplication::GLFWError);
+	glfwSetErrorCallback(&CoreApplication::GLFWError);
 	return true;
 }
 
-void SApplication::Initalize() {
+void CoreApplication::Initalize() {
 	if (bInitialized) return;
 	if (InitializeGLFW(4, 6) == false) return; 
 	if (InitializeWindow() == false) return;
@@ -85,40 +85,31 @@ void SApplication::Initalize() {
 	bInitialized = true;
 }
 
-void SApplication::Close() {
+void CoreApplication::Close() {
 	MainWindow->Terminate();
 	glfwTerminate();
 };
 
-void SApplication::MainLoop() {
-	///// Temporal Section DELETE AFTER //////
+void CoreApplication::MainLoop() {
+	///// Temporal Section DELETE LATER //////
 
-	/*
-	* If the first vertex is (-1, -1, 0). This means that unless we transform it in some way,
-	* it will be displayed at (-1, -1) on the screen. What does this mean? The screen origin is in the middle,
-	* X is on the right, as usual, and Y is up. 
-	*/
-	SMesh TemporalMesh = SMesh::BuildCube();
+	Mesh TemporalMesh = Mesh::BuildCube();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
 	// Perpective matrix (ProjectionMatrix)
-	FMatrix4x4 ProjectionMatrix;
+	Matrix4x4 ProjectionMatrix;
 
-	FVector3 EyePosition = FVector3(2, 4, 4);
+	Vector3 EyePosition = Vector3(2, 4, 4);
 
 	// Camera rotation, position Matrix
-	FMatrix4x4 ViewMatrix = FMatrix4x4::LookAt(
-		EyePosition,        // Camera position
-		FVector3(0, 0, 0),	// Look position
-		FVector3(0, 1, 0)	// Up vector
-	);
+	Matrix4x4 ViewMatrix;
 
 	//* Create and compile our GLSL shader program from text files
 	// Create the shader
-	SShader UnlitBaseShader = SShader(L"Data\\Shaders\\UnlitBase");
+	Shader UnlitBaseShader = Shader(L"Data\\Shaders\\UnlitBase");
 
-	SArray<FMatrix4x4> Matrices;
-	Matrices.push_back(FMatrix4x4());
+	TArray<Matrix4x4> Matrices;
+	Matrices.push_back(Matrix4x4());
 
 	///////// Create Matrices Buffer //////////////
 	GLuint ModelMatrixBuffer;
@@ -132,7 +123,6 @@ void SApplication::MainLoop() {
 
 	//////////////////////////////////////////
 
-
 	// Activate Z-buffer
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if its closer to the camera
@@ -145,21 +135,21 @@ void SApplication::MainLoop() {
 		UnlitBaseShader.Use();
 
 		//////// Drawing ModelMatrix ////////
-		ProjectionMatrix = FMatrix4x4::Perspective(
+		ProjectionMatrix = Matrix4x4::Perspective(
 			45.0F * 0.015708F,			// Aperute angle
 			MainWindow->AspectRatio(),	// Aspect ratio
 			0.1F,						// Near plane
 			200.0F						// Far plane
 		);
 
-		FVector2 CursorPosition = MainWindow->GetMousePosition();
-		EyePosition = FVector3(sinf(float(CursorPosition.x) * 0.01F) * 2, cosf(float(CursorPosition.y) * 0.01F) * 4, cosf(float(CursorPosition.y) * 0.01F) * 4);
+		Vector2 CursorPosition = MainWindow->GetMousePosition();
+		EyePosition = Vector3(sinf(float(CursorPosition.x) * 0.01F) * 2, cosf(float(CursorPosition.y) * 0.01F) * 4, cosf(float(CursorPosition.y) * 0.01F) * 4);
 
 		// Camera rotation, position Matrix
-		ViewMatrix = FMatrix4x4::LookAt(
+		ViewMatrix = Matrix4x4::LookAt(
 			EyePosition,        // Camera position
-			FVector3(0, 0, 0),	// Look position
-			FVector3(0, 1, 0)	// Up vector
+			Vector3(0, 0, 0),	// Look position
+			Vector3(0, 1, 0)	// Up vector
 		);
 
 		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
@@ -167,14 +157,14 @@ void SApplication::MainLoop() {
 
 		for (size_t i = 0; i < 20; i++) {
 			Matrices.push_back(
-				FMatrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
+				Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
 			);
 		}
 
 		TemporalMesh.BindVertexArray();
 
 		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-		glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(FMatrix4x4), &Matrices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
 
 		// set transformation matrices as an instance vertex attribute (with divisor 1)
 		// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
@@ -182,20 +172,20 @@ void SApplication::MainLoop() {
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		// set attribute pointers for matrix (4 times vec4)
 		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)0);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
 		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)(sizeof(FVector4)));
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
 		glEnableVertexAttribArray(8);
-		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)(2 * sizeof(FVector4)));
+		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
 		glEnableVertexAttribArray(9);
-		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(FMatrix4x4), (void*)(3 * sizeof(FVector4)));
+		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
 
 		glVertexAttribDivisor(6, 1);
 		glVertexAttribDivisor(7, 1);
 		glVertexAttribDivisor(8, 1);
 		glVertexAttribDivisor(9, 1);
 
-		// Draw the triangles !
+		// Draw the meshs(es) !
 		TemporalMesh.DrawInstanciated((GLsizei)Matrices.size());
 		// TemporalMesh.DrawElement();
 
@@ -211,11 +201,11 @@ void SApplication::MainLoop() {
 	);
 }
 
-void SApplication::GLFWError(int ErrorID, const char* Description) {
+void CoreApplication::GLFWError(int ErrorID, const char* Description) {
 	wprintf(L"Error:: %s", FChar(Description));
 }
 
-void APIENTRY SApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
+void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
 {
 	// ignore non-significant error/warning codes
 	if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;

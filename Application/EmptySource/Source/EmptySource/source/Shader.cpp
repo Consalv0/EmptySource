@@ -1,8 +1,8 @@
-﻿#include "..\include\SCore.h"
-#include "..\include\SShader.h"
-#include "..\include\SFileManager.h"
+﻿#include "..\include\Core.h"
+#include "..\include\Shader.h"
+#include "..\include\FileManager.h"
 
-bool SShader::Compile() {
+bool Shader::Compile() {
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -33,7 +33,7 @@ bool SShader::Compile() {
 	return true;
 }
 
-bool SShader::ReadStreams(std::fstream * VertexStream, std::fstream * FragmentStream) {
+bool Shader::ReadStreams(std::fstream * VertexStream, std::fstream * FragmentStream) {
 	// ReadStreams the Vertex Shader code from the file
 	if (VertexStream != NULL && VertexStream->is_open()) {
 		std::stringstream sstr;
@@ -45,7 +45,7 @@ bool SShader::ReadStreams(std::fstream * VertexStream, std::fstream * FragmentSt
 		VertexShaderCode = sstr.str();
 		VertexStream->close();
 	} else {
-		wprintf(L"Impossible to open \"%s\". Are you in the right directory ?\n", SFileManager::GetFilePath(VertexStream).c_str());
+		wprintf(L"Impossible to open \"%s\". Are you in the right directory ?\n", FileManager::GetFilePath(VertexStream).c_str());
 		return false;
 	}
 
@@ -60,14 +60,14 @@ bool SShader::ReadStreams(std::fstream * VertexStream, std::fstream * FragmentSt
 		FragmentShaderCode = sstr.str();
 		FragmentStream->close();
 	} else {
-		wprintf(L"Impossible to open \"%s\". Are you in the right directory ?\n", SFileManager::GetFilePath(FragmentStream).c_str());
+		wprintf(L"Impossible to open \"%s\". Are you in the right directory ?\n", FileManager::GetFilePath(FragmentStream).c_str());
 		return false;
 	}
 
 	return true;
 }
 
-bool SShader::LinkProgram() {
+bool Shader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
@@ -89,7 +89,7 @@ bool SShader::LinkProgram() {
 	return true;
 }
 
-SShader::SShader() {
+Shader::Shader() {
 	IsLinked = false;
 	VertexShader = 0;
 	FragmentShader = 0; 
@@ -97,12 +97,12 @@ SShader::SShader() {
 	FilePath = L"";
 }
 
-SShader::SShader(std::wstring ShaderNamePath) {
+Shader::Shader(std::wstring ShaderNamePath) {
 	FilePath = ShaderNamePath;
 
 	IsLinked = ReadStreams(
-		SFileManager::Open(FilePath + L".vertex.glsl"),
-		SFileManager::Open(FilePath + L".fragment.glsl")
+		FileManager::Open(FilePath + L".vertex.glsl"),
+		FileManager::Open(FilePath + L".fragment.glsl")
 	);
 	if (IsLinked == false) return;
 
@@ -119,10 +119,10 @@ SShader::SShader(std::wstring ShaderNamePath) {
 	}
 }
 
-unsigned int SShader::GetLocationID(const char * LocationName) const {
+unsigned int Shader::GetLocationID(const char * LocationName) const {
 	return IsLinked ? glGetUniformLocation(ShaderProgram, LocationName) : 0;
 }
 
-void SShader::Use() const {
+void Shader::Use() const {
 	if (IsLinked) glUseProgram(ShaderProgram);
 }

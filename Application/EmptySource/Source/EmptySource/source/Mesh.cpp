@@ -1,24 +1,24 @@
 
-#include "..\include\SCore.h"
+#include "..\include\Core.h"
 
-#include "..\include\SMath.h"
-#include "..\include\SMesh.h"
+#include "..\include\Math\Math.h"
+#include "..\include\Mesh.h"
 
-SMesh::SMesh() {
+Mesh::Mesh() {
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
-	Triangles = SMeshTriangles();
-	Vertices = SMeshVertices();
+	Triangles = MeshTriangles();
+	Vertices = MeshVertices();
 }
 
-SMesh::SMesh( 
-	const SMeshTriangles triangles, const SMeshVector3D vertices,
-	const SMeshVector3D normals, const SMeshUVs uv0, const SMeshColors colors)
+Mesh::Mesh( 
+	const MeshTriangles triangles, const MeshVector3D vertices,
+	const MeshVector3D normals, const MeshUVs uv0, const MeshColors colors)
 {
 	Triangles = triangles;
 	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], FVector3(), uv0[vCount], FVector2(), colors[vCount] }));
+		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount], Vector2(), colors[vCount] }));
 	}
 
 	VertexArrayObject = 0;
@@ -27,13 +27,23 @@ SMesh::SMesh(
 	SetUpBuffers();
 }
 
-SMesh::SMesh(
-	const SMeshTriangles triangles, const SMeshVector3D vertices,
-	const SMeshVector3D normals, const SMeshVector3D tangents, const SMeshUVs uv0, const SMeshColors colors)
+Mesh::Mesh(
+	const MeshTriangles triangles, const MeshVector3D vertices,
+	const MeshVector3D normals, const MeshVector3D tangents, const MeshUVs uv0, const MeshColors colors) 
+	
+	: Mesh(triangles, vertices, normals, tangents, uv0, uv0, colors)
+{
+}
+
+Mesh::Mesh(
+	const MeshTriangles triangles, const MeshVector3D vertices,
+	const MeshVector3D normals, const MeshVector3D tangents,
+	const MeshUVs uv0, const MeshUVs uv1,
+	const MeshColors colors)
 {
 	Triangles = triangles;
 	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], tangents[vCount], uv0[vCount], FVector2(), colors[vCount] }));
+		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], tangents[vCount], uv0[vCount], Vector2(), colors[vCount] }));
 	}
 
 	VertexArrayObject = 0;
@@ -42,9 +52,9 @@ SMesh::SMesh(
 	SetUpBuffers();
 }
 
-SMesh SMesh::BuildCube() {
-	SMesh TemporalMesh;
-	static const SMeshTriangles TemporalTriangles{
+Mesh Mesh::BuildCube() {
+	Mesh TemporalMesh;
+	static const MeshTriangles TemporalTriangles{
 		// Front Face
 		{  0,  1,  2 }, {  2,  3,  0 },
 		// Back Face
@@ -58,7 +68,7 @@ SMesh SMesh::BuildCube() {
 		// Down Face
 		{ 20, 21, 22 }, { 22, 23, 20 },
 	};
-	static const SMeshVector3D TemporalVertices{
+	static const MeshVector3D TemporalVertices{
 		// Front Face
 		{ 0.5F, -0.5F, -0.5F }, // 1 : 1
 		{-0.5F, -0.5F, -0.5F }, // 2 : 2
@@ -66,10 +76,10 @@ SMesh SMesh::BuildCube() {
 		{ 0.5F,  0.5F, -0.5F }, // 3 : 5
 
 		// Back Face
-		{ -0.5F,  0.5F,  0.5F }, // 5 : 7
-		{  0.5F,  0.5F,  0.5F }, // 4 : 8
-		{  0.5F, -0.5F,  0.5F }, // 8 : 10
-		{ -0.5F, -0.5F,  0.5F }, // 7 : 11
+		{-0.5F,  0.5F,  0.5F }, // 5 : 7
+		{ 0.5F,  0.5F,  0.5F }, // 4 : 8
+		{ 0.5F, -0.5F,  0.5F }, // 8 : 10
+		{-0.5F, -0.5F,  0.5F }, // 7 : 11
 
 		// Right Face
 		{ 0.5F, -0.5F, -0.5F }, // 1 : 13
@@ -95,7 +105,7 @@ SMesh SMesh::BuildCube() {
 		{-0.5F, -0.5F,  0.5F }, // 7 : 34
 		{ 0.5F, -0.5F,  0.5F }, // 8 : 35
 	};
-	static const SMeshVector3D TemporalNormals{
+	static const MeshVector3D TemporalNormals{
 		// Front Face
 		{ 0.0F,  0.0F, -1.0F }, // 1
 		{ 0.0F,  0.0F, -1.0F }, // 2
@@ -132,7 +142,7 @@ SMesh SMesh::BuildCube() {
 		{ 0.0F, -1.0F,  0.0F }, // 7
 		{ 0.0F, -1.0F,  0.0F }, // 8
 	};
-	static const SMeshUVs      TemporalTextureCoords{
+	static const MeshUVs      TemporalTextureCoords{
 		// Front Face
 		{ 1.0F, -1.0F }, // 1
 		{-1.0F, -1.0F }, // 2
@@ -169,7 +179,7 @@ SMesh SMesh::BuildCube() {
 		{-1.0F, -1.0F }, // 7
 		{ 1.0F, -1.0F }, // 8
 	};
-	static const SMeshColors   TemporalColors{
+	static const MeshColors   TemporalColors{
 		// Front Face
 		{ 0.0F, 0.0F, 1.0F, 1.0F },
 		{ 0.0F, 0.0F, 1.0F, 1.0F },
@@ -207,19 +217,19 @@ SMesh SMesh::BuildCube() {
 		{ 1.0F, 1.0F, 1.0F, 1.0F },
 	};
 
-	TemporalMesh = SMesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, TemporalColors);
+	TemporalMesh = Mesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, TemporalColors);
 
 	return TemporalMesh;
 }
 
-void SMesh::BindVertexArray() {
+void Mesh::BindVertexArray() {
 	// Generate 1 VAO, put the resulting identifier in VAO identifier
 	if (VertexArrayObject == 0) glGenVertexArrays(1, &VertexArrayObject);
 	// The following commands will put in context our VAO for the next commands
 	glBindVertexArray(VertexArrayObject);
 }
 
-void SMesh::DrawInstanciated(int Count) const {
+void Mesh::DrawInstanciated(int Count) const {
 	glDrawElementsInstanced(
 		GL_TRIANGLES,	                        // mode
 		(int)Triangles.size() * 3,	            // mode count
@@ -229,7 +239,7 @@ void SMesh::DrawInstanciated(int Count) const {
 	);
 }
 
-void SMesh::DrawElement() const {
+void Mesh::DrawElement() const {
 	glDrawElements(
 		GL_TRIANGLES,	                        // mode
 		(int)Triangles.size() * 3,	            // mode count
@@ -238,7 +248,7 @@ void SMesh::DrawElement() const {
 	); // Starting from vertex 0; to vertices total
 }
 
-void SMesh::SetUpBuffers() {
+void Mesh::SetUpBuffers() {
 
 	BindVertexArray();
 
@@ -251,30 +261,26 @@ void SMesh::SetUpBuffers() {
 	// Generate a Element Buffer for the indices
 	glGenBuffers(1, &ElementBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Triangles.size() * sizeof(IVector3), &Triangles[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Triangles.size() * sizeof(IntVector3), &Triangles[0], GL_STATIC_DRAW);
 
-	// Set the vertex attribute pointers
-	// Positions
-	glEnableVertexAttribArray(VertexLocation);
-	glVertexAttribPointer(VertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	// Normals
-	glEnableVertexAttribArray(NormalLocation);
-	glVertexAttribPointer(NormalLocation, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-	// Tangent
-	glEnableVertexAttribArray(TangentLocation);
-	glVertexAttribPointer(TangentLocation, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-	// Texture Coords
-	glEnableVertexAttribArray(UV0Location);
-	glVertexAttribPointer(UV0Location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV0));
-	glEnableVertexAttribArray(UV1Location);
-	glVertexAttribPointer(UV1Location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
-	// Color
-	glEnableVertexAttribArray(ColorLocation);
-	glVertexAttribPointer(ColorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
+	// Set the vertex attribute pointers layouts
+	glEnableVertexAttribArray(  VertexLocation );
+	    glVertexAttribPointer(  VertexLocation , 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glEnableVertexAttribArray(  NormalLocation );
+	    glVertexAttribPointer(  NormalLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+	glEnableVertexAttribArray( TangentLocation );
+	    glVertexAttribPointer( TangentLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+	glEnableVertexAttribArray(     UV0Location );
+	    glVertexAttribPointer(     UV0Location , 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV0));
+	glEnableVertexAttribArray(     UV1Location );
+	    glVertexAttribPointer(     UV1Location , 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
+	glEnableVertexAttribArray(   ColorLocation );
+	    glVertexAttribPointer(   ColorLocation , 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
 
+	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 }
 
-void SMesh::ClearBuffers() {
+void Mesh::ClearBuffers() {
 	glDeleteVertexArrays(1, &VertexArrayObject);
 }

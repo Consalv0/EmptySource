@@ -1,5 +1,5 @@
-#include "EmptySource/include/SCore.h"
-#include "EmptySource/include/SApplication.h"
+#include "../include/Core.h"
+#include "../include/Application.h"
 
 #ifdef _WIN32
 // Make discrete GPU by default.
@@ -11,7 +11,7 @@ extern "C" {
 }
 #endif
 
- SApplication Application;
+ CoreApplication Application;
 
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT);
