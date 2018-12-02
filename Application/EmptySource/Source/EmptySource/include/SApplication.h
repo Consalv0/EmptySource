@@ -26,7 +26,7 @@ public:
 	SApplication();
 
 	//* Prints the Graphics Version info of the videocard used and the GL used
-	static void GraphicsInformation();
+	static void PrintGraphicsInformation();
 
 	//* Initialize the application, it creates a window, a context and loads the OpenGL functions. Returns the error
 	void Initalize();

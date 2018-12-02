@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\EmptySource\include\SCoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\SCore.h" />
     <ClInclude Include="Source\EmptySource\include\FMatrix3x3.h" />
     <ClInclude Include="Source\EmptySource\include\FMatrix4x4.h" />
@@ -139,12 +140,6 @@
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EmptySource\include\FVector3.cpp" />
-    <ClCompile Include="Source\EmptySource\source\FMatrix3x3.cpp" />
-    <ClCompile Include="Source\EmptySource\source\FMatrix4x4.cpp" />
-    <ClCompile Include="Source\EmptySource\source\FVector2.cpp" />
-    <ClCompile Include="Source\EmptySource\source\FVector4.cpp" />
-    <ClCompile Include="Source\EmptySource\source\IVector3.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
     <ClCompile Include="Source\EmptySource\source\SApplication.cpp" />
     <ClCompile Include="Source\EmptySource\source\SFileManager.cpp" />
@@ -156,6 +151,12 @@
   <ItemGroup>
     <None Include="Data\Shaders\UnlitBase.fragment.glsl" />
     <None Include="Data\Shaders\UnlitBase.vertex.glsl" />
+    <None Include="Source\EmptySource\include\FMatrix3x3.inl" />
+    <None Include="Source\EmptySource\include\FMatrix4x4.inl" />
+    <None Include="Source\EmptySource\include\FVector2.inl" />
+    <None Include="Source\EmptySource\include\FVector3.inl" />
+    <None Include="Source\EmptySource\include\FVector4.inl" />
+    <None Include="Source\EmptySource\include\IVector3.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

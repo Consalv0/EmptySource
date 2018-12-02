@@ -12,6 +12,7 @@
 #include <External/GLFW/glfw3.h>
 
 // Include main standard headers
+#include <stdexcept>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +37,4 @@
 template<class T>
 using SArray = std::vector<T>;
 
-#ifndef FSTRING
-#define FString(STRING) std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(STRING)
-#define FChar(STRING) std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(STRING).c_str()
-#endif // !FSTRING
+#include "..\include\SCoreTypes.h"

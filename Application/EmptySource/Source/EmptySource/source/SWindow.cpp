@@ -3,7 +3,6 @@
 #include "EmptySource/include/SMath.h"
 #include "..\include\SWindow.h"
 
-
 SWindow::SWindow() {
 	Window = NULL;
 	Name = "EmptySource Window";
