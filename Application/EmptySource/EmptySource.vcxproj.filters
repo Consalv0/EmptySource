@@ -87,6 +87,9 @@
     <ClInclude Include="Source\EmptySource\include\SFileManager.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\SCoreTypes.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -101,25 +104,7 @@
     <ClCompile Include="Source\EmptySource\source\SApplication.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\FVector2.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\include\FVector3.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\FMatrix3x3.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\FMatrix4x4.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\FVector4.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EmptySource\source\SMesh.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\IVector3.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\SShader.cpp">
@@ -135,6 +120,24 @@
     </None>
     <None Include="Data\Shaders\UnlitBase.vertex.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\FVector2.inl">
+      <Filter>Header Files\Core</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\FMatrix3x3.inl">
+      <Filter>Header Files\Core</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\FMatrix4x4.inl">
+      <Filter>Header Files\Core</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\FVector3.inl">
+      <Filter>Header Files\Core</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\FVector4.inl">
+      <Filter>Header Files\Core</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\IVector3.inl">
+      <Filter>Header Files\Core</Filter>
     </None>
   </ItemGroup>
 </Project>

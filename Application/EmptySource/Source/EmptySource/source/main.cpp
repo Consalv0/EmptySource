@@ -19,7 +19,7 @@ int main() {
 	wprintf(L"Initalizing Application:\n");
 	Application.Initalize();
 	wprintf(L"...............\n");
-	Application.GraphicsInformation();
+	Application.PrintGraphicsInformation();
 	wprintf(L"...............\n");
 
 	Application.MainLoop();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "..\include\SCoreTypes.h"
+
 struct FVector3;
 struct FVector4;
 
@@ -10,42 +12,43 @@ public:
 		struct { float u, v; };
 	};
 
-	FVector2();
-	FVector2(const FVector2& Vector);
-	FVector2(const FVector3& Vector);
-	FVector2(const FVector4& Vector);
-	FVector2(const float& Value);
-	FVector2(const float& x, const float& y);
+	FORCEINLINE FVector2();
+	FORCEINLINE FVector2(const FVector2& Vector);
+	FORCEINLINE FVector2(const FVector3& Vector);
+	FORCEINLINE FVector2(const FVector4& Vector);
+	FORCEINLINE FVector2(const float& Value);
+	FORCEINLINE FVector2(const float& x, const float& y);
 
-	float Magnitude() const;
-	float MagnitudeSquared() const;
-	FVector2 Normalized() const;
+	inline float Magnitude() const;
+	inline float MagnitudeSquared() const;
+	inline void Normalize();
+	inline FVector2 Normalized() const;
 
-	void Normalize();
-	float Cross(const FVector2& Other) const;
-	float Dot(const FVector2& Other) const;
+	FORCEINLINE float Cross(const FVector2& Other) const;
+	FORCEINLINE float Dot(const FVector2& Other) const;
+	FORCEINLINE static FVector2 Lerp(const FVector2& Start, const FVector2& End, float t);
 
-	static FVector2 Lerp(const FVector2& Start, const FVector2& End, float t);
+	inline float & operator[](unsigned int i);
+	inline float const& operator[](unsigned int i) const;
+	inline const float* PointerToValue() const;
 
-	float & operator[](unsigned int i);
-	float const& operator[](unsigned int i) const;
-	const float* PointerToValue() const;
+	FORCEINLINE bool operator==(const FVector2& Other);
+	FORCEINLINE bool operator!=(const FVector2& Other);
 
-	bool operator==(const FVector2& Other);
-	bool operator!=(const FVector2& Other);
+	FORCEINLINE FVector2 operator+(const FVector2& Other) const;
+	FORCEINLINE FVector2 operator-(const FVector2& Other) const;
+	FORCEINLINE FVector2 operator-(void) const;
+	FORCEINLINE FVector2 operator*(const FVector2& Other) const;
+	FORCEINLINE FVector2 operator/(const FVector2& Other) const;
+	FORCEINLINE FVector2 operator*(const float& Value) const;
+	FORCEINLINE FVector2 operator/(const float& Value) const;
 
-	FVector2 operator+(const FVector2& Other) const;
-	FVector2 operator-(const FVector2& Other) const;
-	FVector2 operator-(void) const;
-	FVector2 operator*(const FVector2& Other) const;
-	FVector2 operator/(const FVector2& Other) const;
-	FVector2 operator*(const float& Value) const;
-	FVector2 operator/(const float& Value) const;
-
-	FVector2& operator+=(const FVector2& Other);
-	FVector2& operator-=(const FVector2& Other);
-	FVector2& operator*=(const FVector2& Other);
-	FVector2& operator/=(const FVector2& Other);
-	FVector2& operator*=(const float& Value);
-	FVector2& operator/=(const float& Value);
+	FORCEINLINE FVector2& operator+=(const FVector2& Other);
+	FORCEINLINE FVector2& operator-=(const FVector2& Other);
+	FORCEINLINE FVector2& operator*=(const FVector2& Other);
+	FORCEINLINE FVector2& operator/=(const FVector2& Other);
+	FORCEINLINE FVector2& operator*=(const float& Value);
+	FORCEINLINE FVector2& operator/=(const float& Value);
 };
+
+#include "..\include\FVector2.inl"

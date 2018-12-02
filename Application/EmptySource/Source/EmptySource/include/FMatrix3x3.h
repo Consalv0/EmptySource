@@ -9,23 +9,25 @@ public:
 		FVector3 m0, m1, m2;
 	};
 
-	FMatrix3x3();
-	FMatrix3x3(const FMatrix3x3& Matrix);
-	FMatrix3x3(const FMatrix4x4& Matrix);
-	FMatrix3x3(const FVector3& Row0, const FVector3& Row1, const FVector3& Row2);
+	FORCEINLINE FMatrix3x3();
+	FORCEINLINE FMatrix3x3(const FMatrix3x3& Matrix);
+	FORCEINLINE FMatrix3x3(const FMatrix4x4& Matrix);
+	FORCEINLINE FMatrix3x3(const FVector3& Row0, const FVector3& Row1, const FVector3& Row2);
 
-	static FMatrix3x3 Identity();
+	inline static FMatrix3x3 Identity();
 
-	void Transpose();
-	FMatrix3x3 Transposed() const;
+	inline void Transpose();
+	inline FMatrix3x3 Transposed() const;
 
-	FVector3 Row(const int& i) const;
-	FVector3 Column(const int& i) const;
+	inline FVector3 Row(const int& i) const;
+	inline FVector3 Column(const int& i) const;
 
-	FVector3 & operator[](unsigned int i);
-	FVector3 const& operator[](unsigned int i) const;
-	const float* PointerToValue(void) const;
+	inline FVector3 & operator[](unsigned int i);
+	inline FVector3 const& operator[](unsigned int i) const;
+	inline const float* PointerToValue(void) const;
 
-	FMatrix3x3 operator*(const FMatrix3x3& Other) const;
-	FVector3 operator*(const FVector3& Vector) const;
+	FORCEINLINE FMatrix3x3 operator*(const FMatrix3x3& Other) const;
+	FORCEINLINE FVector3 operator*(const FVector3& Vector) const;
 };
+
+#include "FMatrix3x3.inl"

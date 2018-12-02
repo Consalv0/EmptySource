@@ -7,7 +7,7 @@ bool SShader::Compile() {
 	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	// Compile Vertex Shader
-	wprintf(L"Compiling shader program '%ws'\n", FilePath.c_str());
+	wprintf(L"Compiling shader program '%s'\n", FilePath.c_str());
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShader, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShader);
@@ -71,7 +71,7 @@ bool SShader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	wprintf(L"└>Linking shader program '%ws'\n", FilePath.c_str());
+	wprintf(L"└>Linking shader program '%s'\n", FilePath.c_str());
 	ShaderProgram = glCreateProgram();
 	glAttachShader(ShaderProgram, VertexShader);
 	glAttachShader(ShaderProgram, FragmentShader);

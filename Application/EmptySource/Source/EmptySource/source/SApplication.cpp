@@ -43,7 +43,7 @@ bool SApplication::InitializeWindow() {
 	return true;
 }
 
-void SApplication::GraphicsInformation() {
+void SApplication::PrintGraphicsInformation() {
 	const GLubyte    *renderer = glGetString(GL_RENDERER);
 	const GLubyte      *vendor = glGetString(GL_VENDOR);
 	const GLubyte     *version = glGetString(GL_VERSION);
@@ -113,9 +113,6 @@ void SApplication::MainLoop() {
 		FVector3(0, 1, 0)	// Up vector
 	);
 
-	// ModelMatrix matrix
-	FMatrix4x4 ModelMatrix = FMatrix4x4::Identity();
-
 	//* Create and compile our GLSL shader program from text files
 	// Create the shader
 	SShader UnlitBaseShader = SShader(L"Data\\Shaders\\UnlitBase");
@@ -134,6 +131,7 @@ void SApplication::MainLoop() {
 	GLuint          ViewMatrixID = UnlitBaseShader.GetLocationID("_ViewMatrix");
 
 	//////////////////////////////////////////
+
 
 	// Activate Z-buffer
 	glEnable(GL_DEPTH_TEST);
@@ -164,10 +162,8 @@ void SApplication::MainLoop() {
 			FVector3(0, 1, 0)	// Up vector
 		);
 
-		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE,                    ProjectionMatrix.PointerToValue() );
-		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,                          ViewMatrix.PointerToValue() );
-		// glUniformMatrix4fv(      ModelMatrixID, 1, GL_FALSE,                         ModelMatrix.PointerToValue() ); 
-		// glUniformMatrix4fv(      WorldNormalID, 1, GL_FALSE, ModelMatrix.Inversed().Transposed().PointerToValue() );
+		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
+		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
 
 		for (size_t i = 0; i < 20; i++) {
 			Matrices.push_back(
