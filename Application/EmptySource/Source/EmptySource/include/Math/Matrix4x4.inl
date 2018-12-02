@@ -2,35 +2,35 @@
 #include <math.h>
 #include <stdexcept>
 
-#include "..\include\FVector3.h"
-#include "..\include\FVector4.h"
-#include "..\include\FMatrix4x4.h"
+#include "..\Math\Vector3.h"
+#include "..\Math\Vector4.h"
+#include "..\Math\Matrix4x4.h"
 
-FORCEINLINE FMatrix4x4::FMatrix4x4() {
+FORCEINLINE Matrix4x4::Matrix4x4() {
 	m0[0] = 1; m0[1] = 0; m0[2] = 0; m0[3] = 0;
 	m1[0] = 0; m1[1] = 1; m1[2] = 0; m1[3] = 0;
 	m2[0] = 0; m2[1] = 0; m2[2] = 1; m2[3] = 0;
 	m3[0] = 0; m3[1] = 0; m3[2] = 0; m3[3] = 1;
 }
 
-FORCEINLINE FMatrix4x4::FMatrix4x4(const FMatrix4x4 & Other)
+FORCEINLINE Matrix4x4::Matrix4x4(const Matrix4x4 & Other)
 	: m0(Other.m0), m1(Other.m1), m2(Other.m2), m3(Other.m3) {
 	
 }
 
-FORCEINLINE FMatrix4x4::FMatrix4x4(const FVector4 & Row0, const FVector4 & Row1, const FVector4 & Row2, const FVector4 Row3) {
+FORCEINLINE Matrix4x4::Matrix4x4(const Vector4 & Row0, const Vector4 & Row1, const Vector4 & Row2, const Vector4 Row3) {
 	m0[0] = Row0.x; m0[1] = Row0.y; m0[2] = Row0.z; m0[3] = Row0.w;
 	m1[0] = Row1.x; m1[1] = Row1.y; m1[2] = Row1.z; m1[3] = Row1.w;
 	m2[0] = Row2.x; m2[1] = Row2.y; m2[2] = Row2.z; m2[3] = Row2.w;
 	m3[0] = Row3.x; m3[1] = Row3.y; m3[2] = Row3.z; m3[3] = Row3.w;
 }
 
-inline FMatrix4x4 FMatrix4x4::Identity() {
-	return FMatrix4x4();
+inline Matrix4x4 Matrix4x4::Identity() {
+	return Matrix4x4();
 }
 
-inline FMatrix4x4 FMatrix4x4::Perspective(const float & FOV, const float & Aspect, const float & Near, const float & Far) {
-	FMatrix4x4 Result = FMatrix4x4();
+inline Matrix4x4 Matrix4x4::Perspective(const float & FOV, const float & Aspect, const float & Near, const float & Far) {
+	Matrix4x4 Result = Matrix4x4();
 	
 	float const TangentHalfFOV = tan(FOV / 2.F);
 
@@ -43,12 +43,12 @@ inline FMatrix4x4 FMatrix4x4::Perspective(const float & FOV, const float & Aspec
 	return Result;
 }
 
-inline FMatrix4x4 FMatrix4x4::LookAt(const FVector3 & Eye, const FVector3 & Target, const FVector3 & Up) {
-	FMatrix4x4 Result = FMatrix4x4();
+inline Matrix4x4 Matrix4x4::LookAt(const Vector3 & Eye, const Vector3 & Target, const Vector3 & Up) {
+	Matrix4x4 Result = Matrix4x4();
 
-	FVector3 const f((Target - Eye).Normalized());
-	FVector3 const s(f.Cross(Up).Normalized());
-	FVector3 const u(s.Cross(f));
+	Vector3 const f((Target - Eye).Normalized());
+	Vector3 const s(f.Cross(Up).Normalized());
+	Vector3 const u(s.Cross(f));
 
 	Result.m0[0] = s.x;
 	Result.m1[0] = s.y;
@@ -65,22 +65,22 @@ inline FMatrix4x4 FMatrix4x4::LookAt(const FVector3 & Eye, const FVector3 & Targ
 	return Result;
 }
 
-inline FMatrix4x4 FMatrix4x4::Translate(const FVector3 & Vector) {
-	FMatrix4x4 Result = FMatrix4x4();
+inline Matrix4x4 Matrix4x4::Translate(const Vector3 & Vector) {
+	Matrix4x4 Result = Matrix4x4();
 	Result[3] = Result[0] * Vector[0] + Result[1] * Vector[1] + Result[2] * Vector[2] + Result[3];
 	return Result;
 }
 
-inline void FMatrix4x4::Transpose() {
-	FMatrix4x4 Result = FMatrix4x4(Column(0), Column(1), Column(2), Column(3));
+inline void Matrix4x4::Transpose() {
+	Matrix4x4 Result = Matrix4x4(Column(0), Column(1), Column(2), Column(3));
 	*this = Result;
 }
 
-inline FMatrix4x4 FMatrix4x4::Transposed() const {
-	return FMatrix4x4(Column(0), Column(1), Column(2), Column(3));
+inline Matrix4x4 Matrix4x4::Transposed() const {
+	return Matrix4x4(Column(0), Column(1), Column(2), Column(3));
 }
 
-inline FMatrix4x4 FMatrix4x4::Inversed() const {
+inline Matrix4x4 Matrix4x4::Inversed() const {
 	float Coef00 = m2[2] * m3[3] - m3[2] * m2[3];
 	float Coef02 = m1[2] * m3[3] - m3[2] * m1[3];
 	float Coef03 = m1[2] * m2[3] - m2[2] * m1[3];
@@ -105,31 +105,31 @@ inline FMatrix4x4 FMatrix4x4::Inversed() const {
 	float Coef22 = m1[0] * m3[1] - m3[0] * m1[1];
 	float Coef23 = m1[0] * m2[1] - m2[0] * m1[1];
 
-	FVector4 Fac0(Coef00, Coef00, Coef02, Coef03);
-	FVector4 Fac1(Coef04, Coef04, Coef06, Coef07);
-	FVector4 Fac2(Coef08, Coef08, Coef10, Coef11);
-	FVector4 Fac3(Coef12, Coef12, Coef14, Coef15);
-	FVector4 Fac4(Coef16, Coef16, Coef18, Coef19);
-	FVector4 Fac5(Coef20, Coef20, Coef22, Coef23);
+	Vector4 Fac0(Coef00, Coef00, Coef02, Coef03);
+	Vector4 Fac1(Coef04, Coef04, Coef06, Coef07);
+	Vector4 Fac2(Coef08, Coef08, Coef10, Coef11);
+	Vector4 Fac3(Coef12, Coef12, Coef14, Coef15);
+	Vector4 Fac4(Coef16, Coef16, Coef18, Coef19);
+	Vector4 Fac5(Coef20, Coef20, Coef22, Coef23);
 
-	FVector4 Vec0(m1[0], m0[0], m0[0], m0[0]);
-	FVector4 Vec1(m1[1], m0[1], m0[1], m0[1]);
-	FVector4 Vec2(m1[2], m0[2], m0[2], m0[2]);
-	FVector4 Vec3(m1[3], m0[3], m0[3], m0[3]);
+	Vector4 Vec0(m1[0], m0[0], m0[0], m0[0]);
+	Vector4 Vec1(m1[1], m0[1], m0[1], m0[1]);
+	Vector4 Vec2(m1[2], m0[2], m0[2], m0[2]);
+	Vector4 Vec3(m1[3], m0[3], m0[3], m0[3]);
 
-	FVector4 Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
-	FVector4 Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
-	FVector4 Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
-	FVector4 Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
+	Vector4 Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
+	Vector4 Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
+	Vector4 Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
+	Vector4 Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
 
-	FVector4 SignA(+1, -1, +1, -1);
-	FVector4 SignB(-1, +1, -1, +1);
+	Vector4 SignA(+1, -1, +1, -1);
+	Vector4 SignB(-1, +1, -1, +1);
 
-	FMatrix4x4 Result(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
+	Matrix4x4 Result(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
 
-	// FVector4 Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
+	// Vector4 Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
 
-	FVector4 Dot0(Row(0) * Result.Column(0));
+	Vector4 Dot0(Row(0) * Result.Column(0));
 	float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
 
 	float OneOverDeterminant = float(1) / Dot1;
@@ -137,7 +137,7 @@ inline FMatrix4x4 FMatrix4x4::Inversed() const {
 	return Result * OneOverDeterminant;
 }
 
-inline FVector4 FMatrix4x4::Row(const int & i) const {
+inline Vector4 Matrix4x4::Row(const int & i) const {
 	switch (i) {
 		case 0: return m0;
 		case 1: return m1;
@@ -145,31 +145,21 @@ inline FVector4 FMatrix4x4::Row(const int & i) const {
 		case 3: return m3;
 	}
 
-	return FVector4();
+	return Vector4();
 }
 
-inline FVector4 FMatrix4x4::Column(const int & i) const {
+inline Vector4 Matrix4x4::Column(const int & i) const {
 	switch (i) {
-		case 0: return FVector4(m0[0], m1[0], m2[0], m3[0]);
-		case 1: return FVector4(m0[1], m1[1], m2[1], m3[1]);
-		case 2: return FVector4(m0[2], m1[2], m2[2], m3[2]);
-		case 3: return FVector4(m0[3], m1[3], m2[3], m3[3]);
+		case 0: return Vector4(m0[0], m1[0], m2[0], m3[0]);
+		case 1: return Vector4(m0[1], m1[1], m2[1], m3[1]);
+		case 2: return Vector4(m0[2], m1[2], m2[2], m3[2]);
+		case 3: return Vector4(m0[3], m1[3], m2[3], m3[3]);
 	}
 
-	return FVector4();
+	return Vector4();
 }
 
-inline FVector4 & FMatrix4x4::operator[](unsigned int i) {
-	switch (i) {
-		case 0:  return m0;
-		case 1:  return m1;
-		case 2:  return m2;
-		case 3:  return m3;
-		default: return m3;
-	}
-}
-
-inline FVector4 const & FMatrix4x4::operator[](unsigned int i) const {
+inline Vector4 & Matrix4x4::operator[](unsigned int i) {
 	switch (i) {
 		case 0:  return m0;
 		case 1:  return m1;
@@ -179,10 +169,20 @@ inline FVector4 const & FMatrix4x4::operator[](unsigned int i) const {
 	}
 }
 
-FORCEINLINE FMatrix4x4 FMatrix4x4::operator*(const FMatrix4x4 & Other) const {
-	FMatrix4x4 Result = FMatrix4x4();
+inline Vector4 const & Matrix4x4::operator[](unsigned int i) const {
+	switch (i) {
+		case 0:  return m0;
+		case 1:  return m1;
+		case 2:  return m2;
+		case 3:  return m3;
+		default: return m3;
+	}
+}
 
-	FVector4 OtherCol0 = Other.Column(0), OtherCol1 = Other.Column(1), OtherCol2 = Other.Column(2), OtherCol3 = Other.Column(3);
+FORCEINLINE Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & Other) const {
+	Matrix4x4 Result = Matrix4x4();
+
+	Vector4 OtherCol0 = Other.Column(0), OtherCol1 = Other.Column(1), OtherCol2 = Other.Column(2), OtherCol3 = Other.Column(3);
 
 	Result.m0[0] = m0.Dot(OtherCol0);
 	Result.m1[0] = m1.Dot(OtherCol0);
@@ -207,8 +207,8 @@ FORCEINLINE FMatrix4x4 FMatrix4x4::operator*(const FMatrix4x4 & Other) const {
 	return Result;
 }
 
-FORCEINLINE FVector4 FMatrix4x4::operator*(const FVector4 & Vector) const {
-	FVector4 Result(
+FORCEINLINE Vector4 Matrix4x4::operator*(const Vector4 & Vector) const {
+	Vector4 Result(
 		Row(0).Dot(Vector),
 		Row(1).Dot(Vector),
 		Row(2).Dot(Vector),
@@ -218,8 +218,8 @@ FORCEINLINE FVector4 FMatrix4x4::operator*(const FVector4 & Vector) const {
 	return Result;
 }
 
-FORCEINLINE FVector3 FMatrix4x4::operator*(const FVector3 & Vector) const {
-	FVector3 Result(
+FORCEINLINE Vector3 Matrix4x4::operator*(const Vector3 & Vector) const {
+	Vector3 Result(
 		Row(0).Dot(Vector),
 		Row(1).Dot(Vector),
 		Row(2).Dot(Vector)
@@ -228,8 +228,8 @@ FORCEINLINE FVector3 FMatrix4x4::operator*(const FVector3 & Vector) const {
 	return Result;
 }
 
-FORCEINLINE FMatrix4x4 FMatrix4x4::operator*(const float & Value) const {
-	FMatrix4x4 Result(*this);
+FORCEINLINE Matrix4x4 Matrix4x4::operator*(const float & Value) const {
+	Matrix4x4 Result(*this);
 
 	Result.m0 *= Value;
 	Result.m1 *= Value;
@@ -239,8 +239,8 @@ FORCEINLINE FMatrix4x4 FMatrix4x4::operator*(const float & Value) const {
 	return Result;
 }
 
-FORCEINLINE FMatrix4x4 FMatrix4x4::operator/(const float & Value) const {
-	FMatrix4x4 Result(*this);
+FORCEINLINE Matrix4x4 Matrix4x4::operator/(const float & Value) const {
+	Matrix4x4 Result(*this);
 
 	Result.m0 /= Value;
 	Result.m1 /= Value;
@@ -250,6 +250,6 @@ FORCEINLINE FMatrix4x4 FMatrix4x4::operator/(const float & Value) const {
 	return Result;
 }
 
-inline const float * FMatrix4x4::PointerToValue(void) const {
+inline const float * Matrix4x4::PointerToValue(void) const {
 	return &m0[0];
 }

@@ -35,6 +35,6 @@
 
 #include <vector>
 template<class T>
-using SArray = std::vector<T>;
+using TArray = std::vector<T>;
 
-#include "..\include\SCoreTypes.h"
+#include "..\include\CoreTypes.h"

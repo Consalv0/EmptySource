@@ -1,6 +1,6 @@
 #pragma once
 
-class SShader {
+class Shader {
 private:
 	std::wstring FilePath;
 	std::string VertexShaderCode;
@@ -21,8 +21,8 @@ private:
 	bool LinkProgram();
 public:
 
-	SShader();
-	SShader(std::wstring FilePath);
+	Shader();
+	Shader(std::wstring FilePath);
 
 	//* Get the location id of a uniform variable in this shader
 	unsigned int GetLocationID(const char* LocationName) const;

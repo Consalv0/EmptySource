@@ -2,7 +2,7 @@
 
 typedef std::map<std::fstream*, std::wstring> FileStringMap;
 
-class SFileManager {
+class FileManager {
 private:
 	static FileStringMap Files;
 

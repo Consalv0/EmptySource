@@ -34,6 +34,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{81659dac-8b3c-41ea-9e4d-f2ccd577285b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\Math">
+      <UniqueIdentifier>{3fbef7f1-3104-42e9-ac93-e7951c99cb19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\External\GLFW\glfw3.h">
@@ -48,69 +51,69 @@
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h">
       <Filter>Header Files\External\GLAD</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SWindow.h">
+    <ClInclude Include="Source\EmptySource\include\Window.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SApplication.h">
+    <ClInclude Include="Source\EmptySource\include\Mesh.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SMath.h">
+    <ClInclude Include="Source\EmptySource\include\Shader.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FVector2.h">
+    <ClInclude Include="Source\EmptySource\include\FileManager.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FVector3.h">
+    <ClInclude Include="Source\EmptySource\include\CoreTypes.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FMatrix3x3.h">
+    <ClInclude Include="Source\EmptySource\include\Core.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FMatrix4x4.h">
+    <ClInclude Include="Source\EmptySource\include\Application.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FVector4.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SMesh.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\Math.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\IVector3.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SShader.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\Matrix4x4.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SCore.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\Vector2.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SFileManager.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\Vector3.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SCoreTypes.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Math\Vector4.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
       <Filter>Header Files\External\GLAD</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\SWindow.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EmptySource\source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\SApplication.cpp">
+    <ClCompile Include="Source\EmptySource\source\Application.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\SMesh.cpp">
+    <ClCompile Include="Source\EmptySource\source\FileManager.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\SShader.cpp">
+    <ClCompile Include="Source\EmptySource\source\Mesh.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\SFileManager.cpp">
+    <ClCompile Include="Source\EmptySource\source\Shader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Window.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -121,23 +124,23 @@
     <None Include="Data\Shaders\UnlitBase.vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Source\EmptySource\include\FVector2.inl">
-      <Filter>Header Files\Core</Filter>
+    <None Include="Source\EmptySource\include\Math\IntVector3.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\FMatrix3x3.inl">
-      <Filter>Header Files\Core</Filter>
+    <None Include="Source\EmptySource\include\Math\Matrix3x3.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\FMatrix4x4.inl">
-      <Filter>Header Files\Core</Filter>
+    <None Include="Source\EmptySource\include\Math\Matrix4x4.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\FVector3.inl">
-      <Filter>Header Files\Core</Filter>
+    <None Include="Source\EmptySource\include\Math\Vector2.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\FVector4.inl">
-      <Filter>Header Files\Core</Filter>
+    <None Include="Source\EmptySource\include\Math\Vector3.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\IVector3.inl">
-      <Filter>Header Files\Core</Filter>
+    <None Include="Source\EmptySource\include\Math\Vector4.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
   </ItemGroup>
 </Project>

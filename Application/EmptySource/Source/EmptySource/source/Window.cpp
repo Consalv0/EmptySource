@@ -1,9 +1,9 @@
 
-#include "EmptySource/include/SCore.h"
-#include "EmptySource/include/SMath.h"
-#include "..\include\SWindow.h"
+#include "..\include\Core.h"
+#include "..\include\Window.h"
+#include "..\include\Math\Math.h"
 
-SWindow::SWindow() {
+ApplicationWindow::ApplicationWindow() {
 	Window = NULL;
 	Name = "EmptySource Window";
 	Width = 1080;
@@ -12,19 +12,19 @@ SWindow::SWindow() {
 	FrameCount = 0;
 }
 
-int SWindow::GetWidth() {
+int ApplicationWindow::GetWidth() {
 	return Width;
 }
 
-int SWindow::GetHeight() {
+int ApplicationWindow::GetHeight() {
 	return Height;
 }
 
-float SWindow::AspectRatio() {
+float ApplicationWindow::AspectRatio() {
 	return (float)Width / (float)Height;
 }
 
-bool SWindow::Create() {
+bool ApplicationWindow::Create() {
 	GLFWmonitor* PrimaryMonitor = Mode == 1 ? glfwGetPrimaryMonitor() : nullptr;
 
 	Window = glfwCreateWindow(Width, Height, Name, PrimaryMonitor, nullptr);
@@ -34,7 +34,7 @@ bool SWindow::Create() {
 	return false;
 }
 
-bool SWindow::Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height) {
+bool ApplicationWindow::Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height) {
 	
 	if (IsCreated()) {
 		wprintf(L"Error :: Window Already Created!\n");
@@ -49,47 +49,47 @@ bool SWindow::Create(const char * Name, const unsigned int& Mode, const unsigned
 	return Create();
 }
 
-bool SWindow::ShouldClose() {
+bool ApplicationWindow::ShouldClose() {
 	return glfwWindowShouldClose(Window);
 }
 
-void SWindow::MakeContext() {
+void ApplicationWindow::MakeContext() {
 	glfwMakeContextCurrent(Window);
 
 	glfwSetWindowUserPointer(Window, this);
 
 	auto WindowResizeFunc = [](GLFWwindow* Handle, int Width, int Height) {
-		static_cast<SWindow*>(glfwGetWindowUserPointer(Handle))->OnWindowResized(Width, Height);
+		static_cast<ApplicationWindow*>(glfwGetWindowUserPointer(Handle))->OnWindowResized(Width, Height);
 	};
 	glfwSetWindowSizeCallback(Window, WindowResizeFunc);
 }
 
-bool SWindow::IsCreated() {
+bool ApplicationWindow::IsCreated() {
 	return Window != NULL;
 }
 
-unsigned long SWindow::GetFrameCount() {
+unsigned long ApplicationWindow::GetFrameCount() {
 	return FrameCount;
 }
 
-FVector2 SWindow::GetMousePosition() {
+Vector2 ApplicationWindow::GetMousePosition() {
 	double x, y;
 	glfwGetCursorPos(Window, &x, &y);
-	return FVector2(float(x), float(y));
+	return Vector2(float(x), float(y));
 }
 
-bool SWindow::GetKeyDown(unsigned int Key) {
+bool ApplicationWindow::GetKeyDown(unsigned int Key) {
 	return glfwGetKey(Window, Key) == GLFW_PRESS;
 }
 
-void SWindow::EndOfFrame() {
+void ApplicationWindow::EndOfFrame() {
 	glfwSwapBuffers(Window);
 	glfwPollEvents();
 
 	FrameCount++;
 }
 
-void SWindow::InitializeInputs() {
+void ApplicationWindow::InitializeInputs() {
 	if (Window == NULL) {
 		wprintf(L"Error :: Unable to set input mode!\n");
 		return;
@@ -98,14 +98,14 @@ void SWindow::InitializeInputs() {
 	glfwSetInputMode(Window, GLFW_STICKY_KEYS, GL_TRUE);
 }
 
-void SWindow::Terminate() {
+void ApplicationWindow::Terminate() {
 	if (Window != NULL) {
 		glfwDestroyWindow(Window);
 		wprintf(L"Window: \"%s\" closed!\n", FChar(Name));
 	}
 }
 
-void SWindow::OnWindowResized(int Width, int Height) {
+void ApplicationWindow::OnWindowResized(int Width, int Height) {
 	this->Width = Width;
 	this->Height = Height;
 	glViewport(0, 0, Width, Height);

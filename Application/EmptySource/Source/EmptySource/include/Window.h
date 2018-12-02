@@ -7,7 +7,7 @@
 /*
 ** Cointaina the properties and functions of a GLFW window
 */
-struct SWindow {
+struct ApplicationWindow {
 private:
 	//* GLFW Window
 	struct GLFWwindow* Window;
@@ -29,7 +29,7 @@ private:
 
 public:
 
-	SWindow();
+	ApplicationWindow();
 
 	//* Get the width in pixels of the window
 	int GetWidth();
@@ -55,7 +55,7 @@ public:
 	unsigned long GetFrameCount();
 
 	//* Get mouse position in screen coordinates relative to the upper left position of this window
-	struct FVector2 GetMousePosition();
+	struct Vector2 GetMousePosition();
 
 	//* Get key pressed
 	bool GetKeyDown(unsigned int Key);

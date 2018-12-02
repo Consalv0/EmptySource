@@ -1,10 +1,10 @@
 
-#include "..\include\SCore.h"
-#include "..\include\SFileManager.h"
+#include "..\include\Core.h"
+#include "..\include\FileManager.h"
 
-FileStringMap SFileManager::Files = FileStringMap();
+FileStringMap FileManager::Files = FileStringMap();
 
-std::fstream* SFileManager::Open(const std::wstring & FilePath) {
+std::fstream* FileManager::Open(const std::wstring & FilePath) {
 	std::fstream* NewStream(new std::fstream(FilePath));
 
 	if (NewStream->fail() || !NewStream->good() || !*NewStream) return NULL;
@@ -13,7 +13,7 @@ std::fstream* SFileManager::Open(const std::wstring & FilePath) {
 	return NewStream;
 }
 
-std::wstring SFileManager::GetFilePath(std::fstream * FileStream) {
+std::wstring FileManager::GetFilePath(std::fstream * FileStream) {
 
 	if (FileStream == NULL) {
 		wprintf(L"Error:: File stream not found");

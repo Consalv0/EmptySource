@@ -1,8 +1,8 @@
 #pragma once
 
-class SApplication {
+class CoreApplication {
 public:
-	struct SWindow* MainWindow;
+	struct ApplicationWindow* MainWindow;
 	bool bInitialized;
 
 private:
@@ -23,7 +23,7 @@ private:
 	
 public:
 
-	SApplication();
+	CoreApplication();
 
 	//* Prints the Graphics Version info of the videocard used and the GL used
 	static void PrintGraphicsInformation();
