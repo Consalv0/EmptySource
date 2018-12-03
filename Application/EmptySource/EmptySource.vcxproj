@@ -124,6 +124,8 @@
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />
     <ClInclude Include="Source\EmptySource\include\FileManager.h" />
+    <ClInclude Include="Source\EmptySource\include\FileStream.h" />
+    <ClInclude Include="Source\EmptySource\include\LogCore.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h" />
@@ -140,6 +142,7 @@
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\EmptySource\source\FileStream.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
     <ClCompile Include="Source\EmptySource\source\Application.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileManager.cpp" />

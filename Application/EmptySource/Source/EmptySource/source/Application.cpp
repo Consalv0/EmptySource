@@ -15,7 +15,7 @@ CoreApplication::CoreApplication() {
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
-		wprintf(L"Error :: Unable to load OpenGL functions!\n");
+		_LOG(LogCritical, L"Unable to load OpenGL functions!");
 		return false;
 	}
 
@@ -32,7 +32,7 @@ bool CoreApplication::InitializeWindow() {
 	MainWindow = new ApplicationWindow();
 
 	if (MainWindow->Create("EmptySource - Debug", ES_WINDOW_MODE_WINDOWED, 1366, 768)) {
-		wprintf(L"Error :: Application Window couldn't be created!\n");
+		_LOG(LogCritical, L"Application Window couldn't be created!");
 		glfwTerminate();
 		return false;
 	}
@@ -53,16 +53,16 @@ void CoreApplication::PrintGraphicsInformation() {
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	wprintf(L"GC Vendor            : %s\n", FChar((const char*)vendor));
-	wprintf(L"GC Renderer          : %s\n", FChar((const char*)vendor));
-	wprintf(L"GL Version (string)  : %s\n", FChar((const char*)version));
-	wprintf(L"GL Version (integer) : %d.%d\n", major, minor);
-	wprintf(L"GLSL Version         : %s\n", FChar((const char*)glslVersion));
+	_LOG(Log, L"GC Vendor            : %s", ToChar((const char*)vendor));
+	_LOG(Log, L"GC Renderer          : %s", ToChar((const char*)vendor));
+	_LOG(Log, L"GL Version (string)  : %s", ToChar((const char*)version));
+	_LOG(Log, L"GL Version (integer) : %d.%d", major, minor);
+	_LOG(Log, L"GLSL Version         : %s\n", ToChar((const char*)glslVersion));
 }
 
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
-		wprintf(L"Error :: Failed to initialize GLFW\n");
+		_LOG(LogCritical, L"Failed to initialize GLFW\n");
 		return false;
 	}
 
@@ -143,7 +143,11 @@ void CoreApplication::MainLoop() {
 		);
 
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
-		EyePosition = Vector3(sinf(float(CursorPosition.x) * 0.01F) * 2, cosf(float(CursorPosition.y) * 0.01F) * 4, cosf(float(CursorPosition.y) * 0.01F) * 4);
+		EyePosition = Vector3(
+			sinf(float(CursorPosition.x) * 0.01F) * 2,
+			cosf(float(CursorPosition.y) * 0.01F) * 4,
+			cosf(float(CursorPosition.y) * 0.01F) * 4
+		);
 
 		// Camera rotation, position Matrix
 		ViewMatrix = Matrix4x4::LookAt(
@@ -192,7 +196,7 @@ void CoreApplication::MainLoop() {
 		glBindVertexArray(0);
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_I)) 
-			wprintf(L"Frame Count (%i), Mesh Instances (%i)\n", MainWindow->GetFrameCount(), (int)Matrices.size());
+			_LOG(LogDebug, L"Frame Count (%i), Mesh Instances (%i)", MainWindow->GetFrameCount(), (int)Matrices.size());
 
 		MainWindow->EndOfFrame();
 
@@ -202,7 +206,7 @@ void CoreApplication::MainLoop() {
 }
 
 void CoreApplication::GLFWError(int ErrorID, const char* Description) {
-	wprintf(L"Error:: %s", FChar(Description));
+	_LOG(LogError, L"%s", ToChar(Description));
 }
 
 void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
@@ -210,29 +214,19 @@ void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GL
 	// ignore non-significant error/warning codes
 	if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;
 
-	std::wcout << L"Error:: ";
+	const char* ErrorPrefix = "";
 
-	switch (ErrorSource)
-	{
-	case GL_DEBUG_SOURCE_API:             std::wcout << L"API"; break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::wcout << L"SYSTEM"; break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER: std::wcout << L"SHADER_COMPILER"; break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::wcout << L"THIRD_PARTY"; break;
-	case GL_DEBUG_SOURCE_APPLICATION:     std::wcout << L"APPLICATION"; break;
-	case GL_DEBUG_SOURCE_OTHER:           std::wcout << L"OTHER"; break;
-	} std::wcout << L"|";
-
-	switch (ErrorType)
-	{
-	case GL_DEBUG_TYPE_ERROR:               std::wcout << L"ERROR"; break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::wcout << L"DEPRECATED"; break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::wcout << L"UNDEFINED"; break;
-	case GL_DEBUG_TYPE_PORTABILITY:         std::wcout << L"PORTABILITY"; break;
-	case GL_DEBUG_TYPE_PERFORMANCE:         std::wcout << L"PERFORMANCE"; break;
-	case GL_DEBUG_TYPE_MARKER:              std::wcout << L"MARKER"; break;
-	case GL_DEBUG_TYPE_PUSH_GROUP:          std::wcout << L"PUSH_GROUP"; break;
-	case GL_DEBUG_TYPE_POP_GROUP:           std::wcout << L"POP_GROUP"; break;
-	case GL_DEBUG_TYPE_OTHER:               std::wcout << L"OTHER"; break;
+	switch (ErrorType) {
+		case GL_DEBUG_TYPE_ERROR:               ErrorPrefix = "error";       break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = "deprecaated";  break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ErrorPrefix = "undefined";   break;
+		case GL_DEBUG_TYPE_PORTABILITY:         ErrorPrefix = "portability"; break;
+		case GL_DEBUG_TYPE_PERFORMANCE:         ErrorPrefix = "performance"; break;
+		case GL_DEBUG_TYPE_MARKER:              ErrorPrefix = "marker";      break;
+		case GL_DEBUG_TYPE_PUSH_GROUP:          ErrorPrefix = "pushgroup";  break;
+		case GL_DEBUG_TYPE_POP_GROUP:           ErrorPrefix = "popgroup";   break;
+		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = "other";       break;
 	}
-	std::wcout << L"(" << ErrorID << L")\n└> " << ErrorMessage << std::endl;
+	
+	_LOG(LogError, L"<%s>(%i) %s", ToChar(ErrorPrefix), ErrorID, ToChar(ErrorMessage));
 }

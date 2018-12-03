@@ -16,15 +16,13 @@ extern "C" {
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT);
 
-	wprintf(L"Initalizing Application:\n");
+	_LOG(Log, L"Initalizing Application:\n");
 	Application.Initalize();
-	wprintf(L"...............\n");
 	Application.PrintGraphicsInformation();
-	wprintf(L"...............\n");
 
 	Application.MainLoop();
 	Application.Close();
 
-	wprintf(L"\nPress any key to close...\n");
+	_LOG(Log, L"Press any key to close...");
 	_getch();
 }

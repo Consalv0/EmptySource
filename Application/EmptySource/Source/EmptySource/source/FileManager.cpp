@@ -1,30 +1,21 @@
 
+#include <algorithm>
 #include "..\include\Core.h"
 #include "..\include\FileManager.h"
 
-FileStringMap FileManager::Files = FileStringMap();
+FileList FileManager::Files = FileList();
 
-std::fstream* FileManager::Open(const std::wstring & FilePath) {
-	std::fstream* NewStream(new std::fstream(FilePath));
+FileStream* FileManager::Open(const WString & FilePath) {
+	FileList::iterator Found = std::find_if(Files.begin(), Files.end(), [FilePath](FileStream* & File)
+		-> bool { return File->GetPath() == FilePath; }
+	);
+	
+	if (Found != Files.end() && (*Found)->IsValid()) return *Found;
 
-	if (NewStream->fail() || !NewStream->good() || !*NewStream) return NULL;
+	FileStream* NewStream = new FileStream(FilePath);
 
-	Files[NewStream] = FilePath;
+	if (!NewStream->IsValid()) return NULL;
+
+	Files.push_back(NewStream);
 	return NewStream;
-}
-
-std::wstring FileManager::GetFilePath(std::fstream * FileStream) {
-
-	if (FileStream == NULL) {
-		wprintf(L"Error:: File stream not found");
-		return L"";
-	}
-
-	FileStringMap::const_iterator Found = Files.find(FileStream);
-
-	if (Found != Files.end()) return (*Found).second;
-	else {
-		wprintf(L"Error:: File stream not found");
-		return L"";
-	}
 }

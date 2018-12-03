@@ -29,8 +29,9 @@ Mesh::Mesh(
 
 Mesh::Mesh(
 	const MeshTriangles triangles, const MeshVector3D vertices,
-	const MeshVector3D normals, const MeshVector3D tangents, const MeshUVs uv0, const MeshColors colors) 
-	
+	const MeshVector3D normals, const MeshVector3D tangents, 
+	const MeshUVs uv0, const MeshColors colors) 
+
 	: Mesh(triangles, vertices, normals, tangents, uv0, uv0, colors)
 {
 }

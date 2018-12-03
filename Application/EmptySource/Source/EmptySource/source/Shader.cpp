@@ -7,7 +7,8 @@ bool Shader::Compile() {
 	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	// Compile Vertex Shader
-	wprintf(L"Compiling shader program '%s'\n", FilePath.c_str());
+	_LOG(Log, L"Compiling shader program '%s'", FilePath.c_str());
+
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShader, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShader);
@@ -33,34 +34,22 @@ bool Shader::Compile() {
 	return true;
 }
 
-bool Shader::ReadStreams(std::fstream * VertexStream, std::fstream * FragmentStream) {
+bool Shader::ReadStreams(FileStream* VertexStream, FileStream* FragmentStream) {
 	// ReadStreams the Vertex Shader code from the file
-	if (VertexStream != NULL && VertexStream->is_open()) {
-		std::stringstream sstr;
-		try {
-			sstr << VertexStream->rdbuf();
-		} catch (...) {
-			return false;
-		}
-		VertexShaderCode = sstr.str();
-		VertexStream->close();
+	if (VertexStream != NULL && VertexStream->IsValid()) {
+		VertexShaderCode = VertexStream->ReadStream().str();
+		VertexStream->Close();
 	} else {
-		wprintf(L"Impossible to open \"%s\". Are you in the right directory ?\n", FileManager::GetFilePath(VertexStream).c_str());
+		_LOG(LogWarning, L"Impossible to open \"%s\". Are you in the right directory ?", VertexStream->GetPath().c_str());
 		return false;
 	}
 
 	// ReadStreams the Fragment Shader code from the file
-	if (FragmentStream != NULL && FragmentStream->is_open()) {
-		std::stringstream sstr;
-		try {
-			sstr << FragmentStream->rdbuf();
-		} catch (...) {
-			return false;
-		}
-		FragmentShaderCode = sstr.str();
-		FragmentStream->close();
+	if (FragmentStream != NULL && FragmentStream->IsValid()) {
+		FragmentShaderCode = FragmentStream->ReadStream().str();
+		FragmentStream->Close();
 	} else {
-		wprintf(L"Impossible to open \"%s\". Are you in the right directory ?\n", FileManager::GetFilePath(FragmentStream).c_str());
+		_LOG(LogWarning, L"Impossible to open \"%s\". Are you in the right directory ?", FragmentStream->GetPath().c_str());
 		return false;
 	}
 
@@ -71,7 +60,7 @@ bool Shader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	wprintf(L"└>Linking shader program '%s'\n", FilePath.c_str());
+	_LOG(Log, L"└>Linking shader program '%s'", FilePath.c_str());
 	ShaderProgram = glCreateProgram();
 	glAttachShader(ShaderProgram, VertexShader);
 	glAttachShader(ShaderProgram, FragmentShader);
@@ -82,7 +71,7 @@ bool Shader::LinkProgram() {
 	if (InfoLogLength > 0) {
 		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		wprintf(L"%s\n", FChar((const char*)&ProgramErrorMessage[0]));
+		_LOG(NoLog, L"'%s'", ToChar((const char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 
@@ -90,7 +79,7 @@ bool Shader::LinkProgram() {
 }
 
 Shader::Shader() {
-	IsLinked = false;
+	bIsLinked = false;
 	VertexShader = 0;
 	FragmentShader = 0; 
 	ShaderProgram = 0;
@@ -99,17 +88,18 @@ Shader::Shader() {
 
 Shader::Shader(std::wstring ShaderNamePath) {
 	FilePath = ShaderNamePath;
+	bool bIsValid = true;
 
-	IsLinked = ReadStreams(
+	bIsValid = ReadStreams(
 		FileManager::Open(FilePath + L".vertex.glsl"),
 		FileManager::Open(FilePath + L".fragment.glsl")
 	);
-	if (IsLinked == false) return;
+	if (bIsValid == false) return;
 
-	IsLinked &= Compile();
-	IsLinked &= LinkProgram();
+	Compile();
+	bIsLinked = LinkProgram();
 
-	if (IsLinked == false) {
+	if (bIsLinked == false) {
 		glDeleteProgram(ShaderProgram);
 		glDetachShader(ShaderProgram, VertexShader);
 		glDetachShader(ShaderProgram, FragmentShader);
@@ -120,9 +110,13 @@ Shader::Shader(std::wstring ShaderNamePath) {
 }
 
 unsigned int Shader::GetLocationID(const char * LocationName) const {
-	return IsLinked ? glGetUniformLocation(ShaderProgram, LocationName) : 0;
+	return bIsLinked ? glGetUniformLocation(ShaderProgram, LocationName) : 0;
 }
 
 void Shader::Use() const {
-	if (IsLinked) glUseProgram(ShaderProgram);
+	if (IsValid()) glUseProgram(ShaderProgram);
+}
+
+bool Shader::IsValid() const {
+	return bIsLinked;
 }
