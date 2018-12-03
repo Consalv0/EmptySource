@@ -1,12 +1,13 @@
 #pragma once
 
-typedef std::map<std::fstream*, std::wstring> FileStringMap;
+#include "..\include\FileStream.h"
+
+typedef std::vector<FileStream*> FileList;
 
 class FileManager {
 private:
-	static FileStringMap Files;
+	static FileList Files;
 
 public:
-	static std::fstream* Open(const std::wstring& FilePath);
-	static std::wstring GetFilePath(std::fstream* FileStream);
+	static FileStream* Open(const WString& FilePath);
 };

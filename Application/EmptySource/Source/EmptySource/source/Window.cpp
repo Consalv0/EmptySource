@@ -29,7 +29,7 @@ bool ApplicationWindow::Create() {
 
 	Window = glfwCreateWindow(Width, Height, Name, PrimaryMonitor, nullptr);
 
-	wprintf(L"Window: \"%s\" initialized!\n", FChar(Name));
+	_LOG(Log, L"Window: \"%s\" initialized!", ToChar(Name));
 
 	return false;
 }
@@ -37,7 +37,7 @@ bool ApplicationWindow::Create() {
 bool ApplicationWindow::Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height) {
 	
 	if (IsCreated()) {
-		wprintf(L"Error :: Window Already Created!\n");
+		_LOG(LogError, L"Window Already Created!");
 		return false;
 	}
 
@@ -91,7 +91,7 @@ void ApplicationWindow::EndOfFrame() {
 
 void ApplicationWindow::InitializeInputs() {
 	if (Window == NULL) {
-		wprintf(L"Error :: Unable to set input mode!\n");
+		_LOG(LogError, L"Unable to set input mode!");
 		return;
 	}
 	// Ensure we can capture the escape key being pressed below
@@ -101,7 +101,7 @@ void ApplicationWindow::InitializeInputs() {
 void ApplicationWindow::Terminate() {
 	if (Window != NULL) {
 		glfwDestroyWindow(Window);
-		wprintf(L"Window: \"%s\" closed!\n", FChar(Name));
+		_LOG(Log, L"Window: \"%s\" closed!", ToChar(Name));
 	}
 }
 

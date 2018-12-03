@@ -52,7 +52,8 @@ public:
 	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshColors Colors);
 	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshColors Colors);
 	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
-	
+	 
+	//* *Creates a cube mesh of size 1 with pivot in the center
 	static Mesh BuildCube();
 
 	//* *Create or Bind Vertex Array Object

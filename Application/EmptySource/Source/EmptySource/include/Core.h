@@ -38,3 +38,4 @@ template<class T>
 using TArray = std::vector<T>;
 
 #include "..\include\CoreTypes.h"
+#include "..\include\LogCore.h"
