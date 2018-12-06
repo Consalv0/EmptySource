@@ -2,7 +2,7 @@
 
 class IIdentifier {
 public: 
-	virtual size_t GetIdentifier() = 0;
+	virtual size_t GetIdentifier();
 
 	IIdentifier() {
 		IdentifierNum = CurrentIdentifier++;

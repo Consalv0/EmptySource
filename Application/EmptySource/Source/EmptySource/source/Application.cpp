@@ -93,7 +93,8 @@ void CoreApplication::Close() {
 void CoreApplication::MainLoop() {
 	///// Temporal Section DELETE LATER //////
 
-	Space NewSpace, OtherNewSpace;
+	Space NewSpace; Space OtherNewSpace(NewSpace);
+	Object* GObject = Object::MakeObject(Space::GetFirstSpace());
 	Mesh TemporalMesh = Mesh::BuildCube();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////

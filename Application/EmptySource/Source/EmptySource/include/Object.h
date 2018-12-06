@@ -1,8 +1,18 @@
 #pragma once
 
-class Object {
+#include "../include/IIdentifier.h"
+
+class Space;
+
+class Object : public IIdentifier {
 private:
+	Space* SpaceIn;
+
+	Object();
 
 public:
-	virtual void DeletePrepare();
+
+	static Object* MakeObject(Space* space);
+
+	virtual void PrepareDelete();
 };
