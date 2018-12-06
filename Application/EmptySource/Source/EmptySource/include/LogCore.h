@@ -14,11 +14,14 @@ constexpr unsigned char    LogDebug = 0x16;
 
 static unsigned char LogFilter = Log | LogWarning | LogError | LogCritical | LogDebug;
 
+typedef std::string String;
+typedef char Char;
 typedef std::wstring WString;
 typedef wchar_t WChar;
 
-#define ToString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING)
-#define ToChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING).c_str()
+#define ToWString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING)
+#define ToWChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING).c_str()
+#define ToString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING)
 
 inline WString LogPrefix(unsigned char Filter, WString Text) {
 	WString Prefix;

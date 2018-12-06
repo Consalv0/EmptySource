@@ -29,7 +29,7 @@ bool ApplicationWindow::Create() {
 
 	Window = glfwCreateWindow(Width, Height, Name, PrimaryMonitor, nullptr);
 
-	_LOG(Log, L"Window: \"%s\" initialized!", ToChar(Name));
+	_LOG(Log, L"Window: \"%s\" initialized!", ToWChar(Name));
 
 	return false;
 }
@@ -101,7 +101,7 @@ void ApplicationWindow::InitializeInputs() {
 void ApplicationWindow::Terminate() {
 	if (Window != NULL) {
 		glfwDestroyWindow(Window);
-		_LOG(Log, L"Window: \"%s\" closed!", ToChar(Name));
+		_LOG(Log, L"Window: \"%s\" closed!", ToWChar(Name));
 	}
 }
 

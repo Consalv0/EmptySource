@@ -2,7 +2,7 @@
 
 struct FileStream {
 private:
-	std::fstream* Stream;
+	std::wfstream* Stream;
 	WString Path;
 
 public:
@@ -12,7 +12,7 @@ public:
 
 	WString GetExtension() const;
 	WString GetPath() const;
-	std::stringstream ReadStream() const;
+	std::wstringstream ReadStream() const;
 	bool IsValid() const;
 
 	bool Open();

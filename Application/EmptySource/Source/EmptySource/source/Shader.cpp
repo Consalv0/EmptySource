@@ -6,10 +6,11 @@ bool Shader::Compile() {
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-	// Compile Vertex Shader
 	_LOG(Log, L"Compiling shader program '%s'", FilePath.c_str());
 
-	char const * VertexSourcePointer = VertexShaderCode.c_str();
+	// Compile Vertex Shader
+	String VertexShaderCode = ToString(FileManager::ReadStream(VertexStream));
+	const Char * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShader, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShader);
 
@@ -21,35 +22,14 @@ bool Shader::Compile() {
 	}
 
 	// Compile Fragment Shader
-	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
+	String FragmentShaderCode = ToString(FileManager::ReadStream(FragmentStream));
+	const Char * FragmentSourcePointer = FragmentShaderCode.c_str();
 	glShaderSource(FragmentShader, 1, &FragmentSourcePointer, NULL);
 	glCompileShader(FragmentShader);
 
 	// Check Fragment Shader
 	glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &Result);
 	if (Result <= 0) {
-		return false;
-	}
-
-	return true;
-}
-
-bool Shader::ReadStreams(FileStream* VertexStream, FileStream* FragmentStream) {
-	// ReadStreams the Vertex Shader code from the file
-	if (VertexStream != NULL && VertexStream->IsValid()) {
-		VertexShaderCode = VertexStream->ReadStream().str();
-		VertexStream->Close();
-	} else {
-		_LOG(LogWarning, L"Impossible to open \"%s\". Are you in the right directory ?", VertexStream->GetPath().c_str());
-		return false;
-	}
-
-	// ReadStreams the Fragment Shader code from the file
-	if (FragmentStream != NULL && FragmentStream->IsValid()) {
-		FragmentShaderCode = FragmentStream->ReadStream().str();
-		FragmentStream->Close();
-	} else {
-		_LOG(LogWarning, L"Impossible to open \"%s\". Are you in the right directory ?", FragmentStream->GetPath().c_str());
 		return false;
 	}
 
@@ -71,7 +51,7 @@ bool Shader::LinkProgram() {
 	if (InfoLogLength > 0) {
 		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		_LOG(NoLog, L"'%s'", ToChar((const char*)&ProgramErrorMessage[0]));
+		_LOG(NoLog, L"'%s'", ToWChar((const char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 
@@ -86,15 +66,13 @@ Shader::Shader() {
 	FilePath = L"";
 }
 
-Shader::Shader(std::wstring ShaderNamePath) {
+Shader::Shader(WString ShaderNamePath) {
 	FilePath = ShaderNamePath;
-	bool bIsValid = true;
 
-	bIsValid = ReadStreams(
-		FileManager::Open(FilePath + L".vertex.glsl"),
-		FileManager::Open(FilePath + L".fragment.glsl")
-	);
-	if (bIsValid == false) return;
+	VertexStream = FileManager::Open(FilePath + L".vertex.glsl");
+	FragmentStream = FileManager::Open(FilePath + L".fragment.glsl");
+
+	if (VertexStream == NULL || FragmentStream == NULL) return;
 
 	Compile();
 	bIsLinked = LinkProgram();
@@ -109,8 +87,15 @@ Shader::Shader(std::wstring ShaderNamePath) {
 	}
 }
 
-unsigned int Shader::GetLocationID(const char * LocationName) const {
+unsigned int Shader::GetLocationID(const Char * LocationName) const {
 	return bIsLinked ? glGetUniformLocation(ShaderProgram, LocationName) : 0;
+}
+
+void Shader::Unload() {
+	bIsLinked = false;
+	glDeleteShader(VertexShader);
+	glDeleteShader(FragmentShader);
+	glDeleteProgram(ShaderProgram);
 }
 
 void Shader::Use() const {
