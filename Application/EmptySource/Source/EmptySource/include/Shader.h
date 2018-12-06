@@ -4,17 +4,14 @@ struct FileStream;
 
 class Shader {
 private:
-	std::wstring FilePath;
-	std::string VertexShaderCode;
-	std::string FragmentShaderCode;
+	WString FilePath;
+	FileStream* VertexStream;
+	FileStream* FragmentStream;
 	unsigned int VertexShader;
 	unsigned int FragmentShader;
 	unsigned int ShaderProgram;
 
 	bool bIsLinked;
-
-	//* ReadStreams the file streams of the shader code
-	bool ReadStreams(FileStream* VertexStream, FileStream* FragmentStream);
 
 	//* Create and compile our GLSL shader program from text files
 	bool Compile();
@@ -31,10 +28,13 @@ public:
 	* For example, if the path ../Base this command will search for Base.vertex.glsl 
 	* and Base.fragment.glsl files. 
 	*/
-	Shader(std::wstring FilePath);
+	Shader(WString FilePath);
 
 	//* Get the location id of a uniform variable in this shader
-	unsigned int GetLocationID(const char* LocationName) const;
+	unsigned int GetLocationID(const Char* LocationName) const;
+
+	//* Unloads the shader program
+	void Unload();
 
 	//* Prepare OpenGL to use this shader
 	void Use() const;

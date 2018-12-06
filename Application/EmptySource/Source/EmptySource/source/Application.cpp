@@ -53,11 +53,11 @@ void CoreApplication::PrintGraphicsInformation() {
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	_LOG(Log, L"GC Vendor            : %s", ToChar((const char*)vendor));
-	_LOG(Log, L"GC Renderer          : %s", ToChar((const char*)vendor));
-	_LOG(Log, L"GL Version (string)  : %s", ToChar((const char*)version));
+	_LOG(Log, L"GC Vendor            : %s", ToWChar((const char*)vendor));
+	_LOG(Log, L"GC Renderer          : %s", ToWChar((const char*)vendor));
+	_LOG(Log, L"GL Version (string)  : %s", ToWChar((const char*)version));
 	_LOG(Log, L"GL Version (integer) : %d.%d", major, minor);
-	_LOG(Log, L"GLSL Version         : %s\n", ToChar((const char*)glslVersion));
+	_LOG(Log, L"GLSL Version         : %s\n", ToWChar((const char*)glslVersion));
 }
 
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
@@ -100,13 +100,13 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ProjectionMatrix;
 
 	Vector3 EyePosition = Vector3(2, 4, 4);
-
+	Vector3 LightPosition = Vector3();
 	// Camera rotation, position Matrix
 	Matrix4x4 ViewMatrix;
 
 	//* Create and compile our GLSL shader program from text files
-	// Create the shader
-	Shader UnlitBaseShader = Shader(L"Data\\Shaders\\UnlitBase");
+	Shader UnlitBaseShader = Shader(L"Data\\Shaders\\PBRBase");
+
 
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
@@ -120,6 +120,12 @@ void CoreApplication::MainLoop() {
 	// Get the ID of the uniforms
 	GLuint    ProjectionMatrixID = UnlitBaseShader.GetLocationID("_ProjectionMatrix");
 	GLuint          ViewMatrixID = UnlitBaseShader.GetLocationID("_ViewMatrix");
+	GLuint        ViewPositionID = UnlitBaseShader.GetLocationID("_ViewPosition");
+	GLuint     Lights1PositionID = UnlitBaseShader.GetLocationID("_Lights[0].Position");
+	GLuint    Lights1IntencityID = UnlitBaseShader.GetLocationID("_Lights[0].ColorIntencity");
+	GLuint   MaterialRoughnessID = UnlitBaseShader.GetLocationID("_Material.Roughness");
+	GLuint   MaterialMetalnessID = UnlitBaseShader.GetLocationID("_Material.Metalness");
+	GLuint       MaterialColorID = UnlitBaseShader.GetLocationID("_Material.SpecularColor");
 
 	//////////////////////////////////////////
 
@@ -156,8 +162,17 @@ void CoreApplication::MainLoop() {
 			Vector3(0, 1, 0)	// Up vector
 		);
 
-		glUniformMatrix4fv( ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
-		glUniformMatrix4fv(       ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
+		float MaterialMetalness = 0.01F;
+		float MaterialRoughness = 0.7F;
+
+		glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
+		glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
+		      glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
+		      glUniform3fv(   Lights1PositionID, 1,              LightPosition.PointerToValue() );
+			  glUniform3fv(  Lights1IntencityID, 1,     Vector3(200, 200, 200).PointerToValue() );
+			  glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
+			  glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
+			  glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
 
 		for (size_t i = 0; i < 20; i++) {
 			Matrices.push_back(
@@ -195,18 +210,29 @@ void CoreApplication::MainLoop() {
 
 		glBindVertexArray(0);
 
-		if (MainWindow->GetKeyDown(GLFW_KEY_I)) 
+		if (MainWindow->GetKeyDown(GLFW_KEY_I))
 			_LOG(LogDebug, L"Frame Count (%i), Mesh Instances (%i)", MainWindow->GetFrameCount(), (int)Matrices.size());
+
+		if (MainWindow->GetKeyDown(GLFW_KEY_W))
+			LightPosition += {0.1F, 0.1F, 0};
+		if (MainWindow->GetKeyDown(GLFW_KEY_S))
+			LightPosition -= {0.1F, 0.1F, 0};
+		if (MainWindow->GetKeyDown(GLFW_KEY_A))
+			LightPosition += {0, 0, 0.1F};
+		if (MainWindow->GetKeyDown(GLFW_KEY_D))
+			LightPosition -= {0, 0, 0.1F};
 
 		MainWindow->EndOfFrame();
 
 	} while (
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
+
+	UnlitBaseShader.Unload();
 }
 
 void CoreApplication::GLFWError(int ErrorID, const char* Description) {
-	_LOG(LogError, L"%s", ToChar(Description));
+	_LOG(LogError, L"%s", ToWChar(Description));
 }
 
 void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
@@ -228,5 +254,5 @@ void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GL
 		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = "other";       break;
 	}
 	
-	_LOG(LogError, L"<%s>(%i) %s", ToChar(ErrorPrefix), ErrorID, ToChar(ErrorMessage));
+	_LOG(LogError, L"<%s>(%i) %s", ToWChar(ErrorPrefix), ErrorID, ToWChar(ErrorMessage));
 }
