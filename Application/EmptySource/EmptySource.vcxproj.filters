@@ -99,6 +99,18 @@
     <ClInclude Include="Source\EmptySource\include\FileStream.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Space.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\IIdentifier.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Object.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\source\Object.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -123,6 +135,12 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\FileStream.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Space.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -150,6 +168,12 @@
     </None>
     <None Include="Source\EmptySource\include\Math\Vector4.inl">
       <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Data\Shaders\PBRBase.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\PBRBase.vertex.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

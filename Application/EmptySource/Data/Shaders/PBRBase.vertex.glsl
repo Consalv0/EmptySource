@@ -14,8 +14,9 @@ uniform mat4 _ViewMatrix;
 out mat4 ModelMatrix;
 out mat4 WorldNormalMatrix;
 
-out vec4 VertexPosition;
+out vec4 VertexPosition; 
 out vec3 NormalDirection;
+out vec3 TangentDirection;
 out vec2 UV0;
 out vec4 Color;
 

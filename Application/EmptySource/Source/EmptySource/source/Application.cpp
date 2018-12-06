@@ -7,11 +7,11 @@
 #include "..\include\Application.h"
 #include "..\include\Mesh.h"
 #include "..\include\Shader.h"
+#include "..\include\Object.h"
+#include "..\include\Space.h"
 
-CoreApplication::CoreApplication() {
-	MainWindow = NULL;
-	bInitialized = false;
-}
+ApplicationWindow* CoreApplication::MainWindow = NULL;
+bool CoreApplication::bInitialized = false;
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
@@ -93,6 +93,7 @@ void CoreApplication::Close() {
 void CoreApplication::MainLoop() {
 	///// Temporal Section DELETE LATER //////
 
+	Space NewSpace, OtherNewSpace;
 	Mesh TemporalMesh = Mesh::BuildCube();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
@@ -121,8 +122,10 @@ void CoreApplication::MainLoop() {
 	GLuint    ProjectionMatrixID = UnlitBaseShader.GetLocationID("_ProjectionMatrix");
 	GLuint          ViewMatrixID = UnlitBaseShader.GetLocationID("_ViewMatrix");
 	GLuint        ViewPositionID = UnlitBaseShader.GetLocationID("_ViewPosition");
-	GLuint     Lights1PositionID = UnlitBaseShader.GetLocationID("_Lights[0].Position");
-	GLuint    Lights1IntencityID = UnlitBaseShader.GetLocationID("_Lights[0].ColorIntencity");
+	GLuint     Lights0PositionID = UnlitBaseShader.GetLocationID("_Lights[0].Position");
+	GLuint    Lights0IntencityID = UnlitBaseShader.GetLocationID("_Lights[0].ColorIntencity");
+	GLuint     Lights1PositionID = UnlitBaseShader.GetLocationID("_Lights[1].Position");
+	GLuint    Lights1IntencityID = UnlitBaseShader.GetLocationID("_Lights[1].ColorIntencity");
 	GLuint   MaterialRoughnessID = UnlitBaseShader.GetLocationID("_Material.Roughness");
 	GLuint   MaterialMetalnessID = UnlitBaseShader.GetLocationID("_Material.Metalness");
 	GLuint       MaterialColorID = UnlitBaseShader.GetLocationID("_Material.SpecularColor");
@@ -150,9 +153,9 @@ void CoreApplication::MainLoop() {
 
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
 		EyePosition = Vector3(
-			sinf(float(CursorPosition.x) * 0.01F) * 2,
+			sinf(float(CursorPosition.x) * 0.01F) * 4,
 			cosf(float(CursorPosition.y) * 0.01F) * 4,
-			cosf(float(CursorPosition.y) * 0.01F) * 4
+			sinf(float(CursorPosition.y) * 0.01F) * 4
 		);
 
 		// Camera rotation, position Matrix
@@ -168,13 +171,15 @@ void CoreApplication::MainLoop() {
 		glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
 		glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
 		      glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
-		      glUniform3fv(   Lights1PositionID, 1,              LightPosition.PointerToValue() );
+		      glUniform3fv(   Lights0PositionID, 1,              LightPosition.PointerToValue() );
+			  glUniform3fv(  Lights0IntencityID, 1,     Vector3(200, 200, 200).PointerToValue() );
+		      glUniform3fv(   Lights1PositionID, 1,           (-LightPosition).PointerToValue() );
 			  glUniform3fv(  Lights1IntencityID, 1,     Vector3(200, 200, 200).PointerToValue() );
 			  glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
 			  glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
 			  glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
 
-		for (size_t i = 0; i < 20; i++) {
+		for (size_t i = 0; i < 100; i++) {
 			Matrices.push_back(
 				Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
 			);

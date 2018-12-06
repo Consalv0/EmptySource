@@ -50,6 +50,7 @@ public:
 
 	Mesh();
 	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshColors Colors);
+	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
 	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshColors Colors);
 	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
 	 

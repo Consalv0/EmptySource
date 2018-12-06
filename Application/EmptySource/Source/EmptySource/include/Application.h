@@ -2,10 +2,11 @@
 
 class CoreApplication {
 public:
-	struct ApplicationWindow* MainWindow;
-	bool bInitialized;
+	static struct ApplicationWindow* MainWindow;
 
 private:
+	static bool bInitialized;
+	
 	//* Error Callback related to GLFW
 	static void GLFWError(int ErrorID, const char* ErrorDescription);
 	
@@ -19,21 +20,19 @@ private:
 	static bool InitalizeGLAD();
 
 	//* Creates the main window for rendering
-	bool InitializeWindow();
+	static bool InitializeWindow();
 	
 public:
-
-	CoreApplication();
 
 	//* Prints the Graphics Version info of the videocard used and the GL used
 	static void PrintGraphicsInformation();
 
 	//* Initialize the application, it creates a window, a context and loads the OpenGL functions. Returns the error
-	void Initalize();
+	static void Initalize();
 	
 	//* Application Loop, draw is done here
-	void MainLoop();
+	static void MainLoop();
 
 	//* Terminates window, 
-	void Close();
+	static void Close();
 };

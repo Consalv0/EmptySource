@@ -27,6 +27,18 @@ Mesh::Mesh(
 	SetUpBuffers();
 }
 
+Mesh::Mesh(const MeshTriangles triangles, const MeshVector3D vertices, const MeshVector3D normals, const MeshUVs uv0, const MeshUVs uv1, const MeshColors colors) {
+	Triangles = triangles;
+	for (int vCount = 0; vCount < vertices.size(); vCount++) {
+		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount],  uv1[vCount], colors[vCount] }));
+	}
+
+	VertexArrayObject = 0;
+	ElementBuffer = 0;
+	VertexBuffer = 0;
+	SetUpBuffers();
+}
+
 Mesh::Mesh(
 	const MeshTriangles triangles, const MeshVector3D vertices,
 	const MeshVector3D normals, const MeshVector3D tangents, 
@@ -143,6 +155,43 @@ Mesh Mesh::BuildCube() {
 		{ 0.0F, -1.0F,  0.0F }, // 7
 		{ 0.0F, -1.0F,  0.0F }, // 8
 	};
+	static const MeshVector3D TemporalTengents{
+		// Front Face
+		{ 0.0F,  0.0F, -1.0F }, // 1
+		{ 0.0F,  0.0F, -1.0F }, // 2
+		{ 0.0F,  0.0F, -1.0F }, // 6
+		{ 0.0F,  0.0F, -1.0F }, // 3
+
+		// Back Face		 
+		{ 0.0F,  0.0F,  1.0F }, // 5
+		{ 0.0F,  0.0F,  1.0F }, // 4
+		{ 0.0F,  0.0F,  1.0F }, // 8
+		{ 0.0F,  0.0F,  1.0F }, // 7
+
+		// Right Face		 
+		{ 1.0F,  0.0F,  0.0F }, // 1
+		{ 1.0F,  0.0F,  0.0F }, // 3
+		{ 1.0F,  0.0F,  0.0F }, // 4
+		{ 1.0F,  0.0F,  0.0F }, // 8
+
+		// Left Face		 
+		{-1.0F,  0.0F,  0.0F }, // 5
+		{-1.0F,  0.0F,  0.0F }, // 7
+		{-1.0F,  0.0F,  0.0F }, // 2
+		{-1.0F,  0.0F,  0.0F }, // 6
+
+		// Up Face			 
+		{ 0.0F,  1.0F,  0.0F }, // 5
+		{ 0.0F,  1.0F,  0.0F }, // 4
+		{ 0.0F,  1.0F,  0.0F }, // 3
+		{ 0.0F,  1.0F,  0.0F }, // 6
+
+		// Down Face		 
+		{ 0.0F, -1.0F,  0.0F }, // 2
+		{ 0.0F, -1.0F,  0.0F }, // 1
+		{ 0.0F, -1.0F,  0.0F }, // 7
+		{ 0.0F, -1.0F,  0.0F }, // 8
+	};
 	static const MeshUVs      TemporalTextureCoords{
 		// Front Face
 		{ 1.0F, -1.0F }, // 1
@@ -218,7 +267,7 @@ Mesh Mesh::BuildCube() {
 		{ 1.0F, 1.0F, 1.0F, 1.0F },
 	};
 
-	TemporalMesh = Mesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTextureCoords, TemporalColors);
+	TemporalMesh = Mesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTengents, TemporalTextureCoords, TemporalColors);
 
 	return TemporalMesh;
 }

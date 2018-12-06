@@ -11,17 +11,16 @@ extern "C" {
 }
 #endif
 
- CoreApplication Application;
 
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT);
 
 	_LOG(Log, L"Initalizing Application:\n");
-	Application.Initalize();
-	Application.PrintGraphicsInformation();
+	CoreApplication::Initalize();
+	CoreApplication::PrintGraphicsInformation();
 
-	Application.MainLoop();
-	Application.Close();
+	CoreApplication::MainLoop();
+	CoreApplication::Close();
 
 	_LOG(Log, L"Press any key to close...");
 	_getch();
