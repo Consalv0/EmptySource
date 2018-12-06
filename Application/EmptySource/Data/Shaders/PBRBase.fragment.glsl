@@ -7,7 +7,7 @@ uniform vec3 _ViewPosition;
 uniform struct LightInfo {
 	vec3 Position;        // Light Position in camera coords.
 	vec3 ColorIntencity;  // Light Color and Intensity
-} _Lights[1];
+} _Lights[2];
 
 uniform struct MaterialInfo {
   float Roughness;     // Roughness
@@ -20,6 +20,7 @@ in mat4 WorldNormalMatrix;
 
 in vec4 VertexPosition;
 in vec3 NormalDirection;
+in vec3 TangentDirection;
 in vec2 UV0;
 in vec4 Color;
 
@@ -105,7 +106,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
 void main() {  
   vec3 Sum = vec3(0);
 
-  for( int i = 0; i < 1; i++ ) {
+  for( int i = 0; i < 2; i++ ) {
     Sum += MicrofacetModel(i, VertexPosition.xyz, NormalDirection);
   }
 

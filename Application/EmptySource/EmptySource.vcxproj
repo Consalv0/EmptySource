@@ -125,6 +125,7 @@
     <ClInclude Include="Source\EmptySource\include\Application.h" />
     <ClInclude Include="Source\EmptySource\include\FileManager.h" />
     <ClInclude Include="Source\EmptySource\include\FileStream.h" />
+    <ClInclude Include="Source\EmptySource\include\IIdentifier.h" />
     <ClInclude Include="Source\EmptySource\include\LogCore.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
@@ -133,9 +134,12 @@
     <ClInclude Include="Source\EmptySource\include\Math\Vector2.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector4.h" />
+    <ClInclude Include="Source\EmptySource\include\Object.h" />
     <ClInclude Include="Source\EmptySource\include\Shader.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
+    <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
+    <ClInclude Include="Source\EmptySource\source\Object.cpp" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
@@ -143,15 +147,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EmptySource\source\FileStream.cpp" />
+    <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
     <ClCompile Include="Source\EmptySource\source\Application.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileManager.cpp" />
     <ClCompile Include="Source\EmptySource\source\Mesh.cpp" />
     <ClCompile Include="Source\EmptySource\source\Shader.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
     <ClCompile Include="Source\External\GLAD\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Shaders\PBRBase.fragment.glsl" />
+    <None Include="Data\Shaders\PBRBase.vertex.glsl" />
     <None Include="Data\Shaders\UnlitBase.fragment.glsl" />
     <None Include="Data\Shaders\UnlitBase.vertex.glsl" />
     <None Include="Source\EmptySource\include\Math\IntVector3.inl" />
