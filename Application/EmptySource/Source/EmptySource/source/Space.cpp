@@ -1,5 +1,7 @@
-#include "../include/Space.h"
-#include "../include/Object.h"
+
+#include "..\include\LogCore.h"
+#include "..\include\Space.h"
+#include "..\include\Object.h"
 
 TDictionary<size_t, Space*> Space::AllSpaces = TDictionary<size_t, Space*>();
 
@@ -18,6 +20,14 @@ size_t Space::GetIdentifier() {
 
 Space * Space::GetFirstSpace() {
 	return AllSpaces.begin()->second;
+}
+
+Object * Space::MakeObject() {
+	Object* NewObject = new Object();
+	NewObject->SpaceIn = this;
+	NewObject->InternalName = L"object_" + std::to_wstring(NewObject->IdentifierNum);
+	Add(NewObject);
+	return NewObject;
 }
 
 void Space::DestroyAllObjects() {

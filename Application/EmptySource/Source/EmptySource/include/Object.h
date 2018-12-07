@@ -1,18 +1,21 @@
 #pragma once
 
+#include "../include/Space.h"
 #include "../include/IIdentifier.h"
-
-class Space;
 
 class Object : public IIdentifier {
 private:
+	friend class Space;
+
+	WString InternalName;
+
 	Space* SpaceIn;
 
 	Object();
 
 public:
 
-	static Object* MakeObject(Space* space);
-
 	virtual void PrepareDelete();
+
+	WString GetName();
 };
