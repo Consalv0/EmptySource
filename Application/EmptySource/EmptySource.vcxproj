@@ -139,7 +139,6 @@
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
-    <ClInclude Include="Source\EmptySource\source\Object.cpp" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
@@ -152,6 +151,7 @@
     <ClCompile Include="Source\EmptySource\source\Application.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileManager.cpp" />
     <ClCompile Include="Source\EmptySource\source\Mesh.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Object.cpp" />
     <ClCompile Include="Source\EmptySource\source\Shader.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />

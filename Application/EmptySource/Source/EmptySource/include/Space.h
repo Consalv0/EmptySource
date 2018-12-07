@@ -23,7 +23,8 @@ public:
 	// Destroy specific object in this Space
 	void DestroyObject(Object* object);
 
-	void Add(Object* object);
+	// Creates an object in this space
+	Object* MakeObject();
 
 private:
 
@@ -32,4 +33,7 @@ private:
 
 	// Dictionary that contains all the Objects in this Space
 	TDictionary<size_t, Object*> ObjectsIn;
+
+	// Add object in this space
+	void Add(Object* object);
 };

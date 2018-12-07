@@ -105,9 +105,6 @@
     <ClInclude Include="Source\EmptySource\include\IIdentifier.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\source\Object.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Object.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -141,6 +138,9 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Object.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

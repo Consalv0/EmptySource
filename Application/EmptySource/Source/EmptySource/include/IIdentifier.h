@@ -4,9 +4,7 @@ class IIdentifier {
 public: 
 	virtual size_t GetIdentifier();
 
-	IIdentifier() {
-		IdentifierNum = CurrentIdentifier++;
-	}
+	IIdentifier();
 
 private:
 	// Identifier Generator
