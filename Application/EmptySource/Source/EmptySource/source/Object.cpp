@@ -2,9 +2,11 @@
 #include "../include/LogCore.h"
 #include "../include/Object.h"
 
-Object::Object() : IIdentifier() { }
+Object::Object() : IIdentifier() { 
+	InternalName = L"object_" + std::to_wstring(IdentifierNum);
+}
 
-void Object::PrepareDelete() {
+void Object::Delete() {
 	SpaceIn->DestroyObject(this);
 }
 
