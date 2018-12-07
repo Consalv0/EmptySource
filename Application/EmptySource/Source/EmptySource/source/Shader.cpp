@@ -49,9 +49,9 @@ bool Shader::LinkProgram() {
 	// Check the program
 	glGetProgramiv(ShaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0) {
-		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		_LOG(NoLog, L"'%s'", ToWChar((const char*)&ProgramErrorMessage[0]));
+		_LOG(LogError, L"'%s'", ToWChar((const Char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 
@@ -67,7 +67,7 @@ Shader::Shader() {
 }
 
 Shader::Shader(WString ShaderNamePath) {
-	FilePath = ShaderNamePath;
+	FilePath = FileManager::GetFullPath(ShaderNamePath);
 
 	VertexStream = FileManager::Open(FilePath + L".vertex.glsl");
 	FragmentStream = FileManager::Open(FilePath + L".fragment.glsl");
@@ -100,6 +100,7 @@ void Shader::Unload() {
 
 void Shader::Use() const {
 	if (IsValid()) glUseProgram(ShaderProgram);
+	else _LOG(LogError, L"Can't use '%s' shader because is not valid", FilePath);
 }
 
 bool Shader::IsValid() const {

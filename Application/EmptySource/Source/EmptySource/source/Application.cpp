@@ -95,8 +95,7 @@ void CoreApplication::MainLoop() {
 
 	Space NewSpace; Space OtherNewSpace(NewSpace);
 	Object* GObject = Space::GetFirstSpace()->MakeObject();
-	GObject->PrepareDelete();
-	delete GObject;
+	GObject->Delete();
 	Mesh TemporalMesh = Mesh::BuildCube();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////

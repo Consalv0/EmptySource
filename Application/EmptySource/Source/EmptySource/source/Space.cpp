@@ -24,22 +24,22 @@ Space * Space::GetFirstSpace() {
 
 Object * Space::MakeObject() {
 	Object* NewObject = new Object();
-	NewObject->SpaceIn = this;
-	NewObject->InternalName = L"object_" + std::to_wstring(NewObject->IdentifierNum);
 	Add(NewObject);
 	return NewObject;
 }
 
 void Space::DestroyAllObjects() {
 	for (TDictionary<size_t, Object*>::iterator Iterator = ObjectsIn.begin(); Iterator != ObjectsIn.end(); Iterator++) {
-		Iterator->second->PrepareDelete();
+		Iterator->second->Delete();
 	}
 }
 
 void Space::DestroyObject(Object * object) {
 	ObjectsIn.erase(object->GetIdentifier());
+	delete object;
 }
 
 void Space::Add(Object * object) {
 	ObjectsIn.insert(std::pair<const size_t, Object*>(object->GetIdentifier(), object));
+	object->SpaceIn = this;
 }
