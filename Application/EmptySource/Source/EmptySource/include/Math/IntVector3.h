@@ -50,6 +50,8 @@ public:
 	FORCEINLINE IntVector3& operator/=(const IntVector3& Other);
 	FORCEINLINE IntVector3& operator*=(const int& Value);
 	FORCEINLINE IntVector3& operator/=(const int& Value);
+
+	inline WString ToString();
 };
 
 #include "..\Math\IntVector3.inl"

@@ -127,6 +127,7 @@
     <ClInclude Include="Source\EmptySource\include\FileStream.h" />
     <ClInclude Include="Source\EmptySource\include\IIdentifier.h" />
     <ClInclude Include="Source\EmptySource\include\LogCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Material.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h" />
@@ -135,9 +136,12 @@
     <ClInclude Include="Source\EmptySource\include\Math\Vector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector4.h" />
     <ClInclude Include="Source\EmptySource\include\Object.h" />
+    <ClInclude Include="Source\EmptySource\include\OBJLoader.h" />
+    <ClInclude Include="Source\EmptySource\include\RenderingCore.h" />
     <ClInclude Include="Source\EmptySource\include\Shader.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
+    <ClInclude Include="Source\EmptySource\include\Time.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
@@ -150,10 +154,13 @@
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
     <ClCompile Include="Source\EmptySource\source\Application.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileManager.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Material.cpp" />
     <ClCompile Include="Source\EmptySource\source\Mesh.cpp" />
     <ClCompile Include="Source\EmptySource\source\Object.cpp" />
+    <ClCompile Include="Source\EmptySource\source\ObjLoader.cpp" />
     <ClCompile Include="Source\EmptySource\source\Shader.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Time.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
     <ClCompile Include="Source\External\GLAD\src\glad.c" />
   </ItemGroup>

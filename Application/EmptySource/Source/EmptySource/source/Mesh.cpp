@@ -4,21 +4,25 @@
 #include "..\include\Math\Math.h"
 #include "..\include\Mesh.h"
 
+bool MeshVertex::operator<(const MeshVertex that) const {
+	return memcmp((void*)this, (void*)&that, sizeof(MeshVertex)) > 0;
+};
+
 Mesh::Mesh() {
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
-	Triangles = MeshTriangles();
+	Faces = MeshFaces();
 	Vertices = MeshVertices();
 }
 
 Mesh::Mesh( 
-	const MeshTriangles triangles, const MeshVector3D vertices,
+	const MeshFaces faces, const MeshVector3D vertices,
 	const MeshVector3D normals, const MeshUVs uv0, const MeshColors colors)
 {
-	Triangles = triangles;
+	Faces = faces;
 	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount], Vector2(), colors[vCount] }));
+		Vertices.push_back(MeshVertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount], Vector2(), colors[vCount] }));
 	}
 
 	VertexArrayObject = 0;
@@ -27,10 +31,10 @@ Mesh::Mesh(
 	SetUpBuffers();
 }
 
-Mesh::Mesh(const MeshTriangles triangles, const MeshVector3D vertices, const MeshVector3D normals, const MeshUVs uv0, const MeshUVs uv1, const MeshColors colors) {
-	Triangles = triangles;
+Mesh::Mesh(const MeshFaces faces, const MeshVector3D vertices, const MeshVector3D normals, const MeshUVs uv0, const MeshUVs uv1, const MeshColors colors) {
+	Faces = faces;
 	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount],  uv1[vCount], colors[vCount] }));
+		Vertices.push_back(MeshVertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount],  uv1[vCount], colors[vCount] }));
 	}
 
 	VertexArrayObject = 0;
@@ -40,24 +44,34 @@ Mesh::Mesh(const MeshTriangles triangles, const MeshVector3D vertices, const Mes
 }
 
 Mesh::Mesh(
-	const MeshTriangles triangles, const MeshVector3D vertices,
+	const MeshFaces faces, const MeshVector3D vertices,
 	const MeshVector3D normals, const MeshVector3D tangents, 
 	const MeshUVs uv0, const MeshColors colors) 
 
-	: Mesh(triangles, vertices, normals, tangents, uv0, uv0, colors)
+	: Mesh(faces, vertices, normals, tangents, uv0, uv0, colors)
 {
 }
 
 Mesh::Mesh(
-	const MeshTriangles triangles, const MeshVector3D vertices,
+	const MeshFaces faces, const MeshVector3D vertices,
 	const MeshVector3D normals, const MeshVector3D tangents,
 	const MeshUVs uv0, const MeshUVs uv1,
 	const MeshColors colors)
 {
-	Triangles = triangles;
+	Faces = faces;
 	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(Vertex({ vertices[vCount], normals[vCount], tangents[vCount], uv0[vCount], Vector2(), colors[vCount] }));
+		Vertices.push_back(MeshVertex({ vertices[vCount], normals[vCount], tangents[vCount], uv0[vCount], Vector2(), colors[vCount] }));
 	}
+
+	VertexArrayObject = 0;
+	ElementBuffer = 0;
+	VertexBuffer = 0;
+	SetUpBuffers();
+}
+
+Mesh::Mesh(const MeshFaces faces, const MeshVertices vertices) {
+	Faces = faces;
+	Vertices = vertices;
 
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
@@ -67,7 +81,7 @@ Mesh::Mesh(
 
 Mesh Mesh::BuildCube() {
 	Mesh TemporalMesh;
-	static const MeshTriangles TemporalTriangles{
+	static const MeshFaces    TemporalFaces{
 		// Front Face
 		{  0,  1,  2 }, {  2,  3,  0 },
 		// Back Face
@@ -267,7 +281,7 @@ Mesh Mesh::BuildCube() {
 		{ 1.0F, 1.0F, 1.0F, 1.0F },
 	};
 
-	TemporalMesh = Mesh(TemporalTriangles, TemporalVertices, TemporalNormals, TemporalTengents, TemporalTextureCoords, TemporalColors);
+	TemporalMesh = Mesh(TemporalFaces, TemporalVertices, TemporalNormals, TemporalTengents, TemporalTextureCoords, TemporalColors);
 
 	return TemporalMesh;
 }
@@ -282,7 +296,7 @@ void Mesh::BindVertexArray() {
 void Mesh::DrawInstanciated(int Count) const {
 	glDrawElementsInstanced(
 		GL_TRIANGLES,	                        // mode
-		(int)Triangles.size() * 3,	            // mode count
+		(int)Faces.size() * 3,	                // mode count
 		GL_UNSIGNED_INT,                        // type
 		(void*)0,		                        // element array buffer offset
 		Count                                   // element count
@@ -292,7 +306,7 @@ void Mesh::DrawInstanciated(int Count) const {
 void Mesh::DrawElement() const {
 	glDrawElements(
 		GL_TRIANGLES,	                        // mode
-		(int)Triangles.size() * 3,	            // mode count
+		(int)Faces.size() * 3,	                // mode count
 		GL_UNSIGNED_INT,                        // type
 		(void*)0		                        // element array buffer offset
 	); // Starting from vertex 0; to vertices total
@@ -306,26 +320,26 @@ void Mesh::SetUpBuffers() {
 	glGenBuffers(1, &VertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), &Vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(MeshVertex), &Vertices[0], GL_STATIC_DRAW);
 
 	// Generate a Element Buffer for the indices
 	glGenBuffers(1, &ElementBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Triangles.size() * sizeof(IntVector3), &Triangles[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Faces.size() * sizeof(IntVector3), &Faces[0], GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers layouts
 	glEnableVertexAttribArray(  VertexLocation );
-	    glVertexAttribPointer(  VertexLocation , 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	    glVertexAttribPointer(  VertexLocation , 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)0);
 	glEnableVertexAttribArray(  NormalLocation );
-	    glVertexAttribPointer(  NormalLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+	    glVertexAttribPointer(  NormalLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Normal));
 	glEnableVertexAttribArray( TangentLocation );
-	    glVertexAttribPointer( TangentLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+	    glVertexAttribPointer( TangentLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Tangent));
 	glEnableVertexAttribArray(     UV0Location );
-	    glVertexAttribPointer(     UV0Location , 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV0));
+	    glVertexAttribPointer(     UV0Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV0));
 	glEnableVertexAttribArray(     UV1Location );
-	    glVertexAttribPointer(     UV1Location , 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
+	    glVertexAttribPointer(     UV1Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV1));
 	glEnableVertexAttribArray(   ColorLocation );
-	    glVertexAttribPointer(   ColorLocation , 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
+	    glVertexAttribPointer(   ColorLocation , 4, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Color));
 
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);

@@ -13,7 +13,7 @@ private:
 	struct GLFWwindow* Window;
 
 	//* Name displayed in header window
-	const char* Name;
+	String Name;
 	unsigned int Width = 1080;
 	unsigned int Height = 720;
 	unsigned int Mode = ES_WINDOW_MODE_WINDOWED;
@@ -35,6 +35,11 @@ public:
 	int GetWidth();
 	//* Get the height in pixels of the window
 	int GetHeight();
+
+	//* Rename the window title
+	void SetWindowName(const WString & NewName);
+	//* Get the window title name
+	WString GetWindowName();
 
 	//* Get the aspect of width divided by height in pixels of the window
 	float AspectRatio();
@@ -60,8 +65,11 @@ public:
 	//* Get key pressed
 	bool GetKeyDown(unsigned int Key);
 
-	//* Window end of frame call
+	//* Window update frame
 	void EndOfFrame();
+
+	//* Window update events
+	void PollEvents();
 
 	//* Initialize inputs in this window
 	void InitializeInputs();

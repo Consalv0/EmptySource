@@ -108,6 +108,18 @@
     <ClInclude Include="Source\EmptySource\include\Object.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Time.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Material.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\RenderingCore.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\OBJLoader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -141,6 +153,15 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\Object.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Time.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Material.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\ObjLoader.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
