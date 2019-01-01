@@ -6,6 +6,7 @@ public:
 
 private:
 	static bool bInitialized;
+	static unsigned long RenderTimeSum;
 	
 	//* Error Callback related to GLFW
 	static void GLFWError(int ErrorID, const char* ErrorDescription);

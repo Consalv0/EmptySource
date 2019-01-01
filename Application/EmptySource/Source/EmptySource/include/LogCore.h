@@ -19,9 +19,10 @@ typedef char Char;
 typedef std::wstring WString;
 typedef wchar_t WChar;
 
-#define ToWString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING)
-#define ToWChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING).c_str()
-#define ToString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING)
+#define StringToWString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING)
+#define CharToWChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING).c_str()
+#define WStringToString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING)
+#define WCharToChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING).c_str()
 
 inline WString LogPrefix(unsigned char Filter, WString Text) {
 	WString Prefix;

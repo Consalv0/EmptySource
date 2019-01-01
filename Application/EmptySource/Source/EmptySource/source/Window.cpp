@@ -20,6 +20,15 @@ int ApplicationWindow::GetHeight() {
 	return Height;
 }
 
+void ApplicationWindow::SetWindowName(const WString & NewName) {
+	Name = WStringToString(NewName);
+	glfwSetWindowTitle(Window, Name.c_str());
+}
+
+WString ApplicationWindow::GetWindowName() {
+	return StringToWString(Name);
+}
+
 float ApplicationWindow::AspectRatio() {
 	return (float)Width / (float)Height;
 }
@@ -27,9 +36,9 @@ float ApplicationWindow::AspectRatio() {
 bool ApplicationWindow::Create() {
 	GLFWmonitor* PrimaryMonitor = Mode == 1 ? glfwGetPrimaryMonitor() : nullptr;
 
-	Window = glfwCreateWindow(Width, Height, Name, PrimaryMonitor, nullptr);
+	Window = glfwCreateWindow(Width, Height, Name.c_str(), PrimaryMonitor, nullptr);
 
-	_LOG(Log, L"Window: \"%s\" initialized!", ToWChar(Name));
+	_LOG(Log, L"Window: \"%s\" initialized!", CharToWChar(Name));
 
 	return false;
 }
@@ -84,9 +93,12 @@ bool ApplicationWindow::GetKeyDown(unsigned int Key) {
 
 void ApplicationWindow::EndOfFrame() {
 	glfwSwapBuffers(Window);
-	glfwPollEvents();
 
 	FrameCount++;
+}
+
+void ApplicationWindow::PollEvents() {
+	glfwPollEvents();
 }
 
 void ApplicationWindow::InitializeInputs() {
@@ -100,8 +112,8 @@ void ApplicationWindow::InitializeInputs() {
 
 void ApplicationWindow::Terminate() {
 	if (Window != NULL) {
+		_LOG(Log, L"Window: \"%s\" closed!", GetWindowName().c_str());
 		glfwDestroyWindow(Window);
-		_LOG(Log, L"Window: \"%s\" closed!", ToWChar(Name));
 	}
 }
 

@@ -2,16 +2,20 @@
 #include "..\include\Math\Math.h"
 
 #include "..\include\FileManager.h"
+#include "..\include\OBJLoader.h"
 
+#include "..\include\Time.h"
 #include "..\include\Window.h"
 #include "..\include\Application.h"
 #include "..\include\Mesh.h"
 #include "..\include\Shader.h"
 #include "..\include\Object.h"
 #include "..\include\Space.h"
+#include "..\include\Material.h"
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
+unsigned long CoreApplication::RenderTimeSum = 0;
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
@@ -53,11 +57,11 @@ void CoreApplication::PrintGraphicsInformation() {
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	_LOG(Log, L"GC Vendor            : %s", ToWChar((const char*)vendor));
-	_LOG(Log, L"GC Renderer          : %s", ToWChar((const char*)vendor));
-	_LOG(Log, L"GL Version (string)  : %s", ToWChar((const char*)version));
+	_LOG(Log, L"GC Vendor            : %s", CharToWChar((const char*)vendor));
+	_LOG(Log, L"GC Renderer          : %s", CharToWChar((const char*)vendor));
+	_LOG(Log, L"GL Version (string)  : %s", CharToWChar((const char*)version));
 	_LOG(Log, L"GL Version (integer) : %d.%d", major, minor);
-	_LOG(Log, L"GLSL Version         : %s\n", ToWChar((const char*)glslVersion));
+	_LOG(Log, L"GLSL Version         : %s\n", CharToWChar((const char*)glslVersion));
 }
 
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
@@ -109,7 +113,9 @@ void CoreApplication::MainLoop() {
 
 	//* Create and compile our GLSL shader program from text files
 	Shader UnlitBaseShader = Shader(L"Data\\Shaders\\PBRBase");
-
+	Material BaseMaterial = Material();
+	BaseMaterial.SetShader(&UnlitBaseShader);
+	BaseMaterial.RenderMode = Render::RenderMode::Point;
 
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
@@ -117,6 +123,8 @@ void CoreApplication::MainLoop() {
 	///////// Create Matrices Buffer //////////////
 	GLuint ModelMatrixBuffer;
 	glGenBuffers(1, &ModelMatrixBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+
 	srand((unsigned int)glfwGetTime());
 
 	///////// Give Uniforms to GLSL /////////////
@@ -125,25 +133,26 @@ void CoreApplication::MainLoop() {
 	GLuint          ViewMatrixID = UnlitBaseShader.GetLocationID("_ViewMatrix");
 	GLuint        ViewPositionID = UnlitBaseShader.GetLocationID("_ViewPosition");
 	GLuint     Lights0PositionID = UnlitBaseShader.GetLocationID("_Lights[0].Position");
-	GLuint    Lights0IntencityID = UnlitBaseShader.GetLocationID("_Lights[0].ColorIntencity");
+	GLuint    Lights0IntencityID = UnlitBaseShader.GetLocationID("_Lights[0].Intencity");
+	GLuint        Lights0ColorID = UnlitBaseShader.GetLocationID("_Lights[0].Color");
 	GLuint     Lights1PositionID = UnlitBaseShader.GetLocationID("_Lights[1].Position");
-	GLuint    Lights1IntencityID = UnlitBaseShader.GetLocationID("_Lights[1].ColorIntencity");
+	GLuint    Lights1IntencityID = UnlitBaseShader.GetLocationID("_Lights[1].Intencity");
+	GLuint        Lights1ColorID = UnlitBaseShader.GetLocationID("_Lights[1].Color");
 	GLuint   MaterialRoughnessID = UnlitBaseShader.GetLocationID("_Material.Roughness");
 	GLuint   MaterialMetalnessID = UnlitBaseShader.GetLocationID("_Material.Metalness");
-	GLuint       MaterialColorID = UnlitBaseShader.GetLocationID("_Material.SpecularColor");
+	GLuint       MaterialColorID = UnlitBaseShader.GetLocationID("_Material.Color");
 
 	//////////////////////////////////////////
 
-	// Activate Z-buffer
-	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if its closer to the camera
-	glDepthFunc(GL_LESS);
-	// Draw Mode
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	MeshFaces OBJFaces; MeshVertices OBJVertices;
+	OBJLoader::LoadFromFile(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices);
+	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
 
 	do {
+		Time::Tick();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		UnlitBaseShader.Use();
+		BaseMaterial.Use();
 
 		//////// Drawing ModelMatrix ////////
 		ProjectionMatrix = Matrix4x4::Perspective(
@@ -168,68 +177,87 @@ void CoreApplication::MainLoop() {
 		);
 
 		float MaterialMetalness = 0.01F;
-		float MaterialRoughness = 0.7F;
+		float MaterialRoughness = 0.5F;
+		float LightIntencity = 2000.F;
 
 		glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
 		glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
-		      glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
-		      glUniform3fv(   Lights0PositionID, 1,              LightPosition.PointerToValue() );
-			  glUniform3fv(  Lights0IntencityID, 1,     Vector3(200, 200, 200).PointerToValue() );
-		      glUniform3fv(   Lights1PositionID, 1,           (-LightPosition).PointerToValue() );
-			  glUniform3fv(  Lights1IntencityID, 1,     Vector3(200, 200, 200).PointerToValue() );
-			  glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
-			  glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
-			  glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
+		glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
+		glUniform3fv(   Lights0PositionID, 1,              LightPosition.PointerToValue() );
+		glUniform3fv(      Lights0ColorID, 1,                 Vector3(1).PointerToValue() );
+		glUniform1fv(  Lights0IntencityID, 1,                             &LightIntencity );
+		glUniform3fv(   Lights1PositionID, 1,           (-LightPosition).PointerToValue() );
+		glUniform3fv(      Lights1ColorID, 1,                 Vector3(1).PointerToValue() );
+		glUniform1fv(  Lights1IntencityID, 1,                             &LightIntencity );
+		glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
+		glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
+		glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
 
-		for (size_t i = 0; i < 100; i++) {
-			Matrices.push_back(
-				Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
-			);
+
+		OBJMesh.BindVertexArray();
+		if (!MainWindow->GetKeyDown(GLFW_KEY_U)) {
+			for (size_t i = 0; i < 1; i++) {
+				Matrices.push_back(
+					Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
+				);
+			}
+			if (MainWindow->GetKeyDown(GLFW_KEY_Q))
+				for (size_t i = 0; i < 10000; i++) {
+					Matrices.push_back(
+						Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
+					);
+				}
+
+			glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+			glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
+
+			// set transformation matrices as an instance vertex attribute (with divisor 1)
+			// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
+			// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
+			// -----------------------------------------------------------------------------------------------------------------------------------
+			// set attribute pointers for matrix (4 times vec4)
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+			glEnableVertexAttribArray(7);
+			glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
+			glEnableVertexAttribArray(8);
+			glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
+			glEnableVertexAttribArray(9);
+			glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
+
+			glVertexAttribDivisor(6, 1);
+			glVertexAttribDivisor(7, 1);
+			glVertexAttribDivisor(8, 1);
+			glVertexAttribDivisor(9, 1);
 		}
 
-		TemporalMesh.BindVertexArray();
-
-		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-		glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
-
-		// set transformation matrices as an instance vertex attribute (with divisor 1)
-		// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
-		// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
-		// -----------------------------------------------------------------------------------------------------------------------------------
-		// set attribute pointers for matrix (4 times vec4)
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
-		glEnableVertexAttribArray(8);
-		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
-		glEnableVertexAttribArray(9);
-		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
-
-		glVertexAttribDivisor(6, 1);
-		glVertexAttribDivisor(7, 1);
-		glVertexAttribDivisor(8, 1);
-		glVertexAttribDivisor(9, 1);
-
 		// Draw the meshs(es) !
-		TemporalMesh.DrawInstanciated((GLsizei)Matrices.size());
-		// TemporalMesh.DrawElement();
+		RenderTimeSum += Time::GetDeltaTimeMilis();
+		if (RenderTimeSum > (1000 / 60)) {
+			RenderTimeSum = 0;
+			OBJMesh.DrawInstanciated((GLsizei)Matrices.size());
+			// TemporalMesh.DrawElement();
+
+			MainWindow->SetWindowName(
+				L"EmptySource - FPS (" + std::to_wstring(int(Time::GetFrameRate())) + L"), (" + std::to_wstring((1 / Time::GetFrameRate()) * 1000) +
+				L"ms) Mesh Instances (" + std::to_wstring((int)Matrices.size()) + L"), Triangle Count (" + std::to_wstring(int(OBJMesh.Faces.size() * Matrices.size())) + L")"
+			);
+
+			MainWindow->EndOfFrame();
+		}
 
 		glBindVertexArray(0);
 
-		if (MainWindow->GetKeyDown(GLFW_KEY_I))
-			_LOG(LogDebug, L"Frame Count (%i), Mesh Instances (%i)", MainWindow->GetFrameCount(), (int)Matrices.size());
-
 		if (MainWindow->GetKeyDown(GLFW_KEY_W))
-			LightPosition += {0.1F, 0.1F, 0};
+			LightPosition += Vector3(100.F, 100.F, 0) * Time::GetDeltaTime();
 		if (MainWindow->GetKeyDown(GLFW_KEY_S))
-			LightPosition -= {0.1F, 0.1F, 0};
+			LightPosition -= Vector3(100.F, 100.F, 0) * Time::GetDeltaTime();
 		if (MainWindow->GetKeyDown(GLFW_KEY_A))
-			LightPosition += {0, 0, 0.1F};
+			LightPosition += Vector3(0, 0, 100.F) * Time::GetDeltaTime();
 		if (MainWindow->GetKeyDown(GLFW_KEY_D))
-			LightPosition -= {0, 0, 0.1F};
+			LightPosition -= Vector3(0, 0, 100.F) * Time::GetDeltaTime();
 
-		MainWindow->EndOfFrame();
+		MainWindow->PollEvents();
 
 	} while (
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
@@ -239,7 +267,7 @@ void CoreApplication::MainLoop() {
 }
 
 void CoreApplication::GLFWError(int ErrorID, const char* Description) {
-	_LOG(LogError, L"%s", ToWChar(Description));
+	_LOG(LogError, L"%s", CharToWChar(Description));
 }
 
 void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
@@ -251,7 +279,7 @@ void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GL
 
 	switch (ErrorType) {
 		case GL_DEBUG_TYPE_ERROR:               ErrorPrefix = "error";       break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = "deprecaated";  break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = "deprecated";  break;
 		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ErrorPrefix = "undefined";   break;
 		case GL_DEBUG_TYPE_PORTABILITY:         ErrorPrefix = "portability"; break;
 		case GL_DEBUG_TYPE_PERFORMANCE:         ErrorPrefix = "performance"; break;
@@ -261,5 +289,5 @@ void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GL
 		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = "other";       break;
 	}
 	
-	_LOG(LogError, L"<%s>(%i) %s", ToWChar(ErrorPrefix), ErrorID, ToWChar(ErrorMessage));
+	_LOG(LogError, L"<%s>(%i) %s", CharToWChar(ErrorPrefix), ErrorID, CharToWChar(ErrorMessage));
 }

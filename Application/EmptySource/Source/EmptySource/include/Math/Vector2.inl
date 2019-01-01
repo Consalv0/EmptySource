@@ -5,6 +5,7 @@
 
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Vector2.h"
 
 FORCEINLINE Vector2::Vector2()
 	: x(0), y(0) {
@@ -151,4 +152,8 @@ FORCEINLINE Vector2& Vector2::operator/=(const float& Value) {
 	x /= Value;
 	y /= Value;
 	return *this;
+}
+
+inline WString Vector2::ToString() {
+	return L"{" + std::to_wstring(x) + L", " + std::to_wstring(y) + L"}";
 }

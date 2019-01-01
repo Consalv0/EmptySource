@@ -17,19 +17,21 @@ struct Vector2;
 struct Vector3;
 struct Vector4;
 
-struct Vertex {
+struct MeshVertex {
 	Vector3 Position;
 	Vector3 Normal;
 	Vector3 Tangent;
 	Vector2 UV0, UV1;
 	Vector4 Color;
+
+	bool operator<(const MeshVertex that) const;
 };
 
-typedef vector<IntVector3> MeshTriangles;
+typedef vector<IntVector3> MeshFaces;
 typedef vector<Vector3>    MeshVector3D;
 typedef vector<Vector2>    MeshUVs;
 typedef vector<Vector4>    MeshColors;
-typedef vector<Vertex>     MeshVertices;
+typedef vector<MeshVertex> MeshVertices;
 
 class Mesh {
 private:
@@ -45,15 +47,16 @@ private:
 	void ClearBuffers();
 
 public:
-	MeshTriangles Triangles;
+	MeshFaces Faces;
 	MeshVertices Vertices;
 
 	Mesh();
-	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshColors Colors);
-	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
-	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshColors Colors);
-	Mesh(const MeshTriangles Triangles, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
-	 
+	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshColors Colors);
+	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
+	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshColors Colors);
+	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
+	Mesh(const MeshFaces Faces, const MeshVertices Vertices);
+
 	//* *Creates a cube mesh of size 1 with pivot in the center
 	static Mesh BuildCube();
 

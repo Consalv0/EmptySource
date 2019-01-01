@@ -1,6 +1,8 @@
 ﻿#include "..\include\Core.h"
-#include "..\include\Shader.h"
 #include "..\include\FileManager.h"
+#include "..\include\Shader.h"
+
+#include "..\include\Math\Math.h"
 
 bool Shader::Compile() {
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -9,7 +11,7 @@ bool Shader::Compile() {
 	_LOG(Log, L"Compiling shader program '%s'", FilePath.c_str());
 
 	// Compile Vertex Shader
-	String VertexShaderCode = ToString(FileManager::ReadStream(VertexStream));
+	String VertexShaderCode = WStringToString(FileManager::ReadStream(VertexStream));
 	const Char * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShader, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShader);
@@ -22,7 +24,7 @@ bool Shader::Compile() {
 	}
 
 	// Compile Fragment Shader
-	String FragmentShaderCode = ToString(FileManager::ReadStream(FragmentStream));
+	String FragmentShaderCode = WStringToString(FileManager::ReadStream(FragmentStream));
 	const Char * FragmentSourcePointer = FragmentShaderCode.c_str();
 	glShaderSource(FragmentShader, 1, &FragmentSourcePointer, NULL);
 	glCompileShader(FragmentShader);
@@ -51,7 +53,7 @@ bool Shader::LinkProgram() {
 	if (InfoLogLength > 0) {
 		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		_LOG(LogError, L"'%s'", ToWChar((const Char*)&ProgramErrorMessage[0]));
+		_LOG(LogError, L"'%s'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 
@@ -99,10 +101,14 @@ void Shader::Unload() {
 }
 
 void Shader::Use() const {
-	if (IsValid()) glUseProgram(ShaderProgram);
-	else _LOG(LogError, L"Can't use '%s' shader because is not valid", FilePath);
+	if (!IsValid()) {
+		_LOG(LogError, L"Can't use '%s' shader because is not valid", FilePath);
+		return;
+	}
+
+	glUseProgram(ShaderProgram);
 }
 
 bool Shader::IsValid() const {
-	return bIsLinked;
+	return bIsLinked && ShaderProgram != GL_FALSE;
 }

@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdexcept>
+#include <string>
 
 #include "Vector2.h"
 #include "IntVector3.h"
@@ -184,4 +185,8 @@ FORCEINLINE Vector3& Vector3::operator/=(const float& Value) {
 	y /= Value;
 	z /= Value;
 	return *this;
+}
+
+inline WString Vector3::ToString() {
+	return L"{" + std::to_wstring(x) + L", " + std::to_wstring(y) + L", " + std::to_wstring(z) + L"}";
 }
