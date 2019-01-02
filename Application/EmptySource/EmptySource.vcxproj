@@ -136,7 +136,7 @@
     <ClInclude Include="Source\EmptySource\include\Math\Vector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector4.h" />
     <ClInclude Include="Source\EmptySource\include\Object.h" />
-    <ClInclude Include="Source\EmptySource\include\OBJLoader.h" />
+    <ClInclude Include="Source\EmptySource\include\MeshLoader.h" />
     <ClInclude Include="Source\EmptySource\include\RenderingCore.h" />
     <ClInclude Include="Source\EmptySource\include\Shader.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
@@ -157,7 +157,7 @@
     <ClCompile Include="Source\EmptySource\source\Material.cpp" />
     <ClCompile Include="Source\EmptySource\source\Mesh.cpp" />
     <ClCompile Include="Source\EmptySource\source\Object.cpp" />
-    <ClCompile Include="Source\EmptySource\source\ObjLoader.cpp" />
+    <ClCompile Include="Source\EmptySource\source\MeshLoader.cpp" />
     <ClCompile Include="Source\EmptySource\source\Shader.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Time.cpp" />

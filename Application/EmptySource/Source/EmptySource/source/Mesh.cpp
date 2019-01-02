@@ -286,14 +286,19 @@ Mesh Mesh::BuildCube() {
 	return TemporalMesh;
 }
 
-void Mesh::BindVertexArray() {
+void Mesh::BindVertexArray() const {
 	// Generate 1 VAO, put the resulting identifier in VAO identifier
-	if (VertexArrayObject == 0) glGenVertexArrays(1, &VertexArrayObject);
+	if (VertexArrayObject == 0) {
+		_LOG(LogError, L"The buffers are empty, use SetUpBuffers first");
+		return;
+	}
 	// The following commands will put in context our VAO for the next commands
 	glBindVertexArray(VertexArrayObject);
 }
 
 void Mesh::DrawInstanciated(int Count) const {
+	BindVertexArray();
+
 	glDrawElementsInstanced(
 		GL_TRIANGLES,	                        // mode
 		(int)Faces.size() * 3,	                // mode count
@@ -314,7 +319,8 @@ void Mesh::DrawElement() const {
 
 void Mesh::SetUpBuffers() {
 
-	BindVertexArray();
+	glGenVertexArrays(1, &VertexArrayObject);
+	glBindVertexArray(VertexArrayObject);
 
 	// This will identify our vertex buffer
 	glGenBuffers(1, &VertexBuffer);

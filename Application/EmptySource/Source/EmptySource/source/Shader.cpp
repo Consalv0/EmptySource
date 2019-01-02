@@ -4,33 +4,40 @@
 
 #include "..\include\Math\Math.h"
 
-bool Shader::Compile() {
-	VertexShader = glCreateShader(GL_VERTEX_SHADER);
-	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	_LOG(Log, L"Compiling shader program '%s'", FilePath.c_str());
+bool Shader::Compile(ShaderType Type) {
 
 	// Compile Vertex Shader
-	String VertexShaderCode = WStringToString(FileManager::ReadStream(VertexStream));
-	const Char * VertexSourcePointer = VertexShaderCode.c_str();
-	glShaderSource(VertexShader, 1, &VertexSourcePointer, NULL);
-	glCompileShader(VertexShader);
+	String ShaderCode;
+	unsigned* ShaderID = NULL;
 
-	GLint Result = 0;
-	// Check Vertex Shader
-	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &Result);
-	if (Result <= 0) {
-		return false;
+	switch (Type) {
+	case Vertex:
+		VertexShader = glCreateShader(GL_VERTEX_SHADER);
+		_LOG(Log, L"Compiling vertex shader '%s'.vertex.glsl", VertexStream->GetShortPath().c_str());
+		ShaderCode = WStringToString(FileManager::ReadStream(VertexStream));
+		ShaderID = &VertexShader;
+		break;
+	case Fragment:
+		FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		_LOG(Log, L"Compiling fragment shader '%s'.fragment.glsl", FragmentStream->GetShortPath().c_str());
+		ShaderCode = WStringToString(FileManager::ReadStream(FragmentStream));
+		ShaderID = &FragmentShader;
+		break;
+	case Pixel:
+		// VertexStream = FileManager::Open(ShaderPath + L".pixel.glsl");
+		break;
+	case Geometry:
+		// VertexStream = FileManager::Open(ShaderPath + L".geometry.glsl");
+		break;
 	}
 
-	// Compile Fragment Shader
-	String FragmentShaderCode = WStringToString(FileManager::ReadStream(FragmentStream));
-	const Char * FragmentSourcePointer = FragmentShaderCode.c_str();
-	glShaderSource(FragmentShader, 1, &FragmentSourcePointer, NULL);
-	glCompileShader(FragmentShader);
+	const Char * SourcePointer = ShaderCode.c_str();
+	glShaderSource(*ShaderID, 1, &SourcePointer, NULL);
+	glCompileShader(*ShaderID);
 
-	// Check Fragment Shader
-	glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &Result);
+	GLint Result = GL_FALSE;
+	// Check Vertex Shader
+	glGetShaderiv(*ShaderID, GL_COMPILE_STATUS, &Result);
 	if (Result <= 0) {
 		return false;
 	}
@@ -42,10 +49,14 @@ bool Shader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	_LOG(Log, L"└>Linking shader program '%s'", FilePath.c_str());
+	_LOG(Log, L"└>Linking shader program '%s'", Name.c_str());
 	ShaderProgram = glCreateProgram();
+
+	if (VertexShader != GL_FALSE)
 	glAttachShader(ShaderProgram, VertexShader);
+	if (FragmentShader != GL_FALSE)
 	glAttachShader(ShaderProgram, FragmentShader);
+
 	glLinkProgram(ShaderProgram);
 
 	// Check the program
@@ -62,21 +73,40 @@ bool Shader::LinkProgram() {
 
 Shader::Shader() {
 	bIsLinked = false;
-	VertexShader = 0;
-	FragmentShader = 0; 
-	ShaderProgram = 0;
-	FilePath = L"";
+	VertexShader = GL_FALSE;
+	FragmentShader = GL_FALSE;
+	ShaderProgram = GL_FALSE;
+	VertexStream = NULL;
+	FragmentStream = NULL;
+	Name = L"";
 }
 
-Shader::Shader(WString ShaderNamePath) {
-	FilePath = FileManager::GetFullPath(ShaderNamePath);
+Shader::Shader(const WString & name) {
+	Name = name;
+}
 
-	VertexStream = FileManager::Open(FilePath + L".vertex.glsl");
-	FragmentStream = FileManager::Open(FilePath + L".fragment.glsl");
+void Shader::LoadShader(ShaderType Type, WString ShaderPath) {
+	switch (Type) {
+	case Vertex:
+		VertexStream = FileManager::Open(ShaderPath + L".vertex.glsl");
+		if (VertexStream == NULL) return;
+		break;
+	case Fragment:
+		FragmentStream = FileManager::Open(ShaderPath + L".fragment.glsl");
+		if (FragmentStream == NULL) return;
+		break;
+	case Pixel:
+		// VertexStream = FileManager::Open(ShaderPath + L".pixel.glsl");
+		break;
+	case Geometry:
+		// VertexStream = FileManager::Open(ShaderPath + L".geometry.glsl");
+		break;
+	}
 
-	if (VertexStream == NULL || FragmentStream == NULL) return;
+	Compile(Type);
+}
 
-	Compile();
+void Shader::Compile() {
 	bIsLinked = LinkProgram();
 
 	if (bIsLinked == false) {
@@ -102,7 +132,7 @@ void Shader::Unload() {
 
 void Shader::Use() const {
 	if (!IsValid()) {
-		_LOG(LogError, L"Can't use '%s' shader because is not valid", FilePath);
+		_LOG(LogError, L"Can't use shader '%s' because is not valid", Name.c_str());
 		return;
 	}
 
