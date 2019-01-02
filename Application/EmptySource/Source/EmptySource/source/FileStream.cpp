@@ -16,11 +16,29 @@ FileStream::FileStream(WString FilePath) {
 }
 
 WString FileStream::GetExtension() const {
-	return WString();
+	WString::size_type ExtensionIndex;
+
+	ExtensionIndex = Path.rfind('.');
+
+	if (ExtensionIndex != WString::npos) {
+		return Path.substr(ExtensionIndex + 1);
+	} else {
+		return L"";
+	}
 }
 
 WString FileStream::GetPath() const {
 	return Path;
+}
+
+WString FileStream::GetShortPath() const {
+	WChar CurrentDirectory[_MAX_DIR + 1];
+	GetCurrentDirectory(_MAX_DIR, CurrentDirectory);
+
+	WString ReturnValue = Path;
+	StringReplace(ReturnValue, WString(CurrentDirectory), WString(L".."));
+
+	return ReturnValue;
 }
 
 std::wstringstream FileStream::ReadStream() const {
@@ -34,6 +52,12 @@ std::wstringstream FileStream::ReadStream() const {
 	}
 
 	return stringStream;
+}
+
+WChar* FileStream::GetLine(long long MaxCount) {
+	WChar* String = new WChar[MaxCount + 1];
+	Stream->getline(String, MaxCount);
+	return String;
 }
 
 bool FileStream::IsValid() const {

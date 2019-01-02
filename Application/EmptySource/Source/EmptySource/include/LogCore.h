@@ -24,8 +24,24 @@ typedef wchar_t WChar;
 #define WStringToString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING)
 #define WCharToChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING).c_str()
 
+// Replace part of string with another string
+template<class T>
+inline bool StringReplace(T& String, const T& From, const T& To) {
+	size_t StartPos = String.find(From);
+	
+	if (StartPos == T::npos) {
+		return false;
+	}
+
+	String.replace(StartPos, From.length(), To);
+	return true;
+}
+
 inline WString LogPrefix(unsigned char Filter, WString Text) {
 	WString Prefix;
+
+    setlocale(LC_ALL, "");
+	
 	switch (Filter) {
 		case NoLog: Prefix = L""; break;
 		case Log: Prefix = L"[LOG] "; break;

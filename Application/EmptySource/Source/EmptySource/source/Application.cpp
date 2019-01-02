@@ -2,7 +2,7 @@
 #include "..\include\Math\Math.h"
 
 #include "..\include\FileManager.h"
-#include "..\include\OBJLoader.h"
+#include "..\include\MeshLoader.h"
 
 #include "..\include\Time.h"
 #include "..\include\Window.h"
@@ -113,9 +113,11 @@ void CoreApplication::MainLoop() {
 
 	//* Create and compile our GLSL shader program from text files
 	Shader UnlitBaseShader = Shader(L"Data\\Shaders\\PBRBase");
+	UnlitBaseShader.LoadShader(ShaderType::Vertex, L"Data\\Shaders\\PBRBase");
+	UnlitBaseShader.LoadShader(ShaderType::Fragment, L"Data\\Shaders\\PBRBase");
+	UnlitBaseShader.Compile();
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShader(&UnlitBaseShader);
-	BaseMaterial.RenderMode = Render::RenderMode::Point;
 
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
@@ -145,8 +147,14 @@ void CoreApplication::MainLoop() {
 	//////////////////////////////////////////
 
 	MeshFaces OBJFaces; MeshVertices OBJVertices;
-	OBJLoader::LoadFromFile(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices);
 	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
+	MeshFaces SphereFaces; MeshVertices SphereVertices;
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &SphereFaces, &SphereVertices);
+	Mesh SphereMesh = Mesh(SphereFaces, SphereVertices);
+	MeshFaces OtherFaces; MeshVertices OtherVertices;
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\SquidwardHouse.obj"), &OtherFaces, &OtherVertices);
+	Mesh OtherMesh = Mesh(OtherFaces, OtherVertices);
 
 	do {
 		Time::Tick();
@@ -176,8 +184,8 @@ void CoreApplication::MainLoop() {
 			Vector3(0, 1, 0)	// Up vector
 		);
 
-		float MaterialMetalness = 0.01F;
-		float MaterialRoughness = 0.5F;
+		float MaterialMetalness = 0.98F;
+		float MaterialRoughness = 0.01F;
 		float LightIntencity = 2000.F;
 
 		glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
@@ -193,9 +201,19 @@ void CoreApplication::MainLoop() {
 		glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
 		glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
 
-
 		OBJMesh.BindVertexArray();
-		if (!MainWindow->GetKeyDown(GLFW_KEY_U)) {
+
+		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
+			if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
+				if (BaseMaterial.RenderMode == Render::RenderMode::Fill) {
+					BaseMaterial.RenderMode = Render::RenderMode::Line;
+				} else {
+					BaseMaterial.RenderMode = Render::RenderMode::Fill;
+				}
+			}
+		}
+
+		if (MainWindow->GetKeyDown(GLFW_KEY_U)) {
 			for (size_t i = 0; i < 1; i++) {
 				Matrices.push_back(
 					Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })

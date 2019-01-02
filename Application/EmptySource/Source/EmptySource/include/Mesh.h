@@ -61,7 +61,7 @@ public:
 	static Mesh BuildCube();
 
 	//* *Create or Bind Vertex Array Object
-	void BindVertexArray();
+	void BindVertexArray() const;
 
 	//* Draw mesh using instanciated Element Buffer
 	void DrawInstanciated(int Count) const;

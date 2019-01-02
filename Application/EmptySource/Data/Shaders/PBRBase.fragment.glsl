@@ -112,7 +112,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
 void main() {  
   vec3 Sum = vec3(0);
 
-  for( int i = 0; i < 2; i++ ) {
+  for( int i = 0; i < 1; i++ ) {
     Sum += MicrofacetModel(i, VertexPosition.xyz, NormalDirection);
   }
 

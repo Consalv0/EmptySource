@@ -2,19 +2,23 @@
 
 struct FileStream;
 
+enum ShaderType {
+	Vertex, Fragment, Pixel, Geometry
+};
+
 class Shader {
 private:
-	WString FilePath;
 	FileStream* VertexStream;
 	FileStream* FragmentStream;
 	unsigned int VertexShader;
 	unsigned int FragmentShader;
 	unsigned int ShaderProgram;
+	WString Name;
 
 	bool bIsLinked;
 
 	//* Create and compile our GLSL shader program from text files
-	bool Compile();
+	bool Compile(ShaderType Type);
 
 	//* Link the shader to OpenGL
 	bool LinkProgram();
@@ -23,12 +27,14 @@ public:
 
 	Shader();
 
-	/*
-	* Create a instance of shader based on the common name of the file in the pathfile specified
-	* For example, if the path ../Base this command will search for Base.vertex.glsl 
-	* and Base.fragment.glsl files. 
-	*/
-	Shader(WString FilePath);
+	//* Create shader with name
+	Shader(const WString & Name);
+
+	//* Add shader to shader program
+	void LoadShader(ShaderType Type, WString ShaderPath);
+
+	//* Compile shader program
+	void Compile();
 
 	//* Get the location id of a uniform variable in this shader
 	unsigned int GetLocationID(const Char* LocationName) const;
