@@ -114,10 +114,13 @@
     <ClInclude Include="Source\EmptySource\include\Material.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\RenderingCore.h">
+    <ClInclude Include="Source\EmptySource\include\MeshLoader.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\MeshLoader.h">
+    <ClInclude Include="Source\EmptySource\include\Graphics.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Text.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>

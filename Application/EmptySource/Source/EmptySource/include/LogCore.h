@@ -1,9 +1,6 @@
 ﻿#pragma once
 
-#include <string>
-#include <locale> 
-#include <codecvt>
-#include <iostream>
+#include "..\include\Text.h"
 
 constexpr unsigned char       NoLog = 0x00;
 constexpr unsigned char         Log = 0x01;
@@ -13,29 +10,6 @@ constexpr unsigned char LogCritical = 0x08;
 constexpr unsigned char    LogDebug = 0x16;
 
 static unsigned char LogFilter = Log | LogWarning | LogError | LogCritical | LogDebug;
-
-typedef std::string String;
-typedef char Char;
-typedef std::wstring WString;
-typedef wchar_t WChar;
-
-#define StringToWString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING)
-#define CharToWChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().from_bytes(STRING).c_str()
-#define WStringToString(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING)
-#define WCharToChar(STRING) std::wstring_convert<std::codecvt_utf8<WChar>>().to_bytes(STRING).c_str()
-
-// Replace part of string with another string
-template<class T>
-inline bool StringReplace(T& String, const T& From, const T& To) {
-	size_t StartPos = String.find(From);
-	
-	if (StartPos == T::npos) {
-		return false;
-	}
-
-	String.replace(StartPos, From.length(), To);
-	return true;
-}
 
 inline WString LogPrefix(unsigned char Filter, WString Text) {
 	WString Prefix;

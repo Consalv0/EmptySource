@@ -180,3 +180,8 @@ FORCEINLINE Vector4& Vector4::operator/=(const float& Value) {
 	w /= Value;
 	return *this;
 }
+
+inline WString Vector4::ToString() {
+	// return TextFormat();
+	return L"{" + std::to_wstring(x) + L", " + std::to_wstring(y) + L", " + std::to_wstring(z) + L"}";
+}

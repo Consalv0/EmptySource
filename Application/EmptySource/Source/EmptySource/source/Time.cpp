@@ -1,9 +1,9 @@
 
 #include "..\include\Core.h"
+#include "..\include\Graphics.h"
 #include "..\include\Application.h"
 #include "..\include\Time.h"
 
-#include <Windows.h>
 #include <time.h>
 
 unsigned long Time::LastUpdateTime = 0;

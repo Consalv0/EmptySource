@@ -126,9 +126,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 			Faces->push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
 
 			// _LOG(LogDebug, L"Face {%d, %d, %d}",
-			// 	Faces->back()[0],
-			// 	Faces->back()[1],
-			// 	Faces->back()[2]
+			// 	Faces->back()[0], Faces->back()[1], Faces->back()[2]
 			// );
 		}
 	}

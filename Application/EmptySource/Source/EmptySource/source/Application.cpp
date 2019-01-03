@@ -4,6 +4,7 @@
 #include "..\include\FileManager.h"
 #include "..\include\MeshLoader.h"
 
+#include "..\include\Graphics.h"
 #include "..\include\Time.h"
 #include "..\include\Window.h"
 #include "..\include\Application.h"
@@ -206,7 +207,7 @@ void CoreApplication::MainLoop() {
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
 			if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
 				if (BaseMaterial.RenderMode == Render::RenderMode::Fill) {
-					BaseMaterial.RenderMode = Render::RenderMode::Line;
+					BaseMaterial.RenderMode = Render::RenderMode::Wire;
 				} else {
 					BaseMaterial.RenderMode = Render::RenderMode::Fill;
 				}
@@ -293,19 +294,19 @@ void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GL
 	// ignore non-significant error/warning codes
 	if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;
 
-	const char* ErrorPrefix = "";
+	const WChar* ErrorPrefix = L"";
 
 	switch (ErrorType) {
-		case GL_DEBUG_TYPE_ERROR:               ErrorPrefix = "error";       break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = "deprecated";  break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ErrorPrefix = "undefined";   break;
-		case GL_DEBUG_TYPE_PORTABILITY:         ErrorPrefix = "portability"; break;
-		case GL_DEBUG_TYPE_PERFORMANCE:         ErrorPrefix = "performance"; break;
-		case GL_DEBUG_TYPE_MARKER:              ErrorPrefix = "marker";      break;
-		case GL_DEBUG_TYPE_PUSH_GROUP:          ErrorPrefix = "pushgroup";  break;
-		case GL_DEBUG_TYPE_POP_GROUP:           ErrorPrefix = "popgroup";   break;
-		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = "other";       break;
+		case GL_DEBUG_TYPE_ERROR:               ErrorPrefix = L"error";       break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = L"deprecated";  break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ErrorPrefix = L"undefined";   break;
+		case GL_DEBUG_TYPE_PORTABILITY:         ErrorPrefix = L"portability"; break;
+		case GL_DEBUG_TYPE_PERFORMANCE:         ErrorPrefix = L"performance"; break;
+		case GL_DEBUG_TYPE_MARKER:              ErrorPrefix = L"marker";      break;
+		case GL_DEBUG_TYPE_PUSH_GROUP:          ErrorPrefix = L"pushgroup";  break;
+		case GL_DEBUG_TYPE_POP_GROUP:           ErrorPrefix = L"popgroup";   break;
+		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = L"other";       break;
 	}
 	
-	_LOG(LogError, L"<%s>(%i) %s", CharToWChar(ErrorPrefix), ErrorID, CharToWChar(ErrorMessage));
+	_LOG(LogError, L"<%s>(%i) %s", ErrorPrefix, ErrorID, CharToWChar(ErrorMessage));
 }
