@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\include\RenderingCore.h"
+#include "..\include\Graphics.h"
 #include "..\include\Shader.h"
 
 class Material {

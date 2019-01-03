@@ -3,14 +3,6 @@
 // Include windows headers
 #include <windows.h>
 
-// Include GLAD
-// Library to make function loaders for OpenGL
-#include <External/GLAD/include/glad.h>
-
-// Include GLFW
-// Library to make crossplataform input and window creation
-#include <External/GLFW/glfw3.h>
-
 // Include main standard headers
 #include <stdexcept>
 #include <errno.h>

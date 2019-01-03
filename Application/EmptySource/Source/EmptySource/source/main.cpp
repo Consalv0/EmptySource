@@ -1,4 +1,5 @@
 #include "../include/Core.h"
+#include "..\include\Graphics.h"
 #include "../include/Application.h"
 
 #ifdef _WIN32

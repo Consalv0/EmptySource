@@ -137,10 +137,11 @@
     <ClInclude Include="Source\EmptySource\include\Math\Vector4.h" />
     <ClInclude Include="Source\EmptySource\include\Object.h" />
     <ClInclude Include="Source\EmptySource\include\MeshLoader.h" />
-    <ClInclude Include="Source\EmptySource\include\RenderingCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Graphics.h" />
     <ClInclude Include="Source\EmptySource\include\Shader.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
+    <ClInclude Include="Source\EmptySource\include\Text.h" />
     <ClInclude Include="Source\EmptySource\include\Time.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />

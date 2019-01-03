@@ -1,4 +1,5 @@
 
+#include "..\include\Graphics.h"
 #include "..\include\Core.h"
 
 #include "..\include\Math\Math.h"
