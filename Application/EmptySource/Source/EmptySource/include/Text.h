@@ -20,7 +20,7 @@ typedef std::wstring_convert<std::codecvt_utf8<WChar>> UTF8Convert;
 
 // Replace part of string with another string
 template<class T>
-inline bool StringReplace(T& String, const T& From, const T& To) {
+inline bool TextReplace(T& String, const T& From, const T& To) {
 	size_t StartPos = String.find(From);
 
 	if (StartPos == T::npos) {
@@ -31,11 +31,43 @@ inline bool StringReplace(T& String, const T& From, const T& To) {
 	return true;
 }
 
-// Create a string qith format
-template<class T, typename ... Arguments>
-inline std::basic_string<T> TextFormat(const std::basic_string<T>& Format, Arguments ... Args) {
-	size_t Size = std::snprintf(nullptr, 0, Format.c_str(), Args ...) + 1; // Extra space for '\0'
-	std::unique_ptr<T[]> Buffer(new T[Size]);
-	std::snprintf(Buffer.get(), Size, Format.c_str(), Args ...);
-	return std::basic_string<T>(Buffer.get(), Buffer.get() + Size - 1); // We don't want the '\0' inside
+template<typename ... Arguments>
+WString TextFormat(const WString& Format, Arguments ... Args) {
+	const WChar* FormatBuffer = Format.c_str();
+	int Size = (int)sizeof(WChar) * (int)Format.size();
+	std::unique_ptr<WChar[]> Buffer;
+
+	while (true) {
+		Buffer = std::make_unique<WChar[]>(Size);
+		int OldSize = Size;
+		Size = std::swprintf(Buffer.get(), Size, FormatBuffer, Args ...);
+
+		if (Size < 0) {
+			Size += OldSize + 10;
+		} else {
+			break;
+		}
+	}
+
+	return WString(Buffer.get(), Buffer.get() + Size);
+}
+
+template<typename ... Arguments>
+WString TextFormat(const WChar* Format, Arguments ... Args) {
+	int Size = (int)std::wcslen(Format);
+	std::unique_ptr<WChar[]> Buffer;
+
+	while (true) {
+		Buffer = std::make_unique<WChar[]>(Size);
+		int OldSize = Size;
+		Size = std::swprintf(Buffer.get(), Size, Format, Args ...);
+
+		if (Size < 0) {
+			Size += OldSize + 25;
+		} else {
+			break;
+		}
+	}
+
+	return WString(Buffer.get(), Buffer.get() + Size); // We don't want the '\0' inside
 }

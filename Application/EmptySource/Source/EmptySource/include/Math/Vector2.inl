@@ -155,5 +155,5 @@ FORCEINLINE Vector2& Vector2::operator/=(const float& Value) {
 }
 
 inline WString Vector2::ToString() {
-	return L"{" + std::to_wstring(x) + L", " + std::to_wstring(y) + L"}";
+	return TextFormat(L"{%.2f, %.2f}", x, y);
 }

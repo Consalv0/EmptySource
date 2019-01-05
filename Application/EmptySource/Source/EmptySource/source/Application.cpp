@@ -36,7 +36,7 @@ bool CoreApplication::InitalizeGLAD() {
 bool CoreApplication::InitializeWindow() {
 	MainWindow = new ApplicationWindow();
 
-	if (MainWindow->Create("EmptySource - Debug", ES_WINDOW_MODE_WINDOWED, 1366, 768)) {
+	if (MainWindow->Create("EmptySource - Debug", WindowMode::Windowed, 1366, 768)) {
 		_LOG(LogCritical, L"Application Window couldn't be created!");
 		glfwTerminate();
 		return false;
@@ -108,7 +108,7 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ProjectionMatrix;
 
 	Vector3 EyePosition = Vector3(2, 4, 4);
-	Vector3 LightPosition = Vector3();
+	Vector3 LightPosition = Vector3(10, 10);
 	// Camera rotation, position Matrix
 	Matrix4x4 ViewMatrix;
 
@@ -148,13 +148,13 @@ void CoreApplication::MainLoop() {
 	//////////////////////////////////////////
 
 	MeshFaces OBJFaces; MeshVertices OBJVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\SquidwardHouse.obj"), &OBJFaces, &OBJVertices);
 	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
 	MeshFaces SphereFaces; MeshVertices SphereVertices;
 	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &SphereFaces, &SphereVertices);
 	Mesh SphereMesh = Mesh(SphereFaces, SphereVertices);
 	MeshFaces OtherFaces; MeshVertices OtherVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\SquidwardHouse.obj"), &OtherFaces, &OtherVertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Cube.obj"), &OtherFaces, &OtherVertices);
 	Mesh OtherMesh = Mesh(OtherFaces, OtherVertices);
 
 	do {
@@ -217,38 +217,39 @@ void CoreApplication::MainLoop() {
 		if (MainWindow->GetKeyDown(GLFW_KEY_U)) {
 			for (size_t i = 0; i < 1; i++) {
 				Matrices.push_back(
-					Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
+					Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
 				);
 			}
-			if (MainWindow->GetKeyDown(GLFW_KEY_Q))
+			if (MainWindow->GetKeyDown(GLFW_KEY_Q)) {
 				for (size_t i = 0; i < 10000; i++) {
 					Matrices.push_back(
-						Matrix4x4::Translate({ ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500, ((rand() % 2000) * 0.5F) - 500 })
+						Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
 					);
 				}
-
-			glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-			glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
-
-			// set transformation matrices as an instance vertex attribute (with divisor 1)
-			// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
-			// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
-			// -----------------------------------------------------------------------------------------------------------------------------------
-			// set attribute pointers for matrix (4 times vec4)
-			glEnableVertexAttribArray(6);
-			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
-			glEnableVertexAttribArray(7);
-			glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
-			glEnableVertexAttribArray(8);
-			glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
-			glEnableVertexAttribArray(9);
-			glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
-
-			glVertexAttribDivisor(6, 1);
-			glVertexAttribDivisor(7, 1);
-			glVertexAttribDivisor(8, 1);
-			glVertexAttribDivisor(9, 1);
+			}
 		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+		glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
+
+		// set transformation matrices as an instance vertex attribute (with divisor 1)
+		// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
+		// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
+		// -----------------------------------------------------------------------------------------------------------------------------------
+		// set attribute pointers for matrix (4 times vec4)
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
+		glEnableVertexAttribArray(8);
+		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
+		glEnableVertexAttribArray(9);
+		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
+
+		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(7, 1);
+		glVertexAttribDivisor(8, 1);
+		glVertexAttribDivisor(9, 1);
 
 		// Draw the meshs(es) !
 		RenderTimeSum += Time::GetDeltaTimeMilis();
@@ -258,8 +259,14 @@ void CoreApplication::MainLoop() {
 			// TemporalMesh.DrawElement();
 
 			MainWindow->SetWindowName(
-				L"EmptySource - FPS (" + std::to_wstring(int(Time::GetFrameRate())) + L"), (" + std::to_wstring((1 / Time::GetFrameRate()) * 1000) +
-				L"ms) Mesh Instances (" + std::to_wstring((int)Matrices.size()) + L"), Triangle Count (" + std::to_wstring(int(OBJMesh.Faces.size() * Matrices.size())) + L")"
+				TextFormat(L"%s - FPS(%.0f)(%.2f ms), Instances(%d), Triangles(%d), Camera(%s)",
+					L"EmptySource",
+					Time::GetFrameRate(),
+					(1 / Time::GetFrameRate()) * 1000,
+					Matrices.size(),
+					OBJMesh.Faces.size() * Matrices.size(),
+					EyePosition.ToString().c_str()
+				)
 			);
 
 			MainWindow->EndOfFrame();
