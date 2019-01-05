@@ -1,3 +1,4 @@
+
 #include "..\include\Graphics.h"
 #include "..\include\Core.h"
 #include "..\include\Window.h"
@@ -8,7 +9,7 @@ ApplicationWindow::ApplicationWindow() {
 	Name = "EmptySource Window";
 	Width = 1080;
 	Height = 720;
-	Mode = ES_WINDOW_MODE_WINDOWED;
+	Mode = WindowMode::Windowed;
 	FrameCount = 0;
 }
 
@@ -34,7 +35,7 @@ float ApplicationWindow::AspectRatio() {
 }
 
 bool ApplicationWindow::Create() {
-	GLFWmonitor* PrimaryMonitor = Mode == 1 ? glfwGetPrimaryMonitor() : nullptr;
+	GLFWmonitor* PrimaryMonitor = Mode == WindowMode::FullScreen ? glfwGetPrimaryMonitor() : nullptr;
 
 	Window = glfwCreateWindow(Width, Height, Name.c_str(), PrimaryMonitor, nullptr);
 
@@ -43,7 +44,7 @@ bool ApplicationWindow::Create() {
 	return false;
 }
 
-bool ApplicationWindow::Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height) {
+bool ApplicationWindow::Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height) {
 	
 	if (IsCreated()) {
 		_LOG(LogError, L"Window Already Created!");

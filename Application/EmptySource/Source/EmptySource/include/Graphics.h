@@ -4,10 +4,6 @@
 // Library to make function loaders for OpenGL
 #include <External/GLAD/include/glad.h>
 
-// Include GLFW
-// Library to make crossplataform input and window creation
-#include <External/GLFW/glfw3.h>
-
 namespace Render {
 	enum DepthFunction {
 		Never = GL_NEVER,

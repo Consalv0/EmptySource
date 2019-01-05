@@ -1,8 +1,13 @@
 #pragma once
 
-// Window modes
-#define ES_WINDOW_MODE_WINDOWED             0
-#define ES_WINDOW_MODE_FULLSCREEN           1
+// Include GLFW
+// Library to make crossplataform input and window creation
+#include <External/GLFW/glfw3.h>
+
+enum WindowMode {
+	Windowed = 0,
+	FullScreen = 1
+};
 
 /*
 ** Cointaina the properties and functions of a GLFW window
@@ -16,7 +21,7 @@ private:
 	String Name;
 	unsigned int Width = 1080;
 	unsigned int Height = 720;
-	unsigned int Mode = ES_WINDOW_MODE_WINDOWED;
+	WindowMode Mode = WindowMode::Windowed;
 
 	//* Frame Count
 	unsigned long FrameCount;
@@ -45,7 +50,7 @@ public:
 	float AspectRatio();
 
 	//* Creates a Window with a Name, Width and Height
-	bool Create(const char * Name, const unsigned int& Mode, const unsigned int& Width, const unsigned int& Height);
+	bool Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height);
 
 	//* Wrapper for glfwShouldClose, asks if window should be closed
 	bool ShouldClose();
