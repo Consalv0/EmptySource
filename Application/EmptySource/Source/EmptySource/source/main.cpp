@@ -16,13 +16,13 @@ extern "C" {
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT);
 
-	_LOG(Log, L"Initalizing Application:\n");
+	Debug::Log(Debug::LogNormal, L"Initalizing Application:\n");
 	CoreApplication::Initalize();
 	CoreApplication::PrintGraphicsInformation();
 
 	CoreApplication::MainLoop();
 	CoreApplication::Close();
 
-	_LOG(Log, L"Press any key to close...");
+	Debug::Log(Debug::LogNormal, L"Press any key to close...");
 	_getch();
 }

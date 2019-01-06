@@ -14,13 +14,13 @@ bool Shader::Compile(ShaderType Type) {
 	switch (Type) {
 	case Vertex:
 		VertexShader = glCreateShader(GL_VERTEX_SHADER);
-		_LOG(Log, L"Compiling vertex shader '%s'.vertex.glsl", VertexStream->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling vertex shader '%s'.vertex.glsl", VertexStream->GetShortPath().c_str());
 		ShaderCode = WStringToString(FileManager::ReadStream(VertexStream));
 		ShaderID = &VertexShader;
 		break;
 	case Fragment:
 		FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		_LOG(Log, L"Compiling fragment shader '%s'.fragment.glsl", FragmentStream->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling fragment shader '%s'.fragment.glsl", FragmentStream->GetShortPath().c_str());
 		ShaderCode = WStringToString(FileManager::ReadStream(FragmentStream));
 		ShaderID = &FragmentShader;
 		break;
@@ -50,7 +50,7 @@ bool Shader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	_LOG(Log, L"└>Linking shader program '%s'", Name.c_str());
+	Debug::Log(Debug::LogNormal, L"└>Linking shader program '%s'", Name.c_str());
 	ShaderProgram = glCreateProgram();
 
 	if (VertexShader != GL_FALSE)
@@ -65,7 +65,7 @@ bool Shader::LinkProgram() {
 	if (InfoLogLength > 0) {
 		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		_LOG(LogError, L"'%s'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
+		Debug::Log(Debug::LogNormal, L"'%s'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 
@@ -133,7 +133,7 @@ void Shader::Unload() {
 
 void Shader::Use() const {
 	if (!IsValid()) {
-		_LOG(LogError, L"Can't use shader '%s' because is not valid", Name.c_str());
+		Debug::Log(Debug::LogError, L"Can't use shader '%s' because is not valid", Name.c_str());
 		return;
 	}
 

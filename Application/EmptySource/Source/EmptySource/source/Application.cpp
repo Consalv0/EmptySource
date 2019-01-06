@@ -20,7 +20,7 @@ unsigned long CoreApplication::RenderTimeSum = 0;
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
-		_LOG(LogCritical, L"Unable to load OpenGL functions!");
+		Debug::Log(Debug::LogCritical, L"Unable to load OpenGL functions!");
 		return false;
 	}
 
@@ -37,7 +37,7 @@ bool CoreApplication::InitializeWindow() {
 	MainWindow = new ApplicationWindow();
 
 	if (MainWindow->Create("EmptySource - Debug", WindowMode::Windowed, 1366, 768)) {
-		_LOG(LogCritical, L"Application Window couldn't be created!");
+		Debug::Log(Debug::LogCritical, L"Application Window couldn't be created!");
 		glfwTerminate();
 		return false;
 	}
@@ -58,16 +58,16 @@ void CoreApplication::PrintGraphicsInformation() {
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	_LOG(Log, L"GC Vendor            : %s", CharToWChar((const char*)vendor));
-	_LOG(Log, L"GC Renderer          : %s", CharToWChar((const char*)vendor));
-	_LOG(Log, L"GL Version (string)  : %s", CharToWChar((const char*)version));
-	_LOG(Log, L"GL Version (integer) : %d.%d", major, minor);
-	_LOG(Log, L"GLSL Version         : %s\n", CharToWChar((const char*)glslVersion));
+	Debug::Log(Debug::LogNormal, L"GC Vendor            : %s", CharToWChar((const char*)vendor));
+	Debug::Log(Debug::LogNormal, L"GC Renderer          : %s", CharToWChar((const char*)vendor));
+	Debug::Log(Debug::LogNormal, L"GL Version (string)  : %s", CharToWChar((const char*)version));
+	Debug::Log(Debug::LogNormal, L"GL Version (integer) : %d.%d", major, minor);
+	Debug::Log(Debug::LogNormal, L"GLSL Version         : %s\n", CharToWChar((const char*)glslVersion));
 }
 
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
-		_LOG(LogCritical, L"Failed to initialize GLFW\n");
+		Debug::Log(Debug::LogCritical, L"Failed to initialize GLFW\n");
 		return false;
 	}
 
@@ -148,7 +148,7 @@ void CoreApplication::MainLoop() {
 	//////////////////////////////////////////
 
 	MeshFaces OBJFaces; MeshVertices OBJVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\SquidwardHouse.obj"), &OBJFaces, &OBJVertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices);
 	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
 	MeshFaces SphereFaces; MeshVertices SphereVertices;
 	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &SphereFaces, &SphereVertices);
@@ -293,7 +293,7 @@ void CoreApplication::MainLoop() {
 }
 
 void CoreApplication::GLFWError(int ErrorID, const char* Description) {
-	_LOG(LogError, L"%s", CharToWChar(Description));
+	Debug::Log(Debug::LogError, L"%s", CharToWChar(Description));
 }
 
 void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
@@ -315,5 +315,5 @@ void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GL
 		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = L"other";       break;
 	}
 	
-	_LOG(LogError, L"<%s>(%i) %s", ErrorPrefix, ErrorID, CharToWChar(ErrorMessage));
+	Debug::Log(Debug::LogError, L"<%s>(%i) %s", ErrorPrefix, ErrorID, CharToWChar(ErrorMessage));
 }

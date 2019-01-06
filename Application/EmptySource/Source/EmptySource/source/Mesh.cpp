@@ -290,7 +290,7 @@ Mesh Mesh::BuildCube() {
 void Mesh::BindVertexArray() const {
 	// Generate 1 VAO, put the resulting identifier in VAO identifier
 	if (VertexArrayObject == 0) {
-		_LOG(LogError, L"The buffers are empty, use SetUpBuffers first");
+		Debug::Log(Debug::LogWarning, L"Model buffers are empty, use SetUpBuffers first");
 		return;
 	}
 	// The following commands will put in context our VAO for the next commands
@@ -319,6 +319,8 @@ void Mesh::DrawElement() const {
 }
 
 void Mesh::SetUpBuffers() {
+
+	if (Vertices.size() <= 0 || Faces.size() <= 0) return;
 
 	glGenVertexArrays(1, &VertexArrayObject);
 	glBindVertexArray(VertexArrayObject);

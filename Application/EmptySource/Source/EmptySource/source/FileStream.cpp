@@ -12,7 +12,7 @@ FileStream::FileStream() {
 FileStream::FileStream(WString FilePath) {
 	Stream = new std::wfstream(FilePath);
 	Path = FilePath;
-	if (!IsValid()) _LOG(LogError, L"File '%s' is not valid or do not exist", FilePath.c_str());
+	if (!IsValid()) Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", FilePath.c_str());
 }
 
 WString FileStream::GetExtension() const {
@@ -48,7 +48,7 @@ std::wstringstream FileStream::ReadStream() const {
 			stringStream << Stream->rdbuf();
 		} catch (...) {}
 	} else {
-		_LOG(LogError, L"File '%s' is not valid or do not exist", Path.c_str());
+		Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", Path.c_str());
 	}
 
 	return stringStream;
@@ -67,6 +67,11 @@ bool FileStream::IsValid() const {
 bool FileStream::Open() {
 	Stream->open(Path);
 	return Stream->is_open();
+}
+
+void FileStream::Reset() {
+	Stream->clear();
+	Stream->seekg(0, Stream->beg);
 }
 
 void FileStream::Close() {

@@ -39,7 +39,7 @@ bool ApplicationWindow::Create() {
 
 	Window = glfwCreateWindow(Width, Height, Name.c_str(), PrimaryMonitor, nullptr);
 
-	_LOG(Log, L"Window: \"%s\" initialized!", CharToWChar(Name));
+	Debug::Log(Debug::LogNormal, L"Window: \"%s\" initialized!", CharToWChar(Name));
 
 	return false;
 }
@@ -47,7 +47,7 @@ bool ApplicationWindow::Create() {
 bool ApplicationWindow::Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height) {
 	
 	if (IsCreated()) {
-		_LOG(LogError, L"Window Already Created!");
+		Debug::Log(Debug::LogWarning, L"Window Already Created!");
 		return false;
 	}
 
@@ -104,7 +104,7 @@ void ApplicationWindow::PollEvents() {
 
 void ApplicationWindow::InitializeInputs() {
 	if (Window == NULL) {
-		_LOG(LogError, L"Unable to set input mode!");
+		Debug::Log(Debug::LogError, L"Unable to set input mode!");
 		return;
 	}
 	// Ensure we can capture the escape key being pressed below
@@ -113,7 +113,7 @@ void ApplicationWindow::InitializeInputs() {
 
 void ApplicationWindow::Terminate() {
 	if (Window != NULL) {
-		_LOG(Log, L"Window: \"%s\" closed!", GetWindowName().c_str());
+		Debug::Log(Debug::LogNormal, L"Window: \"%s\" closed!", GetWindowName().c_str());
 		glfwDestroyWindow(Window);
 	}
 }

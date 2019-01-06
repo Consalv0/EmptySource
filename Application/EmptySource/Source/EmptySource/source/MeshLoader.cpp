@@ -24,7 +24,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 	MeshVector3D ListNormals;
 	MeshUVs ListUVs;
 
-	_LOG(Log, L"Parsing Model '%s'", File->GetShortPath().c_str());
+	Debug::Log(Debug::LogNormal, L"Parsing Model '%s'", File->GetShortPath().c_str());
 
 	WString KeyWord;
 	WChar* Line;
@@ -77,6 +77,11 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 					&VertexIndex[2]
 				);
 
+				if (VertexIndex[0] < 0) {
+					Debug::Log(Debug::LogError, L"The model %s contains negative references, this is not supported", File->GetShortPath().c_str());
+					return 0;
+				}
+
 				if (Empty < 0) {
 					continue;
 				}
@@ -86,7 +91,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 			}
 
 			if (VertexCount > 3) {
-				_LOG(LogError, L"The model %s has four or more points per face and this is no implmented yet", File->GetPath().c_str());
+				Debug::Log(Debug::LogError, L"The model %s has four or more points per face and this is no implmented yet", File->GetShortPath().c_str());
 				return 0;
 			}
 		}
@@ -94,7 +99,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 
 	clock_t EndTime = clock();
 	float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
-	_LOG(Log, L"|> Parsed %d vertices in %.3fs", VertexIndices.size(), TotalTime);
+	Debug::Log(Debug::LogNormal, L"|> Parsed %d vertices in %.3fs", VertexIndices.size(), TotalTime);
 
 	std::map<MeshVertex, unsigned> VertexToIndex;
 	std::vector<int> Indices;
@@ -133,7 +138,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 	EndTime = clock();
 	TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
 	size_t AllocatedSize = sizeof(IntVector3) * Faces->size() + sizeof(MeshVertex) * Vertices->size();
-	_LOG(Log, L"└> Allocated %.2fKB in %.2fs", AllocatedSize / 1024.F, TotalTime);
+	Debug::Log(Debug::LogNormal, L"└> Allocated %.2fKB in %.2fs", AllocatedSize / 1024.F, TotalTime);
 
 	return true;
 }
