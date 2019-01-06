@@ -10,6 +10,7 @@ FileStream* FileManager::Open(const WString & FilePath) {
 	WString FullFilePath = GetFullPath(FilePath);
 	FileList::iterator Found = FindInFiles(FullFilePath);
 
+	if (Found != Files.end()) (*Found)->Reset();
 	if (Found != Files.end() && (*Found)->IsValid()) return *Found;
 
 	FileStream* NewStream = new FileStream(FullFilePath);

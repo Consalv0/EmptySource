@@ -22,5 +22,6 @@ public:
 	}
 
 	bool Open();
+	void Reset();
 	void Close();
 };
