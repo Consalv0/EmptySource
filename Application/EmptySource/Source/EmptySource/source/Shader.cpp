@@ -50,7 +50,7 @@ bool Shader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	Debug::Log(Debug::LogNormal, L"└>Linking shader program '%s'", Name.c_str());
+	Debug::Log(Debug::LogNormal, L"└> Linking shader program '%s'", Name.c_str());
 	ShaderProgram = glCreateProgram();
 
 	if (VertexShader != GL_FALSE)

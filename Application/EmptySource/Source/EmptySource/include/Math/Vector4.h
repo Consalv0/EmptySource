@@ -32,8 +32,8 @@ public:
 	inline float const& operator[](unsigned int i) const;
 	inline const float* PointerToValue() const;
 
-	FORCEINLINE bool operator==(const Vector4& Other);
-	FORCEINLINE bool operator!=(const Vector4& Other);
+	FORCEINLINE bool operator==(const Vector4& Other) const;
+	FORCEINLINE bool operator!=(const Vector4& Other) const;
 
 	FORCEINLINE Vector4 operator+(const Vector4& Other) const;
 	FORCEINLINE Vector4 operator-(const Vector4& Other) const;

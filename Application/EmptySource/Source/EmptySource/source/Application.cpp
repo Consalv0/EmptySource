@@ -120,6 +120,10 @@ void CoreApplication::MainLoop() {
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShader(&UnlitBaseShader);
 
+	float MaterialMetalness = 0.54F;
+	float MaterialRoughness = 0.54F;
+	float LightIntencity = 2000.F;
+
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
 
@@ -147,15 +151,18 @@ void CoreApplication::MainLoop() {
 
 	//////////////////////////////////////////
 
-	MeshFaces OBJFaces; MeshVertices OBJVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices);
-	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
 	MeshFaces SphereFaces; MeshVertices SphereVertices;
 	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &SphereFaces, &SphereVertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &SphereFaces, &SphereVertices);
 	Mesh SphereMesh = Mesh(SphereFaces, SphereVertices);
+	MeshFaces OBJFaces; MeshVertices OBJVertices;
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices, false);
+	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
 	MeshFaces OtherFaces; MeshVertices OtherVertices;
 	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Cube.obj"), &OtherFaces, &OtherVertices);
 	Mesh OtherMesh = Mesh(OtherFaces, OtherVertices);
+
+	unsigned long InputTimeSum = 0;
 
 	do {
 		Time::Tick();
@@ -185,10 +192,6 @@ void CoreApplication::MainLoop() {
 			Vector3(0, 1, 0)	// Up vector
 		);
 
-		float MaterialMetalness = 0.98F;
-		float MaterialRoughness = 0.01F;
-		float LightIntencity = 2000.F;
-
 		glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
 		glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
 		glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
@@ -203,6 +206,19 @@ void CoreApplication::MainLoop() {
 		glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
 
 		OBJMesh.BindVertexArray();
+		
+		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
+			MaterialMetalness -= 0.1F * Time::GetDeltaTime();
+		} 
+		if (MainWindow->GetKeyDown(GLFW_KEY_M)) {
+			MaterialMetalness += 0.1F * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_E)) {
+			MaterialRoughness -= 0.1F * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_R)) {
+			MaterialRoughness += 0.1F * Time::GetDeltaTime();
+		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
 			if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
@@ -215,10 +231,13 @@ void CoreApplication::MainLoop() {
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_U)) {
-			for (size_t i = 0; i < 1; i++) {
-				Matrices.push_back(
-					Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
-				);
+			InputTimeSum += Time::GetDeltaTimeMilis();
+			if (InputTimeSum > (300)) {
+				for (size_t i = 0; i < 1; i++) {
+					Matrices.push_back(
+						Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
+					);
+				}
 			}
 			if (MainWindow->GetKeyDown(GLFW_KEY_Q)) {
 				for (size_t i = 0; i < 10000; i++) {
@@ -275,13 +294,13 @@ void CoreApplication::MainLoop() {
 		glBindVertexArray(0);
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_W))
-			LightPosition += Vector3(100.F, 100.F, 0) * Time::GetDeltaTime();
+			LightPosition += Vector3(20.F, 20.F, 0) * Time::GetDeltaTime();
 		if (MainWindow->GetKeyDown(GLFW_KEY_S))
-			LightPosition -= Vector3(100.F, 100.F, 0) * Time::GetDeltaTime();
+			LightPosition -= Vector3(20.F, 20.F, 0) * Time::GetDeltaTime();
 		if (MainWindow->GetKeyDown(GLFW_KEY_A))
-			LightPosition += Vector3(0, 0, 100.F) * Time::GetDeltaTime();
+			LightPosition += Vector3(0, 0, 20.F) * Time::GetDeltaTime();
 		if (MainWindow->GetKeyDown(GLFW_KEY_D))
-			LightPosition -= Vector3(0, 0, 100.F) * Time::GetDeltaTime();
+			LightPosition -= Vector3(0, 0, 20.F) * Time::GetDeltaTime();
 
 		MainWindow->PollEvents();
 
