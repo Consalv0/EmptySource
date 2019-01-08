@@ -115,11 +115,11 @@ FORCEINLINE Vector3 Vector3::operator/(const Vector3 & Other) const {
 	);
 }
 
-FORCEINLINE bool Vector3::operator==(const Vector3& Other) {
+FORCEINLINE bool Vector3::operator==(const Vector3& Other) const {
 	return (x == Other.x && y == Other.y && z == Other.z);
 }
 
-FORCEINLINE bool Vector3::operator!=(const Vector3& Other) {
+FORCEINLINE bool Vector3::operator!=(const Vector3& Other) const {
 	return (x != Other.x || y != Other.y || z != Other.z);
 }
 

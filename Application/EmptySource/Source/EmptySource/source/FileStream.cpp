@@ -7,11 +7,13 @@
 FileStream::FileStream() {
 	Stream = NULL;
 	Path = L"";
+	Lenght = 0;
 }
 
 FileStream::FileStream(WString FilePath) {
 	Stream = new std::wfstream(FilePath);
 	Path = FilePath;
+	Open();
 	if (!IsValid()) Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", FilePath.c_str());
 }
 
@@ -54,6 +56,21 @@ std::wstringstream FileStream::ReadStream() const {
 	return stringStream;
 }
 
+std::stringstream FileStream::ReadNarrowStream() const {
+	std::stringstream stringStream;
+	if (IsValid()) {
+		try {
+			std::fstream NarrowStream;
+			NarrowStream.open(Path, std::fstream::in);
+			stringStream << NarrowStream.rdbuf();
+		} catch (...) {}
+	} else {
+		Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", Path.c_str());
+	}
+
+	return stringStream;
+}
+
 WChar* FileStream::GetLine(long long MaxCount) {
 	WChar* String = new WChar[MaxCount + 1];
 	Stream->getline(String, MaxCount);
@@ -64,13 +81,22 @@ bool FileStream::IsValid() const {
 	return !Stream->fail() && Stream->good() && Stream != NULL;
 }
 
+long FileStream::GetLenght() {
+	return Lenght;
+}
+
 bool FileStream::Open() {
 	Stream->open(Path);
+
+	if (Stream->is_open()) Reset();
+
 	return Stream->is_open();
 }
 
 void FileStream::Reset() {
 	Stream->clear();
+	Stream->seekg(0, Stream->end);
+	Lenght = long(Stream->tellg());
 	Stream->seekg(0, Stream->beg);
 }
 

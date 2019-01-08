@@ -14,6 +14,7 @@
 // Include standar headers
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <iomanip>
 #include <conio.h>
 #include <memory>

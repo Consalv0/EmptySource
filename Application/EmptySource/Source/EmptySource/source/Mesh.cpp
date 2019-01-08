@@ -7,6 +7,14 @@
 
 bool MeshVertex::operator<(const MeshVertex that) const {
 	return memcmp((void*)this, (void*)&that, sizeof(MeshVertex)) > 0;
+}
+bool MeshVertex::operator==(const MeshVertex & other) const {
+	return (Position == other.Position
+			&& Normal == other.Normal
+			&& Tangent == other.Tangent
+			&& UV0 == other.UV0
+			&& UV1 == other.UV1
+			&& Color == other.Color);
 };
 
 Mesh::Mesh() {

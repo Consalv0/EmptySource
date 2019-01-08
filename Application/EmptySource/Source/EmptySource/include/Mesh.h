@@ -24,7 +24,8 @@ struct MeshVertex {
 	Vector2 UV0, UV1;
 	Vector4 Color;
 
-	bool operator<(const MeshVertex that) const;
+	bool operator<(const MeshVertex that) const; 
+	bool operator==(const MeshVertex &other) const;
 };
 
 typedef vector<IntVector3> MeshFaces;

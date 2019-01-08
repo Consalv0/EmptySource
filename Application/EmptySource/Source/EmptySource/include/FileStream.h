@@ -3,6 +3,7 @@
 struct FileStream {
 private:
 	std::wfstream* Stream;
+	long Lenght;
 	WString Path;
 
 public:
@@ -14,6 +15,7 @@ public:
 	WString GetPath() const;
 	WString GetShortPath() const;
 	std::wstringstream ReadStream() const;
+	std::stringstream ReadNarrowStream() const;
 	WChar* GetLine(long long MaxCount);
 	bool IsValid() const;
 
@@ -21,6 +23,16 @@ public:
 		return (_STD move(*Stream) >> _Str);
 	}
 
+	inline const float GetProgress() const {
+		long Progress = long(Stream->tellg());
+		return Progress / float(Lenght);
+	}
+
+	inline const long GetPosition() const {
+		return (long)Stream->tellg();
+	}
+
+	long GetLenght();
 	bool Open();
 	void Reset();
 	void Close();

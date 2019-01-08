@@ -80,11 +80,11 @@ inline float const & Vector2::operator[](unsigned int i) const {
 	}
 }
 
-FORCEINLINE bool Vector2::operator==(const Vector2& Other) {
+FORCEINLINE bool Vector2::operator==(const Vector2& Other) const {
 	return (x == Other.x && y == Other.y);
 }
 
-FORCEINLINE bool Vector2::operator!=(const Vector2& Other) {
+FORCEINLINE bool Vector2::operator!=(const Vector2& Other) const {
 	return (x != Other.x || y != Other.y);
 }
 

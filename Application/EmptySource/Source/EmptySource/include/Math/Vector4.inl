@@ -95,11 +95,11 @@ inline float const & Vector4::operator[](unsigned int i) const {
 	}
 }
 
-FORCEINLINE bool Vector4::operator==(const Vector4& Other) {
+FORCEINLINE bool Vector4::operator==(const Vector4& Other) const {
 	return (x == Other.x && y == Other.y && z == Other.z && w == Other.w);
 }
 
-FORCEINLINE bool Vector4::operator!=(const Vector4& Other) {
+FORCEINLINE bool Vector4::operator!=(const Vector4& Other) const {
 	return (x != Other.x || y != Other.y || z != Other.z || w != Other.w);
 }
 

@@ -18,6 +18,11 @@ namespace Debug {
 
 	template<typename ... Arguments>
 	inline void Log(unsigned char Filter, WString Text, Arguments ... Args) {
+		if (Filter == NoLog) {
+			std::wprintf(Text.c_str(), Args ...);
+			return;
+		}
+
 		WString LogText = L"";
 
 #ifdef _WIN32

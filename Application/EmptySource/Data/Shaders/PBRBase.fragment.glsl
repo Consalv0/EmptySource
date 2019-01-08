@@ -117,7 +117,7 @@ void main() {
   }
 
   // Gamma 
-  Sum = pow( Sum, vec3(1.0/2.2) );
+  // Sum = pow( Sum, vec3(1.0/2.2) );
 
   FragColor = vec4(Sum, 1);
 } 
