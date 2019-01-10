@@ -1,4 +1,5 @@
 
+#include "..\include\Core.h"
 #include "..\include\LogCore.h"
 #include "..\include\Space.h"
 #include "..\include\Object.h"

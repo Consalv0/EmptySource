@@ -151,16 +151,13 @@ void CoreApplication::MainLoop() {
 
 	//////////////////////////////////////////
 
-	MeshFaces SphereFaces; MeshVertices SphereVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &SphereFaces, &SphereVertices);
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &SphereFaces, &SphereVertices);
-	Mesh SphereMesh = Mesh(SphereFaces, SphereVertices);
-	MeshFaces OBJFaces; MeshVertices OBJVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &OBJFaces, &OBJVertices, false);
-	Mesh OBJMesh = Mesh(OBJFaces, OBJVertices);
-	MeshFaces OtherFaces; MeshVertices OtherVertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Cube.obj"), &OtherFaces, &OtherVertices);
-	Mesh OtherMesh = Mesh(OtherFaces, OtherVertices);
+	MeshFaces Faces; MeshVertices Vertices;
+	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &Faces, &Vertices);
+	// Mesh SphereMesh = Mesh(&Faces, &Vertices);
+	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices);
+	// Mesh EscafandraMesh = Mesh(&Faces, &Vertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\xyzrgbDragon.obj"), &Faces, &Vertices, false);
+	Mesh OBJMesh = Mesh(&Faces, &Vertices);
 
 	unsigned long InputTimeSum = 0;
 

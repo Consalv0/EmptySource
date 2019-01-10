@@ -88,6 +88,16 @@ Mesh::Mesh(const MeshFaces faces, const MeshVertices vertices) {
 	SetUpBuffers();
 }
 
+Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices) {
+	Faces.swap(*faces);
+	Vertices.swap(*vertices);
+
+	VertexArrayObject = 0;
+	ElementBuffer = 0;
+	VertexBuffer = 0;
+	SetUpBuffers();
+}
+
 Mesh Mesh::BuildCube() {
 	Mesh TemporalMesh;
 	static const MeshFaces    TemporalFaces{

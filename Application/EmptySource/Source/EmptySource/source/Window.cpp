@@ -1,6 +1,6 @@
 
-#include "..\include\Graphics.h"
 #include "..\include\Core.h"
+#include "..\include\Graphics.h"
 #include "..\include\Window.h"
 #include "..\include\Math\Math.h"
 
@@ -39,7 +39,7 @@ bool ApplicationWindow::Create() {
 
 	Window = glfwCreateWindow(Width, Height, Name.c_str(), PrimaryMonitor, nullptr);
 
-	Debug::Log(Debug::LogNormal, L"Window: \"%s\" initialized!", CharToWChar(Name));
+	Debug::Log(Debug::LogNormal, L"Window: \"%s\" initialized!", CharToWChar(Name.c_str()));
 
 	return false;
 }

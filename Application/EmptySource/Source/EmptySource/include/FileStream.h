@@ -15,7 +15,7 @@ public:
 	WString GetPath() const;
 	WString GetShortPath() const;
 	std::wstringstream ReadStream() const;
-	std::stringstream ReadNarrowStream() const;
+	bool ReadNarrowStream(String* Output) const;
 	WChar* GetLine(long long MaxCount);
 	bool IsValid() const;
 
