@@ -56,19 +56,25 @@ std::wstringstream FileStream::ReadStream() const {
 	return stringStream;
 }
 
-std::stringstream FileStream::ReadNarrowStream() const {
-	std::stringstream stringStream;
+bool FileStream::ReadNarrowStream(String* Output) const {
 	if (IsValid()) {
 		try {
 			std::fstream NarrowStream;
-			NarrowStream.open(Path, std::fstream::in);
-			stringStream << NarrowStream.rdbuf();
-		} catch (...) {}
+			NarrowStream.open(Path, std::ios::in | std::ios::binary);
+			NarrowStream.seekg(0, std::ios::end);
+			Output->resize(NarrowStream.tellg());
+			NarrowStream.seekg(0, std::ios::beg);
+			NarrowStream.read(&(*Output)[0], Output->size());
+			NarrowStream.close();
+		} catch (...) {
+			return false;
+		}
 	} else {
 		Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", Path.c_str());
+		return false;
 	}
 
-	return stringStream;
+	return true;
 }
 
 WChar* FileStream::GetLine(long long MaxCount) {
@@ -86,7 +92,7 @@ long FileStream::GetLenght() {
 }
 
 bool FileStream::Open() {
-	Stream->open(Path);
+	Stream->open(Path, std::ios::in || std::ios::binary);
 
 	if (Stream->is_open()) Reset();
 

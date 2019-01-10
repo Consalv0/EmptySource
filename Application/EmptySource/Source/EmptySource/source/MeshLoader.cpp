@@ -50,18 +50,22 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 		clock_t StartTime = clock();
 		Debug::Log(Debug::LogNormal, L"Parsing Model '%s'", File->GetShortPath().c_str());
 		
-		std::stringstream MemoryFile = File->ReadNarrowStream();
+		String* MemoryText = new String();
+		File->ReadNarrowStream(MemoryText);
+		std::istringstream InFile;
+		InFile = std::istringstream(*MemoryText);
+		delete MemoryText;
 
 		String KeyWord;
 		long LineCount = 0;
 
-		while (MemoryFile >> KeyWord) {
+		while (InFile >> KeyWord) {
 
 			Char* Line = new Char[250];
-			MemoryFile.getline(Line, (unsigned)250);
+			InFile.getline(Line, (unsigned)250);
 			LineCount++;
 
-			long Progress = long(MemoryFile.tellg());
+			long Progress = long(InFile.tellg());
 			float prog = Progress / float(File->GetLenght());
 			if ((LineCount % 8273) <= 0) {
 				float cur = std::ceil(prog * 25);
@@ -80,13 +84,13 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 				delete[] Line;
 				continue;
 			}
-
+			
 			if (KeyWord == "o") {
 				// _LOG(LogDebug, L"Name%s", Line);
 				delete[] Line;
 				continue;
 			}
-
+			
 			if (KeyWord == "v") {
 				Vector3 Vert;
 				ExtractVector3(Line, &Vert);
@@ -95,7 +99,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 				continue;
 				// _LOG(LogDebug, L"Vertex %s", Vertx.ToString().c_str());
 			}
-
+			
 			if (KeyWord == "vn") {
 				Vector3 Normal;
 				ExtractVector3(Line, &Normal);
@@ -104,7 +108,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 				continue;
 				// _LOG(LogDebug, L"Normal %s", Normal.ToString().c_str());
 			}
-
+			
 			if (KeyWord == "vt") {
 				Vector2 TexCoords;
 				ExtractVector2(Line, &TexCoords);
@@ -113,17 +117,17 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 				continue;
 				// _LOG(LogDebug, L"UV %s", TexCoords.ToString().c_str());
 			}
-
+			
 			if (KeyWord == "f") {
 				// 0 = Vertex, 1 = TextureCoords, 2 = Normal
 				IntVector3 VertexIndex = IntVector3(1);
 				Char *LineState, *Token;
 				Token = strtok_s(Line, " ", &LineState);
 				int VertexCount = 0;
-
+			
 				while (Token != NULL) {
 					int Empty;
-
+			
 					if (ListUVs.size() <= 0) {
 						if (ListNormals.size() <= 0) {
 							Empty = sscanf_s(
@@ -158,7 +162,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 							&VertexIndex[2]
 						);
 					}
-
+			
 					Token = strtok_s(NULL, " ", &LineState);
 					if (VertexIndex[0] < 0 && !bWarned) {
 						bWarned = true;
@@ -166,11 +170,11 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 						Debug::Log(Debug::LogWarning, L"The model %s contains negative references, this is not supported", File->GetShortPath().c_str());
 						continue;
 					}
-
+			
 					if (Empty < 0) {
 						continue;
 					}
-
+			
 					VertexCount++;
 					if (VertexCount == 4) {
 						VertexIndices.push_back(VertexIndices[VertexIndices.size() - 3]);
@@ -180,13 +184,13 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 						VertexIndices.push_back(VertexIndex);
 					}
 				}
-
+			
 				if (VertexCount > 4 && !bWarned) {
 					bWarned = true;
 					Debug::Log(Debug::NoLog, L"\r");
 					Debug::Log(Debug::LogWarning, L"The model %s has n-gons and this is no supported yet", File->GetShortPath().c_str());
 				}
-
+			
 				delete[] Line;
 				continue;
 			}
@@ -194,17 +198,16 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 
 		clock_t EndTime = clock();
 		float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
-		Debug::Log(Debug::LogNormal, L"├> Parsed %d lines, %d vertices in %.3fs", LineCount, VertexIndices.size(), TotalTime);
+		Debug::Log(Debug::LogNormal, L"├> Parsed %d vertices and %d triangles in %.3fs", VertexIndices.size(), VertexIndices.size() / 3, TotalTime);
 	}
 
 	std::unordered_map<MeshVertex, unsigned> VertexToIndex;
 	VertexToIndex.reserve(VertexIndices.size());
 	int* Indices = new int[VertexIndices.size()];
 	Faces->reserve(VertexIndices.size() / 3);
-	Vertices->reserve(VertexIndices.size() / 2);
+	Vertices->reserve(VertexIndices.size());
 
 	clock_t StartTime = clock();
-	MeshVertex NewVertex;
 	for (unsigned int Count = 0; Count < VertexIndices.size(); Count++) {
 
 		float prog = Count / float(VertexIndices.size());
@@ -213,23 +216,20 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %d vertices", WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(), 100 * prog, Count);
 		}
 
-		if (ListPositions.size() > 0) {
-			NewVertex.Position = ListPositions[VertexIndices[Count][0] - 1];
-		} else {
-			NewVertex.Position = Vector3();
-		}
-		if (ListUVs.size() > 0) {
-			NewVertex.UV0 = NewVertex.UV1 = ListUVs[VertexIndices[Count][1] - 1];
-		} else {
-			NewVertex.UV0 = NewVertex.UV1 = Vector2();
-		}
-		if (ListNormals.size() > 0) {
-			NewVertex.Normal = ListNormals[VertexIndices[Count][2] - 1];
-		} else {
-			NewVertex.Normal = Vector3();
-		}
-		NewVertex.Color = Vector4(1);
-		NewVertex.Tangent = Vector3();
+		MeshVertex NewVertex = {
+			ListPositions.size() > 0 ?
+				ListPositions[VertexIndices[Count][0] - 1] : 0,
+			ListNormals.size() > 0 ?
+				NewVertex.Normal = ListNormals[VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
+			0,
+			ListUVs.size() > 0 ?
+				ListUVs[VertexIndices[Count][1] - 1] : 0,
+			ListUVs.size() > 0 ?
+				ListUVs[VertexIndices[Count][1] - 1] : 0,
+			1
+		};
+		// NewVertex.Color = Vector4(1);
+		// NewVertex.Tangent = Vector3();
 
 		unsigned Index = Count;
 		bool bFoundIndex = false;
