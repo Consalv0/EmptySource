@@ -7,6 +7,8 @@
 #include "..\include\MeshLoader.h"
 #include "..\include\FileStream.h"
 
+std::locale MeshLoader::Locale = std::locale();
+
 bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, std::unordered_map<MeshVertex, unsigned>& VertexToIndex, unsigned & Result) {
 	std::unordered_map<MeshVertex, unsigned>::iterator it = VertexToIndex.find(Vertex);
 	if (it == VertexToIndex.end()) {
@@ -17,33 +19,244 @@ bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, std::unordered
 	}
 }
 
-void MeshLoader::ExtractVector3(Char * Text, Vector3* Vector) {
+void MeshLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
 	Char* LineState;
 	Vector->x = std::strtof(Text, &LineState);
 	Vector->y = std::strtof(LineState, &LineState);
 	Vector->z = std::strtof(LineState, NULL);
 }
 
-void MeshLoader::ExtractVector2(Char * Text, Vector2* Vector) {
+void MeshLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
 	Char* LineState;
 	Vector->x = std::strtof(Text, &LineState);
 	Vector->y = std::strtof(LineState, &LineState);
 }
 
-void MeshLoader::ExtractIntVector3(Char * Text, IntVector3 * Vector) {
+void MeshLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
 	Char* LineState;
 	Vector->x = (int)std::strtof(Text, &LineState);
 	Vector->y = (int)std::strtof(LineState, &LineState);
 	Vector->z = (int)std::strtof(LineState, NULL);
 }
 
+void MeshLoader::ParseOBJLine(
+	const OBJKeyword& Keyword,
+	Char * Line,
+	ParseData& Data)
+{
+	bool bWarned = false;
+
+	if (Keyword == CSType && !bWarned) {
+		bWarned = true;
+		Debug::Log(Debug::NoLog, L"\r");
+		Debug::Log(Debug::LogWarning, L"The object contains free-form geometry, this is not supported");
+		return;
+	}
+		
+	if (Keyword == Object) {
+		Debug::Log(Debug::NoLog, L"\r");
+		Debug::Log(Debug::LogNormal, L"├> Parsing Object: %s", CharToWChar(Line));
+		return;
+	}
+		
+	if (Keyword == Vertex) {
+		ExtractVector3(Line, &Data.ListPositions[Data.PositionCount++]);
+		// Debug::Log(Debug::LogDebug, L"Vertex %s", Vert.ToString().c_str());
+		return;
+	}
+		
+	if (Keyword == Normal) {
+		ExtractVector3(Line, &Data.ListNormals[Data.NormalCount++]);
+		// Debug::Log(Debug::LogDebug, L"Normal %s", Normal.ToString().c_str());
+		return;
+	}
+		
+	if (Keyword == TextureCoord) {
+		ExtractVector2(Line, &Data.ListUVs[Data.UVsCount++]);
+		// Debug::Log(Debug::LogDebug, L"UV %s", TexCoords.ToString().c_str());
+		return;
+	}
+		
+	if (Keyword == Face) {
+		// 0 = Vertex, 1 = TextureCoords, 2 = Normal
+		IntVector3 VertexIndex = IntVector3(1);
+		Char *LineState, *Token;
+		Token = strtok_s(Line, " ", &LineState);
+		int VertexCount = 0;
+
+		while (Token != NULL) {
+			int Empty;
+
+			if (Data.ListUVs.size() <= 0) {
+				if (Data.ListNormals.size() <= 0) {
+					Empty = sscanf_s(
+						Token, "%d",
+						&VertexIndex[0]
+					);
+				} else {
+					Empty = sscanf_s(
+						Token, "%d//%d",
+						&VertexIndex[0],
+						&VertexIndex[2]
+					);
+				}
+			} else if (Data.ListNormals.size() <= 0) {
+				if (Data.ListUVs.size() <= 0) {
+					Empty = sscanf_s(
+						Token, "%d",
+						&VertexIndex[0]
+					);
+				} else {
+					Empty = sscanf_s(
+						Token, "%d/%d",
+						&VertexIndex[0],
+						&VertexIndex[1]
+					);
+				}
+			} else {
+				Empty = sscanf_s(
+					Token, "%d/%d/%d",
+					&VertexIndex[0],
+					&VertexIndex[1],
+					&VertexIndex[2]
+				);
+			}
+
+			Token = strtok_s(NULL, " ", &LineState);
+			if (VertexIndex[0] < 0 && !bWarned) {
+				bWarned = true;
+				Debug::Log(Debug::NoLog, L"\r");
+				Debug::Log(Debug::LogWarning, L"The model contains negative references, this is not supported");
+				continue;
+			}
+
+			if (Empty < 0) {
+				continue;
+			}
+
+			VertexCount++;
+			if (VertexCount == 4) {
+				Data.VertexIndices.push_back(Data.VertexIndices[Data.VertexIndices.size() - 3]);
+				Data.VertexIndices.push_back(Data.VertexIndices[Data.VertexIndices.size() - 2]);
+				Data.VertexIndices.push_back(VertexIndex);
+			} else {
+				Data.VertexIndices.push_back(VertexIndex);
+			}
+		}
+
+		if (VertexCount > 4 && !bWarned) {
+			bWarned = true;
+			Debug::Log(Debug::NoLog, L"\r");
+			Debug::Log(Debug::LogWarning, L"The model has n-gons and this is no supported yet");
+		}
+
+		return;
+	}
+}
+
+MeshLoader::OBJKeyword MeshLoader::GetOBJKeyword(const Char * Word) {
+	OBJKeyword Keyword = Undefined;
+
+	if (std::strcmp(Word, "v") == 0) Keyword = Vertex;
+	if (Keyword == Undefined && std::strcmp(Word, "vn") == 0) Keyword = Normal;
+	if (Keyword == Undefined && std::strcmp(Word, "vt") == 0) Keyword = TextureCoord;
+	if (Keyword == Undefined && std::strcmp(Word, "f") == 0) Keyword = Face;
+	if (Keyword == Undefined && std::strcmp(Word, "#") == 0) Keyword = Comment;
+	if (Keyword == Undefined && std::strcmp(Word, "o") == 0) Keyword = Object;
+	if (Keyword == Undefined && std::strcmp(Word, "cstype") == 0) Keyword = CSType;
+
+	return Keyword;
+}
+
+void MeshLoader::ReadOBJByLine(
+	const Char * InFile,
+	ParseData& Data)
+{
+	const size_t LogCountBottleNeck = 86273;
+	size_t LogCount = 1;
+	size_t CharacterCount = 0;
+	size_t LastSplitPosition = 0;
+	size_t MaxCharacterCount = std::strlen(InFile);
+	const Char* Pointer = InFile;
+	size_t LineCount = 0;
+	int VertexIndicesCount = 0;
+	int PositionCount = 0;
+	int NormalCount = 0;
+	int UVsCount = 0;
+
+	while (CharacterCount <= MaxCharacterCount) {
+		CharacterCount++;
+		if (std::isspace(*(Pointer++), Locale)) {
+			size_t KeySize = CharacterCount - LastSplitPosition;
+			Char* Key = new Char[KeySize + 1];
+			std::copy(&InFile[LastSplitPosition], Pointer, Key);
+			Key[KeySize - 1] = '\0';
+			LastSplitPosition = CharacterCount;
+
+			while (CharacterCount <= MaxCharacterCount) {
+				CharacterCount++;
+				if (*(Pointer++) == '\n') {
+					size_t LineSize = CharacterCount - LastSplitPosition;
+					Char* Line = new Char[LineSize + 1];
+					std::copy(&InFile[LastSplitPosition], Pointer, Line);
+					Line[LineSize - 1] = '\0';
+
+					ParseOBJLine(
+						GetOBJKeyword(Key), Line, Data
+					);
+
+					delete[] Line;
+					LineCount++;
+					LastSplitPosition = CharacterCount;
+					break;
+				}
+			}
+			delete[] Key;
+		}
+
+		float Progress = CharacterCount / float(MaxCharacterCount);
+		if (--LogCount <= 0) {
+			LogCount = LogCountBottleNeck;
+			float cur = std::ceil(Progress * 25);
+			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %d lines", WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(), 100 * Progress, LineCount);
+		}
+		
+		if (CharacterCount == MaxCharacterCount) {
+			Debug::Log(Debug::NoLog, L"\r");
+			Debug::Log(Debug::LogNormal, L"├> [%s] %.2f%% %d lines", WString(25, L'#').c_str(), 100 * Progress, LineCount);
+		}
+	}
+}
+
+void MeshLoader::PrepareOBJData(const Char * InFile, ParseData& Data) {
+	size_t CharacterCount = 0;
+	size_t MaxCharacterCount = std::strlen(InFile);
+	const Char* Pointer = InFile;
+	int VertexCount = 0;
+	int NormalCount = 0;
+	int UVCount = 0;
+	int FaceCount = 0;
+	int ObjectCount = 0;
+
+	while (CharacterCount <= MaxCharacterCount) {
+		CharacterCount++;
+		Pointer++;
+		if (*Pointer == 'v' && *(Pointer + 1) == ' ') { VertexCount++; continue; };
+		if (*Pointer == 'n') { NormalCount++; continue; };
+		if (*Pointer == 't') { UVCount++;     continue; };
+		if (*Pointer == 'f') { FaceCount++;   continue; };
+	}
+
+	Data.ListPositions.resize(VertexCount);
+	Data.ListNormals.resize(NormalCount);
+	Data.ListUVs.resize(UVCount);
+	Data.VertexIndices.reserve(FaceCount * 4);
+}
+
 bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Vertices, bool hasOptimize) {
 	if (File == NULL || !File->IsValid()) return false;
 
-	std::vector<IntVector3> VertexIndices;
-	MeshVector3D ListPositions;
-	MeshVector3D ListNormals;
-	MeshUVs ListUVs;
+	ParseData Data;
 
 	{
 		bool bWarned = false;
@@ -52,180 +265,49 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 		
 		String* MemoryText = new String();
 		File->ReadNarrowStream(MemoryText);
-		std::istringstream InFile;
-		InFile = std::istringstream(*MemoryText);
-		delete MemoryText;
 
 		String KeyWord;
 		long LineCount = 0;
 
-		while (InFile >> KeyWord) {
-
-			Char* Line = new Char[250];
-			InFile.getline(Line, (unsigned)250);
-			LineCount++;
-
-			long Progress = long(InFile.tellg());
-			float prog = Progress / float(File->GetLenght());
-			if ((LineCount % 8273) <= 0) {
-				float cur = std::ceil(prog * 25);
-				Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %d lines", WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(), 100 * prog, LineCount);
-			}
-
-			if (prog == 1) {
-				Debug::Log(Debug::NoLog, L"\r");
-				Debug::Log(Debug::LogNormal, L"├> [%s] %.2f%% %d lines", WString(25, L'#').c_str(), 100 * prog, LineCount);
-			}
-
-			if (KeyWord == "cstype" && !bWarned) {
-				bWarned = true;
-				Debug::Log(Debug::NoLog, L"\r");
-				Debug::Log(Debug::LogWarning, L"The model %s contains free-form geometry, this is not supported", File->GetShortPath().c_str());
-				delete[] Line;
-				continue;
-			}
-			
-			if (KeyWord == "o") {
-				// _LOG(LogDebug, L"Name%s", Line);
-				delete[] Line;
-				continue;
-			}
-			
-			if (KeyWord == "v") {
-				Vector3 Vert;
-				ExtractVector3(Line, &Vert);
-				ListPositions.push_back(Vert);
-				delete[] Line;
-				continue;
-				// _LOG(LogDebug, L"Vertex %s", Vertx.ToString().c_str());
-			}
-			
-			if (KeyWord == "vn") {
-				Vector3 Normal;
-				ExtractVector3(Line, &Normal);
-				ListNormals.push_back(Normal);
-				delete[] Line;
-				continue;
-				// _LOG(LogDebug, L"Normal %s", Normal.ToString().c_str());
-			}
-			
-			if (KeyWord == "vt") {
-				Vector2 TexCoords;
-				ExtractVector2(Line, &TexCoords);
-				ListUVs.push_back(TexCoords);
-				delete[] Line;
-				continue;
-				// _LOG(LogDebug, L"UV %s", TexCoords.ToString().c_str());
-			}
-			
-			if (KeyWord == "f") {
-				// 0 = Vertex, 1 = TextureCoords, 2 = Normal
-				IntVector3 VertexIndex = IntVector3(1);
-				Char *LineState, *Token;
-				Token = strtok_s(Line, " ", &LineState);
-				int VertexCount = 0;
-			
-				while (Token != NULL) {
-					int Empty;
-			
-					if (ListUVs.size() <= 0) {
-						if (ListNormals.size() <= 0) {
-							Empty = sscanf_s(
-								Token, "%d",
-								&VertexIndex[0]
-							);
-						} else {
-							Empty = sscanf_s(
-								Token, "%d//%d",
-								&VertexIndex[0],
-								&VertexIndex[2]
-							);
-						}
-					} else if (ListNormals.size() <= 0) {
-						if (ListUVs.size() <= 0) {
-							Empty = sscanf_s(
-								Token, "%d",
-								&VertexIndex[0]
-							);
-						} else {
-							Empty = sscanf_s(
-								Token, "%d/%d",
-								&VertexIndex[0],
-								&VertexIndex[1]
-							);
-						}
-					} else {
-						Empty = sscanf_s(
-							Token, "%d/%d/%d",
-							&VertexIndex[0],
-							&VertexIndex[1],
-							&VertexIndex[2]
-						);
-					}
-			
-					Token = strtok_s(NULL, " ", &LineState);
-					if (VertexIndex[0] < 0 && !bWarned) {
-						bWarned = true;
-						Debug::Log(Debug::NoLog, L"\r");
-						Debug::Log(Debug::LogWarning, L"The model %s contains negative references, this is not supported", File->GetShortPath().c_str());
-						continue;
-					}
-			
-					if (Empty < 0) {
-						continue;
-					}
-			
-					VertexCount++;
-					if (VertexCount == 4) {
-						VertexIndices.push_back(VertexIndices[VertexIndices.size() - 3]);
-						VertexIndices.push_back(VertexIndices[VertexIndices.size() - 2]);
-						VertexIndices.push_back(VertexIndex);
-					} else {
-						VertexIndices.push_back(VertexIndex);
-					}
-				}
-			
-				if (VertexCount > 4 && !bWarned) {
-					bWarned = true;
-					Debug::Log(Debug::NoLog, L"\r");
-					Debug::Log(Debug::LogWarning, L"The model %s has n-gons and this is no supported yet", File->GetShortPath().c_str());
-				}
-			
-				delete[] Line;
-				continue;
-			}
-		}
+		PrepareOBJData(MemoryText->c_str(), Data);
+		ReadOBJByLine(MemoryText->c_str(), Data);
+		delete MemoryText;
 
 		clock_t EndTime = clock();
 		float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
-		Debug::Log(Debug::LogNormal, L"├> Parsed %d vertices and %d triangles in %.3fs", VertexIndices.size(), VertexIndices.size() / 3, TotalTime);
+		Debug::Log(Debug::LogNormal, L"├> Parsed %d vertices and %d triangles in %.3fs", Data.VertexIndices.size(), Data.VertexIndices.size() / 3, TotalTime);
 	}
 
 	std::unordered_map<MeshVertex, unsigned> VertexToIndex;
-	VertexToIndex.reserve(VertexIndices.size());
-	int* Indices = new int[VertexIndices.size()];
-	Faces->reserve(VertexIndices.size() / 3);
-	Vertices->reserve(VertexIndices.size());
+	Data.VertexIndices.shrink_to_fit();
+	VertexToIndex.reserve(Data.VertexIndices.size());
+	int* Indices = new int[Data.VertexIndices.size()];
+	Faces->reserve(Data.VertexIndices.size() / 3);
+	Vertices->reserve(Data.VertexIndices.size());
+
+	const size_t LogCountBottleNeck = 86273;
+	size_t LogCount = 1;
 
 	clock_t StartTime = clock();
-	for (unsigned int Count = 0; Count < VertexIndices.size(); Count++) {
+	for (unsigned int Count = 0; Count < Data.VertexIndices.size(); Count++) {
 
-		float prog = Count / float(VertexIndices.size());
-		if ((Count % 14271) <= 0) {
+		float prog = Count / float(Data.VertexIndices.size());
+		if (--LogCount <= 0) {
+			LogCount = LogCountBottleNeck;
 			float cur = std::ceil(prog * 25);
 			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %d vertices", WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(), 100 * prog, Count);
 		}
 
 		MeshVertex NewVertex = {
-			ListPositions.size() > 0 ?
-				ListPositions[VertexIndices[Count][0] - 1] : 0,
-			ListNormals.size() > 0 ?
-				NewVertex.Normal = ListNormals[VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
+			Data.ListPositions.size() > 0 ?
+				Data.ListPositions[Data.VertexIndices[Count][0] - 1] : 0,
+			Data.ListNormals.size() > 0 ?
+				Data.ListNormals[Data.VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
 			0,
-			ListUVs.size() > 0 ?
-				ListUVs[VertexIndices[Count][1] - 1] : 0,
-			ListUVs.size() > 0 ?
-				ListUVs[VertexIndices[Count][1] - 1] : 0,
+			Data.ListUVs.size() > 0 ?
+				Data.ListUVs[Data.VertexIndices[Count][1] - 1] : 0,
+			Data.ListUVs.size() > 0 ?
+				Data.ListUVs[Data.VertexIndices[Count][1] - 1] : 0,
 			1
 		};
 		// NewVertex.Color = Vector4(1);
@@ -255,7 +337,7 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 	}
 
 	Debug::Log(Debug::NoLog, L"\r");
-	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %d vertices", WString(25, L'#').c_str(), VertexIndices.size());
+	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %d vertices", WString(25, L'#').c_str(), Data.VertexIndices.size());
 
 	clock_t EndTime = clock();
 	float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;

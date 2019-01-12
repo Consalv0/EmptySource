@@ -29,8 +29,8 @@ inline Char* WCharToChar(const WChar* From) {
 inline WChar* CharToWChar(const Char* From) {
 	if (From == NULL) return NULL;
 	int SizeNeeded = MultiByteToWideChar(CP_UTF8, 0, &From[0], (int)std::strlen(From), NULL, 0);
-	WChar* To = new WChar[SizeNeeded];
-	MultiByteToWideChar(CP_UTF8, 0, &From[0], (int)std::strlen(From), &To[0], SizeNeeded);
+	WChar* To = (wchar_t*)LocalAlloc(LMEM_ZEROINIT, sizeof(wchar_t) * SizeNeeded + 1);
+	MultiByteToWideChar(CP_UTF8, 0, &From[0], (int)std::strlen(From) + 1, &To[0], SizeNeeded);
 	return To;
 }
 

@@ -2,20 +2,50 @@
 
 #include "..\include\FileManager.h"
 #include "..\include\Mesh.h"
-
 #include "..\include\Core.h"
 
 class MeshLoader {
 public:
+
+	struct ParseData {
+		std::vector<IntVector3> VertexIndices;
+		int VertexIndicesCount = 0;
+		MeshVector3D ListPositions;
+		int PositionCount = 0;
+		MeshVector3D ListNormals;
+		int NormalCount = 0;
+		MeshUVs ListUVs;
+		int UVsCount = 0;
+	};
+	enum OBJKeyword {
+		Comment, Object, Vertex, Normal, TextureCoord, Face, CSType, Undefined
+	};
+
+	static std::locale Locale;
+	
 	static bool GetSimilarVertexIndex(
 		const MeshVertex & Vertex,
 		std::unordered_map<MeshVertex, unsigned> & VertexToIndex,
 		unsigned & Result
 	);
 
-	static void ExtractVector3(Char * Text, Vector3* Vertex);
-	static void ExtractVector2(Char * Text, Vector2* Vertex);
-	static void ExtractIntVector3(Char * Text, IntVector3* Vertex);
+	static void ExtractVector3(const Char * Text, Vector3* Vertex);
+	static void ExtractVector2(const Char * Text, Vector2* Vertex);
+	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
+	static void ReadOBJByLine(
+		const Char * InFile,
+		ParseData& Data
+	); 
+	static void PrepareOBJData(
+		const Char * InFile,
+		ParseData& Data
+	);
+	static OBJKeyword GetOBJKeyword(const Char* Line);
+	static void ParseOBJLine(
+		const OBJKeyword& Keyword,
+		Char* Line,
+		ParseData& Data
+	);
 
 	static bool FromOBJ(FileStream* File, MeshFaces* Faces, MeshVertices* Vertices, bool Optimize = true);
 };
