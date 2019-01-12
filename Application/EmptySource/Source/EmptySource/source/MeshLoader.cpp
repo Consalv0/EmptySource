@@ -21,22 +21,22 @@ bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, std::unordered
 
 void MeshLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
 	Char* LineState;
-	Vector->x = std::strtof(Text, &LineState);
-	Vector->y = std::strtof(LineState, &LineState);
-	Vector->z = std::strtof(LineState, NULL);
+	Vector->x = (float)crack_strtof(Text, &LineState);
+	Vector->y = (float)crack_strtof(LineState, &LineState);
+	Vector->z = (float)crack_strtof(LineState, &LineState);
 }
 
 void MeshLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
 	Char* LineState;
-	Vector->x = std::strtof(Text, &LineState);
-	Vector->y = std::strtof(LineState, &LineState);
+	Vector->x = (float)crack_strtof(Text, &LineState);
+	Vector->y = (float)crack_strtof(LineState, &LineState);
 }
 
 void MeshLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
 	Char* LineState;
-	Vector->x = (int)std::strtof(Text, &LineState);
-	Vector->y = (int)std::strtof(LineState, &LineState);
-	Vector->z = (int)std::strtof(LineState, NULL);
+	Vector->x = (int)crack_strtof(Text, &LineState);
+	Vector->y = (int)crack_strtof(LineState, &LineState);
+	Vector->z = (int)crack_strtof(LineState, NULL);
 }
 
 void MeshLoader::ParseOBJLine(
@@ -87,8 +87,8 @@ void MeshLoader::ParseOBJLine(
 		while (Token != NULL) {
 			int Empty;
 
-			if (Data.ListUVs.size() <= 0) {
-				if (Data.ListNormals.size() <= 0) {
+			if (Data.UVsCount <= 0) {
+				if (Data.NormalCount <= 0) {
 					Empty = sscanf_s(
 						Token, "%d",
 						&VertexIndex[0]
@@ -100,8 +100,8 @@ void MeshLoader::ParseOBJLine(
 						&VertexIndex[2]
 					);
 				}
-			} else if (Data.ListNormals.size() <= 0) {
-				if (Data.ListUVs.size() <= 0) {
+			} else if (Data.NormalCount <= 0) {
+				if (Data.UVsCount <= 0) {
 					Empty = sscanf_s(
 						Token, "%d",
 						&VertexIndex[0]
@@ -157,13 +157,15 @@ void MeshLoader::ParseOBJLine(
 MeshLoader::OBJKeyword MeshLoader::GetOBJKeyword(const Char * Word) {
 	OBJKeyword Keyword = Undefined;
 
-	if (std::strcmp(Word, "v") == 0) Keyword = Vertex;
-	if (Keyword == Undefined && std::strcmp(Word, "vn") == 0) Keyword = Normal;
-	if (Keyword == Undefined && std::strcmp(Word, "vt") == 0) Keyword = TextureCoord;
-	if (Keyword == Undefined && std::strcmp(Word, "f") == 0) Keyword = Face;
-	if (Keyword == Undefined && std::strcmp(Word, "#") == 0) Keyword = Comment;
-	if (Keyword == Undefined && std::strcmp(Word, "o") == 0) Keyword = Object;
-	if (Keyword == Undefined && std::strcmp(Word, "cstype") == 0) Keyword = CSType;
+	if (Word[0] == 'v') {
+		Keyword = Vertex;
+		if (Word[1] == 'n') Keyword = Normal;
+		if (Word[1] == 't') Keyword = TextureCoord;
+	}
+	if (Keyword == Undefined && Word[0] == 'f') Keyword = Face;
+	if (Keyword == Undefined && Word[0] == '#') Keyword = Comment;
+	if (Keyword == Undefined && Word[0] == 'o') Keyword = Object;
+	if (Keyword == Undefined && Word[0] == 'c') Keyword = CSType;
 
 	return Keyword;
 }
@@ -179,39 +181,30 @@ void MeshLoader::ReadOBJByLine(
 	size_t MaxCharacterCount = std::strlen(InFile);
 	const Char* Pointer = InFile;
 	size_t LineCount = 0;
-	int VertexIndicesCount = 0;
-	int PositionCount = 0;
-	int NormalCount = 0;
-	int UVsCount = 0;
 
 	while (CharacterCount <= MaxCharacterCount) {
 		CharacterCount++;
 		if (std::isspace(*(Pointer++), Locale)) {
 			size_t KeySize = CharacterCount - LastSplitPosition;
-			Char* Key = new Char[KeySize + 1];
-			std::copy(&InFile[LastSplitPosition], Pointer, Key);
-			Key[KeySize - 1] = '\0';
+			Char* Key = (Char*)&InFile[LastSplitPosition++];
 			LastSplitPosition = CharacterCount;
 
 			while (CharacterCount <= MaxCharacterCount) {
 				CharacterCount++;
 				if (*(Pointer++) == '\n') {
 					size_t LineSize = CharacterCount - LastSplitPosition;
-					Char* Line = new Char[LineSize + 1];
-					std::copy(&InFile[LastSplitPosition], Pointer, Line);
+					Char* Line = (Char*)&InFile[LastSplitPosition];
 					Line[LineSize - 1] = '\0';
 
 					ParseOBJLine(
 						GetOBJKeyword(Key), Line, Data
 					);
 
-					delete[] Line;
 					LineCount++;
 					LastSplitPosition = CharacterCount;
 					break;
 				}
 			}
-			delete[] Key;
 		}
 
 		float Progress = CharacterCount / float(MaxCharacterCount);
@@ -299,14 +292,14 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 		}
 
 		MeshVertex NewVertex = {
-			Data.ListPositions.size() > 0 ?
+			Data.PositionCount > 0 ?
 				Data.ListPositions[Data.VertexIndices[Count][0] - 1] : 0,
-			Data.ListNormals.size() > 0 ?
+			Data.NormalCount > 0 ?
 				Data.ListNormals[Data.VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
 			0,
-			Data.ListUVs.size() > 0 ?
+			Data.UVsCount > 0 ?
 				Data.ListUVs[Data.VertexIndices[Count][1] - 1] : 0,
-			Data.ListUVs.size() > 0 ?
+			Data.UVsCount > 0 ?
 				Data.ListUVs[Data.VertexIndices[Count][1] - 1] : 0,
 			1
 		};
