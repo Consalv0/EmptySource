@@ -21,30 +21,32 @@ bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, std::unordered
 
 void MeshLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
 	Char* LineState;
-	Vector->x = (float)crack_strtof(Text, &LineState);
-	Vector->y = (float)crack_strtof(LineState, &LineState);
-	Vector->z = (float)crack_strtof(LineState, &LineState);
+	Vector->x = (float)StringToDouble(Text, &LineState);
+	Vector->y = (float)StringToDouble(LineState, &LineState);
+	Vector->z = (float)StringToDouble(LineState, &LineState);
 }
 
 void MeshLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
 	Char* LineState;
-	Vector->x = (float)crack_strtof(Text, &LineState);
-	Vector->y = (float)crack_strtof(LineState, &LineState);
+	Vector->x = (float)StringToDouble(Text, &LineState);
+	Vector->y = (float)StringToDouble(LineState, &LineState);
 }
 
 void MeshLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
 	Char* LineState;
-	Vector->x = (int)crack_strtof(Text, &LineState);
-	Vector->y = (int)crack_strtof(LineState, &LineState);
-	Vector->z = (int)crack_strtof(LineState, NULL);
+	Vector->x = (int)StringToDouble(Text, &LineState);
+	Vector->y = (int)StringToDouble(LineState, &LineState);
+	Vector->z = (int)StringToDouble(LineState, NULL);
 }
 
 void MeshLoader::ParseOBJLine(
 	const OBJKeyword& Keyword,
 	Char * Line,
-	ParseData& Data)
+	OBJFileData& ModelData,
+	int ObjectCount)
 {
 	bool bWarned = false;
+	OBJObjectData* Data = &ModelData.Objects[ObjectCount];
 
 	if (Keyword == CSType && !bWarned) {
 		bWarned = true;
@@ -54,25 +56,27 @@ void MeshLoader::ParseOBJLine(
 	}
 		
 	if (Keyword == Object) {
-		Debug::Log(Debug::NoLog, L"\r");
-		Debug::Log(Debug::LogNormal, L"├> Parsing Object: %s", CharToWChar(Line));
+		Data->Name = Line;
 		return;
 	}
 		
 	if (Keyword == Vertex) {
-		ExtractVector3(Line, &Data.ListPositions[Data.PositionCount++]);
+		ExtractVector3(Line, &ModelData.ListPositions[ModelData.PositionCount++]);
+		Data->PositionCount++;
 		// Debug::Log(Debug::LogDebug, L"Vertex %s", Vert.ToString().c_str());
 		return;
 	}
 		
 	if (Keyword == Normal) {
-		ExtractVector3(Line, &Data.ListNormals[Data.NormalCount++]);
+		ExtractVector3(Line, &ModelData.ListNormals[ModelData.NormalCount++]);
+		Data->NormalCount++;
 		// Debug::Log(Debug::LogDebug, L"Normal %s", Normal.ToString().c_str());
 		return;
 	}
 		
 	if (Keyword == TextureCoord) {
-		ExtractVector2(Line, &Data.ListUVs[Data.UVsCount++]);
+		ExtractVector2(Line, &ModelData.ListUVs[ModelData.UVsCount++]);
+		Data->UVsCount++;
 		// Debug::Log(Debug::LogDebug, L"UV %s", TexCoords.ToString().c_str());
 		return;
 	}
@@ -87,8 +91,8 @@ void MeshLoader::ParseOBJLine(
 		while (Token != NULL) {
 			int Empty;
 
-			if (Data.UVsCount <= 0) {
-				if (Data.NormalCount <= 0) {
+			if (Data->UVsCount <= 0) {
+				if (Data->NormalCount <= 0) {
 					Empty = sscanf_s(
 						Token, "%d",
 						&VertexIndex[0]
@@ -100,8 +104,8 @@ void MeshLoader::ParseOBJLine(
 						&VertexIndex[2]
 					);
 				}
-			} else if (Data.NormalCount <= 0) {
-				if (Data.UVsCount <= 0) {
+			} else if (Data->NormalCount <= 0) {
+				if (Data->UVsCount <= 0) {
 					Empty = sscanf_s(
 						Token, "%d",
 						&VertexIndex[0]
@@ -136,11 +140,15 @@ void MeshLoader::ParseOBJLine(
 
 			VertexCount++;
 			if (VertexCount == 4) {
-				Data.VertexIndices.push_back(Data.VertexIndices[Data.VertexIndices.size() - 3]);
-				Data.VertexIndices.push_back(Data.VertexIndices[Data.VertexIndices.size() - 2]);
-				Data.VertexIndices.push_back(VertexIndex);
+				ModelData.VertexIndices.push_back(ModelData.VertexIndices[ModelData.VertexIndices.size() - 3]);
+				ModelData.VertexIndices.push_back(ModelData.VertexIndices[ModelData.VertexIndices.size() - 2]);
+				ModelData.VertexIndices.push_back(VertexIndex);
+				Data->VertexIndicesCount += 3;
+				ModelData.VertexIndicesCount += 3;
 			} else {
-				Data.VertexIndices.push_back(VertexIndex);
+				ModelData.VertexIndices.push_back(VertexIndex);
+				Data->VertexIndicesCount++;
+				ModelData.VertexIndicesCount++;
 			}
 		}
 
@@ -155,24 +163,22 @@ void MeshLoader::ParseOBJLine(
 }
 
 MeshLoader::OBJKeyword MeshLoader::GetOBJKeyword(const Char * Word) {
-	OBJKeyword Keyword = Undefined;
-
+	if (Word[0] == 'f' ) return Face;
 	if (Word[0] == 'v') {
-		Keyword = Vertex;
-		if (Word[1] == 'n') Keyword = Normal;
-		if (Word[1] == 't') Keyword = TextureCoord;
+		if (Word[1] == ' ') return Vertex;
+		if (Word[1] == 'n' && Word[2] == ' ') return Normal;
+		if (Word[1] == 't' && Word[2] == ' ') return TextureCoord;
 	}
-	if (Keyword == Undefined && Word[0] == 'f') Keyword = Face;
-	if (Keyword == Undefined && Word[0] == '#') Keyword = Comment;
-	if (Keyword == Undefined && Word[0] == 'o') Keyword = Object;
-	if (Keyword == Undefined && Word[0] == 'c') Keyword = CSType;
+	if (Word[0] == '#' && Word[1] == ' ') return Comment;
+	if (Word[0] == 'o' && Word[1] == ' ') return Object;
+	if (Word[0] == 'c') return CSType;
 
-	return Keyword;
+	return Undefined;
 }
 
 void MeshLoader::ReadOBJByLine(
 	const Char * InFile,
-	ParseData& Data)
+	OBJFileData& ModelData)
 {
 	const size_t LogCountBottleNeck = 86273;
 	size_t LogCount = 1;
@@ -181,6 +187,7 @@ void MeshLoader::ReadOBJByLine(
 	size_t MaxCharacterCount = std::strlen(InFile);
 	const Char* Pointer = InFile;
 	size_t LineCount = 0;
+	int ObjectCount = 0;
 
 	while (CharacterCount <= MaxCharacterCount) {
 		CharacterCount++;
@@ -195,9 +202,14 @@ void MeshLoader::ReadOBJByLine(
 					size_t LineSize = CharacterCount - LastSplitPosition;
 					Char* Line = (Char*)&InFile[LastSplitPosition];
 					Line[LineSize - 1] = '\0';
+					
+					OBJKeyword LineKey = GetOBJKeyword(Key);
+					if (LineKey == Object) {
+						++ObjectCount;
+					}
 
 					ParseOBJLine(
-						GetOBJKeyword(Key), Line, Data
+						LineKey, Line, ModelData, ObjectCount == 0 ? ObjectCount : ObjectCount - 1
 					);
 
 					LineCount++;
@@ -221,40 +233,70 @@ void MeshLoader::ReadOBJByLine(
 	}
 }
 
-void MeshLoader::PrepareOBJData(const Char * InFile, ParseData& Data) {
-	size_t CharacterCount = 0;
-	size_t MaxCharacterCount = std::strlen(InFile);
+void MeshLoader::PrepareOBJData(const Char * InFile, OBJFileData& ModelData) {
 	const Char* Pointer = InFile;
 	int VertexCount = 0;
 	int NormalCount = 0;
 	int UVCount = 0;
 	int FaceCount = 0;
 	int ObjectCount = 0;
+	OBJKeyword Keyword;
 
-	while (CharacterCount <= MaxCharacterCount) {
-		CharacterCount++;
-		Pointer++;
-		if (*Pointer == 'v' && *(Pointer + 1) == ' ') { VertexCount++; continue; };
-		if (*Pointer == 'n') { NormalCount++; continue; };
-		if (*Pointer == 't') { UVCount++;     continue; };
-		if (*Pointer == 'f') { FaceCount++;   continue; };
+	while (*Pointer != '\0') {
+		Keyword = GetOBJKeyword(Pointer);
+		if (Keyword == Comment) {
+			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
+			++Pointer;
+			continue;
+		};
+		if (Keyword == Vertex) {
+			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
+			++Pointer;
+			VertexCount++; continue;
+		};
+		if (Keyword == Normal) {
+			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
+			++Pointer;
+			NormalCount++; continue;
+		};
+		if (Keyword == TextureCoord) {
+			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
+			++Pointer;
+			UVCount++;     continue;
+		};
+		if (Keyword == Face) {
+			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
+			++Pointer;
+			FaceCount++;   continue;
+		};
+		if (Keyword == Object) {
+			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
+			if (ObjectCount++ <= 0) continue;
+
+			ModelData.Objects.push_back(OBJObjectData());
+			continue;
+		}
+
+		++Pointer;
 	}
-
-	Data.ListPositions.resize(VertexCount);
-	Data.ListNormals.resize(NormalCount);
-	Data.ListUVs.resize(UVCount);
-	Data.VertexIndices.reserve(FaceCount * 4);
+	
+	ModelData.Objects.push_back(OBJObjectData());
+	ModelData.ListPositions.resize(VertexCount);
+	ModelData.ListNormals.resize(NormalCount);
+	ModelData.ListUVs.resize(UVCount);
+	ModelData.VertexIndices.reserve(FaceCount * 4);
 }
 
 bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Vertices, bool hasOptimize) {
 	if (File == NULL || !File->IsValid()) return false;
 
-	ParseData Data;
+	OBJFileData ModelData;
+	int VertexIndexCount = 0;
 
 	{
 		bool bWarned = false;
 		clock_t StartTime = clock();
-		Debug::Log(Debug::LogNormal, L"Parsing Model '%s'", File->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Parsing File Model '%s'", File->GetShortPath().c_str());
 		
 		String* MemoryText = new String();
 		File->ReadNarrowStream(MemoryText);
@@ -262,75 +304,98 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 		String KeyWord;
 		long LineCount = 0;
 
-		PrepareOBJData(MemoryText->c_str(), Data);
-		ReadOBJByLine(MemoryText->c_str(), Data);
+		PrepareOBJData(MemoryText->c_str(), ModelData);
+		ReadOBJByLine(MemoryText->c_str(), ModelData);
 		delete MemoryText;
 
 		clock_t EndTime = clock();
 		float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
-		Debug::Log(Debug::LogNormal, L"├> Parsed %d vertices and %d triangles in %.3fs", Data.VertexIndices.size(), Data.VertexIndices.size() / 3, TotalTime);
+		VertexIndexCount = ModelData.VertexIndicesCount;
+		Debug::Log(Debug::LogNormal, L"├> Parsed %d vertices and %d triangles in %.3fs", VertexIndexCount, VertexIndexCount / 3, TotalTime);
 	}
 
 	std::unordered_map<MeshVertex, unsigned> VertexToIndex;
-	Data.VertexIndices.shrink_to_fit();
-	VertexToIndex.reserve(Data.VertexIndices.size());
-	int* Indices = new int[Data.VertexIndices.size()];
-	Faces->reserve(Data.VertexIndices.size() / 3);
-	Vertices->reserve(Data.VertexIndices.size());
+	ModelData.VertexIndices.shrink_to_fit();
+	VertexToIndex.reserve(VertexIndexCount);
+	int* Indices = new int[VertexIndexCount];
+	Faces->reserve(VertexIndexCount / 3);
+	Vertices->reserve(VertexIndexCount);
 
-	const size_t LogCountBottleNeck = 86273;
-	size_t LogCount = 1;
+	const size_t LogCountBottleNeck = 56273;
+	size_t LogCount = 1; 
+	int Count = 0;
 
 	clock_t StartTime = clock();
-	for (unsigned int Count = 0; Count < Data.VertexIndices.size(); Count++) {
+	for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
+		OBJObjectData* Data = &ModelData.Objects[ObjectCount];
+		int InitialCount = Count;
+		
+		for (; Count < InitialCount + Data->VertexIndicesCount; ++Count) {
 
-		float prog = Count / float(Data.VertexIndices.size());
-		if (--LogCount <= 0) {
-			LogCount = LogCountBottleNeck;
-			float cur = std::ceil(prog * 25);
-			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %d vertices", WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(), 100 * prog, Count);
+			if (--LogCount <= 0) {
+				float prog = Count / float(ModelData.VertexIndicesCount);
+				float prog2 = (Count - InitialCount) / float(Data->VertexIndicesCount);
+				LogCount = LogCountBottleNeck;
+				float cur = std::ceil(prog * 12);
+				float cur2 = std::ceil(prog2 * 12);
+				Debug::Log(Debug::NoLog, L"\r %s : [%s%s|%s%s] %.2f%% %d vertices",
+					StringToWString(Data->Name).c_str(),
+					WString(int(cur2), L'%').c_str(), WString(int(12 + 1 - cur2), L' ').c_str(),
+					WString(int(cur), L'#').c_str(), WString(int(12 + 1 - cur), L' ').c_str(),
+					100 * prog, Count
+				);
+			}
+
+			MeshVertex NewVertex = {
+				Data->PositionCount > 0 ?
+					ModelData.ListPositions[ModelData.VertexIndices[Count][0] - 1] : 0,
+				Data->NormalCount > 0 ?
+					ModelData.ListNormals[ModelData.VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
+				0,
+				Data->UVsCount > 0 ?
+					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
+				Data->UVsCount > 0 ?
+					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
+				1
+			};
+			// NewVertex.Color = Vector4(1);
+			// NewVertex.Tangent = Vector3();
+
+			unsigned Index = Count;
+			bool bFoundIndex = false;
+			if (hasOptimize) {
+				bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
+			}
+
+			if (bFoundIndex) { // A similar vertex is already in the VBO, use it instead !
+				Indices[Count] = Index;
+			} else { // If not, it needs to be added in the output data.
+				Vertices->push_back(NewVertex);
+				unsigned NewIndex = (unsigned)Vertices->size() - 1;
+				Indices[Count] = NewIndex;
+				if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
+			}
+
+			if ((Count + 1) % 3 == 0) {
+				Faces->push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+				// _LOG(LogDebug, L"Face {%d, %d, %d}",
+				// 	Faces->back()[0], Faces->back()[1], Faces->back()[2]
+				// );
+			}
 		}
 
-		MeshVertex NewVertex = {
-			Data.PositionCount > 0 ?
-				Data.ListPositions[Data.VertexIndices[Count][0] - 1] : 0,
-			Data.NormalCount > 0 ?
-				Data.ListNormals[Data.VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
-			0,
-			Data.UVsCount > 0 ?
-				Data.ListUVs[Data.VertexIndices[Count][1] - 1] : 0,
-			Data.UVsCount > 0 ?
-				Data.ListUVs[Data.VertexIndices[Count][1] - 1] : 0,
-			1
-		};
-		// NewVertex.Color = Vector4(1);
-		// NewVertex.Tangent = Vector3();
-
-		unsigned Index = Count;
-		bool bFoundIndex = false;
-		if (hasOptimize) {
-			bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
-		}
-
-		if (bFoundIndex) { // A similar vertex is already in the VBO, use it instead !
-			Indices[Count] = Index;
-		} else { // If not, it needs to be added in the output data.
-			Vertices->push_back(NewVertex);
-			unsigned NewIndex = (unsigned)Vertices->size() - 1;
-			Indices[Count] = NewIndex;
-			if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
-		}
-
-		if ((Count + 1) % 3 == 0) {
-			Faces->push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
-			// _LOG(LogDebug, L"Face {%d, %d, %d}",
-			// 	Faces->back()[0], Faces->back()[1], Faces->back()[2]
-			// );
-		}
+		Debug::Log(Debug::NoLog, L"\r");
+		Debug::Log(
+			Debug::LogNormal,
+			L"├> %d vertices at %d in '%s'",
+			Data->VertexIndicesCount,
+			Vertices->size() + Data->VertexIndicesCount,
+			StringToWString(Data->Name).c_str()
+		);
 	}
 
 	Debug::Log(Debug::NoLog, L"\r");
-	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %d vertices", WString(25, L'#').c_str(), Data.VertexIndices.size());
+	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %d vertices", WString(25, L'#').c_str(), VertexIndexCount);
 
 	clock_t EndTime = clock();
 	float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
