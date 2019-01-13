@@ -6,7 +6,7 @@ Material::Material() {
 	bUseDepthTest = true;
 	DepthFunction = Render::DepthFunction::LessEqual;
 	RenderMode = Render::RenderMode::Fill;
-	CullMode = Render::CullMode::FrontBack;
+	CullMode = Render::CullMode::Back;
 }
 
 void Material::SetShader(Shader* Value) {
@@ -23,7 +23,10 @@ void Material::Use() {
 
 	glDepthFunc((unsigned int)DepthFunction);
 
-	glPolygonMode((unsigned int)CullMode, (unsigned int)RenderMode);
+	glEnable(GL_CULL_FACE);
+	glCullFace((unsigned int)CullMode);
+
+	glPolygonMode((unsigned int)Render::CullMode::FrontBack, (unsigned int)RenderMode);
 
 	if (MaterialShader && MaterialShader->IsValid()) {
 		MaterialShader->Use();

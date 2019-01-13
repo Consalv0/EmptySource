@@ -287,7 +287,7 @@ void MeshLoader::PrepareOBJData(const Char * InFile, OBJFileData& ModelData) {
 	ModelData.VertexIndices.reserve(FaceCount * 4);
 }
 
-bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Vertices, bool hasOptimize) {
+bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std::vector<MeshVertices> * Vertices, bool hasOptimize) {
 	if (File == NULL || !File->IsValid()) return false;
 
 	OBJFileData ModelData;
@@ -321,13 +321,18 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 	Faces->reserve(VertexIndexCount / 3);
 	Vertices->reserve(VertexIndexCount);
 
-	const size_t LogCountBottleNeck = 56273;
+	const size_t LogCountBottleNeck = 36273;
 	size_t LogCount = 1; 
 	int Count = 0;
+
+	Vertices->clear();
+	Faces->clear();
 
 	clock_t StartTime = clock();
 	for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
 		OBJObjectData* Data = &ModelData.Objects[ObjectCount];
+		Vertices->push_back(MeshVertices());
+		Faces->push_back(MeshFaces());
 		int InitialCount = Count;
 		
 		for (; Count < InitialCount + Data->VertexIndicesCount; ++Count) {
@@ -370,14 +375,14 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 			if (bFoundIndex) { // A similar vertex is already in the VBO, use it instead !
 				Indices[Count] = Index;
 			} else { // If not, it needs to be added in the output data.
-				Vertices->push_back(NewVertex);
-				unsigned NewIndex = (unsigned)Vertices->size() - 1;
+				Vertices->back().push_back(NewVertex);
+				unsigned NewIndex = (unsigned)Vertices->back().size() - 1;
 				Indices[Count] = NewIndex;
 				if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
 			}
 
 			if ((Count + 1) % 3 == 0) {
-				Faces->push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+				Faces->back().push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
 				// _LOG(LogDebug, L"Face {%d, %d, %d}",
 				// 	Faces->back()[0], Faces->back()[1], Faces->back()[2]
 				// );
@@ -387,9 +392,10 @@ bool MeshLoader::FromOBJ(FileStream * File, MeshFaces * Faces, MeshVertices * Ve
 		Debug::Log(Debug::NoLog, L"\r");
 		Debug::Log(
 			Debug::LogNormal,
-			L"├> %d vertices at %d in '%s'",
+			L"├> Parsed %d	vertices at %d in [%d]'%s'",
 			Data->VertexIndicesCount,
-			Vertices->size() + Data->VertexIndicesCount,
+			Count,
+			Vertices->size(),
 			StringToWString(Data->Name).c_str()
 		);
 	}

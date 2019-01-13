@@ -58,7 +58,7 @@ public:
 		int ObjectCount
 	);
 
-	static bool FromOBJ(FileStream* File, MeshFaces* Faces, MeshVertices* Vertices, bool Optimize = true);
+	static bool FromOBJ(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
 };
 
 inline void hash_combine(std::size_t& seed) { }

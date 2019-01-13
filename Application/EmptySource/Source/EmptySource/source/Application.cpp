@@ -151,13 +151,17 @@ void CoreApplication::MainLoop() {
 
 	//////////////////////////////////////////
 
-	MeshFaces Faces; MeshVertices Vertices;
+	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
 	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &Faces, &Vertices);
 	// Mesh SphereMesh = Mesh(&Faces, &Vertices);
 	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices);
 	// Mesh EscafandraMesh = Mesh(&Faces, &Vertices);
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\xyzrgbDragon.obj"), &Faces, &Vertices, false);
-	Mesh OBJMesh = Mesh(&Faces, &Vertices);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices, false);
+	std::vector<Mesh> OBJModel;
+	float MeshSelector = 0;
+	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+		OBJModel.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+	}
 
 	unsigned long InputTimeSum = 0;
 
@@ -202,7 +206,7 @@ void CoreApplication::MainLoop() {
 		glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
 		glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
 
-		OBJMesh.BindVertexArray();
+		OBJModel[(int)MeshSelector].BindVertexArray();
 		
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
 			MaterialMetalness -= 0.1F * Time::GetDeltaTime();
@@ -225,6 +229,15 @@ void CoreApplication::MainLoop() {
 					BaseMaterial.RenderMode = Render::RenderMode::Fill;
 				}
 			}
+		}
+
+		if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
+			MeshSelector += Time::GetDeltaTime() * 10;
+			MeshSelector = MeshSelector > OBJModel.size() - 1 ? OBJModel.size() - 1 : MeshSelector;
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
+			MeshSelector -= Time::GetDeltaTime() * 10;
+			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_U)) {
@@ -271,7 +284,7 @@ void CoreApplication::MainLoop() {
 		RenderTimeSum += Time::GetDeltaTimeMilis();
 		if (RenderTimeSum > (1000 / 60)) {
 			RenderTimeSum = 0;
-			OBJMesh.DrawInstanciated((GLsizei)Matrices.size());
+			OBJModel[(int)MeshSelector].DrawInstanciated((GLsizei)Matrices.size());
 			// TemporalMesh.DrawElement();
 
 			MainWindow->SetWindowName(
@@ -280,7 +293,7 @@ void CoreApplication::MainLoop() {
 					Time::GetFrameRate(),
 					(1 / Time::GetFrameRate()) * 1000,
 					Matrices.size(),
-					OBJMesh.Faces.size() * Matrices.size(),
+					OBJModel[(int)MeshSelector].Faces.size() * Matrices.size(),
 					EyePosition.ToString().c_str()
 				)
 			);
