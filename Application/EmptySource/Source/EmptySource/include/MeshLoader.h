@@ -7,16 +7,26 @@
 class MeshLoader {
 public:
 
-	struct ParseData {
-		std::vector<IntVector3> VertexIndices;
+	struct OBJObjectData {
+		String Name;
 		int VertexIndicesCount = 0;
-		MeshVector3D ListPositions;
 		int PositionCount = 0;
-		MeshVector3D ListNormals;
 		int NormalCount = 0;
-		MeshUVs ListUVs;
 		int UVsCount = 0;
 	};
+
+	struct OBJFileData{
+		std::vector<OBJObjectData> Objects;
+		std::vector<IntVector3> VertexIndices;
+		MeshVector3D ListPositions;
+		MeshVector3D ListNormals;
+		MeshUVs ListUVs;
+		int VertexIndicesCount = 0;
+		int PositionCount = 0;
+		int NormalCount = 0;
+		int UVsCount = 0;
+	};
+
 	enum OBJKeyword {
 		Comment, Object, Vertex, Normal, TextureCoord, Face, CSType, Undefined
 	};
@@ -34,17 +44,18 @@ public:
 	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
 	static void ReadOBJByLine(
 		const Char * InFile,
-		ParseData& Data
+		OBJFileData& FileData
 	); 
 	static void PrepareOBJData(
 		const Char * InFile,
-		ParseData& Data
+		OBJFileData& FileData
 	);
 	static OBJKeyword GetOBJKeyword(const Char* Line);
 	static void ParseOBJLine(
 		const OBJKeyword& Keyword,
 		Char* Line,
-		ParseData& Data
+		OBJFileData& FileData,
+		int ObjectCount
 	);
 
 	static bool FromOBJ(FileStream* File, MeshFaces* Faces, MeshVertices* Vertices, bool Optimize = true);
@@ -79,100 +90,82 @@ MAKE_HASHABLE(MeshVertex, t.Position, t.Normal, t.Tangent, t.UV0, t.UV1, t.Color
 // But it cannot convert floating point with high +/- exponent.
 // The version below by Tian Bo fixes that problem and improves performance by 10%
 // http://coliru.stacked-crooked.com/a/2e28f0d71f47ca5e
-inline double pow10(int n) {
-	double ret = 1.0;
-	double r = 10.0;
-	if (n < 0) {
-		n = -n;
-		r = 0.1;
-	}
+inline double StringToDouble(const char* String, char** Pointer) {
 
-	while (n) {
-		if (n & 1) {
-			ret *= r;
-		}
-		r *= r;
-		n >>= 1;
-	}
-	return ret;
-}
-
-inline double crack_strtof(const char* str, char** num) {
-
-	*num = (char*)str;
-	if (!*num || !**num) {
+	*Pointer = (char*)String;
+	if (!*Pointer || !**Pointer) {
 		return 0;
 	}
 
-	int sign = 1;
-	double integerPart = 0.0;
-	double fractionPart = 0.0;
+	int Sign = 1;
+	double IntPart = 0.0;
+	double FractionPart = 0.0;
 	bool hasFraction = false;
 	bool hasExpo = false;
 
 	// Take care of +/- sign
-	if (**num == '-') {
-		++*num;
-		sign = -1;
-	} else if (**num == '+') {
-		++*num;
+	if (**Pointer == '-') {
+		++*Pointer;
+		Sign = -1;
+	} else if (**Pointer == '+') {
+		++*Pointer;
 	}
 
-	while (**num != '\0' && **num != ',' && **num != ' ') {
-		if (**num >= '0' && **num <= '9') {
-			integerPart = integerPart * 10 + (**num - '0');
-		} else if (**num == '.') {
+	while (**Pointer != '\0' && **Pointer != ',' && **Pointer != ' ') {
+		if (**Pointer >= '0' && **Pointer <= '9') {
+			IntPart = IntPart * 10 + (**Pointer - '0');
+		} else if (**Pointer == '.') {
 			hasFraction = true;
-			++*num;
+			++*Pointer;
 			break;
-		} else if (**num == 'e') {
+		} else if (**Pointer == 'e') {
 			hasExpo = true;
-			++*num;
+			++*Pointer;
 			break;
 		} else {
-			return sign * integerPart;
+			return Sign * IntPart;
 		}
-		++*num;
+		++*Pointer;
 	}
 
 	if (hasFraction) {
 		double fractionExpo = 0.1;
 
-		while (**num != '\0' && **num != ',' && **num != ' ') {
-			if (**num >= '0' && **num <= '9') {
-				fractionPart += fractionExpo * (**num - '0');
+		while (**Pointer != '\0' && **Pointer != ',' && **Pointer != ' ') {
+			if (**Pointer >= '0' && **Pointer <= '9') {
+				FractionPart += fractionExpo * (**Pointer - '0');
 				fractionExpo *= 0.1;
-			} else if (**num == 'e') {
+			} else if (**Pointer == 'e') {
 				hasExpo = true;
-				++*num;
+				++*Pointer;
 				break;
 			} else {
-				return sign * (integerPart + fractionPart);
+				return Sign * (IntPart + FractionPart);
 			}
-			++*num;
+			++*Pointer;
 		}
 	}
 
-	// parsing exponet part
+	// Parsing exponet part
 	double expPart = 1.0;
-	if ((**num != '\0' && **num != ',' && **num != ' ') && hasExpo) {
-		int expSign = 1;
-		if (**num == '-') {
-			expSign = -1;
-			++*num;
-		} else if (**num == '+') {
-			++*num;
+	if ((**Pointer != '\0' && **Pointer != ',' && **Pointer != ' ') && hasExpo) {
+		int ExponentSign = 1;
+		if (**Pointer == '-') {
+			ExponentSign = -1;
+			++*Pointer;
+		} else if (**Pointer == '+') {
+			++*Pointer;
 		}
 
 		int e = 0;
-		while ((**num != '\0' && **num != ',' && **num != ' ') && **num >= '0' && **num <= '9') {
-			e = e * 10 + **num - '0';
-			++*num;
+		while ((**Pointer != '\0' && **Pointer != ',' && **Pointer != ' ') && **Pointer >= '0' && **Pointer <= '9') {
+			e = e * 10 + **Pointer - '0';
+			++*Pointer;
 		}
 
-		expPart = pow10(expSign * e);
+		expPart = Pow10(ExponentSign * e);
 	}
-	++*num;
+	++*Pointer;
 
-	return sign * (integerPart + fractionPart) * expPart;
+	return Sign * (IntPart + FractionPart) * expPart;
 }
