@@ -174,5 +174,5 @@ FORCEINLINE IntVector3& IntVector3::operator/=(const int& Value) {
 }
 
 inline WString IntVector3::ToString() {
-	return TextFormat(WString(L"{%d, %d, %d}"), x, y, z);
+	return Text::Formatted(WString(L"{%d, %d, %d}"), x, y, z);
 }

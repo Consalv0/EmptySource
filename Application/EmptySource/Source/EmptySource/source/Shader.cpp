@@ -5,30 +5,28 @@
 
 #include "..\include\Math\Math.h"
 
-bool Shader::Compile(ShaderType Type) {
-
-	// Compile Vertex Shader
+bool Shader::Compile(Type Type) {
 	String ShaderCode;
 	unsigned* ShaderID = NULL;
 
 	switch (Type) {
 	case Vertex:
 		VertexShader = glCreateShader(GL_VERTEX_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling vertex shader '%s'.vertex.glsl", VertexStream->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling vertex shader '%s'", VertexStream->GetShortPath().c_str());
 		ShaderCode = WStringToString(FileManager::ReadStream(VertexStream));
 		ShaderID = &VertexShader;
 		break;
 	case Fragment:
 		FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling fragment shader '%s'.fragment.glsl", FragmentStream->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling fragment shader '%s'", FragmentStream->GetShortPath().c_str());
 		ShaderCode = WStringToString(FileManager::ReadStream(FragmentStream));
 		ShaderID = &FragmentShader;
 		break;
-	case Pixel:
-		// VertexStream = FileManager::Open(ShaderPath + L".pixel.glsl");
+	case Compute:
+		// VertexStream = FileManager::Open(ShaderPath);
 		break;
 	case Geometry:
-		// VertexStream = FileManager::Open(ShaderPath + L".geometry.glsl");
+		// VertexStream = FileManager::Open(ShaderPath);
 		break;
 	}
 
@@ -50,7 +48,7 @@ bool Shader::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	Debug::Log(Debug::LogNormal, L"└> Linking shader program '%s'", Name.c_str());
+	Debug::Log(Debug::LogNormal, L"└> Linking shader program...");
 	ShaderProgram = glCreateProgram();
 
 	if (VertexShader != GL_FALSE)
@@ -76,9 +74,13 @@ Shader::Shader() {
 	bIsLinked = false;
 	VertexShader = GL_FALSE;
 	FragmentShader = GL_FALSE;
+	ComputeShader = GL_FALSE;
+	GeometryShader = GL_FALSE;
 	ShaderProgram = GL_FALSE;
 	VertexStream = NULL;
 	FragmentStream = NULL;
+	ComputeStream = NULL;
+	GeometryStream = NULL;
 	Name = L"";
 }
 
@@ -86,21 +88,23 @@ Shader::Shader(const WString & name) {
 	Name = name;
 }
 
-void Shader::LoadShader(ShaderType Type, WString ShaderPath) {
+void Shader::LoadShader(Type Type, WString ShaderPath) {
 	switch (Type) {
 	case Vertex:
-		VertexStream = FileManager::Open(ShaderPath + L".vertex.glsl");
+		VertexStream = FileManager::Open(ShaderPath);
 		if (VertexStream == NULL) return;
 		break;
 	case Fragment:
-		FragmentStream = FileManager::Open(ShaderPath + L".fragment.glsl");
+		FragmentStream = FileManager::Open(ShaderPath);
 		if (FragmentStream == NULL) return;
 		break;
-	case Pixel:
-		// VertexStream = FileManager::Open(ShaderPath + L".pixel.glsl");
+	case Compute:
+		ComputeStream = FileManager::Open(ShaderPath);
+		if (ComputeStream == NULL) return;
 		break;
 	case Geometry:
-		// VertexStream = FileManager::Open(ShaderPath + L".geometry.glsl");
+		GeometryStream = FileManager::Open(ShaderPath);
+		if (GeometryStream == NULL) return;
 		break;
 	}
 
@@ -120,7 +124,7 @@ void Shader::Compile() {
 	}
 }
 
-unsigned int Shader::GetLocationID(const Char * LocationName) const {
+unsigned int Shader::GetUniformLocationID(const Char * LocationName) const {
 	return bIsLinked ? glGetUniformLocation(ShaderProgram, LocationName) : 0;
 }
 

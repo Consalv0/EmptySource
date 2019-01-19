@@ -155,7 +155,7 @@ void MeshLoader::ParseOBJLine(
 		if (VertexCount > 4 && !bWarned) {
 			bWarned = true;
 			Debug::Log(Debug::NoLog, L"\r");
-			Debug::Log(Debug::LogWarning, L"The model has n-gons and this is no supported yet");
+			Debug::Log(Debug::LogWarning, L"The model has n-gons, this may lead to unwanted geometry");
 		}
 
 		return;
@@ -223,7 +223,10 @@ void MeshLoader::ReadOBJByLine(
 		if (--LogCount <= 0) {
 			LogCount = LogCountBottleNeck;
 			float cur = std::ceil(Progress * 25);
-			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %d lines", WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(), 100 * Progress, LineCount);
+			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %s lines",
+				WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(),
+				100 * Progress, Text::FormattedUnit(LineCount, 2).c_str()
+			);
 		}
 		
 		if (CharacterCount == MaxCharacterCount) {
@@ -311,15 +314,18 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		clock_t EndTime = clock();
 		float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
 		VertexIndexCount = ModelData.VertexIndicesCount;
-		Debug::Log(Debug::LogNormal, L"├> Parsed %d vertices and %d triangles in %.3fs", VertexIndexCount, VertexIndexCount / 3, TotalTime);
+		Debug::Log(Debug::LogNormal,
+			L"├> Parsed %s vertices and %s triangles in %.3fs",
+			Text::FormattedUnit(VertexIndexCount, 2).c_str(),
+			Text::FormattedUnit(VertexIndexCount / 3, 2).c_str(),
+			TotalTime
+		);
 	}
 
 	std::unordered_map<MeshVertex, unsigned> VertexToIndex;
 	ModelData.VertexIndices.shrink_to_fit();
 	VertexToIndex.reserve(VertexIndexCount);
 	int* Indices = new int[VertexIndexCount];
-	Faces->reserve(VertexIndexCount / 3);
-	Vertices->reserve(VertexIndexCount);
 
 	const size_t LogCountBottleNeck = 36273;
 	size_t LogCount = 1; 
@@ -327,6 +333,7 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 
 	Vertices->clear();
 	Faces->clear();
+	size_t TotalAllocatedSize = 0;
 
 	clock_t StartTime = clock();
 	for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
@@ -343,11 +350,11 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 				LogCount = LogCountBottleNeck;
 				float cur = std::ceil(prog * 12);
 				float cur2 = std::ceil(prog2 * 12);
-				Debug::Log(Debug::NoLog, L"\r %s : [%s%s|%s%s] %.2f%% %d vertices",
+				Debug::Log(Debug::NoLog, L"\r %s : [%s%s|%s%s] %.2f%% %s vertices",
 					StringToWString(Data->Name).c_str(),
 					WString(int(cur2), L'%').c_str(), WString(int(12 + 1 - cur2), L' ').c_str(),
 					WString(int(cur), L'#').c_str(), WString(int(12 + 1 - cur), L' ').c_str(),
-					100 * prog, Count
+					100 * prog, Text::FormattedUnit(Count, 2).c_str()
 				);
 			}
 
@@ -392,21 +399,22 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		Debug::Log(Debug::NoLog, L"\r");
 		Debug::Log(
 			Debug::LogNormal,
-			L"├> Parsed %d	vertices at %d in [%d]'%s'",
-			Data->VertexIndicesCount,
-			Count,
+			L"├> Parsed %s	vertices in %s	in [%d]'%s'",
+			Text::FormattedUnit(Data->VertexIndicesCount, 2).c_str(),
+			Text::FormattedData(sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size(), 2).c_str(),
 			Vertices->size(),
 			StringToWString(Data->Name).c_str()
 		);
+
+		TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
 	}
 
 	Debug::Log(Debug::NoLog, L"\r");
-	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %d vertices", WString(25, L'#').c_str(), VertexIndexCount);
+	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %s vertices", WString(25, L'#').c_str(), Text::FormattedUnit(VertexIndexCount, 2).c_str());
 
 	clock_t EndTime = clock();
 	float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
-	size_t AllocatedSize = sizeof(IntVector3) * Faces->size() + sizeof(MeshVertex) * Vertices->size();
-	Debug::Log(Debug::LogNormal, L"└> Allocated %.2fKB in %.2fs", AllocatedSize / 1024.F, TotalTime);
+	Debug::Log(Debug::LogNormal, L"└> Allocated %s in %.2fs", Text::FormattedData(TotalAllocatedSize, 2).c_str(), TotalTime);
 
 	return true;
 }

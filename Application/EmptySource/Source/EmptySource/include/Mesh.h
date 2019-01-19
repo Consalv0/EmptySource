@@ -56,7 +56,9 @@ public:
 	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
 	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshColors Colors);
 	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
+	// Copy the information to the mesh, the data will be coppied
 	Mesh(const MeshFaces Faces, const MeshVertices Vertices);
+	// Transfer information to the mesh, the data will be swapped
 	Mesh(MeshFaces* Faces, MeshVertices* Vertices);
 
 	//* *Creates a cube mesh of size 1 with pivot in the center
