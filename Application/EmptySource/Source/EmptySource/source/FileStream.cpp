@@ -38,7 +38,7 @@ WString FileStream::GetShortPath() const {
 	GetCurrentDirectory(_MAX_DIR, CurrentDirectory);
 
 	WString ReturnValue = Path;
-	TextReplace(ReturnValue, WString(CurrentDirectory), WString(L".."));
+	Text::Replace(ReturnValue, WString(CurrentDirectory), WString(L".."));
 
 	return ReturnValue;
 }

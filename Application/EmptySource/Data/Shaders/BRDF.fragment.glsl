@@ -28,35 +28,35 @@ in vec3 TangentDirection;
 in vec2 UV0;
 in vec4 Color;
 
-out vec4 FragColor; 
+out vec4 FragColor;
 
-// Fresnel term using the Schlick approximation
 float SchlickFresnel(float i) {
     float x = clamp(1.0 - i, 0.0, 1.0);
     float x2 = x * x;
     return x2 * x2 * x;
 }
 
-float SchlickFresnelFuntion (float roughness, float NdotL, float NdotV, float LdotH) {
-    float FresnelLight = SchlickFresnel(NdotL); 
-    float FresnelView = SchlickFresnel(NdotV);
-    float FresnelDiffuse90 = 0.5 + 2.0 * LdotH * LdotH * roughness;
+float FresnelIncidenceReflection(float NDotL, float NDotV, float LDotH, float Roughness) {
+    float FresnelLight = SchlickFresnel(NDotL); 
+    float FresnelView = SchlickFresnel(NDotV);
+    float FresnelDiffuse90 = 0.5 + 2.0 * LDotH * LDotH * Roughness;
     return mix(1, FresnelDiffuse90, FresnelLight) * mix(1, FresnelDiffuse90, FresnelView);
 }
 
-// Geometry function (G)
-float ModifiedKelemenGeometricShadowingFunction (float roughness, float NdotV, float NdotL) {
-	float c = 0.797884560802865; // sqrt(2 / Pi)
-	float k = roughness * roughness * c;
-	float gH = NdotV  * k + (1 - k);
-	return (gH * gH * NdotL);
+float WalterEtAlGeometricShadowingFunction (float NDotL, float NDotV, float RoughnessSqr){
+    float NDotLSqr = NDotL*NDotL;
+    float NDotVSqr = NDotV*NDotV;
+
+    float SmithLight = 2/(1 + sqrt(1 + RoughnessSqr * (1-NDotLSqr)/(NDotLSqr)));
+    float SmithVisibility = 2/(1 + sqrt(1 + RoughnessSqr * (1-NDotVSqr)/(NDotVSqr)));
+
+	float GeometricShadow = (SmithLight * SmithVisibility);
+	return GeometricShadow;
 }
 
-// The normal distribution function (D)
-float GGXTrowbridgeReitzDistribution(float roughness, float NdotH) {
-  float roughnessSqr = roughness * roughness;
-  float distribution = NdotH * NdotH * (roughnessSqr - 1.0) + 1.0;
-  return roughnessSqr / (PI * distribution * distribution);
+float TrowbridgeReitzNormalDistribution(float NdotH, float RoughnessSqr){
+    float Distribution = NdotH*NdotH * (RoughnessSqr-1.0) + 1.0;
+    return RoughnessSqr / (PI * Distribution*Distribution);
 }
 
 float SmoothDistanceAttenuation (float SquaredDistance, float InvSqrAttenuationRadius) {
@@ -76,17 +76,6 @@ float GetLightAttenuation (vec3 UnormalizedLightVector, float InvSqrAttenuationR
 vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
 
   vec3 Normal = normalize(VertNormal);
-  vec3 NormalColor = (_ViewMatrix * vec4(Normal, 1)).rgb;
-       NormalColor = (1 - NormalColor) * 0.5;
-
-  float LinearRoughness = _Material.Roughness;
-  float Roughness = LinearRoughness * LinearRoughness;
-  float Metalness = _Material.Metalness;
-
-  vec3 DiffuseColor = NormalColor * (1 - Metalness);
-       // DiffuseColor *= texture(_texture, uv).rgb;
-
-  vec3 SpecularColor = mix(vec3(1), _Material.Color, Metalness);
 
   vec3 UnormalizedLightDirection = (_Lights[LightIndex].Position - VertPosition).xyz;
   float LightDistance = length(UnormalizedLightDirection);
@@ -98,29 +87,36 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
   float LDotH = clamp( dot( LightDirection, HalfWayDirection ), 0, 1 );
   float NDotH = clamp( dot( Normal, HalfWayDirection ), 0, 1 );
   float NDotL = clamp( dot( Normal, LightDirection ), 0, 1 );
-  float NDotV = abs( dot (Normal , EyeDirection )) + 1e-5f; // avoid artifact
+  float NDotV = abs( dot (Normal , EyeDirection )) + 1e-5f; // Avoids artifact
 
   float InvSqrLightRadius = 1 / ( (_Lights[LightIndex].Intencity * _Lights[LightIndex].Intencity) + 1e-5f) ;
   float Attenuation = 1;
         // Attenuation *= ShadowCalculation(positionLightSpace, 0.0001);
         // Attenuation *= (-dot(LightDirection * 2, LightDirection) - 1.4) * 6;
-        Attenuation *= GetLightAttenuation(UnormalizedLightDirection, InvSqrLightRadius);
-
-  vec3 Diffuse = NDotL * _Lights[LightIndex].Color * Attenuation;
-
-  vec3 SpecularDistribution = _Lights[LightIndex].Color * SpecularColor * Attenuation;
-       SpecularDistribution *= max( GGXTrowbridgeReitzDistribution(Roughness, NDotH), 0.0 );
+        Attenuation *= GetLightAttenuation(UnormalizedLightDirection, InvSqrLightRadius) * _Lights[LightIndex].Intencity;
   
-  float GeometricShadow = max( ModifiedKelemenGeometricShadowingFunction(Roughness, NDotV, NDotL), 0.0 );
-  
-  float Fresnel = max( SchlickFresnelFuntion(Roughness, NDotL, NDotV, LDotH), 0.0 );
+  vec3 NormalColor = (_ViewMatrix * vec4(Normal, 1)).rgb;
+       NormalColor = (1 - NormalColor) * 0.5;
 
-  vec3 Specularity = (SpecularDistribution * GeometricShadow * Fresnel) / (4 * ( NDotL * NDotV ));
-  
-  vec3 SurfaceColor = Diffuse * DiffuseColor;
-       SurfaceColor += max( Specularity * NDotV, 0 );
+  float LinearRoughness = _Material.Roughness;
+  float Roughness = LinearRoughness * LinearRoughness;
+  float Metalness = _Material.Metalness;
 
-  return SurfaceColor;
+  vec3 SpecularColor = mix(vec3(1), _Material.Color, Metalness);
+  vec3 DiffuseColor = NormalColor * (1 - Metalness);
+  // DiffuseColor *= texture(_texture, uv).rgb;
+  
+  float SpecularDistribution = TrowbridgeReitzNormalDistribution(NDotH, Roughness);
+  float GeometricShadow = WalterEtAlGeometricShadowingFunction(NDotL, NDotV, Roughness);
+  float Fresnel = FresnelIncidenceReflection(NDotL, NDotV, NDotH, Roughness);
+
+  vec3 Diffuse = NDotL * DiffuseColor * _Lights[LightIndex].Color;
+  vec3 Specular = SpecularColor;
+       Specular *= (SpecularDistribution * Fresnel * GeometricShadow) / (4 * (  NDotL * NDotV));
+  
+  vec3 SurfaceColor = (Diffuse + Specular) * Attenuation * NDotL;
+
+  return max (SurfaceColor, 0);
 }
 
 void main() {  
@@ -133,4 +129,4 @@ void main() {
   Sum = pow( Sum, vec3(1.0/Gamma) );
 
   FragColor = vec4(Sum, 1);
-} 
+}

@@ -182,5 +182,5 @@ FORCEINLINE Vector4& Vector4::operator/=(const float& Value) {
 }
 
 inline WString Vector4::ToString() {
-	return TextFormat(L"{%.2f, %.2f, %.2f, %.2f}", x, y, z, w);
+	return Text::Formatted(L"{%.2f, %.2f, %.2f, %.2f}", x, y, z, w);
 }

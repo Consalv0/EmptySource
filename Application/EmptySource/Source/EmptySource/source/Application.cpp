@@ -108,21 +108,21 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ProjectionMatrix;
 
 	Vector3 EyePosition = Vector3(2, 4, 4);
-	Vector3 LightPosition = Vector3(10, 10);
+	Vector3 LightPosition = Vector3(1, 0);
 	// Camera rotation, position Matrix
 	Matrix4x4 ViewMatrix;
 
 	//* Create and compile our GLSL shader program from text files
-	Shader UnlitBaseShader = Shader(L"Data\\Shaders\\PBRBase");
-	UnlitBaseShader.LoadShader(ShaderType::Vertex, L"Data\\Shaders\\PBRBase");
-	UnlitBaseShader.LoadShader(ShaderType::Fragment, L"Data\\Shaders\\PBRBase");
-	UnlitBaseShader.Compile();
+	Shader PBRBaseShader = Shader(L"Data\\Shaders\\PBRBase");
+	PBRBaseShader.LoadShader(Shader::Type::Vertex, L"Data\\Shaders\\Base.vertex.glsl");
+	PBRBaseShader.LoadShader(Shader::Type::Fragment, L"Data\\Shaders\\BRDF.fragment.glsl");
+	PBRBaseShader.Compile();
 	Material BaseMaterial = Material();
-	BaseMaterial.SetShader(&UnlitBaseShader);
+	BaseMaterial.SetShader(&PBRBaseShader);
 
-	float MaterialMetalness = 0.54F;
+	float MaterialMetalness = 0.F;
 	float MaterialRoughness = 0.54F;
-	float LightIntencity = 2000.F;
+	float LightIntencity = 100.F;
 
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
@@ -136,18 +136,18 @@ void CoreApplication::MainLoop() {
 
 	///////// Give Uniforms to GLSL /////////////
 	// Get the ID of the uniforms
-	GLuint    ProjectionMatrixID = UnlitBaseShader.GetLocationID("_ProjectionMatrix");
-	GLuint          ViewMatrixID = UnlitBaseShader.GetLocationID("_ViewMatrix");
-	GLuint        ViewPositionID = UnlitBaseShader.GetLocationID("_ViewPosition");
-	GLuint     Lights0PositionID = UnlitBaseShader.GetLocationID("_Lights[0].Position");
-	GLuint    Lights0IntencityID = UnlitBaseShader.GetLocationID("_Lights[0].Intencity");
-	GLuint        Lights0ColorID = UnlitBaseShader.GetLocationID("_Lights[0].Color");
-	GLuint     Lights1PositionID = UnlitBaseShader.GetLocationID("_Lights[1].Position");
-	GLuint    Lights1IntencityID = UnlitBaseShader.GetLocationID("_Lights[1].Intencity");
-	GLuint        Lights1ColorID = UnlitBaseShader.GetLocationID("_Lights[1].Color");
-	GLuint   MaterialRoughnessID = UnlitBaseShader.GetLocationID("_Material.Roughness");
-	GLuint   MaterialMetalnessID = UnlitBaseShader.GetLocationID("_Material.Metalness");
-	GLuint       MaterialColorID = UnlitBaseShader.GetLocationID("_Material.Color");
+	GLuint    ProjectionMatrixID = PBRBaseShader.GetUniformLocationID("_ProjectionMatrix");
+	GLuint          ViewMatrixID = PBRBaseShader.GetUniformLocationID("_ViewMatrix");
+	GLuint        ViewPositionID = PBRBaseShader.GetUniformLocationID("_ViewPosition");
+	GLuint     Lights0PositionID = PBRBaseShader.GetUniformLocationID("_Lights[0].Position");
+	GLuint    Lights0IntencityID = PBRBaseShader.GetUniformLocationID("_Lights[0].Intencity");
+	GLuint        Lights0ColorID = PBRBaseShader.GetUniformLocationID("_Lights[0].Color");
+	GLuint     Lights1PositionID = PBRBaseShader.GetUniformLocationID("_Lights[1].Position");
+	GLuint    Lights1IntencityID = PBRBaseShader.GetUniformLocationID("_Lights[1].Intencity");
+	GLuint        Lights1ColorID = PBRBaseShader.GetUniformLocationID("_Lights[1].Color");
+	GLuint   MaterialRoughnessID = PBRBaseShader.GetUniformLocationID("_Material.Roughness");
+	GLuint   MaterialMetalnessID = PBRBaseShader.GetUniformLocationID("_Material.Metalness");
+	GLuint       MaterialColorID = PBRBaseShader.GetUniformLocationID("_Material.Color");
 
 	//////////////////////////////////////////
 
@@ -156,11 +156,11 @@ void CoreApplication::MainLoop() {
 	// Mesh SphereMesh = Mesh(&Faces, &Vertices);
 	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices);
 	// Mesh EscafandraMesh = Mesh(&Faces, &Vertices);
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices, false);
-	std::vector<Mesh> OBJModel;
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Serapis.obj"), &Faces, &Vertices, true);
+	std::vector<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-		OBJModel.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
 
 	unsigned long InputTimeSum = 0;
@@ -193,32 +193,27 @@ void CoreApplication::MainLoop() {
 			Vector3(0, 1, 0)	// Up vector
 		);
 
-		glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
-		glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
-		glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
-		glUniform3fv(   Lights0PositionID, 1,              LightPosition.PointerToValue() );
-		glUniform3fv(      Lights0ColorID, 1,                 Vector3(1).PointerToValue() );
-		glUniform1fv(  Lights0IntencityID, 1,                             &LightIntencity );
-		glUniform3fv(   Lights1PositionID, 1,           (-LightPosition).PointerToValue() );
-		glUniform3fv(      Lights1ColorID, 1,                 Vector3(1).PointerToValue() );
-		glUniform1fv(  Lights1IntencityID, 1,                             &LightIntencity );
-		glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
-		glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
-		glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
-
-		OBJModel[(int)MeshSelector].BindVertexArray();
-		
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
-			MaterialMetalness -= 0.1F * Time::GetDeltaTime();
-		} 
+			MaterialMetalness -= 1.F * Time::GetDeltaTime();
+			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_M)) {
-			MaterialMetalness += 0.1F * Time::GetDeltaTime();
+			MaterialMetalness += 1.F * Time::GetDeltaTime();
+			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_E)) {
 			MaterialRoughness -= 0.1F * Time::GetDeltaTime();
+			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_R)) {
 			MaterialRoughness += 0.1F * Time::GetDeltaTime();
+			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_L)) {
+			LightIntencity += 10 * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
+			LightIntencity -= 10 * Time::GetDeltaTime();
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
@@ -233,7 +228,7 @@ void CoreApplication::MainLoop() {
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
 			MeshSelector += Time::GetDeltaTime() * 10;
-			MeshSelector = MeshSelector > OBJModel.size() - 1 ? OBJModel.size() - 1 : MeshSelector;
+			MeshSelector = MeshSelector > OBJModels.size() - 1 ? OBJModels.size() - 1 : MeshSelector;
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
 			MeshSelector -= Time::GetDeltaTime() * 10;
@@ -258,42 +253,70 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-		glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
-
-		// set transformation matrices as an instance vertex attribute (with divisor 1)
-		// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
-		// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
-		// -----------------------------------------------------------------------------------------------------------------------------------
-		// set attribute pointers for matrix (4 times vec4)
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
-		glEnableVertexAttribArray(8);
-		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
-		glEnableVertexAttribArray(9);
-		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
-
-		glVertexAttribDivisor(6, 1);
-		glVertexAttribDivisor(7, 1);
-		glVertexAttribDivisor(8, 1);
-		glVertexAttribDivisor(9, 1);
+		if (MainWindow->GetKeyDown(GLFW_KEY_W))
+			LightPosition += Vector3(0, 1.F, 0) * Time::GetDeltaTime();
+		if (MainWindow->GetKeyDown(GLFW_KEY_S))
+			LightPosition -= Vector3(0, 1.F, 0) * Time::GetDeltaTime();
+		if (MainWindow->GetKeyDown(GLFW_KEY_A))
+			LightPosition += Vector3(0, 0, 1.F) * Time::GetDeltaTime();
+		if (MainWindow->GetKeyDown(GLFW_KEY_D))
+			LightPosition -= Vector3(0, 0, 1.F) * Time::GetDeltaTime();
 
 		// Draw the meshs(es) !
 		RenderTimeSum += Time::GetDeltaTimeMilis();
 		if (RenderTimeSum > (1000 / 60)) {
 			RenderTimeSum = 0;
-			OBJModel[(int)MeshSelector].DrawInstanciated((GLsizei)Matrices.size());
-			// TemporalMesh.DrawElement();
+			size_t TriangleCount = 0;
+
+			glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
+			glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
+			glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
+			glUniform3fv(   Lights0PositionID, 1,              LightPosition.PointerToValue() );
+			glUniform3fv(      Lights0ColorID, 1,                 Vector3(1).PointerToValue() );
+			glUniform1fv(  Lights0IntencityID, 1,                             &LightIntencity );
+			glUniform3fv(   Lights1PositionID, 1,           (-LightPosition).PointerToValue() );
+			glUniform3fv(      Lights1ColorID, 1,                 Vector3(1).PointerToValue() );
+			glUniform1fv(  Lights1IntencityID, 1,                             &LightIntencity );
+			glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
+			glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
+			glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
+
+			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
+				OBJModels[MeshCount].BindVertexArray();
+
+				glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+				glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
+
+				// set transformation matrices as an instance vertex attribute (with divisor 1)
+				// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
+				// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
+				// -----------------------------------------------------------------------------------------------------------------------------------
+				// set attribute pointers for matrix (4 times vec4)
+				glEnableVertexAttribArray(6);
+				glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+				glEnableVertexAttribArray(7);
+				glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
+				glEnableVertexAttribArray(8);
+				glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
+				glEnableVertexAttribArray(9);
+				glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
+
+				glVertexAttribDivisor(6, 1);
+				glVertexAttribDivisor(7, 1);
+				glVertexAttribDivisor(8, 1);
+				glVertexAttribDivisor(9, 1);
+
+				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
+				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
+			}
 
 			MainWindow->SetWindowName(
-				TextFormat(L"%s - FPS(%.0f)(%.2f ms), Instances(%d), Triangles(%d), Camera(%s)",
+				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Triangles(%s), Camera(%s)",
 					L"EmptySource",
 					Time::GetFrameRate(),
 					(1 / Time::GetFrameRate()) * 1000,
-					Matrices.size(),
-					OBJModel[(int)MeshSelector].Faces.size() * Matrices.size(),
+					Text::FormattedUnit(Matrices.size(), 2).c_str(),
+					Text::FormattedUnit(TriangleCount, 2).c_str(),
 					EyePosition.ToString().c_str()
 				)
 			);
@@ -303,22 +326,13 @@ void CoreApplication::MainLoop() {
 
 		glBindVertexArray(0);
 
-		if (MainWindow->GetKeyDown(GLFW_KEY_W))
-			LightPosition += Vector3(20.F, 20.F, 0) * Time::GetDeltaTime();
-		if (MainWindow->GetKeyDown(GLFW_KEY_S))
-			LightPosition -= Vector3(20.F, 20.F, 0) * Time::GetDeltaTime();
-		if (MainWindow->GetKeyDown(GLFW_KEY_A))
-			LightPosition += Vector3(0, 0, 20.F) * Time::GetDeltaTime();
-		if (MainWindow->GetKeyDown(GLFW_KEY_D))
-			LightPosition -= Vector3(0, 0, 20.F) * Time::GetDeltaTime();
-
 		MainWindow->PollEvents();
 
 	} while (
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
 
-	UnlitBaseShader.Unload();
+	PBRBaseShader.Unload();
 }
 
 void CoreApplication::GLFWError(int ErrorID, const char* Description) {

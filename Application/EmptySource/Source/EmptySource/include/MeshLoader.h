@@ -58,6 +58,7 @@ public:
 		int ObjectCount
 	);
 
+	// Load Mesh information from a .obj file
 	static bool FromOBJ(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
 };
 

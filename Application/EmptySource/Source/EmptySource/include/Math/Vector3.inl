@@ -188,5 +188,5 @@ FORCEINLINE Vector3& Vector3::operator/=(const float& Value) {
 }
 
 inline WString Vector3::ToString() {
-	return TextFormat(L"{%.2f, %.2f, %.2f}", x, y, z);
+	return Text::Formatted(L"{%.2f, %.2f, %.2f}", x, y, z);
 }

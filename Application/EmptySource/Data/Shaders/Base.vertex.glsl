@@ -27,7 +27,7 @@ void main() {
  	NormalDirection = normalize(WorldNormalMatrix * vec4( _iVertexNormal, 1.0 )).xyz; 
 	UV0 = _iVertexUV0; 
 	Color = _iVertexColor;
-
+  	
   	// Now set the position in model space
   	VertexPosition = _iModelMatrix * VertexPosition;
   	gl_Position = _ProjectionMatrix * _ViewMatrix * VertexPosition;

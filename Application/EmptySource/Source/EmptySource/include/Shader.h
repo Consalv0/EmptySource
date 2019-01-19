@@ -2,23 +2,31 @@
 
 struct FileStream;
 
-enum ShaderType {
-	Vertex, Fragment, Pixel, Geometry
-};
-
 class Shader {
+public:
+	enum Type {
+		Vertex = GL_VERTEX_SHADER,
+		Fragment = GL_FRAGMENT_SHADER,
+		Compute = GL_COMPUTE_SHADER,
+		Geometry = GL_GEOMETRY_SHADER
+	};
+
 private:
 	FileStream* VertexStream;
 	FileStream* FragmentStream;
+	FileStream* ComputeStream;
+	FileStream* GeometryStream;
 	unsigned int VertexShader;
 	unsigned int FragmentShader;
+	unsigned int ComputeShader;
+	unsigned int GeometryShader;
 	unsigned int ShaderProgram;
 	WString Name;
 
 	bool bIsLinked;
 
 	//* Create and compile our GLSL shader program from text files
-	bool Compile(ShaderType Type);
+	bool Compile(Type Type);
 
 	//* Link the shader to OpenGL
 	bool LinkProgram();
@@ -31,13 +39,13 @@ public:
 	Shader(const WString & Name);
 
 	//* Add shader to shader program
-	void LoadShader(ShaderType Type, WString ShaderPath);
+	void LoadShader(Type Type, WString ShaderPath);
 
 	//* Compile shader program
 	void Compile();
 
 	//* Get the location id of a uniform variable in this shader
-	unsigned int GetLocationID(const Char* LocationName) const;
+	unsigned int GetUniformLocationID(const Char* LocationName) const;
 
 	//* Unloads the shader program
 	void Unload();
