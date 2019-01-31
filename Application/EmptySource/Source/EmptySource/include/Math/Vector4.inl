@@ -46,7 +46,7 @@ inline float Vector4::MagnitudeSquared() const {
 
 inline void Vector4::Normalize() {
 	if (MagnitudeSquared() == 0) {
-		x = 0, y = 0, z = 0;
+		x = 0, y = 0, z = 0; w = 0;
 	} else {
 		*this /= Magnitude();
 	}

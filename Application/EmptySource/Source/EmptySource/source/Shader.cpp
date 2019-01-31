@@ -3,24 +3,19 @@
 #include "..\include\FileManager.h"
 #include "..\include\Shader.h"
 
-#include "..\include\Math\Math.h"
+bool Shader::Compile() {
+	String Code;
 
-bool Shader::Compile(Type Type) {
-	String ShaderCode;
-	unsigned* ShaderID = NULL;
-
-	switch (Type) {
+	switch (ShaderType) {
 	case Vertex:
-		VertexShader = glCreateShader(GL_VERTEX_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling vertex shader '%s'", VertexStream->GetShortPath().c_str());
-		ShaderCode = WStringToString(FileManager::ReadStream(VertexStream));
-		ShaderID = &VertexShader;
+		ShaderUnit = glCreateShader(GL_VERTEX_SHADER);
+		Debug::Log(Debug::LogNormal, L"Compiling vertex shader '%s'", ShaderCode->GetShortPath().c_str());
+		Code = WStringToString(FileManager::ReadStream(ShaderCode));
 		break;
 	case Fragment:
-		FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling fragment shader '%s'", FragmentStream->GetShortPath().c_str());
-		ShaderCode = WStringToString(FileManager::ReadStream(FragmentStream));
-		ShaderID = &FragmentShader;
+		ShaderUnit = glCreateShader(GL_FRAGMENT_SHADER);
+		Debug::Log(Debug::LogNormal, L"Compiling fragment shader '%s'", ShaderCode->GetShortPath().c_str());
+		Code = WStringToString(FileManager::ReadStream(ShaderCode));
 		break;
 	case Compute:
 		// VertexStream = FileManager::Open(ShaderPath);
@@ -30,13 +25,13 @@ bool Shader::Compile(Type Type) {
 		break;
 	}
 
-	const Char * SourcePointer = ShaderCode.c_str();
-	glShaderSource(*ShaderID, 1, &SourcePointer, NULL);
-	glCompileShader(*ShaderID);
+	const Char * SourcePointer = Code.c_str();
+	glShaderSource(ShaderUnit, 1, &SourcePointer, NULL);
+	glCompileShader(ShaderUnit);
 
 	GLint Result = GL_FALSE;
 	// Check Vertex Shader
-	glGetShaderiv(*ShaderID, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(ShaderUnit, GL_COMPILE_STATUS, &Result);
 	if (Result <= 0) {
 		return false;
 	}
@@ -44,106 +39,29 @@ bool Shader::Compile(Type Type) {
 	return true;
 }
 
-bool Shader::LinkProgram() {
-	int InfoLogLength;
-
-	// Link the shader program
-	Debug::Log(Debug::LogNormal, L"└> Linking shader program...");
-	ShaderProgram = glCreateProgram();
-
-	if (VertexShader != GL_FALSE)
-	glAttachShader(ShaderProgram, VertexShader);
-	if (FragmentShader != GL_FALSE)
-	glAttachShader(ShaderProgram, FragmentShader);
-
-	glLinkProgram(ShaderProgram);
-
-	// Check the program
-	glGetProgramiv(ShaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
-		glGetProgramInfoLog(ShaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		Debug::Log(Debug::LogNormal, L"'%s'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
-		return false;
-	}
-
-	return true;
-}
-
 Shader::Shader() {
-	bIsLinked = false;
-	VertexShader = GL_FALSE;
-	FragmentShader = GL_FALSE;
-	ComputeShader = GL_FALSE;
-	GeometryShader = GL_FALSE;
-	ShaderProgram = GL_FALSE;
-	VertexStream = NULL;
-	FragmentStream = NULL;
-	ComputeStream = NULL;
-	GeometryStream = NULL;
-	Name = L"";
+	ShaderCode = NULL;
+	ShaderUnit = GL_FALSE;
 }
 
-Shader::Shader(const WString & name) {
-	Name = name;
+Shader::Shader(Type type, FileStream* ShaderPath) {
+	ShaderCode = ShaderPath;
+	ShaderType = type;
+	Compile();
 }
 
-void Shader::LoadShader(Type Type, WString ShaderPath) {
-	switch (Type) {
-	case Vertex:
-		VertexStream = FileManager::Open(ShaderPath);
-		if (VertexStream == NULL) return;
-		break;
-	case Fragment:
-		FragmentStream = FileManager::Open(ShaderPath);
-		if (FragmentStream == NULL) return;
-		break;
-	case Compute:
-		ComputeStream = FileManager::Open(ShaderPath);
-		if (ComputeStream == NULL) return;
-		break;
-	case Geometry:
-		GeometryStream = FileManager::Open(ShaderPath);
-		if (GeometryStream == NULL) return;
-		break;
-	}
-
-	Compile(Type);
+unsigned int Shader::GetShaderUnit() const {
+	return ShaderUnit;
 }
 
-void Shader::Compile() {
-	bIsLinked = LinkProgram();
-
-	if (bIsLinked == false) {
-		glDeleteProgram(ShaderProgram);
-		glDetachShader(ShaderProgram, VertexShader);
-		glDetachShader(ShaderProgram, FragmentShader);
-
-		glDeleteShader(VertexShader);
-		glDeleteShader(FragmentShader);
-	}
-}
-
-unsigned int Shader::GetUniformLocationID(const Char * LocationName) const {
-	return bIsLinked ? glGetUniformLocation(ShaderProgram, LocationName) : 0;
+Shader::Type Shader::GetType() const {
+	return ShaderType;
 }
 
 void Shader::Unload() {
-	bIsLinked = false;
-	glDeleteShader(VertexShader);
-	glDeleteShader(FragmentShader);
-	glDeleteProgram(ShaderProgram);
-}
-
-void Shader::Use() const {
-	if (!IsValid()) {
-		Debug::Log(Debug::LogError, L"Can't use shader '%s' because is not valid", Name.c_str());
-		return;
-	}
-
-	glUseProgram(ShaderProgram);
+	glDeleteShader(ShaderUnit);
 }
 
 bool Shader::IsValid() const {
-	return bIsLinked && ShaderProgram != GL_FALSE;
+	return ShaderUnit != GL_FALSE;
 }

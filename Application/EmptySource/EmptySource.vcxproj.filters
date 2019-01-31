@@ -123,6 +123,12 @@
     <ClInclude Include="Source\EmptySource\include\Text.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Math\Quaternion.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\ShaderProgram.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -167,6 +173,9 @@
     <ClCompile Include="Source\EmptySource\source\MeshLoader.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\UnlitBase.fragment.glsl">
@@ -198,6 +207,9 @@
     </None>
     <None Include="Data\Shaders\PBRBase.vertex.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\Math\Quaternion.inl">
+      <Filter>Header Files\Core\Math</Filter>
     </None>
   </ItemGroup>
 </Project>

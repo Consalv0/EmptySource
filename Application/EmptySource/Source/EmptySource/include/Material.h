@@ -1,11 +1,11 @@
 #pragma once
 
 #include "..\include\Graphics.h"
-#include "..\include\Shader.h"
+#include "..\include\ShaderProgram.h"
 
 class Material {
 private:
-	Shader* MaterialShader;
+	ShaderProgram* MaterialShader;
 
 public:
 	bool bUseDepthTest;
@@ -16,7 +16,7 @@ public:
 	Material();
 
 	/*Set material shader*/
-	void SetShader(Shader* Value);
+	void SetShaderProgram(ShaderProgram* Value);
 
 	/*Use shader program and render mode*/
 	void Use();

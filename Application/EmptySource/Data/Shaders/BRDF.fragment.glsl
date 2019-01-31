@@ -95,8 +95,8 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
         // Attenuation *= (-dot(LightDirection * 2, LightDirection) - 1.4) * 6;
         Attenuation *= GetLightAttenuation(UnormalizedLightDirection, InvSqrLightRadius) * _Lights[LightIndex].Intencity;
   
-  vec3 NormalColor = (_ViewMatrix * vec4(Normal, 1)).rgb;
-       NormalColor = (1 - NormalColor) * 0.5;
+  vec3 NormalColor = (WorldNormalMatrix * vec4(Normal, 1)).rgb;
+       NormalColor = normalize(NormalColor) * 0.5 + 0.5;
 
   float LinearRoughness = _Material.Roughness;
   float Roughness = LinearRoughness * LinearRoughness;
