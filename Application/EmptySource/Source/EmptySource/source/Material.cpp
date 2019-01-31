@@ -9,7 +9,7 @@ Material::Material() {
 	CullMode = Render::CullMode::Back;
 }
 
-void Material::SetShader(Shader* Value) {
+void Material::SetShaderProgram(ShaderProgram* Value) {
 	MaterialShader = Value;
 }
 

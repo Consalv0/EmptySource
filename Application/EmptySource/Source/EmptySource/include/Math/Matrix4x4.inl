@@ -71,6 +71,14 @@ inline Matrix4x4 Matrix4x4::Translate(const Vector3 & Vector) {
 	return Result;
 }
 
+inline Matrix4x4 Matrix4x4::Scale(const Vector3 & Vector) {
+	Matrix4x4 Result = Matrix4x4();
+	Result[0][0] = Vector[0];
+	Result[1][1] = Vector[1];
+	Result[2][2] = Vector[2];
+	return Result;
+}
+
 inline void Matrix4x4::Transpose() {
 	Matrix4x4 Result = Matrix4x4(Column(0), Column(1), Column(2), Column(3));
 	*this = Result;

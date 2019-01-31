@@ -61,9 +61,6 @@ public:
 	// Transfer information to the mesh, the data will be swapped
 	Mesh(MeshFaces* Faces, MeshVertices* Vertices);
 
-	//* *Creates a cube mesh of size 1 with pivot in the center
-	static Mesh BuildCube();
-
 	//* *Create or Bind Vertex Array Object
 	void BindVertexArray() const;
 

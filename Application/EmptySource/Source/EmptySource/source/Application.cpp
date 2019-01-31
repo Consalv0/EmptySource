@@ -10,6 +10,7 @@
 #include "..\include\Application.h"
 #include "..\include\Mesh.h"
 #include "..\include\Shader.h"
+#include "..\include\ShaderProgram.h"
 #include "..\include\Object.h"
 #include "..\include\Space.h"
 #include "..\include\Material.h"
@@ -101,24 +102,37 @@ void CoreApplication::MainLoop() {
 	Space NewSpace; Space OtherNewSpace(NewSpace);
 	Object* GObject = Space::GetFirstSpace()->MakeObject();
 	GObject->Delete();
-	Mesh TemporalMesh = Mesh::BuildCube();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
 	// Perpective matrix (ProjectionMatrix)
 	Matrix4x4 ProjectionMatrix;
 
-	Vector3 EyePosition = Vector3(2, 4, 4);
+	Vector3 EyePosition = 0;
 	Vector3 LightPosition = Vector3(1, 0);
 	// Camera rotation, position Matrix
+	float ViewSpeed = 5;
+	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix;
 
 	//* Create and compile our GLSL shader program from text files
-	Shader PBRBaseShader = Shader(L"Data\\Shaders\\PBRBase");
-	PBRBaseShader.LoadShader(Shader::Type::Vertex, L"Data\\Shaders\\Base.vertex.glsl");
-	PBRBaseShader.LoadShader(Shader::Type::Fragment, L"Data\\Shaders\\BRDF.fragment.glsl");
-	PBRBaseShader.Compile();
+	Shader VertexBase = Shader(Shader::Type::Vertex, FileManager::Open(L"Data\\Shaders\\Base.vertex.glsl"));
+	Shader FragmentBRDF = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\BRDF.fragment.glsl"));
+	Shader FragmentUnlit = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\Unlit.fragment.glsl"));
+	ShaderProgram BRDFShader = ShaderProgram(L"BRDF");
+	BRDFShader.Append(&VertexBase);
+	BRDFShader.Append(&FragmentBRDF);
+	BRDFShader.Compile();
+
+	ShaderProgram UnlitShader = ShaderProgram(L"UnLit");
+	UnlitShader.Append(&VertexBase);
+	UnlitShader.Append(&FragmentUnlit);
+	UnlitShader.Compile();
+
 	Material BaseMaterial = Material();
-	BaseMaterial.SetShader(&PBRBaseShader);
+	BaseMaterial.SetShaderProgram(&BRDFShader);
+
+	Material UnlitMaterial = Material();
+	UnlitMaterial.SetShaderProgram(&UnlitShader);
 
 	float MaterialMetalness = 0.F;
 	float MaterialRoughness = 0.54F;
@@ -136,31 +150,40 @@ void CoreApplication::MainLoop() {
 
 	///////// Give Uniforms to GLSL /////////////
 	// Get the ID of the uniforms
-	GLuint    ProjectionMatrixID = PBRBaseShader.GetUniformLocationID("_ProjectionMatrix");
-	GLuint          ViewMatrixID = PBRBaseShader.GetUniformLocationID("_ViewMatrix");
-	GLuint        ViewPositionID = PBRBaseShader.GetUniformLocationID("_ViewPosition");
-	GLuint     Lights0PositionID = PBRBaseShader.GetUniformLocationID("_Lights[0].Position");
-	GLuint    Lights0IntencityID = PBRBaseShader.GetUniformLocationID("_Lights[0].Intencity");
-	GLuint        Lights0ColorID = PBRBaseShader.GetUniformLocationID("_Lights[0].Color");
-	GLuint     Lights1PositionID = PBRBaseShader.GetUniformLocationID("_Lights[1].Position");
-	GLuint    Lights1IntencityID = PBRBaseShader.GetUniformLocationID("_Lights[1].Intencity");
-	GLuint        Lights1ColorID = PBRBaseShader.GetUniformLocationID("_Lights[1].Color");
-	GLuint   MaterialRoughnessID = PBRBaseShader.GetUniformLocationID("_Material.Roughness");
-	GLuint   MaterialMetalnessID = PBRBaseShader.GetUniformLocationID("_Material.Metalness");
-	GLuint       MaterialColorID = PBRBaseShader.GetUniformLocationID("_Material.Color");
+	GLuint  ProjectionMatrixLocation = BRDFShader.GetUniformLocation("_ProjectionMatrix");
+	GLuint        ViewMatrixLocation = BRDFShader.GetUniformLocation("_ViewMatrix");
+	GLuint      ViewPositionLocation = BRDFShader.GetUniformLocation("_ViewPosition");
+	GLuint   Lights0PositionLocation = BRDFShader.GetUniformLocation("_Lights[0].Position");
+	GLuint  Lights0IntencityLocation = BRDFShader.GetUniformLocation("_Lights[0].Intencity");
+	GLuint      Lights0ColorLocation = BRDFShader.GetUniformLocation("_Lights[0].Color");
+	GLuint   Lights1PositionLocation = BRDFShader.GetUniformLocation("_Lights[1].Position");
+	GLuint  Lights1IntencityLocation = BRDFShader.GetUniformLocation("_Lights[1].Intencity");
+	GLuint      Lights1ColorLocation = BRDFShader.GetUniformLocation("_Lights[1].Color");
+	GLuint MaterialRoughnessLocation = BRDFShader.GetUniformLocation("_Material.Roughness");
+	GLuint MaterialMetalnessLocation = BRDFShader.GetUniformLocation("_Material.Metalness");
+	GLuint     MaterialColorLocation = BRDFShader.GetUniformLocation("_Material.Color");
+
+	GLuint LProjectionMatrixLocation = UnlitShader.GetUniformLocation("_ProjectionMatrix");
+	GLuint       LViewMatrixLocation = UnlitShader.GetUniformLocation("_ViewMatrix");
+	GLuint     LViewPositionLocation = UnlitShader.GetUniformLocation("_ViewPosition");
+	GLuint    LMaterialColorLocation = UnlitShader.GetUniformLocation("_Material.Color");
+
+	GLuint ModelMatrixLocation = BRDFShader.GetAttribLocation("_iModelMatrix");
 
 	//////////////////////////////////////////
 
 	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
-	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &Faces, &Vertices);
-	// Mesh SphereMesh = Mesh(&Faces, &Vertices);
-	// MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices);
-	// Mesh EscafandraMesh = Mesh(&Faces, &Vertices);
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Serapis.obj"), &Faces, &Vertices, true);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sponza.obj"), &Faces, &Vertices, false);
 	std::vector<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+	}
+
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &Faces, &Vertices, true);
+	std::vector<Mesh> LightModels;
+	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+		LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
 
 	unsigned long InputTimeSum = 0;
@@ -169,7 +192,6 @@ void CoreApplication::MainLoop() {
 		Time::Tick();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		BaseMaterial.Use();
 
 		//////// Drawing ModelMatrix ////////
 		ProjectionMatrix = Matrix4x4::Perspective(
@@ -179,19 +201,31 @@ void CoreApplication::MainLoop() {
 			200.0F						// Far plane
 		);
 
-		Vector2 CursorPosition = MainWindow->GetMousePosition();
-		EyePosition = Vector3(
-			sinf(float(CursorPosition.x) * 0.01F) * 4,
-			cosf(float(CursorPosition.y) * 0.01F) * 4,
-			sinf(float(CursorPosition.y) * 0.01F) * 4
-		);
-
 		// Camera rotation, position Matrix
-		ViewMatrix = Matrix4x4::LookAt(
-			EyePosition,        // Camera position
-			Vector3(0, 0, 0),	// Look position
-			Vector3(0, 1, 0)	// Up vector
-		);
+		Vector2 CursorPosition = MainWindow->GetMousePosition();
+		
+		ViewOrientation = { CursorPosition.y * 0.01F, CursorPosition.x * 0.01F, 0.F };
+		Quaternion FrameRotation = Quaternion(ViewOrientation.x, { 1, 0, 0 });
+		           FrameRotation *= Quaternion(ViewOrientation.y, { 0, 1, 0 });
+		
+		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
+			Vector3 Forward = FrameRotation.ToMatrix4x4() * Vector3(0, 0, ViewSpeed);
+			EyePosition += Forward * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
+			Vector3 Right = FrameRotation.ToMatrix4x4() * Vector3(ViewSpeed, 0, 0);
+			EyePosition += Right * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
+			Vector3 Back = FrameRotation.ToMatrix4x4() * Vector3(0, 0, -ViewSpeed);
+			EyePosition += Back * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
+			Vector3 Left = FrameRotation.ToMatrix4x4() * Vector3(-ViewSpeed, 0, 0);
+			EyePosition += Left * Time::GetDeltaTime();
+		}
+		ViewMatrix =
+			Matrix4x4::Translate(EyePosition) * FrameRotation.ToMatrix4x4();
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime();
@@ -245,7 +279,7 @@ void CoreApplication::MainLoop() {
 				}
 			}
 			if (MainWindow->GetKeyDown(GLFW_KEY_Q)) {
-				for (size_t i = 0; i < 10000; i++) {
+				for (size_t i = 0; i < 100; i++) {
 					Matrices.push_back(
 						Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
 					);
@@ -253,62 +287,51 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
-		if (MainWindow->GetKeyDown(GLFW_KEY_W))
-			LightPosition += Vector3(0, 1.F, 0) * Time::GetDeltaTime();
-		if (MainWindow->GetKeyDown(GLFW_KEY_S))
-			LightPosition -= Vector3(0, 1.F, 0) * Time::GetDeltaTime();
-		if (MainWindow->GetKeyDown(GLFW_KEY_A))
-			LightPosition += Vector3(0, 0, 1.F) * Time::GetDeltaTime();
-		if (MainWindow->GetKeyDown(GLFW_KEY_D))
-			LightPosition -= Vector3(0, 0, 1.F) * Time::GetDeltaTime();
-
 		// Draw the meshs(es) !
 		RenderTimeSum += Time::GetDeltaTimeMilis();
 		if (RenderTimeSum > (1000 / 60)) {
 			RenderTimeSum = 0;
 			size_t TriangleCount = 0;
 
-			glUniformMatrix4fv(  ProjectionMatrixID, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
-			glUniformMatrix4fv(        ViewMatrixID, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
-			glUniform3fv(      ViewPositionID, 1,                EyePosition.PointerToValue() );
-			glUniform3fv(   Lights0PositionID, 1,              LightPosition.PointerToValue() );
-			glUniform3fv(      Lights0ColorID, 1,                 Vector3(1).PointerToValue() );
-			glUniform1fv(  Lights0IntencityID, 1,                             &LightIntencity );
-			glUniform3fv(   Lights1PositionID, 1,           (-LightPosition).PointerToValue() );
-			glUniform3fv(      Lights1ColorID, 1,                 Vector3(1).PointerToValue() );
-			glUniform1fv(  Lights1IntencityID, 1,                             &LightIntencity );
-			glUniform1fv( MaterialMetalnessID, 1,                          &MaterialMetalness );
-			glUniform1fv( MaterialRoughnessID, 1,                          &MaterialRoughness );
-			glUniform3fv(     MaterialColorID, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
+			BaseMaterial.Use();
+
+			glUniformMatrix4fv(  ProjectionMatrixLocation, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
+			glUniformMatrix4fv(        ViewMatrixLocation, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
+			glUniform3fv(      ViewPositionLocation, 1,                EyePosition.PointerToValue() );
+			glUniform3fv(   Lights0PositionLocation, 1,              LightPosition.PointerToValue() );
+			glUniform3fv(      Lights0ColorLocation, 1,                 Vector3(1).PointerToValue() );
+			glUniform1fv(  Lights0IntencityLocation, 1,                             &LightIntencity );
+			glUniform3fv(   Lights1PositionLocation, 1,           (-LightPosition).PointerToValue() );
+			glUniform3fv(      Lights1ColorLocation, 1,                 Vector3(1).PointerToValue() );
+			glUniform1fv(  Lights1IntencityLocation, 1,                             &LightIntencity );
+			glUniform1fv( MaterialMetalnessLocation, 1,                          &MaterialMetalness );
+			glUniform1fv( MaterialRoughnessLocation, 1,                          &MaterialRoughness );
+			glUniform3fv(     MaterialColorLocation, 1,     Vector3(0.6F, 0.2F, 0).PointerToValue() );
 
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
 				OBJModels[MeshCount].BindVertexArray();
 
-				glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-				glBufferData(GL_ARRAY_BUFFER, Matrices.size() * sizeof(Matrix4x4), &Matrices[0], GL_STATIC_DRAW);
-
-				// set transformation matrices as an instance vertex attribute (with divisor 1)
-				// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
-				// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
-				// -----------------------------------------------------------------------------------------------------------------------------------
-				// set attribute pointers for matrix (4 times vec4)
-				glEnableVertexAttribArray(6);
-				glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
-				glEnableVertexAttribArray(7);
-				glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
-				glEnableVertexAttribArray(8);
-				glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
-				glEnableVertexAttribArray(9);
-				glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
-
-				glVertexAttribDivisor(6, 1);
-				glVertexAttribDivisor(7, 1);
-				glVertexAttribDivisor(8, 1);
-				glVertexAttribDivisor(9, 1);
+				BRDFShader.SetMatrix4x4Array(ModelMatrixLocation, (int)Matrices.size(), &Matrices[0], ModelMatrixBuffer);
 
 				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
 				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
 			}
+			
+			UnlitMaterial.Use();
+
+			glUniformMatrix4fv( LProjectionMatrixLocation, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
+			glUniformMatrix4fv(       LViewMatrixLocation, 1, GL_FALSE,       ViewMatrix.PointerToValue() );
+			glUniform3fv(  LViewPositionLocation, 1, EyePosition.PointerToValue() );
+			glUniform3fv( LMaterialColorLocation, 1,  Vector3(1).PointerToValue() );
+			
+			LightModels[0].BindVertexArray();
+
+			vector<Matrix4x4> LightPositions;
+			LightPositions.push_back(Matrix4x4::Scale(0.1F) * Matrix4x4::Translate(LightPosition));
+			LightPositions.push_back(Matrix4x4::Scale(0.1F) * Matrix4x4::Translate(-LightPosition));
+			BRDFShader.SetMatrix4x4Array(ModelMatrixLocation, 2, &LightPositions[0], ModelMatrixBuffer);
+
+			LightModels[0].DrawInstanciated(2);
 
 			MainWindow->SetWindowName(
 				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Triangles(%s), Camera(%s)",
@@ -332,7 +355,7 @@ void CoreApplication::MainLoop() {
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
 
-	PBRBaseShader.Unload();
+	BRDFShader.Unload();
 }
 
 void CoreApplication::GLFWError(int ErrorID, const char* Description) {

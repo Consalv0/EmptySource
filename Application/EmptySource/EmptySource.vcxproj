@@ -133,6 +133,7 @@
     <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix4x4.h" />
+    <ClInclude Include="Source\EmptySource\include\Math\Quaternion.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector2.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Vector4.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Source\EmptySource\include\Graphics.h" />
     <ClInclude Include="Source\EmptySource\include\Shader.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
+    <ClInclude Include="Source\EmptySource\include\ShaderProgram.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Text.h" />
     <ClInclude Include="Source\EmptySource\include\Time.h" />
@@ -161,6 +163,7 @@
     <ClCompile Include="Source\EmptySource\source\Object.cpp" />
     <ClCompile Include="Source\EmptySource\source\MeshLoader.cpp" />
     <ClCompile Include="Source\EmptySource\source\Shader.cpp" />
+    <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Time.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
@@ -174,6 +177,7 @@
     <None Include="Source\EmptySource\include\Math\IntVector3.inl" />
     <None Include="Source\EmptySource\include\Math\Matrix3x3.inl" />
     <None Include="Source\EmptySource\include\Math\Matrix4x4.inl" />
+    <None Include="Source\EmptySource\include\Math\Quaternion.inl" />
     <None Include="Source\EmptySource\include\Math\Vector2.inl" />
     <None Include="Source\EmptySource\include\Math\Vector3.inl" />
     <None Include="Source\EmptySource\include\Math\Vector4.inl" />
