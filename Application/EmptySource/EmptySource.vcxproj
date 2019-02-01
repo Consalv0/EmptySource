@@ -131,6 +131,7 @@
     <ClInclude Include="Source\EmptySource\include\Material.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
+    <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix4x4.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Quaternion.h" />
@@ -170,11 +171,14 @@
     <ClCompile Include="Source\External\GLAD\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Shaders\Base.vertex.glsl" />
+    <None Include="Data\Shaders\BRDF.fragment.glsl" />
+    <None Include="Data\Shaders\DSPBR.fragment.glsl" />
     <None Include="Data\Shaders\PBRBase.fragment.glsl" />
-    <None Include="Data\Shaders\PBRBase.vertex.glsl" />
+    <None Include="Data\Shaders\Unlit.fragment.glsl" />
     <None Include="Data\Shaders\UnlitBase.fragment.glsl" />
-    <None Include="Data\Shaders\UnlitBase.vertex.glsl" />
     <None Include="Source\EmptySource\include\Math\IntVector3.inl" />
+    <None Include="Source\EmptySource\include\Math\MathUtility.inl" />
     <None Include="Source\EmptySource\include\Math\Matrix3x3.inl" />
     <None Include="Source\EmptySource\include\Math\Matrix4x4.inl" />
     <None Include="Source\EmptySource\include\Math\Quaternion.inl" />

@@ -148,7 +148,7 @@ void CoreApplication::MainLoop() {
 
 	srand((unsigned int)glfwGetTime());
 
-	///////// Give Uniforms to GLSL /////////////
+	///////// Get Locations from Shaders /////////////
 	// Get the ID of the uniforms
 	GLuint  ProjectionMatrixLocation = BRDFShader.GetUniformLocation("_ProjectionMatrix");
 	GLuint        ViewMatrixLocation = BRDFShader.GetUniformLocation("_ViewMatrix");
@@ -191,7 +191,7 @@ void CoreApplication::MainLoop() {
 	do {
 		Time::Tick();
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		MainWindow->ClearWindow();
 
 		//////// Drawing ModelMatrix ////////
 		ProjectionMatrix = Matrix4x4::Perspective(
@@ -334,13 +334,14 @@ void CoreApplication::MainLoop() {
 			LightModels[0].DrawInstanciated(2);
 
 			MainWindow->SetWindowName(
-				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Triangles(%s), Camera(%s)",
+				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Triangles(%s), Camera(%s, %s)",
 					L"EmptySource",
 					Time::GetFrameRate(),
 					(1 / Time::GetFrameRate()) * 1000,
 					Text::FormattedUnit(Matrices.size(), 2).c_str(),
 					Text::FormattedUnit(TriangleCount, 2).c_str(),
-					EyePosition.ToString().c_str()
+					EyePosition.ToString().c_str(),
+					Math::ClampAngleComponents(FrameRotation.ToEulerAngles() * MathConstants::RadToDegree).ToString().c_str()
 				)
 			);
 

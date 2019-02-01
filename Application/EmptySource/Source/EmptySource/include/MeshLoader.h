@@ -164,7 +164,7 @@ inline double StringToDouble(const char* String, char** Pointer) {
 			++*Pointer;
 		}
 
-		expPart = Pow10(ExponentSign * e);
+		expPart = Math::Pow10(ExponentSign * e);
 	}
 	++*Pointer;
 

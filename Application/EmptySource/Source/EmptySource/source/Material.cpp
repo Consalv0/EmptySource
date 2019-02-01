@@ -10,7 +10,15 @@ Material::Material() {
 }
 
 void Material::SetShaderProgram(ShaderProgram* Value) {
-	MaterialShader = Value;
+	if (Value && Value->IsValid()) {
+		MaterialShader = Value;
+	} else {
+		Debug::Log(Debug::LogError, L"The ShaderProgram is NULL or is not valid");
+	}
+}
+
+ShaderProgram * Material::GetShaderProgram() const {
+	return MaterialShader;
 }
 
 void Material::Use() {

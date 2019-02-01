@@ -70,6 +70,9 @@ public:
 	//* Get key pressed
 	bool GetKeyDown(unsigned int Key);
 
+	//* Window clear events
+	void ClearWindow();
+
 	//* Window update frame
 	void EndOfFrame();
 

@@ -18,7 +18,7 @@ public:
 	// Create a quaternion from two normalized axis
 	FORCEINLINE Quaternion(Vector3 const& u, Vector3 const& v);
 	// Create a quaternion from euler angles (pitch, yaw, roll), in radians.
-	FORCEINLINE Quaternion(Vector3 const& Angles);
+	FORCEINLINE Quaternion(Vector3 const& EulerAngles);
 
 	inline float Magnitude() const;
 	inline float MagnitudeSquared() const;
@@ -26,6 +26,10 @@ public:
 	inline Quaternion Normalized() const;
 
 	inline Matrix4x4 ToMatrix4x4() const;
+	inline float GetPitch() const;
+	inline float GetYaw() const;
+	inline float GetRoll() const;
+	inline Vector3 ToEulerAngles() const;
 
 	FORCEINLINE float Dot(const Quaternion& Other) const;
 	FORCEINLINE Quaternion Cross(const Quaternion& Other) const;

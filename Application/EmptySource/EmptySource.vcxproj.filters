@@ -129,6 +129,9 @@
     <ClInclude Include="Source\EmptySource\include\ShaderProgram.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -178,12 +181,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Shaders\UnlitBase.fragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Data\Shaders\UnlitBase.vertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Source\EmptySource\include\Math\IntVector3.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
@@ -202,13 +199,28 @@
     <None Include="Source\EmptySource\include\Math\Vector4.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
+    <None Include="Source\EmptySource\include\Math\Quaternion.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Data\Shaders\Base.vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\BRDF.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\DSPBR.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
     <None Include="Data\Shaders\PBRBase.fragment.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\PBRBase.vertex.glsl">
+    <None Include="Data\Shaders\Unlit.fragment.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Source\EmptySource\include\Math\Quaternion.inl">
+    <None Include="Data\Shaders\UnlitBase.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\Math\MathUtility.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
   </ItemGroup>
