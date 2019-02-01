@@ -56,23 +56,23 @@ unsigned int ShaderProgram::GetAttribLocation(const Char * LocationName) const {
 	return bIsLinked ? glGetAttribLocation(Program, LocationName) : 0;
 }
 
-void ShaderProgram::SetMatrix4x4Array(const unsigned int& Location, int Count, const void * Data, const unsigned int & Buffer) const {
+void ShaderProgram::SetMatrix4x4Array(const unsigned int& AttribLocation, int Count, const void * Data, const unsigned int & Buffer) const {
 	glBindBuffer(GL_ARRAY_BUFFER, Buffer);
 	glBufferData(GL_ARRAY_BUFFER, Count * sizeof(Matrix4x4), Data, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(Location);
-	glVertexAttribPointer(Location, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+	glEnableVertexAttribArray(AttribLocation);
+	glVertexAttribPointer(AttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
 	glEnableVertexAttribArray(7);
-	glVertexAttribPointer(Location + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
+	glVertexAttribPointer(AttribLocation + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
 	glEnableVertexAttribArray(8);
-	glVertexAttribPointer(Location + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
+	glVertexAttribPointer(AttribLocation + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
 	glEnableVertexAttribArray(9);
-	glVertexAttribPointer(Location + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
+	glVertexAttribPointer(AttribLocation + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
 
-	glVertexAttribDivisor(Location    , 1);
-	glVertexAttribDivisor(Location + 1, 1);
-	glVertexAttribDivisor(Location + 2, 1);
-	glVertexAttribDivisor(Location + 3, 1);
+	glVertexAttribDivisor(AttribLocation    , 1);
+	glVertexAttribDivisor(AttribLocation + 1, 1);
+	glVertexAttribDivisor(AttribLocation + 2, 1);
+	glVertexAttribDivisor(AttribLocation + 3, 1);
 }
 
 void ShaderProgram::Append(Shader * shader) {

@@ -82,9 +82,9 @@ inline Quaternion Quaternion::Normalized() const {
 
 inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	Matrix4x4 Result;
-	float xx(x * x);
-	float yy(y * y);
-	float zz(z * z);
+	float Sqrx(x * x);
+	float Sqry(y * y);
+	float Sqrz(z * z);
 	float xz(x * z);
 	float xy(x * y);
 	float yz(y * z);
@@ -92,18 +92,46 @@ inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	float wy(w * y);
 	float wz(w * z);
 
-	Result[0][0] = 1.F - 2.F * (yy + zz);
+	Result[0][0] = 1.F - 2.F * (Sqry + Sqrz);
 	Result[0][1] = 2.F * (xy + wz);
 	Result[0][2] = 2.F * (xz - wy);
 
 	Result[1][0] = 2.F * (xy - wz);
-	Result[1][1] = 1.F - 2.f * (xx + zz);
+	Result[1][1] = 1.F - 2.f * (Sqrx + Sqrz);
 	Result[1][2] = 2.F * (yz + wx);
 
 	Result[2][0] = 2.F * (xz + wy);
 	Result[2][1] = 2.F * (yz - wx);
-	Result[2][2] = 1.F - 2.F * (xx + yy);
+	Result[2][2] = 1.F - 2.F * (Sqrx + Sqry);
 	return Result;
+}
+
+inline Vector3 Quaternion::ToEulerAngles() const {
+	// Is close to the pole?
+	const float SingularityTest = z * x - w * y;
+	const float YawY = 2.F * (w * z + x * y);
+	const float YawX = ( 1.F - 2.F*((y * y) + (z * z)) );
+
+	// Reference 
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+
+	Vector3 EulerAngles;
+
+	if (SingularityTest > 0.4999F) { // NortPole
+		EulerAngles.x = 1.5708F;
+		EulerAngles.y = atan2(YawY, YawX);
+		EulerAngles.z = EulerAngles.y - ( 2.F * atan2(x, w) );
+	} else if (SingularityTest < -0.4999F) { // SouthPole
+		EulerAngles.x = -1.5708F;
+		EulerAngles.y = atan2f(YawY, YawX);
+		EulerAngles.z = -EulerAngles.y - ( 2.F * atan2f(x, w) );
+	} else {
+		EulerAngles.x = asin( 2.F * (SingularityTest) );
+		EulerAngles.y = atan2(YawY, YawX);
+		EulerAngles.z = atan2( -2.F * (w * x + y * z), ( 1.F - 2.F * ((x * x) + (y * y)) ) );
+	}
+
+	return EulerAngles;
 }
 
 FORCEINLINE float Quaternion::Dot(const Quaternion & Other) const {

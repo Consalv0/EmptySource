@@ -15,9 +15,12 @@ public:
 
 	Material();
 
-	/*Set material shader*/
+	//* Set material shader
 	void SetShaderProgram(ShaderProgram* Value);
 
-	/*Use shader program and render mode*/
+	//* Get material shader
+	ShaderProgram* GetShaderProgram() const;
+
+	//* Use shader program and render mode
 	void Use();
 };

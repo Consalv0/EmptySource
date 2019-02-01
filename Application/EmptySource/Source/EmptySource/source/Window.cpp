@@ -92,6 +92,10 @@ bool ApplicationWindow::GetKeyDown(unsigned int Key) {
 	return glfwGetKey(Window, Key) == GLFW_PRESS;
 }
 
+void ApplicationWindow::ClearWindow() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void ApplicationWindow::EndOfFrame() {
 	glfwSwapBuffers(Window);
 

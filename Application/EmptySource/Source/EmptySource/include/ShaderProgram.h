@@ -31,7 +31,7 @@ public:
 	unsigned int GetAttribLocation(const Char* LocationName) const;
 
 	//* Pass Matrix Array
-	void SetMatrix4x4Array(const unsigned int& Location, int Count, const void* Data, const unsigned int& Buffer) const;
+	void SetMatrix4x4Array(const unsigned int& AttribLocation, int Count, const void* Data, const unsigned int& Buffer) const;
 
 	//* Appends shader unit to shader program
 	void Append(Shader* Shader);
