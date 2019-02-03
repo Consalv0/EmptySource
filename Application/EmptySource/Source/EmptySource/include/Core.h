@@ -27,4 +27,4 @@
 #include <iostream>
 
 #include "..\include\CoreTypes.h"
-#include "..\include\LogCore.h"
+#include "..\include\Utility\LogCore.h"

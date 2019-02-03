@@ -11,12 +11,6 @@ typedef std::string String;
 typedef char Char;
 typedef std::wstring WString;
 typedef wchar_t WChar;
-// typedef std::wstring_convert<std::codecvt_utf8<WChar>> UTF8Convert;
-
-// #define StringToWString(STRING) UTF8Convert().from_bytes(STRING)
-// #define CharToWChar(STRING) UTF8Convert().from_bytes(STRING).c_str()
-// #define WStringToString(STRING) UTF8Convert().to_bytes(STRING)
-// #define WCharToChar(STRING) UTF8Convert().to_bytes(STRING).c_str()
 
 inline Char* WCharToChar(const WChar* From) {
 	if (From == NULL) return NULL;

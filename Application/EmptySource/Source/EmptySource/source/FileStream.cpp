@@ -2,8 +2,6 @@
 #include "..\include\Core.h"
 #include "..\include\FileStream.h"
 
-#include "..\include\LogCore.h"
-
 FileStream::FileStream() {
 	Stream = NULL;
 	Path = L"";
