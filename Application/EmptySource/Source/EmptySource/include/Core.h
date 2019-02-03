@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <io.h>
 #include <fcntl.h>
+#include <assert.h>
 
 // Include standar headers
 #include <vector>
