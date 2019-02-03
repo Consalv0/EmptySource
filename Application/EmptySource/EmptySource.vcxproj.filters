@@ -43,6 +43,9 @@
     <Filter Include="Source Files\Core\Utility">
       <UniqueIdentifier>{57393333-3b79-40ae-b8ac-b0d51768b942}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CUDA Test">
+      <UniqueIdentifier>{f7a409a1-077c-45cf-8e36-6918fc925195}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\External\GLFW\glfw3.h">
@@ -144,6 +147,9 @@
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\CUDAUtility.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -238,5 +244,10 @@
     <None Include="Source\EmptySource\include\Math\MathUtility.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Source\EmptySource\source\Utility\CUDAExample.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>
