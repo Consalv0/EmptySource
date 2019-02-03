@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{BCB96236-02F4-40DA-AAE3-91AD5473468B}</ProjectGuid>
     <RootNamespace>EmptySource</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -124,10 +124,10 @@
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />
+    <ClInclude Include="Source\EmptySource\include\RenderingCore.h" />
     <ClInclude Include="Source\EmptySource\include\FileManager.h" />
     <ClInclude Include="Source\EmptySource\include\FileStream.h" />
     <ClInclude Include="Source\EmptySource\include\IIdentifier.h" />
-    <ClInclude Include="Source\EmptySource\include\LogCore.h" />
     <ClInclude Include="Source\EmptySource\include\Material.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
@@ -147,6 +147,8 @@
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Text.h" />
     <ClInclude Include="Source\EmptySource\include\Time.h" />
+    <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Utility\Timer.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
@@ -167,6 +169,7 @@
     <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Time.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
     <ClCompile Include="Source\External\GLAD\src\glad.c" />
   </ItemGroup>

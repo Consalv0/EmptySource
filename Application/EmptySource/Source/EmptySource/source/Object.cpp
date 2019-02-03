@@ -1,7 +1,6 @@
 
 #include "..\include\Core.h"
-#include "../include/LogCore.h"
-#include "../include/Object.h"
+#include "..\include\Object.h"
 
 Object::Object() : IIdentifier() { 
 	InternalName = L"object_" + std::to_wstring(IdentifierNum);

@@ -7,7 +7,7 @@ public:
 	static void Tick();
 	// Update the fixed update time
 	// Don't use this unless you know what are you doing
-	// static void fixedUpdate();
+	// static void FixedUpdate();
 
 	// Time since the last frame;
 	static float GetDeltaTime();

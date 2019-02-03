@@ -42,7 +42,6 @@ float Time::GetFrameRate() {
 unsigned long Time::GetApplicationTime() {
 	SYSTEMTIME time;
 	GetSystemTime(&time);
-	using namespace std;
 	return time.wHour * (long)3600000 +
 		   time.wMinute * (long)60000 +
 		   time.wSecond * (long)1000 +

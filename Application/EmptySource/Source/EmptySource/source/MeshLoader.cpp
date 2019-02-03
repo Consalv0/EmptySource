@@ -1,8 +1,9 @@
-﻿#include <ctime>
+﻿
 #include <cstdio>
 #include <string>
 
 #include "..\include\Core.h"
+#include "..\include\Utility\Timer.h"
 #include "..\include\Math\Math.h"
 #include "..\include\MeshLoader.h"
 #include "..\include\FileStream.h"
@@ -298,9 +299,11 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 
 	{
 		bool bWarned = false;
-		clock_t StartTime = clock();
+		Debug::Timer Timer;
+
 		Debug::Log(Debug::LogNormal, L"Parsing File Model '%s'", File->GetShortPath().c_str());
 		
+		Timer.Start();
 		String* MemoryText = new String();
 		File->ReadNarrowStream(MemoryText);
 
@@ -311,14 +314,13 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		ReadOBJByLine(MemoryText->c_str(), ModelData);
 		delete MemoryText;
 
-		clock_t EndTime = clock();
-		float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
+		Timer.Stop();
 		VertexIndexCount = ModelData.VertexIndicesCount;
 		Debug::Log(Debug::LogNormal,
 			L"├> Parsed %s vertices and %s triangles in %.3fs",
 			Text::FormattedUnit(VertexIndexCount, 2).c_str(),
 			Text::FormattedUnit(VertexIndexCount / 3, 2).c_str(),
-			TotalTime
+			Timer.GetEnlapsedSeconds()
 		);
 	}
 
@@ -335,7 +337,8 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	Faces->clear();
 	size_t TotalAllocatedSize = 0;
 
-	clock_t StartTime = clock();
+	Debug::Timer Timer;
+	Timer.Start();
 	for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
 		OBJObjectData* Data = &ModelData.Objects[ObjectCount];
 		Vertices->push_back(MeshVertices());
@@ -412,9 +415,8 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	Debug::Log(Debug::NoLog, L"\r");
 	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %s vertices", WString(25, L'#').c_str(), Text::FormattedUnit(VertexIndexCount, 2).c_str());
 
-	clock_t EndTime = clock();
-	float TotalTime = float(EndTime - StartTime) / CLOCKS_PER_SEC;
-	Debug::Log(Debug::LogNormal, L"└> Allocated %s in %.2fs", Text::FormattedData(TotalAllocatedSize, 2).c_str(), TotalTime);
+	Timer.Stop();
+	Debug::Log(Debug::LogNormal, L"└> Allocated %s in %.2fs", Text::FormattedData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
 
 	return true;
 }

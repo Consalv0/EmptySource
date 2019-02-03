@@ -37,6 +37,12 @@
     <Filter Include="Header Files\Core\Math">
       <UniqueIdentifier>{3fbef7f1-3104-42e9-ac93-e7951c99cb19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\Utility">
+      <UniqueIdentifier>{95b5a43f-091a-46cd-b271-d3e43cb74443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Utility">
+      <UniqueIdentifier>{57393333-3b79-40ae-b8ac-b0d51768b942}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\External\GLFW\glfw3.h">
@@ -93,9 +99,6 @@
     <ClInclude Include="Source\EmptySource\include\Math\Vector4.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\LogCore.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\FileStream.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -131,6 +134,15 @@
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h">
       <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\RenderingCore.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\Timer.h">
+      <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
