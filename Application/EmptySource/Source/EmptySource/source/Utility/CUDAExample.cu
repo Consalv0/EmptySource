@@ -19,135 +19,92 @@
 #include "..\Source\EmptySource\include\Core.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
-#include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
-
-#ifndef MAX
-#define MAX(a,b) (a > b ? a : b)
+#ifndef __CUDACC__
+#define __CUDACC__
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
-// declaration, forward
+#include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
+#include "..\Source\EmptySource\include\Utility\Timer.h"
+#include "..\Source\EmptySource\include\Math\Math.h"
 
-// extern "C" void computeGold(char *reference, char *idata, const unsigned int len);
-// extern "C" void computeGold2(int2 *reference, int2 *idata, const unsigned int len);
-
-///////////////////////////////////////////////////////////////////////////////
-//! Simple test kernel for device functionality
-//! @param g_odata  memory to process (in and out)
-///////////////////////////////////////////////////////////////////////////////
-__global__ void kernel(int *g_data)
-{
-	// write data to global memory
-	const unsigned int tid = threadIdx.x;
-	int data = g_data[tid];
-
-	// use integer arithmetic to process all four bytes with one thread
-	// this serializes the execution, but is the simplest solutions to avoid
-	// bank conflicts for this very low number of threads
-	// in general it is more efficient to process each byte by a separate thread,
-	// to avoid bank conflicts the access pattern should be
-	// g_data[4 * wtid + wid], where wtid is the thread id within the half warp
-	// and wid is the warp id
-	// see also the programming guide for a more in depth discussion.
-	g_data[tid] = ((((data << 0) >> 24) - 10) << 24)
-		| ((((data << 8) >> 24) - 10) << 16)
-		| ((((data << 16) >> 24) - 10) << 8)
-		| ((((data << 24) >> 24) - 10) << 0);
+ // Kernel function to add the elements of two arrays
+__global__ void Add(int n, float *x, float *y) {
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
+  int stride = blockDim.x * gridDim.x;
+  for (int i = index; i < n; i += stride)
+    y[i] = x[i] * y[i];
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//! Demonstration that int2 data can be used in the cpp code
-//! @param g_odata  memory to process (in and out)
-///////////////////////////////////////////////////////////////////////////////
-__global__ void
-kernel2(int2 *g_data)
-{
-	// write data to global memory
-	const unsigned int tid = threadIdx.x;
-	int2 data = g_data[tid];
-
-	// use integer arithmetic to process all four bytes with one thread
-	// this serializes the execution, but is the simplest solutions to avoid
-	// bank conflicts for this very low number of threads
-	// in general it is more efficient to process each byte by a separate thread,
-	// to avoid bank conflicts the access pattern should be
-	// g_data[4 * wtid + wid], where wtid is the thread id within the half warp
-	// and wid is the warp id
-	// see also the programming guide for a more in depth discussion.
-	g_data[tid].x = data.x - data.y;
+// Kernel function to init the elements of two arrays
+__global__ void Init(int n, float *x, float *y) {
+	int index = blockIdx.x * blockDim.x + threadIdx.x;
+	int stride = blockDim.x * gridDim.x;
+	for (int i = index; i < n; i += stride) {
+		x[i] = i * 1.0f;
+		y[i] = i * 2.0F;
+	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//! Entry point for Cuda functionality on host side
-//! @param argc  command line argument count
-//! @param argv  command line arguments
-//! @param data  data to process on the device
-//! @param len   len of \a data
-////////////////////////////////////////////////////////////////////////////////
-extern "C" bool
-RunTest(const int argc, const char **argv, char *data, int2 *data_int2, unsigned int len) {
-	// use command-line specified CUDA device, otherwise use device with highest Gflops/s
-	CUDA::FindCudaDevice(argc, (const char **)argv);
+extern "C" bool FindCudaDevice() {
+	return CUDA::FindCudaDevice();
+}
 
-	const unsigned int num_threads = len / 4;
-	assert(0 == (len % 4));
-	const unsigned int mem_size = sizeof(char) * len;
-	const unsigned int mem_size_int2 = sizeof(int2) * len;
+extern "C" bool RunTest(int N, float * x, float * y) {
 
-	// allocate device memory
-	char *d_data;
-	CUDA::CheckCudaErrors(cudaMalloc((void **)&d_data, mem_size));
-	// copy host memory to device
-	CUDA::CheckCudaErrors(cudaMemcpy(d_data, data, mem_size,
-		cudaMemcpyHostToDevice));
-	// allocate device memory for int2 version
-	int2 *d_data_int2;
-	CUDA::CheckCudaErrors(cudaMalloc((void **)&d_data_int2, mem_size_int2));
-	// copy host memory to device
-	CUDA::CheckCudaErrors(cudaMemcpy(d_data_int2, data_int2, mem_size_int2,
-		cudaMemcpyHostToDevice));
+	CUDA::CheckCudaErrors(cudaProfilerStart());
 
-	// setup execution parameters
-	dim3 grid(1, 1, 1);
-	dim3 threads(num_threads, 1, 1);
-	dim3 threads2(len, 1, 1); // more threads needed fir separate int2 version
-	// execute the kernel
-	kernel <<< grid, threads >>> ((int *)d_data);
-	kernel2 <<< grid, threads2 >>> (d_data_int2);
+	Debug::Timer Timer;
+	Timer.Start();
 
-	// check if kernel execution generated and error
+	// Allocate Memory in Host
+	CUDA::CheckCudaErrors( cudaHostAlloc(&x, N * sizeof(float), cudaHostAllocDefault) );
+	CUDA::CheckCudaErrors( cudaHostAlloc(&y, N * sizeof(float), cudaHostAllocDefault) );
+
+	CUDA::CheckCudaErrors( cudaMemset(x, 0, N * sizeof(float)) );
+	CUDA::CheckCudaErrors( cudaMemset(y, 0, N * sizeof(float)) );
+
+	Timer.Stop();
+	// Debug::Log(
+	// 	Debug::LogDebug, L"CUDA Host allocation of %s durantion: %dms",
+	// 	Text::FormattedData((double)N * 2 * sizeof(float), 2).c_str(),
+	// 	Timer.GetEnlapsed()
+	// );
+
+	Timer.Start();
+	// Run kernel on N elements on the GPU
+	int blockSize = 256;
+	int numBlocks = (N + blockSize - 1) / blockSize;
+
+	// Run Kernel to initialize x and y arrays
+	Init <<< numBlocks, blockSize >>> (N, x, y);
+	// Run kernel on N elements on the GPU
+	Add <<< numBlocks, blockSize >>> (N, x, y);
+
+	// Wait for GPU to finish before accessing on host
+	CUDA::CheckCudaErrors(cudaDeviceSynchronize());
+
+	Debug::Log(Debug::LogDebug, L"Test Vector[%d] %s", 1500, Vector2(x[1500], y[1500]).ToString().c_str());
+
+	// Check for errors (all values should be 3.0f)
+	float maxError = 0.0f;
+	for (int i = 0; i < N; i++)
+		maxError = fmax(maxError, fabs(y[i] - 3.0f));
+	Debug::Log(Debug::LogDebug, L"Max error: %.2f", maxError);
+
+	// Check if kernel execution generated and error
 	CUDA::GetLastCudaError("Kernel execution failed");
 
-	// compute reference solutions
-	char *reference = (char *)malloc(mem_size);
-	// computeGold(reference, data, len);
-	int2 *reference2 = (int2 *)malloc(mem_size_int2);
-	// computeGold2(reference2, data_int2, len);
+	// Free memory
+	CUDA::CheckCudaErrors(cudaFreeHost(x));
+	CUDA::CheckCudaErrors(cudaFreeHost(y));
 
-	// copy results from device to host
-	CUDA::CheckCudaErrors(cudaMemcpy(data, d_data, mem_size,
-		cudaMemcpyDeviceToHost));
-	CUDA::CheckCudaErrors(cudaMemcpy(data_int2, d_data_int2, mem_size_int2,
-		cudaMemcpyDeviceToHost));
+	Timer.Stop();
+	// Debug::Log(
+	// 	Debug::LogDebug, L"CUDA Device Kernel functions durantion: %dms",
+	// 	Timer.GetEnlapsed()
+	// );
 
-	// check result
-	bool success = true;
+	CUDA::CheckCudaErrors(cudaProfilerStop());
 
-	for (unsigned int i = 0; i < len; i++)
-	{
-		if (reference[i] != data[i] ||
-			reference2[i].x != data_int2[i].x ||
-			reference2[i].y != data_int2[i].y)
-		{
-			success = false;
-		}
-	}
-
-	// cleanup memory
-	CUDA::CheckCudaErrors(cudaFree(d_data));
-	CUDA::CheckCudaErrors(cudaFree(d_data_int2));
-	free(reference);
-	free(reference2);
-
-	return success;
+	return 0;
 }

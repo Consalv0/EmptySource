@@ -16,6 +16,9 @@ bool ShaderProgram::LinkProgram() {
 	if (VertexShader != NULL && VertexShader->IsValid()) {
 		glAttachShader(Program, VertexShader->GetShaderUnit());
 	}
+	if (GeometryShader != NULL && GeometryShader->IsValid()) {
+		glAttachShader(Program, GeometryShader->GetShaderUnit());
+	}
 	if (FragmentShader != NULL && FragmentShader->IsValid()) {
 		glAttachShader(Program, FragmentShader->GetShaderUnit());
 	}

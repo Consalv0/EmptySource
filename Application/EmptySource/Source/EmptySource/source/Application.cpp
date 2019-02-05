@@ -14,6 +14,11 @@
 #include "..\include\Object.h"
 #include "..\include\Space.h"
 #include "..\include\Material.h"
+#include "..\include\Utility\Timer.h"
+
+extern "C" {
+	bool RunTest(int N, float * x, float * y);
+}
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
@@ -27,9 +32,11 @@ bool CoreApplication::InitalizeGLAD() {
 
 	glEnable(GL_DEBUG_OUTPUT);
 	// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(OGLError, nullptr);
+	glDebugMessageCallback(Debug::OGLError, nullptr);
 	// Enable all messages, all sources, all levels, and all IDs:
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+	Debug::PrintGraphicsInformation();
 
 	return true;
 }
@@ -49,23 +56,6 @@ bool CoreApplication::InitializeWindow() {
 	return true;
 }
 
-void CoreApplication::PrintGraphicsInformation() {
-	const GLubyte    *renderer = glGetString(GL_RENDERER);
-	const GLubyte      *vendor = glGetString(GL_VENDOR);
-	const GLubyte     *version = glGetString(GL_VERSION);
-	const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-	GLint major, minor;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
-
-	Debug::Log(Debug::LogNormal, L"GC Vendor            : %s", CharToWChar((const char*)vendor));
-	Debug::Log(Debug::LogNormal, L"GC Renderer          : %s", CharToWChar((const char*)vendor));
-	Debug::Log(Debug::LogNormal, L"GL Version (string)  : %s", CharToWChar((const char*)version));
-	Debug::Log(Debug::LogNormal, L"GL Version (integer) : %d.%d", major, minor);
-	Debug::Log(Debug::LogNormal, L"GLSL Version         : %s\n", CharToWChar((const char*)glslVersion));
-}
-
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
 		Debug::Log(Debug::LogCritical, L"Failed to initialize GLFW\n");
@@ -78,7 +68,7 @@ bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int Ver
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	glfwSetErrorCallback(&CoreApplication::GLFWError);
+	glfwSetErrorCallback(&Debug::GLFWError);
 	return true;
 }
 
@@ -116,10 +106,13 @@ void CoreApplication::MainLoop() {
 
 	//* Create and compile our GLSL shader program from text files
 	Shader VertexBase = Shader(Shader::Type::Vertex, FileManager::Open(L"Data\\Shaders\\Base.vertex.glsl"));
+	Shader GeometryVertex = Shader(Shader::Type::Vertex, FileManager::Open(L"Data\\Shaders\\GeometryBase.vertex.glsl"));
 	Shader FragmentBRDF = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\BRDF.fragment.glsl"));
 	Shader FragmentUnlit = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\Unlit.fragment.glsl"));
+	Shader Voxelizer = Shader(Shader::Type::Geometry, FileManager::Open(L"Data\\Shaders\\Voxelizer.geometry.glsl"));
 	ShaderProgram BRDFShader = ShaderProgram(L"BRDF");
-	BRDFShader.Append(&VertexBase);
+	BRDFShader.Append(&GeometryVertex);
+	BRDFShader.Append(&Voxelizer);
 	BRDFShader.Append(&FragmentBRDF);
 	BRDFShader.Compile();
 
@@ -190,8 +183,6 @@ void CoreApplication::MainLoop() {
 
 	do {
 		Time::Tick();
-
-		MainWindow->ClearWindow();
 
 		//////// Drawing ModelMatrix ////////
 		ProjectionMatrix = Matrix4x4::Perspective(
@@ -293,6 +284,24 @@ void CoreApplication::MainLoop() {
 			RenderTimeSum = 0;
 			size_t TriangleCount = 0;
 
+			MainWindow->ClearWindow();
+
+			// Debug::Timer Timer;
+			// Timer.Start();
+			// int ElementCount = 1 << 20;
+			// float * x = NULL; float * y = NULL;
+			// // Run the device part of the program
+			// bool bTestResult;
+			// bTestResult = RunTest(ElementCount, x, y);
+			// 
+			// Timer.Stop();
+			// Debug::Log(
+			// 	Debug::LogDebug, L"CUDA Test with %s elements durantion: %dms",
+			// 	Text::FormattedUnit(ElementCount, 2).c_str(),
+			// 	Timer.GetEnlapsed()
+			// );
+			// Debug::Log(Debug::NoLog, L"\n");
+
 			BaseMaterial.Use();
 
 			glUniformMatrix4fv(  ProjectionMatrixLocation, 1, GL_FALSE, ProjectionMatrix.PointerToValue() );
@@ -357,30 +366,4 @@ void CoreApplication::MainLoop() {
 	);
 
 	BRDFShader.Unload();
-}
-
-void CoreApplication::GLFWError(int ErrorID, const char* Description) {
-	Debug::Log(Debug::LogError, L"%s", CharToWChar(Description));
-}
-
-void APIENTRY CoreApplication::OGLError(GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength, const GLchar * ErrorMessage, const void * UserParam)
-{
-	// ignore non-significant error/warning codes
-	if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;
-
-	const WChar* ErrorPrefix = L"";
-
-	switch (ErrorType) {
-		case GL_DEBUG_TYPE_ERROR:               ErrorPrefix = L"error";       break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = L"deprecated";  break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ErrorPrefix = L"undefined";   break;
-		case GL_DEBUG_TYPE_PORTABILITY:         ErrorPrefix = L"portability"; break;
-		case GL_DEBUG_TYPE_PERFORMANCE:         ErrorPrefix = L"performance"; break;
-		case GL_DEBUG_TYPE_MARKER:              ErrorPrefix = L"marker";      break;
-		case GL_DEBUG_TYPE_PUSH_GROUP:          ErrorPrefix = L"pushgroup";  break;
-		case GL_DEBUG_TYPE_POP_GROUP:           ErrorPrefix = L"popgroup";   break;
-		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = L"other";       break;
-	}
-	
-	Debug::Log(Debug::LogError, L"<%s>(%i) %s", ErrorPrefix, ErrorID, CharToWChar(ErrorMessage));
 }

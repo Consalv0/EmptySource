@@ -14,7 +14,7 @@ uniform mat4 _ViewMatrix;
 out struct Matrices {
   mat4 Model;
   mat4 WorldNormal;
-} Matrix;
+} vMatrix;
 
 out struct VertexData {
   vec4 Position;
@@ -22,18 +22,18 @@ out struct VertexData {
   vec3 TangentDirection;
   vec2 UV0;
   vec4 Color;
-} Vertex;
+} vVertex;
 
 void main() {
-	Matrix.Model = _iModelMatrix;
-	Matrix.WorldNormal = transpose(inverse(_iModelMatrix));
+	vMatrix.Model = _iModelMatrix;
+	vMatrix.WorldNormal = transpose(inverse(_iModelMatrix));
 
- 	Vertex.Position = vec4(_iVertexPosition, 1.0);
- 	Vertex.NormalDirection = normalize(Matrix.WorldNormal * vec4( _iVertexNormal, 1.0 )).xyz; 
-	Vertex.UV0 = _iVertexUV0; 
-	Vertex.Color = _iVertexColor;
+ 	vVertex.Position = vec4(_iVertexPosition, 1.0);
+ 	vVertex.NormalDirection = normalize(vMatrix.WorldNormal * vec4( _iVertexNormal, 1.0 )).xyz; 
+	vVertex.UV0 = _iVertexUV0; 
+	vVertex.Color = _iVertexColor;
   	
   	// Now set the position in model space
-  	Vertex.Position = _iModelMatrix * Vertex.Position;
-  	gl_Position = _ProjectionMatrix * _ViewMatrix * Vertex.Position;
+  	vVertex.Position = _iModelMatrix * vVertex.Position;
+  	gl_Position = _ProjectionMatrix * _ViewMatrix * vVertex.Position;
 }
