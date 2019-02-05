@@ -19,14 +19,18 @@ uniform struct MaterialInfo {
   vec3 Color;          // Diffuse color for dielectrics, f0 for metallic
 } _Material;
 
-in mat4 ModelMatrix;
-in mat4 WorldNormalMatrix;
+in struct Matrices {
+  mat4 Model;
+  mat4 WorldNormal;
+} Matrix;
 
-in vec4 VertexPosition;
-in vec3 NormalDirection;
-in vec3 TangentDirection;
-in vec2 UV0;
-in vec4 Color;
+in struct VertexData {
+  vec4 Position;
+  vec3 NormalDirection;
+  vec3 TangentDirection;
+  vec2 UV0;
+  vec4 Color;
+} Vertex;
 
 out vec4 FragColor;
 
@@ -95,7 +99,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
         // Attenuation *= (-dot(LightDirection * 2, LightDirection) - 1.4) * 6;
         Attenuation *= GetLightAttenuation(UnormalizedLightDirection, InvSqrLightRadius) * _Lights[LightIndex].Intencity;
   
-  vec3 NormalColor = (WorldNormalMatrix * vec4(Normal, 1)).rgb;
+  vec3 NormalColor = (Matrix.WorldNormal * vec4(Normal, 1)).rgb;
        NormalColor = normalize(NormalColor) * 0.5 + 0.5;
 
   float LinearRoughness = _Material.Roughness;
@@ -123,7 +127,7 @@ void main() {
   vec3 Sum = vec3(0);
 
   for( int i = 0; i < 2; i++ ) {
-    Sum += MicrofacetModel(i, VertexPosition.xyz, NormalDirection);
+    Sum += MicrofacetModel(i, Vertex.Position.xyz, Vertex.NormalDirection);
   }
  
   Sum = pow( Sum, vec3(1.0/Gamma) );

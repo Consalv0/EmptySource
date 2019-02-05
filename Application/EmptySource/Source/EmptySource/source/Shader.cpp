@@ -21,7 +21,9 @@ bool Shader::Compile() {
 		// VertexStream = FileManager::Open(ShaderPath);
 		break;
 	case Geometry:
-		// VertexStream = FileManager::Open(ShaderPath);
+		ShaderUnit = glCreateShader(GL_GEOMETRY_SHADER);
+		Debug::Log(Debug::LogNormal, L"Compiling geometry shader '%s'", ShaderCode->GetShortPath().c_str());
+		Code = WStringToString(FileManager::ReadStream(ShaderCode));
 		break;
 	}
 

@@ -6,6 +6,9 @@
 #include <Windows.h>
 #endif
 
+#ifndef LOG_CORE
+#define LOG_CORE
+
 namespace Debug {
 	constexpr unsigned char       NoLog = 0x00;
 	constexpr unsigned char	  LogNormal = 0x01;
@@ -46,3 +49,5 @@ namespace Debug {
 #endif
 	}
 }
+
+#endif // !LOG_CORE

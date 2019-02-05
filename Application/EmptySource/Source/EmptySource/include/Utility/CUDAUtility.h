@@ -1,16 +1,18 @@
-
+﻿
 #include "..\Core.h"
-
-// CUDA HEADERS
-#include "cuda.h"
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
-
 #include "..\Utility\LogCore.h"
 
+// CUDA HEADERS
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
+#include <driver_functions.h>
+#include <cuda_gl_interop.h>
+#include <cuda_profiler_api.h>
+
 /*
- * Extracted from "helper_cuda.h from NVIDIA Corporation CUDA Examples,
- * to use the Debug and custom debug functions"
+ * Extracted from "helper_cuda.h from NVIDIA Corporation CUDA Samples,
+ * and modified to use the Debug and custom debug functions"
 **/
 namespace CUDA {
 
@@ -18,8 +20,8 @@ namespace CUDA {
 	void CheckFunction(T Result, WChar const *const FunctionName, const char *const FileName, int const Line) {
 		if (Result) {
 			Debug::Log(
-				Debug::LogCritical, L"CUDA error at %s:%d code=%d(%s) \"%s\" \n", CharToWChar(FileName), Line,
-				static_cast<unsigned int>(Result), cudaGetErrorName(Result), FunctionName
+				Debug::LogCritical, L"CUDA error at %s:%d code=%d(%s) '%s'", CharToWChar(FileName), Line,
+				static_cast<unsigned int>(Result), CharToWChar(cudaGetErrorName(Result)), FunctionName
 			);
 
 			cudaDeviceReset();
@@ -41,7 +43,7 @@ namespace CUDA {
 		if (cudaSuccess != CUDAError) {
 			Debug::Log(
 				Debug::LogCritical,
-				L"%s(%i) : CUDA error : %s : (%d) %s.\n",
+				L"%s(%i) : CUDA error : %s : (%d) %s.",
 				CharToWChar(FileName), Line, CharToWChar(ErrorMessage), static_cast<int>(CUDAError),
 				CharToWChar(cudaGetErrorString(CUDAError))
 			);
@@ -92,7 +94,7 @@ namespace CUDA {
 		// to run properly
 		Debug::Log(
 			Debug::LogError,
-			L"MapSMtoCores for SM %d.%d is undefined. Default to use %d Cores/SM\n",
+			L"MapSMtoCores for SM %d.%d is undefined. Default to use %d Cores/SM",
 			major, minor, nGpuArchCoresPerSM[index - 1].Cores
 		);
 		return nGpuArchCoresPerSM[index - 1].Cores;
@@ -100,74 +102,77 @@ namespace CUDA {
 
 	// Returns the best GPU (maximum GFLOPS)
 	inline int GetMaxGflopsDeviceId() {
-		int current_device = 0, sm_per_multiproc = 0;
-		int max_perf_device = 0;
-		int device_count = 0;
-		int devices_prohibited = 0;
+		int CurrentDevice = 0, SMPerMiltiproc = 0;
+		int MaxPreformaceDevice = 0;
+		int DeviceCount = 0;
+		int DevicesProhibited = 0;
 
-		uint64_t max_compute_perf = 0;
-		cudaDeviceProp deviceProp;
-		CheckCudaErrors(cudaGetDeviceCount(&device_count));
+		uint64_t MaxComputePerformance = 0;
+		cudaDeviceProp DeviceProperties;
+		CheckCudaErrors(cudaGetDeviceCount(&DeviceCount));
 
-		if (device_count == 0) {
+		if (DeviceCount == 0) {
 			Debug::Log(
 				Debug::LogCritical,
-				L"GetMaxGflopsDeviceId(): No devices supporting CUDA.\n"
+				L"GetMaxGflopsDeviceId(): No devices supporting CUDA."
 			);
 			exit(EXIT_FAILURE);
 		}
 
 		// Find the best CUDA capable GPU device
-		current_device = 0;
+		CurrentDevice = 0;
 
-		while (current_device < device_count) {
-			cudaGetDeviceProperties(&deviceProp, current_device);
+		while (CurrentDevice < DeviceCount) {
+			cudaGetDeviceProperties(&DeviceProperties, CurrentDevice);
 
 			// If this GPU is not running on Compute Mode prohibited,
 			// then we can add it to the list
-			if (deviceProp.computeMode != cudaComputeModeProhibited) {
-				if (deviceProp.major == 9999 && deviceProp.minor == 9999) {
-					sm_per_multiproc = 1;
+			if (DeviceProperties.computeMode != cudaComputeModeProhibited) {
+				if (DeviceProperties.major == 9999 && DeviceProperties.minor == 9999) {
+					SMPerMiltiproc = 1;
 				} else {
-					sm_per_multiproc =
-						_ConvertSMVer2Cores(deviceProp.major, deviceProp.minor);
+					SMPerMiltiproc =
+						_ConvertSMVer2Cores(DeviceProperties.major, DeviceProperties.minor);
 				}
 
-				uint64_t compute_perf = (uint64_t)deviceProp.multiProcessorCount *
-					sm_per_multiproc * deviceProp.clockRate;
+				uint64_t ComputePerformance = (uint64_t)DeviceProperties.multiProcessorCount *
+					SMPerMiltiproc * DeviceProperties.clockRate;
 
-				if (compute_perf > max_compute_perf) {
-					max_compute_perf = compute_perf;
-					max_perf_device = current_device;
+				if (ComputePerformance > MaxComputePerformance) {
+					MaxComputePerformance = ComputePerformance;
+					MaxPreformaceDevice = CurrentDevice;
 				}
 			} else {
-				devices_prohibited++;
+				DevicesProhibited++;
 			}
 
-			++current_device;
+			++CurrentDevice;
 		}
 
-		if (devices_prohibited == device_count) {
+		if (DevicesProhibited == DeviceCount) {
 			Debug::Log(
 				Debug::LogCritical,
-				L"GetMaxGflopsDeviceId(): All devices have compute mode prohibited.\n"
+				L"GetMaxGflopsDeviceId(): All devices have compute mode prohibited."
 			);
 			exit(EXIT_FAILURE);
 		}
 
-		return max_perf_device;
+		return MaxPreformaceDevice;
 	}
 
-	inline int FindCudaDevice(int Argc, const char **Argv) {
+	// Picks the device with highest Gflops/s
+	inline int FindCudaDevice() {
 		cudaDeviceProp DeviceProperties;
 		int DeviceID = 0;
 
-		// Otherwise pick the device with highest Gflops/s
 		DeviceID = GetMaxGflopsDeviceId();
 		CheckCudaErrors(cudaSetDevice(DeviceID));
 		CheckCudaErrors(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
-		Debug::Log(Debug::LogNormal, L"GPU Device %d: \"%s\" with compute capability %d.%d\n\n", DeviceID,
-			CharToWChar(DeviceProperties.name), DeviceProperties.major, DeviceProperties.minor);
+		Debug::Log(Debug::LogNormal, L"GPU CUDA Device");
+		Debug::Log(
+			Debug::LogNormal, L"\u2514> GPU Device #%d: '%s' with compute capability %d.%d", DeviceID,
+			CharToWChar(DeviceProperties.name), DeviceProperties.major, DeviceProperties.minor
+		);
 
 		return DeviceID;
 	}
