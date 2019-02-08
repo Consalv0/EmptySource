@@ -24,8 +24,10 @@ namespace CUDA {
 				static_cast<unsigned int>(Result), CharToWChar(cudaGetErrorName(Result)), FunctionName
 			);
 
-			cudaDeviceReset();
 			// Make sure we call CUDA Device Reset before exiting
+			cudaDeviceReset();
+			Debug::Log(Debug::LogNormal, L"Press any key to close...");
+			_getch();
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -48,8 +50,10 @@ namespace CUDA {
 				CharToWChar(cudaGetErrorString(CUDAError))
 			);
 
-			cudaDeviceReset();
 			// Make sure we call CUDA Device Reset before exiting
+			cudaDeviceReset();
+			Debug::Log(Debug::LogNormal, L"Press any key to close...");
+			_getch();
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -65,20 +69,14 @@ namespace CUDA {
 		} sSMtoCores;
 
 		sSMtoCores nGpuArchCoresPerSM[] = {
-			{0x30, 192},
-			{0x32, 192},
-			{0x35, 192},
-			{0x37, 192},
-			{0x50, 128},
-			{0x52, 128},
-			{0x53, 128},
-			{0x60,  64},
-			{0x61, 128},
-			{0x62, 128},
-			{0x70,  64},
-			{0x72,  64},
-			{0x75,  64},
-			{-1, -1} };
+			{0x30, 192}, {0x32, 192},
+			{0x35, 192}, {0x37, 192},
+			{0x50, 128}, {0x52, 128},
+			{0x53, 128}, {0x60,  64},
+			{0x61, 128}, {0x62, 128},
+			{0x70,  64}, {0x72,  64},
+			{0x75,  64}, {-1, -1} 
+		};
 
 		int index = 0;
 
@@ -116,6 +114,9 @@ namespace CUDA {
 				Debug::LogCritical,
 				L"GetMaxGflopsDeviceId(): No devices supporting CUDA."
 			);
+
+			Debug::Log(Debug::LogNormal, L"Press any key to close...");
+			_getch();
 			exit(EXIT_FAILURE);
 		}
 
@@ -154,6 +155,9 @@ namespace CUDA {
 				Debug::LogCritical,
 				L"GetMaxGflopsDeviceId(): All devices have compute mode prohibited."
 			);
+
+			Debug::Log(Debug::LogNormal, L"Press any key to close...");
+			_getch();
 			exit(EXIT_FAILURE);
 		}
 

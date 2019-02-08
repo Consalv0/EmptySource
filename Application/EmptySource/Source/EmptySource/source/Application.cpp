@@ -17,7 +17,7 @@
 #include "..\include\Utility\Timer.h"
 
 extern "C" {
-	bool RunTest(int N, float * x, float * y);
+	bool RunTest(int N, MeshVertex * Positions);
 }
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
@@ -110,9 +110,15 @@ void CoreApplication::MainLoop() {
 	Shader FragmentBRDF = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\BRDF.fragment.glsl"));
 	Shader FragmentUnlit = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\Unlit.fragment.glsl"));
 	Shader Voxelizer = Shader(Shader::Type::Geometry, FileManager::Open(L"Data\\Shaders\\Voxelizer.geometry.glsl"));
+
+	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
+	VoxelBRDFShader.Append(&GeometryVertex);
+	VoxelBRDFShader.Append(&Voxelizer);
+	VoxelBRDFShader.Append(&FragmentBRDF);
+	VoxelBRDFShader.Compile();
+	
 	ShaderProgram BRDFShader = ShaderProgram(L"BRDF");
-	BRDFShader.Append(&GeometryVertex);
-	BRDFShader.Append(&Voxelizer);
+	BRDFShader.Append(&VertexBase);
 	BRDFShader.Append(&FragmentBRDF);
 	BRDFShader.Compile();
 
@@ -123,6 +129,9 @@ void CoreApplication::MainLoop() {
 
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(&BRDFShader);
+
+	Material VoxelizeMaterial = Material();
+	VoxelizeMaterial.SetShaderProgram(&VoxelBRDFShader);
 
 	Material UnlitMaterial = Material();
 	UnlitMaterial.SetShaderProgram(&UnlitShader);
@@ -166,7 +175,7 @@ void CoreApplication::MainLoop() {
 	//////////////////////////////////////////
 
 	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sponza.obj"), &Faces, &Vertices, false);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Serapis.obj"), &Faces, &Vertices, true);
 	std::vector<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
@@ -286,21 +295,51 @@ void CoreApplication::MainLoop() {
 
 			MainWindow->ClearWindow();
 
-			// Debug::Timer Timer;
-			// Timer.Start();
-			// int ElementCount = 1 << 20;
-			// float * x = NULL; float * y = NULL;
-			// // Run the device part of the program
-			// bool bTestResult;
-			// bTestResult = RunTest(ElementCount, x, y);
+			Debug::Timer Timer;
+			Timer.Start();
+
+			Debug::Log(Debug::LogDebug, L"Test Host Vector[%d] %s", 0, OBJModels[0].Vertices[0].Position.ToString().c_str());
+
+			MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
+			std::memcpy(Positions, &OBJModels[0].Vertices[0], OBJModels[0].Vertices.size() * sizeof(MeshVertex));
+
+			// Run the device part of the program
+			bool bTestResult;
+			bTestResult = RunTest((int)OBJModels[0].Vertices.size(), Positions);
+
+			Debug::Log(Debug::LogDebug, L"Test Device Vector[%d] %s", 0, Positions[0].Position.ToString().c_str());
+			
+			Timer.Stop();
+			Debug::Log(
+				Debug::LogWarning, L"CUDA Test with %s elements durantion: %dms",
+				Text::FormattedUnit(OBJModels[0].Vertices.size(), 2).c_str(),
+				Timer.GetEnlapsed()
+			);
+			Debug::Log(Debug::NoLog, L"\n");
+
+			// VoxelizeMaterial.Use();
 			// 
-			// Timer.Stop();
-			// Debug::Log(
-			// 	Debug::LogDebug, L"CUDA Test with %s elements durantion: %dms",
-			// 	Text::FormattedUnit(ElementCount, 2).c_str(),
-			// 	Timer.GetEnlapsed()
-			// );
-			// Debug::Log(Debug::NoLog, L"\n");
+			// glUniformMatrix4fv(ProjectionMatrixLocation, 1, GL_FALSE, ProjectionMatrix.PointerToValue());
+			// glUniformMatrix4fv(ViewMatrixLocation, 1, GL_FALSE, ViewMatrix.PointerToValue());
+			// glUniform3fv(ViewPositionLocation, 1, EyePosition.PointerToValue());
+			// glUniform3fv(Lights0PositionLocation, 1, LightPosition.PointerToValue());
+			// glUniform3fv(Lights0ColorLocation, 1, Vector3(1).PointerToValue());
+			// glUniform1fv(Lights0IntencityLocation, 1, &LightIntencity);
+			// glUniform3fv(Lights1PositionLocation, 1, (-LightPosition).PointerToValue());
+			// glUniform3fv(Lights1ColorLocation, 1, Vector3(1).PointerToValue());
+			// glUniform1fv(Lights1IntencityLocation, 1, &LightIntencity);
+			// glUniform1fv(MaterialMetalnessLocation, 1, &MaterialMetalness);
+			// glUniform1fv(MaterialRoughnessLocation, 1, &MaterialRoughness);
+			// glUniform3fv(MaterialColorLocation, 1, Vector3(0.6F, 0.2F, 0).PointerToValue());
+			// 
+			// for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
+			// 	OBJModels[MeshCount].BindVertexArray();
+			// 
+			// 	BRDFShader.SetMatrix4x4Array(ModelMatrixLocation, (int)Matrices.size(), &Matrices[0], ModelMatrixBuffer);
+			// 
+			// 	OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
+			// 	TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
+			// }
 
 			BaseMaterial.Use();
 
