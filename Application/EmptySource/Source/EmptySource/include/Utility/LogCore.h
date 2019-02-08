@@ -36,10 +36,10 @@ namespace Debug {
 
 		switch (Filter) {
 			case LogNormal: LogText += L"[LOG] "; break;
-			case LogWarning: LogText += L"[WARNING] "; SetConsoleTextAttribute(hstdout, 0x0006); break;
-			case LogError: LogText += L"[Error] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
+			case LogWarning: LogText += L"[WARNING] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY); break;
+			case LogError: LogText += L"[Error] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_INTENSITY); break;
 			case LogCritical: LogText += L"[CRITICAL] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
-			case LogDebug: LogText += L"[DEBUG] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN); break;
+			case LogDebug: LogText += L"[DEBUG] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;
 		}
 
 		setlocale(LC_ALL, "");

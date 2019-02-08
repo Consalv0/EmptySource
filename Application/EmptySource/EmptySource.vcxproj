@@ -145,6 +145,7 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\EmptySource\include\BoundingBox.h" />
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />

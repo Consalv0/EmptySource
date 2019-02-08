@@ -2,7 +2,7 @@
 
 // Input is triangles, output is triangle strip. Because we're going
 // to do a 1 in 1 out shader producing a single triangle output for
-// each one input, max_vertices can be 3 here.
+// each one input.
 layout (triangles) in;
 layout (triangle_strip, max_vertices=36) out;
 
@@ -27,14 +27,14 @@ out Matrices Matrix;
 out VertexData Vertex;
 
 const vec4 CubeVertices[8] = vec4[8] (
-    vec4( 0.025, -0.025, -0.025, 0),
-    vec4( 0.025, -0.025,  0.025, 0),
-    vec4(-0.025, -0.025,  0.025, 0),
-    vec4(-0.025, -0.025, -0.025, 0),
-    vec4( 0.025,  0.025, -0.025, 0),
-    vec4( 0.025,  0.025,  0.025, 0),
-    vec4(-0.025,  0.025,  0.025, 0),
-    vec4(-0.025,  0.025, -0.025, 0)
+    vec4( 0.5, -0.5, -0.5, 0),
+    vec4( 0.5, -0.5,  0.5, 0),
+    vec4(-0.5, -0.5,  0.5, 0),
+    vec4(-0.5, -0.5, -0.5, 0),
+    vec4( 0.5,  0.5, -0.5, 0),
+    vec4( 0.5,  0.5,  0.5, 0),
+    vec4(-0.5,  0.5,  0.5, 0),
+    vec4(-0.5,  0.5, -0.5, 0)
 );
 
 const int CubeIndices[36] = int[36] (
@@ -49,7 +49,7 @@ const int CubeIndices[36] = int[36] (
 void BuildCube(int index) {
     for (int i_face = 0; i_face < 12; i_face++) {
         for (int i_vert = 0; i_vert < 3; i_vert++) {
-  	        gl_Position = _ProjectionMatrix * _ViewMatrix * (vVertex[index].Position + CubeVertices[CubeIndices[i_face * 3 + i_vert] - 1]);
+  	        gl_Position = _ProjectionMatrix * _ViewMatrix * (round(vVertex[index].Position) + CubeVertices[CubeIndices[i_face * 3 + i_vert] - 1]);
             Matrix.Model       = vMatrix[index].Model;
             Matrix.WorldNormal = vMatrix[index].WorldNormal;
             Vertex.Position        = vVertex[index].Position + CubeVertices[CubeIndices[i_face * 3 + i_vert] - 1];
@@ -65,17 +65,6 @@ void BuildCube(int index) {
 
 void main() {
     BuildCube(1);
-
-    for (int i = 0; i < 3; i++) {
-        gl_Position = gl_in[i].gl_Position;
-        Matrix.Model       = vMatrix[i].Model;
-        Matrix.WorldNormal = vMatrix[i].WorldNormal;
- 	    Vertex.Position        = vVertex[i].Position;
- 	    Vertex.NormalDirection = vVertex[i].NormalDirection;
-	    Vertex.UV0             = vVertex[i].UV0; 
-	    Vertex.Color           = vVertex[i].Color;
-        EmitVertex();
-    }
 
     EndPrimitive();
 }

@@ -393,9 +393,6 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 
 			if ((Count + 1) % 3 == 0) {
 				Faces->back().push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
-				// _LOG(LogDebug, L"Face {%d, %d, %d}",
-				// 	Faces->back()[0], Faces->back()[1], Faces->back()[2]
-				// );
 			}
 		}
 
@@ -414,6 +411,14 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 
 	Debug::Log(Debug::NoLog, L"\r");
 	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %s vertices", WString(25, L'#').c_str(), Text::FormattedUnit(VertexIndexCount, 2).c_str());
+	if (hasOptimize) {
+		Debug::Log(
+			Debug::LogNormal, L"├> Vertex optimization from %s to %s (%.2f%%)",
+			Text::FormattedUnit(VertexIndexCount, 2).c_str(), 
+			Text::FormattedUnit(VertexToIndex.size(), 2).c_str(),
+			(float(VertexToIndex.size()) - VertexIndexCount) / VertexIndexCount * 100
+		);
+	}
 
 	Timer.Stop();
 	Debug::Log(Debug::LogNormal, L"└> Allocated %s in %.2fs", Text::FormattedData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
