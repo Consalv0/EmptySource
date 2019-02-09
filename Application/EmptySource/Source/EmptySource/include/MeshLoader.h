@@ -58,7 +58,9 @@ public:
 		int ObjectCount
 	);
 
-	// Load Mesh information from a .obj file
+	/* Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
+	 * there's the option to optimize the vertices.
+	 */
 	static bool FromOBJ(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
 };
 

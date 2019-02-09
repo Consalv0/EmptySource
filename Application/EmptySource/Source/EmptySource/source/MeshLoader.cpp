@@ -382,9 +382,11 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 				bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
 			}
 
-			if (bFoundIndex) { // A similar vertex is already in the VBO, use it instead !
+			if (bFoundIndex) { 
+				// --- A similar vertex is already in the VBO, use it instead !
 				Indices[Count] = Index;
-			} else { // If not, it needs to be added in the output data.
+			} else { 
+				// --- If not, it needs to be added in the output data.
 				Vertices->back().push_back(NewVertex);
 				unsigned NewIndex = (unsigned)Vertices->back().size() - 1;
 				Indices[Count] = NewIndex;

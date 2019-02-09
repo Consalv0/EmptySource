@@ -3,7 +3,7 @@
 #include "..\include\Object.h"
 
 Object::Object() : IIdentifier() { 
-	InternalName = L"object_" + std::to_wstring(IdentifierNum);
+	InternalName = L"Object_" + std::to_wstring(IdentifierNum);
 }
 
 void Object::Delete() {

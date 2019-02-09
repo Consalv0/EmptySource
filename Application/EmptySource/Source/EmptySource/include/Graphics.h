@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-// Include GLAD
-// Library to make function loaders for OpenGL
+// --- Include GLAD library to make function loaders for OpenGL
 #include <External/GLAD/include/glad.h>
 
 namespace Render {
@@ -49,7 +48,7 @@ namespace Debug {
 		GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength,
 		const GLchar * ErrorMessage, const void * UserParam)
 	{
-		// ignore non-significant error/warning codes
+		// --- Ignore non-significant error/warning codes
 		if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;
 
 		const WChar* ErrorPrefix = L"";
