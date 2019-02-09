@@ -16,9 +16,8 @@
 #include "..\include\Material.h"
 #include "..\include\Utility\Timer.h"
 
-extern "C" {
-	bool RunTest(int N, MeshVertex * Positions);
-}
+bool RunTest(int N, MeshVertex * Positions);
+int FindBoundingBox(int N, MeshVertex * Vertices);
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
@@ -87,24 +86,23 @@ void CoreApplication::Close() {
 };
 
 void CoreApplication::MainLoop() {
-	///// Temporal Section DELETE LATER //////
-
+	
 	Space NewSpace; Space OtherNewSpace(NewSpace);
 	Object* GObject = Space::GetFirstSpace()->MakeObject();
 	GObject->Delete();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
-	// Perpective matrix (ProjectionMatrix)
+	// --- Perpective matrix (ProjectionMatrix)
 	Matrix4x4 ProjectionMatrix;
 
 	Vector3 EyePosition = 0;
 	Vector3 LightPosition = Vector3(1, 0);
-	// Camera rotation, position Matrix
+	// --- Camera rotation, position Matrix
 	float ViewSpeed = 5;
 	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix;
 
-	//* Create and compile our GLSL shader program from text files
+	// --- Create and compile our GLSL shader program from text files
 	Shader VertexBase = Shader(Shader::Type::Vertex, FileManager::Open(L"Data\\Shaders\\Base.vertex.glsl"));
 	Shader GeometryVertex = Shader(Shader::Type::Vertex, FileManager::Open(L"Data\\Shaders\\GeometryBase.vertex.glsl"));
 	Shader FragmentBRDF = Shader(Shader::Type::Fragment, FileManager::Open(L"Data\\Shaders\\BRDF.fragment.glsl"));
@@ -151,7 +149,9 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	///////// Get Locations from Shaders /////////////
-	// Get the ID of the uniforms
+	// --- Get the ID of the uniforms
+	GLuint       ModelMatrixLocation = BRDFShader.GetAttribLocation("_iModelMatrix");
+	
 	GLuint  ProjectionMatrixLocation = BRDFShader.GetUniformLocation("_ProjectionMatrix");
 	GLuint        ViewMatrixLocation = BRDFShader.GetUniformLocation("_ViewMatrix");
 	GLuint      ViewPositionLocation = BRDFShader.GetUniformLocation("_ViewPosition");
@@ -170,9 +170,7 @@ void CoreApplication::MainLoop() {
 	GLuint     LViewPositionLocation = UnlitShader.GetUniformLocation("_ViewPosition");
 	GLuint    LMaterialColorLocation = UnlitShader.GetUniformLocation("_Material.Color");
 
-	GLuint ModelMatrixLocation = BRDFShader.GetAttribLocation("_iModelMatrix");
-
-	//////////////////////////////////////////
+	///////////////////////////////////////////////////
 
 	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
 	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Serapis.obj"), &Faces, &Vertices, true);
@@ -188,6 +186,7 @@ void CoreApplication::MainLoop() {
 		LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
 
+	MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 	unsigned long InputTimeSum = 0;
 
 	do {
@@ -201,7 +200,7 @@ void CoreApplication::MainLoop() {
 			200.0F						// Far plane
 		);
 
-		// Camera rotation, position Matrix
+		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
 		
 		ViewOrientation = { CursorPosition.y * 0.01F, CursorPosition.x * 0.01F, 0.F };
@@ -287,27 +286,27 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
-		// Draw the meshs(es) !
+		// --- Draw the meshs(es) !
 		RenderTimeSum += Time::GetDeltaTimeMilis();
 		if (RenderTimeSum > (1000 / 60)) {
 			RenderTimeSum = 0;
 			size_t TriangleCount = 0;
+			size_t VerticesCount = 0;
 
 			MainWindow->ClearWindow();
 
 			Debug::Timer Timer;
 			Timer.Start();
 
-			Debug::Log(Debug::LogDebug, L"Test Host Vector[%d] %s", 0, OBJModels[0].Vertices[0].Position.ToString().c_str());
+			// Debug::Log(Debug::LogDebug, L"Test Host Vector[%d] %s", 0, OBJModels[0].Vertices[0].Position.ToString().c_str());
 
-			MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 			std::memcpy(Positions, &OBJModels[0].Vertices[0], OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 
-			// Run the device part of the program
+			// --- Run the device part of the program
 			bool bTestResult;
-			bTestResult = RunTest((int)OBJModels[0].Vertices.size(), Positions);
+			bTestResult = FindBoundingBox((int)OBJModels[0].Vertices.size(), Positions);
 
-			Debug::Log(Debug::LogDebug, L"Test Device Vector[%d] %s", 0, Positions[0].Position.ToString().c_str());
+			// Debug::Log(Debug::LogDebug, L"Test Device Vector[%d] %s", 0, Positions[0].Position.ToString().c_str());
 			
 			Timer.Stop();
 			Debug::Log(
@@ -363,6 +362,7 @@ void CoreApplication::MainLoop() {
 
 				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
 				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
+				VerticesCount += OBJModels[MeshCount].Vertices.size() * Matrices.size();
 			}
 			
 			UnlitMaterial.Use();
@@ -382,11 +382,12 @@ void CoreApplication::MainLoop() {
 			LightModels[0].DrawInstanciated(2);
 
 			MainWindow->SetWindowName(
-				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Triangles(%s), Camera(%s, %s)",
+				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(%s, %s)",
 					L"EmptySource",
 					Time::GetFrameRate(),
 					(1 / Time::GetFrameRate()) * 1000,
 					Text::FormattedUnit(Matrices.size(), 2).c_str(),
+					Text::FormattedUnit(VerticesCount, 2).c_str(),
 					Text::FormattedUnit(TriangleCount, 2).c_str(),
 					EyePosition.ToString().c_str(),
 					Math::ClampAngleComponents(FrameRotation.ToEulerAngles() * MathConstants::RadToDegree).ToString().c_str()
@@ -404,5 +405,6 @@ void CoreApplication::MainLoop() {
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
 
+	delete[] Positions;
 	BRDFShader.Unload();
 }

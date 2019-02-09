@@ -1,11 +1,35 @@
 #include "MathUtility.h"
 #pragma once
 
+namespace Math {
+	template <class T>
+	inline T Max(const T& A, const T& B) { return (((A) > (B)) ? (A) : (B)); }
+
+	template <class T>
+	inline T Min(const T& A, const T& B) { return (((A) < (B)) ? (A) : (B)); }
+	
+	//* The number is power of 2
+	inline int IsPow2(const int& x) {
+		return ((x&(x - 1)) == 0);
+	}
+
+	//* Get the next power2 of the value
+	inline unsigned int NextPow2(unsigned int x) {
+		--x;
+		x |= x >> 1;
+		x |= x >> 2;
+		x |= x >> 4;
+		x |= x >> 8;
+		x |= x >> 16;
+		return ++x;
+	}
+}
+
 float Math::ClampAngle(float Angle) {
 	Angle = std::fmod(Angle, 360.F);
 
 	if (Angle < 0.F) {
-		// Shift to [0,360)
+		// --- Shift to [0,360)
 		Angle += 360.F;
 	}
 
@@ -16,7 +40,7 @@ float Math::NormalizeAngle(float Angle) {
 	Angle = ClampAngle(Angle);
 
 	if (Angle > 180.f) {
-		// Shift to (-180,180]
+		// --- Shift to (-180,180]
 		Angle -= 360.f;
 	}
 

@@ -24,7 +24,7 @@ namespace CUDA {
 				static_cast<unsigned int>(Result), CharToWChar(cudaGetErrorName(Result)), FunctionName
 			);
 
-			// Make sure we call CUDA Device Reset before exiting
+			// --- Make sure we call CUDA Device Reset before exiting
 			cudaDeviceReset();
 			Debug::Log(Debug::LogNormal, L"Press any key to close...");
 			_getch();
@@ -32,11 +32,11 @@ namespace CUDA {
 		}
 	}
 
-	// This will output the proper CUDA error strings in the event
-	// that a CUDA host call returns an error
-#define CheckCudaErrors(func) CheckFunction((func), L#func, __FILE__, __LINE__)
+	// -- This will output the proper CUDA error strings in the event
+	// -- that a CUDA host call returns an error
+#define CheckErrors(func) CheckFunction((func), L#func, __FILE__, __LINE__)
 
-// This will output the proper error string when calling cudaGetLastError
+	// --- This will output the proper error string when calling cudaGetLastError
 #define GetLastCudaError(msg) __GetLastCudaError(msg, __FILE__, __LINE__)
 
 	inline void __GetLastCudaError(const char *ErrorMessage, const char *FileName, const int Line) {
@@ -58,13 +58,14 @@ namespace CUDA {
 		}
 	}
 
-	// Beginning of GPU Architecture definitions
+	// --- Beginning of GPU Architecture definitions
 	inline int _ConvertSMVer2Cores(int major, int minor) {
-		// Defines for GPU Architecture types (using the SM version to determine
-		// the # of cores per SM
+		// --- Defines for GPU Architecture types (using the SM version to determine
+		// --- the # of cores per SM
 		typedef struct {
-			int SM;  // 0xMm (hexidecimal notation), M = SM Major version,
-			// and m = SM minor version
+			// --- 0xMm (hexidecimal notation), M = SM Major version,
+			int SM;  
+			// --- And m = SM minor version
 			int Cores;
 		} sSMtoCores;
 
@@ -88,8 +89,8 @@ namespace CUDA {
 			index++;
 		}
 
-		// If we don't find the values, we default use the previous one
-		// to run properly
+		// --- If we don't find the values, we default use the previous one
+		// --- to run properly
 		Debug::Log(
 			Debug::LogError,
 			L"MapSMtoCores for SM %d.%d is undefined. Default to use %d Cores/SM",
@@ -98,7 +99,7 @@ namespace CUDA {
 		return nGpuArchCoresPerSM[index - 1].Cores;
 	}
 
-	// Returns the best GPU (maximum GFLOPS)
+	// --- Returns the best GPU (maximum GFLOPS)
 	inline int GetMaxGflopsDeviceId() {
 		int CurrentDevice = 0, SMPerMiltiproc = 0;
 		int MaxPreformaceDevice = 0;
@@ -107,7 +108,7 @@ namespace CUDA {
 
 		uint64_t MaxComputePerformance = 0;
 		cudaDeviceProp DeviceProperties;
-		CheckCudaErrors(cudaGetDeviceCount(&DeviceCount));
+		CheckErrors(cudaGetDeviceCount(&DeviceCount));
 
 		if (DeviceCount == 0) {
 			Debug::Log(
@@ -120,14 +121,13 @@ namespace CUDA {
 			exit(EXIT_FAILURE);
 		}
 
-		// Find the best CUDA capable GPU device
-		CurrentDevice = 0;
-
+		// --- Find the best CUDA capable GPU device
+		CheckErrors(cudaDeviceSynchronize());
 		while (CurrentDevice < DeviceCount) {
 			cudaGetDeviceProperties(&DeviceProperties, CurrentDevice);
 
-			// If this GPU is not running on Compute Mode prohibited,
-			// then we can add it to the list
+			// --- If this GPU is not running on Compute Mode prohibited,
+			// --- then we can add it to the list
 			if (DeviceProperties.computeMode != cudaComputeModeProhibited) {
 				if (DeviceProperties.major == 9999 && DeviceProperties.minor == 9999) {
 					SMPerMiltiproc = 1;
@@ -164,14 +164,14 @@ namespace CUDA {
 		return MaxPreformaceDevice;
 	}
 
-	// Picks the device with highest Gflops/s
+	// --- Picks the device with highest Gflops/s
 	inline int FindCudaDevice() {
 		cudaDeviceProp DeviceProperties;
 		int DeviceID = 0;
 
 		DeviceID = GetMaxGflopsDeviceId();
-		CheckCudaErrors(cudaSetDevice(DeviceID));
-		CheckCudaErrors(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
+		CheckErrors(cudaSetDevice(DeviceID));
+		CheckErrors(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
 		Debug::Log(Debug::LogNormal, L"GPU CUDA Device");
 		Debug::Log(
 			Debug::LogNormal, L"\u2514> GPU Device #%d: '%s' with compute capability %d.%d", DeviceID,
