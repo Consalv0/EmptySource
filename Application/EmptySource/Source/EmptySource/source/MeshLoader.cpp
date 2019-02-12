@@ -223,16 +223,16 @@ void MeshLoader::ReadOBJByLine(
 		float Progress = CharacterCount / float(MaxCharacterCount);
 		if (--LogCount <= 0) {
 			LogCount = LogCountBottleNeck;
-			float cur = std::ceil(Progress * 25);
+			float cur = std::ceil(Progress * 12);
 			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %s lines",
 				WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(),
-				50 * Progress, Text::FormattedUnit(LineCount, 2).c_str()
+				100 * Progress, Text::FormattedUnit(LineCount, 2).c_str()
 			);
 		}
 		
 		if (CharacterCount == MaxCharacterCount) {
 			Debug::Log(Debug::NoLog, L"\r");
-			Debug::Log(Debug::LogNormal, L"├> [%s] %.2f%% %d lines", WString(25, L'#').c_str(), 50 * Progress, LineCount);
+			// Debug::Log(Debug::LogNormal, L"├> [%s] %.2f%% %d lines", WString(25, L'#').c_str(), 100 * Progress, LineCount);
 		}
 	}
 }
