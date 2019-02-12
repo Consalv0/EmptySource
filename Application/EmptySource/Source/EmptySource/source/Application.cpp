@@ -173,7 +173,7 @@ void CoreApplication::MainLoop() {
 	///////////////////////////////////////////////////
 
 	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Serapis.obj"), &Faces, &Vertices, true);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Serapis.obj"), &Faces, &Vertices, false);
 	std::vector<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
@@ -192,12 +192,11 @@ void CoreApplication::MainLoop() {
 	do {
 		Time::Tick();
 
-		//////// Drawing ModelMatrix ////////
 		ProjectionMatrix = Matrix4x4::Perspective(
-			45.0F * 0.015708F,			// Aperute angle
-			MainWindow->AspectRatio(),	// Aspect ratio
-			0.1F,						// Near plane
-			200.0F						// Far plane
+			45.0F * MathConstants::DegreeToRad,	// Aperute angle
+			MainWindow->AspectRatio(),	        // Aspect ratio
+			0.1F,						        // Near plane
+			200.0F						        // Far plane
 		);
 
 		// --- Camera rotation, position Matrix
@@ -300,14 +299,14 @@ void CoreApplication::MainLoop() {
 
 			// Debug::Log(Debug::LogDebug, L"Test Host Vector[%d] %s", 0, OBJModels[0].Vertices[0].Position.ToString().c_str());
 
-			std::memcpy(Positions, &OBJModels[0].Vertices[0], OBJModels[0].Vertices.size() * sizeof(MeshVertex));
+			// std::memcpy(Positions, &OBJModels[0].Vertices[0], OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 
 			// --- Run the device part of the program
 			bool bTestResult;
-			bTestResult = FindBoundingBox((int)OBJModels[0].Vertices.size(), Positions);
+			bTestResult = FindBoundingBox((int)OBJModels[0].Vertices.size(), &OBJModels[0].Vertices[0]);
 
 			// Debug::Log(Debug::LogDebug, L"Test Device Vector[%d] %s", 0, Positions[0].Position.ToString().c_str());
-			
+	
 			Timer.Stop();
 			Debug::Log(
 				Debug::LogWarning, L"CUDA Test with %s elements durantion: %dms",
@@ -382,7 +381,7 @@ void CoreApplication::MainLoop() {
 			LightModels[0].DrawInstanciated(2);
 
 			MainWindow->SetWindowName(
-				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(%s, %s)",
+				Text::Formatted(L"%s - FPS(%.0f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
 					L"EmptySource",
 					Time::GetFrameRate(),
 					(1 / Time::GetFrameRate()) * 1000,

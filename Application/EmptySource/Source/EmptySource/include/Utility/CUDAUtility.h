@@ -17,7 +17,7 @@
 namespace CUDA {
 
 	template <typename T>
-	void CheckFunction(T Result, WChar const *const FunctionName, const char *const FileName, int const Line) {
+	void __CheckFunction(T Result, WChar const *const FunctionName, const char *const FileName, int const Line) {
 		if (Result) {
 			Debug::Log(
 				Debug::LogCritical, L"CUDA error at %s:%d code=%d(%s) '%s'", CharToWChar(FileName), Line,
@@ -32,11 +32,12 @@ namespace CUDA {
 		}
 	}
 
-	// -- This will output the proper CUDA error strings in the event
-	// -- that a CUDA host call returns an error
-#define CheckErrors(func) CheckFunction((func), L#func, __FILE__, __LINE__)
+	/* This will output the proper CUDA error strings in the event
+	 *  that a CUDA host call returns an error
+	 */
+#define CheckErrors(func) __CheckFunction((func), L#func, __FILE__, __LINE__)
 
-	// --- This will output the proper error string when calling cudaGetLastError
+	//* This will output the proper error string when calling cudaGetLastError
 #define GetLastCudaError(msg) __GetLastCudaError(msg, __FILE__, __LINE__)
 
 	inline void __GetLastCudaError(const char *ErrorMessage, const char *FileName, const int Line) {
@@ -59,7 +60,7 @@ namespace CUDA {
 	}
 
 	// --- Beginning of GPU Architecture definitions
-	inline int _ConvertSMVer2Cores(int major, int minor) {
+	inline int ConvertSMVer2Cores(int major, int minor) {
 		// --- Defines for GPU Architecture types (using the SM version to determine
 		// --- the # of cores per SM
 		typedef struct {
@@ -99,7 +100,7 @@ namespace CUDA {
 		return nGpuArchCoresPerSM[index - 1].Cores;
 	}
 
-	// --- Returns the best GPU (maximum GFLOPS)
+	//* Returns the best GPU (maximum GFLOPS)
 	inline int GetMaxGflopsDeviceId() {
 		int CurrentDevice = 0, SMPerMiltiproc = 0;
 		int MaxPreformaceDevice = 0;
@@ -133,7 +134,7 @@ namespace CUDA {
 					SMPerMiltiproc = 1;
 				} else {
 					SMPerMiltiproc =
-						_ConvertSMVer2Cores(DeviceProperties.major, DeviceProperties.minor);
+						ConvertSMVer2Cores(DeviceProperties.major, DeviceProperties.minor);
 				}
 
 				uint64_t ComputePerformance = (uint64_t)DeviceProperties.multiProcessorCount *
@@ -164,7 +165,7 @@ namespace CUDA {
 		return MaxPreformaceDevice;
 	}
 
-	// --- Picks the device with highest Gflops/s
+	//* Picks the device with highest Gflops/s
 	inline int FindCudaDevice() {
 		cudaDeviceProp DeviceProperties;
 		int DeviceID = 0;
