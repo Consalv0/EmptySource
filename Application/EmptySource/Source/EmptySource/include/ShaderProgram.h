@@ -1,13 +1,18 @@
 #pragma once
 
-class Shader;
+#include "..\include\ShaderStage.h"
+#include <unordered_map>
+#include <functional>
+#include <cstring>
+
+typedef std::unordered_map<const Char *, unsigned int> LocationMap;
 
 class ShaderProgram {
 private:
-	Shader* VertexShader;
-	Shader* FragmentShader;
-	Shader* ComputeShader;
-	Shader* GeometryShader;
+	ShaderStage* VertexShader;
+	ShaderStage* FragmentShader;
+	ShaderStage* ComputeShader;
+	ShaderStage* GeometryShader;
 	WString Name;
 
 	bool bIsLinked;
@@ -15,26 +20,29 @@ private:
 	//* Link the shader to OpenGL
 	bool LinkProgram();
 
-	unsigned int Program;
+	//* Shader Program Object
+	unsigned int ProgramObject;
+
+	LocationMap Locations;
 
 public:
-
+	//* Default Constructor
 	ShaderProgram();
 
 	//* Constructor with name
 	ShaderProgram(WString Name);
 
 	//* Get the location id of a uniform variable in this shader
-	unsigned int GetUniformLocation(const Char* LocationName) const;
+	unsigned int GetUniformLocation(const Char* LocationName);
 
 	//* Get the location of the attrib in this shader
-	unsigned int GetAttribLocation(const Char* LocationName) const;
-
-	//* Pass Matrix Array
-	void SetMatrix4x4Array(const unsigned int& AttribLocation, int Count, const void* Data, const unsigned int& Buffer) const;
+	unsigned int GetAttribLocation(const Char* LocationName);
 
 	//* Appends shader unit to shader program
-	void Append(Shader* Shader);
+	void AppendStage(ShaderStage* ShaderProgram);
+
+	//* Get the string name of this program
+	WString GetName() const;
 
 	//* Prepare OpenGL to use this shader
 	void Use() const;
@@ -43,7 +51,7 @@ public:
 	void Compile();
 
 	//* Unloads the shader program
-	void Unload();
+	void Delete();
 
 	//* The shader is valid for use?
 	bool IsValid() const;
