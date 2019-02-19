@@ -2,6 +2,7 @@
 
 
 #include "..\Source\EmptySource\include\Core.h"
+#include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
 #include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
@@ -294,13 +295,13 @@ MinKernel(T *iData, T *oData, T Init, unsigned int n) {
 */
 void GetNumBlocksAndThreads(int N, int MaxBlocks, int MaxThreads, int &Blocks, int &Threads) {
 	
-	CUDA::CheckErrors( cudaDeviceSynchronize() );
+	CUDA::Check( cudaDeviceSynchronize() );
 	
 	// --- Get device capability, to avoid block/grid size exceed the upper bound
 	cudaDeviceProp DeviceProperties;
 	int Device;
-	CUDA::CheckErrors( cudaGetDevice(&Device) );
-	CUDA::CheckErrors( cudaGetDeviceProperties(&DeviceProperties, Device) );
+	CUDA::Check( cudaGetDevice(&Device) );
+	CUDA::Check( cudaGetDeviceProperties(&DeviceProperties, Device) );
 
 
 	Threads = (N < MaxThreads * 2) ? Math::NextPow2((N + 1) / 2) : MaxThreads;
@@ -346,7 +347,7 @@ void ExecuteSumKernel(int N, int Threads, int Blocks, T* diData, T* doData, T In
 	}
 
 	// --- Wait for GPU to finish
-	CUDA::CheckErrors(cudaDeviceSynchronize());
+	CUDA::Check(cudaDeviceSynchronize());
 }
 
 template<class T, bool isPow2>
@@ -372,8 +373,9 @@ void ExecuteMinKernel(int N, int Threads, int Blocks, T* diData, T* doData, T In
 	}
 
 	// --- Wait for GPU to finish
-	CUDA::CheckErrors(cudaDeviceSynchronize());
+	CUDA::Check(cudaDeviceSynchronize());
 }
+
 void ExecuteInitBoundingBoxes(int N, int Threads, int Blocks, MeshVertex* Vertices, BoundingBox* BoundingBoxes) {
 	dim3 dimBlock(Threads, 1, 1);
 	dim3 dimGrid(Blocks, 1, 1);
@@ -381,16 +383,14 @@ void ExecuteInitBoundingBoxes(int N, int Threads, int Blocks, MeshVertex* Vertic
 	InitBoundingBoxes <<< dimGrid, dimBlock >>> (N, Vertices, BoundingBoxes);
 
 	// --- Wait for GPU to finish
-	CUDA::CheckErrors(cudaDeviceSynchronize());
+	CUDA::Check(cudaDeviceSynchronize());
 }
 
-/********/
-/* MAIN */
-/********/
+// --- MAIN
 int FindBoundingBox(int N, MeshVertex * Vertices) {
 
 
-	CUDA::CheckErrors( cudaProfilerStart() );
+	CUDA::Check( cudaProfilerStart() );
 
 	size_t Size = N * sizeof(MeshVertex);
 
@@ -399,19 +399,19 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 
 	// --- Allocate Memory in Device
 	MeshVertex* dVertices;
-	CUDA::CheckErrors( cudaMalloc(&dVertices, Size) );
-	CUDA::CheckErrors( cudaMemcpy(dVertices, Vertices, Size, cudaMemcpyHostToDevice) );
+	CUDA::Check( cudaMalloc(&dVertices, Size) );
+	CUDA::Check( cudaMemcpy(dVertices, Vertices, Size, cudaMemcpyHostToDevice) );
 	
 	BoundingBox* diBBox;
-	CUDA::CheckErrors( cudaMalloc(&diBBox, N * sizeof(BoundingBox)) );
+	CUDA::Check( cudaMalloc(&diBBox, N * sizeof(BoundingBox)) );
 
 	BoundingBox* doBBox;
-	CUDA::CheckErrors( cudaMalloc(&doBBox, N * sizeof(BoundingBox)) );
+	CUDA::Check( cudaMalloc(&doBBox, N * sizeof(BoundingBox)) );
 
 	Timer.Stop();
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Host allocation of %s durantion: %dms",
-		Text::FormattedData((double)N * 2 * sizeof(BoundingBox) + Size, 2).c_str(),
+		Text::FormatData((double)N * 2 * sizeof(BoundingBox) + Size, 2).c_str(),
 		Timer.GetEnlapsed()
 	);
 
@@ -430,7 +430,7 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 
 	/// TEST
 	// BoundingBox* InBoundBox = (BoundingBox*) malloc(N * sizeof(BoundingBox));
-	// CUDA::CheckErrors( cudaMemcpy(InBoundBox, diBBox, N * sizeof(BoundingBox), cudaMemcpyDeviceToHost) );
+	// CUDA::Check( cudaMemcpy(InBoundBox, diBBox, N * sizeof(BoundingBox), cudaMemcpyDeviceToHost) );
 
 	// BoundingBox CPUResult = Initial;
 	// for (int i = 0; i < N; i++)
@@ -461,7 +461,7 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 
 	// --- Copy final result from device to host
 	std::vector<BoundingBox> GPUResults = std::vector<BoundingBox>(NumBlocks, Initial);
-	CUDA::CheckErrors( cudaMemcpy(&GPUResults[0], doBBox, NumBlocks * sizeof(BoundingBox), cudaMemcpyDeviceToHost) );
+	CUDA::Check( cudaMemcpy(&GPUResults[0], doBBox, NumBlocks * sizeof(BoundingBox), cudaMemcpyDeviceToHost) );
 	
 	BoundingBox GPUResult = GPUResults[0];
 	for (int i = 0; i < NumBlocks; i++) { GPUResult <= GPUResults[i]; }
@@ -472,18 +472,18 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 		Timer.GetEnlapsed()
 	);
 
-	CUDA::CheckErrors( cudaProfilerStop() );
+	CUDA::Check( cudaProfilerStop() );
 
 	// --- Print output
 	// Debug::Log(Debug::LogDebug,
 	// 	L"Bounding Box in (%ss): LowLeft(%d, %d, %d) UpRight(%d, %d, %d)",
-	// 	Text::FormattedUnit(Timer.GetEnlapsedSeconds(), 2).c_str(),
+	// 	Text::FormatUnit(Timer.GetEnlapsedSeconds(), 2).c_str(),
 	// 	GPUResult.LowLeft.x, GPUResult.LowLeft.y, GPUResult.LowLeft.z,
 	// 	GPUResult.UpRight.x, GPUResult.UpRight.y, GPUResult.UpRight.z
 	// );
 	// Debug::Log(Debug::LogDebug,
 	// 	L"Bounding Box Error: LowLeft(%.4f, %.4f, %.4f) UpRight(%.4f, %.4f, %.4f)",
-	// 	Text::FormattedUnit(Timer.GetEnlapsedSeconds(), 2).c_str(),
+	// 	Text::FormatUnit(Timer.GetEnlapsedSeconds(), 2).c_str(),
 	// 	abs(abs(GPUResult.LowLeft.x) - abs(CPUResult.LowLeft.x)), abs(abs(GPUResult.LowLeft.y) - abs(CPUResult.LowLeft.y)),
 	// 	abs(abs(GPUResult.LowLeft.z) - abs(CPUResult.LowLeft.z)),
 	// 	abs(abs(GPUResult.UpRight.x) - abs(CPUResult.UpRight.x)), abs(abs(GPUResult.UpRight.y) - abs(CPUResult.UpRight.y)),
@@ -491,9 +491,9 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 	// );
 
 	// --- Free device memory
-	CUDA::CheckErrors(cudaFree(dVertices));
-	CUDA::CheckErrors(cudaFree(diBBox));
-	CUDA::CheckErrors(cudaFree(doBBox));
+	CUDA::Check(cudaFree(dVertices));
+	CUDA::Check(cudaFree(diBBox));
+	CUDA::Check(cudaFree(doBBox));
 
 	return 0;
 }

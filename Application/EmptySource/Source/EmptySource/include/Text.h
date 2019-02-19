@@ -100,7 +100,7 @@ namespace Text {
 	}
 
 	template<class Num>
-	inline WString FormattedUnit(const Num & Number, const int & Decimals) {
+	inline WString FormatUnit(const Num & Number, const int & Decimals) {
 		double PrecisionNumber = (double)Number;
 		WString Suffix = L"";
 		if (PrecisionNumber > 1e3 && PrecisionNumber <= 1e6) {
@@ -128,7 +128,7 @@ namespace Text {
 	}
 
 	template<class Num>
-	inline WString FormattedData(const Num & Number, const int & Decimals) {
+	inline WString FormatData(const Num & Number, const int & MaxDecimals) {
 		double PrecisionNumber = (double)Number;
 		WString Suffix = L"b";
 		if (PrecisionNumber > 1<<10 && PrecisionNumber <= 1<<20) {
@@ -151,7 +151,7 @@ namespace Text {
 		if (int(PrecisionNumber) == PrecisionNumber) {
 			return Formatted(L"%d%s", (int)PrecisionNumber, Suffix.c_str());
 		} else {
-			return Formatted(L"%." + std::to_wstring(Decimals) + L"f%s", PrecisionNumber, Suffix.c_str());
+			return Formatted(L"%." + std::to_wstring(MaxDecimals) + L"f%s", PrecisionNumber, Suffix.c_str());
 		}
 	}
 }

@@ -109,14 +109,12 @@ void Mesh::BindVertexArray() const {
 }
 
 void Mesh::DrawInstanciated(int Count) const {
-	BindVertexArray();
-
 	glDrawElementsInstanced(
-		GL_TRIANGLES,	                        // mode
-		(int)Faces.size() * 3,	                // mode count
-		GL_UNSIGNED_INT,                        // type
-		(void*)0,		                        // element array buffer offset
-		Count                                   // element count
+		GL_TRIANGLES,	         // mode
+		(int)Faces.size() * 3,	 // mode count
+		GL_UNSIGNED_INT,         // type
+		(void*)0,		         // element array buffer offset
+		Count                    // element count
 	);
 }
 
@@ -148,18 +146,18 @@ void Mesh::SetUpBuffers() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Faces.size() * sizeof(IntVector3), &Faces[0], GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers layouts
-	glEnableVertexAttribArray(  VertexLocation );
-	    glVertexAttribPointer(  VertexLocation , 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)0);
-	glEnableVertexAttribArray(  NormalLocation );
-	    glVertexAttribPointer(  NormalLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Normal));
-	glEnableVertexAttribArray( TangentLocation );
-	    glVertexAttribPointer( TangentLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Tangent));
-	glEnableVertexAttribArray(     UV0Location );
-	    glVertexAttribPointer(     UV0Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV0));
-	glEnableVertexAttribArray(     UV1Location );
-	    glVertexAttribPointer(     UV1Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV1));
-	glEnableVertexAttribArray(   ColorLocation );
-	    glVertexAttribPointer(   ColorLocation , 4, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Color));
+	glEnableVertexAttribArray( PositionLocation );
+	    glVertexAttribPointer( PositionLocation , 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)0);
+	glEnableVertexAttribArray(   NormalLocation );
+	    glVertexAttribPointer(   NormalLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Normal));
+	glEnableVertexAttribArray(  TangentLocation );
+	    glVertexAttribPointer(  TangentLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Tangent));
+	glEnableVertexAttribArray(      UV0Location );
+	    glVertexAttribPointer(      UV0Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV0));
+	glEnableVertexAttribArray(      UV1Location );
+	    glVertexAttribPointer(      UV1Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV1));
+	glEnableVertexAttribArray(    ColorLocation );
+	    glVertexAttribPointer(    ColorLocation , 4, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Color));
 
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);

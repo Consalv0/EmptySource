@@ -9,9 +9,9 @@ private:
 
 public:
 	bool bUseDepthTest;
-	Render::DepthFunction DepthFunction;
-	Render::RenderMode RenderMode;
-	Render::CullMode CullMode;
+	Graphics::DepthFunction DepthFunction;
+	Graphics::RenderMode RenderMode;
+	Graphics::CullMode CullMode;
 
 	Material();
 
@@ -20,6 +20,24 @@ public:
 
 	//* Get material shader
 	ShaderProgram* GetShaderProgram() const;
+
+	//* Pass Matrix4x4 Buffer Array
+	void SetAttribMatrix4x4Array(const Char * AttributeName, int Count, const void* Data, const unsigned int& Buffer) const;
+
+	//* Pass Matrix4x4 Array
+	void SetMatrix4x4Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+
+	//* Pass one float vector value array
+	void SetFloat1Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+
+	//* Pass two float vector value array
+	void SetFloat2Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+
+	//* Pass three float vector value array
+	void SetFloat3Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+
+	//* Pass four float vector value array
+	void SetFloat4Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
 
 	//* Use shader program and render mode
 	void Use();
