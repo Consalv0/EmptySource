@@ -31,7 +31,7 @@ WString FileManager::GetFullPath(const WString & Path) {
 FileList::iterator FileManager::FindInFiles(const WString & FilePath) {
 	return std::find_if(Files.begin(), Files.end(), [FilePath](FileStream* & File)
 		-> bool { return File->GetPath() == FilePath; }
-	);;
+	);
 }
 
 WString FileManager::ReadStream(FileStream* Stream) {

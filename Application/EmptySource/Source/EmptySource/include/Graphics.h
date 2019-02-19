@@ -3,7 +3,7 @@
 // --- Include GLAD library to make function loaders for OpenGL
 #include <External/GLAD/include/glad.h>
 
-namespace Render {
+namespace Graphics {
 	enum DepthFunction {
 		Never = GL_NEVER,
 		Less = GL_LESS,
@@ -17,14 +17,14 @@ namespace Render {
 
 	enum CullMode {
 		None = GL_NONE,
-		FrontLeft = GL_FRONT_LEFT,
-		FrontRight = GL_FRONT_RIGHT,
-		BackLeft = GL_BACK_LEFT,
-		BackRight = GL_BACK_RIGHT,
+		// FrontLeft = GL_FRONT_LEFT,
+		// FrontRight = GL_FRONT_RIGHT,
+		// BackLeft = GL_BACK_LEFT,
+		// BackRight = GL_BACK_RIGHT,
 		Front = GL_FRONT,
 		Back = GL_BACK,
-		Left = GL_LEFT,
-		Right = GL_RIGHT,
+		// Left = GL_LEFT,
+		// Right = GL_RIGHT,
 		FrontBack = GL_FRONT_AND_BACK,
 	};
 
@@ -32,6 +32,32 @@ namespace Render {
 		Point = GL_POINT,
 		Wire = GL_LINE,
 		Fill = GL_FILL,
+	};
+
+	enum ColorFormat {
+		Red = GL_RED,
+		RGB = GL_RGB,
+		RGBA = GL_RGBA,
+	};
+
+	enum AddressMode {
+		Repeat = GL_REPEAT,
+		Mirror = GL_MIRRORED_REPEAT,
+		Clamp = GL_CLAMP_TO_EDGE,
+		Border = GL_CLAMP_TO_BORDER,
+	};
+
+	enum FilterMode {
+		MinMagNearest,
+		MinMagLinear,
+		MinLinearMagNearest,
+		MinNearestMagLinear,
+	};
+
+	enum DrawMode {
+		Points = GL_POINTS,
+		Lines = GL_LINES,
+		Triangles = GL_TRIANGLES
 	};
 }
 

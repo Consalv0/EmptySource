@@ -226,7 +226,7 @@ void MeshLoader::ReadOBJByLine(
 			float cur = std::ceil(Progress * 12);
 			Debug::Log(Debug::NoLog, L"\r [%s%s] %.2f%% %s lines",
 				WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(),
-				100 * Progress, Text::FormattedUnit(LineCount, 2).c_str()
+				100 * Progress, Text::FormatUnit(LineCount, 2).c_str()
 			);
 		}
 		
@@ -318,8 +318,8 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		VertexIndexCount = ModelData.VertexIndicesCount;
 		Debug::Log(Debug::LogNormal,
 			L"├> Parsed %s vertices and %s triangles in %.3fs",
-			Text::FormattedUnit(VertexIndexCount, 2).c_str(),
-			Text::FormattedUnit(VertexIndexCount / 3, 2).c_str(),
+			Text::FormatUnit(VertexIndexCount, 2).c_str(),
+			Text::FormatUnit(VertexIndexCount / 3, 2).c_str(),
 			Timer.GetEnlapsedSeconds()
 		);
 	}
@@ -357,7 +357,7 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 					StringToWString(Data->Name).c_str(),
 					WString(int(cur2), L'%').c_str(), WString(int(12 + 1 - cur2), L' ').c_str(),
 					WString(int(cur), L'#').c_str(), WString(int(12 + 1 - cur), L' ').c_str(),
-					100 * prog, Text::FormattedUnit(Count, 2).c_str()
+					100 * prog, Text::FormatUnit(Count, 2).c_str()
 				);
 			}
 
@@ -402,8 +402,8 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		Debug::Log(
 			Debug::LogNormal,
 			L"├> Parsed %s	vertices in %s	at [%d]'%s'",
-			Text::FormattedUnit(Data->VertexIndicesCount, 2).c_str(),
-			Text::FormattedData(sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size(), 2).c_str(),
+			Text::FormatUnit(Data->VertexIndicesCount, 2).c_str(),
+			Text::FormatData(sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size(), 2).c_str(),
 			Vertices->size(),
 			StringToWString(Data->Name).c_str()
 		);
@@ -412,18 +412,18 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	}
 
 	Debug::Log(Debug::NoLog, L"\r");
-	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %s vertices", WString(25, L'#').c_str(), Text::FormattedUnit(VertexIndexCount, 2).c_str());
+	Debug::Log(Debug::LogNormal, L"├> [%s] 100.00%% %s vertices", WString(25, L'#').c_str(), Text::FormatUnit(VertexIndexCount, 2).c_str());
 	if (hasOptimize) {
 		Debug::Log(
 			Debug::LogNormal, L"├> Vertex optimization from %s to %s (%.2f%%)",
-			Text::FormattedUnit(VertexIndexCount, 2).c_str(), 
-			Text::FormattedUnit(VertexToIndex.size(), 2).c_str(),
+			Text::FormatUnit(VertexIndexCount, 2).c_str(), 
+			Text::FormatUnit(VertexToIndex.size(), 2).c_str(),
 			(float(VertexToIndex.size()) - VertexIndexCount) / VertexIndexCount * 100
 		);
 	}
 
 	Timer.Stop();
-	Debug::Log(Debug::LogNormal, L"└> Allocated %s in %.2fs", Text::FormattedData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
+	Debug::Log(Debug::LogNormal, L"└> Allocated %s in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
 
 	return true;
 }

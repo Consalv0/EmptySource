@@ -1,7 +1,7 @@
 #pragma once
 
-// Vertex Locations
-constexpr auto VertexLocation = 0;
+// Default vertex Locations
+constexpr auto PositionLocation = 0;
 constexpr auto NormalLocation = 1;
 constexpr auto TangentLocation = 2;
 constexpr auto UV0Location = 3;
@@ -56,9 +56,9 @@ public:
 	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
 	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshColors Colors);
 	Mesh(const MeshFaces Faces, const MeshVector3D Vertices, const MeshVector3D Normals, const MeshVector3D Tangents, const MeshUVs UV0, const MeshUVs UV1, const MeshColors Colors);
-	// Copy the information to the mesh, the data will be coppied
+	//* Copy the information to the mesh, the data will be coppied
 	Mesh(const MeshFaces Faces, const MeshVertices Vertices);
-	// Transfer information to the mesh, the data will be swapped
+	//* Transfer information to the mesh, the data will be swapped
 	Mesh(MeshFaces* Faces, MeshVertices* Vertices);
 
 	//* *Create or Bind Vertex Array Object

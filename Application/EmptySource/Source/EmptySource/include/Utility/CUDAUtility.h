@@ -35,7 +35,7 @@ namespace CUDA {
 	/* This will output the proper CUDA error strings in the event
 	 *  that a CUDA host call returns an error
 	 */
-#define CheckErrors(func) __CheckFunction((func), L#func, __FILE__, __LINE__)
+#define Check(func) __CheckFunction((func), L#func, __FILE__, __LINE__)
 
 	//* This will output the proper error string when calling cudaGetLastError
 #define GetLastCudaError(msg) __GetLastCudaError(msg, __FILE__, __LINE__)
@@ -109,7 +109,7 @@ namespace CUDA {
 
 		uint64_t MaxComputePerformance = 0;
 		cudaDeviceProp DeviceProperties;
-		CheckErrors(cudaGetDeviceCount(&DeviceCount));
+		Check(cudaGetDeviceCount(&DeviceCount));
 
 		if (DeviceCount == 0) {
 			Debug::Log(
@@ -123,7 +123,7 @@ namespace CUDA {
 		}
 
 		// --- Find the best CUDA capable GPU device
-		CheckErrors(cudaDeviceSynchronize());
+		Check(cudaDeviceSynchronize());
 		while (CurrentDevice < DeviceCount) {
 			cudaGetDeviceProperties(&DeviceProperties, CurrentDevice);
 
@@ -171,8 +171,8 @@ namespace CUDA {
 		int DeviceID = 0;
 
 		DeviceID = GetMaxGflopsDeviceId();
-		CheckErrors(cudaSetDevice(DeviceID));
-		CheckErrors(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
+		Check(cudaSetDevice(DeviceID));
+		Check(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
 		Debug::Log(Debug::LogNormal, L"GPU CUDA Device");
 		Debug::Log(
 			Debug::LogNormal, L"\u2514> GPU Device #%d: '%s' with compute capability %d.%d", DeviceID,

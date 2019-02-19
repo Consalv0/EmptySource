@@ -66,9 +66,6 @@
     <ClInclude Include="Source\EmptySource\include\Mesh.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Shader.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\FileManager.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -132,9 +129,6 @@
     <ClInclude Include="Source\EmptySource\include\Math\Quaternion.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\ShaderProgram.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
@@ -148,6 +142,18 @@
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Utility\CUDAUtility.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\ShaderStage.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\ShaderProgram.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Texture.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
   </ItemGroup>
@@ -165,9 +171,6 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\Mesh.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Shader.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\Window.cpp">
@@ -194,11 +197,17 @@
     <ClCompile Include="Source\EmptySource\source\MeshLoader.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\ShaderStage.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp">
-      <Filter>Source Files\Core\Utility</Filter>
+    <ClCompile Include="Source\EmptySource\source\Texture.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +259,9 @@
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
     <CudaCompile Include="Source\EmptySource\source\BoundingBox.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Source\EmptySource\source\ModelVoxelizer.cu">
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
   </ItemGroup>

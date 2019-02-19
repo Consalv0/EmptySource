@@ -17,6 +17,7 @@
  */
 
 #include "..\Source\EmptySource\include\Core.h"
+#include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
 #include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
@@ -35,7 +36,7 @@ __global__ void Add(int elementCount, MeshVertex *Positions) {
 
 bool RunTest(int N, MeshVertex * Positions) {
 
-	CUDA::CheckErrors(cudaProfilerStart()); 
+	CUDA::Check(cudaProfilerStart()); 
 	
 	size_t Size = N * sizeof(MeshVertex);
 
@@ -44,13 +45,13 @@ bool RunTest(int N, MeshVertex * Positions) {
 
 	// Allocate Memory in Device
 	MeshVertex* dPositions;
-	CUDA::CheckErrors( cudaMalloc(&dPositions, Size) );
-	CUDA::CheckErrors( cudaMemcpy(dPositions, Positions, Size, cudaMemcpyHostToDevice) );
+	CUDA::Check( cudaMalloc(&dPositions, Size) );
+	CUDA::Check( cudaMemcpy(dPositions, Positions, Size, cudaMemcpyHostToDevice) );
 
 	Timer.Stop();
 	// Debug::Log(
 	// 	Debug::LogDebug, L"CUDA Host allocation of %s durantion: %dms",
-	// 	Text::FormattedData((double)N * 2 * sizeof(float), 2).c_str(),
+	// 	Text::FormatData((double)N * 2 * sizeof(float), 2).c_str(),
 	// 	Timer.GetEnlapsed()
 	// );
 
@@ -65,15 +66,15 @@ bool RunTest(int N, MeshVertex * Positions) {
 	Add<<< numBlocks, blockSize >>> (N, dPositions);
 
 	// Wait for GPU to finish before accessing on host
-	CUDA::CheckErrors( cudaDeviceSynchronize() );
+	CUDA::Check( cudaDeviceSynchronize() );
 
 	// Check if kernel execution generated and error
 	CUDA::GetLastCudaError("Kernel execution failed");
 
-	CUDA::CheckErrors( cudaMemcpy(Positions, dPositions, Size, cudaMemcpyDeviceToHost) );
+	CUDA::Check( cudaMemcpy(Positions, dPositions, Size, cudaMemcpyDeviceToHost) );
 
 	// Free memory
-	CUDA::CheckErrors( cudaFree(dPositions) );
+	CUDA::Check( cudaFree(dPositions) );
 
 	Timer.Stop();
 	// Debug::Log(
@@ -81,7 +82,7 @@ bool RunTest(int N, MeshVertex * Positions) {
 	// 	Timer.GetEnlapsed()
 	// );
 
-	CUDA::CheckErrors(cudaProfilerStop());
+	CUDA::Check(cudaProfilerStop());
 
 	return 0;
 }
