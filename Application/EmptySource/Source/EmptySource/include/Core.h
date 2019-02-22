@@ -1,7 +1,9 @@
 #pragma once
 
 // Include windows headers
+#ifdef _WIN32
 #include <windows.h>
+#endif // _WIN32
 
 // Include main standard headers
 #include <stdexcept>

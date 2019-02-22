@@ -3,10 +3,10 @@
 #include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
-#include "..\Source\EmptySource\include\Texture.h"
 #include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
 #include "..\Source\EmptySource\include\Utility\Timer.h"
 #include "..\Source\EmptySource\include\Math\Math.h"
+#include "..\Source\EmptySource\include\Texture3D.h"
 #include "..\Source\EmptySource\include\Mesh.h"
 
 #ifndef __CUDACC__
@@ -67,7 +67,7 @@ void LaunchWriteKernel(int N, MeshVertex * dVertices, cudaArray *cudaTextureArra
 }
 
 
-int VoxelizeToTexture3D(Texture3D& texture, int N, MeshVertex * Vertices) {
+int VoxelizeToTexture3D(Texture3D* texture, int N, MeshVertex * Vertices) {
 	cudaGraphicsResource *cudaTextureResource;
 	cudaArray            *cudaTextureArray;
 	MeshVertex           *dVertices;
@@ -85,7 +85,7 @@ int VoxelizeToTexture3D(Texture3D& texture, int N, MeshVertex * Vertices) {
 
 	// --- Register Image (texture) to CUDA Resource
 	CUDA::Check( cudaGraphicsGLRegisterImage(&cudaTextureResource,
-		texture.GetTextureObject(), GL_TEXTURE_3D, cudaGraphicsRegisterFlagsSurfaceLoadStore) 
+		texture->GetTextureObject(), GL_TEXTURE_3D, cudaGraphicsRegisterFlagsSurfaceLoadStore) 
 	);
 
 	Timer.Stop();
@@ -101,7 +101,7 @@ int VoxelizeToTexture3D(Texture3D& texture, int N, MeshVertex * Vertices) {
 	{
 		// --- Get mapped array
 		CUDA::Check( cudaGraphicsSubResourceGetMappedArray(&cudaTextureArray, cudaTextureResource, 0, 0) );
-		IntVector3 TextureDim = texture.GetDimension();
+		IntVector3 TextureDim = texture->GetDimension();
 		LaunchWriteKernel(N, dVertices, cudaTextureArray, dim3(TextureDim.x, TextureDim.y, TextureDim.z));
 	}
 	CUDA::Check( cudaGraphicsUnmapResources(1, &cudaTextureResource, 0) );
@@ -110,7 +110,7 @@ int VoxelizeToTexture3D(Texture3D& texture, int N, MeshVertex * Vertices) {
 	CUDA::Check( cudaDeviceSynchronize() );
 
 	Timer.Stop();
-	IntVector3 TextureDim = texture.GetDimension();
+	IntVector3 TextureDim = texture->GetDimension();
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Texture Write with total volume (%s): %dms",
 		Text::FormatUnit(TextureDim.x * TextureDim.y * TextureDim.z, 0).c_str(),

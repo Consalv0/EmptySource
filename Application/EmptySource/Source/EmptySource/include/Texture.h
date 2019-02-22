@@ -1,8 +1,8 @@
 #pragma once
 
+#include "..\include\Core.h"
 #include "..\include\Graphics.h"
-#include "..\include\Text.h"
-#include "..\include\Math\IntVector3.h"
+#include "..\include\Math\Math.h"
 
 struct Texture {
 protected:
@@ -33,33 +33,4 @@ public:
 	virtual void SetAddressMode(const Graphics::AddressMode& Mode) = 0;
 
 	virtual void Delete() = 0;
-};
-
-struct Texture3D : public Texture {
-private:
-	//* Texture dimesions
-	IntVector3 Dimension;
-
-public:
-	//* Constructor
-	Texture3D(
-		const IntVector3& Size, const Graphics::ColorFormat ColorFormat,
-		const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
-	);
-
-	//* Get Dimension of the texture
-	IntVector3 GetDimension() const;
-
-	//* Use the texture
-	void Use() const;
-
-	//* Check if texture is valid
-	bool IsValid() const;
-
-	void SetFilterMode(const Graphics::FilterMode& Mode);
-
-	void SetAddressMode(const Graphics::AddressMode& Mode);
-
-	//* 
-	void Delete();
 };

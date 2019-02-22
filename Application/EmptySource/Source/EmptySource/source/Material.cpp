@@ -1,6 +1,7 @@
 #include "..\include\Core.h"
 #include "..\include\Material.h"
 #include "..\include\Math\Math.h"
+#include "..\include\Texture2D.h"
 
 Material::Material() {
 	MaterialShader = NULL;
@@ -71,18 +72,30 @@ void Material::SetFloat4Array(const Char * UniformName, const float * Data, cons
 	glUniform4fv(UniformLocation, Count, Data);
 }
 
+void Material::SetTexture2D(const Char * UniformName, Texture2D * Tex, const unsigned int & Position) const {
+	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+	glUniform1i(UniformLocation, Position);
+	glActiveTexture(GL_TEXTURE0 + Position);
+	Tex->Use();
+}
+
 void Material::Use() {
 	// --- Activate Z-buffer
 	if (bUseDepthTest) {
 		glEnable(GL_DEPTH_TEST);
-	} else {
+	}
+	else {
 		glDisable(GL_DEPTH_TEST);
 	}
 
 	glDepthFunc((unsigned int)DepthFunction);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace((unsigned int)CullMode);
+	if (CullMode == Graphics::CullMode::None) { 
+		glDisable(GL_CULL_FACE);
+	} else {
+		glEnable(GL_CULL_FACE);
+		glCullFace((unsigned int)CullMode);
+	}
 
 	glPolygonMode((unsigned int)Graphics::CullMode::FrontBack, (unsigned int)RenderMode);
 

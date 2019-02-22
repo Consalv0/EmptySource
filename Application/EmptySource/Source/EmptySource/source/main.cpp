@@ -1,7 +1,6 @@
 #include "..\include\Core.h"
 #include "..\include\Graphics.h"
 #include "..\include\Application.h"
-#include "..\include\Utility\CUDAUtility.h"
 
 #ifdef _WIN32
 // --- Make discrete GPU by default.
@@ -18,7 +17,6 @@ int main(int argc, char **argv) {
 
 	Debug::Log(Debug::LogNormal, L"Initalizing Application:\n");
 	CoreApplication::Initalize();
-	CUDA::FindCudaDevice();
 	CoreApplication::MainLoop();
 	CoreApplication::Close();
 
