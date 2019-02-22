@@ -188,6 +188,7 @@
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\EmptySource\include\Math\Ray.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileStream.cpp" />
     <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />

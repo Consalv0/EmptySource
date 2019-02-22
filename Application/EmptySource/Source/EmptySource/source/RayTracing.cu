@@ -17,22 +17,24 @@
 
 surface<void, cudaSurfaceType2D> SurfaceWrite;
 
-__global__ void WirteTextureKernel(int2 TextureDimension) {
+__device__ Vector4 RayColor(const Ray& r) {
+	Vector3 NormalizedDirection = r.Direction() / r.Direction().MagnitudeSquared();
+	float t = 0.5F * (NormalizedDirection.y + 1.0F);
+	return Vector3(1.0F) * (1.0F - t) + Vector3(0.5F, 0.7F, 1.0F) * t;
+}
+
+__global__ void WirteTextureKernel(int2 TextureDimension, Vector3 LowLeft, Vector3 Horizontal, Vector3 Vertical, Vector3 Origin) {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	int y = threadIdx.y + blockIdx.y * blockDim.y;
 
 	if (x >= TextureDimension.x || y >= TextureDimension.y) return;
 
-	uchar4 element = make_uchar4(0, 0, 0, 0);
-	surf2Dread(&element, SurfaceWrite, x * sizeof(uchar4), y);
-	element = make_uchar4(
-		(float(x) / float(TextureDimension.x)) * 255.99F,
-		(float(y) / float(TextureDimension.y)) * 255.99F,
-		0.2F * 255.99F,
-		0
-	);
-	surf2Dwrite(element, SurfaceWrite, x * sizeof(uchar4), y);
-
+	// float4 element = make_float4(0, 0, 0, 0);
+	// surf2Dread(&element, SurfaceWrite, x * sizeof(float4), y);
+	float u = float(x) / float(TextureDimension.x);
+	float v = float(y) / float(TextureDimension.y);
+	Ray ray(Origin, LowLeft + (Horizontal * u) + (Vertical * v));
+	surf2Dwrite(RayColor(ray), SurfaceWrite, x * sizeof(float4), y);
 }
 
 extern "C"
@@ -52,7 +54,7 @@ void LaunchWriteTextureKernel(cudaArray *cudaTextureArray, int2 TextureDim) {
 		return;
 	}
 
-	WirteTextureKernel <<< dimGrid, dimBlock >>> (TextureDim);
+	WirteTextureKernel <<< dimGrid, dimBlock >>> (TextureDim, {-2, -1, -1}, {4, 0, 0}, {0, 2, 0}, 0);
 
 	Error = cudaGetLastError();
 	if (Error != cudaSuccess) {
@@ -93,7 +95,7 @@ int RayTracingTexture2D(Texture2D* texture) {
 	Timer.Stop();
 	IntVector2 TextureDim = texture->GetDimension();
 	Debug::Log(
-		Debug::LogDebug, L"CUDA Texture Write with total volume (%s): %dms",
+		Debug::LogDebug, L"CUDA Texture Write/Read with total volume (%s): %dms",
 		Text::FormatUnit(TextureDim.x * TextureDim.y, 0).c_str(),
 		Timer.GetEnlapsed()
 	);
