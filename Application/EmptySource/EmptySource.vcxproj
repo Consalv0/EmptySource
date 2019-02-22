@@ -148,7 +148,8 @@
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />
-    <ClInclude Include="Source\EmptySource\include\RenderingCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Math\IntVector2.h" />
+    <ClInclude Include="Source\EmptySource\include\Math\Ray.h" />
     <ClInclude Include="Source\EmptySource\include\FileManager.h" />
     <ClInclude Include="Source\EmptySource\include\FileStream.h" />
     <ClInclude Include="Source\EmptySource\include\IIdentifier.h" />
@@ -165,16 +166,20 @@
     <ClInclude Include="Source\EmptySource\include\Object.h" />
     <ClInclude Include="Source\EmptySource\include\MeshLoader.h" />
     <ClInclude Include="Source\EmptySource\include\Graphics.h" />
+    <ClInclude Include="Source\EmptySource\include\RenderTarget.h" />
     <ClInclude Include="Source\EmptySource\include\ShaderStage.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
     <ClInclude Include="Source\EmptySource\include\ShaderProgram.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Text.h" />
     <ClInclude Include="Source\EmptySource\include\Texture.h" />
+    <ClInclude Include="Source\EmptySource\include\Texture2D.h" />
+    <ClInclude Include="Source\EmptySource\include\Texture3D.h" />
     <ClInclude Include="Source\EmptySource\include\Time.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\CUDAUtility.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
@@ -192,10 +197,13 @@
     <ClCompile Include="Source\EmptySource\source\Mesh.cpp" />
     <ClCompile Include="Source\EmptySource\source\Object.cpp" />
     <ClCompile Include="Source\EmptySource\source\MeshLoader.cpp" />
+    <ClCompile Include="Source\EmptySource\source\RenderTarget.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShaderStage.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Texture2D.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Texture3D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Time.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
@@ -208,18 +216,20 @@
     <None Include="Data\Shaders\PBRBase.fragment.glsl" />
     <None Include="Data\Shaders\Unlit.fragment.glsl" />
     <None Include="Data\Shaders\UnlitBase.fragment.glsl" />
+    <None Include="Source\EmptySource\include\Math\IntVector2.inl" />
     <None Include="Source\EmptySource\include\Math\IntVector3.inl" />
     <None Include="Source\EmptySource\include\Math\MathUtility.inl" />
     <None Include="Source\EmptySource\include\Math\Matrix3x3.inl" />
     <None Include="Source\EmptySource\include\Math\Matrix4x4.inl" />
     <None Include="Source\EmptySource\include\Math\Quaternion.inl" />
+    <None Include="Source\EmptySource\include\Math\Ray.inl" />
     <None Include="Source\EmptySource\include\Math\Vector2.inl" />
     <None Include="Source\EmptySource\include\Math\Vector3.inl" />
     <None Include="Source\EmptySource\include\Math\Vector4.inl" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Source\EmptySource\source\BoundingBox.cu" />
-    <CudaCompile Include="Source\EmptySource\source\Utility\CUDAExample.cu" />
+    <CudaCompile Include="Source\EmptySource\source\RayTracing.cu" />
     <CudaCompile Include="Source\EmptySource\source\ModelVoxelizer.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

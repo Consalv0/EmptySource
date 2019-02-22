@@ -132,9 +132,6 @@
     <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\RenderingCore.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
@@ -155,6 +152,24 @@
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h">
       <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\RenderTarget.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Math\IntVector2.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Texture2D.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Math\Ray.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Texture3D.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +224,15 @@
     <ClCompile Include="Source\EmptySource\source\Texture.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Texture3D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\RenderTarget.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Texture2D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\EmptySource\include\Math\IntVector3.inl">
@@ -253,15 +277,21 @@
     <None Include="Source\EmptySource\include\Math\MathUtility.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
+    <None Include="Source\EmptySource\include\Math\IntVector2.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\EmptySource\include\Math\Ray.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Source\EmptySource\source\Utility\CUDAExample.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
     <CudaCompile Include="Source\EmptySource\source\BoundingBox.cu">
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
     <CudaCompile Include="Source\EmptySource\source\ModelVoxelizer.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Source\EmptySource\source\RayTracing.cu">
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
   </ItemGroup>
