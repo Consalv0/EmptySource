@@ -154,6 +154,3 @@ FORCEINLINE Vector2& Vector2::operator/=(const float& Value) {
 	return *this;
 }
 
-inline WString Vector2::ToString() {
-	return Text::Formatted(L"{%.2f, %.2f}", x, y);
-}

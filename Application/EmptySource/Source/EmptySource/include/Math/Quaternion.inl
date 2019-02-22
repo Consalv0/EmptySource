@@ -212,7 +212,3 @@ FORCEINLINE Quaternion& Quaternion::operator/=(const float& Value) {
 	z /= Value;
 	return *this;
 }
-
-inline WString Quaternion::ToString() {
-	return Text::Formatted(L"{%.2f, %.2f, %.2f, %.2f}", w, x, y, z);
-}

@@ -180,7 +180,3 @@ FORCEINLINE Vector4& Vector4::operator/=(const float& Value) {
 	w /= Value;
 	return *this;
 }
-
-inline WString Vector4::ToString() {
-	return Text::Formatted(L"{%.2f, %.2f, %.2f, %.2f}", x, y, z, w);
-}

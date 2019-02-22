@@ -52,8 +52,6 @@ public:
 	FORCEINLINE Vector3& operator/=(const Vector3& Other);
 	FORCEINLINE Vector3& operator*=(const float& Value);
 	FORCEINLINE Vector3& operator/=(const float& Value);
-
-	inline WString ToString();
 };
 
 #include "..\Math\Vector3.inl"
