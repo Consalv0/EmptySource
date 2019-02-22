@@ -49,8 +49,6 @@ public:
 	FORCEINLINE Quaternion& operator*=(const Quaternion& Other);
 	FORCEINLINE Quaternion& operator*=(const float& Value);
 	FORCEINLINE Quaternion& operator/=(const float& Value);
-
-	inline WString ToString();
 };
 
 #include "..\Math\Quaternion.inl"

@@ -172,7 +172,3 @@ FORCEINLINE IntVector3& IntVector3::operator/=(const int& Value) {
 	z /= Value;
 	return *this;
 }
-
-inline WString IntVector3::ToString() {
-	return Text::Formatted(WString(L"{%d, %d, %d}"), x, y, z);
-}

@@ -49,8 +49,6 @@ public:
 	FORCEINLINE Vector2& operator/=(const Vector2& Other);
 	FORCEINLINE Vector2& operator*=(const float& Value);
 	FORCEINLINE Vector2& operator/=(const float& Value);
-
-	inline WString ToString();
 };
 
 #include "..\Math\Vector2.inl"
