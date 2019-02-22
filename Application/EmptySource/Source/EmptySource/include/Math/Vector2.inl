@@ -113,7 +113,7 @@ FORCEINLINE Vector2 Vector2::operator*(const float& Value) const {
 }
 
 FORCEINLINE Vector2 Vector2::operator/(const float& Value) const {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) return Vector2();
 	return Vector2(x / Value, y / Value);
 }
 
@@ -148,7 +148,7 @@ FORCEINLINE Vector2& Vector2::operator*=(const float& Value) {
 }
 
 FORCEINLINE Vector2& Vector2::operator/=(const float& Value) {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) x = y = 0;
 	x /= Value;
 	y /= Value;
 	return *this;

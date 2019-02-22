@@ -140,7 +140,7 @@ FORCEINLINE Vector3 Vector3::operator*(const float& Value) const {
 }
 
 FORCEINLINE Vector3 Vector3::operator/(const float& Value) const {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) return Vector3();
 	return Vector3(x / Value, y / Value, z / Value);
 }
 
@@ -180,7 +180,7 @@ FORCEINLINE Vector3& Vector3::operator*=(const float& Value) {
 }
 
 FORCEINLINE Vector3& Vector3::operator/=(const float& Value) {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) x = y = z = 0;
 	x /= Value;
 	y /= Value;
 	z /= Value;

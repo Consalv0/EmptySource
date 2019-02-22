@@ -11,44 +11,44 @@ public:
 		struct { float x, y, z, w; };
 	};
 
-	FORCEINLINE Quaternion();
-	FORCEINLINE Quaternion(Quaternion const& Other);
-	FORCEINLINE Quaternion(float const& Angle, Vector3 const& Axis);
-	FORCEINLINE Quaternion(float const& w, float const& x, float const& y, float const& z);
+	HOST_DEVICE FORCEINLINE Quaternion();
+	HOST_DEVICE FORCEINLINE Quaternion(Quaternion const& Other);
+	HOST_DEVICE FORCEINLINE Quaternion(float const& Angle, Vector3 const& Axis);
+	HOST_DEVICE FORCEINLINE Quaternion(float const& w, float const& x, float const& y, float const& z);
 	// Create a quaternion from two normalized axis
-	FORCEINLINE Quaternion(Vector3 const& u, Vector3 const& v);
+	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& u, Vector3 const& v);
 	// Create a quaternion from euler angles (pitch, yaw, roll), in radians.
-	FORCEINLINE Quaternion(Vector3 const& EulerAngles);
+	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& EulerAngles);
 
-	inline float Magnitude() const;
-	inline float MagnitudeSquared() const;
-	inline void Normalize();
-	inline Quaternion Normalized() const;
+	HOST_DEVICE inline float Magnitude() const;
+	HOST_DEVICE inline float MagnitudeSquared() const;
+	HOST_DEVICE inline void Normalize();
+	HOST_DEVICE inline Quaternion Normalized() const;
 
-	inline Matrix4x4 ToMatrix4x4() const;
-	inline float GetPitch() const;
-	inline float GetYaw() const;
-	inline float GetRoll() const;
-	inline Vector3 ToEulerAngles() const;
+	HOST_DEVICE inline Matrix4x4 ToMatrix4x4() const;
+	HOST_DEVICE inline float GetPitch() const;
+	HOST_DEVICE inline float GetYaw() const;
+	HOST_DEVICE inline float GetRoll() const;
+	HOST_DEVICE inline Vector3 ToEulerAngles() const;
 
-	FORCEINLINE float Dot(const Quaternion& Other) const;
-	FORCEINLINE Quaternion Cross(const Quaternion& Other) const;
+	HOST_DEVICE FORCEINLINE float Dot(const Quaternion& Other) const;
+	HOST_DEVICE FORCEINLINE Quaternion Cross(const Quaternion& Other) const;
 
-	inline float & operator[](unsigned int i);
-	inline float const& operator[](unsigned int i) const;
-	inline const float* PointerToValue() const;
+	HOST_DEVICE inline float & operator[](unsigned int i);
+	HOST_DEVICE inline float const& operator[](unsigned int i) const;
+	HOST_DEVICE inline const float* PointerToValue() const;
 
-	FORCEINLINE bool operator==(const Quaternion& Other) const;
-	FORCEINLINE bool operator!=(const Quaternion& Other) const;
-
-	FORCEINLINE Quaternion operator-(void) const;
-	FORCEINLINE Quaternion operator*(const float& Value) const;
-	FORCEINLINE Quaternion operator/(const float& Value) const;
-	FORCEINLINE Quaternion operator*(const Quaternion& Other) const;
-
-	FORCEINLINE Quaternion& operator*=(const Quaternion& Other);
-	FORCEINLINE Quaternion& operator*=(const float& Value);
-	FORCEINLINE Quaternion& operator/=(const float& Value);
+	HOST_DEVICE FORCEINLINE bool operator==(const Quaternion& Other) const;
+	HOST_DEVICE FORCEINLINE bool operator!=(const Quaternion& Other) const;
+	
+	HOST_DEVICE FORCEINLINE Quaternion operator-(void) const;
+	HOST_DEVICE FORCEINLINE Quaternion operator*(const float& Value) const;
+	HOST_DEVICE FORCEINLINE Quaternion operator/(const float& Value) const;
+	HOST_DEVICE FORCEINLINE Quaternion operator*(const Quaternion& Other) const;
+	
+	HOST_DEVICE FORCEINLINE Quaternion& operator*=(const Quaternion& Other);
+	HOST_DEVICE FORCEINLINE Quaternion& operator*=(const float& Value);
+	HOST_DEVICE FORCEINLINE Quaternion& operator/=(const float& Value);
 };
 
 #include "..\Math\Quaternion.inl"

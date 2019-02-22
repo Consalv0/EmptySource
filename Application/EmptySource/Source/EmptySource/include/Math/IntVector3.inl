@@ -126,7 +126,7 @@ FORCEINLINE IntVector3 IntVector3::operator*(const int& Value) const {
 }
 
 FORCEINLINE IntVector3 IntVector3::operator/(const int& Value) const {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) return IntVector3();
 	return IntVector3(x / Value, y / Value, z / Value);
 }
 
@@ -166,7 +166,7 @@ FORCEINLINE IntVector3& IntVector3::operator*=(const int& Value) {
 }
 
 FORCEINLINE IntVector3& IntVector3::operator/=(const int& Value) {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) x = y = z = 0;
 	x /= Value;
 	y /= Value;
 	z /= Value;
