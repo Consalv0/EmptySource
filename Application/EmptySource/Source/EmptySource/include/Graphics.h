@@ -40,6 +40,7 @@ namespace Graphics {
 		Red = GL_RED,
 		RGB = GL_RGB,
 		RGBA = GL_RGBA,
+		RGBA32F = GL_RGBA32F,
 	};
 
 	enum AddressMode {

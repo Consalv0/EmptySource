@@ -233,6 +233,9 @@
     <ClCompile Include="Source\EmptySource\source\Texture2D.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EmptySource\include\Math\Ray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\EmptySource\include\Math\IntVector3.inl">

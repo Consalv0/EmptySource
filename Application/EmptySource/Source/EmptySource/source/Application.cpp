@@ -172,8 +172,8 @@ void CoreApplication::MainLoop() {
 	RenderTexMaterial.CullMode = Graphics::CullMode::None;
 	RenderTexMaterial.SetShaderProgram(&RenderTextureShader);
 
-	Texture3D VoxelizedSceneTexture = Texture3D(1 << 7, Graphics::RGBA, Graphics::MinMagNearest, Graphics::Clamp);
-	Texture2D RenderedTexture = Texture2D({ MainWindow->GetWidth(), MainWindow->GetHeight() }, Graphics::RGB, Graphics::MinLinearMagNearest, Graphics::Repeat);
+	Texture3D VoxelizedSceneTexture = Texture3D(1 << 7, Graphics::RGBA32F, Graphics::MinMagNearest, Graphics::Clamp);
+	Texture2D RenderedTexture = Texture2D({ MainWindow->GetWidth(), MainWindow->GetHeight() }, Graphics::RGBA32F, Graphics::MinLinearMagNearest, Graphics::Repeat);
 	RenderTarget Framebuffer = RenderTarget({ MainWindow->GetWidth(), MainWindow->GetHeight() }, &RenderedTexture, true);
 
 	float MaterialMetalness = 0.F;
@@ -199,7 +199,7 @@ void CoreApplication::MainLoop() {
 	///////////////////////////////////////////////////
 
 	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sponza.obj"), &Faces, &Vertices, false);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices, false);
 	std::vector<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
