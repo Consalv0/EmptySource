@@ -132,9 +132,6 @@
     <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
@@ -165,11 +162,14 @@
     <ClInclude Include="Source\EmptySource\include\Math\Ray.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Texture3D.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Texture3D.h">
-      <Filter>Header Files\Core</Filter>
+    <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h">
+      <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

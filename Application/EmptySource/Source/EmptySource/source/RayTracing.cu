@@ -21,7 +21,7 @@ __global__ void WirteTextureKernel(int2 TextureDimension) {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	int y = threadIdx.y + blockIdx.y * blockDim.y;
 
-	if (x >= TextureDimension.x && y >= TextureDimension.y) return;
+	if (x >= TextureDimension.x || y >= TextureDimension.y) return;
 
 	uchar4 element = make_uchar4(0, 0, 0, 0);
 	surf2Dread(&element, SurfaceWrite, x * sizeof(uchar4), y);
