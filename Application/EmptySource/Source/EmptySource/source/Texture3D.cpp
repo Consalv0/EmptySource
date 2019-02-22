@@ -17,7 +17,7 @@ Texture3D::Texture3D(
 	// TODO COLOR FORMATS
 	{
 		Use();
-		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, Dimension.x, Dimension.y, Dimension.z, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexImage3D(GL_TEXTURE_3D, 0, (int)ColorFormat, Dimension.x, Dimension.y, Dimension.z, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_3D, 0);
 	}
 }

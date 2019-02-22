@@ -17,7 +17,7 @@ Texture2D::Texture2D(
 	// TODO COLOR FORMATS
 	{
 		Use();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Dimension.x, Dimension.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, (int)ColorFormat, Dimension.x, Dimension.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
