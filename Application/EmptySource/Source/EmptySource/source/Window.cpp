@@ -125,5 +125,4 @@ void ApplicationWindow::Terminate() {
 void ApplicationWindow::OnWindowResized(int Width, int Height) {
 	this->Width = Width;
 	this->Height = Height;
-	glViewport(0, 0, Width, Height);
 }

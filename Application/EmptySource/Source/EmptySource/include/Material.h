@@ -39,6 +39,9 @@ public:
 	//* Pass four float vector value array
 	void SetFloat4Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
 
+	//* Pass Texture 2D array
+	void SetTexture2D(const Char * UniformName, struct Texture2D* Tex, const unsigned int& Position) const;
+
 	//* Use shader program and render mode
 	void Use();
 };

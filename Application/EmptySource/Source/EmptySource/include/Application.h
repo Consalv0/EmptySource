@@ -16,6 +16,9 @@ private:
 
 	//* Creates the main window for rendering
 	static bool InitializeWindow();
+
+	//* Initialize Nvidia Managment Library
+	static bool InitializeNVML();
 	
 public:
 

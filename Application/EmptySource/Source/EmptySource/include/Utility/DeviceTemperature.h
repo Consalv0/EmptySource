@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nvml.h>
-
 #include "EmptySource\include\Core.h"
 
 namespace Debug {
@@ -10,28 +9,17 @@ namespace Debug {
 		nvmlReturn_t DeviceResult;
 		unsigned int DeviceTemperature;
 
-		// --- Initialize NVML library
-		DeviceResult = nvmlInit();
-		if (NVML_SUCCESS != DeviceResult) {
-			Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %s", nvmlErrorString(DeviceResult));
-			return 0;
-		}
-
 		DeviceResult = nvmlDeviceGetHandleByIndex(DeviceIndex, &Device);
 		if (NVML_SUCCESS != DeviceResult) {
-			Debug::Log(Debug::LogError, L"NVML :: Failed to get handle for device %i: %s", DeviceIndex, nvmlErrorString(DeviceResult));
+			Debug::Log(Debug::LogError, L"NVML :: Failed to get handle for device %i: %s", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
 			return 0;
 		}
 
 		DeviceResult = nvmlDeviceGetTemperature(Device, NVML_TEMPERATURE_GPU, &DeviceTemperature);
 		if (NVML_SUCCESS != DeviceResult) {
-			Debug::Log(Debug::LogError, L"NVML :: Failed to get temperature of device %i: %s", DeviceIndex, nvmlErrorString(DeviceResult));
+			Debug::Log(Debug::LogError, L"NVML :: Failed to get temperature of device %i: %s", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
 		}
 		return DeviceTemperature;
-
-		DeviceResult = nvmlShutdown();
-		if (NVML_SUCCESS != DeviceResult)
-			Debug::Log(Debug::LogError, L"NVML :: Failed to shutdown: %s", nvmlErrorString(DeviceResult));
 
 		return 0;
 	} 
