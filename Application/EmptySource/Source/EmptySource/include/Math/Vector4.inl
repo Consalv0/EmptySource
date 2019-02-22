@@ -120,7 +120,7 @@ FORCEINLINE Vector4 Vector4::operator*(const float& Value) const {
 }
 
 FORCEINLINE Vector4 Vector4::operator/(const float& Value) const {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) return Vector4();
 	return Vector4(x / Value, y / Value, z / Value, w / Value);
 }
 
@@ -173,7 +173,7 @@ FORCEINLINE Vector4& Vector4::operator*=(const float& Value) {
 }
 
 FORCEINLINE Vector4& Vector4::operator/=(const float& Value) {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) x = y = z = w = 0;
 	x /= Value;
 	y /= Value;
 	z /= Value;

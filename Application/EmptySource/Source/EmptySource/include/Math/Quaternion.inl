@@ -176,7 +176,7 @@ FORCEINLINE Quaternion Quaternion::operator*(const float& Value) const {
 }
 
 FORCEINLINE Quaternion Quaternion::operator/(const float& Value) const {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) Quaternion();
 	return Quaternion(w / Value, x / Value, y / Value, z / Value);
 }
 
@@ -205,7 +205,7 @@ FORCEINLINE Quaternion& Quaternion::operator*=(const float& Value) {
 }
 
 FORCEINLINE Quaternion& Quaternion::operator/=(const float& Value) {
-	if (Value == 0) throw std::exception("Can't divide by zero");
+	if (Value == 0) w = x = y = z = 0;
 	w /= Value;
 	x /= Value;
 	y /= Value;
