@@ -15,6 +15,7 @@ public:
 	HOST_DEVICE FORCEINLINE Vector4();
 	HOST_DEVICE FORCEINLINE Vector4(const Vector2& Vector);
 	HOST_DEVICE FORCEINLINE Vector4(const Vector3& Vector);
+	HOST_DEVICE FORCEINLINE Vector4(const Vector3& Vector, const float& w);
 	HOST_DEVICE FORCEINLINE Vector4(const Vector4& Vector);
 	HOST_DEVICE FORCEINLINE Vector4(const float& Value);
 	HOST_DEVICE FORCEINLINE Vector4(const float& x, const float& y, const float& z);

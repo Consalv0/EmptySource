@@ -32,6 +32,10 @@ FORCEINLINE Vector4::Vector4(const Vector3 & Vector)
 	: x(Vector.x), y(Vector.y), z(Vector.z), w(0) {
 };
 
+FORCEINLINE Vector4::Vector4(const Vector3 & Vector, const float & w)
+	: x(Vector.x), y(Vector.y), z(Vector.z), w(w) {
+};
+
 FORCEINLINE Vector4::Vector4(const float& Value)
 	: x(Value), y(Value), z(Value) {
 }

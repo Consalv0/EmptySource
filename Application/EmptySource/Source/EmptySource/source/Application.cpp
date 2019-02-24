@@ -23,10 +23,9 @@
 
 #include <nvml.h>
 
-bool RunTest(int N, MeshVertex * Positions);
 int FindBoundingBox(int N, MeshVertex * Vertices);
-int VoxelizeToTexture3D(Texture3D* Texture, int N, MeshVertex * Vertices);
-int RayTracingTexture2D(Texture2D* texture);
+int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
+int RayTracingTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres);
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
@@ -172,9 +171,12 @@ void CoreApplication::MainLoop() {
 	RenderTexMaterial.CullMode = Graphics::CullMode::None;
 	RenderTexMaterial.SetShaderProgram(&RenderTextureShader);
 
-	Texture3D VoxelizedSceneTexture = Texture3D(1 << 7, Graphics::RGBA32F, Graphics::MinMagNearest, Graphics::Clamp);
-	Texture2D RenderedTexture = Texture2D({ MainWindow->GetWidth(), MainWindow->GetHeight() }, Graphics::RGBA32F, Graphics::MinLinearMagNearest, Graphics::Repeat);
-	RenderTarget Framebuffer = RenderTarget({ MainWindow->GetWidth(), MainWindow->GetHeight() }, &RenderedTexture, true);
+	Texture2D RenderedTexture = Texture2D(
+		IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::RGBA32F, Graphics::MinLinearMagNearest, Graphics::Repeat
+	);
+	RenderTarget Framebuffer = RenderTarget(
+		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, &RenderedTexture, true
+	);
 
 	float MaterialMetalness = 0.F;
 	float MaterialRoughness = 0.54F;
@@ -189,14 +191,6 @@ void CoreApplication::MainLoop() {
 	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
 
 	srand((unsigned int)glfwGetTime());
-
-	///////// Get Locations from Shaders /////////////
-	// --- Get the ID of the uniforms
-	GLuint       ModelMatrixLocation = BRDFShader.GetAttribLocation("_iModelMatrix");
-
-	GLuint         Texture3DLocation = VoxelBRDFShader.GetUniformLocation("_Texture3D");
-
-	///////////////////////////////////////////////////
 
 	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
 	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices, false);
@@ -324,10 +318,8 @@ void CoreApplication::MainLoop() {
 			size_t TriangleCount = 0;
 			size_t VerticesCount = 0;
 
-			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			MainWindow->ClearWindow();
-			Framebuffer.Clear();
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			// Framebuffer.Clear();
 
 			Debug::Timer Timer;
 			Timer.Start();
@@ -338,7 +330,10 @@ void CoreApplication::MainLoop() {
 
 			// --- Run the device part of the program
 			bool bTestResult = false;
-			bTestResult = RayTracingTexture2D(&RenderedTexture);
+			std::vector<Vector4> Spheres = std::vector<Vector4>();
+			Spheres.push_back(Vector4(0, 0, -1.F, 0.25F));
+			Spheres.push_back(Vector4(FrameRotation.ToEulerAngles(), 0.25F));
+			bTestResult = RayTracingTexture2D(&RenderedTexture, &Spheres);
 			// bTestResult = FindBoundingBox((int)OBJModels[0].Vertices.size(), &OBJModels[0].Vertices[0]);
 			// bTestResult = VoxelizeToTexture3D(VoxelizedSceneTexture, (int)OBJModels[0].Vertices.size(), &OBJModels[0].Vertices[0]);
 
@@ -352,6 +347,8 @@ void CoreApplication::MainLoop() {
 			// );
 			// Debug::Log(Debug::NoLog, L"\n");
 
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// Framebuffer.Use();
 			BaseMaterial.Use();
 			
@@ -397,20 +394,20 @@ void CoreApplication::MainLoop() {
 			LightModels[0].DrawInstanciated(2);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
-
+			// glViewport(0, 0, Framebuffer.GetDimension().x, Framebuffer.GetDimension().y);
+			
 			RenderTexMaterial.Use();
-
+			
 			float AppTime = (float)Time::GetApplicationTime() / 1000;
 			RenderTexMaterial.SetFloat1Array("_Time", &AppTime);
 			RenderTexMaterial.SetFloat2Array("_MainTextureSize", RenderedTexture.GetDimension().FloatVector2().PointerToValue());
 			RenderTexMaterial.SetTexture2D("_MainTexture", &RenderedTexture, 0);
-
+			
 			QuadModels[0].BindVertexArray();
-
+			
 			Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
 			RenderTexMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer);
-
+			
 			QuadModels[0].DrawInstanciated(1);
 
 			MainWindow->SetWindowName(
