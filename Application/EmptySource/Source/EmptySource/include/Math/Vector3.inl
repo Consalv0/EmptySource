@@ -77,8 +77,12 @@ inline const float * Vector3::PointerToValue() const {
 	return &x;
 }
 
-FORCEINLINE Vector3 Vector3::Lerp(const Vector3 & start, const Vector3 & end, float t) {
-	return Vector3((start.x * (1.0F - t)) + (end.x * t), (start.y * (1.0F - t)) + (end.y * t), (start.z * (1.0F - t)) + (end.z * t));
+FORCEINLINE Vector3 Vector3::Lerp(const Vector3 & Start, const Vector3 & End, float t) {
+	return Vector3((Start.x * (1.0F - t)) + (End.x * t), (Start.y * (1.0F - t)) + (End.y * t), (Start.z * (1.0F - t)) + (End.z * t));
+}
+
+inline HOST_DEVICE Vector3 Vector3::Reflect(const Vector3 & Incident, const Vector3 & Normal) {
+	return Incident - ( Normal * Normal.Dot(Incident) ) * 2.F;
 }
 
 inline float & Vector3::operator[](unsigned int i) {

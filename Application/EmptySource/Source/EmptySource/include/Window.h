@@ -15,7 +15,10 @@ enum WindowMode {
 struct ApplicationWindow {
 private:
 	//* GLFW Window
-	struct GLFWwindow* Window;
+	struct GLFWwindow* Window; 
+	
+	//* External on resized function
+	void(*OnWindowResizedFunc)(int Width, int Height);
 
 	//* Name displayed in header window
 	String Name;
@@ -84,4 +87,7 @@ public:
 
 	//* Terminates this window
 	void Terminate();
+	
+	//* Set on resized event
+	void SetOnResizedEvent(void(*OnWindowResizedFunc)(int Width, int Height));
 };

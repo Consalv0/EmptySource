@@ -20,7 +20,7 @@ namespace CUDA {
 	void __CheckFunction(T Result, WChar const *const FunctionName, const char *const FileName, int const Line) {
 		if (Result) {
 			Debug::Log(
-				Debug::LogCritical, L"CUDA error at %s:%d code=%d(%s) '%s'", CharToWChar(FileName), Line,
+				Debug::LogCritical, L"CUDA error at %s:%d [%d](%s) '%s'", CharToWChar(FileName), Line,
 				static_cast<unsigned int>(Result), CharToWChar(cudaGetErrorName(Result)), FunctionName
 			);
 

@@ -11,6 +11,7 @@ ApplicationWindow::ApplicationWindow() {
 	Height = 720;
 	Mode = WindowMode::Windowed;
 	FrameCount = 0;
+	OnWindowResizedFunc = 0;
 }
 
 int ApplicationWindow::GetWidth() {
@@ -122,7 +123,14 @@ void ApplicationWindow::Terminate() {
 	}
 }
 
+void ApplicationWindow::SetOnResizedEvent(void(*OnWindowResizedFunc)(int Width, int Height)) {
+	this->OnWindowResizedFunc = OnWindowResizedFunc;
+}
+
 void ApplicationWindow::OnWindowResized(int Width, int Height) {
 	this->Width = Width;
 	this->Height = Height;
+	if (OnWindowResizedFunc != 0) {
+		OnWindowResizedFunc(Width, Height);
+	}
 }
