@@ -1,5 +1,6 @@
 
 #include "..\include\Texture3D.h"
+#include "..\include\CoreGraphics.h"
 #include "..\include\Utility\LogCore.h"
 
 Texture3D::Texture3D(
@@ -44,19 +45,19 @@ void Texture3D::SetFilterMode(const Graphics::FilterMode & Mode) {
 	Use();
 
 	switch (Mode) {
-	case Graphics::FilterMode::MinMagLinear:
+	case Graphics::FM_MinMagLinear:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		break;
-	case Graphics::FilterMode::MinMagNearest:
+	case Graphics::FM_MinMagNearest:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		break;
-	case Graphics::FilterMode::MinLinearMagNearest:
+	case Graphics::FM_MinLinearMagNearest:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		break;
-	case Graphics::FilterMode::MinNearestMagLinear:
+	case Graphics::FM_MinNearestMagLinear:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		break;
@@ -70,22 +71,22 @@ void Texture3D::SetAddressMode(const Graphics::AddressMode & Mode) {
 	Use();
 
 	switch (Mode) {
-	case Graphics::AddressMode::Repeat:
+	case Graphics::AM_Repeat:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 		break;
-	case Graphics::AddressMode::Mirror:
+	case Graphics::AM_Mirror:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
 		break;
-	case Graphics::AddressMode::Clamp:
+	case Graphics::AM_Clamp:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		break;
-	case Graphics::AddressMode::Border:
+	case Graphics::AM_Border:
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);

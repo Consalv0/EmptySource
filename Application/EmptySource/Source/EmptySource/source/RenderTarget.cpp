@@ -1,4 +1,5 @@
 #include "..\include\RenderTarget.h"
+#include "..\include\CoreGraphics.h"
 #include "..\include\Utility\LogCore.h"
 
 RenderTarget::RenderTarget() {

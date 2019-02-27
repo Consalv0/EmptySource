@@ -135,9 +135,6 @@
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\CUDAUtility.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\ShaderStage.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -170,6 +167,15 @@
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h">
       <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\LogGraphics.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\CoreGraphics.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\CoreCUDA.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +298,9 @@
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
     <CudaCompile Include="Source\EmptySource\source\RTRenderer.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Source\EmptySource\source\CudaRandArray.cu">
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
   </ItemGroup>

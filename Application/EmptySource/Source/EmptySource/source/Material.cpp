@@ -1,4 +1,5 @@
 #include "..\include\Core.h"
+#include "..\include\CoreGraphics.h"
 #include "..\include\Material.h"
 #include "..\include\Math\Math.h"
 #include "..\include\Texture2D.h"
@@ -6,9 +7,9 @@
 Material::Material() {
 	MaterialShader = NULL;
 	bUseDepthTest = true;
-	DepthFunction = Graphics::DepthFunction::LessEqual;
-	RenderMode = Graphics::RenderMode::Fill;
-	CullMode = Graphics::CullMode::Back;
+	DepthFunction = Graphics::DF_LessEqual;
+	RenderMode = Graphics::RM_Fill;
+	CullMode = Graphics::CM_Back;
 }
 
 void Material::SetShaderProgram(ShaderProgram* Value) {
@@ -88,16 +89,47 @@ void Material::Use() {
 		glDisable(GL_DEPTH_TEST);
 	}
 
-	glDepthFunc((unsigned int)DepthFunction);
+	switch (DepthFunction) {
+		case Graphics::DF_Always:
+			glDepthFunc(GL_ALWAYS); break;
+		case Graphics::DF_Equal:
+			glDepthFunc(GL_EQUAL); break;
+		case Graphics::DF_Greater:
+			glDepthFunc(GL_GREATER); break;
+		case Graphics::DF_GreaterEqual:
+			glDepthFunc(GL_GEQUAL); break;
+		case Graphics::DF_Less:
+			glDepthFunc(GL_LESS); break;
+		case Graphics::DF_LessEqual:
+			glDepthFunc(GL_LEQUAL); break;
+		case Graphics::DF_Never:
+			glDepthFunc(GL_NEVER); break;
+		case Graphics::DF_NotEqual:
+			glDepthFunc(GL_NOTEQUAL); break;
+	}
 
-	if (CullMode == Graphics::CullMode::None) { 
+	if (CullMode == Graphics::CM_None) { 
 		glDisable(GL_CULL_FACE);
 	} else {
 		glEnable(GL_CULL_FACE);
-		glCullFace((unsigned int)CullMode);
+		switch (CullMode) {
+			case Graphics::CM_Front:
+				glCullFace(GL_FRONT); break;
+			case Graphics::CM_Back:
+				glCullFace(GL_BACK); break;
+			case Graphics::CM_FrontBack:
+				glCullFace(GL_FRONT_AND_BACK); break;
+		}
 	}
 
-	glPolygonMode((unsigned int)Graphics::CullMode::FrontBack, (unsigned int)RenderMode);
+	switch (RenderMode) {
+		case Graphics::RM_Point:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); break;
+		case Graphics::RM_Wire:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
+		case Graphics::RM_Fill:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+	}
 
 	if (MaterialShader && MaterialShader->IsValid()) {
 		MaterialShader->Use();

@@ -1,6 +1,6 @@
 
-#include "..\include\Graphics.h"
 #include "..\include\Core.h"
+#include "..\include\CoreGraphics.h"
 
 #include "..\include\Math\Math.h"
 #include "..\include\Mesh.h"

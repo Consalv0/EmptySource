@@ -3,7 +3,7 @@
 
 Texture::Texture() {
 	TextureObject = 0;
-	FilterMode = Graphics::FilterMode::MinMagLinear;
-	AddressMode = Graphics::AddressMode::Border;
-	ColorFormat = Graphics::ColorFormat::RGB;
+	FilterMode = Graphics::FM_MinMagLinear;
+	AddressMode = Graphics::AM_Border;
+	ColorFormat = Graphics::CF_RGB;
 }
