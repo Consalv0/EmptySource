@@ -1,22 +1,24 @@
 ﻿#include "..\include\Core.h"
 #include "..\include\Math\Math.h"
+#include "..\include\Application.h"
+#include "..\include\CoreCUDA.h"
 
-#include "..\include\FileManager.h"
-#include "..\include\MeshLoader.h"
-
-#include "..\include\Graphics.h"
+#include "..\include\Utility\LogGraphics.h"
 #include "..\include\Utility\DeviceTemperature.h"
-#include "..\include\Utility\CUDAUtility.h"
 #include "..\include\Utility\LogMath.h"
+#include "..\include\Utility\Timer.h"
+
 #include "..\include\Time.h"
 #include "..\include\Window.h"
-#include "..\include\Application.h"
+#include "..\include\FileManager.h"
 #include "..\include\Mesh.h"
-#include "..\include\ShaderProgram.h"
-#include "..\include\Object.h"
-#include "..\include\Space.h"
+#include "..\include\MeshLoader.h"
 #include "..\include\Material.h"
-#include "..\include\Utility\Timer.h"
+#include "..\include\ShaderProgram.h"
+#include "..\include\Space.h"
+#include "..\include\Object.h"
+
+#include "..\include\Graphics.h"
 #include "..\include\RenderTarget.h"
 #include "..\include\Texture2D.h"
 #include "..\include\Texture3D.h"
@@ -25,7 +27,8 @@
 
 int FindBoundingBox(int N, MeshVertex * Vertices);
 int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
-int RayTracingTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres);
+int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, const void * dRandState); 
+const void * GetRandomArray(IntVector2 Dimension);
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
@@ -167,12 +170,12 @@ void CoreApplication::MainLoop() {
 	UnlitMaterial.SetShaderProgram(&UnlitShader);
 
 	Material RenderTexMaterial = Material();
-	RenderTexMaterial.DepthFunction = Graphics::DepthFunction::Always;
-	RenderTexMaterial.CullMode = Graphics::CullMode::None;
+	RenderTexMaterial.DepthFunction = Graphics::DF_Always;
+	RenderTexMaterial.CullMode = Graphics::CM_None;
 	RenderTexMaterial.SetShaderProgram(&RenderTextureShader);
 
 	Texture2D RenderedTexture = Texture2D(
-		IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::RGBA32F, Graphics::MinLinearMagNearest, Graphics::Repeat
+		IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
 	);
 	RenderTarget Framebuffer = RenderTarget(
 		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, &RenderedTexture, true
@@ -214,6 +217,9 @@ void CoreApplication::MainLoop() {
 
 	MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 	unsigned long InputTimeSum = 0;
+
+	bool bRandomArray = false;
+	const void* curandomStateArray = 0;
 
 	do {
 		Time::Tick();
@@ -276,10 +282,10 @@ void CoreApplication::MainLoop() {
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
 			if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
-				if (BaseMaterial.RenderMode == Graphics::RenderMode::Fill) {
-					BaseMaterial.RenderMode = Graphics::RenderMode::Wire;
+				if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
+					BaseMaterial.RenderMode = Graphics::RM_Wire;
 				} else {
-					BaseMaterial.RenderMode = Graphics::RenderMode::Fill;
+					BaseMaterial.RenderMode = Graphics::RM_Fill;
 				}
 			}
 		}
@@ -329,11 +335,15 @@ void CoreApplication::MainLoop() {
 			// std::memcpy(Positions, &OBJModels[0].Vertices[0], OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 
 			// --- Run the device part of the program
+			if (!bRandomArray) {
+				curandomStateArray = GetRandomArray(RenderedTexture.GetDimension());
+				bRandomArray = true;
+			}
 			bool bTestResult = false;
 			std::vector<Vector4> Spheres = std::vector<Vector4>();
 			Spheres.push_back(Vector4(0, 0, -1.F, 0.25F));
 			Spheres.push_back(Vector4(FrameRotation.ToEulerAngles(), 0.25F));
-			bTestResult = RayTracingTexture2D(&RenderedTexture, &Spheres);
+			bTestResult = RTRenderToTexture2D(&RenderedTexture, &Spheres, curandomStateArray);
 			// bTestResult = FindBoundingBox((int)OBJModels[0].Vertices.size(), &OBJModels[0].Vertices[0]);
 			// bTestResult = VoxelizeToTexture3D(VoxelizedSceneTexture, (int)OBJModels[0].Vertices.size(), &OBJModels[0].Vertices[0]);
 

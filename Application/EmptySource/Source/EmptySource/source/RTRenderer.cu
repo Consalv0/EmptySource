@@ -1,10 +1,10 @@
 
 #include "..\Source\EmptySource\include\Core.h"
-#include "..\Source\EmptySource\include\Graphics.h"
+#include "..\Source\EmptySource\include\CoreCUDA.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
+#include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\Texture2D.h"
-#include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
 #include "..\Source\EmptySource\include\Utility\Timer.h"
 #include "..\Source\EmptySource\include\Math\Math.h"
 #include "..\Source\EmptySource\include\Mesh.h"
@@ -30,7 +30,7 @@ __device__ RayHit HitSphere(const Vector3& Center, const float& Radius, const fl
 	if (Discriminant >= 0.F) {
 		float Stamp = (-b - Discriminant) / a;
 		Vector3 Normal = (ray.PointAt(Stamp) - Center) / Radius;
-		if (Stamp <= MaxDistance && Stamp >= MinDistance) {
+		if (Stamp < MaxDistance && Stamp > MinDistance) {
 			Hit.bHit = true;
 			Hit.Stamp = Stamp;
 			Hit.Normal = Normal;
@@ -38,7 +38,7 @@ __device__ RayHit HitSphere(const Vector3& Center, const float& Radius, const fl
 		}
 
 		Stamp = (-b + Discriminant) / a;
-		if (Stamp <= MaxDistance && Stamp >= MinDistance) {
+		if (Stamp < MaxDistance && Stamp > MinDistance) {
 			Hit.bHit = true;
 			Hit.Stamp = Stamp;
 			Hit.Normal = Normal;
@@ -49,51 +49,64 @@ __device__ RayHit HitSphere(const Vector3& Center, const float& Radius, const fl
 	return Hit;
 }
 
+__device__ Vector3 RandomSphericalDir(curandState LocalRandState) {
+	Vector3 Direction;
+	do {
+		Direction = (Vector3(curand_uniform(&LocalRandState), curand_uniform(&LocalRandState), curand_uniform(&LocalRandState)) * 2.F) - Vector3(1, 1, 1);
+	} while (Direction.MagnitudeSquared() >= 1.0);
+	return Direction;
+}
+
 template <unsigned char Bounces>
-__device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres);
+__device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState);
 
 template <>
-__device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres);
+__device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres, curandState LocalRandState);
 
 template <unsigned char Bounces>
-__device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres) {
+__device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
 	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, ray);
-	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, FLT_MAX, ray);
+	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, ray);
 	RayHit * Hit = (Hit1.bHit && Hit2.bHit) ? (Hit1.Stamp < Hit2.Stamp ? &Hit1 : &Hit2) : ( Hit1.bHit ? &Hit1 : &Hit2 );
 
-	Vector3 Color = CastRay<0>(ray, Spheres);
-	if (Hit->bHit) {
-		// --- Normal Color ((Hit.Normal + 1.F) * 0.5F)
-		Color = (Color + ( CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Vector3::Reflect(ray.Direction(), Hit->Normal)), Spheres) ) ) * 0.5F;
+	Vector3 Color = Vector3(1.F);
+	for (int i = 0; i < 10; i++) {
+		if (Hit->bHit) {
+			Vector3 Target = ray.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
+			Target.Normalize();
+			// Color = ((Target + 1.F) * 0.5F);
+			Color = CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Target - ray.PointAt(Hit->Stamp)), Spheres, LocalRandState) * Color * 0.1F;
+		}
+		else break;
 	}
-
+	
 	return Color;
+
+	return CastRay<0>(ray, Spheres, LocalRandState);;
 }
 
 template <>
-__device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres) {
+__device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
 	Vector3 NormalizedDirection = ray.Direction().Normalized();
 	float NHit = 0.5F * (NormalizedDirection.y + 1.F);
 	Vector3 Color = Vector3(1.F) * (1.F - NHit) + Vector3(0.5F, 0.7F, 1.F) * NHit * 0.5F;
 	return Color;
 }
 
-__global__ void InitRandomKernel(int2 TextureDimension, curandState * RandState) {
-	int x = threadIdx.x + blockIdx.x * blockDim.x;
-	int y = threadIdx.y + blockIdx.y * blockDim.y;
-
-	if (x >= TextureDimension.x || y >= TextureDimension.y) return;
-
-	int Index = y * TextureDimension.x + x;
-	// --- Each thread gets same seed, a different sequence number, no offset
-	curand_init(1984, Index, 0, &RandState[Index]);
-}
-
-__global__ void WirteTextureKernel(int2 TextSize, Vector3 LowLeft, Vector3 Horizontal, Vector3 Vertical, Vector3 Origin, Vector4 * Spheres) {
+__global__ void WirteTextureKernel(
+	int2 TextSize, 
+	Vector3 LowLeft, 
+	Vector3 Horizontal, Vector3 Vertical, 
+	Vector3 Origin, 
+	curandState * RandState, 
+	Vector4 * Spheres) 
+{
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	int y = threadIdx.y + blockIdx.y * blockDim.y;
 
 	if (x >= TextSize.x || y >= TextSize.y) return;
+	int PixelIndex = y * TextSize.x + x;
+	curandState LocalRandState = RandState[PixelIndex];
 
 	// int Index = y * TextureDimension.x + x;
 	// float4 element = make_float4(0, 0, 0, 0);
@@ -104,13 +117,14 @@ __global__ void WirteTextureKernel(int2 TextSize, Vector3 LowLeft, Vector3 Horiz
 		Coord.u = float(x + 0.25F) / float(TextSize.x);
 		Coord.v = float(y + 0.1F) / float(TextSize.y);
 		ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
-		Color += CastRay<2>(ray, Spheres);
-		// Coord.u = float(x - 0.5) / float(TextSize.x);
-		// Coord.v = float(y - 0.2) / float(TextSize.y);
-		// ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
-		// Color += CastRay<2>(ray, Spheres);
+		Color += CastRay<4>(ray, Spheres, LocalRandState);
+		Coord.u = float(x - 0.5) / float(TextSize.x);
+		Coord.v = float(y - 0.2) / float(TextSize.y);
+		ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
+		Color += CastRay<4>(ray, Spheres, LocalRandState);
 	// }
-	surf2Dwrite(Color / 1.0F, SurfaceWrite, x * sizeof(float4), y);
+	Color = Vector4(sqrtf(Color.x / 2.0F), sqrtf(Color.y / 2.0F), sqrtf(Color.z / 2.0F), 1);
+	surf2Dwrite(Color, SurfaceWrite, x * sizeof(float4), y);
 }
 
 extern "C"
@@ -121,26 +135,19 @@ void LaunchWriteTextureKernel(cudaArray *cudaTextureArray, int2 TextureDim, cura
 	// --- Bind texture array to a writable CUDA surface
 	CUDA::Check( cudaBindSurfaceToArray(SurfaceWrite, cudaTextureArray) );
 
-	// InitRandomKernel <<< dimGrid, dimBlock >>> (TextureDim, RandState);
-	// CUDA::GetLastCudaError("InitRandomKernel Failed");
-	// // --- Wait for GPU to finish
-	// CUDA::Check( cudaDeviceSynchronize() );
-
 	float WidthRatio = TextureDim.x / 100.F;
 	float HeightRatio = TextureDim.y / 100.F;
 	WirteTextureKernel <<< dimGrid, dimBlock >>> (
-		TextureDim, {-WidthRatio, -HeightRatio, -HeightRatio }, { 2 * WidthRatio, 0, 0}, {0, 2 * HeightRatio, 0}, 0, Spheres
+		TextureDim, {-WidthRatio, -HeightRatio, -HeightRatio }, { 2 * WidthRatio, 0, 0}, {0, 2 * HeightRatio, 0}, 0, RandState, Spheres
 	);
 	CUDA::GetLastCudaError("WriteTextureKernel Failed");
 	// --- Wait for GPU to finish
 	CUDA::Check( cudaDeviceSynchronize() );
 }
 
-
-int RayTracingTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres) {
+int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, const void * dRandState) {
 	cudaGraphicsResource *cudaTextureResource;
 	cudaArray            *cudaTextureArray;
-	curandState          *dRandState;
 	Vector4              *dSpheres;
 
 	IntVector2 TextureDim = texture->GetDimension();
@@ -150,9 +157,6 @@ int RayTracingTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres) {
 	// --- Allocate Spheres
 	CUDA::Check( cudaMalloc((void **)&dSpheres, Spheres->size() * sizeof(Vector4)) );
 	CUDA::Check( cudaMemcpy(dSpheres, &(*Spheres)[0], Spheres->size() * sizeof(Vector4), cudaMemcpyHostToDevice) );
-
-	// --- Allocate pseudo random values
-	CUDA::Check( cudaMalloc((void **)&dRandState, TextureDim.x * TextureDim.y * sizeof(curandState)) );
 
 	// --- Register Image (texture) to CUDA Resource
 	CUDA::Check( cudaGraphicsGLRegisterImage(&cudaTextureResource,
@@ -167,14 +171,12 @@ int RayTracingTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres) {
 		// --- Get mapped array
 		CUDA::Check( cudaGraphicsSubResourceGetMappedArray(&cudaTextureArray, cudaTextureResource, 0, 0) );
 		IntVector2 TextureDim = texture->GetDimension();
-		LaunchWriteTextureKernel(cudaTextureArray, { TextureDim.x, TextureDim.y }, dRandState, dSpheres);
+		LaunchWriteTextureKernel(cudaTextureArray, { TextureDim.x, TextureDim.y }, (curandState*)dRandState, dSpheres);
 	}
 	CUDA::Check( cudaGraphicsUnmapResources(1, &cudaTextureResource, 0) );
 
 	// --- Wait for GPU to finish
 	CUDA::Check( cudaDeviceSynchronize() );
-
-	CUDA::Check( cudaFree(dRandState) );
 
 	Timer.Stop();
 	Debug::Log(
