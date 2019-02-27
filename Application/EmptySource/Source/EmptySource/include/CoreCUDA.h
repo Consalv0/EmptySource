@@ -1,6 +1,7 @@
 ﻿
-#include "..\Core.h"
-#include "..\Utility\LogCore.h"
+#include "..\include\Core.h"
+#include "..\include\CoreGraphics.h"
+#include "..\include\Utility\LogCore.h"
 
 // CUDA HEADERS
 #include <cuda.h>

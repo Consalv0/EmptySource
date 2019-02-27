@@ -2,10 +2,10 @@
 
 
 #include "..\Source\EmptySource\include\Core.h"
-#include "..\Source\EmptySource\include\Graphics.h"
+#include "..\Source\EmptySource\include\CoreCUDA.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
-#include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
+#include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\Utility\Timer.h"
 #include "..\Source\EmptySource\include\Math\Math.h"
 #include "..\Source\EmptySource\include\Mesh.h"

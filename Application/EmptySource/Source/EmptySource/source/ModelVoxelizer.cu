@@ -3,7 +3,7 @@
 #include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
 
-#include "..\Source\EmptySource\include\Utility\CUDAUtility.h"
+#include "..\Source\EmptySource\include\CoreCuda.h"
 #include "..\Source\EmptySource\include\Utility\Timer.h"
 #include "..\Source\EmptySource\include\Math\Math.h"
 #include "..\Source\EmptySource\include\Texture3D.h"

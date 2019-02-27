@@ -96,7 +96,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CodeGeneration>compute_30,sm_30;compute_35,sm_35;compute_37,sm_37;compute_50,sm_50;compute_52,sm_52;compute_60,sm_60;compute_61,sm_61;compute_70,sm_70;compute_75,sm_75;</CodeGeneration>
+      <CodeGeneration>compute_30,sm_30;compute_35,sm_35;compute_50,sm_50;</CodeGeneration>
       <Runtime>MDd</Runtime>
       <Include>$(CUDA_INC_PATH)</Include>
       <Defines>WIN32</Defines>
@@ -145,6 +145,8 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\EmptySource\include\CoreCUDA.h" />
+    <ClInclude Include="Source\EmptySource\include\CoreGraphics.h" />
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />
@@ -176,9 +178,9 @@
     <ClInclude Include="Source\EmptySource\include\Texture2D.h" />
     <ClInclude Include="Source\EmptySource\include\Texture3D.h" />
     <ClInclude Include="Source\EmptySource\include\Time.h" />
-    <ClInclude Include="Source\EmptySource\include\Utility\CUDAUtility.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Utility\LogGraphics.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
@@ -229,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Source\EmptySource\source\BoundingBox.cu" />
+    <CudaCompile Include="Source\EmptySource\source\CudaRandArray.cu" />
     <CudaCompile Include="Source\EmptySource\source\RTRenderer.cu" />
     <CudaCompile Include="Source\EmptySource\source\ModelVoxelizer.cu" />
   </ItemGroup>

@@ -1,5 +1,5 @@
-﻿#include "..\include\Graphics.h"
-#include "..\include\Core.h"
+﻿#include "..\include\Core.h"
+#include "..\include\CoreGraphics.h"
 #include "..\include\FileManager.h"
 #include "..\include\ShaderProgram.h"
 
