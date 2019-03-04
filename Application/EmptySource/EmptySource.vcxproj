@@ -85,14 +85,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(ProjectDir)Libraries/GLFW;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -124,15 +124,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)Libraries/GLFW;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <Include>$(CUDA_INC_PATH)</Include>
@@ -150,6 +150,7 @@
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />
+    <ClInclude Include="Source\EmptySource\include\Glyph.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector2.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Ray.h" />
     <ClInclude Include="Source\EmptySource\include\FileManager.h" />
@@ -184,12 +185,104 @@
     <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h" />
     <ClInclude Include="Source\EmptySource\include\Window.h" />
+    <ClInclude Include="Source\External\freetype\config\ftconfig.h" />
+    <ClInclude Include="Source\External\freetype\config\ftheader.h" />
+    <ClInclude Include="Source\External\freetype\config\ftmodule.h" />
+    <ClInclude Include="Source\External\freetype\config\ftoption.h" />
+    <ClInclude Include="Source\External\freetype\config\ftstdlib.h" />
+    <ClInclude Include="Source\External\freetype\freetype.h" />
+    <ClInclude Include="Source\External\freetype\ftadvanc.h" />
+    <ClInclude Include="Source\External\freetype\ftbbox.h" />
+    <ClInclude Include="Source\External\freetype\ftbdf.h" />
+    <ClInclude Include="Source\External\freetype\ftbitmap.h" />
+    <ClInclude Include="Source\External\freetype\ftbzip2.h" />
+    <ClInclude Include="Source\External\freetype\ftcache.h" />
+    <ClInclude Include="Source\External\freetype\ftchapters.h" />
+    <ClInclude Include="Source\External\freetype\ftcid.h" />
+    <ClInclude Include="Source\External\freetype\ftdriver.h" />
+    <ClInclude Include="Source\External\freetype\fterrdef.h" />
+    <ClInclude Include="Source\External\freetype\fterrors.h" />
+    <ClInclude Include="Source\External\freetype\ftfntfmt.h" />
+    <ClInclude Include="Source\External\freetype\ftgasp.h" />
+    <ClInclude Include="Source\External\freetype\ftglyph.h" />
+    <ClInclude Include="Source\External\freetype\ftgxval.h" />
+    <ClInclude Include="Source\External\freetype\ftgzip.h" />
+    <ClInclude Include="Source\External\freetype\ftimage.h" />
+    <ClInclude Include="Source\External\freetype\ftincrem.h" />
+    <ClInclude Include="Source\External\freetype\ftlcdfil.h" />
+    <ClInclude Include="Source\External\freetype\ftlist.h" />
+    <ClInclude Include="Source\External\freetype\ftlzw.h" />
+    <ClInclude Include="Source\External\freetype\ftmac.h" />
+    <ClInclude Include="Source\External\freetype\ftmm.h" />
+    <ClInclude Include="Source\External\freetype\ftmodapi.h" />
+    <ClInclude Include="Source\External\freetype\ftmoderr.h" />
+    <ClInclude Include="Source\External\freetype\ftotval.h" />
+    <ClInclude Include="Source\External\freetype\ftoutln.h" />
+    <ClInclude Include="Source\External\freetype\ftparams.h" />
+    <ClInclude Include="Source\External\freetype\ftpfr.h" />
+    <ClInclude Include="Source\External\freetype\ftrender.h" />
+    <ClInclude Include="Source\External\freetype\ftsizes.h" />
+    <ClInclude Include="Source\External\freetype\ftsnames.h" />
+    <ClInclude Include="Source\External\freetype\ftstroke.h" />
+    <ClInclude Include="Source\External\freetype\ftsynth.h" />
+    <ClInclude Include="Source\External\freetype\ftsystem.h" />
+    <ClInclude Include="Source\External\freetype\fttrigon.h" />
+    <ClInclude Include="Source\External\freetype\fttypes.h" />
+    <ClInclude Include="Source\External\freetype\ftwinfnt.h" />
+    <ClInclude Include="Source\External\freetype\internal\autohint.h" />
+    <ClInclude Include="Source\External\freetype\internal\cffotypes.h" />
+    <ClInclude Include="Source\External\freetype\internal\cfftypes.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftcalc.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftdebug.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftdrv.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftgloadr.h" />
+    <ClInclude Include="Source\External\freetype\internal\fthash.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftmemory.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftobjs.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftpic.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftpsprop.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftrfork.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftserv.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftstream.h" />
+    <ClInclude Include="Source\External\freetype\internal\fttrace.h" />
+    <ClInclude Include="Source\External\freetype\internal\ftvalid.h" />
+    <ClInclude Include="Source\External\freetype\internal\internal.h" />
+    <ClInclude Include="Source\External\freetype\internal\psaux.h" />
+    <ClInclude Include="Source\External\freetype\internal\pshints.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svbdf.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svcfftl.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svcid.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svfntfmt.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svgldict.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svgxval.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svkern.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svmetric.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svmm.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svotval.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svpfr.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svpostnm.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svprop.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svpscmap.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svpsinfo.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svsfnt.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svttcmap.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svtteng.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svttglyf.h" />
+    <ClInclude Include="Source\External\freetype\internal\services\svwinfnt.h" />
+    <ClInclude Include="Source\External\freetype\internal\sfnt.h" />
+    <ClInclude Include="Source\External\freetype\internal\t1types.h" />
+    <ClInclude Include="Source\External\freetype\internal\tttypes.h" />
+    <ClInclude Include="Source\External\freetype\t1tables.h" />
+    <ClInclude Include="Source\External\freetype\ttnameid.h" />
+    <ClInclude Include="Source\External\freetype\tttables.h" />
+    <ClInclude Include="Source\External\freetype\tttags.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\EmptySource\Glyph.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileStream.cpp" />
     <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
