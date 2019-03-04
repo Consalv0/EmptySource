@@ -14,6 +14,12 @@ public:
 		const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
 	);
 
+	Texture2D(
+		const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
+		const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode,
+		const Graphics::ColorFormat InputFormat, const unsigned int InputMode, const void* BufferData
+	);
+
 	//* Get Dimension of the texture
 	IntVector2 GetDimension() const;
 

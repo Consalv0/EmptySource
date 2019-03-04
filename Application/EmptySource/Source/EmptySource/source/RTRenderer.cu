@@ -64,23 +64,41 @@ template <>
 __device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres, curandState LocalRandState);
 
 template <unsigned char Bounces>
+__device__ Vector4 CastScreenRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
+	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, ray);
+	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, ray);
+	RayHit * Hit = (Hit1.bHit && Hit2.bHit) ? (Hit1.Stamp < Hit2.Stamp ? &Hit1 : &Hit2) : (Hit1.bHit ? &Hit1 : &Hit2);
+
+	Vector3 Color = Vector3(1.F);
+	if (Hit->bHit) {
+		float Diffuse = 1;
+		for (int i = 0; i < 10; i++) {
+			Vector3 Target = ray.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
+			Target.Normalize();
+			Diffuse *= 0.5F;
+			// Color = ((Target + 1.F) * 0.5F);
+			Color *= CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Target - ray.PointAt(Hit->Stamp)), Spheres, LocalRandState) * 0.5F;
+		}
+		return Color * Diffuse;
+	}
+
+	return CastRay<0>(ray, Spheres, LocalRandState);;
+}
+
+template <unsigned char Bounces>
 __device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
 	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, ray);
 	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, ray);
 	RayHit * Hit = (Hit1.bHit && Hit2.bHit) ? (Hit1.Stamp < Hit2.Stamp ? &Hit1 : &Hit2) : ( Hit1.bHit ? &Hit1 : &Hit2 );
 
 	Vector3 Color = Vector3(1.F);
-	for (int i = 0; i < 10; i++) {
-		if (Hit->bHit) {
-			Vector3 Target = ray.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
-			Target.Normalize();
-			// Color = ((Target + 1.F) * 0.5F);
-			Color = CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Target - ray.PointAt(Hit->Stamp)), Spheres, LocalRandState) * Color * 0.1F;
-		}
-		else break;
+	if (Hit->bHit) {
+		Vector3 Target = ray.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
+		Target.Normalize();
+		// Color = ((Target + 1.F) * 0.5F);
+		Color *= CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Target - ray.PointAt(Hit->Stamp)), Spheres, LocalRandState) * 0.5F;
+		return Color;
 	}
-	
-	return Color;
 
 	return CastRay<0>(ray, Spheres, LocalRandState);;
 }
@@ -117,11 +135,11 @@ __global__ void WirteTextureKernel(
 		Coord.u = float(x + 0.25F) / float(TextSize.x);
 		Coord.v = float(y + 0.1F) / float(TextSize.y);
 		ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
-		Color += CastRay<4>(ray, Spheres, LocalRandState);
+		Color += CastScreenRay<4>(ray, Spheres, LocalRandState);
 		Coord.u = float(x - 0.5) / float(TextSize.x);
 		Coord.v = float(y - 0.2) / float(TextSize.y);
 		ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
-		Color += CastRay<4>(ray, Spheres, LocalRandState);
+		Color += CastScreenRay<4>(ray, Spheres, LocalRandState);
 	// }
 	Color = Vector4(sqrtf(Color.x / 2.0F), sqrtf(Color.y / 2.0F), sqrtf(Color.z / 2.0F), 1);
 	surf2Dwrite(Color, SurfaceWrite, x * sizeof(float4), y);

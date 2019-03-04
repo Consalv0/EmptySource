@@ -42,6 +42,29 @@ Texture2D::Texture2D(
 	}
 }
 
+Texture2D::Texture2D(
+	const IntVector2 & Size,
+	const Graphics::ColorFormat Format,
+	const Graphics::FilterMode & Filter,
+	const Graphics::AddressMode & Address,
+	const Graphics::ColorFormat InputFormat,
+	const unsigned int InputMode,
+	const void * BufferData) 
+{
+	Dimension = Size;
+	ColorFormat = Format;
+
+	glGenTextures(1, &TextureObject);
+	SetFilterMode(Filter);
+	SetAddressMode(Address);
+
+	{
+		Use();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GL_GetColorFormat(InputFormat), InputMode, BufferData);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
 IntVector2 Texture2D::GetDimension() const {
 	return Dimension;
 }
