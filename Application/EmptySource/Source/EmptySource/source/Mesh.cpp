@@ -165,4 +165,6 @@ void Mesh::SetUpBuffers() {
 
 void Mesh::ClearBuffers() {
 	glDeleteVertexArrays(1, &VertexArrayObject);
+	glDeleteBuffers(1, &VertexBuffer);
+	glDeleteBuffers(1, &ElementBuffer);
 }
