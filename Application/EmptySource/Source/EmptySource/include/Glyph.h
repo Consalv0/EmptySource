@@ -8,6 +8,7 @@ public:
 	int Size;
 	IntVector2 Dimension;
 	IntVector3 Offset;
+	Vector2 UV;
 	unsigned char * Data;
 
 	TextGlyph();
