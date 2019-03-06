@@ -82,9 +82,9 @@ inline Quaternion Quaternion::Normalized() const {
 
 inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	Matrix4x4 Result;
-	float Sqrx(x * x);
-	float Sqry(y * y);
-	float Sqrz(z * z);
+	float xx(x * x);
+	float yy(y * y);
+	float zz(z * z);
 	float xz(x * z);
 	float xy(x * y);
 	float yz(y * z);
@@ -92,17 +92,17 @@ inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	float wy(w * y);
 	float wz(w * z);
 
-	Result[0][0] = 1.F - 2.F * (Sqry + Sqrz);
+	Result[0][0] = 1.F - 2.F * (yy + zz);
 	Result[0][1] = 2.F * (xy + wz);
 	Result[0][2] = 2.F * (xz - wy);
 
 	Result[1][0] = 2.F * (xy - wz);
-	Result[1][1] = 1.F - 2.f * (Sqrx + Sqrz);
+	Result[1][1] = 1.F - 2.f * (xx + zz);
 	Result[1][2] = 2.F * (yz + wx);
 
 	Result[2][0] = 2.F * (xz + wy);
 	Result[2][1] = 2.F * (yz - wx);
-	Result[2][2] = 1.F - 2.F * (Sqrx + Sqry);
+	Result[2][2] = 1.F - 2.F * (xx + yy);
 	return Result;
 }
 

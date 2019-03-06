@@ -18,6 +18,7 @@ public:
 	
 	//* Creates a perspective matrix, FOV is the aperture angle in radians
 	HOST_DEVICE inline static Matrix4x4 Perspective(const float& Aperture, const float& Aspect, const float& Near, const float& Far);
+	HOST_DEVICE inline static Matrix4x4 Orthographic(const float& Left, const float& Right, const float& Bottom, const float& Top);
 	HOST_DEVICE inline static Matrix4x4 LookAt(const Vector3& Position, const Vector3& Direction, const Vector3& Up);
 	HOST_DEVICE inline static Matrix4x4 Translate(const Vector3& Vector);
 	HOST_DEVICE inline static Matrix4x4 Scale(const Vector3& Vector);

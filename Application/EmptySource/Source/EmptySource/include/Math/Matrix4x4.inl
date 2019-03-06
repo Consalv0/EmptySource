@@ -43,6 +43,15 @@ inline Matrix4x4 Matrix4x4::Perspective(const float & FOV, const float & Aspect,
 	return Result;
 }
 
+inline HOST_DEVICE Matrix4x4 Matrix4x4::Orthographic(const float & Left, const float & Right, const float & Bottom, const float & Top) {
+	Matrix4x4 Result = Matrix4x4();
+	Result.m0[0] = 2.F / (Right - Left);
+	Result.m1[1] = 2.F / (Top - Bottom);
+	Result.m3[0] = -(Right + Left) / (Right - Left);
+	Result.m3[1] = -(Top + Bottom) / (Top - Bottom);
+	return Result;
+}
+
 inline Matrix4x4 Matrix4x4::LookAt(const Vector3 & Eye, const Vector3 & Target, const Vector3 & Up) {
 	Matrix4x4 Result = Matrix4x4();
 
@@ -73,9 +82,9 @@ inline Matrix4x4 Matrix4x4::Translate(const Vector3 & Vector) {
 
 inline Matrix4x4 Matrix4x4::Scale(const Vector3 & Vector) {
 	Matrix4x4 Result = Matrix4x4();
-	Result[0][0] = Vector[0];
-	Result[1][1] = Vector[1];
-	Result[2][2] = Vector[2];
+	Result.m0 = Result.m0 * Vector[0];
+	Result.m1 = Result.m1 * Vector[1];
+	Result.m2 = Result.m2 * Vector[2];
 	return Result;
 }
 
@@ -190,28 +199,28 @@ inline Vector4 const & Matrix4x4::operator[](unsigned int i) const {
 FORCEINLINE Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & Other) const {
 	Matrix4x4 Result = Matrix4x4();
 
-	Vector4 OtherCol0 = Other.Column(0), OtherCol1 = Other.Column(1), OtherCol2 = Other.Column(2), OtherCol3 = Other.Column(3);
+	Vector4 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2), Col3 = Column(3);
 
-	Result.m0[0] = m0.Dot(OtherCol0);
-	Result.m1[0] = m1.Dot(OtherCol0);
-	Result.m2[0] = m2.Dot(OtherCol0);
-	Result.m3[0] = m3.Dot(OtherCol0);
-	
-	Result.m0[1] = m0.Dot(OtherCol1);
-	Result.m1[1] = m1.Dot(OtherCol1);
-	Result.m2[1] = m2.Dot(OtherCol1);
-	Result.m3[1] = m3.Dot(OtherCol1);
+	Result.m0[0] = Other.m0.Dot(Col0);
+	Result.m1[0] = Other.m1.Dot(Col0);
+	Result.m2[0] = Other.m2.Dot(Col0);
+	Result.m3[0] = Other.m3.Dot(Col0);
 
-	Result.m0[2] = m0.Dot(OtherCol2);
-	Result.m1[2] = m1.Dot(OtherCol2);
-	Result.m2[2] = m2.Dot(OtherCol2);
-	Result.m3[2] = m3.Dot(OtherCol2);
+	Result.m0[1] = Other.m0.Dot(Col1);
+	Result.m1[1] = Other.m1.Dot(Col1);
+	Result.m2[1] = Other.m2.Dot(Col1);
+	Result.m3[1] = Other.m3.Dot(Col1);
+				   
+	Result.m0[2] = Other.m0.Dot(Col2);
+	Result.m1[2] = Other.m1.Dot(Col2);
+	Result.m2[2] = Other.m2.Dot(Col2);
+	Result.m3[2] = Other.m3.Dot(Col2);
+				   
+	Result.m0[3] = Other.m0.Dot(Col3);
+	Result.m1[3] = Other.m1.Dot(Col3);
+	Result.m2[3] = Other.m2.Dot(Col3);
+	Result.m3[3] = Other.m3.Dot(Col3);
 
-	Result.m0[3] = m0.Dot(OtherCol3);
-	Result.m1[3] = m1.Dot(OtherCol3);
-	Result.m2[3] = m2.Dot(OtherCol3);
-	Result.m3[3] = m3.Dot(OtherCol3);
-	
 	return Result;
 }
 
