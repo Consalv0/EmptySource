@@ -8,6 +8,8 @@ layout(location = 4) in vec2 _iVertexUV1;
 layout(location = 5) in vec4 _iVertexColor;
 layout(location = 6) in mat4 _iModelMatrix;
 
+uniform mat4 _ProjectionMatrix;
+
 out struct VertexData {
   vec4 Position;
   vec3 NormalDirection;
@@ -25,5 +27,5 @@ void main() {
   	
   // Now set the position in model space
   vVertex.Position = _iModelMatrix * vVertex.Position;
-  gl_Position = _iModelMatrix * vVertex.Position;
+  gl_Position = _ProjectionMatrix * _iModelMatrix * vVertex.Position;
 }

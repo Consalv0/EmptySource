@@ -41,12 +41,6 @@ private:
 	unsigned int VertexBuffer;
 	unsigned int ElementBuffer;
 
-	//* Give Vertices to OpenGL **This must be done once**
-	void SetUpBuffers();
-
-	//* Give Vertices to OpenGL **This must be done once**
-	void ClearBuffers();
-
 public:
 	MeshFaces Faces;
 	MeshVertices Vertices;
@@ -69,4 +63,10 @@ public:
 
 	//* Draw mesh using Element Buffer
 	void DrawElement() const;
+
+	//* Clear the objects in OpenGL
+	void ClearBuffers();
+
+	//* Give Vertices to OpenGL **This must be done once**
+	void SetUpBuffers();
 };

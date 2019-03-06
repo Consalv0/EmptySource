@@ -140,7 +140,7 @@ void CoreApplication::MainLoop() {
 	FT_Face Face;
 	if (FT_New_Face(FreeTypeLibrary, "Data\\Fonts\\SourceSansPro.ttf", 0, &Face))
 		Debug::Log(Debug::LogError, L"FREETYPE: Failed to load font");
-	int GlyphHeightSize = 32;
+	int GlyphHeightSize = 16;
 	int TextureAtlasSize = 32 * GlyphHeightSize;
 	FT_Set_Pixel_Sizes(Face, 0, GlyphHeightSize);
 
@@ -148,7 +148,6 @@ void CoreApplication::MainLoop() {
 	TDictionary<unsigned long, TextGlyph *> Characters;
 	for (unsigned long i = L'!'; i <= L'~'; i++) {
 		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		Debug::Log(Debug::LogDebug, L"Index of char '%c':%d", i, GlyphIndex);
 		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
 			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
 		}
@@ -169,7 +168,6 @@ void CoreApplication::MainLoop() {
 	// --- Controls and Latin-1 Unicode Range
 	for (unsigned long i = L'¡'; i <= L'ſ'; i++) {
 		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		Debug::Log(Debug::LogDebug, L"Index of char '%c':%d", i, GlyphIndex);
 		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
 			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
 		}
@@ -190,7 +188,6 @@ void CoreApplication::MainLoop() {
 	// --- Greek Unicode Range
 	for (unsigned long i = L'Ͱ'; i <= L'Ͽ'; i++) {
 		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		Debug::Log(Debug::LogDebug, L"Index of char '%c':%d", i, GlyphIndex);
 		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
 			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
 		}
@@ -211,7 +208,6 @@ void CoreApplication::MainLoop() {
 	// --- Technical Unicode Range
 	for (unsigned long i = L'⌀'; i <= L'⍺'; i++) {
 		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		Debug::Log(Debug::LogDebug, L"Index of char '%c':%d", i, GlyphIndex);
 		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
 			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
 		}
@@ -239,16 +235,17 @@ void CoreApplication::MainLoop() {
 		}
 	}
 
-	IntVector2 Offset;
+	IntVector2 AtlasPosition;
 	for (TDictionary<unsigned long, TextGlyph*>::iterator Begin = Characters.begin(); Begin != Characters.end(); Begin++) {
 		unsigned long i = Begin->first;
 		TextGlyph * Char = Begin->second;
-		int o = Offset.x + Offset.y * TextureAtlasSize;
-		Offset.y += Char->Size;
+		int o = AtlasPosition.x + AtlasPosition.y * TextureAtlasSize;
+		Char->UV = (Vector2((float)Char->Offset.x, 0.F) + AtlasPosition.FloatVector2()) / (float)TextureAtlasSize;
+		AtlasPosition.y += Char->Size;
 		o += Char->Offset.x;
-		if (Offset.y * TextureAtlasSize > (TextureAtlasSize * TextureAtlasSize - Char->Size * TextureAtlasSize) ) {
-			Offset.x += Char->Size;
-			Offset.y = 0;
+		if (AtlasPosition.y * TextureAtlasSize > (TextureAtlasSize * TextureAtlasSize - Char->Size * TextureAtlasSize) ) {
+			AtlasPosition.x += Char->Size;
+			AtlasPosition.y = 0;
 		}
 		for (int i = Char->Dimension.y - 1; i >= 0; i--) {
 			for (int j = 0; j < Char->Dimension.x; j++) {
@@ -267,7 +264,7 @@ void CoreApplication::MainLoop() {
 	Texture2D FontMap = Texture2D(
 		IntVector2(TextureAtlasSize, TextureAtlasSize),
 		Graphics::CF_Red,
-		Graphics::FM_MinMagNearest,
+		Graphics::FM_MinMagLinear,
 		Graphics::AM_Border,
 		Graphics::CF_Red,
 		GL_UNSIGNED_BYTE,
@@ -343,6 +340,8 @@ void CoreApplication::MainLoop() {
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
 
+	TArray<Matrix4x4> TextMatrices;
+
 	///////// Create Matrices Buffer //////////////
 	GLuint ModelMatrixBuffer;
 	glGenBuffers(1, &ModelMatrixBuffer);
@@ -372,6 +371,9 @@ void CoreApplication::MainLoop() {
 
 	MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 	unsigned long InputTimeSum = 0;
+
+	WString RenderText = L"¡Ya puedo Debuggear en Pantalla :')!";
+	Mesh DynamicMesh;
 
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
@@ -410,7 +412,7 @@ void CoreApplication::MainLoop() {
 			EyePosition += Left * Time::GetDeltaTime();
 		}
 		ViewMatrix =
-			Matrix4x4::Translate(EyePosition) * FrameRotation.ToMatrix4x4();
+			FrameRotation.ToMatrix4x4() * Matrix4x4::Translate(EyePosition);
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime();
@@ -523,32 +525,112 @@ void CoreApplication::MainLoop() {
 			LightModels[0].BindVertexArray();
 
 			vector<Matrix4x4> LightPositions;
-			LightPositions.push_back(Matrix4x4::Scale(0.1F) * Matrix4x4::Translate(LightPosition));
-			LightPositions.push_back(Matrix4x4::Scale(0.1F) * Matrix4x4::Translate(-LightPosition));
+			LightPositions.push_back(Matrix4x4::Translate(LightPosition) * Matrix4x4::Scale(0.1F));
+			LightPositions.push_back(Matrix4x4::Translate(-LightPosition) * Matrix4x4::Scale(0.1F));
 
 			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
 
 			LightModels[0].DrawInstanciated(2);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
+			// glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
-			RenderTexMaterial.Use();
+			// RenderTexMaterial.Use();
 			
 			float AppTime = (float)Time::GetApplicationTime() / 1000;
+			// RenderTexMaterial.SetFloat1Array("_Time", &AppTime);
+			// RenderTexMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			// RenderTexMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			// RenderTexMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			// 
+			// QuadModels[0].BindVertexArray();
+			// 
+			// Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
+			// RenderTexMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+			// 	ModelMatrixBuffer
+			// );
+			// 
+			// QuadModels[0].DrawInstanciated(1);
+			
+			// Activate corresponding render state	
+			RenderTexMaterial.Use();
 			RenderTexMaterial.SetFloat1Array("_Time", &AppTime);
 			RenderTexMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			RenderTexMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
-			
-			QuadModels[0].BindVertexArray();
-			
-			Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
-			RenderTexMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-				ModelMatrixBuffer
+			RenderTexMaterial.SetMatrix4x4Array("_ProjectionMatrix", 
+				Matrix4x4::Orthographic(0.F, (float)MainWindow->GetWidth(), 0.F, (float)MainWindow->GetHeight()).PointerToValue()
 			);
+			RenderTexMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+
+			QuadModels[0].BindVertexArray();
+
+			// Iterate through all characters
+			int VertexCount = 0;
+			WString::const_iterator c;
+			Vector3 TextPosition = Vector3(0.F, (float)GlyphHeightSize);
+			TextMatrices.push_back(Matrix4x4());
+			DynamicMesh.ClearBuffers();
+			DynamicMesh.Faces.clear();
+			DynamicMesh.Vertices.clear();
+
+			for (c = RenderText.begin(); c != RenderText.end(); c++)
+			{
+				if (Characters.find(*c) == Characters.end()) {
+					TextPosition.x += GlyphHeightSize / 2;
+					continue;
+				}
+				TextGlyph * ch = Characters[*c];
+
+				float xpos = TextPosition.x + ch->Offset.x;
+				float ypos = TextPosition.y - (ch->Dimension.y - ch->Offset.y);
+
+				float w = (float)ch->Dimension.x;
+				float h = (float)ch->Dimension.y;
+
+				// TextMatrices.push_back(
+				// 	Matrix4x4::Translate(Vector3(CurrentAdvance + w * 0.5F, 0.F + h * 0.5F, 0.F)) *
+				// 	Matrix4x4::Scale({ 1.F * w, 1.F * h, 1.F })
+				// );
+
+				DynamicMesh.Faces.push_back(IntVector3(VertexCount    , VertexCount + 1, VertexCount + 2));
+				DynamicMesh.Faces.push_back(IntVector3(VertexCount + 3, VertexCount + 4, VertexCount + 5));
+				VertexCount += 6;
+				
+				MeshVertex * MV = new MeshVertex[6];
+				MV[0].Position = Vector3(xpos + w, ypos);
+				MV[1].Position = Vector3(xpos, ypos + h);
+				MV[2].Position = Vector3(xpos + w, ypos + h);
+				MV[3].Position = Vector3(xpos + w, ypos);
+				MV[4].Position = Vector3(xpos, ypos);
+				MV[5].Position = Vector3(xpos, ypos + h);
+				MV[0].UV0 = ch->UV + Vector2(w / TextureAtlasSize, 0.F);
+				MV[1].UV0 = ch->UV + Vector2(0.F, h / TextureAtlasSize);
+				MV[2].UV0 = ch->UV + Vector2(w / TextureAtlasSize, h / TextureAtlasSize);
+				MV[3].UV0 = ch->UV + Vector2(w / TextureAtlasSize, 0.F);
+				MV[4].UV0 = ch->UV + Vector2(0.F, 0.F);
+				MV[5].UV0 = ch->UV + Vector2(0.F, h / TextureAtlasSize);
+				DynamicMesh.Vertices.push_back(MV[0]);
+				DynamicMesh.Vertices.push_back(MV[1]);
+				DynamicMesh.Vertices.push_back(MV[2]);
+				DynamicMesh.Vertices.push_back(MV[3]);
+				DynamicMesh.Vertices.push_back(MV[4]);
+				DynamicMesh.Vertices.push_back(MV[5]);
+
+				// Now advance cursors for next glyph (note that advance is number of 1/32 pixels)
+				TextPosition.x += (ch->Offset.z >> 6); // Bitshift by 6 to get value in pixels (2^5 = 32)
+			}
+
+			DynamicMesh.SetUpBuffers();
+			DynamicMesh.BindVertexArray();
+			// RenderTexMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+			// 	ModelMatrixBuffer
+			// );
+			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", (int)TextMatrices.size(), &TextMatrices[0], ModelMatrixBuffer);
+
+			DynamicMesh.DrawInstanciated(1);
 			
-			QuadModels[0].DrawInstanciated(1);
+			TextMatrices.clear();
 
 			MainWindow->SetWindowName(
 				Text::Formatted(L"%s - Temp(%d°), FPS(%.0f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
