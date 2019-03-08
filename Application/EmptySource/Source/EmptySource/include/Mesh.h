@@ -24,8 +24,14 @@ struct MeshVertex {
 	Vector2 UV0, UV1;
 	Vector4 Color;
 
-	bool operator<(const MeshVertex that) const; 
-	bool operator==(const MeshVertex &other) const;
+	MeshVertex() = default;
+	MeshVertex(const MeshVertex& Other) = default;
+	MeshVertex(MeshVertex&& Other) = default;
+	MeshVertex(const Vector3& P, const Vector3& N, const Vector2& UV);
+	MeshVertex(const Vector3& P, const Vector3& N, const Vector3& T, const Vector2& UV0, const Vector2& UV1, const Vector4& C);
+	MeshVertex& operator=(const MeshVertex& other) = default;
+	bool operator<(const MeshVertex That) const; 
+	bool operator==(const MeshVertex &Other) const;
 };
 
 typedef vector<IntVector3> MeshFaces;
@@ -64,7 +70,10 @@ public:
 	//* Draw mesh using Element Buffer
 	void DrawElement() const;
 
-	//* Clear the objects in OpenGL
+	//* Clear the mesh entirely
+	void Clear();
+
+	//* Clear the GL's objects
 	void ClearBuffers();
 
 	//* Give Vertices to OpenGL **This must be done once**

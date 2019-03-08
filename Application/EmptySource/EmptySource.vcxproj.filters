@@ -465,6 +465,15 @@
     <ClInclude Include="Source\EmptySource\include\Glyph.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Font.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\LogFreeType.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Text2DGenerator.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\src\glad.c">
@@ -529,6 +538,12 @@
     </ClCompile>
     <ClCompile Include="Source\EmptySource\Glyph.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Font.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\include\Text2DGenerator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

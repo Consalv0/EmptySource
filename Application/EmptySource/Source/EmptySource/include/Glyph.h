@@ -5,15 +5,16 @@
 struct TextGlyph {
 public:
 	unsigned long UnicodeValue;
-	int Size;
-	IntVector2 Dimension;
-	IntVector3 Offset;
-	Vector2 UV;
+	IntVector2 Size;
+	IntVector2 Bearing;
+	int Advance;
+	Vector2 MinUV;
+	Vector2 MaxUV;
 	unsigned char * Data;
 
 	TextGlyph();
 
-	TextGlyph(unsigned long Character, int Size, IntVector2 Dimension, IntVector3 Offset);
+	TextGlyph(unsigned long Character, IntVector2 Size, IntVector2 Bearing, int Advance);
 
 	~TextGlyph();
 };

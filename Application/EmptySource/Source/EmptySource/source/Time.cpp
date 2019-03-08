@@ -24,7 +24,7 @@ void Time::Tick() {
 	for (int Count = 0; Count < MaxTickSamples; Count++) {
 		TickAverage += TickBuffer[Count] / 1000.0;
 	}
-	TickAverage = TickAverage / MaxTickSamples;
+	TickAverage = TickAverage / (float)MaxTickSamples;
 }
 
 float Time::GetDeltaTime() {
@@ -36,7 +36,7 @@ long Time::GetDeltaTimeMilis() {
 }
 
 float Time::GetFrameRate() {
-	return float(1 / TickAverage);
+	return float(1.0 / TickAverage);
 }
 
 unsigned long Time::GetApplicationTime() {

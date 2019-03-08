@@ -18,17 +18,14 @@
 #include "..\include\Space.h"
 #include "..\include\Object.h"
 
+#include "..\include\Font.h"
+#include "..\include\Text2DGenerator.h"
 #include "..\include\Graphics.h"
 #include "..\include\RenderTarget.h"
 #include "..\include\Texture2D.h"
 #include "..\include\Texture3D.h"
 
 #include <nvml.h>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include "..\..\External\freetype\freetype.h"
-#include "..\include\Glyph.h"
 
 int FindBoundingBox(int N, MeshVertex * Vertices);
 int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
@@ -38,7 +35,6 @@ const void * GetRandomArray(IntVector2 Dimension);
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
 unsigned long CoreApplication::RenderTimeSum = 0;
-FT_LibraryRec_ * CoreApplication::FreeTypeLibrary = 0;
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
@@ -83,15 +79,6 @@ bool CoreApplication::InitializeNVML() {
 	return true;
 }
 
-bool CoreApplication::InitializeFreeType() {
-	if (FT_Init_FreeType(&FreeTypeLibrary)) {
-		Debug::Log(Debug::LogCritical, L"Could not initialize FreeType Library");
-		return false;
-	}
-
-	return true;
-}
-
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
 		Debug::Log(Debug::LogCritical, L"Failed to initialize GLFW\n");
@@ -114,7 +101,6 @@ void CoreApplication::Initalize() {
 	if (InitializeWindow() == false) return;
 	if (InitalizeGLAD() == false) return;
 	if (InitializeNVML() == false) return;
-	if (InitializeFreeType() == false) return;
 
 	CUDA::FindCudaDevice();
 
@@ -137,138 +123,32 @@ void CoreApplication::MainLoop() {
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	FT_Face Face;
-	if (FT_New_Face(FreeTypeLibrary, "Data\\Fonts\\SourceSansPro.ttf", 0, &Face))
-		Debug::Log(Debug::LogError, L"FREETYPE: Failed to load font");
-	int GlyphHeightSize = 16;
-	int TextureAtlasSize = 32 * GlyphHeightSize;
-	FT_Set_Pixel_Sizes(Face, 0, GlyphHeightSize);
+	Font FontFace;
+	Font::InitializeFreeType();
+	FontFace.Initialize(FileManager::Open(L"Data\\Fonts\\SourceSansPro.ttf"));
+
+	Text2DGenerator TextGenerator;
+	TextGenerator.TextFont = &FontFace;
+	TextGenerator.GlyphHeight = 13;
+	TextGenerator.AtlasSize = 32 * TextGenerator.GlyphHeight;
+	TextGenerator.Pivot = 0;
 
 	// --- Basic Latin Unicode Range
-	TDictionary<unsigned long, TextGlyph *> Characters;
-	for (unsigned long i = L'!'; i <= L'~'; i++) {
-		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
-			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
-		}
-		else {
-			Characters.insert_or_assign(i, new TextGlyph(
-				i, GlyphHeightSize,
-				{ (int)Face->glyph->bitmap.width, (int)Face->glyph->bitmap.rows },
-				{ (int)Face->glyph->bitmap_left, (int)Face->glyph->bitmap_top, (int)Face->glyph->advance.x}
-			));
-			{
-				TextGlyph * Glyph = Characters[i];
-				Characters[i]->Data = new unsigned char[Glyph->Dimension.x * Glyph->Dimension.y];
-				memcpy(Glyph->Data, Face->glyph->bitmap.buffer, Glyph->Dimension.x * Glyph->Dimension.y);
-			}
-		}
-	}
-
+	TextGenerator.PrepareCharacters(L'!', L'~');
 	// --- Controls and Latin-1 Unicode Range
-	for (unsigned long i = L'¡'; i <= L'ſ'; i++) {
-		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
-			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
-		}
-		else {
-			Characters.insert_or_assign(i, new TextGlyph(
-				i, GlyphHeightSize,
-				{ (int)Face->glyph->bitmap.width, (int)Face->glyph->bitmap.rows },
-				{ (int)Face->glyph->bitmap_left, (int)Face->glyph->bitmap_top, (int)Face->glyph->advance.x }
-			));
-			{
-				TextGlyph * Glyph = Characters[i];
-				Characters[i]->Data = new unsigned char[Glyph->Dimension.x * Glyph->Dimension.y];
-				memcpy(Glyph->Data, Face->glyph->bitmap.buffer, Glyph->Dimension.x * Glyph->Dimension.y);
-			}
-		}
-	}
-
+	TextGenerator.PrepareCharacters(L'¡', L'ſ');
 	// --- Greek Unicode Range
-	for (unsigned long i = L'Ͱ'; i <= L'Ͽ'; i++) {
-		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
-			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
-		}
-		else {
-			Characters.insert_or_assign(i, new TextGlyph(
-				i, GlyphHeightSize,
-				{ (int)Face->glyph->bitmap.width, (int)Face->glyph->bitmap.rows },
-				{ (int)Face->glyph->bitmap_left, (int)Face->glyph->bitmap_top, (int)Face->glyph->advance.x }
-			));
-			{
-				TextGlyph * Glyph = Characters[i];
-				Characters[i]->Data = new unsigned char[Glyph->Dimension.x * Glyph->Dimension.y];
-				memcpy(Glyph->Data, Face->glyph->bitmap.buffer, Glyph->Dimension.x * Glyph->Dimension.y);
-			}
-		}
-	}
+	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
 
-	// --- Technical Unicode Range
-	for (unsigned long i = L'⌀'; i <= L'⍺'; i++) {
-		unsigned int GlyphIndex = FT_Get_Char_Index(Face, i);
-		if (FT_Load_Glyph(Face, GlyphIndex, FT_LOAD_RENDER)) {
-			Debug::Log(Debug::LogError, L"FREETYPE: Failed to load Glyph '%c'", i);
-		}
-		else {
-			Characters.insert_or_assign(i, new TextGlyph(
-				i, GlyphHeightSize,
-				{ (int)Face->glyph->bitmap.width, (int)Face->glyph->bitmap.rows },
-				{ (int)Face->glyph->bitmap_left, (int)Face->glyph->bitmap_top, (int)Face->glyph->advance.x }
-			));
-			{
-				TextGlyph * Glyph = Characters[i];
-				Characters[i]->Data = new unsigned char[Glyph->Dimension.x * Glyph->Dimension.y];
-				memcpy(Glyph->Data, Face->glyph->bitmap.buffer, Glyph->Dimension.x * Glyph->Dimension.y);
-			}
-		}
-	}
-	unsigned char * AtlasData = new unsigned char[TextureAtlasSize * TextureAtlasSize];
-	
-	for (int i = 0; i < TextureAtlasSize * TextureAtlasSize; i++) {
-		if (i % GlyphHeightSize == 0 || (i / (TextureAtlasSize)) % GlyphHeightSize == 0) {
-			AtlasData[i] = 0;
-		}
-		else {
-			AtlasData[i] = 0;
-		}
-	}
-
-	IntVector2 AtlasPosition;
-	for (TDictionary<unsigned long, TextGlyph*>::iterator Begin = Characters.begin(); Begin != Characters.end(); Begin++) {
-		unsigned long i = Begin->first;
-		TextGlyph * Char = Begin->second;
-		int o = AtlasPosition.x + AtlasPosition.y * TextureAtlasSize;
-		Char->UV = (Vector2((float)Char->Offset.x, 0.F) + AtlasPosition.FloatVector2()) / (float)TextureAtlasSize;
-		AtlasPosition.y += Char->Size;
-		o += Char->Offset.x;
-		if (AtlasPosition.y * TextureAtlasSize > (TextureAtlasSize * TextureAtlasSize - Char->Size * TextureAtlasSize) ) {
-			AtlasPosition.x += Char->Size;
-			AtlasPosition.y = 0;
-		}
-		for (int i = Char->Dimension.y - 1; i >= 0; i--) {
-			for (int j = 0; j < Char->Dimension.x; j++) {
-				if (o >= TextureAtlasSize * TextureAtlasSize) {
-					o -= TextureAtlasSize * TextureAtlasSize / GlyphHeightSize;
-				}
-				if (o < TextureAtlasSize * TextureAtlasSize && o >= 0) {
-					AtlasData[o] = Char->Data[i * Char->Dimension.x + j];
-				}
-				o++;
-			}
-			o += -Char->Dimension.x + TextureAtlasSize;
-		}
-	}
-
+	unsigned char * FontAtlasData = TextGenerator.GenerateTextureAtlas();
 	Texture2D FontMap = Texture2D(
-		IntVector2(TextureAtlasSize, TextureAtlasSize),
+		IntVector2(32 * TextGenerator.GlyphHeight),
 		Graphics::CF_Red,
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Border,
 		Graphics::CF_Red,
 		GL_UNSIGNED_BYTE,
-		AtlasData
+		FontAtlasData
 	);
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
@@ -276,7 +156,7 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ProjectionMatrix;
 
 	Vector3 EyePosition = 0;
-	Vector3 LightPosition = Vector3(1, 0);
+	Vector3 LightPosition = Vector3(2, 1);
 	// --- Camera rotation, position Matrix
 	float ViewSpeed = 5;
 	Vector3 ViewOrientation;
@@ -340,8 +220,6 @@ void CoreApplication::MainLoop() {
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4());
 
-	TArray<Matrix4x4> TextMatrices;
-
 	///////// Create Matrices Buffer //////////////
 	GLuint ModelMatrixBuffer;
 	glGenBuffers(1, &ModelMatrixBuffer);
@@ -372,7 +250,7 @@ void CoreApplication::MainLoop() {
 	MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
 	unsigned long InputTimeSum = 0;
 
-	WString RenderText = L"¡Ya puedo Debuggear en Pantalla :')!";
+	WString RenderingText = L"¡Ya puedo Debuggear en Pantalla :')!";
 	Mesh DynamicMesh;
 
 	bool bRandomArray = false;
@@ -564,86 +442,32 @@ void CoreApplication::MainLoop() {
 
 			QuadModels[0].BindVertexArray();
 
-			// Iterate through all characters
-			int VertexCount = 0;
-			WString::const_iterator c;
-			Vector3 TextPosition = Vector3(0.F, (float)GlyphHeightSize);
-			TextMatrices.push_back(Matrix4x4());
-			DynamicMesh.ClearBuffers();
-			DynamicMesh.Faces.clear();
-			DynamicMesh.Vertices.clear();
+			unsigned long TimeCount = 0;
+			for (int i = 0; i < 100; i++) {
+				DynamicMesh.Clear();
+				Timer.Start();
+				TextGenerator.GenerateTextMesh(RenderingText, &DynamicMesh.Faces, &DynamicMesh.Vertices);
+				Timer.Stop();
+				TimeCount += Timer.GetEnlapsed();
+				DynamicMesh.SetUpBuffers();
+				DynamicMesh.BindVertexArray();
 
-			for (c = RenderText.begin(); c != RenderText.end(); c++)
-			{
-				if (Characters.find(*c) == Characters.end()) {
-					TextPosition.x += GlyphHeightSize / 2;
-					continue;
-				}
-				TextGlyph * ch = Characters[*c];
+				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4::Translate(Vector3(0, i * TextGenerator.GlyphHeight * .4F)).PointerToValue(), ModelMatrixBuffer);
 
-				float xpos = TextPosition.x + ch->Offset.x;
-				float ypos = TextPosition.y - (ch->Dimension.y - ch->Offset.y);
-
-				float w = (float)ch->Dimension.x;
-				float h = (float)ch->Dimension.y;
-
-				// TextMatrices.push_back(
-				// 	Matrix4x4::Translate(Vector3(CurrentAdvance + w * 0.5F, 0.F + h * 0.5F, 0.F)) *
-				// 	Matrix4x4::Scale({ 1.F * w, 1.F * h, 1.F })
-				// );
-
-				DynamicMesh.Faces.push_back(IntVector3(VertexCount    , VertexCount + 1, VertexCount + 2));
-				DynamicMesh.Faces.push_back(IntVector3(VertexCount + 3, VertexCount + 4, VertexCount + 5));
-				VertexCount += 6;
-				
-				MeshVertex * MV = new MeshVertex[6];
-				MV[0].Position = Vector3(xpos + w, ypos);
-				MV[1].Position = Vector3(xpos, ypos + h);
-				MV[2].Position = Vector3(xpos + w, ypos + h);
-				MV[3].Position = Vector3(xpos + w, ypos);
-				MV[4].Position = Vector3(xpos, ypos);
-				MV[5].Position = Vector3(xpos, ypos + h);
-				MV[0].UV0 = ch->UV + Vector2(w / TextureAtlasSize, 0.F);
-				MV[1].UV0 = ch->UV + Vector2(0.F, h / TextureAtlasSize);
-				MV[2].UV0 = ch->UV + Vector2(w / TextureAtlasSize, h / TextureAtlasSize);
-				MV[3].UV0 = ch->UV + Vector2(w / TextureAtlasSize, 0.F);
-				MV[4].UV0 = ch->UV + Vector2(0.F, 0.F);
-				MV[5].UV0 = ch->UV + Vector2(0.F, h / TextureAtlasSize);
-				DynamicMesh.Vertices.push_back(MV[0]);
-				DynamicMesh.Vertices.push_back(MV[1]);
-				DynamicMesh.Vertices.push_back(MV[2]);
-				DynamicMesh.Vertices.push_back(MV[3]);
-				DynamicMesh.Vertices.push_back(MV[4]);
-				DynamicMesh.Vertices.push_back(MV[5]);
-
-				// Now advance cursors for next glyph (note that advance is number of 1/32 pixels)
-				TextPosition.x += (ch->Offset.z >> 6); // Bitshift by 6 to get value in pixels (2^5 = 32)
+				DynamicMesh.DrawElement();
 			}
 
-			DynamicMesh.SetUpBuffers();
-			DynamicMesh.BindVertexArray();
-			// RenderTexMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-			// 	ModelMatrixBuffer
-			// );
-			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", (int)TextMatrices.size(), &TextMatrices[0], ModelMatrixBuffer);
-
-			DynamicMesh.DrawInstanciated(1);
-			
-			TextMatrices.clear();
-
-			MainWindow->SetWindowName(
-				Text::Formatted(L"%s - Temp(%d°), FPS(%.0f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
-					L"EmptySource",
-					Debug::GetDeviceTemperature(0),
-					Time::GetFrameRate(),
-					(1 / Time::GetFrameRate()) * 1000,
-					Text::FormatUnit(Matrices.size(), 2).c_str(),
-					Text::FormatUnit(VerticesCount, 2).c_str(),
-					Text::FormatUnit(TriangleCount, 2).c_str(),
-					Text::FormatMath(EyePosition).c_str(),
-					Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles() * MathConstants::RadToDegree)).c_str()
-				)
+			RenderingText = Text::Formatted(
+				L"DebugTimer(%d ms), Temp(%d°), FPS(%.1f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
+				TimeCount,
+				Debug::GetDeviceTemperature(0),
+				Time::GetFrameRate(),
+				(1.F / Time::GetFrameRate()) * 1000.F,
+				Text::FormatUnit(Matrices.size(), 2).c_str(),
+				Text::FormatUnit(VerticesCount, 2).c_str(),
+				Text::FormatUnit(TriangleCount, 2).c_str(),
+				Text::FormatMath(EyePosition).c_str(),
+				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles() * MathConstants::RadToDegree)).c_str()
 			);
 
 			MainWindow->EndOfFrame();

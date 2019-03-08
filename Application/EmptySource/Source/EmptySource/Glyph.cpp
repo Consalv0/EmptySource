@@ -3,16 +3,15 @@
 TextGlyph::TextGlyph() {
 	UnicodeValue = 0;
 	Size = 0;
-	Dimension = 0;
-	Offset = 0;
+	Bearing = 0;
 	Data = NULL;
 }
 
-TextGlyph::TextGlyph(unsigned long Character, int FontSize, IntVector2 GlyphSize, IntVector3 GlyphOffset) {
+TextGlyph::TextGlyph(unsigned long Character, IntVector2 GlyphHeight, IntVector2 GlyphOffset, int GlyphAdvance) {
 	UnicodeValue = Character;
-	Size = FontSize;
-	Dimension = GlyphSize;
-	Offset = GlyphOffset;
+	Size = GlyphHeight;
+	Bearing = GlyphOffset;
+	Advance = GlyphAdvance;
 	Data = NULL;
 }
 
