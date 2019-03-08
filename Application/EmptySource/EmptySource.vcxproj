@@ -150,6 +150,7 @@
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
     <ClInclude Include="Source\EmptySource\include\Core.h" />
     <ClInclude Include="Source\EmptySource\include\Application.h" />
+    <ClInclude Include="Source\EmptySource\include\Font.h" />
     <ClInclude Include="Source\EmptySource\include\Glyph.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector2.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Ray.h" />
@@ -175,12 +176,14 @@
     <ClInclude Include="Source\EmptySource\include\ShaderProgram.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Text.h" />
+    <ClInclude Include="Source\EmptySource\include\Text2DGenerator.h" />
     <ClInclude Include="Source\EmptySource\include\Texture.h" />
     <ClInclude Include="Source\EmptySource\include\Texture2D.h" />
     <ClInclude Include="Source\EmptySource\include\Texture3D.h" />
     <ClInclude Include="Source\EmptySource\include\Time.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h" />
+    <ClInclude Include="Source\EmptySource\include\Utility\LogFreeType.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogGraphics.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\Timer.h" />
@@ -283,7 +286,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EmptySource\Glyph.cpp" />
+    <ClCompile Include="Source\EmptySource\include\Text2DGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileStream.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Font.cpp" />
     <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp" />
     <ClCompile Include="Source\EmptySource\source\main.cpp" />
     <ClCompile Include="Source\EmptySource\source\Application.cpp" />
