@@ -9,25 +9,25 @@ public:
 	// Don't use this unless you know what are you doing
 	// static void FixedUpdate();
 
-	// Time since the last frame;
+	// Time in seconds since the last frame;
 	static float GetDeltaTime();
 
 	// Time in milliseconds since the last frame;
-	static long GetDeltaTimeMilis();
+	static double GetDeltaTimeMilis();
 
 	// Get frame rate per second (FPS)
-	static float GetFrameRate();
+	static float GetFrameRatePerSecond();
 
 	// Time since the app is running;
-	static unsigned long GetApplicationTime();
+	static unsigned long long GetEpochTimeMilli();
 
 private:
 	// Time since the last update callback
-	static unsigned long LastUpdateTime;
-	static unsigned long LastDeltaTime;
+	static unsigned long long LastUpdateMicro;
+	static unsigned long long LastDeltaMicro;
 
-	static unsigned TickCount;
+	static unsigned int TickCount;
 	static double TickAverage;
-	static const unsigned MaxTickSamples = 25;
-	static unsigned long TickBuffer[MaxTickSamples];
+	static const unsigned int MaxTickSamples = 25;
+	static unsigned long long TickBuffer[MaxTickSamples];
 };

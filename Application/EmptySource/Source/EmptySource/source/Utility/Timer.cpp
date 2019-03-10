@@ -1,30 +1,24 @@
 #include "..\Source\EmptySource\include\Utility\Timer.h"
 
 Debug::Timer::Timer() {
-	long StartTime = 0;
-	long EndTime = 0;
+	std::chrono::steady_clock::time_point StartTime;
+	std::chrono::steady_clock::time_point EndTime;
 }
 
 void Debug::Timer::Start() {
-	StartTime = clock();
+	StartTime = std::chrono::high_resolution_clock::now();
 }
 
 void Debug::Timer::Stop() {
-	EndTime = clock();
+	EndTime = std::chrono::high_resolution_clock::now();
 }
 
-long Debug::Timer::GetStart() const {
-	return StartTime;
+double Debug::Timer::GetEnlapsed() const {
+	std::chrono::duration<double, std::milli> Enlapsed = EndTime - StartTime;
+	return Enlapsed.count();
 }
 
-long Debug::Timer::GetEnd() const {
-	return EndTime;
-}
-
-long Debug::Timer::GetEnlapsed() const {
-	return EndTime - StartTime;
-}
-
-float Debug::Timer::GetEnlapsedSeconds() const {
-	return float(GetEnlapsed()) / CLOCKS_PER_SEC;
+double Debug::Timer::GetEnlapsedSeconds() const {
+	std::chrono::duration<double, std::milli> Enlapsed = EndTime - StartTime;
+	return GetEnlapsed() / CLOCKS_PER_SEC;
 }
