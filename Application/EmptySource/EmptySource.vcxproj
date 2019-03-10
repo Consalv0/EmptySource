@@ -89,6 +89,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
@@ -100,6 +102,9 @@
       <Runtime>MDd</Runtime>
       <Include>$(CUDA_INC_PATH)</Include>
       <Defines>WIN32</Defines>
+      <AdditionalCompilerOptions>
+      </AdditionalCompilerOptions>
+      <AdditionalOptions>-Xcudafe "--diag_suppress=bad_friend_decl" %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,6 +132,8 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -142,6 +149,9 @@
       <CodeGeneration>compute_30,sm_30;compute_35,sm_35;compute_37,sm_37;compute_50,sm_50;compute_52,sm_52;compute_60,sm_60;compute_61,sm_61;compute_70,sm_70;compute_75,sm_75;</CodeGeneration>
       <Defines>WIN32</Defines>
       <Runtime>MD</Runtime>
+      <AdditionalCompilerOptions>
+      </AdditionalCompilerOptions>
+      <AdditionalOptions>-Xcudafe "--diag_suppress=bad_friend_decl" %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -279,10 +289,15 @@
     <ClInclude Include="Source\External\freetype\ttnameid.h" />
     <ClInclude Include="Source\External\freetype\tttables.h" />
     <ClInclude Include="Source\External\freetype\tttags.h" />
+    <ClInclude Include="Source\External\ft2build.h" />
     <ClInclude Include="Source\External\GLAD\include\glad.h" />
     <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
+    <ClInclude Include="Source\External\tsl\robin_growth_policy.h" />
+    <ClInclude Include="Source\External\tsl\robin_hash.h" />
+    <ClInclude Include="Source\External\tsl\robin_map.h" />
+    <ClInclude Include="Source\External\tsl\robin_set.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EmptySource\Glyph.cpp" />

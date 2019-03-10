@@ -35,59 +35,6 @@ Mesh::Mesh() {
 	Vertices = MeshVertices();
 }
 
-Mesh::Mesh( 
-	const MeshFaces faces, const MeshVector3D vertices,
-	const MeshVector3D normals, const MeshUVs uv0, const MeshColors colors)
-{
-	Faces = faces;
-	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(MeshVertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount], Vector2(), colors[vCount] }));
-	}
-
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
-	VertexBuffer = 0;
-	SetUpBuffers();
-}
-
-Mesh::Mesh(const MeshFaces faces, const MeshVector3D vertices, const MeshVector3D normals, const MeshUVs uv0, const MeshUVs uv1, const MeshColors colors) {
-	Faces = faces;
-	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(MeshVertex({ vertices[vCount], normals[vCount], Vector3(), uv0[vCount],  uv1[vCount], colors[vCount] }));
-	}
-
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
-	VertexBuffer = 0;
-	SetUpBuffers();
-}
-
-Mesh::Mesh(
-	const MeshFaces faces, const MeshVector3D vertices,
-	const MeshVector3D normals, const MeshVector3D tangents, 
-	const MeshUVs uv0, const MeshColors colors) 
-
-	: Mesh(faces, vertices, normals, tangents, uv0, uv0, colors)
-{
-}
-
-Mesh::Mesh(
-	const MeshFaces faces, const MeshVector3D vertices,
-	const MeshVector3D normals, const MeshVector3D tangents,
-	const MeshUVs uv0, const MeshUVs uv1,
-	const MeshColors colors)
-{
-	Faces = faces;
-	for (int vCount = 0; vCount < vertices.size(); vCount++) {
-		Vertices.push_back(MeshVertex({ vertices[vCount], normals[vCount], tangents[vCount], uv0[vCount], Vector2(), colors[vCount] }));
-	}
-
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
-	VertexBuffer = 0;
-	SetUpBuffers();
-}
-
 Mesh::Mesh(const MeshFaces faces, const MeshVertices vertices) {
 	Faces = faces;
 	Vertices = vertices;
@@ -116,6 +63,7 @@ void Mesh::BindVertexArray() const {
 	}
 	// The following commands will put in context our VAO for the next commands
 	glBindVertexArray(VertexArrayObject);
+	return;
 }
 
 void Mesh::DrawInstanciated(int Count) const {
@@ -137,9 +85,9 @@ void Mesh::DrawElement() const {
 	); // Starting from vertex 0; to vertices total
 }
 
-void Mesh::SetUpBuffers() {
+bool Mesh::SetUpBuffers() {
 
-	if (Vertices.size() <= 0 || Faces.size() <= 0) return;
+	if (Vertices.size() <= 0 || Faces.size() <= 0) return false;
 
 	glGenVertexArrays(1, &VertexArrayObject);
 	glBindVertexArray(VertexArrayObject);
@@ -171,6 +119,8 @@ void Mesh::SetUpBuffers() {
 
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
+
+	return true;
 }
 
 void Mesh::ClearBuffers() {

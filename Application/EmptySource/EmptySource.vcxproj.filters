@@ -58,6 +58,9 @@
     <Filter Include="Header Files\External\FreeType\Internal\Services">
       <UniqueIdentifier>{77cefc87-7bcd-4c00-b9d4-1783f4a76dbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\External\tsl">
+      <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\External\GLFW\glfw3.h">
@@ -473,6 +476,21 @@
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Text2DGenerator.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\tsl\robin_growth_policy.h">
+      <Filter>Header Files\External\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\tsl\robin_hash.h">
+      <Filter>Header Files\External\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\tsl\robin_map.h">
+      <Filter>Header Files\External\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\tsl\robin_set.h">
+      <Filter>Header Files\External\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\ft2build.h">
+      <Filter>Header Files\External\FreeType</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

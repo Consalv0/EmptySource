@@ -4,9 +4,9 @@
 template<class T>
 using TArray = std::vector<T>;
 
-#include <map>
+#include "..\External\tsl\robin_map.h"
 template<class K, class T>
-using TDictionary = std::map<K, T>;
+using TDictionary = tsl::robin_map<K, T>;
 
 #include <cuda_runtime.h>
 

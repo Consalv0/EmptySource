@@ -1,5 +1,7 @@
 #pragma once
 
+#define NOMINMAX
+
 // Include windows headers
 #ifdef _WIN32
 #include <windows.h>
@@ -16,8 +18,6 @@
 
 // Include standar headers
 #include <vector>
-#include <map>
-#include <unordered_map>
 #include <iomanip>
 #include <conio.h>
 #include <memory>

@@ -26,44 +26,52 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 			));
 			{
 				TextGlyph * Glyph = LoadedCharacters[Character];
-				LoadedCharacters[Character]->Data = new unsigned char[Glyph->Size.x * Glyph->Size.y];
-				memcpy(Glyph->Data, TextFont->FreeTypeFace->glyph->bitmap.buffer, Glyph->Size.x * Glyph->Size.y);
+				LoadedCharacters[Character]->RasterizedData = new unsigned char[Glyph->Size.x * Glyph->Size.y];
+				memcpy(Glyph->RasterizedData, TextFont->FreeTypeFace->glyph->bitmap.buffer, Glyph->Size.x * Glyph->Size.y);
 			}
 		}
 	}
 }
 
-void Text2DGenerator::GenerateTextMesh(const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
+void Text2DGenerator::GenerateTextMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
 	WString::const_iterator Character = InText.begin();
-	Vector3 TextPosition = Vector3(0.F, (float)GlyphHeight);
+
+	IntVector3 * TextFaces = new IntVector3[InText.size() * 2];
+	MeshVertex * TextVertices = new MeshVertex[InText.size() * 4];
+	IntVector3 * TextFacesEnd = TextFaces;
+	MeshVertex * TextVerticesEnd = TextVertices;
+
+	int VertexCount = 0;
 
 	// --- Iterate through all characters
 	for (; Character != InText.end(); Character++) {
 		TextGlyph * Glyph = LoadedCharacters[*Character];
 		if (Glyph == NULL) {
-			TextPosition.x += GlyphHeight / 2;
+			Pivot.x += GlyphHeight / 2.F;
 			continue;
 		}
 
-		float XPos = TextPosition.x + Glyph->Bearing.x;
-		float YPos = TextPosition.y - (Glyph->Size.y - Glyph->Bearing.y);
+		Glyph->GetQuadMesh(Pivot, TextVerticesEnd);
+		TextFacesEnd->x = VertexCount;
+		TextFacesEnd->y = VertexCount + 1;
+		(TextFacesEnd++)->z = VertexCount + 2;
+		TextFacesEnd->x = VertexCount + 3;
+		TextFacesEnd->y = VertexCount;
+		(TextFacesEnd++)->z = VertexCount + 1;
 
-		float XPosWidth = XPos + (float)Glyph->Size.x;
-		float YPosHeight = YPos + (float)Glyph->Size.y;
-
-		int VertexCount = (int)Vertices->size();
-
-		Faces->push_back({ VertexCount, VertexCount + 1, VertexCount + 2 });
-		Faces->push_back({ VertexCount + 3, VertexCount, VertexCount + 1 });
-
-		Vertices->push_back({ Vector3(XPosWidth, YPos),       0, Glyph->MinUV + Vector2(Glyph->MaxUV.u, 0.F) });
-		Vertices->push_back({ Vector3(XPos, YPosHeight),      0, Glyph->MinUV + Vector2(0.F, Glyph->MaxUV.v) });
-		Vertices->push_back({ Vector3(XPosWidth, YPosHeight), 0, Glyph->MinUV + Glyph->MaxUV                 });
-		Vertices->push_back({ Vector3(XPos, YPos),            0, Glyph->MinUV                                });
-
-		// --- Now advance cursor for next glyph (note that advance is number of 1/32 pixels)
-		TextPosition.x += (Glyph->Advance >> 6);
+		VertexCount += 4;
+		TextVerticesEnd += 4;
+		// --- Advance cursor for next glyph (note that advance is number of 1/32 pixels)
+		Pivot.x += (Glyph->Advance >> 6);
 	}
+
+	if (VertexCount > 0) {
+		Faces->insert(Faces->end(), &TextFaces[0], TextFacesEnd);
+		Vertices->insert(Vertices->end(), &TextVertices[0], TextVerticesEnd);
+	}
+
+	delete[] TextFaces;
+	delete[] TextVertices;
 }
 
 void Text2DGenerator::Clear() {
@@ -89,8 +97,10 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 		IndexPos += Character->Bearing.x;
 
 		// --- Asign the current UV Position
-		Character->MinUV = (Vector2((float)Character->Bearing.x, 0.F) + AtlasPosition.FloatVector2()) / (float)AtlasSize;
-		Character->MaxUV = Character->Size.FloatVector2() / (float)AtlasSize;
+		Character->MinU = (Character->Bearing.u + AtlasPosition.u) / (float)AtlasSize;
+		Character->MaxU = (Character->Bearing.u + AtlasPosition.u + Character->Size.u) / (float)AtlasSize;
+		Character->MinV = (AtlasPosition.v) / (float)AtlasSize;
+		Character->MaxV = (AtlasPosition.v + Character->Size.v) / (float)AtlasSize;
 		
 		// --- If current position exceds the canvas with the next character, reset the position in Y
 		AtlasPosition.y += GlyphHeight;
@@ -106,7 +116,7 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 					IndexPos -= AtlasSize * AtlasSize / GlyphHeight;
 				}
 				if (IndexPos < AtlasSize * AtlasSize && IndexPos >= 0) {
-					AtlasData[IndexPos] = Character->Data[i * Character->Size.x + j];
+					AtlasData[IndexPos] = Character->RasterizedData[i * Character->Size.x + j];
 				}
 				IndexPos++;
 			}

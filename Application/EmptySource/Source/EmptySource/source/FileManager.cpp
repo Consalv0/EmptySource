@@ -1,6 +1,5 @@
 
 #include <algorithm>
-#include <Windows.h>
 #include "..\include\Core.h"
 #include "..\include\FileManager.h"
 
