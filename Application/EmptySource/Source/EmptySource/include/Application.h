@@ -6,7 +6,7 @@ public:
 
 private:
 	static bool bInitialized;
-	static unsigned long RenderTimeSum;
+	static double RenderTimeSum;
 	
 	//* Initialize GLFW Functions using OpenGL Versions, returns true if initialized correctly
 	static bool InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor);

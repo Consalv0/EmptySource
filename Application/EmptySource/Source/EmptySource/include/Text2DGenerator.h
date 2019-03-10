@@ -21,7 +21,7 @@ public:
 
 	//* Generate mesh geometry for rasterization. 
 	//* The uv of the quads are calculated in the gryphs creation 
-	void GenerateTextMesh(const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
+	void GenerateTextMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
 
 	//* Clear generator memory
 	void Clear();

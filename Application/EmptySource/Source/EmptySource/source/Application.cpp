@@ -34,7 +34,7 @@ const void * GetRandomArray(IntVector2 Dimension);
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
 bool CoreApplication::bInitialized = false;
-unsigned long CoreApplication::RenderTimeSum = 0;
+double CoreApplication::RenderTimeSum = 0;
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
@@ -92,6 +92,7 @@ bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int Ver
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
 	glfwSetErrorCallback(&Debug::GLFWError);
+
 	return true;
 }
 
@@ -121,6 +122,7 @@ void CoreApplication::MainLoop() {
 	Object* GObject = Space::GetFirstSpace()->MakeObject();
 	GObject->Delete();
 
+	glfwSwapInterval(0);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	Font FontFace;
@@ -129,7 +131,7 @@ void CoreApplication::MainLoop() {
 
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
-	TextGenerator.GlyphHeight = 13;
+	TextGenerator.GlyphHeight = 12;
 	TextGenerator.AtlasSize = 32 * TextGenerator.GlyphHeight;
 	TextGenerator.Pivot = 0;
 
@@ -168,6 +170,7 @@ void CoreApplication::MainLoop() {
 	ShaderStage FragmentBRDF =      ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\BRDF.fragment.glsl"));
 	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data\\Shaders\\Passthrough.vertex.glsl"));
 	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\RenderTexture.fragment.glsl"));
+	ShaderStage FragRenderText =    ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\RenderText.fragment.glsl"));
 	ShaderStage FragmentUnlit =     ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\Unlit.fragment.glsl"));
 	ShaderStage Voxelizer =         ShaderStage(ShaderType::Geometry, FileManager::Open(L"Data\\Shaders\\Voxelizer.geometry.glsl"));
 
@@ -192,6 +195,11 @@ void CoreApplication::MainLoop() {
 	RenderTextureShader.AppendStage(&FragRenderTexture);
 	RenderTextureShader.Compile();
 
+	ShaderProgram RenderTextShader = ShaderProgram(L"RenderText");
+	RenderTextShader.AppendStage(&PassthroughVertex);
+	RenderTextShader.AppendStage(&FragRenderText);
+	RenderTextShader.Compile();
+
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(&BRDFShader);
 
@@ -201,10 +209,15 @@ void CoreApplication::MainLoop() {
 	Material UnlitMaterial = Material();
 	UnlitMaterial.SetShaderProgram(&UnlitShader);
 
-	Material RenderTexMaterial = Material();
-	RenderTexMaterial.DepthFunction = Graphics::DF_Always;
-	RenderTexMaterial.CullMode = Graphics::CM_None;
-	RenderTexMaterial.SetShaderProgram(&RenderTextureShader);
+	Material RenderTextureMaterial = Material();
+	RenderTextureMaterial.DepthFunction = Graphics::DF_Always;
+	RenderTextureMaterial.CullMode = Graphics::CM_None;
+	RenderTextureMaterial.SetShaderProgram(&RenderTextureShader);
+
+	Material RenderTextMaterial = Material();
+	RenderTextMaterial.DepthFunction = Graphics::DF_Always;
+	RenderTextMaterial.CullMode = Graphics::CM_None;
+	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
 
 	Texture2D RenderedTexture = Texture2D(
 		IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
@@ -248,9 +261,11 @@ void CoreApplication::MainLoop() {
 	}
 
 	MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
-	unsigned long InputTimeSum = 0;
+	double InputTimeSum = 0;
 
-	WString RenderingText = L"¡Ya puedo Debuggear en Pantalla :')!";
+	int CurrentRenderText = 0;
+	const int TextCount = 1;
+	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
 
 	bool bRandomArray = false;
@@ -353,17 +368,17 @@ void CoreApplication::MainLoop() {
 		}
 
 		// --- Draw the meshs(es) !
-		RenderTimeSum += Time::GetDeltaTimeMilis();
-		if (RenderTimeSum > (1000 / 60)) {
+		RenderTimeSum += Time::GetDeltaTime();
+		if (RenderTimeSum > (1 / 60)) {
 			RenderTimeSum = 0;
 			size_t TriangleCount = 0;
 			size_t VerticesCount = 0;
-
+		
 			MainWindow->ClearWindow();
 			// Framebuffer.Clear();
-
+		
 			Debug::Timer Timer;
-
+		
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// Framebuffer.Use();
@@ -382,49 +397,49 @@ void CoreApplication::MainLoop() {
 			
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
-
+		
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
 				OBJModels[MeshCount].BindVertexArray();
-
+		
 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", (int)Matrices.size(), &Matrices[0], ModelMatrixBuffer);
-
+		
 				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
 				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * Matrices.size();
 			}
-
+		
 			UnlitMaterial.Use();
-
+		
 			UnlitMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			UnlitMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_ViewPosition",             EyePosition.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_Material.Color",            Vector3(1).PointerToValue() );
 			
 			LightModels[0].BindVertexArray();
-
+		
 			vector<Matrix4x4> LightPositions;
 			LightPositions.push_back(Matrix4x4::Translate(LightPosition) * Matrix4x4::Scale(0.1F));
 			LightPositions.push_back(Matrix4x4::Translate(-LightPosition) * Matrix4x4::Scale(0.1F));
-
+		
 			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
-
+		
 			LightModels[0].DrawInstanciated(2);
-
+		
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			// glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
-			// RenderTexMaterial.Use();
+			// RenderTextureMaterial.Use();
 			
-			float AppTime = (float)Time::GetApplicationTime() / 1000;
-			// RenderTexMaterial.SetFloat1Array("_Time", &AppTime);
-			// RenderTexMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			// RenderTexMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			// RenderTexMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			float AppTime = (float)Time::GetEpochTimeMilli() / 1000.F;
+			// RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
+			// RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			// RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			// RenderTextureMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
 			// 
 			// QuadModels[0].BindVertexArray();
 			// 
 			// Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
-			// RenderTexMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			// RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
 			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
 			// 	ModelMatrixBuffer
 			// );
@@ -432,43 +447,49 @@ void CoreApplication::MainLoop() {
 			// QuadModels[0].DrawInstanciated(1);
 			
 			// Activate corresponding render state	
-			RenderTexMaterial.Use();
-			RenderTexMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTexMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			RenderTexMaterial.SetMatrix4x4Array("_ProjectionMatrix", 
+			RenderTextMaterial.Use();
+			RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
+			RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix", 
 				Matrix4x4::Orthographic(0.F, (float)MainWindow->GetWidth(), 0.F, (float)MainWindow->GetHeight()).PointerToValue()
 			);
-			RenderTexMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
-
+			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+		
 			QuadModels[0].BindVertexArray();
-
-			unsigned long TimeCount = 0;
-			for (int i = 0; i < 100; i++) {
+		
+			double TimeCount = 0;
+			for (int i = 0; i < TextCount; i++) {
 				DynamicMesh.Clear();
 				Timer.Start();
-				TextGenerator.GenerateTextMesh(RenderingText, &DynamicMesh.Faces, &DynamicMesh.Vertices);
+				TextGenerator.GenerateTextMesh(
+					Vector2(0.F, i * (float)TextGenerator.GlyphHeight),
+					RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
+				);
+				if ( !DynamicMesh.SetUpBuffers() ) { continue; }
+				DynamicMesh.BindVertexArray();
+				RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
+				DynamicMesh.DrawElement();
 				Timer.Stop();
 				TimeCount += Timer.GetEnlapsed();
-				DynamicMesh.SetUpBuffers();
-				DynamicMesh.BindVertexArray();
-
-				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4::Translate(Vector3(0, i * TextGenerator.GlyphHeight * .4F)).PointerToValue(), ModelMatrixBuffer);
-
-				DynamicMesh.DrawElement();
 			}
 
-			RenderingText = Text::Formatted(
-				L"DebugTimer(%d ms), Temp(%d°), FPS(%.1f)(%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
-				TimeCount,
+			RenderingText[CurrentRenderText] = Text::Formatted(
+				L"Character(%.2f μs, %d), Temp [%d°], %.1f FPS (%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
+				TimeCount / (RenderingText[CurrentRenderText].size() * (double)TextCount) * 1000.,
+				RenderingText[CurrentRenderText].size() * TextCount,
 				Debug::GetDeviceTemperature(0),
-				Time::GetFrameRate(),
-				(1.F / Time::GetFrameRate()) * 1000.F,
+				Time::GetFrameRatePerSecond(),
+				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
 				Text::FormatUnit(Matrices.size(), 2).c_str(),
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles() * MathConstants::RadToDegree)).c_str()
 			);
+
+			// MainWindow->SetWindowName(RenderingText[CurrentRenderText]);
+
+			CurrentRenderText = (CurrentRenderText + 1) < TextCount ? CurrentRenderText + 1 : 0;
 
 			MainWindow->EndOfFrame();
 			glBindVertexArray(0);
