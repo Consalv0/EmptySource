@@ -264,7 +264,7 @@ void CoreApplication::MainLoop() {
 	double InputTimeSum = 0;
 
 	int CurrentRenderText = 0;
-	const int TextCount = 1;
+	const int TextCount = 100;
 	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
 
@@ -462,7 +462,7 @@ void CoreApplication::MainLoop() {
 				DynamicMesh.Clear();
 				Timer.Start();
 				TextGenerator.GenerateTextMesh(
-					Vector2(0.F, i * (float)TextGenerator.GlyphHeight),
+					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * (float)TextGenerator.GlyphHeight),
 					RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
 				if ( !DynamicMesh.SetUpBuffers() ) { continue; }
