@@ -27,15 +27,15 @@ bool Font::InitializeFreeType() {
 }
 
 Font::Font() {
-	FreeTypeFace = NULL;
+	Face = NULL;
 }
 
 void Font::Clear() {
-	FT_Done_Face(FreeTypeFace);
+	FT_Done_Face(Face);
 }
 
 void Font::SetGlyphHeight(const unsigned int & Size) const {
-	FT_Error Error = FT_Set_Pixel_Sizes(FreeTypeFace, 0, Size);
+	FT_Error Error = FT_Set_Pixel_Sizes(Face, 0, Size);
 	if (Error) {
 		Debug::Log(Debug::LogError, L"Couldn't set the glyph size to %d, %s", Size, FT_ErrorMessage(Error));
 	}
@@ -43,10 +43,10 @@ void Font::SetGlyphHeight(const unsigned int & Size) const {
 
 void Font::Initialize(FileStream * File) {
 	FT_Error Error;
-	if (Error = FT_New_Face(FreeTypeLibrary, WStringToString(File->GetPath()).c_str(), 0, &FreeTypeFace))
+	if (Error = FT_New_Face(FreeTypeLibrary, WStringToString(File->GetPath()).c_str(), 0, &Face))
 		Debug::Log(Debug::LogError, L"Failed to load font, %s", FT_ErrorMessage(Error));
 }
 
 unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
-	return FT_Get_Char_Index(FreeTypeFace, Character);
+	return FT_Get_Char_Index(Face, Character);
 }

@@ -461,7 +461,7 @@ void CoreApplication::MainLoop() {
 			for (int i = 0; i < TextCount; i++) {
 				DynamicMesh.Clear();
 				Timer.Start();
-				TextGenerator.GenerateTextMesh(
+				TextGenerator.GenerateMesh(
 					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * (float)TextGenerator.GlyphHeight),
 					RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
@@ -475,7 +475,7 @@ void CoreApplication::MainLoop() {
 
 			RenderingText[CurrentRenderText] = Text::Formatted(
 				L"Character(%.2f μs, %d), Temp [%d°], %.1f FPS (%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
-				TimeCount / (RenderingText[CurrentRenderText].size() * (double)TextCount) * 1000.,
+				TimeCount / (RenderingText[CurrentRenderText].size() * (double)TextCount) * 1000.0,
 				RenderingText[CurrentRenderText].size() * TextCount,
 				Debug::GetDeviceTemperature(0),
 				Time::GetFrameRatePerSecond(),
