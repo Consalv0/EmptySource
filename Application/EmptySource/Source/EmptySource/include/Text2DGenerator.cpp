@@ -34,17 +34,22 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 }
 
 void Text2DGenerator::GenerateTextMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
-	WString::const_iterator Character = InText.begin();
+	
+	if (InText.size() == 0) return;
 
-	IntVector3 * TextFaces = new IntVector3[InText.size() * 2];
-	MeshVertex * TextVertices = new MeshVertex[InText.size() * 4];
-	IntVector3 * TextFacesEnd = TextFaces;
-	MeshVertex * TextVerticesEnd = TextVertices;
+	size_t InTextSize = InText.size();
+	size_t InitialFacesSize = Faces->size();
+	size_t InitialVerticesSize = Vertices->size();
 
+	Faces->resize(InitialFacesSize + InTextSize * 2);
+	Vertices->resize(InitialVerticesSize + InTextSize * 4);
+	
 	int VertexCount = 0;
+	IntVector3 * TextFacesEnd = &Faces->at(InitialFacesSize);
+	MeshVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
 
 	// --- Iterate through all characters
-	for (; Character != InText.end(); Character++) {
+	for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
 		TextGlyph * Glyph = LoadedCharacters[*Character];
 		if (Glyph == NULL) {
 			Pivot.x += GlyphHeight / 2.F;
@@ -61,17 +66,13 @@ void Text2DGenerator::GenerateTextMesh(Vector2 Pivot, const WString & InText, Me
 
 		VertexCount += 4;
 		TextVerticesEnd += 4;
+
 		// --- Advance cursor for next glyph (note that advance is number of 1/32 pixels)
 		Pivot.x += (Glyph->Advance >> 6);
 	}
 
-	if (VertexCount > 0) {
-		Faces->insert(Faces->end(), &TextFaces[0], TextFacesEnd);
-		Vertices->insert(Vertices->end(), &TextVertices[0], TextVerticesEnd);
-	}
-
-	delete[] TextFaces;
-	delete[] TextVertices;
+	Faces->resize(InitialFacesSize + VertexCount / 2);
+	Vertices->resize(InitialVerticesSize + VertexCount);
 }
 
 void Text2DGenerator::Clear() {
@@ -79,9 +80,10 @@ void Text2DGenerator::Clear() {
 }
 
 unsigned char * Text2DGenerator::GenerateTextureAtlas() {
-	unsigned char * AtlasData = new unsigned char[AtlasSize * AtlasSize];
+	int AtlasSizeSqr = AtlasSize * AtlasSize;
+	unsigned char * AtlasData = new unsigned char[AtlasSizeSqr];
 
-	for (int i = 0; i < AtlasSize * AtlasSize; i++) {
+	for (int i = 0; i < AtlasSizeSqr; i++) {
 		// if (i % GlyphHeight == 0 || (i / (AtlasSize)) % GlyphHeight == 0) {
 		// 	AtlasData[i] = 255;
 		// }
@@ -104,7 +106,7 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 		
 		// --- If current position exceds the canvas with the next character, reset the position in Y
 		AtlasPosition.y += GlyphHeight;
-		if (AtlasPosition.y * AtlasSize > (AtlasSize * AtlasSize - GlyphHeight * AtlasSize)) {
+		if (AtlasPosition.y * AtlasSize > (AtlasSizeSqr - GlyphHeight * AtlasSize)) {
 			AtlasPosition.x += GlyphHeight;
 			AtlasPosition.y = 0;
 		}
@@ -112,10 +114,10 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 		// --- Render current character in the current position
 		for (int i = Character->Size.y - 1; i >= 0; i--) {
 			for (int j = 0; j < Character->Size.x; j++) {
-				if (IndexPos >= AtlasSize * AtlasSize) {
-					IndexPos -= AtlasSize * AtlasSize / GlyphHeight;
+				if (IndexPos >= AtlasSizeSqr) {
+					IndexPos -= AtlasSizeSqr / GlyphHeight;
 				}
-				if (IndexPos < AtlasSize * AtlasSize && IndexPos >= 0) {
+				if (IndexPos < AtlasSizeSqr && IndexPos >= 0) {
 					AtlasData[IndexPos] = Character->RasterizedData[i * Character->Size.x + j];
 				}
 				IndexPos++;
