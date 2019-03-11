@@ -14,26 +14,26 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 	for (unsigned long Character = From; Character <= To; Character++) {
 		unsigned int GlyphIndex = TextFont->GetGlyphIndex(Character);
 		FT_Error Error;
-		if (Error = FT_Load_Glyph(TextFont->FreeTypeFace, GlyphIndex, FT_LOAD_RENDER)) {
+		if (Error = FT_Load_Glyph(TextFont->Face, GlyphIndex, FT_LOAD_RENDER)) {
 			Debug::Log(Debug::LogError, L"Failed to load Glyph '%c', %s", Character, FT_ErrorMessage(Error));
 		}
 		else {
 			LoadedCharacters.insert_or_assign(Character, new TextGlyph(
 				Character,
-				{ (int)TextFont->FreeTypeFace->glyph->bitmap.width, (int)TextFont->FreeTypeFace->glyph->bitmap.rows },
-				{ (int)TextFont->FreeTypeFace->glyph->bitmap_left, (int)TextFont->FreeTypeFace->glyph->bitmap_top },
-				(int)TextFont->FreeTypeFace->glyph->advance.x
+				{ (int)TextFont->Face->glyph->bitmap.width, (int)TextFont->Face->glyph->bitmap.rows },
+				{ (int)TextFont->Face->glyph->bitmap_left, (int)TextFont->Face->glyph->bitmap_top },
+				(int)TextFont->Face->glyph->advance.x
 			));
 			{
 				TextGlyph * Glyph = LoadedCharacters[Character];
 				LoadedCharacters[Character]->RasterizedData = new unsigned char[Glyph->Size.x * Glyph->Size.y];
-				memcpy(Glyph->RasterizedData, TextFont->FreeTypeFace->glyph->bitmap.buffer, Glyph->Size.x * Glyph->Size.y);
+				memcpy(Glyph->RasterizedData, TextFont->Face->glyph->bitmap.buffer, Glyph->Size.x * Glyph->Size.y);
 			}
 		}
 	}
 }
 
-void Text2DGenerator::GenerateTextMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
+void Text2DGenerator::GenerateMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
 	
 	if (InText.size() == 0) return;
 

@@ -9,7 +9,7 @@ private:
 
 public:
 
-	struct FT_FaceRec_ * FreeTypeFace;
+	struct FT_FaceRec_ * Face;
 	
 	//* Initialize FreeType Library
 	static bool InitializeFreeType();
