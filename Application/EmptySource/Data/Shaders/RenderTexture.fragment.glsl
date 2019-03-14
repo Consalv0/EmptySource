@@ -19,5 +19,6 @@ void main(){
     //     _MainTexture, vVertex.UV0 + 0.005 * vec2( sin(_Time + _MainTextureSize.x * vVertex.UV0.x), cos(_Time + _MainTextureSize.y * vVertex.UV0.y) )
     // );
     // FragColor = texture(_MainTexture, vVertex.UV0 + 0.05 * vec2(_Time, _Time * 0.5));
-    FragColor = texture(_MainTexture, vVertex.UV0);
+    float Color = texture(_MainTexture, vVertex.UV0).r;
+    FragColor = vec4(Color, Color, Color, Color);
 } 

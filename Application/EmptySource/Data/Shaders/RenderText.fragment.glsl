@@ -4,6 +4,9 @@ uniform sampler2D _MainTexture;
 uniform vec2 _MainTextureSize;
 uniform float _Time;
 
+uniform float _TextSize;
+uniform float _TextBold;
+
 in struct VertexData {
   vec4 Position;
   vec3 NormalDirection;
@@ -15,10 +18,8 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main(){
-    // FragColor = texture( 
-    //     _MainTexture, vVertex.UV0 + 0.005 * vec2( sin(_Time + _MainTextureSize.x * vVertex.UV0.x), cos(_Time + _MainTextureSize.y * vVertex.UV0.y) )
-    // );
-    // FragColor = texture(_MainTexture, vVertex.UV0 + 0.05 * vec2(_Time, _Time * 0.5));
-    float Value = texture(_MainTexture, vVertex.UV0).r;
-    FragColor = vec4(Value, Value, Value, 0);
+  float Smoothing = 1.0 / _TextSize;
+  float Distance = texture(_MainTexture, vVertex.UV0).r;
+  float Alpha = smoothstep(_TextBold - Smoothing, _TextBold + Smoothing, Distance);
+  FragColor = vec4(Alpha, Alpha, Alpha, 0);
 } 

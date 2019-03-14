@@ -2,7 +2,7 @@
 
 #include "..\include\Math\Math.h"
 
-struct TextGlyph {
+struct FontGlyph {
 public:
 	unsigned long UnicodeValue;
 	IntVector2 Size;
@@ -14,11 +14,15 @@ public:
 	float MaxV;
 	unsigned char * RasterizedData;
 
-	TextGlyph();
+	FontGlyph();
 
-	TextGlyph(unsigned long Character, IntVector2 Size, IntVector2 Bearing, int Advance);
+	FontGlyph(unsigned long Character, IntVector2 Size, IntVector2 Bearing, int Advance, unsigned char * Data);
 
-	void GetQuadMesh(Vector2 Pivot, struct MeshVertex * Quad);
+	FontGlyph(const FontGlyph & Other);
 
-	~TextGlyph();
+	void GetQuadMesh(Vector2 Pivot, const float& Scale, struct MeshVertex * Quad);
+
+	FontGlyph & operator=(const FontGlyph & Other);
+
+	~FontGlyph();
 };
