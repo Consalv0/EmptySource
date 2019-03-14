@@ -15,9 +15,51 @@ namespace MathConstants {
 	static const float DeltaPresicion = 0.00001F;
 	static const float RadToDegree = 57.2957795130823208F;
 	static const float DegreeToRad = 0.0174532925199432F;
+	static const float SquareRoot2 = 1.41421356237F;
+}
+
+namespace MathEquations {
+	inline int SolveQuadratic(float x[2], float a, float b, float c);
+
+	inline int SolveCubicNormed(float *x, float a, float b, float c);
+
+	inline int SolveCubic(float x[3], float a, float b, float c, float d);
+
 }
 
 namespace Math {
+	//* Returns the smaller of the arguments.
+	template <typename T>
+	inline T Min(const T & A, const T & B);
+
+	//* Returns the larger of the arguments.
+	template <typename T>
+	inline T Max(const T & A, const T & B);
+
+	//* Returns the middle out of three values
+	template <typename T, typename S>
+	inline T Median(T A, T B, S Alpha);
+
+	//* Returns the weighted average of a and b.
+	template <typename T, typename S>
+	inline T Mix(T A, T B, S Weight);
+
+	//* Returns 1 for positive values, -1 for negative values, and 0 for zero.
+	template <typename T>
+	inline int Sign(T Value);
+
+	/// Returns 1 for non-negative values and -1 for negative values.
+	template <typename T>
+	inline int NonZeroSign(T Value);
+
+	//* Clamp the value in the defined range 
+	template <typename T>
+	inline T Clamp(T Value, const T& A, const T& B);
+
+	//* Clamp the value in range of [0, 1] 
+	template <typename T>
+	inline T Clamp01(T Value);
+
 	//* Get the angle in degrees in range of [0, 360)
 	inline float ClampAngle(float Angle);
 
