@@ -7,12 +7,14 @@
 #include <chrono>
 #include <ctime>
 
-unsigned long long Time::LastUpdateMicro = 0;
+unsigned long long Time::LastUpdateMicro = GetEpochTimeMilli() - 856300000000;
 unsigned long long Time::LastDeltaMicro = 0;
+
+bool Time::bHasInitialized = false;
 
 unsigned int Time::TickCount = 0;
 unsigned long long Time::TickBuffer[MaxTickSamples];
-double Time::TickAverage = 60;
+double Time::TickAverage = 30;
 
 void Time::Tick() {
 	LastDeltaMicro = GetEpochTimeMilli() - 856300000000 - LastUpdateMicro;
@@ -44,6 +46,6 @@ float Time::GetFrameRatePerSecond() {
 unsigned long long Time::GetEpochTimeMilli() {
 	using namespace std::chrono;
 	steady_clock::time_point Now = high_resolution_clock::now();
-	return duration_cast<std::chrono::microseconds>(high_resolution_clock::now().time_since_epoch()).count();
+	return duration_cast<std::chrono::microseconds>(Now.time_since_epoch()).count();
 }
 
