@@ -11,16 +11,17 @@ namespace Debug {
 		std::chrono::steady_clock::time_point EndTime;
 
 	public:
+		// Default Constructor
 		Timer();
 
-		// --- Save time stamp
+		// Save time stamp
 		void Start();
-		// --- Save end time stamp
+		// Save end time stamp
 		void Stop();
 
-		// --- Get enlapsed time in miliseconds
+		// Get enlapsed time in miliseconds
 		double GetEnlapsed() const;
-		// --- Get enlapsed time in seconds
+		// Get enlapsed time in seconds
 		double GetEnlapsedSeconds() const;
 	};
 

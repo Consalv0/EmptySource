@@ -3,8 +3,10 @@
 class Time {
 public:
 	friend class Application;
+	
 	// Don't use this unless you know what are you doing
 	static void Tick();
+
 	// Update the fixed update time
 	// Don't use this unless you know what are you doing
 	// static void FixedUpdate();
@@ -22,9 +24,11 @@ public:
 	static unsigned long long GetEpochTimeMilli();
 
 private:
-	// Time since the last update callback
+	// Time since the last tick callback
 	static unsigned long long LastUpdateMicro;
 	static unsigned long long LastDeltaMicro;
+
+	static bool bHasInitialized;
 
 	static unsigned int TickCount;
 	static double TickAverage;
