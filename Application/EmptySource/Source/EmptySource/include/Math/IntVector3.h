@@ -53,3 +53,5 @@ public:
 };
 
 #include "..\Math\IntVector3.inl"
+
+typedef Vector3 Point3;

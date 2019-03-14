@@ -7,7 +7,7 @@
 struct Text2DGenerator {
 private:
 
-	TDictionary<unsigned long, TextGlyph *> LoadedCharacters;
+	TDictionary<unsigned long, FontGlyph *> LoadedCharacters;
 
 public:
 	Font * TextFont;
@@ -21,7 +21,7 @@ public:
 
 	//* Generate mesh geometry for rasterization. 
 	//* The uv of the quads are calculated in the gryphs creation 
-	void GenerateMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
+	void GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
 
 	//* Clear generator memory
 	void Clear();

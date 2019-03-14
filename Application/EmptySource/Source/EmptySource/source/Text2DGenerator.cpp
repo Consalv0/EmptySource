@@ -1,62 +1,47 @@
 
-#include "..\External\ft2build.h"
-#include FT_FREETYPE_H
-#include "..\External\freetype\freetype.h"
-
 #include "..\include\Core.h"
 #include "..\include\Utility\LogFreeType.h"
 #include "..\include\Utility\LogCore.h"
 #include "..\include\Text2DGenerator.h"
 #include "..\include\Utility\Timer.h"
 
+#include "..\include\SDFTextureGenerator.h"
+
 void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
 	TextFont->SetGlyphHeight(GlyphHeight);
 	for (unsigned long Character = From; Character <= To; Character++) {
-		unsigned int GlyphIndex = TextFont->GetGlyphIndex(Character);
-		FT_Error Error;
-		if (Error = FT_Load_Glyph(TextFont->Face, GlyphIndex, FT_LOAD_RENDER)) {
-			Debug::Log(Debug::LogError, L"Failed to load Glyph '%c', %s", Character, FT_ErrorMessage(Error));
-		}
-		else {
-			LoadedCharacters.insert_or_assign(Character, new TextGlyph(
-				Character,
-				{ (int)TextFont->Face->glyph->bitmap.width, (int)TextFont->Face->glyph->bitmap.rows },
-				{ (int)TextFont->Face->glyph->bitmap_left, (int)TextFont->Face->glyph->bitmap_top },
-				(int)TextFont->Face->glyph->advance.x
-			));
-			{
-				TextGlyph * Glyph = LoadedCharacters[Character];
-				LoadedCharacters[Character]->RasterizedData = new unsigned char[Glyph->Size.x * Glyph->Size.y];
-				memcpy(Glyph->RasterizedData, TextFont->Face->glyph->bitmap.buffer, Glyph->Size.x * Glyph->Size.y);
-			}
+		FontGlyph Glyph;
+		if (TextFont->GetGlyph(Glyph, Character)) {
+			LoadedCharacters.insert_or_assign(Character, new FontGlyph(Glyph));
 		}
 	}
 }
 
-void Text2DGenerator::GenerateMesh(Vector2 Pivot, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
+void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
 	
 	if (InText.size() == 0) return;
 
+	float ScaleFactor = HeightSize / GlyphHeight;
 	size_t InTextSize = InText.size();
 	size_t InitialFacesSize = Faces->size();
 	size_t InitialVerticesSize = Vertices->size();
 
-	Faces->resize(InitialFacesSize + InTextSize * 2);
-	Vertices->resize(InitialVerticesSize + InTextSize * 4);
+	Faces->resize(InitialFacesSize + (InTextSize * 2));
+	Vertices->resize(InitialVerticesSize + (InTextSize * 4));
 	
-	int VertexCount = 0;
+	int VertexCount = (int)InitialVerticesSize;
 	IntVector3 * TextFacesEnd = &Faces->at(InitialFacesSize);
 	MeshVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
 
 	// --- Iterate through all characters
 	for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
-		TextGlyph * Glyph = LoadedCharacters[*Character];
+		FontGlyph * Glyph = LoadedCharacters[*Character];
 		if (Glyph == NULL) {
-			Pivot.x += GlyphHeight / 2.F;
+			Pivot.x += GlyphHeight * 0.5F * ScaleFactor;
 			continue;
 		}
 
-		Glyph->GetQuadMesh(Pivot, TextVerticesEnd);
+		Glyph->GetQuadMesh(Pivot, ScaleFactor, TextVerticesEnd);
 		TextFacesEnd->x = VertexCount;
 		TextFacesEnd->y = VertexCount + 1;
 		(TextFacesEnd++)->z = VertexCount + 2;
@@ -68,10 +53,12 @@ void Text2DGenerator::GenerateMesh(Vector2 Pivot, const WString & InText, MeshFa
 		TextVerticesEnd += 4;
 
 		// --- Advance cursor for next glyph (note that advance is number of 1/32 pixels)
-		Pivot.x += (Glyph->Advance >> 6);
+		Pivot.x += (Glyph->Advance >> 6) * ScaleFactor;
 	}
 
-	Faces->resize(InitialFacesSize + VertexCount / 2);
+	// --- The VertexCount was initialized with the initial VertexCount
+	VertexCount -= (int)InitialVerticesSize;
+	Faces->resize(InitialFacesSize + ((VertexCount) / 2));
 	Vertices->resize(InitialVerticesSize + VertexCount);
 }
 
@@ -93,8 +80,8 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 	}
 
 	IntVector2 AtlasPosition;
-	for (TDictionary<unsigned long, TextGlyph*>::iterator Begin = LoadedCharacters.begin(); Begin != LoadedCharacters.end(); Begin++) {
-		TextGlyph * Character = Begin->second;
+	for (TDictionary<unsigned long, FontGlyph*>::iterator Begin = LoadedCharacters.begin(); Begin != LoadedCharacters.end(); Begin++) {
+		FontGlyph * Character = Begin->second;
 		int IndexPos = AtlasPosition.x + AtlasPosition.y * AtlasSize;
 		IndexPos += Character->Bearing.x;
 
@@ -126,5 +113,7 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 		}
 	}
 
+	// GenerateSDFFromUChar(AtlasData, { AtlasSize , AtlasSize });
+	SDFTextureGenerator::Generate(AtlasData, { AtlasSize , AtlasSize }, 2, 4, 0);
 	return AtlasData;
 }

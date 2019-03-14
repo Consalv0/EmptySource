@@ -131,8 +131,8 @@ void CoreApplication::MainLoop() {
 
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
-	TextGenerator.GlyphHeight = 12;
-	TextGenerator.AtlasSize = 32 * TextGenerator.GlyphHeight;
+	TextGenerator.GlyphHeight = 24;
+	TextGenerator.AtlasSize = 1024;
 	TextGenerator.Pivot = 0;
 
 	// --- Basic Latin Unicode Range
@@ -144,7 +144,7 @@ void CoreApplication::MainLoop() {
 
 	unsigned char * FontAtlasData = TextGenerator.GenerateTextureAtlas();
 	Texture2D FontMap = Texture2D(
-		IntVector2(32 * TextGenerator.GlyphHeight),
+		IntVector2(TextGenerator.AtlasSize),
 		Graphics::CF_Red,
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Border,
@@ -265,6 +265,8 @@ void CoreApplication::MainLoop() {
 
 	int CurrentRenderText = 0;
 	const int TextCount = 100;
+	float FontSize = 125;
+	float FontBoldness = 0.5F;
 	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
 
@@ -367,6 +369,24 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
+		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
+			if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
+				FontSize += Time::GetDeltaTime() * FontSize;
+			}
+
+			if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
+				FontSize -= Time::GetDeltaTime() * FontSize;
+			}
+		} else {
+			if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
+				FontBoldness += Time::GetDeltaTime() / 10;
+			}
+
+			if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
+				FontBoldness -= Time::GetDeltaTime() / 10;
+			}
+		}
+
 		// --- Draw the meshs(es) !
 		RenderTimeSum += Time::GetDeltaTime();
 		if (RenderTimeSum > (1 / 60)) {
@@ -426,26 +446,27 @@ void CoreApplication::MainLoop() {
 			LightModels[0].DrawInstanciated(2);
 		
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			// glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
+			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
-			// RenderTextureMaterial.Use();
+			RenderTextureMaterial.Use();
 			
 			float AppTime = (float)Time::GetEpochTimeMilli() / 1000.F;
-			// RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			// RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			// RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			// RenderTextureMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
-			// 
-			// QuadModels[0].BindVertexArray();
-			// 
-			// Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
-			// RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-			// 	ModelMatrixBuffer
-			// );
-			// 
-			// QuadModels[0].DrawInstanciated(1);
+			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
 			
+			QuadModels[0].BindVertexArray();
+			
+			Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
+			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+				ModelMatrixBuffer
+			);
+			
+			QuadModels[0].DrawInstanciated(1);
+
+			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// Activate corresponding render state	
 			RenderTextMaterial.Use();
 			RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
@@ -453,30 +474,36 @@ void CoreApplication::MainLoop() {
 			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix", 
 				Matrix4x4::Orthographic(0.F, (float)MainWindow->GetWidth(), 0.F, (float)MainWindow->GetHeight()).PointerToValue()
 			);
+
 			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
+			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
 		
 			QuadModels[0].BindVertexArray();
 		
 			double TimeCount = 0;
+			int TotalCharacterSize = 0;
+			DynamicMesh.Clear();
 			for (int i = 0; i < TextCount; i++) {
-				DynamicMesh.Clear();
 				Timer.Start();
 				TextGenerator.GenerateMesh(
-					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * (float)TextGenerator.GlyphHeight),
-					RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
+					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + 10 * FontSize / TextGenerator.GlyphHeight),
+					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
-				if ( !DynamicMesh.SetUpBuffers() ) { continue; }
+				Timer.Stop();
+				TimeCount += Timer.GetEnlapsed();
+				TotalCharacterSize += (int)RenderingText[i].size();
+			}
+			if (DynamicMesh.SetUpBuffers()) {
 				DynamicMesh.BindVertexArray();
 				RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 				DynamicMesh.DrawElement();
-				Timer.Stop();
-				TimeCount += Timer.GetEnlapsed();
 			}
 
 			RenderingText[CurrentRenderText] = Text::Formatted(
 				L"Character(%.2f μs, %d), Temp [%d°], %.1f FPS (%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
-				TimeCount / (RenderingText[CurrentRenderText].size() * (double)TextCount) * 1000.0,
-				RenderingText[CurrentRenderText].size() * TextCount,
+				TimeCount / double(TotalCharacterSize) * 1000.0,
+				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
 				Time::GetFrameRatePerSecond(),
 				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,

@@ -155,6 +155,13 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\EmptySource\include\Bitmap.h" />
+    <ClInclude Include="Source\EmptySource\include\Contour.h" />
+    <ClInclude Include="Source\EmptySource\include\EdgeHolder.h" />
+    <ClInclude Include="Source\EmptySource\include\EdgeSegments.h" />
+    <ClInclude Include="Source\EmptySource\include\Header.h" />
+    <ClInclude Include="Source\EmptySource\include\SDFTextureGenerator.h" />
     <ClInclude Include="Source\EmptySource\include\CoreCUDA.h" />
     <ClInclude Include="Source\EmptySource\include\CoreGraphics.h" />
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
@@ -184,6 +191,7 @@
     <ClInclude Include="Source\EmptySource\include\ShaderStage.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
     <ClInclude Include="Source\EmptySource\include\ShaderProgram.h" />
+    <ClInclude Include="Source\EmptySource\include\Shape2D.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Text.h" />
     <ClInclude Include="Source\EmptySource\include\Text2DGenerator.h" />
@@ -300,8 +308,11 @@
     <ClInclude Include="Source\External\tsl\robin_set.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EmptySource\Glyph.cpp" />
-    <ClCompile Include="Source\EmptySource\include\Text2DGenerator.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Contour.cpp" />
+    <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp" />
+    <ClCompile Include="Source\EmptySource\source\EdgeSegments.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Glyph.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Bitmap.cpp" />
     <ClCompile Include="Source\EmptySource\source\FileStream.cpp" />
     <ClCompile Include="Source\EmptySource\source\Font.cpp" />
     <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp" />
@@ -315,7 +326,9 @@
     <ClCompile Include="Source\EmptySource\source\RenderTarget.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShaderStage.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Shape2D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Text2DGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture2D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture3D.cpp" />
@@ -347,6 +360,12 @@
     <CudaCompile Include="Source\EmptySource\source\CudaRandArray.cu" />
     <CudaCompile Include="Source\EmptySource\source\RTRenderer.cu" />
     <CudaCompile Include="Source\EmptySource\source\ModelVoxelizer.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="EmptySource.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EmptySource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

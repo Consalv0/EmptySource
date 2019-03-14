@@ -50,3 +50,23 @@ void Font::Initialize(FileStream * File) {
 unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
 	return FT_Get_Char_Index(Face, Character);
 }
+
+bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
+	FT_Error Error;
+	if (Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_RENDER)) {
+		Debug::Log(Debug::LogError, L"Failed to load Glyph '%c', %s", Character, FT_ErrorMessage(Error));
+		return false;
+	}
+	else {
+		FT_GlyphSlot * FTGlyph = &Face->glyph;
+
+		Glyph = FontGlyph(
+			Character,
+			{ (int)(*FTGlyph)->bitmap.width, (int)(*FTGlyph)->bitmap.rows },
+			{ (int)(*FTGlyph)->bitmap_left, (int)(*FTGlyph)->bitmap_top },
+			(int)Face->glyph->advance.x, (*FTGlyph)->bitmap.buffer
+		);
+
+		return true;
+	}
+}

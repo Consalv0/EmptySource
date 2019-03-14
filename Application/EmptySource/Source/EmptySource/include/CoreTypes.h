@@ -8,7 +8,11 @@ using TArray = std::vector<T>;
 template<class K, class T>
 using TDictionary = tsl::robin_map<K, T>;
 
+#ifdef __CUDACC__
 #include <cuda_runtime.h>
+#define HOST_DEVICE __host__ __device__
+#else
+#define HOST_DEVICE
+#endif // __CUDACC__
 
-#define HOST_DEVICE __host__ __device__ 
 #define FORCEINLINE __forceinline	/* Force code to be inline */

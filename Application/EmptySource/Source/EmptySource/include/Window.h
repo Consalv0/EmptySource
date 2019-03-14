@@ -46,6 +46,7 @@ public:
 
 	//* Rename the window title
 	void SetWindowName(const WString & NewName);
+
 	//* Get the window title name
 	WString GetWindowName();
 
