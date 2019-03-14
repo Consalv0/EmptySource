@@ -52,8 +52,27 @@ FORCEINLINE float Vector2::Cross(const Vector2& Other) const {
 	return x * Other.y - y * Other.x;
 }
 
+FORCEINLINE float Vector2::Cross(const Vector2 & A, const Vector2 & B) {
+	return A.x * B.y - A.y * B.x;
+}
+
 FORCEINLINE float Vector2::Dot(const Vector2& Other) const {
 	return x * Other.x + y * Other.y;
+}
+
+FORCEINLINE float Vector2::Dot(const Vector2 & A, const Vector2 & B) {
+	return A.x * B.x + A.y * B.y;
+}
+
+inline Vector2 Vector2::Orthogonal(bool Polarity) const {
+	return Polarity ? Vector2(-y, x) : Vector2(y, -x);
+}
+
+inline Vector2 Vector2::Orthonormal(bool Polarity) const {
+	float Length = Magnitude();
+	if (Length == 0)
+		return Polarity ? Vector2(0) : Vector2(0);
+	return Polarity ? Vector2(-y / Length, x / Length) : Vector2(y / Length, -x / Length);
 }
 
 inline const float * Vector2::PointerToValue() const {
@@ -82,6 +101,10 @@ inline float const & Vector2::operator[](unsigned int i) const {
 
 FORCEINLINE bool Vector2::operator==(const Vector2& Other) const {
 	return (x == Other.x && y == Other.y);
+}
+
+inline HOST_DEVICE bool Vector2::operator!() const {
+	return !x && !y;
 }
 
 FORCEINLINE bool Vector2::operator!=(const Vector2& Other) const {
@@ -154,3 +177,10 @@ FORCEINLINE Vector2& Vector2::operator/=(const float& Value) {
 	return *this;
 }
 
+inline Vector2 operator*(float Value, const Vector2 & Vector) {
+	return Vector2(Value * Vector.x, Value * Vector.y);
+}
+
+inline Vector2 operator/(float Value, const Vector2 & Vector) {
+	return Vector2(Value / Vector.x, Value / Vector.y);
+}
