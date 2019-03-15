@@ -15,6 +15,9 @@ public:
 	int GetHeight() const;
 
 	Bitmap<T> & operator=(const Bitmap<T> & Other);
+	T & operator[](int i);
+	T const& operator[](int i) const;
+	const T* PointerToValue() const;
 	T & operator()(int x, int y);
 	const T & operator()(int x, int y) const;
 

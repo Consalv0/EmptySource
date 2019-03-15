@@ -157,11 +157,12 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\EmptySource\include\Bitmap.h" />
-    <ClInclude Include="Source\EmptySource\include\Contour.h" />
+    <ClInclude Include="Source\EmptySource\include\Math\Box2D.h" />
+    <ClInclude Include="Source\EmptySource\include\Shape2DContour.h" />
     <ClInclude Include="Source\EmptySource\include\EdgeHolder.h" />
     <ClInclude Include="Source\EmptySource\include\EdgeSegments.h" />
     <ClInclude Include="Source\EmptySource\include\Header.h" />
-    <ClInclude Include="Source\EmptySource\include\SDFTextureGenerator.h" />
+    <ClInclude Include="Source\EmptySource\include\SDFGenerator.h" />
     <ClInclude Include="Source\EmptySource\include\CoreCUDA.h" />
     <ClInclude Include="Source\EmptySource\include\CoreGraphics.h" />
     <ClInclude Include="Source\EmptySource\include\CoreTypes.h" />
@@ -308,7 +309,7 @@
     <ClInclude Include="Source\External\tsl\robin_set.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EmptySource\source\Contour.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Shape2DContour.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeSegments.cpp" />
     <ClCompile Include="Source\EmptySource\source\Glyph.cpp" />
@@ -333,6 +334,7 @@
     <ClCompile Include="Source\EmptySource\source\Texture2D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture3D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Time.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
     <ClCompile Include="Source\External\GLAD\src\glad.c" />

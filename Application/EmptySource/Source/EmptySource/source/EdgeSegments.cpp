@@ -21,7 +21,7 @@
 #include "..\include\EdgeSegments.h"
 #include "..\include\Math\MathUtility.h"
 
-SignedDistance::SignedDistance() : distance(MathConstants::Big_Number), dot(1) { }
+SignedDistance::SignedDistance() : distance(-MathConstants::Big_Number), dot(1) { }
 
 SignedDistance::SignedDistance(float Distance, float Dot) : distance(Distance), dot(Dot) { }
 
@@ -148,8 +148,8 @@ SignedDistance QuadraticSegment::signedDistance(Point2 Origin, float &Param) con
     Vector2 ab = p[1]-p[0];
     Vector2 br = p[0]+p[2]-p[1]-p[1];
     float a = Vector2::Dot(br, br);
-    float b = 3*Vector2::Dot(ab, br);
-    float c = 2*Vector2::Dot(ab, ab)+Vector2::Dot(qa, br);
+    float b = 3.F * Vector2::Dot(ab, br);
+    float c = 2.F * Vector2::Dot(ab, ab)+Vector2::Dot(qa, br);
     float d = Vector2::Dot(qa, ab);
     float t[3];
     int Solutions = MathEquations::SolveCubic(t, a, b, c, d);
@@ -182,28 +182,30 @@ SignedDistance QuadraticSegment::signedDistance(Point2 Origin, float &Param) con
         return SignedDistance(MinDistance, fabs(Vector2::Dot((p[2]-p[1]).Normalized(), (p[2]-Origin).Normalized())));
 }
 
-SignedDistance CubicSegment::signedDistance(Point2 origin, float &param) const {
-    Vector2 qa = p[0]-origin;
-    Vector2 ab = p[1]-p[0];
-    Vector2 br = p[2]-p[1]-ab;
-    Vector2 as = (p[3]-p[2])-(p[2]-p[1])-br;
+SignedDistance CubicSegment::signedDistance(Point2 Origin, float &param) const {
+    Vector2 qa = p[0] - Origin;
+    Vector2 ab = p[1] - p[0];
+    Vector2 br = p[2] - p[1]-ab;
+    Vector2 as = (p[3] - p[2]) - (p[2] - p[1]) - br;
 
     Vector2 epDir = direction(0);
-    float minDistance = Math::NonZeroSign(Vector2::Cross(epDir, qa))*qa.Magnitude(); // distance from A
+	// --- Distance from A
+    float minDistance = Math::NonZeroSign(Vector2::Cross(epDir, qa))*qa.Magnitude(); 
     param = -Vector2::Dot(qa, epDir)/Vector2::Dot(epDir, epDir);
     {
         epDir = direction(1);
-        float distance = Math::NonZeroSign(Vector2::Cross(epDir, p[3]-origin))*(p[3]-origin).Magnitude(); // distance from B
+		// --- Distance from B
+        float distance = Math::NonZeroSign(Vector2::Cross(epDir, p[3] - Origin)) * (p[3] - Origin).Magnitude(); 
         if (fabs(distance) < fabs(minDistance)) {
             minDistance = distance;
-            param = Vector2::Dot(origin+epDir-p[3], epDir)/Vector2::Dot(epDir, epDir);
+            param = Vector2::Dot(Origin+epDir-p[3], epDir)/Vector2::Dot(epDir, epDir);
         }
     }
     // Iterative minimum distance search
     for (int i = 0; i <= MSDFGEN_CUBIC_SEARCH_STARTS; ++i) {
         float t = (float) i/MSDFGEN_CUBIC_SEARCH_STARTS;
         for (int step = 0;; ++step) {
-            Vector2 qpt = point(t)-origin;
+            Vector2 qpt = point(t)-Origin;
             float distance = Math::NonZeroSign(Vector2::Cross(direction(t), qpt))*qpt.Magnitude();
             if (fabs(distance) < fabs(minDistance)) {
                 minDistance = distance;
@@ -225,7 +227,7 @@ SignedDistance CubicSegment::signedDistance(Point2 origin, float &param) const {
     if (param < .5F)
         return SignedDistance(minDistance, fabs(Vector2::Dot(direction(0).Normalized(), qa.Normalized())));
     else
-        return SignedDistance(minDistance, fabs(Vector2::Dot(direction(1).Normalized(), (p[3]-origin).Normalized())));
+        return SignedDistance(minDistance, fabs(Vector2::Dot(direction(1).Normalized(), (p[3]-Origin).Normalized())));
 }
 
 static void pointBounds(Point2 p, float &l, float &b, float &r, float &t) {

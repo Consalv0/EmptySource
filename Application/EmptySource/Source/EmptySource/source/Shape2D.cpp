@@ -59,7 +59,7 @@ void Shape::normalize() {
 		}
 }
 
-void Shape::bounds(float &l, float &b, float &r, float &t) const {
+void Shape::bounds(Box2D & Bounds) const {
 	for (std::vector<Contour>::const_iterator contour = contours.begin(); contour != contours.end(); ++contour)
-		contour->bounds(l, b, r, t);
+		contour->bounds(Bounds.Left, Bounds.Bottom, Bounds.Right, Bounds.Top);
 }

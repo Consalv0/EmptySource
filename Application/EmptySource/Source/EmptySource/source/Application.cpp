@@ -131,7 +131,7 @@ void CoreApplication::MainLoop() {
 
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
-	TextGenerator.GlyphHeight = 24;
+	TextGenerator.GlyphHeight = 16;
 	TextGenerator.AtlasSize = 1024;
 	TextGenerator.Pivot = 0;
 
@@ -142,7 +142,9 @@ void CoreApplication::MainLoop() {
 	// --- Greek Unicode Range
 	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
 
-	unsigned char * FontAtlasData = TextGenerator.GenerateTextureAtlas();
+	Bitmap<unsigned char> FontAtlas;
+	TextGenerator.GenerateTextureAtlas(FontAtlas);
+
 	Texture2D FontMap = Texture2D(
 		IntVector2(TextGenerator.AtlasSize),
 		Graphics::CF_Red,
@@ -150,7 +152,7 @@ void CoreApplication::MainLoop() {
 		Graphics::AM_Border,
 		Graphics::CF_Red,
 		GL_UNSIGNED_BYTE,
-		FontAtlasData
+		FontAtlas.PointerToValue()
 	);
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
@@ -264,9 +266,9 @@ void CoreApplication::MainLoop() {
 	double InputTimeSum = 0;
 
 	int CurrentRenderText = 0;
-	const int TextCount = 100;
+	const int TextCount = 10;
 	float FontSize = 125;
-	float FontBoldness = 0.5F;
+	float FontBoldness = 0.55F;
 	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
 
@@ -487,7 +489,7 @@ void CoreApplication::MainLoop() {
 			for (int i = 0; i < TextCount; i++) {
 				Timer.Start();
 				TextGenerator.GenerateMesh(
-					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + 10 * FontSize / TextGenerator.GlyphHeight),
+					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize),
 					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
 				Timer.Stop();

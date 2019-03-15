@@ -3,6 +3,7 @@
 #include "..\include\Font.h"
 #include "..\include\Mesh.h"
 #include "..\include\Text.h"
+#include "..\include\Bitmap.h"
 
 struct Text2DGenerator {
 private:
@@ -27,5 +28,5 @@ public:
 	void Clear();
 
 	//* Prepare Texture Data
-	unsigned char * GenerateTextureAtlas();
+	bool GenerateTextureAtlas(Bitmap<unsigned char> & Atlas);
 };
