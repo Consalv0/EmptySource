@@ -34,16 +34,16 @@ void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& Scale, MeshVertex * Quad
 	float YPosHeight = YPos + SDFResterized.GetHeight() * Scale;
 
 	Quad[0].Position.x = XPosWidth; Quad[0].Position.y = YPos;
-	Quad[0].UV0.u = MaxU; Quad[0].UV0.v = MinV;
+	Quad[0].UV0.u = UV.MaxX; Quad[0].UV0.v = UV.MinY;
 
 	Quad[1].Position.x = XPos;      Quad[1].Position.y = YPosHeight;
-	Quad[1].UV0.u = MinU; Quad[1].UV0.v = MaxV;
+	Quad[1].UV0.u = UV.MinX; Quad[1].UV0.v = UV.MaxY;
 	
 	Quad[2].Position.x = XPosWidth; Quad[2].Position.y = YPosHeight;
-	Quad[2].UV0.u = MaxU; Quad[2].UV0.v = MaxV;
+	Quad[2].UV0.u = UV.MaxX; Quad[2].UV0.v = UV.MaxY;
 	
 	Quad[3].Position.x = XPos;      Quad[3].Position.y = YPos;
-	Quad[3].UV0.u = MinU; Quad[3].UV0.v = MinV;
+	Quad[3].UV0.u = UV.MinX; Quad[3].UV0.v = UV.MinY;
 }
 
 FontGlyph & FontGlyph::operator=(const FontGlyph & Other) {

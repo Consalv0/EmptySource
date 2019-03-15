@@ -20,34 +20,34 @@
 
 #pragma once
 
-#include "..\include\Shape2DContour.h"
+#include "..\include\ShapeContour.h"
 #include "..\include\Math\Box2D.h"
 
 // Vector shape representation.
 class Shape {
 public:
 	//* The list of contours the shape consists of.
-	TArray<Contour> contours;
+	TArray<ShapeContour> Contours;
 
 	//* Specifies whether the shape uses bottom-to-top (false) or top-to-bottom (true) Y coordinates.
-	bool inverseYAxis;
+	bool bInverseYAxis;
 
 	//* Default constructor
 	Shape();
 	
 	//* Adds a contour.
-	void addContour(const Contour &contour);
+	void AddContour(const ShapeContour & Contour);
 
 	//* Adds a blank contour and returns its reference.
-	Contour & addContour();
+	ShapeContour & AddContour();
 	
 	//* Normalizes the shape geometry for distance field generation.
-	void normalize();
+	void Normalize();
 	
 	//* Performs basic checks to determine if the object represents a valid shape.
-	bool validate() const;
+	bool Validate() const;
 	
 	//* Computes the shape's bounding box.
-	void bounds(Box2D & Bounds) const;
+	void Bounds(Box2D & Bounds) const;
 
 };

@@ -5,7 +5,7 @@
 struct FT_Context {
 	Point2 position;
 	Shape *shape;
-	Contour *contour;
+	ShapeContour *contour;
 };
 
 class Font {

@@ -492,17 +492,11 @@
     <ClInclude Include="Source\External\ft2build.h">
       <Filter>Header Files\External\FreeType</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Header.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Bitmap.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Shape2D.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\EdgeHolder.h">
       <Filter>Header Files\Core</Filter>
@@ -510,14 +504,17 @@
     <ClInclude Include="Source\EmptySource\include\EdgeSegments.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Shape2DContour.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\SDFGenerator.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Math\Box2D.h">
       <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\ShapeContour.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Shape.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -593,20 +590,20 @@
     <ClCompile Include="Source\EmptySource\source\Bitmap.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Shape2D.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\EdgeSegments.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Shape2DContour.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp">
       <Filter>Source Files\Core\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Shape.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\ShapeContour.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

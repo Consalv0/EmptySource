@@ -63,6 +63,11 @@ namespace MathEquations {
 			return SolveQuadratic(x, b, c, d);
 		return SolveCubicNormed(x, b / a, c / a, d / a);
 	}
+
+	template<typename T>
+	float Shoelace2(const T & A, const T & B) {
+		return (B[0] - A[0]) * (A[1] + B[1]);
+	}
 }
 
 namespace Math {

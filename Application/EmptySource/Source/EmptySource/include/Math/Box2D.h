@@ -1,6 +1,9 @@
 #pragma once
 
 struct Box2D {
-public:
-	float Left, Bottom, Right, Top;
+public: 
+	union {
+		struct { float Left, Bottom, Right, Top; };
+		struct { float MinX, MinY, MaxX, MaxY; };
+	};
 };

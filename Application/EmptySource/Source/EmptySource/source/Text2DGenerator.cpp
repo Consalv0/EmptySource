@@ -12,16 +12,16 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 		FontGlyph Glyph;
 		if (TextFont->GetGlyph(Glyph, Character)) {
 
-			if (!Glyph.VectorShape.validate())
+			if (!Glyph.VectorShape.Validate())
 				Debug::Log(Debug::LogWarning, L"The geometry of the loaded shape is invalid.");
-			Glyph.VectorShape.normalize();
+			Glyph.VectorShape.Normalize();
 
 			Box2D Bounds = { 
 				MathConstants::Big_Number, MathConstants::Big_Number,
 				-MathConstants::Big_Number, -MathConstants::Big_Number
 			};
 
-			Glyph.VectorShape.bounds(Bounds);
+			Glyph.VectorShape.Bounds(Bounds);
 			
 			Glyph.GenerateSDF(GlyphHeight);
 			LoadedCharacters.insert_or_assign(Character, new FontGlyph(Glyph));
@@ -98,10 +98,10 @@ bool Text2DGenerator::GenerateTextureAtlas(Bitmap<unsigned char> & Atlas) {
 		IndexPos += Character->Bearing.x;
 
 		// --- Asign the current UV Position
-		Character->MinU = (Character->Bearing.u + AtlasPosition.u) / (float)AtlasSize;
-		Character->MaxU = (Character->Bearing.u + AtlasPosition.u + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
-		Character->MinV = (AtlasPosition.v) / (float)AtlasSize;
-		Character->MaxV = (AtlasPosition.v + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
+		Character->UV.MinX = (Character->Bearing.u + AtlasPosition.u) / (float)AtlasSize;
+		Character->UV.MaxX = (Character->Bearing.u + AtlasPosition.u + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
+		Character->UV.MinY = (AtlasPosition.v) / (float)AtlasSize;
+		Character->UV.MaxY = (AtlasPosition.v + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
 		
 		// --- If current position exceds the canvas with the next character, reset the position in Y
 		AtlasPosition.y += GlyphHeight;

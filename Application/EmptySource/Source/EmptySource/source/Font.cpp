@@ -48,28 +48,35 @@ Point2 FT_Point2(const FT_Vector & Vector) {
 
 int FT_MoveTo(const FT_Vector * To, void * User) {
 	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
-	Context->contour = &Context->shape->addContour();
+	Context->contour = &Context->shape->AddContour();
 	Context->position = FT_Point2(*To);
 	return 0;
 }
 
 int FT_LineTo(const FT_Vector * To, void * User) {
 	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
-	Context->contour->addEdge(new LinearSegment(Context->position, FT_Point2(*To)));
+	Context->contour->AddEdge(new LinearSegment(Context->position, FT_Point2(*To)));
 	Context->position = FT_Point2(*To);
 	return 0;
 }
 
 int FT_ConicTo(const FT_Vector * Control, const FT_Vector * To, void * User) {
 	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
-	Context->contour->addEdge(new QuadraticSegment(Context->position, FT_Point2(*Control), FT_Point2(*To)));
+	Context->contour->AddEdge(new QuadraticSegment(Context->position, FT_Point2(*Control), FT_Point2(*To)));
 	Context->position = FT_Point2(*To);
 	return 0;
 }
 
 int FT_CubicTo(const FT_Vector * ControlA, const FT_Vector * ControlB, const FT_Vector * To, void * User) {
 	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
-	Context->contour->addEdge(new CubicSegment(Context->position, FT_Point2(*ControlA), FT_Point2(*ControlB), FT_Point2(*To)));
+	Context->contour->AddEdge(new CubicSegment(Context->position, FT_Point2(*ControlA), FT_Point2(*ControlB), FT_Point2(*To)));
+	Context->position = FT_Point2(*To);
+	return 0;
+}
+
+int FT_Shift(const FT_Vector * ControlA, const FT_Vector * ControlB, const FT_Vector * To, void * User) {
+	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
+	Context->contour->AddEdge(new CubicSegment(Context->position, FT_Point2(*ControlA), FT_Point2(*ControlB), FT_Point2(*To)));
 	Context->position = FT_Point2(*To);
 	return 0;
 }
@@ -93,20 +100,20 @@ bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
 	FT_GlyphSlot & FTGlyph = Face->glyph;
 
 	Glyph.UnicodeValue = Character;
-	Glyph.VectorShape.contours.clear();
-	Glyph.VectorShape.inverseYAxis = false;
+	Glyph.VectorShape.Contours.clear();
+	Glyph.VectorShape.bInverseYAxis = false;
 	Glyph.Advance = FTGlyph->advance.x / 64.F;
 
 	FT_Context Context = { };
 	Context.shape = &Glyph.VectorShape;
-	FT_Outline_Funcs FT_Functions;
-	FT_Functions.move_to = &FT_MoveTo;
-	FT_Functions.line_to = &FT_LineTo;
-	FT_Functions.conic_to = &FT_ConicTo;
-	FT_Functions.cubic_to = &FT_CubicTo;
-	FT_Functions.shift = 0;
-	FT_Functions.delta = 0;
-	Error = FT_Outline_Decompose(&FTGlyph->outline, &FT_Functions, &Context);
+	FT_Outline_Funcs Functions;
+	Functions.move_to = &FT_MoveTo;
+	Functions.line_to = &FT_LineTo;
+	Functions.conic_to = &FT_ConicTo;
+	Functions.cubic_to = &FT_CubicTo;
+	Functions.shift = 0;
+	Functions.delta = 0;
+	Error = FT_Outline_Decompose(&FTGlyph->outline, &Functions, &Context);
 	if (Error) {
 		Debug::Log(Debug::LogError, L"Failed to decompose outline of Glyph '%c', %s", Character, FT_ErrorMessage(Error));
 		return false;
