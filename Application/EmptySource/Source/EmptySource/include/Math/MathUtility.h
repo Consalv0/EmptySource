@@ -25,6 +25,8 @@ namespace MathEquations {
 
 	inline int SolveCubic(float x[3], float a, float b, float c, float d);
 
+	template <typename T>
+	inline float Shoelace2(const T & A, const T & B);
 }
 
 namespace Math {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "..\include\Math\Math.h"
-#include "..\include\Shape2D.h"
+#include "..\include\Shape.h"
 #include "..\include\Bitmap.h"
 
 struct FontGlyph {
@@ -9,10 +9,7 @@ public:
 	unsigned long UnicodeValue;
 	IntVector2 Bearing;
 	float Advance;
-	float MinU;
-	float MaxU;
-	float MinV;
-	float MaxV;
+	Box2D UV;
 	Shape VectorShape;
 	Bitmap<float> SDFResterized;
 

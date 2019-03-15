@@ -489,7 +489,7 @@ void CoreApplication::MainLoop() {
 			for (int i = 0; i < TextCount; i++) {
 				Timer.Start();
 				TextGenerator.GenerateMesh(
-					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize),
+					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + 10 * FontSize / TextGenerator.GlyphHeight),
 					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
 				Timer.Stop();

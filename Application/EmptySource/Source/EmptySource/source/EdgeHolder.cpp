@@ -36,7 +36,7 @@ EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, Point2 P2, Point2 P3, EdgeColor edg
 	: edgeSegment(new CubicSegment(P0, P1, P2, P3, edgeColor)) { }
 
 EdgeHolder::EdgeHolder(const EdgeHolder &Origin) 
-	: edgeSegment(Origin.edgeSegment ? Origin.edgeSegment->clone() : NULL) { }
+	: edgeSegment(Origin.edgeSegment ? Origin.edgeSegment->Clone() : NULL) { }
 
 EdgeHolder::~EdgeHolder() {
     delete edgeSegment;
@@ -44,7 +44,7 @@ EdgeHolder::~EdgeHolder() {
 
 EdgeHolder & EdgeHolder::operator=(const EdgeHolder &Origin) {
     delete edgeSegment;
-    edgeSegment = Origin.edgeSegment ? Origin.edgeSegment->clone() : NULL;
+    edgeSegment = Origin.edgeSegment ? Origin.edgeSegment->Clone() : NULL;
     return *this;
 }
 

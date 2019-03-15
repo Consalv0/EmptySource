@@ -158,10 +158,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\EmptySource\include\Bitmap.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Box2D.h" />
-    <ClInclude Include="Source\EmptySource\include\Shape2DContour.h" />
+    <ClInclude Include="Source\EmptySource\include\ShapeContour.h" />
     <ClInclude Include="Source\EmptySource\include\EdgeHolder.h" />
     <ClInclude Include="Source\EmptySource\include\EdgeSegments.h" />
-    <ClInclude Include="Source\EmptySource\include\Header.h" />
     <ClInclude Include="Source\EmptySource\include\SDFGenerator.h" />
     <ClInclude Include="Source\EmptySource\include\CoreCUDA.h" />
     <ClInclude Include="Source\EmptySource\include\CoreGraphics.h" />
@@ -192,7 +191,7 @@
     <ClInclude Include="Source\EmptySource\include\ShaderStage.h" />
     <ClInclude Include="Source\EmptySource\include\Mesh.h" />
     <ClInclude Include="Source\EmptySource\include\ShaderProgram.h" />
-    <ClInclude Include="Source\EmptySource\include\Shape2D.h" />
+    <ClInclude Include="Source\EmptySource\include\Shape.h" />
     <ClInclude Include="Source\EmptySource\include\Space.h" />
     <ClInclude Include="Source\EmptySource\include\Text.h" />
     <ClInclude Include="Source\EmptySource\include\Text2DGenerator.h" />
@@ -309,7 +308,7 @@
     <ClInclude Include="Source\External\tsl\robin_set.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EmptySource\source\Shape2DContour.cpp" />
+    <ClCompile Include="Source\EmptySource\source\ShapeContour.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeSegments.cpp" />
     <ClCompile Include="Source\EmptySource\source\Glyph.cpp" />
@@ -327,7 +326,7 @@
     <ClCompile Include="Source\EmptySource\source\RenderTarget.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShaderStage.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp" />
-    <ClCompile Include="Source\EmptySource\source\Shape2D.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Shape.cpp" />
     <ClCompile Include="Source\EmptySource\source\Space.cpp" />
     <ClCompile Include="Source\EmptySource\source\Text2DGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture.cpp" />

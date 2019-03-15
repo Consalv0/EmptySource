@@ -23,20 +23,23 @@
 #include "..\include\EdgeHolder.h"
 
 // A single closed contour of a shape.
-class Contour {
+class ShapeContour {
 public:
 	// The sequence of edges that make up the contour.
-	std::vector<EdgeHolder> edges;
+	TArray<EdgeHolder> Edges;
 
 	// Adds an edge to the contour.
-	void addEdge(const EdgeHolder &edge);
+	void AddEdge(const EdgeHolder & Edge);
 
 	// Creates a new edge in the contour and returns its reference.
-	EdgeHolder & addEdge();
-	
+	EdgeHolder & AddEdge();
+
 	// Computes the bounding box of the contour.
-	void bounds(float &l, float &b, float &r, float &t) const;
+	void GetBounds(float &Left, float &Bottom, float &Right, float &Top) const;
+
+	// Computes the bounding box of the contour.
+	void GetBounds(Box2D & BBox) const;
 	
 	// Computes the winding of the contour. Returns 1 if positive, -1 if negative.
-	int winding() const;
+	int Winding() const;
 };

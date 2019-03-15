@@ -71,9 +71,9 @@ void SDFTextureGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY
 
 	int dX = neighbor->Delta.x - oX;
 	int dY = neighbor->Delta.y - oY;
-	float distance = sqrtf((float)dX * dX + dY * dY) + ApproximateEdgeDelta((float)dX, (float)dY, closest->Alpha);
-	if (distance < p->Distance) {
-		p->Distance = distance;
+	float Distance = sqrtf((float)dX * dX + dY * dY) + ApproximateEdgeDelta((float)dX, (float)dY, closest->Alpha);
+	if (Distance < p->Distance) {
+		p->Distance = Distance;
 		p->Delta.x = dX;
 		p->Delta.y = dY;
 	}
@@ -239,19 +239,19 @@ void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInsid
 }
 
 void SDFGenerator::Generate(Bitmap<float>& Output, const Shape & shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
-	int ContourCount = (int)shape.contours.size();
+	int ContourCount = (int)shape.Contours.size();
 	int OutWidth = Output.GetWidth(), OutHeight = Output.GetHeight();
 	std::vector<int> Windings;
 
 	Windings.reserve(ContourCount);
-	for (std::vector<Contour>::const_iterator Contour = shape.contours.begin(); Contour != shape.contours.end(); ++Contour)
-		Windings.push_back(Contour->winding());
+	for (std::vector<ShapeContour>::const_iterator ShapeContour = shape.Contours.begin(); ShapeContour != shape.Contours.end(); ++ShapeContour)
+		Windings.push_back(ShapeContour->Winding());
 	{
 		std::vector<float> ContourSD;
 		ContourSD.resize(ContourCount);
 
 		for (int y = 0; y < OutHeight; ++y) {
-			int Row = shape.inverseYAxis ? OutHeight - y - 1 : y;
+			int Row = shape.bInverseYAxis ? OutHeight - y - 1 : y;
 			for (int x = 0; x < OutWidth; ++x) {
 				float Dummy;
 				Point2 Point = Vector2(x + .5F, y + .5F) / Scale - Translate;
@@ -259,19 +259,19 @@ void SDFGenerator::Generate(Bitmap<float>& Output, const Shape & shape, double R
 				float PosDist = -MathConstants::Big_Number;
 				int Winding = 0;
 
-				std::vector<Contour>::const_iterator contour = shape.contours.begin();
+				std::vector<ShapeContour>::const_iterator contour = shape.Contours.begin();
 				for (int i = 0; i < ContourCount; ++i, ++contour) {
 					SignedDistance MinDistance;
-					for (std::vector<EdgeHolder>::const_iterator Edge = contour->edges.begin(); Edge != contour->edges.end(); ++Edge) {
-						SignedDistance distance = (*Edge)->signedDistance(Point, Dummy);
-						if (distance < MinDistance)
-							MinDistance = distance;
+					for (std::vector<EdgeHolder>::const_iterator Edge = contour->Edges.begin(); Edge != contour->Edges.end(); ++Edge) {
+						SignedDistance Distance = (*Edge)->GetSignedDistance(Point, Dummy);
+						if (Distance < MinDistance)
+							MinDistance = Distance;
 					}
-					ContourSD[i] = MinDistance.distance;
-					if (Windings[i] > 0 && MinDistance.distance >= 0 && fabs(MinDistance.distance) < fabs(PosDist))
-						PosDist = MinDistance.distance;
-					if (Windings[i] < 0 && MinDistance.distance <= 0 && fabs(MinDistance.distance) < fabs(NegDist))
-						NegDist = MinDistance.distance;
+					ContourSD[i] = MinDistance.Distance;
+					if (Windings[i] > 0 && MinDistance.Distance >= 0 && fabs(MinDistance.Distance) < fabs(PosDist))
+						PosDist = MinDistance.Distance;
+					if (Windings[i] < 0 && MinDistance.Distance <= 0 && fabs(MinDistance.Distance) < fabs(NegDist))
+						NegDist = MinDistance.Distance;
 				}
 
 				float SignedDist = -MathConstants::Big_Number;

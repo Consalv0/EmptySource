@@ -1,7 +1,7 @@
 #pragma once
 
 #include "..\include\Math\Math.h"
-#include "..\include\Shape2D.h"
+#include "..\include\Shape.h"
 #include "..\include\Bitmap.h"
 
 class SDFGenerator {
