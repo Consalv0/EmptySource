@@ -59,7 +59,7 @@ class EdgeSegment {
 
 public:
 	EdgeColor color;
-
+	
 	EdgeSegment(EdgeColor edgeColor = WHITE) : color(edgeColor) { }
 
 	virtual ~EdgeSegment() { }
@@ -144,7 +144,7 @@ public:
 	void bounds(float &l, float &b, float &r, float &t) const;
 
 	void moveStartPoint(Point2 To);
-	void moveEndPoint(Point2 To);
+	void moveEndPoint(Point2 to);
 	void splitInThirds(EdgeSegment *&part1, EdgeSegment *&part2, EdgeSegment *&part3) const;
 
 };

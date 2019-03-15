@@ -114,10 +114,13 @@ int Math::NonZeroSign(T Value) {
 }
 
 template <typename T>
+T Math::Clamp(T Value, const T & A) {
+	return Value >= T(0) && Value <= A ? Value : T(Value > T(0)) * A;
+}
+
+template <typename T>
 T Math::Clamp(T Value, const T & A, const T & B) {
-	if (Value < A) Value = A;
-	if (Value > B) Value = B;
-	return Value;
+	return Value >= A && Value <= B ? Value : Value < A ? A : B;
 }
 
 template <typename T>

@@ -4,14 +4,26 @@
 #include "..\include\Utility\LogCore.h"
 #include "..\include\Text2DGenerator.h"
 #include "..\include\Utility\Timer.h"
-
-#include "..\include\SDFTextureGenerator.h"
+#include "..\include\SDFGenerator.h"
 
 void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
 	TextFont->SetGlyphHeight(GlyphHeight);
 	for (unsigned long Character = From; Character <= To; Character++) {
 		FontGlyph Glyph;
 		if (TextFont->GetGlyph(Glyph, Character)) {
+
+			if (!Glyph.VectorShape.validate())
+				Debug::Log(Debug::LogWarning, L"The geometry of the loaded shape is invalid.");
+			Glyph.VectorShape.normalize();
+
+			Box2D Bounds = { 
+				MathConstants::Big_Number, MathConstants::Big_Number,
+				-MathConstants::Big_Number, -MathConstants::Big_Number
+			};
+
+			Glyph.VectorShape.bounds(Bounds);
+			
+			Glyph.GenerateSDF(GlyphHeight);
 			LoadedCharacters.insert_or_assign(Character, new FontGlyph(Glyph));
 		}
 	}
@@ -52,8 +64,7 @@ void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WStrin
 		VertexCount += 4;
 		TextVerticesEnd += 4;
 
-		// --- Advance cursor for next glyph (note that advance is number of 1/32 pixels)
-		Pivot.x += (Glyph->Advance >> 6) * ScaleFactor;
+		Pivot.x += (Glyph->Advance) * ScaleFactor;
 	}
 
 	// --- The VertexCount was initialized with the initial VertexCount
@@ -66,16 +77,17 @@ void Text2DGenerator::Clear() {
 	LoadedCharacters.clear();
 }
 
-unsigned char * Text2DGenerator::GenerateTextureAtlas() {
+bool Text2DGenerator::GenerateTextureAtlas(Bitmap<unsigned char> & Atlas) {
+	int Value = 0;
 	int AtlasSizeSqr = AtlasSize * AtlasSize;
-	unsigned char * AtlasData = new unsigned char[AtlasSizeSqr];
+	Atlas = Bitmap<unsigned char>(AtlasSize, AtlasSize);
 
 	for (int i = 0; i < AtlasSizeSqr; i++) {
 		// if (i % GlyphHeight == 0 || (i / (AtlasSize)) % GlyphHeight == 0) {
 		// 	AtlasData[i] = 255;
 		// }
 		// else {
-			AtlasData[i] = 0;
+		Atlas[i] = 0;
 		// }
 	}
 
@@ -87,9 +99,9 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 
 		// --- Asign the current UV Position
 		Character->MinU = (Character->Bearing.u + AtlasPosition.u) / (float)AtlasSize;
-		Character->MaxU = (Character->Bearing.u + AtlasPosition.u + Character->Size.u) / (float)AtlasSize;
+		Character->MaxU = (Character->Bearing.u + AtlasPosition.u + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
 		Character->MinV = (AtlasPosition.v) / (float)AtlasSize;
-		Character->MaxV = (AtlasPosition.v + Character->Size.v) / (float)AtlasSize;
+		Character->MaxV = (AtlasPosition.v + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
 		
 		// --- If current position exceds the canvas with the next character, reset the position in Y
 		AtlasPosition.y += GlyphHeight;
@@ -99,21 +111,20 @@ unsigned char * Text2DGenerator::GenerateTextureAtlas() {
 		}
 		
 		// --- Render current character in the current position
-		for (int i = Character->Size.y - 1; i >= 0; i--) {
-			for (int j = 0; j < Character->Size.x; j++) {
+		for (int i = 0; i < Character->SDFResterized.GetHeight(); ++i) {
+			for (int j = 0; j < Character->SDFResterized.GetWidth(); ++j) {
 				if (IndexPos >= AtlasSizeSqr) {
 					IndexPos -= AtlasSizeSqr / GlyphHeight;
 				}
 				if (IndexPos < AtlasSizeSqr && IndexPos >= 0) {
-					AtlasData[IndexPos] = Character->RasterizedData[i * Character->Size.x + j];
+					Value = Math::Clamp(int(Character->SDFResterized[i * Character->SDFResterized.GetWidth() + j] * 0x100), 0xff);
+					Atlas[IndexPos] = Value;
 				}
 				IndexPos++;
 			}
-			IndexPos += -Character->Size.x + AtlasSize;
+			IndexPos += -Character->SDFResterized.GetWidth() + AtlasSize;
 		}
 	}
 
-	// GenerateSDFFromUChar(AtlasData, { AtlasSize , AtlasSize });
-	SDFTextureGenerator::Generate(AtlasData, { AtlasSize , AtlasSize }, 2, 4, 0);
-	return AtlasData;
+	return true;
 }

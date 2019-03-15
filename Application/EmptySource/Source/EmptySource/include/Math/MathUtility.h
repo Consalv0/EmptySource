@@ -52,6 +52,10 @@ namespace Math {
 	template <typename T>
 	inline int NonZeroSign(T Value);
 
+	//* Clamps the number to the interval from 0 to b.
+	template <typename T>
+	inline T Clamp(T Value, const T & A);
+
 	//* Clamp the value in the defined range 
 	template <typename T>
 	inline T Clamp(T Value, const T& A, const T& B);

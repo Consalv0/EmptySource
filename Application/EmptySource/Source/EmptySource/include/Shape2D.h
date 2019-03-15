@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include "..\include\Contour.h"
+#include "..\include\Shape2DContour.h"
+#include "..\include\Math\Box2D.h"
 
 // Vector shape representation.
 class Shape {
@@ -47,6 +48,6 @@ public:
 	bool validate() const;
 	
 	//* Computes the shape's bounding box.
-	void bounds(float &l, float &b, float &r, float &t) const;
+	void bounds(Box2D & Bounds) const;
 
 };

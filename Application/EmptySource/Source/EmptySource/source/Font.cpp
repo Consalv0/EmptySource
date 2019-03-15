@@ -1,6 +1,7 @@
 
 #include "..\External\ft2build.h"
 #include FT_FREETYPE_H
+#include FT_OUTLINE_H
 #include "..\External\freetype\freetype.h"
 
 #include "..\include\Core.h"
@@ -41,6 +42,38 @@ void Font::SetGlyphHeight(const unsigned int & Size) const {
 	}
 }
 
+Point2 FT_Point2(const FT_Vector & Vector) {
+	return Point2(Vector.x / 64.F, Vector.y / 64.F);
+}
+
+int FT_MoveTo(const FT_Vector * To, void * User) {
+	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
+	Context->contour = &Context->shape->addContour();
+	Context->position = FT_Point2(*To);
+	return 0;
+}
+
+int FT_LineTo(const FT_Vector * To, void * User) {
+	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
+	Context->contour->addEdge(new LinearSegment(Context->position, FT_Point2(*To)));
+	Context->position = FT_Point2(*To);
+	return 0;
+}
+
+int FT_ConicTo(const FT_Vector * Control, const FT_Vector * To, void * User) {
+	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
+	Context->contour->addEdge(new QuadraticSegment(Context->position, FT_Point2(*Control), FT_Point2(*To)));
+	Context->position = FT_Point2(*To);
+	return 0;
+}
+
+int FT_CubicTo(const FT_Vector * ControlA, const FT_Vector * ControlB, const FT_Vector * To, void * User) {
+	FT_Context *Context = reinterpret_cast<FT_Context *>(User);
+	Context->contour->addEdge(new CubicSegment(Context->position, FT_Point2(*ControlA), FT_Point2(*ControlB), FT_Point2(*To)));
+	Context->position = FT_Point2(*To);
+	return 0;
+}
+
 void Font::Initialize(FileStream * File) {
 	FT_Error Error;
 	if (Error = FT_New_Face(FreeTypeLibrary, WStringToString(File->GetPath()).c_str(), 0, &Face))
@@ -52,21 +85,31 @@ unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
 }
 
 bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
-	FT_Error Error;
-	if (Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_RENDER)) {
+	FT_Error Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_NO_SCALE);
+	if (Error) {
 		Debug::Log(Debug::LogError, L"Failed to load Glyph '%c', %s", Character, FT_ErrorMessage(Error));
 		return false;
 	}
-	else {
-		FT_GlyphSlot * FTGlyph = &Face->glyph;
+	FT_GlyphSlot & FTGlyph = Face->glyph;
 
-		Glyph = FontGlyph(
-			Character,
-			{ (int)(*FTGlyph)->bitmap.width, (int)(*FTGlyph)->bitmap.rows },
-			{ (int)(*FTGlyph)->bitmap_left, (int)(*FTGlyph)->bitmap_top },
-			(int)Face->glyph->advance.x, (*FTGlyph)->bitmap.buffer
-		);
+	Glyph.UnicodeValue = Character;
+	Glyph.VectorShape.contours.clear();
+	Glyph.VectorShape.inverseYAxis = false;
+	Glyph.Advance = FTGlyph->advance.x / 64.F;
 
-		return true;
+	FT_Context Context = { };
+	Context.shape = &Glyph.VectorShape;
+	FT_Outline_Funcs FT_Functions;
+	FT_Functions.move_to = &FT_MoveTo;
+	FT_Functions.line_to = &FT_LineTo;
+	FT_Functions.conic_to = &FT_ConicTo;
+	FT_Functions.cubic_to = &FT_CubicTo;
+	FT_Functions.shift = 0;
+	FT_Functions.delta = 0;
+	Error = FT_Outline_Decompose(&FTGlyph->outline, &FT_Functions, &Context);
+	if (Error) {
+		Debug::Log(Debug::LogError, L"Failed to decompose outline of Glyph '%c', %s", Character, FT_ErrorMessage(Error));
+		return false;
 	}
+	return true;
 }

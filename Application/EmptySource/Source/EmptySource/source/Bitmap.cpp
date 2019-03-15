@@ -30,6 +30,21 @@ Bitmap<T> & Bitmap<T>::operator=(const Bitmap<T> &Other) {
 	return *this;
 }
 
+template<typename T>
+T & Bitmap<T>::operator[](int i) {
+	return Data[i];
+}
+
+template<typename T>
+T const & Bitmap<T>::operator[](int i) const {
+	return Data[i];
+}
+
+template<typename T>
+const T * Bitmap<T>::PointerToValue() const {
+	return Data;
+}
+
 template <typename T>
 int Bitmap<T>::GetWidth() const {
 	return Width;

@@ -2,6 +2,12 @@
 
 #include "..\include\Glyph.h"
 
+struct FT_Context {
+	Point2 position;
+	Shape *shape;
+	Contour *contour;
+};
+
 class Font {
 private:
 	static struct FT_LibraryRec_ * FreeTypeLibrary;
@@ -9,6 +15,10 @@ private:
 	struct FT_FaceRec_ * Face;
 
 public:
+
+	//* Default Constructor
+	Font();
+
 	//* Initialize FreeType Library
 	static bool InitializeFreeType();
 
@@ -26,7 +36,4 @@ public:
 
 	//* Clear all the FreeType info
 	void Clear();
-
-	//* Default Constructor
-	Font();
 };

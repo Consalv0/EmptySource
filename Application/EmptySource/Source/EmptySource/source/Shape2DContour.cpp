@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "..\include\Contour.h"
+#include "..\include\Shape2DContour.h"
 #include "..\include\Math\MathUtility.h"
 
 static float shoelace(const Point2 &a, const Point2 &b) {
