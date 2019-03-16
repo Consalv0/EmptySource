@@ -126,5 +126,11 @@ bool Text2DGenerator::GenerateTextureAtlas(Bitmap<unsigned char> & Atlas) {
 		}
 	}
 
+	std::function<float(unsigned char)> FunctionAB = [](unsigned char Value) { return Value / 255.F; };
+	std::function<unsigned char(float)> FunctionBA = [](float Value) { return (unsigned char)(Value * 255.F); };
+	Bitmap<float> AtlasF;
+	Atlas.ChangeType(AtlasF, FunctionAB);
+	SDFGenerator::FromBitmap(AtlasF, 2, 4);
+	AtlasF.ChangeType(Atlas, FunctionBA);
 	return true;
 }

@@ -5,11 +5,6 @@
 #include "..\include\Bitmap.h"
 
 class SDFGenerator {
-public:
-	static void Generate(Bitmap<float> &Output, const Shape &shape, double Range, const Vector2 &Scale, const Vector2 &Translate);
-};
-
-class SDFTextureGenerator {
 private:
 	struct Pixel {
 		float Alpha, Distance;
@@ -31,5 +26,7 @@ private:
 	static void GenerateDistanceTransform();
 
 public:
-	static void Generate(Bitmap<unsigned char> &Output, float MaxInside, float MaxOutside);
+	static void FromShape(Bitmap<float> &Output, const Shape &shape, double Range, const Vector2 &Scale, const Vector2 &Translate);
+
+	static void FromBitmap(Bitmap<float> &Output, float MaxInside, float MaxOutside);
 };

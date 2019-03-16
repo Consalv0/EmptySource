@@ -1,16 +1,16 @@
 #include "..\..\include\SDFGenerator.h"
 
-int SDFTextureGenerator::Width = 0, SDFTextureGenerator::Height = 0;
-SDFTextureGenerator::Pixel * SDFTextureGenerator::Pixels = NULL;
+int SDFGenerator::Width = 0, SDFGenerator::Height = 0;
+SDFGenerator::Pixel * SDFGenerator::Pixels = NULL;
 
-void SDFTextureGenerator::ComputeEdgeGradients() {
+void SDFGenerator::ComputeEdgeGradients() {
 	for (int y = 1; y < Height - 1; y++) {
 		for (int x = 1; x < Width - 1; x++) {
 			Pixel * p = PixelAt(x, y);
 			if (p->Alpha > 0.F && p->Alpha < 1.F) {
 				// estimate gradient of edge pixel using surrounding pixels
 				float g =
-					-PixelAt(x - 1, y - 1)->Alpha
+					- PixelAt(x - 1, y - 1)->Alpha
 					- PixelAt(x - 1, y + 1)->Alpha
 					+ PixelAt(x + 1, y - 1)->Alpha
 					+ PixelAt(x + 1, y + 1)->Alpha;
@@ -22,7 +22,7 @@ void SDFTextureGenerator::ComputeEdgeGradients() {
 	}
 }
 
-float SDFTextureGenerator::ApproximateEdgeDelta(float gx, float gy, float a) {
+float SDFGenerator::ApproximateEdgeDelta(float gx, float gy, float a) {
 	// (gx, gy) can be either the local pixel gradient or the direction to the pixel
 
 	if (gx == 0.F || gy == 0.F) {
@@ -59,7 +59,7 @@ float SDFTextureGenerator::ApproximateEdgeDelta(float gx, float gy, float a) {
 	// 1-a1 < a <= 1
 	return -0.5F * (gx + gy) + sqrtf(2.F * gx * gy * (1.F - a));
 }
-void SDFTextureGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY) {
+void SDFGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY) {
 	Pixel * neighbor = PixelAt(x + oX, y + oY);
 	Pixel * closest = PixelAt(x + oX - neighbor->Delta.x, y + oY - neighbor->Delta.y);
 
@@ -78,7 +78,7 @@ void SDFTextureGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY
 		p->Delta.y = dY;
 	}
 }
-void SDFTextureGenerator::GenerateDistanceTransform() {
+void SDFGenerator::GenerateDistanceTransform() {
 	// perform anti-aliased Euclidean distance transform
 	int x, y;
 	Pixel * p;
@@ -91,7 +91,7 @@ void SDFTextureGenerator::GenerateDistanceTransform() {
 			p->Delta.y = 0;
 			if (p->Alpha <= 0.F) {
 				// outside
-				p->Distance = 1000000.F;
+				p->Distance = MathConstants::Big_Number;
 			}
 			else if (p->Alpha < 1.F) {
 				// on the edge
@@ -182,7 +182,7 @@ void SDFTextureGenerator::GenerateDistanceTransform() {
 	}
 }
 
-void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInside, float MaxOutside) {
+void SDFGenerator::FromBitmap(Bitmap<float>& Output, float MaxInside, float MaxOutside) {
 	Width = Output.GetWidth();
 	Height = Output.GetHeight();
 
@@ -194,7 +194,7 @@ void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInsid
 	if (MaxInside > 0.F) {
 		for (y = 0; y < Height; y++) {
 			for (x = 0; x < Width; x++) {
-				PixelAt(x, y)->Alpha = 1.F - (Output(x, y) / 255.F);
+				PixelAt(x, y)->Alpha = 1.F - Output(x, y);
 			}
 		}
 		ComputeEdgeGradients();
@@ -203,14 +203,14 @@ void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInsid
 		for (y = 0; y < Height; y++) {
 			for (x = 0; x < Width; x++) {
 				float Alpha = Math::Clamp01(PixelAt(x, y)->Distance * Scale);
-				Output(x, y) = unsigned char(Alpha * 255);
+				Output(x, y) = Alpha;
 			}
 		}
 	}
 	if (MaxOutside > 0.F) {
 		for (y = 0; y < Height; y++) {
 			for (x = 0; x < Width; x++) {
-				PixelAt(x, y)->Alpha = Output(x, y) / 255.F;
+				PixelAt(x, y)->Alpha = Output(x, y);
 			}
 		}
 		ComputeEdgeGradients();
@@ -219,9 +219,9 @@ void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInsid
 		if (MaxInside > 0.F) {
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
-					float Alpha = 0.5f + ((Output(x, y) / 255.F) -
+					float Alpha = 0.5f + (Output(x, y) -
 						Math::Clamp01(PixelAt(x, y)->Distance * Scale)) * 0.5f;
-					Output(x, y) = unsigned char(Alpha * 255);
+					Output(x, y) = Alpha;
 				}
 			}
 		}
@@ -229,7 +229,7 @@ void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInsid
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
 					float Alpha = Math::Clamp01(1.F - PixelAt(x, y)->Distance * Scale);
-					Output(x, y) = unsigned char(Alpha * 255);
+					Output(x, y) = Alpha;
 				}
 			}
 		}
@@ -238,7 +238,7 @@ void SDFTextureGenerator::Generate(Bitmap<unsigned char>& Output, float MaxInsid
 	delete[] Pixels;
 }
 
-void SDFGenerator::Generate(Bitmap<float>& Output, const Shape & shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
+void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
 	int ContourCount = (int)shape.Contours.size();
 	int OutWidth = Output.GetWidth(), OutHeight = Output.GetHeight();
 	std::vector<int> Windings;

@@ -24,7 +24,7 @@ FontGlyph::FontGlyph(const FontGlyph & Other) :
 
 void FontGlyph::GenerateSDF(const IntVector2 & Size) {
 	SDFResterized = Bitmap<float>(Size.x, Size.y);
-	SDFGenerator::Generate(SDFResterized, VectorShape, 4, 1, {0, 5});
+	SDFGenerator::FromShape(SDFResterized, VectorShape, 4, 1, {0, 5});
 }
 
 void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& Scale, MeshVertex * Quad) {
