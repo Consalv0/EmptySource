@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 template <typename T>
 class Bitmap {
 
@@ -20,6 +22,16 @@ public:
 	const T* PointerToValue() const;
 	T & operator()(int x, int y);
 	const T & operator()(int x, int y) const;
+
+	template<typename U>
+	void ChangeType(Bitmap<U> & Result, std::function<U(T)> const& Function) const {
+		Result = Bitmap<U>(Width, Height);
+		for (int y = 0; y < Height; ++y) {
+			for (int x = 0; x < Width; ++x) {
+				Result(x, y) = Function((*this)(x, y));
+			}
+		}
+	}
 
 	~Bitmap();
 
