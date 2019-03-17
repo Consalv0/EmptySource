@@ -11,11 +11,11 @@ private:
 	TDictionary<unsigned long, FontGlyph *> LoadedCharacters;
 
 public:
-	Font * TextFont;
-	int GlyphHeight;
-	int AtlasSize;
-	int RenderScale;
-	Vector2 Pivot;
+	Font * TextFont = NULL;
+	int GlyphHeight = 24;
+	int AtlasSize = 512;
+	float PixelRange = 2.F;
+	Vector2 Pivot = 0;
 
 	//* Prepare Character Info
 	void PrepareCharacters(const unsigned long & From, const unsigned long & To);
@@ -28,5 +28,5 @@ public:
 	void Clear();
 
 	//* Prepare Texture Data
-	bool GenerateTextureAtlas(Bitmap<unsigned char> & Atlas);
+	bool GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas);
 };

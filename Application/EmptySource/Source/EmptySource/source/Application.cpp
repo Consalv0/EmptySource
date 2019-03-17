@@ -131,8 +131,9 @@ void CoreApplication::MainLoop() {
 
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
-	TextGenerator.GlyphHeight = 16;
+	TextGenerator.GlyphHeight = 24;
 	TextGenerator.AtlasSize = 1024;
+	TextGenerator.PixelRange = 2.F;
 	TextGenerator.Pivot = 0;
 
 	// --- Basic Latin Unicode Range
@@ -143,7 +144,7 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
 
 	Bitmap<unsigned char> FontAtlas;
-	TextGenerator.GenerateTextureAtlas(FontAtlas);
+	TextGenerator.GenerateGlyphAtlas(FontAtlas);
 
 	Texture2D FontMap = Texture2D(
 		IntVector2(TextGenerator.AtlasSize),
@@ -266,14 +267,18 @@ void CoreApplication::MainLoop() {
 	double InputTimeSum = 0;
 
 	int CurrentRenderText = 0;
-	const int TextCount = 10;
-	float FontSize = 125;
+	const int TextCount = 1;
+	float FontSize = 14;
 	float FontBoldness = 0.55F;
 	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
+	Point2 TextPivot;
 
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	do {
 		Time::Tick();
@@ -295,18 +300,22 @@ void CoreApplication::MainLoop() {
 		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
 			Vector3 Forward = FrameRotation.ToMatrix4x4() * Vector3(0, 0, ViewSpeed);
 			EyePosition += Forward * Time::GetDeltaTime();
+			// TextPivot.y += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
 			Vector3 Right = FrameRotation.ToMatrix4x4() * Vector3(ViewSpeed, 0, 0);
 			EyePosition += Right * Time::GetDeltaTime();
+			// TextPivot.x -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
 			Vector3 Back = FrameRotation.ToMatrix4x4() * Vector3(0, 0, -ViewSpeed);
 			EyePosition += Back * Time::GetDeltaTime();
+			// TextPivot.y -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
 			Vector3 Left = FrameRotation.ToMatrix4x4() * Vector3(-ViewSpeed, 0, 0);
 			EyePosition += Left * Time::GetDeltaTime();
+			// TextPivot.x += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		ViewMatrix =
 			FrameRotation.ToMatrix4x4() * Matrix4x4::Translate(EyePosition);
@@ -447,12 +456,12 @@ void CoreApplication::MainLoop() {
 		
 			LightModels[0].DrawInstanciated(2);
 		
+			float AppTime = (float)Time::GetEpochTimeMilli() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
 			RenderTextureMaterial.Use();
-			
-			float AppTime = (float)Time::GetEpochTimeMilli() / 1000.F;
+			 
 			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
 			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
@@ -489,7 +498,7 @@ void CoreApplication::MainLoop() {
 			for (int i = 0; i < TextCount; i++) {
 				Timer.Start();
 				TextGenerator.GenerateMesh(
-					Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + 10 * FontSize / TextGenerator.GlyphHeight),
+					TextPivot + Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight),
 					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
 				Timer.Stop();
