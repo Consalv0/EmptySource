@@ -238,20 +238,19 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, float MaxInside, float MaxO
 	delete[] Pixels;
 }
 
-void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
-	int ContourCount = (int)shape.Contours.size();
+void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
+	int ContourCount = (int)Shape.Contours.size();
 	int OutWidth = Output.GetWidth(), OutHeight = Output.GetHeight();
-	std::vector<int> Windings;
+	int * Windings = new int[ContourCount];
 
-	Windings.reserve(ContourCount);
-	for (std::vector<ShapeContour>::const_iterator ShapeContour = shape.Contours.begin(); ShapeContour != shape.Contours.end(); ++ShapeContour)
-		Windings.push_back(ShapeContour->Winding());
+	int ShapeContourCount = 0;
+	for (TArray<ShapeContour>::const_iterator ShapeContour = Shape.Contours.begin(); ShapeContour != Shape.Contours.end(); ++ShapeContour)
+		Windings[ShapeContourCount++] = ShapeContour->Winding();
 	{
-		std::vector<float> ContourSD;
-		ContourSD.resize(ContourCount);
+		float * ContourSD = new float[ContourCount];
 
 		for (int y = 0; y < OutHeight; ++y) {
-			int Row = shape.bInverseYAxis ? OutHeight - y - 1 : y;
+			int Row = Shape.bInverseYAxis ? OutHeight - y - 1 : y;
 			for (int x = 0; x < OutWidth; ++x) {
 				float Dummy;
 				Point2 Point = Vector2(x + .5F, y + .5F) / Scale - Translate;
@@ -259,10 +258,10 @@ void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & shape, double 
 				float PosDist = -MathConstants::Big_Number;
 				int Winding = 0;
 
-				std::vector<ShapeContour>::const_iterator contour = shape.Contours.begin();
-				for (int i = 0; i < ContourCount; ++i, ++contour) {
+				TArray<ShapeContour>::const_iterator Contour = Shape.Contours.begin();
+				for (int i = 0; i < ContourCount; ++i, ++Contour) {
 					SignedDistance MinDistance;
-					for (std::vector<EdgeHolder>::const_iterator Edge = contour->Edges.begin(); Edge != contour->Edges.end(); ++Edge) {
+					for (TArray<EdgeHolder>::const_iterator Edge = Contour->Edges.begin(); Edge != Contour->Edges.end(); ++Edge) {
 						SignedDistance Distance = (*Edge)->GetSignedDistance(Point, Dummy);
 						if (Distance < MinDistance)
 							MinDistance = Distance;
@@ -296,5 +295,7 @@ void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & shape, double 
 				Output(x, Row) = float(SignedDist / Range + .5F);
 			}
 		}
+		delete[] ContourSD;
 	}
+	delete[] Windings;
 }

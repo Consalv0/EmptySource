@@ -130,23 +130,26 @@ Vector2 CubicSegment::DirectionAt(float Value) const {
 }
 
 SignedDistance LinearSegment::GetSignedDistance(Point2 Origin, float &Value) const {
-    Vector2 aq = Origin-p[0];
-    Vector2 ab = p[1]-p[0];
-    Value = Vector2::Dot(aq, ab)/Vector2::Dot(ab, ab);
-    Vector2 eq = p[Value > .5]-Origin;
-    float endpointDistance = eq.Magnitude();
-    if (Value > 0 && Value < 1) {
-        float orthoDistance = Vector2::Dot(ab.Orthonormal(false), aq);
-        if (fabs(orthoDistance) < endpointDistance)
-            return SignedDistance(orthoDistance, 0);
+    Vector2 aq = Origin - p[0];
+    Vector2 ab = p[1] - p[0];
+    Value = Vector2::Dot(aq, ab) / Vector2::Dot(ab, ab);
+    Vector2 eq = p[Value > .5F] - Origin;
+    float EndPointDistance = eq.Magnitude();
+    if (Value > 0.F && Value < 1.F) {
+        float OrthoDistance = Vector2::Dot(ab.Orthonormal(false), aq);
+        if (fabs(OrthoDistance) < EndPointDistance)
+            return SignedDistance(OrthoDistance, 0.F);
     }
-    return SignedDistance(Math::NonZeroSign(Vector2::Cross(aq, ab))*endpointDistance, fabs(Vector2::Dot(ab.Normalized(), eq.Normalized())));
+    return SignedDistance(
+		Math::NonZeroSign( Vector2::Cross(aq, ab) ) * EndPointDistance,
+		fabs( Vector2::Dot(ab.Normalized(), eq.Normalized()) 
+	));
 }
 
 SignedDistance QuadraticSegment::GetSignedDistance(Point2 Origin, float &Param) const {
-    Vector2 qa = p[0]-Origin;
-    Vector2 ab = p[1]-p[0];
-    Vector2 br = p[0]+p[2]-p[1]-p[1];
+    Vector2 qa = p[0] - Origin;
+    Vector2 ab = p[1] - p[0];
+    Vector2 br = p[0] + p[2] - p[1] - p[1];
     float a = Vector2::Dot(br, br);
     float b = 3.F * Vector2::Dot(ab, br);
     float c = 2.F * Vector2::Dot(ab, ab)+Vector2::Dot(qa, br);
@@ -178,7 +181,7 @@ SignedDistance QuadraticSegment::GetSignedDistance(Point2 Origin, float &Param) 
 
     if (Param >= 0 && Param <= 1)
         return SignedDistance(MinDistance, 0);
-    if (Param < .5)
+    if (Param < .5F)
         return SignedDistance(MinDistance, fabs(Vector2::Dot(ab.Normalized(), qa.Normalized())));
     else
         return SignedDistance(MinDistance, fabs(Vector2::Dot((p[2]-p[1]).Normalized(), (p[2]-Origin).Normalized())));
@@ -192,30 +195,30 @@ SignedDistance CubicSegment::GetSignedDistance(Point2 Origin, float &param) cons
 
     Vector2 epDir = DirectionAt(0);
 	// --- Distance from A
-    float minDistance = Math::NonZeroSign(Vector2::Cross(epDir, qa)) * qa.Magnitude(); 
+    float MinDistance = Math::NonZeroSign(Vector2::Cross(epDir, qa)) * qa.Magnitude(); 
     param = -Vector2::Dot(qa, epDir)/Vector2::Dot(epDir, epDir);
     {
         epDir = DirectionAt(1);
 		// --- Distance from B
         float Distance = Math::NonZeroSign(Vector2::Cross(epDir, p[3] - Origin)) * (p[3] - Origin).Magnitude(); 
-        if (fabs(Distance) < fabs(minDistance)) {
-            minDistance = Distance;
+        if (fabs(Distance) < fabs(MinDistance)) {
+            MinDistance = Distance;
             param = Vector2::Dot(Origin+epDir-p[3], epDir)/Vector2::Dot(epDir, epDir);
         }
     }
-    // Iterative minimum distance search
+    // --- Iterative minimum distance search
     for (int i = 0; i <= MSDFGEN_CUBIC_SEARCH_STARTS; ++i) {
         float t = (float) i/MSDFGEN_CUBIC_SEARCH_STARTS;
         for (int step = 0;; ++step) {
             Vector2 qpt = PointAt(t)-Origin;
             float Distance = Math::NonZeroSign(Vector2::Cross(DirectionAt(t), qpt))*qpt.Magnitude();
-            if (fabs(Distance) < fabs(minDistance)) {
-                minDistance = Distance;
+            if (fabs(Distance) < fabs(MinDistance)) {
+                MinDistance = Distance;
                 param = t;
             }
             if (step == MSDFGEN_CUBIC_SEARCH_STEPS)
                 break;
-            // Improve t
+            // --- Improve t
             Vector2 d1 = 3*as*t*t+6*br*t+3*ab;
             Vector2 d2 = 6*as*t+6*br;
             t -= Vector2::Dot(qpt, d1)/(Vector2::Dot(d1, d1)+Vector2::Dot(qpt, d2));
@@ -225,11 +228,11 @@ SignedDistance CubicSegment::GetSignedDistance(Point2 Origin, float &param) cons
     }
 
     if (param >= 0 && param <= 1)
-        return SignedDistance(minDistance, 0);
+        return SignedDistance(MinDistance, 0);
     if (param < .5F)
-        return SignedDistance(minDistance, fabs(Vector2::Dot(DirectionAt(0).Normalized(), qa.Normalized())));
+        return SignedDistance(MinDistance, fabs(Vector2::Dot(DirectionAt(0).Normalized(), qa.Normalized())));
     else
-        return SignedDistance(minDistance, fabs(Vector2::Dot(DirectionAt(1).Normalized(), (p[3]-Origin).Normalized())));
+        return SignedDistance(MinDistance, fabs(Vector2::Dot(DirectionAt(1).Normalized(), (p[3]-Origin).Normalized())));
 }
 
 static void pointBounds(Point2 p, float &l, float &b, float &r, float &t) {
@@ -266,16 +269,16 @@ void CubicSegment::GetBounds(float &l, float &b, float &r, float &t) const {
     Vector2 a0 = p[1]-p[0];
     Vector2 a1 = 2*(p[2]-p[1]-a0);
     Vector2 a2 = p[3]-3*p[2]+3*p[1]-p[0];
-    float params[2];
-    int solutions;
-    solutions = MathEquations::SolveQuadratic(params, a2.x, a1.x, a0.x);
-    for (int i = 0; i < solutions; ++i)
-        if (params[i] > 0 && params[i] < 1)
-            pointBounds(PointAt(params[i]), l, b, r, t);
-    solutions = MathEquations::SolveQuadratic(params, a2.y, a1.y, a0.y);
-    for (int i = 0; i < solutions; ++i)
-        if (params[i] > 0 && params[i] < 1)
-            pointBounds(PointAt(params[i]), l, b, r, t);
+    float Values[2];
+    int Solutions;
+    Solutions = MathEquations::SolveQuadratic(Values, a2.x, a1.x, a0.x);
+    for (int i = 0; i < Solutions; ++i)
+        if (Values[i] > 0 && Values[i] < 1)
+            pointBounds(PointAt(Values[i]), l, b, r, t);
+    Solutions = MathEquations::SolveQuadratic(Values, a2.y, a1.y, a0.y);
+    for (int i = 0; i < Solutions; ++i)
+        if (Values[i] > 0 && Values[i] < 1)
+            pointBounds(PointAt(Values[i]), l, b, r, t);
 }
 
 void LinearSegment::MoveStartPoint(Point2 To) {
@@ -285,7 +288,7 @@ void LinearSegment::MoveStartPoint(Point2 To) {
 void QuadraticSegment::MoveStartPoint(Point2 To) {
     Vector2 origSDir = p[0]-p[1];
     Point2 origP1 = p[1];
-    p[1] += Vector2::Cross(p[0]-p[1], To-p[0])/Vector2::Cross(p[0]-p[1], p[2]-p[1])*(p[2]-p[1]);
+    p[1] += Vector2::Cross(p[0]-p[1], To-p[0]) / Vector2::Cross(p[0]-p[1], p[2]-p[1])*(p[2]-p[1]);
     p[0] = To;
     if (Vector2::Dot(origSDir, p[0]-p[1]) < 0)
         p[1] = origP1;
@@ -303,7 +306,7 @@ void LinearSegment::MoveEndPoint(Point2 To) {
 void QuadraticSegment::MoveEndPoint(Point2 To) {
     Vector2 origEDir = p[2]-p[1];
     Point2 origP1 = p[1];
-    p[1] += Vector2::Cross(p[2]-p[1], To-p[2])/Vector2::Cross(p[2]-p[1], p[0]-p[1])*(p[0]-p[1]);
+    p[1] += Vector2::Cross(p[2]-p[1], To-p[2]) / Vector2::Cross(p[2]-p[1], p[0]-p[1])*(p[0]-p[1]);
     p[2] = To;
     if (Vector2::Dot(origEDir, p[2]-p[1]) < 0)
         p[1] = origP1;

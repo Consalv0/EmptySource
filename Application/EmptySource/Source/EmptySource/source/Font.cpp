@@ -92,7 +92,7 @@ unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
 }
 
 bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
-	FT_Error Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_NO_SCALE);
+	FT_Error Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_COMPUTE_METRICS);
 	if (Error) {
 		Debug::Log(Debug::LogError, L"Failed to load Glyph '%c', %s", Character, FT_ErrorMessage(Error));
 		return false;
@@ -102,7 +102,11 @@ bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
 	Glyph.UnicodeValue = Character;
 	Glyph.VectorShape.Contours.clear();
 	Glyph.VectorShape.bInverseYAxis = false;
-	Glyph.Advance = FTGlyph->advance.x / 64.F;
+	Glyph.Advance = FTGlyph->metrics.horiAdvance / 64.F;
+	Glyph.Width = FTGlyph->metrics.width / 64.F;
+	Glyph.Height = FTGlyph->metrics.height / 64.F;
+	Glyph.Bearing.x = FTGlyph->metrics.horiBearingX / 64;
+	Glyph.Bearing.y = FTGlyph->metrics.horiBearingY / 64;
 
 	FT_Context Context = { };
 	Context.shape = &Glyph.VectorShape;

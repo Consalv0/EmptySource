@@ -1,11 +1,10 @@
 #pragma once
 
 #include "..\include\ShaderStage.h"
-#include <unordered_map>
 #include <functional>
 #include <cstring>
 
-typedef std::unordered_map<const Char *, unsigned int> LocationMap;
+typedef TDictionary<const Char *, unsigned int> LocationMap;
 
 class ShaderProgram {
 private:

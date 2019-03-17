@@ -7,6 +7,8 @@
 struct FontGlyph {
 public:
 	unsigned long UnicodeValue;
+	float Width;
+	float Height;
 	IntVector2 Bearing;
 	float Advance;
 	Box2D UV;
@@ -15,13 +17,11 @@ public:
 
 	FontGlyph();
 
-	FontGlyph(unsigned long Character, IntVector2 Bearing, float Advance, Shape VectorShape);
-
 	FontGlyph(const FontGlyph & Other);
 
-	void GenerateSDF(const IntVector2 & Size);
+	void GenerateSDF(float PixelRange = 2.F);
 
-	void GetQuadMesh(Vector2 Pivot, const float& Scale, struct MeshVertex * Quad);
+	void GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, struct MeshVertex * Quad);
 
 	FontGlyph & operator=(const FontGlyph & Other);
 };
