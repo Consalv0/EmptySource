@@ -142,6 +142,12 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PrepareCharacters(L'¡', L'ſ');
 	// --- Greek Unicode Range
 	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
+	// // --- Hiragana
+	// TextGenerator.PrepareCharacters(0x3041, 0x309F);
+	// // --- Katana
+	// TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
+	// TextGenerator.PrepareCharacters(0x2200, 0x22FF);
+	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
 
 	Bitmap<unsigned char> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
