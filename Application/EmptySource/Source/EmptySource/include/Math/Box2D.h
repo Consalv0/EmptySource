@@ -28,4 +28,4 @@ public:
 	inline float GetPerimeter() const { return GetWidth() * 2.F + GetHeight() * 2.F; }
 };
 
-typedef Box2D BoundingBox2D
+typedef Box2D BoundingBox2D;
