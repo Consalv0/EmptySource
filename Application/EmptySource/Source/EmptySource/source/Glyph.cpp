@@ -25,7 +25,7 @@ void FontGlyph::GenerateSDF(float PixelRange) {
 	IntVector2 Size = { (int)Width, (int)Height };
 	SDFResterized = Bitmap<float>(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4);
 	Vector2 Translate(-(float)Bearing.x, Height - (float)Bearing.y);
-	Vector2 Scale = 1; // Height / (Height + PixelRange * 4);
+	Vector2 Scale = 1;
 	Translate += PixelRange;
  
 	// // --- Auto-frame
