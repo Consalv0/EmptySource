@@ -21,12 +21,12 @@ public:
 	void PrepareCharacters(const unsigned long & From, const unsigned long & To);
 
 	//* Generate mesh geometry for rasterization. 
-	//* The uv of the quads are calculated in the gryphs creation 
 	void GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
 
 	//* Clear generator memory
 	void Clear();
 
 	//* Prepare Texture Data
+	//* The UV of the glyph quads are calculated here
 	bool GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas);
 };
