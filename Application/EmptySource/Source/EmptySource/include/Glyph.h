@@ -19,7 +19,7 @@ public:
 
 	FontGlyph(const FontGlyph & Other);
 
-	void GenerateSDF(float PixelRange = 2.F);
+	void GenerateSDF(float PixelRange);
 
 	void GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, struct MeshVertex * Quad);
 
