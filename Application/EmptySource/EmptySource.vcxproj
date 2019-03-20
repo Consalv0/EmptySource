@@ -91,6 +91,8 @@
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
@@ -134,6 +136,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
