@@ -109,8 +109,10 @@ void CoreApplication::Initalize() {
 }
 
 void CoreApplication::Close() {
-	MainWindow->Terminate();
-	delete MainWindow;
+	if (MainWindow) {
+		MainWindow->Terminate();
+		delete MainWindow;
+	}
 
 	glfwTerminate(); 
 	nvmlShutdown();
@@ -118,6 +120,8 @@ void CoreApplication::Close() {
 
 void CoreApplication::MainLoop() {
 	
+	if (!bInitialized) return;
+
 	Space NewSpace; Space OtherNewSpace(NewSpace);
 	Object* GObject = Space::GetFirstSpace()->MakeObject();
 	GObject->Delete();
@@ -127,7 +131,7 @@ void CoreApplication::MainLoop() {
 
 	Font FontFace;
 	Font::InitializeFreeType();
-	FontFace.Initialize(FileManager::Open(L"Data\\Fonts\\SourceSansPro.ttf"));
+	FontFace.Initialize(FileManager::Open(L"Data\\Fonts\\ArialUnicode.ttf"));
 
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
@@ -136,18 +140,19 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PixelRange = 2.F;
 	TextGenerator.Pivot = 0;
 
+	// TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
 	// --- Basic Latin Unicode Range
 	TextGenerator.PrepareCharacters(L'!', L'~');
 	// --- Controls and Latin-1 Unicode Range
 	TextGenerator.PrepareCharacters(L'¡', L'ſ');
 	// --- Greek Unicode Range
 	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
-	// // --- Hiragana
-	// TextGenerator.PrepareCharacters(0x3041, 0x309F);
-	// // --- Katana
-	// TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
-	// TextGenerator.PrepareCharacters(0x2200, 0x22FF);
-	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
+	// --- Hiragana
+	TextGenerator.PrepareCharacters(0x3041, 0x309F);
+	// --- Katana
+	TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
+	TextGenerator.PrepareCharacters(0x2200, 0x22FF);
+	TextGenerator.PrepareCharacters(0x0600, 0x06FF);
 
 	Bitmap<unsigned char> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -466,17 +471,19 @@ void CoreApplication::MainLoop() {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
-			RenderTextureMaterial.Use();
+			RenderTextMaterial.Use();
 			 
-			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
+			RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
+			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
 			
 			QuadModels[0].BindVertexArray();
 			
 			Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
-			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
 				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
 				ModelMatrixBuffer
 			);
