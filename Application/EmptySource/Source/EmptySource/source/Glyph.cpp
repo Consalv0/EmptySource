@@ -54,9 +54,9 @@ void FontGlyph::GenerateSDF(float PixelRange) {
 
 void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, MeshVertex * Quad) {
 	float XPos = Pivot.x + Bearing.x * Scale;
-	float YPos = Pivot.y - (Height - Bearing.y) * Scale;
-	float XPosWidth = XPos + (Width + PixelRange) * Scale;
-	float YPosHeight = YPos + (Height + PixelRange) * Scale;
+	float YPos = Pivot.y - (SDFResterized.GetHeight() - Bearing.y) * Scale;
+	float XPosWidth = XPos + (SDFResterized.GetWidth() + PixelRange) * Scale;
+	float YPosHeight = YPos + (SDFResterized.GetHeight() + PixelRange) * Scale;
 
 	Quad[0].Position.x = XPosWidth; Quad[0].Position.y = YPos;
 	Quad[0].UV0.u = UV.xMax; Quad[0].UV0.v = UV.yMin;

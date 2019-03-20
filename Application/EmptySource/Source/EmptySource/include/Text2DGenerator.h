@@ -7,6 +7,15 @@
 
 struct Text2DGenerator {
 private:
+	struct Node {
+		Node* Smaller;
+		Node* Bigger;
+		Box2D BBox;
+		const FontGlyph * Glyph;
+
+		Node* Insert(const FontGlyph & Glyph);
+		~Node();
+	};
 
 	TDictionary<unsigned long, FontGlyph *> LoadedCharacters;
 
@@ -16,6 +25,9 @@ public:
 	int AtlasSize = 512;
 	float PixelRange = 2.F;
 	Vector2 Pivot = 0;
+
+	//* Prepare Character Info
+	void PrepareCharacters(const WChar* Characters, const size_t & Count);
 
 	//* Prepare Character Info
 	void PrepareCharacters(const unsigned long & From, const unsigned long & To);
