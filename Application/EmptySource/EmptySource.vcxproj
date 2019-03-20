@@ -298,8 +298,8 @@
     <ClInclude Include="Source\External\freetype\tttables.h" />
     <ClInclude Include="Source\External\freetype\tttags.h" />
     <ClInclude Include="Source\External\ft2build.h" />
-    <ClInclude Include="Source\External\GLAD\include\glad.h" />
-    <ClInclude Include="Source\External\GLAD\include\khrplatform.h" />
+    <ClInclude Include="Source\External\GLAD\glad.h" />
+    <ClInclude Include="Source\External\GLAD\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
     <ClInclude Include="Source\External\tsl\robin_growth_policy.h" />
@@ -336,7 +336,7 @@
     <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
-    <ClCompile Include="Source\External\GLAD\src\glad.c" />
+    <ClCompile Include="Source\External\GLAD\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Base.vertex.glsl" />
