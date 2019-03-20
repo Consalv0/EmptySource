@@ -80,6 +80,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.res
 
 # Files built by CUDA
 *.i
