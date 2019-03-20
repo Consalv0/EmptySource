@@ -28,7 +28,7 @@ namespace Debug {
 
 		WString LogText = L"";
 
-#ifdef _WIN32
+#ifdef WIN32
 		HANDLE hstdin = GetStdHandle(STD_INPUT_HANDLE); \
 		HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE); \
 		CONSOLE_SCREEN_BUFFER_INFO csbi; \
