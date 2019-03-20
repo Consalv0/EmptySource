@@ -69,12 +69,6 @@
     <ClInclude Include="Source\External\GLFW\glfw3native.h">
       <Filter>Header Files\External\GLFW</Filter>
     </ClInclude>
-    <ClInclude Include="Source\External\GLAD\include\glad.h">
-      <Filter>Header Files\External\GLAD</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\GLAD\include\khrplatform.h">
-      <Filter>Header Files\External\GLAD</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Window.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -516,11 +510,14 @@
     <ClInclude Include="Source\EmptySource\include\Shape.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\External\GLAD\glad.h">
+      <Filter>Header Files\External\GLAD</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\GLAD\khrplatform.h">
+      <Filter>Header Files\External\GLAD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\External\GLAD\src\glad.c">
-      <Filter>Header Files\External\GLAD</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EmptySource\source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -604,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\ShapeContour.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\External\GLAD\glad.c">
+      <Filter>Header Files\External\GLAD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
