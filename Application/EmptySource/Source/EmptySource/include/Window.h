@@ -2,7 +2,7 @@
 
 // Include GLFW
 // Library to make crossplataform input and window creation
-#include <External/GLFW/glfw3.h>
+#include "External/GLFW/glfw3.h"
 
 enum WindowMode {
 	Windowed = 0,
@@ -15,7 +15,7 @@ enum WindowMode {
 struct ApplicationWindow {
 private:
 	//* GLFW Window
-	struct GLFWwindow* Window; 
+	struct GLFWwindow * Window; 
 	
 	//* External on resized function
 	void(*OnWindowResizedFunc)(int Width, int Height);
@@ -41,6 +41,7 @@ public:
 
 	//* Get the width in pixels of the window
 	int GetWidth();
+
 	//* Get the height in pixels of the window
 	int GetHeight();
 
