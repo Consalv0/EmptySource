@@ -13,7 +13,9 @@ extern "C" {
 #endif
 
 int main(int argc, char **argv) {
+#ifdef _WIN32
 	_setmode(_fileno(stdout), _O_U16TEXT);
+#endif
 
 	Debug::Log(Debug::LogNormal, L"Initalizing Application:\n");
 	CoreApplication::Initalize();
