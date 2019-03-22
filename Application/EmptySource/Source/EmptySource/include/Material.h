@@ -1,7 +1,7 @@
 #pragma once
 
-#include "..\include\Graphics.h"
-#include "..\include\ShaderProgram.h"
+#include "../include/Graphics.h"
+#include "../include/ShaderProgram.h"
 
 class Material {
 private:

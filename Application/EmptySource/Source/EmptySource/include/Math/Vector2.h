@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\CoreTypes.h"
+#include "../CoreTypes.h"
 
 struct Vector3;
 struct Vector4;
@@ -11,7 +11,7 @@ public:
 		struct { float x, y; };
 		struct { float u, v; };
 	};
-
+    
 	HOST_DEVICE FORCEINLINE Vector2();
 	HOST_DEVICE FORCEINLINE Vector2(const Vector2& Vector);
 	HOST_DEVICE FORCEINLINE Vector2(const Vector3& Vector);
@@ -24,7 +24,7 @@ public:
 	HOST_DEVICE inline void Normalize();
 	HOST_DEVICE inline Vector2 Normalized() const;
 	
-	// A special version of the cross product for 2D vectors (returns scalar value).
+	//* A special version of the cross product for 2D vectors (returns scalar value).
 	HOST_DEVICE FORCEINLINE float Cross(const Vector2& Other) const;
 	HOST_DEVICE FORCEINLINE static float Cross(const Vector2 &A, const Vector2 &B);
 	HOST_DEVICE FORCEINLINE float Dot(const Vector2& Other) const;
@@ -60,6 +60,6 @@ public:
 	HOST_DEVICE inline friend Vector2 operator/(float Value, const Vector2 &Vector);
 };
 
-#include "..\Math\Vector2.inl"
+#include "../Math/Vector2.inl"
 
 typedef Vector2 Point2;

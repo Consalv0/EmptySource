@@ -1,7 +1,7 @@
 
-#include "..\include\SDFGenerator.h"
-#include "..\include\Mesh.h"
-#include "..\include\Glyph.h"
+#include "../include/SDFGenerator.h"
+#include "../include/Mesh.h"
+#include "../include/Glyph.h"
 
 FontGlyph::FontGlyph() {
 	UnicodeValue = 0;

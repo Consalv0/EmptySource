@@ -68,7 +68,7 @@ inline float Quaternion::MagnitudeSquared() const {
 
 inline void Quaternion::Normalize() {
 	if (MagnitudeSquared() == 0) {
-		w = 1; x = 0, y = 0, z = 0;
+        w = 1; x = 0; y = 0; z = 0;
 	} else {
 		*this /= Magnitude();
 	}

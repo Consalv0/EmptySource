@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\include\Glyph.h"
+#include "../include/Glyph.h"
 
 struct FT_Context {
 	Point2 position;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 #include <stdexcept>
 
 #include "Vector2.h"
@@ -41,7 +41,7 @@ FORCEINLINE Vector4::Vector4(const float& Value)
 }
 
 inline float Vector4::Magnitude() const {
-	return sqrtf(x * x + y * y + z * z + w * w);
+    return sqrtf(x * x + y * y + z * z + w * w);
 }
 
 inline float Vector4::MagnitudeSquared() const {
@@ -50,7 +50,7 @@ inline float Vector4::MagnitudeSquared() const {
 
 inline void Vector4::Normalize() {
 	if (MagnitudeSquared() == 0) {
-		x = 0, y = 0, z = 0; w = 0;
+        x = 0; y = 0; z = 0; w = 0;
 	} else {
 		*this /= Magnitude();
 	}

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "..\include\Math\Math.h"
+#include "../include/Math/CoreMath.h"
 
 // Parameters for iterative search of closest point on a cubic Bezier curve. Increase for higher precision.
 #define MSDFGEN_CUBIC_SEARCH_STARTS 4

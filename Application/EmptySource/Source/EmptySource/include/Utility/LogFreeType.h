@@ -1,7 +1,7 @@
 #pragma once
 
-#include "..\..\include\Text.h"
-#include <ft2build.h>
+#include "../../include/Text.h"
+#include "../External/ft2build.h"
 #include FT_FREETYPE_H
 
 inline const WChar* FT_ErrorMessage(FT_Error err) {

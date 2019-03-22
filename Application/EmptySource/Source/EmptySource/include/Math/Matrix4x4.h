@@ -41,4 +41,4 @@ public:
 	HOST_DEVICE FORCEINLINE Matrix4x4 operator/(const float& Value) const;
 };
 
-#include "..\Math\Matrix4x4.inl"
+#include "../Math/Matrix4x4.inl"

@@ -54,8 +54,9 @@ inline String WStringToString(const WString &From) {
     String To(SizeNeeded, 0);
     WideCharToMultiByte(CP_UTF8, 0, &From[0], (int)From.size(), &To[0], SizeNeeded, NULL, NULL);
 #else
-    String To = String(From.size(), 0);
-    To.resize(std::wcstombs(&To[0], From.c_str(), From.size()));
+    size_t SizeNeeded = 1 + std::wcstombs(NULL, &From[0], 0);
+    String To = String(SizeNeeded, '\0');
+    To.resize(std::wcstombs(&To[0], From.c_str(), SizeNeeded));
 #endif
     
     return To;
@@ -69,8 +70,9 @@ inline WString StringToWString(const String &From) {
     WString To(SizeNeeded, 0);
     MultiByteToWideChar(CP_UTF8, 0, &From[0], (int)From.size(), &To[0], SizeNeeded);
 #else
-    WString To = WString(From.size(), 0);
-    To.resize(std::mbstowcs(&To[0], From.c_str(), From.size()));
+    size_t SizeNeeded = 1 + std::mbstowcs(NULL, &From[0], 0);
+    WString To = WString(SizeNeeded, '\0');
+    To.resize(std::mbstowcs(&To[0], From.c_str(), SizeNeeded));
 #endif
     
     return To;

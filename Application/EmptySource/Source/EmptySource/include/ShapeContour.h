@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "..\include\EdgeHolder.h"
+#include "../include/EdgeHolder.h"
 
 // A single closed contour of a shape.
 class ShapeContour {

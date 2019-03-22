@@ -1,6 +1,9 @@
 
-#include "..\include\Core.h"
-#include "..\include\FileStream.h"
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
+#include "../include/Core.h"
+#include "../include/FileStream.h"
 
 FileStream::FileStream() {
 	Stream = NULL;
@@ -9,10 +12,14 @@ FileStream::FileStream() {
 }
 
 FileStream::FileStream(WString FilePath) {
+#ifdef WIN32
 	Stream = new std::wfstream(FilePath);
+#else
+    Stream = new std::wfstream(WStringToString(FilePath));
+#endif
 	Path = FilePath;
 	Open();
-	if (!IsValid()) Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", FilePath.c_str());
+	if (!IsValid()) Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", FilePath.c_str());
 }
 
 WString FileStream::GetExtension() const {
@@ -32,9 +39,19 @@ WString FileStream::GetPath() const {
 }
 
 WString FileStream::GetShortPath() const {
-	WChar CurrentDirectory[_MAX_DIR + 1];
+#ifdef WIN32
+    WChar CurrentDirectory[_MAX_DIR + 1];
 	GetCurrentDirectory(_MAX_DIR, CurrentDirectory);
-
+#else
+    long Size = pathconf(".", _PC_PATH_MAX);
+    Char * Buffer;
+    Char * Ptr;
+    if ((Buffer = (Char *)malloc((size_t)Size)) != NULL) {
+        Ptr = getcwd(Buffer, (size_t)Size);
+    }
+    WChar * CurrentDirectory = CharToWChar(Buffer);
+#endif
+    
 	WString ReturnValue = Path;
 	Text::Replace(ReturnValue, WString(CurrentDirectory), WString(L".."));
 
@@ -48,7 +65,7 @@ std::wstringstream FileStream::ReadStream() const {
 			stringStream << Stream->rdbuf();
 		} catch (...) {}
 	} else {
-		Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", Path.c_str());
+		Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", Path.c_str());
 	}
 
 	return stringStream;
@@ -58,7 +75,11 @@ bool FileStream::ReadNarrowStream(String* Output) const {
 	if (IsValid()) {
 		try {
 			std::fstream NarrowStream;
-			NarrowStream.open(Path, std::ios::in | std::ios::binary);
+#ifdef WIN32
+            NarrowStream.open(Path, std::ios::in | std::ios::binary);
+#else
+            NarrowStream.open(WStringToString(Path), std::ios::in | std::ios::binary);
+#endif
 			NarrowStream.seekg(0, std::ios::end);
 			Output->resize(NarrowStream.tellg());
 			NarrowStream.seekg(0, std::ios::beg);
@@ -68,7 +89,7 @@ bool FileStream::ReadNarrowStream(String* Output) const {
 			return false;
 		}
 	} else {
-		Debug::Log(Debug::LogError, L"File '%s' is not valid or do not exist", Path.c_str());
+		Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", Path.c_str());
 		return false;
 	}
 
@@ -90,7 +111,11 @@ long FileStream::GetLenght() {
 }
 
 bool FileStream::Open() {
-	Stream->open(Path, std::ios::in || std::ios::binary);
+#ifdef WIN32
+    Stream->open(Path, std::ios::in | std::ios::binary);
+#else
+    Stream->open(WStringToString(Path), std::ios::in | std::ios::binary);
+#endif
 
 	if (Stream->is_open()) Reset();
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\CoreTypes.h"
+#include "../CoreTypes.h"
 
 struct Vector2;
 struct Vector3;
@@ -52,4 +52,4 @@ public:
 	HOST_DEVICE FORCEINLINE IntVector2& operator/=(const int& Value);
 };
 
-#include "..\Math\IntVector2.inl"
+#include "../Math/IntVector2.inl"

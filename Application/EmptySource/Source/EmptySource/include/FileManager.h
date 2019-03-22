@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\include\FileStream.h"
+#include "../include/FileStream.h"
 
 typedef std::vector<FileStream*> FileList;
 

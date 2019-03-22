@@ -1,15 +1,15 @@
-﻿#include "..\include\Core.h"
-#include "..\include\CoreGraphics.h"
-#include "..\include\FileManager.h"
-#include "..\include\ShaderProgram.h"
+#include "../include/Core.h"
+#include "../include/CoreGraphics.h"
+#include "../include/FileManager.h"
+#include "../include/ShaderProgram.h"
 
-#include "..\include\Math\Math.h"
+#include "../include/Math/CoreMath.h"
 
 bool ShaderProgram::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	Debug::Log(Debug::LogNormal, L"Linking shader program '%s'...", Name.c_str());
+	Debug::Log(Debug::LogNormal, L"Linking shader program '%ls'...", Name.c_str());
 	ProgramObject = glCreateProgram();
 
 	if (VertexShader != NULL && VertexShader->IsValid()) {
@@ -29,7 +29,7 @@ bool ShaderProgram::LinkProgram() {
 	if (InfoLogLength > 0) {
 		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ProgramObject, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		Debug::Log(Debug::LogNormal, L"'%s'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
+		Debug::Log(Debug::LogNormal, L"'%ls'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 
@@ -37,17 +37,25 @@ bool ShaderProgram::LinkProgram() {
 }
 
 ShaderProgram::ShaderProgram() {
-	ShaderStage* VertexShader = NULL;
-	ShaderStage* FragmentShader = NULL;
-	ShaderStage* ComputeShader = NULL;
-	ShaderStage* GeometryShader = NULL;
+	VertexShader = NULL;
+	FragmentShader = NULL;
+	ComputeShader = NULL;
+	GeometryShader = NULL;
+    bIsLinked = false;
 	WString Name = L"";
 
-	unsigned int Program = GL_FALSE;
+	ProgramObject = GL_FALSE;
 }
 
 ShaderProgram::ShaderProgram(WString Name) : ShaderProgram() {
-	this->Name = Name;
+    VertexShader = NULL;
+    FragmentShader = NULL;
+    ComputeShader = NULL;
+    GeometryShader = NULL;
+    bIsLinked = false;
+    this->Name = Name;
+    
+    ProgramObject = GL_FALSE;
 }
 
 unsigned int ShaderProgram::GetUniformLocation(const Char * LocationName) {
@@ -79,7 +87,7 @@ unsigned int ShaderProgram::GetAttribLocation(const Char * LocationName) {
 void ShaderProgram::AppendStage(ShaderStage * shader) {
 
 	if (IsValid()) {
-		Debug::Log(Debug::LogError, L"Program '%s' is already linked and compiled, can't modify shader stages", Name.c_str());
+		Debug::Log(Debug::LogError, L"Program '%ls' is already linked and compiled, can't modify shader stages", Name.c_str());
 		return;
 	}
 
@@ -105,7 +113,7 @@ WString ShaderProgram::GetName() const {
 
 void ShaderProgram::Use() const {
 	if (!IsValid()) {
-		Debug::Log(Debug::LogError, L"Can't use shader program '%s' because is not valid", Name.c_str());
+		Debug::Log(Debug::LogError, L"Can't use shader program '%ls' because is not valid", Name.c_str());
 		return;
 	}
 

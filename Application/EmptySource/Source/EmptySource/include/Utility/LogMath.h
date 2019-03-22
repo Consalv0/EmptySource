@@ -1,7 +1,7 @@
 #pragma once
 
-#include "..\Math\Math.h"
-#include "..\Text.h"
+#include "../Math/CoreMath.h"
+#include "../Text.h"
 
 namespace Text {
 	inline WString FormatMath(const IntVector2& Value) {

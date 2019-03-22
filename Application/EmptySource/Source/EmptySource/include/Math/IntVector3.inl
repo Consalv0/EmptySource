@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 #include <stdexcept>
 
 #include "Vector2.h"
@@ -40,7 +40,7 @@ FORCEINLINE IntVector3::IntVector3(const int& Value)
 }
 
 inline float IntVector3::Magnitude() const {
-	return sqrtf(x * float(x) + y * float(y) + z * float(z));
+    return sqrtf(x * float(x) + y * float(y) + z * float(z));
 }
 
 inline int IntVector3::MagnitudeSquared() const {

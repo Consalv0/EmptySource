@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "..\include\EdgeSegments.h"
+#include "../include/EdgeSegments.h"
 
 	/// Container for a single edge of dynamic type.
 class EdgeHolder {

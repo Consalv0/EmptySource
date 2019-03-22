@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\include\Texture.h"
+#include "../include/Texture.h"
 
 struct Texture3D : public Texture {
 private:

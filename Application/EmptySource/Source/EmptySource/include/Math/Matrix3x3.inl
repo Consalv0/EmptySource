@@ -1,9 +1,9 @@
 
 #include <math.h>
 #include <stdexcept>
-#include "..\Math\Vector3.h"
-#include "..\Math\Matrix4x4.h"
-#include "..\Math\Matrix3x3.h"
+#include "../Math/Vector3.h"
+#include "../Math/Matrix4x4.h"
+#include "../Math/Matrix3x3.h"
 
 FORCEINLINE FMatrix3x3::FMatrix3x3() {
 	m0[0] = 1; m0[1] = 0; m0[2] = 0;
@@ -20,9 +20,9 @@ FORCEINLINE FMatrix3x3::FMatrix3x3(const Matrix4x4 & Matrix) {
 }
 
 FORCEINLINE FMatrix3x3::FMatrix3x3(const Vector3 & Row0, const Vector3 & Row1, const Vector3 & Row2) {
-	m0[0] = Row0.x, m0[1] = Row0.y, m0[2] = Row0.z;
-	m1[0] = Row1.x, m1[1] = Row1.y, m1[2] = Row1.z;
-	m2[0] = Row2.x, m2[1] = Row2.y, m2[2] = Row2.z;
+    m0[0] = Row0.x; m0[1] = Row0.y; m0[2] = Row0.z;
+    m1[0] = Row1.x; m1[1] = Row1.y; m1[2] = Row1.z;
+    m2[0] = Row2.x; m2[1] = Row2.y; m2[2] = Row2.z;
 }
 
 inline FMatrix3x3 FMatrix3x3::Identity() {

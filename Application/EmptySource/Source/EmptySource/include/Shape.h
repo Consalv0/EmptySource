@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "..\include\ShapeContour.h"
-#include "..\include\Math\Box2D.h"
+#include "../include/ShapeContour.h"
+#include "../include/Math/Box2D.h"
 
 // Vector shape representation.
 class Shape {
