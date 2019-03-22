@@ -20,7 +20,7 @@ namespace Debug {
 		void Stop();
 
 		// Get enlapsed time in miliseconds
-		double GetEnlapsed() const;
+		double GetEnlapsedMicro() const;
 		// Get enlapsed time in seconds
 		double GetEnlapsedSeconds() const;
 	};

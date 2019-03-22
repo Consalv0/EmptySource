@@ -1,4 +1,4 @@
-﻿#include "../include/Core.h"
+#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
@@ -478,7 +478,7 @@ void CoreApplication::MainLoop() {
 
 			LightModels[0].DrawInstanciated(2);
 
-			float AppTime = (float)Time::GetEpochTimeMili() / 1000.F;
+			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
@@ -526,7 +526,7 @@ void CoreApplication::MainLoop() {
 					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
 				Timer.Stop();
-				TimeCount += Timer.GetEnlapsed();
+				TimeCount += Timer.GetEnlapsedMicro();
 				TotalCharacterSize += (int)RenderingText[i].size();
 			}
 			if (DynamicMesh.SetUpBuffers()) {
