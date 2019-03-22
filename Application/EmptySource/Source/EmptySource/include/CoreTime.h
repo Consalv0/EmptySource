@@ -21,7 +21,7 @@ public:
 	static float GetFrameRatePerSecond();
 
 	// Time since the app is running;
-	static unsigned long long GetEpochTimeMilli();
+	static unsigned long long GetEpochTimeMili();
 
 private:
 	// Time since the last tick callback
