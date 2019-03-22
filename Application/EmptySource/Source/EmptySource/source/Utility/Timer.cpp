@@ -5,17 +5,17 @@ Debug::Timer::Timer() {
 }
 
 void Debug::Timer::Start() {
-	StartTime = Time::GetEpochTimeMili() - 856300000000;
+	StartTime = Time::GetEpochTimeMicro() - 856300000000;
 }
 
 void Debug::Timer::Stop() {
-	EndTime = Time::GetEpochTimeMili() - 856300000000;
+	EndTime = Time::GetEpochTimeMicro() - 856300000000;
 }
 
-double Debug::Timer::GetEnlapsed() const {
+double Debug::Timer::GetEnlapsedMicro() const {
 	return (EndTime - StartTime) / 1000.F;
 }
 
 double Debug::Timer::GetEnlapsedSeconds() const {
-	return GetEnlapsed() / CLOCKS_PER_SEC;
+	return GetEnlapsedMicro() / CLOCKS_PER_SEC;
 }
