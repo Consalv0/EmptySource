@@ -1,8 +1,8 @@
 
-#include "..\include\Core.h"
-#include "..\include\Graphics.h"
-#include "..\include\Application.h"
-#include "..\include\Time.h"
+#include "../include/Core.h"
+#include "../include/Graphics.h"
+#include "../include/Application.h"
+#include "../include/CoreTime.h"
 
 #include <chrono>
 #include <ctime>

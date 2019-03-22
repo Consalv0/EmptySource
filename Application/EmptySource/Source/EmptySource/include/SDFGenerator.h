@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\include\Math\Math.h"
-#include "..\include\Shape.h"
-#include "..\include\Bitmap.h"
+#include "../include/Math/CoreMath.h"
+#include "../include/Shape.h"
+#include "../include/Bitmap.h"
 
 class SDFGenerator {
 private:

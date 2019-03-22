@@ -1,9 +1,9 @@
 
-#include "..\include\Core.h"
-#include "..\include\CoreGraphics.h"
+#include "../include/Core.h"
+#include "../include/CoreGraphics.h"
 
-#include "..\include\Math\Math.h"
-#include "..\include\Mesh.h"
+#include "../include/Math/CoreMath.h"
+#include "../include/Mesh.h"
 
 MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV) :
 	Position(P), Normal(N), Tangent(), UV0(UV), UV1(UV), Color() {
@@ -11,7 +11,7 @@ MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV)
 
 MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector3 & T, const Vector2 & UV0, const Vector2 & UV1, const Vector4 & C) :
 	Position(P), Normal(N), Tangent(T),
-	UV0(UV0), UV1(UV1), Color(Color) {
+	UV0(UV0), UV1(UV1), Color(C) {
 }
 
 bool MeshVertex::operator<(const MeshVertex that) const {

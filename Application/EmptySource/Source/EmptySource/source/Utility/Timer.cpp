@@ -1,8 +1,6 @@
-#include "..\Source\EmptySource\include\Utility\Timer.h"
+#include "../include/Utility/Timer.h"
 
 Debug::Timer::Timer() {
-	std::chrono::steady_clock::time_point StartTime;
-	std::chrono::steady_clock::time_point EndTime;
 }
 
 void Debug::Timer::Start() {
@@ -19,6 +17,5 @@ double Debug::Timer::GetEnlapsed() const {
 }
 
 double Debug::Timer::GetEnlapsedSeconds() const {
-	std::chrono::duration<double, std::milli> Enlapsed = EndTime - StartTime;
 	return GetEnlapsed() / CLOCKS_PER_SEC;
 }

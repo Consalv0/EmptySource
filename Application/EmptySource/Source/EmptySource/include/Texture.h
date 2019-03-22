@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\include\Core.h"
-#include "..\include\Graphics.h"
-#include "..\include\Math\Math.h"
+#include "../include/Core.h"
+#include "../include/Graphics.h"
+#include "../include/Math/CoreMath.h"
 
 struct Texture {
 protected:

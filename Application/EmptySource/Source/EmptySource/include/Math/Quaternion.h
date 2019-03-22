@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\CoreTypes.h"
+#include "../CoreTypes.h"
 
 struct Vector3;
 struct Matrix4x4;
@@ -51,4 +51,4 @@ public:
 	HOST_DEVICE FORCEINLINE Quaternion& operator/=(const float& Value);
 };
 
-#include "..\Math\Quaternion.inl"
+#include "../Math/Quaternion.inl"

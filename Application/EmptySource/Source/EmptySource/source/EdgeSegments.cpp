@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "..\include\EdgeSegments.h"
-#include "..\include\Math\MathUtility.h"
+#include "../include/EdgeSegments.h"
+#include "../include/Math/MathUtility.h"
 
 SignedDistance::SignedDistance() : Distance(-MathConstants::Big_Number), Dot(1) { }
 

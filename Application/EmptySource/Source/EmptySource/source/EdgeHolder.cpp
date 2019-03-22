@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "..\include\EdgeHolder.h"
+#include "../include/EdgeHolder.h"
 
 EdgeHolder::EdgeHolder() 
 	: edgeSegment(NULL) { }

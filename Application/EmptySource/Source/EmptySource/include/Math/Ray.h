@@ -10,7 +10,7 @@ public:
 
 	HOST_DEVICE FORCEINLINE RayHit() {
 		bHit = false;
-		Stamp = FLT_MAX;
+		Stamp = MathConstants::Big_Number;
 		Normal = Vector3();
 	}
 };

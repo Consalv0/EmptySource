@@ -1,35 +1,35 @@
-﻿#include "..\include\Core.h"
-#include "..\include\Math\Math.h"
-#include "..\include\Application.h"
-#include "..\include\CoreCUDA.h"
+#include "../include/Core.h"
+#include "../include/Math/CoreMath.h"
+#include "../include/Application.h"
+#ifndef __APPLE__
+#include "../include/CoreCUDA.h"
+#endif
 
-#include "..\include\Utility\LogGraphics.h"
-#include "..\include\Utility\DeviceTemperature.h"
-#include "..\include\Utility\LogMath.h"
-#include "..\include\Utility\Timer.h"
+#include "../include/Utility/LogGraphics.h"
+#include "../include/Utility/DeviceTemperature.h"
+#include "../include/Utility/LogMath.h"
+#include "../include/Utility/Timer.h"
 
-#include "..\include\Time.h"
-#include "..\include\Window.h"
-#include "..\include\FileManager.h"
-#include "..\include\Mesh.h"
-#include "..\include\MeshLoader.h"
-#include "..\include\Material.h"
-#include "..\include\ShaderProgram.h"
-#include "..\include\Space.h"
-#include "..\include\Object.h"
+#include "../include/CoreTime.h"
+#include "../include/Window.h"
+#include "../include/FileManager.h"
+#include "../include/Mesh.h"
+#include "../include/MeshLoader.h"
+#include "../include/Material.h"
+#include "../include/ShaderProgram.h"
+#include "../include/Space.h"
+#include "../include/Object.h"
 
-#include "..\include\Font.h"
-#include "..\include\Text2DGenerator.h"
-#include "..\include\Graphics.h"
-#include "..\include\RenderTarget.h"
-#include "..\include\Texture2D.h"
-#include "..\include\Texture3D.h"
+#include "../include/Font.h"
+#include "../include/Text2DGenerator.h"
+#include "../include/Graphics.h"
+#include "../include/RenderTarget.h"
+#include "../include/Texture2D.h"
+#include "../include/Texture3D.h"
 
-#include <nvml.h>
-
-int FindBoundingBox(int N, MeshVertex * Vertices);
-int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
-int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, const void * dRandState); 
+// int FindBoundingBox(int N, MeshVertex * Vertices);
+// int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
+// int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, const void * dRandState);
 const void * GetRandomArray(IntVector2 Dimension);
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
@@ -42,12 +42,14 @@ bool CoreApplication::InitalizeGLAD() {
 		return false;
 	}
 
+#ifndef __APPLE__
 	glEnable(GL_DEBUG_OUTPUT);
 	// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(Debug::OGLError, nullptr);
 	// --- Enable all messages, all sources, all levels, and all IDs:
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-
+#endif
+    
 	Debug::PrintGraphicsInformation();
 
 	return true;
@@ -68,16 +70,18 @@ bool CoreApplication::InitializeWindow() {
 	return true;
 }
 
+#ifndef __APPLE__
 bool CoreApplication::InitializeNVML() {
 	nvmlReturn_t DeviceResult = nvmlInit();
 
 	if (NVML_SUCCESS != DeviceResult) {
-		Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %s", CharToWChar(nvmlErrorString(DeviceResult)));
+		Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWChar(nvmlErrorString(DeviceResult)));
 		return false;
 	}
 
 	return true;
 }
+#endif
 
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
@@ -98,13 +102,19 @@ bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int Ver
 
 void CoreApplication::Initalize() {
 	if (bInitialized) return;
-	if (InitializeGLFW(4, 6) == false) return; 
+#ifdef __APPLE__
+    if (InitializeGLFW(4, 1) == false) return;
+#else
+    if (InitializeGLFW(4, 6) == false) return;
+#endif
 	if (InitializeWindow() == false) return;
 	if (InitalizeGLAD() == false) return;
+    
+#ifndef __APPLE__
 	if (InitializeNVML() == false) return;
-
 	CUDA::FindCudaDevice();
-
+#endif
+    
 	bInitialized = true;
 }
 
@@ -114,8 +124,10 @@ void CoreApplication::Close() {
 		delete MainWindow;
 	}
 
-	glfwTerminate(); 
+	glfwTerminate();
+#ifndef __APPLE__
 	nvmlShutdown();
+#endif
 };
 
 void CoreApplication::MainLoop() {
@@ -131,32 +143,33 @@ void CoreApplication::MainLoop() {
 
 	Font FontFace;
 	Font::InitializeFreeType();
-	FontFace.Initialize(FileManager::Open(L"Data\\Fonts\\ArialUnicode.ttf"));
-
+	FontFace.Initialize(FileManager::Open(L"Data/Fonts/ArialUnicode.ttf"));
+    
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
 	TextGenerator.GlyphHeight = 24;
 	TextGenerator.AtlasSize = 1024;
 	TextGenerator.PixelRange = 2.F;
 	TextGenerator.Pivot = 0;
-
-	// TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
+    
+    // TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
 	// --- Basic Latin Unicode Range
 	TextGenerator.PrepareCharacters(L'!', L'~');
 	// --- Controls and Latin-1 Unicode Range
-	TextGenerator.PrepareCharacters(L'¡', L'ſ');
+    TextGenerator.PrepareCharacters(L'¡', L'ſ');
 	// --- Greek Unicode Range
 	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
 	// --- Hiragana
 	TextGenerator.PrepareCharacters(0x3041, 0x309F);
 	// --- Katana
 	TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
+    // --- Arabic
 	TextGenerator.PrepareCharacters(0x2200, 0x22FF);
 	TextGenerator.PrepareCharacters(0x0600, 0x06FF);
-
+    
 	Bitmap<unsigned char> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
-
+    
 	Texture2D FontMap = Texture2D(
 		IntVector2(TextGenerator.AtlasSize),
 		Graphics::CF_Red,
@@ -179,62 +192,62 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ViewMatrix;
 
 	// --- Create and compile our GLSL shader programs from text files
-	ShaderStage VertexBase =        ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data\\Shaders\\Base.vertex.glsl"));
-	ShaderStage VoxelizerVertex =   ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data\\Shaders\\Voxelizer.vertex.glsl"));
-	ShaderStage FragmentBRDF =      ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\BRDF.fragment.glsl"));
-	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data\\Shaders\\Passthrough.vertex.glsl"));
-	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\RenderTexture.fragment.glsl"));
-	ShaderStage FragRenderText =    ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\RenderText.fragment.glsl"));
-	ShaderStage FragmentUnlit =     ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data\\Shaders\\Unlit.fragment.glsl"));
-	ShaderStage Voxelizer =         ShaderStage(ShaderType::Geometry, FileManager::Open(L"Data\\Shaders\\Voxelizer.geometry.glsl"));
-
+	ShaderStage VertexBase =        ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data/Shaders/Base.vertex.glsl"));
+	ShaderStage VoxelizerVertex =   ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data/Shaders/Voxelizer.vertex.glsl"));
+	ShaderStage FragmentBRDF =      ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data/Shaders/BRDF.fragment.glsl"));
+	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex, FileManager::Open(L"Data/Shaders/Passthrough.vertex.glsl"));
+	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data/Shaders/RenderTexture.fragment.glsl"));
+	ShaderStage FragRenderText =    ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data/Shaders/RenderText.fragment.glsl"));
+	ShaderStage FragmentUnlit =     ShaderStage(ShaderType::Fragment, FileManager::Open(L"Data/Shaders/Unlit.fragment.glsl"));
+	ShaderStage Voxelizer =         ShaderStage(ShaderType::Geometry, FileManager::Open(L"Data/Shaders/Voxelizer.geometry.glsl"));
+    
 	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
 	VoxelBRDFShader.AppendStage(&VoxelizerVertex);
 	VoxelBRDFShader.AppendStage(&Voxelizer);
 	VoxelBRDFShader.AppendStage(&FragmentBRDF);
 	VoxelBRDFShader.Compile();
-	
+    
 	ShaderProgram BRDFShader = ShaderProgram(L"BRDF");
 	BRDFShader.AppendStage(&VertexBase);
 	BRDFShader.AppendStage(&FragmentBRDF);
 	BRDFShader.Compile();
-
-	ShaderProgram UnlitShader = ShaderProgram(L"UnLit");
+    
+    ShaderProgram UnlitShader = ShaderProgram(L"UnLit");
 	UnlitShader.AppendStage(&VertexBase);
 	UnlitShader.AppendStage(&FragmentUnlit);
 	UnlitShader.Compile();
-
+    
 	ShaderProgram RenderTextureShader = ShaderProgram(L"RenderTexture");
 	RenderTextureShader.AppendStage(&PassthroughVertex);
 	RenderTextureShader.AppendStage(&FragRenderTexture);
 	RenderTextureShader.Compile();
-
+    
 	ShaderProgram RenderTextShader = ShaderProgram(L"RenderText");
 	RenderTextShader.AppendStage(&PassthroughVertex);
 	RenderTextShader.AppendStage(&FragRenderText);
 	RenderTextShader.Compile();
-
+    
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(&BRDFShader);
-
-	Material VoxelizeMaterial = Material();
+    
+    Material VoxelizeMaterial = Material();
 	VoxelizeMaterial.SetShaderProgram(&VoxelBRDFShader);
-
+    
 	Material UnlitMaterial = Material();
 	UnlitMaterial.SetShaderProgram(&UnlitShader);
-
+    
 	Material RenderTextureMaterial = Material();
 	RenderTextureMaterial.DepthFunction = Graphics::DF_Always;
 	RenderTextureMaterial.CullMode = Graphics::CM_None;
 	RenderTextureMaterial.SetShaderProgram(&RenderTextureShader);
-
+    
 	Material RenderTextMaterial = Material();
 	RenderTextMaterial.DepthFunction = Graphics::DF_Always;
 	RenderTextMaterial.CullMode = Graphics::CM_None;
 	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
-
+    
 	Texture2D RenderedTexture = Texture2D(
-		IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
+	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
 	);
 	RenderTarget Framebuffer = RenderTarget(
 		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, &RenderedTexture, true
@@ -254,29 +267,27 @@ void CoreApplication::MainLoop() {
 
 	srand((unsigned int)glfwGetTime());
 
-	std::vector<MeshFaces> Faces; std::vector<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Escafandra.obj"), &Faces, &Vertices, false);
-	std::vector<Mesh> OBJModels;
+	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Escafandra.obj"), &Faces, &Vertices, false);
+	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+        OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
-
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Quad.obj"), &Faces, &Vertices, false);
-	std::vector<Mesh> QuadModels;;
+    
+	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Quad.obj"), &Faces, &Vertices, false);
+	TArray<Mesh> QuadModels;;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 		QuadModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
-
-	MeshLoader::FromOBJ(FileManager::Open(L"Data\\Models\\Sphere.obj"), &Faces, &Vertices, true);
-	std::vector<Mesh> LightModels;
+    
+	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Sphere.obj"), &Faces, &Vertices, true);
+	TArray<Mesh> LightModels;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-		LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-	}
-
-	MeshVertex* Positions = (MeshVertex*)malloc(OBJModels[0].Vertices.size() * sizeof(MeshVertex));
+        LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+    }
+    
 	double InputTimeSum = 0;
-
 	int CurrentRenderText = 0;
 	const int TextCount = 1;
 	float FontSize = 14;
@@ -285,8 +296,8 @@ void CoreApplication::MainLoop() {
 	Mesh DynamicMesh;
 	Point2 TextPivot;
 
-	bool bRandomArray = false;
-	const void* curandomStateArray = 0;
+	// bool bRandomArray = false;
+	// const void* curandomStateArray = 0;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -355,7 +366,7 @@ void CoreApplication::MainLoop() {
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
-			if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
+		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
 				if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
 					BaseMaterial.RenderMode = Graphics::RM_Wire;
 				} else {
@@ -363,9 +374,9 @@ void CoreApplication::MainLoop() {
 				}
 			}
 		}
-
+        
 		if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
-			MeshSelector += Time::GetDeltaTime() * 10;
+            MeshSelector += Time::GetDeltaTime() * 10;
 			MeshSelector = MeshSelector > OBJModels.size() - 1 ? OBJModels.size() - 1 : MeshSelector;
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
@@ -436,43 +447,43 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetFloat1Array( "_Material.Metalness",                &MaterialMetalness );
 			BaseMaterial.SetFloat1Array( "_Material.Roughness",                &MaterialRoughness );
 			BaseMaterial.SetFloat3Array( "_Material.Color", Vector3(.6F, .2F, 0).PointerToValue() );
-			
+        
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
-		
+        
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
-				OBJModels[MeshCount].BindVertexArray();
-		
+                OBJModels[MeshCount].BindVertexArray();
+            
 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", (int)Matrices.size(), &Matrices[0], ModelMatrixBuffer);
-		
+            
 				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
 				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * Matrices.size();
 			}
-		
+        
 			UnlitMaterial.Use();
-		
+            
 			UnlitMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			UnlitMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_ViewPosition",             EyePosition.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_Material.Color",            Vector3(1).PointerToValue() );
 			
 			LightModels[0].BindVertexArray();
-		
+
 			vector<Matrix4x4> LightPositions;
 			LightPositions.push_back(Matrix4x4::Translate(LightPosition) * Matrix4x4::Scale(0.1F));
 			LightPositions.push_back(Matrix4x4::Translate(-LightPosition) * Matrix4x4::Scale(0.1F));
-		
+
 			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
-		
+
 			LightModels[0].DrawInstanciated(2);
-		
+
 			float AppTime = (float)Time::GetEpochTimeMilli() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
 			
 			RenderTextMaterial.Use();
-			 
+
 			RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
 			RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
 			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
@@ -491,20 +502,20 @@ void CoreApplication::MainLoop() {
 			QuadModels[0].DrawInstanciated(1);
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
-			// Activate corresponding render state	
+			// --- Activate corresponding render state
 			RenderTextMaterial.Use();
 			RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
 			RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix", 
+			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix",
 				Matrix4x4::Orthographic(0.F, (float)MainWindow->GetWidth(), 0.F, (float)MainWindow->GetHeight()).PointerToValue()
 			);
 
 			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
 			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
 			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
-		
+
 			QuadModels[0].BindVertexArray();
-		
+            
 			double TimeCount = 0;
 			int TotalCharacterSize = 0;
 			DynamicMesh.Clear();
@@ -525,7 +536,7 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[CurrentRenderText] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%d°], %.1f FPS (%.2f ms), Instances(%s), Vertices(%s), Triangles(%s), Camera(P%s, R%s)",
+                L"Character(%.2f μs, %d), Temp [%d°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
@@ -553,5 +564,5 @@ void CoreApplication::MainLoop() {
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
 
-	delete[] Positions;
+	// delete[] Positions;
 }

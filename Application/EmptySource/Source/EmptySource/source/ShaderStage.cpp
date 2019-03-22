@@ -1,7 +1,7 @@
-﻿#include "..\include\Core.h"
-#include "..\include\CoreGraphics.h"
-#include "..\include\FileManager.h"
-#include "..\include\ShaderStage.h"
+#include "../include/Core.h"
+#include "../include/CoreGraphics.h"
+#include "../include/FileManager.h"
+#include "../include/ShaderStage.h"
 
 bool ShaderStage::Compile() {
 	String Code;
@@ -9,12 +9,12 @@ bool ShaderStage::Compile() {
 	switch (Type) {
 	case Vertex:
 		ShaderObject = glCreateShader(GL_VERTEX_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling VERTEX shader '%s'", ShaderCode->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling VERTEX shader '%ls'", ShaderCode->GetShortPath().c_str());
 		Code = WStringToString(FileManager::ReadStream(ShaderCode));
 		break;
 	case Fragment:
 		ShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling FRAGMENT shader '%s'", ShaderCode->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling FRAGMENT shader '%ls'", ShaderCode->GetShortPath().c_str());
 		Code = WStringToString(FileManager::ReadStream(ShaderCode));
 		break;
 	case Compute:
@@ -22,7 +22,7 @@ bool ShaderStage::Compile() {
 		break;
 	case Geometry:
 		ShaderObject = glCreateShader(GL_GEOMETRY_SHADER);
-		Debug::Log(Debug::LogNormal, L"Compiling GEOMETRY shader '%s'", ShaderCode->GetShortPath().c_str());
+		Debug::Log(Debug::LogNormal, L"Compiling GEOMETRY shader '%ls'", ShaderCode->GetShortPath().c_str());
 		Code = WStringToString(FileManager::ReadStream(ShaderCode));
 		break;
 	}

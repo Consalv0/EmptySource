@@ -17,9 +17,11 @@ private:
 	//* Creates the main window for rendering
 	static bool InitializeWindow();
 
+#ifndef __APPLE__
 	//* Initialize Nvidia Managment Library
 	static bool InitializeNVML();
-	
+#endif
+    
 public:
 
 	//* Initialize the application, it creates a window, a context and loads the OpenGL functions. Returns the error

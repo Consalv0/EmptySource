@@ -2,9 +2,9 @@
 #include <math.h>
 #include <stdexcept>
 
-#include "..\Math\Vector3.h"
-#include "..\Math\Vector4.h"
-#include "..\Math\Matrix4x4.h"
+#include "../Math/Vector3.h"
+#include "../Math/Vector4.h"
+#include "../Math/Matrix4x4.h"
 
 FORCEINLINE Matrix4x4::Matrix4x4() {
 	m0[0] = 1; m0[1] = 0; m0[2] = 0; m0[3] = 0;

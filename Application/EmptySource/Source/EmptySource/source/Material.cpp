@@ -1,8 +1,8 @@
-#include "..\include\Core.h"
-#include "..\include\CoreGraphics.h"
-#include "..\include\Material.h"
-#include "..\include\Math\Math.h"
-#include "..\include\Texture2D.h"
+#include "../include/Core.h"
+#include "../include/CoreGraphics.h"
+#include "../include/Material.h"
+#include "../include/Math/CoreMath.h"
+#include "../include/Texture2D.h"
 
 Material::Material() {
 	MaterialShader = NULL;
@@ -17,7 +17,7 @@ void Material::SetShaderProgram(ShaderProgram* Value) {
 		MaterialShader = Value;
 	} else {
 		Debug::Log(
-			Debug::LogError, L"The Shader Program '%s' is not a valid program",
+			Debug::LogError, L"The Shader Program '%ls' is not a valid program",
 			Value != NULL ? Value->GetName().c_str() : L"NULL"
 		);
 	}
@@ -28,7 +28,9 @@ ShaderProgram * Material::GetShaderProgram() const {
 }
 
 void Material::SetAttribMatrix4x4Array(const Char * AttributeName, int Count, const void * Data, const unsigned int & Buffer) const {
-	unsigned int AttribLocation = GetShaderProgram()->GetAttribLocation(AttributeName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+    unsigned int AttribLocation = Program->GetAttribLocation(AttributeName);
 
 	glBindBuffer(GL_ARRAY_BUFFER, Buffer);
 	glBufferData(GL_ARRAY_BUFFER, Count * sizeof(Matrix4x4), Data, GL_STATIC_DRAW);
@@ -49,32 +51,44 @@ void Material::SetAttribMatrix4x4Array(const Char * AttributeName, int Count, co
 }
 
 void Material::SetMatrix4x4Array(const Char * UniformName, const float * Data, const int & Count) const {
-	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+	unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniformMatrix4fv(UniformLocation, Count, GL_FALSE, Data);
 }
 
 void Material::SetFloat1Array(const Char * UniformName, const float * Data, const int & Count) const {
-	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+    unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform1fv(UniformLocation, Count, Data);
 }
 
 void Material::SetFloat2Array(const Char * UniformName, const float * Data, const int & Count) const {
-	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+    unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform2fv(UniformLocation, Count, Data);
 }
 
 void Material::SetFloat3Array(const Char * UniformName, const float * Data, const int & Count) const {
-	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+    unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform3fv(UniformLocation, Count, Data);
 }
 
 void Material::SetFloat4Array(const Char * UniformName, const float * Data, const int & Count) const {
-	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+    unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform4fv(UniformLocation, Count, Data);
 }
 
 void Material::SetTexture2D(const Char * UniformName, Texture2D * Tex, const unsigned int & Position) const {
-	unsigned int UniformLocation = GetShaderProgram()->GetUniformLocation(UniformName);
+    ShaderProgram * Program = GetShaderProgram();
+    if (Program == NULL) return;
+    unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform1i(UniformLocation, Position);
 	glActiveTexture(GL_TEXTURE0 + Position);
 	Tex->Use();
@@ -119,6 +133,8 @@ void Material::Use() {
 				glCullFace(GL_BACK); break;
 			case Graphics::CM_FrontBack:
 				glCullFace(GL_FRONT_AND_BACK); break;
+            case Graphics::CM_None:
+                break;
 		}
 	}
 

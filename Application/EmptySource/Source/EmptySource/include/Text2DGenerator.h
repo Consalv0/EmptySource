@@ -1,9 +1,9 @@
 #pragma once
 
-#include "..\include\Font.h"
-#include "..\include\Mesh.h"
-#include "..\include\Text.h"
-#include "..\include\Bitmap.h"
+#include "../include/Font.h"
+#include "../include/Mesh.h"
+#include "../include/Text.h"
+#include "../include/Bitmap.h"
 
 struct Text2DGenerator {
 private:

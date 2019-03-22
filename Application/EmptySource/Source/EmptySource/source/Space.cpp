@@ -1,7 +1,7 @@
 
-#include "..\include\Core.h"
-#include "..\include\Space.h"
-#include "..\include\Object.h"
+#include "../include/Core.h"
+#include "../include/Space.h"
+#include "../include/Object.h"
 
 TDictionary<size_t, Space*> Space::AllSpaces = TDictionary<size_t, Space*>();
 

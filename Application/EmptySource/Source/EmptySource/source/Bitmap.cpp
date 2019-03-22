@@ -1,5 +1,5 @@
 
-#include "..\include\Bitmap.h"
+#include "../include/Bitmap.h"
 #include <memory>
 
 template <typename T>

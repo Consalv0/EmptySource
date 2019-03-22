@@ -1,10 +1,10 @@
-﻿
-#include "..\include\Core.h"
-#include "..\include\Utility\LogFreeType.h"
-#include "..\include\Utility\LogCore.h"
-#include "..\include\Text2DGenerator.h"
-#include "..\include\Utility\Timer.h"
-#include "..\include\SDFGenerator.h"
+
+#include "../include/Core.h"
+#include "../include/Utility/LogFreeType.h"
+#include "../include/Utility/LogCore.h"
+#include "../include/Text2DGenerator.h"
+#include "../include/Utility/Timer.h"
+#include "../include/SDFGenerator.h"
 
 Text2DGenerator::Node * Text2DGenerator::Node::Insert(const FontGlyph & Glyph) {
     // --- We're not in leaf
@@ -78,13 +78,13 @@ void Text2DGenerator::PrepareCharacters(const WChar * Characters, const size_t &
 }
 
 void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
-	Debug::Log(Debug::LogNormal, L"Loading %d font glyphs from %c(%d) to %c(%d)", To - From, From, From, To, To);
+	Debug::Log(Debug::LogNormal, L"Loading %d font glyphs from %lc(%d) to %lc(%d)", To - From, From, From, To, To);
 	Debug::Timer Timer;
 	Timer.Start();
 	TextFont->SetGlyphHeight(GlyphHeight);
 	for (unsigned long Character = From; Character <= To; Character++) {
 		FontGlyph Glyph;
-		if (TextFont->GetGlyph(Glyph, Character)) {
+		if (TextFont->GetGlyph(Glyph, (unsigned int)Character)) {
 			if (!Glyph.VectorShape.Validate())
 				Debug::Log(Debug::LogWarning, L"The geometry of the loaded shape is invalid.");
 			Glyph.VectorShape.Normalize();
@@ -176,7 +176,7 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 		FontGlyph * Character = *Begin;
 		Node * ResultNode = PNode.Insert(*Character);
 		if (ResultNode == NULL || ResultNode->Glyph == NULL) {
-			Debug::Log(Debug::LogError, L"Error writting in %c(%d)", Character->UnicodeValue, Character->UnicodeValue);
+			Debug::Log(Debug::LogError, L"Error writting in %lc(%d)", Character->UnicodeValue, Character->UnicodeValue);
 			continue;
 		}
 

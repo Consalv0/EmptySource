@@ -1,4 +1,4 @@
-#include "..\..\include\SDFGenerator.h"
+#include "../../include/SDFGenerator.h"
 
 int SDFGenerator::Width = 0, SDFGenerator::Height = 0;
 SDFGenerator::Pixel * SDFGenerator::Pixels = NULL;

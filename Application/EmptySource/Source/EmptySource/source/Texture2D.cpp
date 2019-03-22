@@ -1,7 +1,7 @@
 
-#include "..\include\Texture2D.h"
-#include "..\include\CoreGraphics.h"
-#include "..\include\Utility\LogCore.h"
+#include "../include/Texture2D.h"
+#include "../include/CoreGraphics.h"
+#include "../include/Utility/LogCore.h"
 
 GLuint GL_GetColorFormat(const Graphics::ColorFormat & CF) {
 	GLuint GLColorFormat = 0;

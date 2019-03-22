@@ -1,7 +1,8 @@
 
 #include <algorithm>
-#include "..\include\Core.h"
-#include "..\include\FileManager.h"
+#include <stdlib.h>
+#include "../include/Core.h"
+#include "../include/FileManager.h"
 
 FileList FileManager::Files = FileList();
 
@@ -21,10 +22,16 @@ FileStream* FileManager::Open(const WString & FilePath) {
 }
 
 WString FileManager::GetFullPath(const WString & Path) {
-	WChar FullPath[MAX_PATH];
+#ifdef WIN32
+	WChar FullPath[MAX_PATH + 1];
 	GetFullPathName(Path.c_str(), MAX_PATH, FullPath, NULL);
-
-	return FullPath;
+    return FullPath;
+#else
+    Char FullPath[PATH_MAX + 1];
+    Char * Ptr;
+    Ptr = realpath(WStringToString(Path).c_str(), FullPath);
+    return CharToWChar(FullPath);
+#endif
 }
 
 FileList::iterator FileManager::FindInFiles(const WString & FilePath) {

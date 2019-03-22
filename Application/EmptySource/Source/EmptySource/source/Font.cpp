@@ -1,14 +1,14 @@
 
-#include "..\External\ft2build.h"
+#include "../External/ft2build.h"
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
-#include "..\External\freetype\freetype.h"
+#include "../External/freetype/freetype.h"
 
-#include "..\include\Core.h"
-#include "..\include\Utility\LogFreeType.h"
-#include "..\include\Utility\LogCore.h"
-#include "..\include\FileStream.h"
-#include "..\include\Font.h"
+#include "../include/Core.h"
+#include "../include/Utility/LogFreeType.h"
+#include "../include/Utility/LogCore.h"
+#include "../include/FileStream.h"
+#include "../include/Font.h"
 
 FT_LibraryRec_ * Font::FreeTypeLibrary = NULL;
 
@@ -19,8 +19,8 @@ bool Font::InitializeFreeType() {
 	}
 
 	FT_Error Error;
-	if (Error = FT_Init_FreeType(&FreeTypeLibrary)) {
-		Debug::Log(Debug::LogCritical, L"Could not initialize FreeType Library, %s", FT_ErrorMessage(Error));
+	if ((Error = FT_Init_FreeType(&FreeTypeLibrary))) {
+		Debug::Log(Debug::LogCritical, L"Could not initialize FreeType Library, %ls", FT_ErrorMessage(Error));
 		return false;
 	}
 
@@ -38,7 +38,7 @@ void Font::Clear() {
 void Font::SetGlyphHeight(const unsigned int & Size) const {
 	FT_Error Error = FT_Set_Pixel_Sizes(Face, 0, Size);
 	if (Error) {
-		Debug::Log(Debug::LogError, L"Couldn't set the glyph size to %d, %s", Size, FT_ErrorMessage(Error));
+		Debug::Log(Debug::LogError, L"Couldn't set the glyph size to %d, %ls", Size, FT_ErrorMessage(Error));
 	}
 }
 
@@ -83,8 +83,8 @@ int FT_Shift(const FT_Vector * ControlA, const FT_Vector * ControlB, const FT_Ve
 
 void Font::Initialize(FileStream * File) {
 	FT_Error Error;
-	if (Error = FT_New_Face(FreeTypeLibrary, WStringToString(File->GetPath()).c_str(), 0, &Face))
-		Debug::Log(Debug::LogError, L"Failed to load font, %s", FT_ErrorMessage(Error));
+    if ((Error = FT_New_Face(FreeTypeLibrary, WStringToString(File->GetPath()).c_str(), 0, &Face)))
+		Debug::Log(Debug::LogError, L"Failed to load font, %ls", FT_ErrorMessage(Error));
 }
 
 unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
@@ -94,7 +94,7 @@ unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
 bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
 	FT_Error Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_COMPUTE_METRICS);
 	if (Error) {
-		Debug::Log(Debug::LogError, L"Failed to load Glyph '%c', %s", Character, FT_ErrorMessage(Error));
+		Debug::Log(Debug::LogError, L"Failed to load Glyph '%lc', %ls", Character, FT_ErrorMessage(Error));
 		return false;
 	}
 	FT_GlyphSlot & FTGlyph = Face->glyph;
@@ -105,8 +105,8 @@ bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
 	Glyph.Advance = FTGlyph->metrics.horiAdvance / 64.F;
 	Glyph.Width = FTGlyph->metrics.width / 64.F;
 	Glyph.Height = FTGlyph->metrics.height / 64.F;
-	Glyph.Bearing.x = FTGlyph->metrics.horiBearingX / 64;
-	Glyph.Bearing.y = FTGlyph->metrics.horiBearingY / 64;
+	Glyph.Bearing.x = (int)FTGlyph->metrics.horiBearingX / 64;
+	Glyph.Bearing.y = (int)FTGlyph->metrics.horiBearingY / 64;
 
 	FT_Context Context = { };
 	Context.shape = &Glyph.VectorShape;
@@ -119,7 +119,7 @@ bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
 	Functions.delta = 0;
 	Error = FT_Outline_Decompose(&FTGlyph->outline, &Functions, &Context);
 	if (Error) {
-		Debug::Log(Debug::LogError, L"Failed to decompose outline of Glyph '%c', %s", Character, FT_ErrorMessage(Error));
+		Debug::Log(Debug::LogError, L"Failed to decompose outline of Glyph '%lc', %ls", Character, FT_ErrorMessage(Error));
 		return false;
 	}
 	return true;

@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "..\include\Shape.h"
+#include "../include/Shape.h"
 
 Shape::Shape() : bInverseYAxis(false) { }
 

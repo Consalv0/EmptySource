@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\include\FileManager.h"
-#include "..\include\Mesh.h"
-#include "..\include\Core.h"
+#include "../include/FileManager.h"
+#include "../include/Mesh.h"
+#include "../include/Core.h"
 
 class MeshLoader {
 public:
@@ -35,7 +35,7 @@ public:
 	
 	static bool GetSimilarVertexIndex(
 		const MeshVertex & Vertex,
-		std::unordered_map<MeshVertex, unsigned> & VertexToIndex,
+		TDictionary<MeshVertex, unsigned> & VertexToIndex,
 		unsigned & Result
 	);
 

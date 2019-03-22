@@ -4,7 +4,7 @@
 template<class T>
 using TArray = std::vector<T>;
 
-#include "..\External\tsl\robin_map.h"
+#include "../External/tsl/robin_map.h"
 template<class K, class T>
 using TDictionary = tsl::robin_map<K, T>;
 
@@ -13,6 +13,10 @@ using TDictionary = tsl::robin_map<K, T>;
 #define HOST_DEVICE __host__ __device__
 #else
 #define HOST_DEVICE
-#endif // __CUDACC__
+#endif
 
-#define FORCEINLINE __forceinline	/* Force code to be inline */
+#ifdef __APPLE__
+#define FORCEINLINE inline
+#else
+#define FORCEINLINE __forceinline
+#endif
