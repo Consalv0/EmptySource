@@ -1,4 +1,4 @@
-
+﻿
 #include "../include/Core.h"
 #include "../include/Utility/LogFreeType.h"
 #include "../include/Utility/LogCore.h"

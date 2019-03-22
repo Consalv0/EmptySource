@@ -14,7 +14,7 @@ extern "C" {
 
 int main(int argc, char **argv) {
 #ifdef WIN32
-    _setmode(_fileno(stdout), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U8TEXT);
 #endif
     
     Debug::Log(Debug::LogNormal, L"Initalizing Application:\n");
@@ -22,7 +22,9 @@ int main(int argc, char **argv) {
     CoreApplication::MainLoop();
     CoreApplication::Close();
     
+#ifdef WIN32
     Debug::Log(Debug::LogNormal, L"Press any key to close...");
-    // _getch();
+    _getch();
+#endif
 }
 

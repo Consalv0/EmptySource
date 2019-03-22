@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // --- Include GLAD library to make function loaders for OpenGL
 #ifndef __gl_h_

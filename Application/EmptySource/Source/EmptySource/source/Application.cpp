@@ -1,4 +1,4 @@
-#include "../include/Core.h"
+﻿#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
