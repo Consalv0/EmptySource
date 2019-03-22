@@ -41,8 +41,8 @@ namespace Debug {
             case LogCritical: LogText += L"[CRITICAL] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
             case LogDebug: LogText += L"[DEBUG] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;
         }
-        
-        setlocale(LC_ALL, "");
+
+		setlocale(LC_ALL, "en_US.UTF-8");
         
         std::wprintf((LogText + (Text + L"\n")).c_str(), Args ...);
         SetConsoleTextAttribute(hstdout, csbi.wAttributes);

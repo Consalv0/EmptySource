@@ -10,7 +10,11 @@ public:
 
 	HOST_DEVICE FORCEINLINE RayHit() {
 		bHit = false;
+#ifndef __CUDACC__
 		Stamp = MathConstants::Big_Number;
+#else
+		Stamp = 3.4e+38f;
+#endif
 		Normal = Vector3();
 	}
 };

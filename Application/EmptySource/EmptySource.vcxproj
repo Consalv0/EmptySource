@@ -161,7 +161,9 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\EmptySource\include\Bitmap.h" />
+    <ClInclude Include="Source\EmptySource\include\CoreTime.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Box2D.h" />
+    <ClInclude Include="Source\EmptySource\include\Math\CoreMath.h" />
     <ClInclude Include="Source\EmptySource\include\ShapeContour.h" />
     <ClInclude Include="Source\EmptySource\include\EdgeHolder.h" />
     <ClInclude Include="Source\EmptySource\include\EdgeSegments.h" />
@@ -180,7 +182,6 @@
     <ClInclude Include="Source\EmptySource\include\IIdentifier.h" />
     <ClInclude Include="Source\EmptySource\include\Material.h" />
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h" />
-    <ClInclude Include="Source\EmptySource\include\Math\Math.h" />
     <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h" />
     <ClInclude Include="Source\EmptySource\include\Math\Matrix4x4.h" />
@@ -202,7 +203,6 @@
     <ClInclude Include="Source\EmptySource\include\Texture.h" />
     <ClInclude Include="Source\EmptySource\include\Texture2D.h" />
     <ClInclude Include="Source\EmptySource\include\Texture3D.h" />
-    <ClInclude Include="Source\EmptySource\include\Time.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogFreeType.h" />
@@ -312,6 +312,7 @@
     <ClInclude Include="Source\External\tsl\robin_set.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\EmptySource\source\CoreTime.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShapeContour.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeSegments.cpp" />
@@ -336,7 +337,6 @@
     <ClCompile Include="Source\EmptySource\source\Texture.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture2D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture3D.cpp" />
-    <ClCompile Include="Source\EmptySource\source\Time.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />

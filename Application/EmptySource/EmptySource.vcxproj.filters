@@ -90,9 +90,6 @@
     <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Math.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
@@ -118,9 +115,6 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Object.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Time.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\EmptySource\include\Material.h">
@@ -516,6 +510,12 @@
     <ClInclude Include="Source\External\GLAD\khrplatform.h">
       <Filter>Header Files\External\GLAD</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Math\CoreMath.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\CoreTime.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EmptySource\source\main.cpp">
@@ -543,9 +543,6 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\Object.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Time.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\Material.cpp">
@@ -604,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="Source\External\GLAD\glad.c">
       <Filter>Header Files\External\GLAD</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\CoreTime.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
