@@ -7,7 +7,7 @@
 
 #include "..\Source\EmptySource\include\Graphics.h"
 #include "..\Source\EmptySource\include\Utility\Timer.h"
-#include "..\Source\EmptySource\include\Math\Math.h"
+#include "..\Source\EmptySource\include\Math\CoreMath.h"
 #include "..\Source\EmptySource\include\Mesh.h"
 
 #ifndef __CUDACC__

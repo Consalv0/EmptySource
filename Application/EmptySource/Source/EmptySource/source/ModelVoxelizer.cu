@@ -5,7 +5,7 @@
 
 #include "..\Source\EmptySource\include\CoreCuda.h"
 #include "..\Source\EmptySource\include\Utility\Timer.h"
-#include "..\Source\EmptySource\include\Math\Math.h"
+#include "..\Source\EmptySource\include\Math\CoreMath.h"
 #include "..\Source\EmptySource\include\Texture3D.h"
 #include "..\Source\EmptySource\include\Mesh.h"
 
