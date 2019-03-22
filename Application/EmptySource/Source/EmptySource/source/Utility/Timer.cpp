@@ -13,7 +13,7 @@ void Debug::Timer::Stop() {
 }
 
 double Debug::Timer::GetEnlapsed() const {
-	return (EndTime - StartTime);
+	return (EndTime - StartTime) / 1000.F;
 }
 
 double Debug::Timer::GetEnlapsedSeconds() const {
