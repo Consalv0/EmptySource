@@ -200,7 +200,7 @@ int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, con
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Texture Write/Read with total volume (%s): %dms",
 		Text::FormatUnit(TextureDim.x * TextureDim.y, 3).c_str(),
-		Timer.GetEnlapsed()
+		Timer.GetEnlapsedMili()
 	);
 
 	CUDA::Check( cudaGraphicsUnregisterResource(cudaTextureResource) );

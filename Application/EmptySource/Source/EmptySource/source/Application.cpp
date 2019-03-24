@@ -1,4 +1,4 @@
-#include "../include/Core.h"
+﻿#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
@@ -268,7 +268,7 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Escafandra.obj"), &Faces, &Vertices, false);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Bunny.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
@@ -526,7 +526,7 @@ void CoreApplication::MainLoop() {
 					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
 				);
 				Timer.Stop();
-				TimeCount += Timer.GetEnlapsedMicro();
+				TimeCount += Timer.GetEnlapsedMili();
 				TotalCharacterSize += (int)RenderingText[i].size();
 			}
 			if (DynamicMesh.SetUpBuffers()) {

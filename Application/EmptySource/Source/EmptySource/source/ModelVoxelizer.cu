@@ -92,7 +92,7 @@ int VoxelizeToTexture3D(Texture3D* texture, int N, MeshVertex * Vertices) {
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Host allocation of %s durantion: %dms",
 		Text::FormatData((double)N * 2 * sizeof(MeshVertex) + Size, 2).c_str(),
-		Timer.GetEnlapsed()
+		Timer.GetEnlapsedMili()
 	);
 
 	Timer.Start();
@@ -114,7 +114,7 @@ int VoxelizeToTexture3D(Texture3D* texture, int N, MeshVertex * Vertices) {
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Texture Write with total volume (%s): %dms",
 		Text::FormatUnit(TextureDim.x * TextureDim.y * TextureDim.z, 0).c_str(),
-		Timer.GetEnlapsed()
+		Timer.GetEnlapsedMili()
 	);
 
 	CUDA::Check( cudaGraphicsUnregisterResource(cudaTextureResource) );
