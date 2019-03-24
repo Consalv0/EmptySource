@@ -6,7 +6,7 @@
 #endif
 
 #include "../include/Utility/LogGraphics.h"
-#include "../include/Utility/DeviceTemperature.h"
+#include "../include/Utility/DeviceFunctions.h"
 #include "../include/Utility/LogMath.h"
 #include "../include/Utility/Timer.h"
 
@@ -70,19 +70,6 @@ bool CoreApplication::InitializeWindow() {
 	return true;
 }
 
-#ifndef __APPLE__
-bool CoreApplication::InitializeNVML() {
-	nvmlReturn_t DeviceResult = nvmlInit();
-
-	if (NVML_SUCCESS != DeviceResult) {
-		Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWChar(nvmlErrorString(DeviceResult)));
-		return false;
-	}
-
-	return true;
-}
-#endif
-
 bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (!glfwInit()) {
 		Debug::Log(Debug::LogCritical, L"Failed to initialize GLFW\n");
@@ -109,9 +96,9 @@ void CoreApplication::Initalize() {
 #endif
 	if (InitializeWindow() == false) return;
 	if (InitalizeGLAD() == false) return;
+    if (Debug::InitializeDeviceFunctions() == false) return;
     
 #ifndef __APPLE__
-	if (InitializeNVML() == false) return;
 	CUDA::FindCudaDevice();
 #endif
     
@@ -125,9 +112,7 @@ void CoreApplication::Close() {
 	}
 
 	glfwTerminate();
-#ifndef __APPLE__
-	nvmlShutdown();
-#endif
+    Debug::CloseDeviceFunctions();
 };
 
 void CoreApplication::MainLoop() {
@@ -147,7 +132,7 @@ void CoreApplication::MainLoop() {
     
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
-	TextGenerator.GlyphHeight = 24;
+	TextGenerator.GlyphHeight = 32;
 	TextGenerator.AtlasSize = 1024;
 	TextGenerator.PixelRange = 2.F;
 	TextGenerator.Pivot = 0;
@@ -165,6 +150,7 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
     // --- Arabic
 	TextGenerator.PrepareCharacters(0x2200, 0x22FF);
+    // --- Cientific Symbols
 	TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
 	Bitmap<unsigned char> FontAtlas;
@@ -268,7 +254,7 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Bunny.obj"), &Faces, &Vertices, false);
+	MeshLoader::FromOBJ(FileManager::Open(L"Data/Models/Escafandra.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
@@ -536,7 +522,7 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[CurrentRenderText] = Text::Formatted(
-                L"Character(%.2f μs, %d), Temp [%d°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
+                L"Character(%.2f μs, %d), Temp [%.2f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
