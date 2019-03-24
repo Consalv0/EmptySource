@@ -120,6 +120,8 @@ bool Debug::InitializeDeviceFunctions() {
         Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWChar(nvmlErrorString(DeviceResult)));
         return false;
     }
+
+	return true;
 #elif __APPLE__
     kern_return_t result;
     io_iterator_t iterator;
@@ -158,6 +160,8 @@ bool Debug::CloseDeviceFunctions() {
         Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWChar(nvmlErrorString(DeviceResult)));
         return false;
     }
+
+	return true;
 #elif __APPLE__
     kern_return_t result;
     

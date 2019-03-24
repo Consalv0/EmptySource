@@ -5,7 +5,7 @@
 #elif WIN32
 #include <nvml.h>
 #endif
-#include "../include/Core.h"
+#include "../../include/Core.h"
 
 namespace Debug {
     bool InitializeDeviceFunctions();

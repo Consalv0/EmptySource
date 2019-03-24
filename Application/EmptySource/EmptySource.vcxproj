@@ -203,7 +203,7 @@
     <ClInclude Include="Source\EmptySource\include\Texture.h" />
     <ClInclude Include="Source\EmptySource\include\Texture2D.h" />
     <ClInclude Include="Source\EmptySource\include\Texture3D.h" />
-    <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h" />
+    <ClInclude Include="Source\EmptySource\include\Utility\DeviceFunctions.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogFreeType.h" />
     <ClInclude Include="Source\EmptySource\include\Utility\LogGraphics.h" />
@@ -337,6 +337,7 @@
     <ClCompile Include="Source\EmptySource\source\Texture.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture2D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Texture3D.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Utility\DeviceFunctions.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />

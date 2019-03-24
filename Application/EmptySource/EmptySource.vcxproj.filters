@@ -147,9 +147,6 @@
     <ClInclude Include="Source\EmptySource\include\Texture.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\DeviceTemperature.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EmptySource\include\RenderTarget.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -516,6 +513,9 @@
     <ClInclude Include="Source\EmptySource\include\CoreTime.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EmptySource\include\Utility\DeviceFunctions.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\EmptySource\source\main.cpp">
@@ -604,6 +604,9 @@
     </ClCompile>
     <ClCompile Include="Source\EmptySource\source\CoreTime.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Utility\DeviceFunctions.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
