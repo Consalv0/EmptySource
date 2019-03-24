@@ -828,7 +828,7 @@
 					"$(SRCROOT)/EmptySource/Source/**",
 					"$(SRCROOT)/EmptySource/Source/External",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path";
+				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/Libraries @executable_path";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Libraries",
 					"$(PROJECT_DIR)/EmptySource/Libraries",
@@ -852,7 +852,7 @@
 					"$(SRCROOT)/EmptySource/Source/**",
 					"$(SRCROOT)/EmptySource/Source/External",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path";
+				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/Libraries @executable_path";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Libraries",
 					"$(PROJECT_DIR)/EmptySource/Libraries",
