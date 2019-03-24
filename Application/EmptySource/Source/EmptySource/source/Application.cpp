@@ -522,7 +522,7 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[CurrentRenderText] = Text::Formatted(
-                L"Character(%.2f μs, %d), Temp [%.2f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
+                L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
