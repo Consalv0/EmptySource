@@ -17,10 +17,8 @@ private:
 	//* Creates the main window for rendering
 	static bool InitializeWindow();
 
-#ifndef __APPLE__
-	//* Initialize Nvidia Managment Library
-	static bool InitializeNVML();
-#endif
+	//* Initialize Nvidia Managment Library or IOKitLib
+	static bool InitializeDeviceFunctions();
     
 public:
 

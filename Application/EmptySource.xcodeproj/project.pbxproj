@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
+		DD23A6F922482AB700F3C46E /* DeviceFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */; };
 		DD88808B2241B1D60052F499 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
 		DD8880A02241B9910052F499 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
 		DD8880B12241E10C0052F499 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880B02241E10C0052F499 /* Window.cpp */; };
@@ -55,6 +57,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DD23A6F52248277100F3C46E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		DD23A6F7224828CB00F3C46E /* DeviceFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceFunctions.h; sourceTree = "<group>"; };
+		DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceFunctions.cpp; sourceTree = "<group>"; };
 		DD8880872241B1D60052F499 /* EmptySource */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EmptySource; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD88808A2241B1D60052F499 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DD88809F2241B9910052F499 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
@@ -100,7 +105,6 @@
 		DD8880DD2242FBCB0052F499 /* Vector3.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Vector3.inl; sourceTree = "<group>"; };
 		DD8880DF224310070052F499 /* Application.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Application.cpp; sourceTree = "<group>"; };
 		DD8880E1224310120052F499 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
-		DD8880E2224311430052F499 /* DeviceTemperature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceTemperature.h; sourceTree = "<group>"; };
 		DD8880E3224311430052F499 /* LogGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogGraphics.h; sourceTree = "<group>"; };
 		DD8880E4224311430052F499 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
 		DD8880E5224311430052F499 /* LogMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogMath.h; sourceTree = "<group>"; };
@@ -256,6 +260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */,
 				DDCA395D224474F000A6373B /* libfreetype.6.dylib in Frameworks */,
 				DD8880B72241E3870052F499 /* OpenGL.framework in Frameworks */,
 				DD8880B92241F25E0052F499 /* libglfw.3.3.dylib in Frameworks */,
@@ -343,14 +348,6 @@
 		DD8880AD2241E0C90052F499 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				DDCA39D42244777200A6373B /* EdgeHolder.h */,
-				DDCA39D02244777100A6373B /* EdgeSegments.h */,
-				DDCA39D62244777300A6373B /* Font.h */,
-				DDCA39D32244777200A6373B /* Glyph.h */,
-				DDCA39D52244777200A6373B /* SDFGenerator.h */,
-				DDCA39D22244777200A6373B /* Shape.h */,
-				DDCA39D12244777200A6373B /* ShapeContour.h */,
-				DDCA39CF2244777100A6373B /* Text2DGenerator.h */,
 				DD8880C72242FBA50052F499 /* Math */,
 				DD8880BB2242D9560052F499 /* Utility */,
 				DD8880E1224310120052F499 /* Application.h */,
@@ -376,6 +373,14 @@
 				DD8880E7224317270052F499 /* CoreTime.h */,
 				DD8880B22241E1580052F499 /* Window.h */,
 				DD8880BA224224C60052F499 /* Text.h */,
+				DDCA39D42244777200A6373B /* EdgeHolder.h */,
+				DDCA39D02244777100A6373B /* EdgeSegments.h */,
+				DDCA39D62244777300A6373B /* Font.h */,
+				DDCA39D32244777200A6373B /* Glyph.h */,
+				DDCA39D52244777200A6373B /* SDFGenerator.h */,
+				DDCA39D22244777200A6373B /* Shape.h */,
+				DDCA39D12244777200A6373B /* ShapeContour.h */,
+				DDCA39CF2244777100A6373B /* Text2DGenerator.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -384,13 +389,7 @@
 			isa = PBXGroup;
 			children = (
 				DD8880EA224319D80052F499 /* Utility */,
-				DDCA39C52244773D00A6373B /* EdgeHolder.cpp */,
-				DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */,
-				DDCA39C32244773C00A6373B /* Font.cpp */,
-				DDCA39C02244773C00A6373B /* Glyph.cpp */,
-				DDCA39C42244773D00A6373B /* Shape.cpp */,
-				DDCA39C12244773C00A6373B /* ShapeContour.cpp */,
-				DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */,
+				DD8880DF224310070052F499 /* Application.cpp */,
 				DD88810C2243604C0052F499 /* Bitmap.cpp */,
 				DD88810E2243604C0052F499 /* Material.cpp */,
 				DD8881102243604D0052F499 /* RenderTarget.cpp */,
@@ -407,8 +406,14 @@
 				DD8880FA224355670052F499 /* MeshLoader.cpp */,
 				DD8880EF224348E20052F499 /* FileManager.cpp */,
 				DD8880F0224348E20052F499 /* FileStream.cpp */,
-				DD8880DF224310070052F499 /* Application.cpp */,
 				DD8880B02241E10C0052F499 /* Window.cpp */,
+				DDCA39C52244773D00A6373B /* EdgeHolder.cpp */,
+				DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */,
+				DDCA39C32244773C00A6373B /* Font.cpp */,
+				DDCA39C02244773C00A6373B /* Glyph.cpp */,
+				DDCA39C42244773D00A6373B /* Shape.cpp */,
+				DDCA39C12244773C00A6373B /* ShapeContour.cpp */,
+				DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */,
 				DD88808A2241B1D60052F499 /* main.cpp */,
 			);
 			path = source;
@@ -417,6 +422,7 @@
 		DD8880B32241E37A0052F499 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD23A6F52248277100F3C46E /* IOKit.framework */,
 				DDCA395C224474F000A6373B /* libfreetype.6.dylib */,
 				DD8880B82241F25E0052F499 /* libglfw.3.3.dylib */,
 				DD8880B62241E3870052F499 /* OpenGL.framework */,
@@ -429,11 +435,11 @@
 			isa = PBXGroup;
 			children = (
 				DDCA39BE224476AE00A6373B /* LogFreeType.h */,
-				DD8880E2224311430052F499 /* DeviceTemperature.h */,
 				DD8880E3224311430052F499 /* LogGraphics.h */,
 				DD8880E5224311430052F499 /* LogMath.h */,
 				DD8880E4224311430052F499 /* Timer.h */,
 				DD8880BC2242D96C0052F499 /* LogCore.h */,
+				DD23A6F7224828CB00F3C46E /* DeviceFunctions.h */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -483,6 +489,7 @@
 			children = (
 				DDCA39CD2244774E00A6373B /* SDFGenerator.cpp */,
 				DD8880EB224319F30052F499 /* Timer.cpp */,
+				DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -675,6 +682,7 @@
 				DD8881172243604D0052F499 /* Texture3D.cpp in Sources */,
 				DD888101224355AC0052F499 /* Space.cpp in Sources */,
 				DDCA39C92244773D00A6373B /* Text2DGenerator.cpp in Sources */,
+				DD23A6F922482AB700F3C46E /* DeviceFunctions.cpp in Sources */,
 				DDCA39CB2244773D00A6373B /* Shape.cpp in Sources */,
 				DD8881132243604D0052F499 /* Texture2D.cpp in Sources */,
 				DD8880B12241E10C0052F499 /* Window.cpp in Sources */,
