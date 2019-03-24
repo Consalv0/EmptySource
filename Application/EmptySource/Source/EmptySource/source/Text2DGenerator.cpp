@@ -1,4 +1,4 @@
-﻿
+
 #include "../include/Core.h"
 #include "../include/Utility/LogFreeType.h"
 #include "../include/Utility/LogCore.h"
@@ -26,9 +26,9 @@ Text2DGenerator::Node * Text2DGenerator::Node::Insert(const FontGlyph & Glyph) {
 			return NULL;
 
         // --- If We're just right, accept
-        if (Glyph.SDFResterized.GetWidth() == (int)BBox.GetWidth() &&
-			Glyph.SDFResterized.GetWidth() == (int)BBox.GetHeight())
-            return this;
+        // if (Glyph.SDFResterized.GetWidth() == (int)BBox.GetWidth() &&
+		//  	Glyph.SDFResterized.GetHeight() == (int)BBox.GetHeight())
+        //     return this;
         
         // --- Otherwise, gotta split this node and create some kids
 		Smaller = new Node();
@@ -41,13 +41,13 @@ Text2DGenerator::Node * Text2DGenerator::Node::Insert(const FontGlyph & Glyph) {
 		int DeltaHeight = (int)BBox.GetHeight() - Height;
 
         // --- Decide which way to split
-		if (DeltaWidth < DeltaHeight) {
-			Smaller->BBox = { BBox.xMin + Width, BBox.yMin, BBox.xMax, BBox.yMin + Height};
-			Bigger->BBox  = { BBox.xMin, BBox.yMin + Height, BBox.xMax, BBox.yMax };
+		if (DeltaWidth > DeltaHeight) {
+            Smaller->BBox = { BBox.xMin,         BBox.yMin + Height, BBox.xMin + Width, BBox.yMax };
+            Bigger->BBox  = { BBox.xMin + Width, BBox.yMin,          BBox.xMax,         BBox.yMax };
 		}
         else {
-            Smaller->BBox = { BBox.xMin, BBox.yMin + Height, BBox.xMin + Width, BBox.yMax };
-			Bigger->BBox  = { BBox.xMin + Width, BBox.yMin, BBox.xMax, BBox.yMax };
+            Smaller->BBox = { BBox.xMin + Width, BBox.yMin,          BBox.xMax, BBox.yMin + Height };
+            Bigger->BBox  = { BBox.xMin,         BBox.yMin + Height, BBox.xMax, BBox.yMax          };
         }
 
 		this->Glyph = &Glyph;
@@ -166,10 +166,9 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 	TArray<FontGlyph *> GlyphArray = TArray<FontGlyph * >(LoadedCharacters.size());
 	for (TDictionary<unsigned long, FontGlyph*>::const_iterator Begin = LoadedCharacters.begin(); Begin != LoadedCharacters.end(); Begin++)
 		GlyphArray[Count++] = Begin->second;
-
 	std::sort(GlyphArray.begin(), GlyphArray.end(), [](FontGlyph * A, FontGlyph * B) {
-		return A->SDFResterized.GetHeight() * A->SDFResterized.GetWidth() 
-			 > B->SDFResterized.GetHeight() * B->SDFResterized.GetWidth();
+        return Math::Max(A->Width, A->Height) / Math::Min(A->Width, A->Height) * A->Width * A->Height
+			 > Math::Max(B->Width, B->Height) / Math::Min(B->Width, B->Height) * B->Width * B->Height;
 	});
 
 	for (TArray<FontGlyph * >::const_iterator Begin = GlyphArray.begin(); Begin != GlyphArray.end(); Begin++) {
