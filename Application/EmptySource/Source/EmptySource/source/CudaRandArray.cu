@@ -56,7 +56,7 @@ const void * GetRandomArray(IntVector2 Dimension) {
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Random values with total volume (%s): %dms",
 		Text::FormatUnit(Dimension.x * Dimension.y, 3).c_str(),
-		Timer.GetEnlapsed()
+		Timer.GetEnlapsedMili()
 	);
 
 	return dRandState;

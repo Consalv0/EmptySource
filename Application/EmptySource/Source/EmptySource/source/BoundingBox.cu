@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "..\Source\EmptySource\include\Core.h"
 #include "..\Source\EmptySource\include\CoreCUDA.h"
 #include "..\Source\EmptySource\include\CoreTypes.h"
@@ -412,7 +411,7 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Host allocation of %s durantion: %dms",
 		Text::FormatData((double)N * 2 * sizeof(BoundingBox) + Size, 2).c_str(),
-		Timer.GetEnlapsed()
+		Timer.GetEnlapsedMili()
 	);
 
 	Timer.Start();
@@ -469,7 +468,7 @@ int FindBoundingBox(int N, MeshVertex * Vertices) {
 	Timer.Stop();
 	Debug::Log(
 		Debug::LogDebug, L"CUDA Device Kernel functions durantion: %dms",
-		Timer.GetEnlapsed()
+		Timer.GetEnlapsedMili()
 	);
 
 	CUDA::Check( cudaProfilerStop() );

@@ -12,10 +12,10 @@ void Debug::Timer::Stop() {
 	EndTime = Time::GetEpochTimeMicro() - 856300000000;
 }
 
-double Debug::Timer::GetEnlapsedMicro() const {
+double Debug::Timer::GetEnlapsedMili() const {
 	return (EndTime - StartTime) / 1000.F;
 }
 
 double Debug::Timer::GetEnlapsedSeconds() const {
-	return GetEnlapsedMicro() / CLOCKS_PER_SEC;
+	return GetEnlapsedMili() / CLOCKS_PER_SEC;
 }
