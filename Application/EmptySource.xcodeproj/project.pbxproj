@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
 		DD23A6F922482AB700F3C46E /* DeviceFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */; };
+		DD23A6FB2248705B00F3C46E /* TexturePacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */; };
 		DD88808B2241B1D60052F499 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
 		DD8880A02241B9910052F499 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
 		DD8880B12241E10C0052F499 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880B02241E10C0052F499 /* Window.cpp */; };
@@ -60,6 +61,8 @@
 		DD23A6F52248277100F3C46E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		DD23A6F7224828CB00F3C46E /* DeviceFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceFunctions.h; sourceTree = "<group>"; };
 		DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceFunctions.cpp; sourceTree = "<group>"; };
+		DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TexturePacking.cpp; sourceTree = "<group>"; };
+		DD23A6FC2248706500F3C46E /* TexturePacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexturePacking.h; sourceTree = "<group>"; };
 		DD8880872241B1D60052F499 /* EmptySource */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EmptySource; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD88808A2241B1D60052F499 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DD88809F2241B9910052F499 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
@@ -434,6 +437,7 @@
 		DD8880BB2242D9560052F499 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				DD23A6FC2248706500F3C46E /* TexturePacking.h */,
 				DDCA39BE224476AE00A6373B /* LogFreeType.h */,
 				DD8880E3224311430052F499 /* LogGraphics.h */,
 				DD8880E5224311430052F499 /* LogMath.h */,
@@ -487,6 +491,7 @@
 		DD8880EA224319D80052F499 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */,
 				DDCA39CD2244774E00A6373B /* SDFGenerator.cpp */,
 				DD8880EB224319F30052F499 /* Timer.cpp */,
 				DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */,
@@ -690,6 +695,7 @@
 				DD8880FE224355680052F499 /* MeshLoader.cpp in Sources */,
 				DD8881162243604D0052F499 /* Material.cpp in Sources */,
 				DD8880F2224348E20052F499 /* FileStream.cpp in Sources */,
+				DD23A6FB2248705B00F3C46E /* TexturePacking.cpp in Sources */,
 				DDCA39C72244773D00A6373B /* Glyph.cpp in Sources */,
 				DDCA39C62244773D00A6373B /* EdgeSegments.cpp in Sources */,
 				DD8881142243604D0052F499 /* Bitmap.cpp in Sources */,
