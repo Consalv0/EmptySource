@@ -1,67 +1,11 @@
 ﻿
 #include "../include/Core.h"
+#include "../include/Utility/TexturePacking.h"
 #include "../include/Utility/LogFreeType.h"
 #include "../include/Utility/LogCore.h"
 #include "../include/Text2DGenerator.h"
-#include "../include/Utility/Timer.h"
 #include "../include/SDFGenerator.h"
-
-Text2DGenerator::Node * Text2DGenerator::Node::Insert(const FontGlyph & Glyph) {
-    // --- We're not in leaf
-	if (Smaller != NULL) {
-		// --- Try inserting into first child
-		Node * NewNode = Smaller->Insert(Glyph);
-		if (NewNode != NULL) return NewNode;
-
-		// --- No room, insert into second
-		return Bigger->Insert(Glyph);
-	}
-    else {
-		// --- If There's already a glyph here, return;
-		if (this->Glyph != NULL) return NULL;
-
-		// --- If We're too small, return
-		if (Glyph.SDFResterized.GetWidth() > (int)BBox.GetWidth() ||
-			Glyph.SDFResterized.GetHeight() > (int)BBox.GetHeight())
-			return NULL;
-		
-		// --- Removed resolved the wrong subdivicion
-        // --- If We're just right, accept
-        // if (Glyph.SDFResterized.GetWidth() == (int)BBox.GetWidth() &&
-		//  	Glyph.SDFResterized.GetHeight() == (int)BBox.GetHeight())
-        //     return this;
-        
-        // --- Otherwise, gotta split this node and create some kids
-		Smaller = new Node();
-		Bigger  = new Node();
-        
-		int Width = Glyph.SDFResterized.GetWidth();
-		int Height = Glyph.SDFResterized.GetHeight();
-
-		int DeltaWidth = (int)BBox.GetWidth() - Width;
-		int DeltaHeight = (int)BBox.GetHeight() - Height;
-
-        // --- Decide which way to split
-		if (DeltaWidth > DeltaHeight) {
-            Smaller->BBox = { BBox.xMin,         BBox.yMin + Height, BBox.xMin + Width, BBox.yMax };
-            Bigger->BBox  = { BBox.xMin + Width, BBox.yMin,          BBox.xMax,         BBox.yMax };
-		}
-        else {
-            Smaller->BBox = { BBox.xMin + Width, BBox.yMin,          BBox.xMax, BBox.yMin + Height };
-            Bigger->BBox  = { BBox.xMin,         BBox.yMin + Height, BBox.xMax, BBox.yMax          };
-        }
-
-		this->Glyph = &Glyph;
-		return this;
-	}
-}
-
-Text2DGenerator::Node::~Node() {
-	if (Smaller != NULL)
-		delete Smaller;
-	if (Bigger != NULL)
-		delete Bigger;
-}
+#include "../include/Utility/Timer.h"
 
 void Text2DGenerator::PrepareCharacters(const WChar * Characters, const size_t & Count) {
 	TextFont->SetGlyphHeight(GlyphHeight);
@@ -160,8 +104,8 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 		// }
 	}
 	
-	Node PNode = Node();
-	PNode.BBox = {0.F, 0.F, (float)AtlasSize, (float)AtlasSize};
+	TexturePacking<Bitmap<float>> TextureAtlas;
+	TextureAtlas.CreateTexture({ AtlasSize, AtlasSize });
 
 	size_t Count = 0;
 	TArray<FontGlyph *> GlyphArray = TArray<FontGlyph * >(LoadedCharacters.size());
@@ -174,19 +118,19 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 
 	for (TArray<FontGlyph * >::const_iterator Begin = GlyphArray.begin(); Begin != GlyphArray.end(); Begin++) {
 		FontGlyph * Character = *Begin;
-		Node * ResultNode = PNode.Insert(*Character);
-		if (ResultNode == NULL || ResultNode->Glyph == NULL) {
+		TexturePacking<Bitmap<float>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
+		if (!ResultNode.bValid || ResultNode.Element == NULL) {
 			Debug::Log(Debug::LogError, L"Error writting in %lc(%d)", Character->UnicodeValue, Character->UnicodeValue);
 			continue;
 		}
 
 		// --- Asign the current UV Position
-		Character->UV.xMin = (ResultNode->BBox.xMin) / (float)AtlasSize;
-		Character->UV.xMax = (ResultNode->BBox.xMin + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
-		Character->UV.yMin = (ResultNode->BBox.yMin) / (float)AtlasSize;
-		Character->UV.yMax = (ResultNode->BBox.yMin + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
+		Character->UV.xMin = (ResultNode.BBox.xMin) / (float)AtlasSize;
+		Character->UV.xMax = (ResultNode.BBox.xMin + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
+		Character->UV.yMin = (ResultNode.BBox.yMin) / (float)AtlasSize;
+		Character->UV.yMax = (ResultNode.BBox.yMin + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
 
-		int IndexPos = int(ResultNode->BBox.xMin + ResultNode->BBox.yMin * AtlasSize);
+		int IndexPos = int(ResultNode.BBox.xMin + ResultNode.BBox.yMin * AtlasSize);
 
 		// --- Render current character in the current position
 		for (int i = 0; i < Character->SDFResterized.GetHeight(); ++i) {

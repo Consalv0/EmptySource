@@ -7,16 +7,6 @@
 
 struct Text2DGenerator {
 private:
-	struct Node {
-		Node* Smaller;
-		Node* Bigger;
-		Box2D BBox;
-		const FontGlyph * Glyph;
-
-		Node* Insert(const FontGlyph & Glyph);
-		~Node();
-	};
-
 	TDictionary<unsigned long, FontGlyph *> LoadedCharacters;
 
 public:
