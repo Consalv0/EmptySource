@@ -63,21 +63,18 @@ void MeshLoader::ParseOBJLine(
 	if (Keyword == Vertex) {
 		ExtractVector3(Line, &ModelData.ListPositions[ModelData.PositionCount++]);
 		Data->PositionCount++;
-		// Debug::Log(Debug::LogDebug, L"Vertex %ls", Vert.ToString().c_str());
 		return;
 	}
 		
 	if (Keyword == Normal) {
 		ExtractVector3(Line, &ModelData.ListNormals[ModelData.NormalCount++]);
 		Data->NormalCount++;
-		// Debug::Log(Debug::LogDebug, L"Normal %ls", Normal.ToString().c_str());
 		return;
 	}
 		
 	if (Keyword == TextureCoord) {
 		ExtractVector2(Line, &ModelData.ListUVs[ModelData.UVsCount++]);
 		Data->UVsCount++;
-		// Debug::Log(Debug::LogDebug, L"UV %ls", TexCoords.ToString().c_str());
 		return;
 	}
 		
@@ -243,7 +240,6 @@ void MeshLoader::ReadOBJByLine(
 		
 		if (CharacterCount == MaxCharacterCount) {
 			Debug::Log(Debug::NoLog, L"\r");
-			// Debug::Log(Debug::LogNormal, L"├> [%ls] %.2f%% %d lines", WString(25, L'#').c_str(), 100 * Progress, LineCount);
 		}
 	}
 }
@@ -308,6 +304,7 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	OBJFileData ModelData;
 	int VertexIndexCount = 0;
 
+	// --- Read File
 	{
 		Debug::Timer Timer;
 
