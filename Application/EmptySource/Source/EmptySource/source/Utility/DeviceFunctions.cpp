@@ -1,112 +1,114 @@
 #include "../../include/Utility/DeviceFunctions.h"
 
 #ifdef __APPLE__
-static io_connect_t conn;
+#include <IOKit/IOKitLib.h>
+#elif WIN32
+#include <nvml.h>
+#endif
+
+#ifdef __APPLE__
+static io_connect_t IOConnection;
 
 typedef char              SMCBytes_t[32];
 typedef char              UInt32Char_t[5];
 
 typedef struct {
-    UInt32Char_t            key;
-    UInt32                  dataSize;
-    UInt32Char_t            dataType;
-    SMCBytes_t              bytes;
+    UInt32Char_t          Key;
+    UInt32                DataSize;
+    UInt32Char_t          DataType;
+    SMCBytes_t            Bytes;
 } SMCVal_t;
 
 typedef struct {
-    char                  major;
-    char                  minor;
-    char                  build;
-    char                  reserved[1];
-    UInt16                release;
+    char                  Major;
+    char                  Minor;
+    char                  Build;
+    char                  Reserved[1];
+    UInt16                Release;
 } SMCKeyData_vers_t;
 
 typedef struct {
-    UInt16                version;
-    UInt16                length;
-    UInt32                cpuPLimit;
-    UInt32                gpuPLimit;
-    UInt32                memPLimit;
-} SMCKeyData_pLimitData_t;
+    UInt16                Version;
+    UInt16                Length;
+    UInt32                CPUpLimit;
+    UInt32                GPUpLimit;
+    UInt32                mempLimit;
+} SMCKeyData_pLimits_t;
 
 typedef struct {
-    UInt32                dataSize;
-    UInt32                dataType;
-    char                  dataAttributes;
-} SMCKeyData_keyInfo_t;
+    UInt32                DataSize;
+    UInt32                DataType;
+    char                  DataAttributes;
+} SMCKeyData_Info_t;
 
 typedef struct {
-    UInt32                  key;
-    SMCKeyData_vers_t       vers;
-    SMCKeyData_pLimitData_t pLimitData;
-    SMCKeyData_keyInfo_t    keyInfo;
-    char                    result;
-    char                    status;
-    char                    data8;
-    UInt32                  data32;
-    SMCBytes_t              bytes;
+    UInt32                  Key;
+    SMCKeyData_vers_t       Version;
+    SMCKeyData_pLimits_t    pLimits;
+    SMCKeyData_Info_t       Info;
+    char                    Result;
+    char                    Status;
+    char                    Data8;
+    UInt32                  Data32;
+    SMCBytes_t              Bytes;
 } SMCKeyData_t;
 
-kern_return_t SMCCall(int index, SMCKeyData_t *inputStructure, SMCKeyData_t *outputStructure) {
-    size_t   structureInputSize;
-    size_t   structureOutputSize;
+inline kern_return_t SMCCall(int Index, SMCKeyData_t *InputStructure, SMCKeyData_t *OutputStructure) {
+    size_t StructureInputSize;
+    size_t StructureOutputSize;
     
-    structureInputSize = sizeof(SMCKeyData_t);
-    structureOutputSize = sizeof(SMCKeyData_t);
+    InputSize = sizeof(SMCKeyData_t);
+    OutputSize = sizeof(SMCKeyData_t);
     
 #if MAC_OS_X_VERSION_10_5
-    return IOConnectCallStructMethod( conn, index,
-                                     // inputStructure
-                                     inputStructure, structureInputSize,
-                                     // ouputStructure
-                                     outputStructure, &structureOutputSize );
+    return IOConnectCallStructMethod( IOConnection, Index,
+                                      InputStructure, InputSize,     
+                                      OutputStructure, &OutputSize );
 #else
-    return IOConnectMethodStructureIStructureO( conn, index,
-                                               structureInputSize, /* structureInputSize */
-                                               &structureOutputSize,   /* structureOutputSize */
-                                               inputStructure,        /* inputStructure */
-                                               outputStructure);       /* ouputStructure */
+    return IOConnectMethodStructureIStructureO( IOConnection, Index,
+                                                InputSize, &OutputSize,      
+                                                InputStructure, OutputStructure );
 #endif
     
 }
 
-kern_return_t SMCReadKey(UInt32Char_t key, SMCVal_t *val) {
-    kern_return_t result;
-    SMCKeyData_t  inputStructure;
-    SMCKeyData_t  outputStructure;
+inline kern_return_t SMCReadKey(UInt32Char_t Key, SMCVal_t *Value) {
+    kern_return_t Result;
+    SMCKeyData_t  InputStructure;
+    SMCKeyData_t  OutputStructure;
     
-    memset(&inputStructure, 0, sizeof(SMCKeyData_t));
-    memset(&outputStructure, 0, sizeof(SMCKeyData_t));
-    memset(val, 0, sizeof(SMCVal_t));
+    memset(&InputStructure, 0, sizeof(SMCKeyData_t));
+    memset(&OutputStructure, 0, sizeof(SMCKeyData_t));
+    memset(Value, 0, sizeof(SMCVal_t));
     
     UInt32 total = 0;
     for (int i = 0; i < 4; i++) {
-        total += key[i] << (4 - 1 - i) * 8;
+        total += Key[i] << (4 - 1 - i) * 8;
     }
-    inputStructure.key = total;
-    // --- Read key info
-    inputStructure.data8 = 9;
+    InputStructure.Key = total;
+    // --- Read Key info
+    InputStructure.Data8 = 9;
     
-    result = SMCCall(2, &inputStructure, &outputStructure);
-    if (result != kIOReturnSuccess)
-        return result;
+    Result = SMCCall(2, &InputStructure, &OutputStructure);
+    if (Result != kIOReturnSuccess)
+        return Result;
     
-    val->dataSize = outputStructure.keyInfo.dataSize;
-    val->dataType[0] = '\0';
-    sprintf(val->dataType, "%c%c%c%c",
-            (unsigned int)outputStructure.keyInfo.dataType >> 24,
-            (unsigned int)outputStructure.keyInfo.dataType >> 16,
-            (unsigned int)outputStructure.keyInfo.dataType >> 8,
-            (unsigned int)outputStructure.keyInfo.dataType);
-    inputStructure.keyInfo.dataSize = val->dataSize;
+    Value->DataSize = OutputStructure.KeyInfo.DataSize;
+    Value->DataType[0] = '\0';
+    sprintf(Value->DataType, "%c%c%c%c",
+            (unsigned int)OutputStructure.KeyInfo.DataType >> 24,
+            (unsigned int)OutputStructure.KeyInfo.DataType >> 16,
+            (unsigned int)OutputStructure.KeyInfo.DataType >> 8,
+            (unsigned int)OutputStructure.KeyInfo.DataType);
+    InputStructure.KeyInfo.DataSize = Value->DataSize;
     // --- Read data
-    inputStructure.data8 = 5;
+    InputStructure.Data8 = 5;
     
-    result = SMCCall(2, &inputStructure, &outputStructure);
-    if (result != kIOReturnSuccess)
-        return result;
+    Result = SMCCall(2, &InputStructure, &OutputStructure);
+    if (Result != kIOReturnSuccess)
+        return Result;
     
-    memcpy(val->bytes, outputStructure.bytes, sizeof(outputStructure.bytes));
+    memcpy(Value->Bytes, OutputStructure.Bytes, sizeof(OutputStructure.Bytes));
     
     return kIOReturnSuccess;
 }
@@ -123,28 +125,28 @@ bool Debug::InitializeDeviceFunctions() {
 
 	return true;
 #elif __APPLE__
-    kern_return_t result;
-    io_iterator_t iterator;
-    io_object_t   device;
+    kern_return_t Result;
+    io_iterator_t Iterator;
+    io_object_t   Device;
     
     CFMutableDictionaryRef matchingDictionary = IOServiceMatching("AppleSMC");
-    result = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary, &iterator);
-    if (result != kIOReturnSuccess) {
-        Debug::Log(Debug::LogError, L"Device Functions error : IOServiceGetMatchingServices() = %08x", result);
+    Result = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary, &Iterator);
+    if (Result != kIOReturnSuccess) {
+        Debug::Log(Debug::LogError, L"ASMC :: IOServiceGetMatchingServices() = %08x", Result);
         return false;
     }
     
-    device = IOIteratorNext(iterator);
-    IOObjectRelease(iterator);
-    if (device == 0) {
-        Debug::Log(Debug::LogError, L"Device Functions error : no SMC found");
+    Device = IOIteratorNext(Iterator);
+    IOObjectRelease(Iterator);
+    if (Device == 0) {
+        Debug::Log(Debug::LogError, L"ASMC :: No SMC Found");
         return false;
     }
     
-    result = IOServiceOpen(device, mach_task_self(), 0, &conn);
-    IOObjectRelease(device);
-    if (result != kIOReturnSuccess) {
-        Debug::Log(Debug::LogError, L"Device Functions error : IOServiceOpen() = %08x", result);
+    Result = IOServiceOpen(Device, mach_task_self(), 0, &IOConnection);
+    IOObjectRelease(Device);
+    if (Result != kIOReturnSuccess) {
+        Debug::Log(Debug::LogError, L"ASMC :: IOServiceOpen() = %08x", Result);
         return false;
     }
     
@@ -163,12 +165,12 @@ bool Debug::CloseDeviceFunctions() {
 
 	return true;
 #elif __APPLE__
-    kern_return_t result;
+    kern_return_t Result;
     
-    result = IOServiceClose(conn);
+    Result = IOServiceClose(IOConnection);
     
-    if (result != kIOReturnSuccess) {
-        Debug::Log(Debug::LogError, L"Device Functions error : IOServiceClose() = %08x", result);
+    if (Result != kIOReturnSuccess) {
+        Debug::Log(Debug::LogError, L"ASMC :: IOServiceClose() = %08x", Result);
         return false;
     }
     
@@ -184,29 +186,29 @@ float Debug::GetDeviceTemperature(const int & DeviceIndex) {
     
     DeviceResult = nvmlDeviceGetHandleByIndex(DeviceIndex, &Device);
     if (NVML_SUCCESS != DeviceResult) {
-        Debug::Log(Debug::LogError, L"NVML :: Failed to get handle for device %i: %s", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
+        Debug::Log(Debug::LogError, L"NVML :: Failed to get handle for device %i: %ls", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
         return 0;
     }
     
     DeviceResult = nvmlDeviceGetTemperature(Device, NVML_TEMPERATURE_GPU, &DeviceTemperature);
     if (NVML_SUCCESS != DeviceResult) {
-        Debug::Log(Debug::LogError, L"NVML :: Failed to get temperature of device %i: %s", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
+        Debug::Log(Debug::LogError, L"NVML :: Failed to get temperature of device %i: %ls", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
     }
     
     return (float)DeviceTemperature;
     
 #elif __APPLE__
-    SMCVal_t val;
-    kern_return_t result;
-    char * DeviceTempKey = (char *)"TG0P";
+    SMCVal_t Value;
+    kern_return_t Result;
+    char * DeviceTempKey = (char *)"TG" + DeviceIndex + "0P";
     
-    result = SMCReadKey(DeviceTempKey, &val);
-    if (result == kIOReturnSuccess) {
+    Result = SMCReadKey(DeviceTempKey, &Value);
+    if (Result == kIOReturnSuccess) {
         // --- Read succeeded - check returned value
-        if (val.dataSize > 0) {
-            if (strcmp(val.dataType, "sp78") == 0) {
+        if (Value.DataSize > 0) {
+            if (strcmp(Value.DataType, "sp78") == 0) {
                 // --- Convert sp78 value to temperature
-                int intValue = val.bytes[0] * 256 + (unsigned char)val.bytes[1];
+                int intValue = Value.Bytes[0] * 256 + (unsigned char)Value.Bytes[1];
                 return intValue / 256.F;
             }
         }
