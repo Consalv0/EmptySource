@@ -1,3 +1,4 @@
+
 #include "../../include/Utility/DeviceFunctions.h"
 
 #ifdef __APPLE__
@@ -54,11 +55,8 @@ typedef struct {
 } SMCKeyData_t;
 
 inline kern_return_t SMCCall(int Index, SMCKeyData_t *InputStructure, SMCKeyData_t *OutputStructure) {
-    size_t StructureInputSize;
-    size_t StructureOutputSize;
-    
-    InputSize = sizeof(SMCKeyData_t);
-    OutputSize = sizeof(SMCKeyData_t);
+    size_t InputSize = sizeof(SMCKeyData_t);
+    size_t OutputSize = sizeof(SMCKeyData_t);
     
 #if MAC_OS_X_VERSION_10_5
     return IOConnectCallStructMethod( IOConnection, Index,
@@ -93,14 +91,14 @@ inline kern_return_t SMCReadKey(UInt32Char_t Key, SMCVal_t *Value) {
     if (Result != kIOReturnSuccess)
         return Result;
     
-    Value->DataSize = OutputStructure.KeyInfo.DataSize;
+    Value->DataSize = OutputStructure.Info.DataSize;
     Value->DataType[0] = '\0';
     sprintf(Value->DataType, "%c%c%c%c",
-            (unsigned int)OutputStructure.KeyInfo.DataType >> 24,
-            (unsigned int)OutputStructure.KeyInfo.DataType >> 16,
-            (unsigned int)OutputStructure.KeyInfo.DataType >> 8,
-            (unsigned int)OutputStructure.KeyInfo.DataType);
-    InputStructure.KeyInfo.DataSize = Value->DataSize;
+            (unsigned int)OutputStructure.Info.DataType >> 24,
+            (unsigned int)OutputStructure.Info.DataType >> 16,
+            (unsigned int)OutputStructure.Info.DataType >> 8,
+            (unsigned int)OutputStructure.Info.DataType);
+    InputStructure.Info.DataSize = Value->DataSize;
     // --- Read data
     InputStructure.Data8 = 5;
     
@@ -200,9 +198,10 @@ float Debug::GetDeviceTemperature(const int & DeviceIndex) {
 #elif __APPLE__
     SMCVal_t Value;
     kern_return_t Result;
-    char * DeviceTempKey = (char *)"TG" + DeviceIndex + "0P";
+    std::string DeviceTempKey = "TG" + std::to_string(DeviceIndex) + "P";
+    char * DeviceTempKeyChars = (char *)DeviceTempKey.c_str();
     
-    Result = SMCReadKey(DeviceTempKey, &Value);
+    Result = SMCReadKey(DeviceTempKeyChars, &Value);
     if (Result == kIOReturnSuccess) {
         // --- Read succeeded - check returned value
         if (Value.DataSize > 0) {
