@@ -312,6 +312,7 @@
     <ClInclude Include="Source\External\tsl\robin_set.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\EmptySource\include\Utility\TexturePacking.h" />
     <ClCompile Include="Source\EmptySource\source\CoreTime.cpp" />
     <ClCompile Include="Source\EmptySource\source\ShapeContour.cpp" />
     <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp" />
@@ -339,6 +340,7 @@
     <ClCompile Include="Source\EmptySource\source\Texture3D.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\DeviceFunctions.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp" />
+    <ClCompile Include="Source\EmptySource\source\Utility\TexturePacking.cpp" />
     <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp" />
     <ClCompile Include="Source\EmptySource\source\Window.cpp" />
     <ClCompile Include="Source\External\GLAD\glad.c" />

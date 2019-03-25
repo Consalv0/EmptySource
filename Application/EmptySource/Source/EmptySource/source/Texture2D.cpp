@@ -69,6 +69,14 @@ IntVector2 Texture2D::GetDimension() const {
 	return Dimension;
 }
 
+int Texture2D::GetWidth() const {
+	return Dimension.x;
+}
+
+int Texture2D::GetHeight() const {
+	return Dimension.y;
+}
+
 void Texture2D::Use() const {
 	if (IsValid()) {
 		glBindTexture(GL_TEXTURE_2D, TextureObject);

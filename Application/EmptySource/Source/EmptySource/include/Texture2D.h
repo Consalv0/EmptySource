@@ -23,6 +23,10 @@ public:
 	//* Get Dimension of the texture
 	IntVector2 GetDimension() const;
 
+	int GetWidth() const;
+
+	int GetHeight() const;
+
 	//* Use the texture
 	void Use() const;
 

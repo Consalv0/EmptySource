@@ -608,6 +608,12 @@
     <ClCompile Include="Source\EmptySource\source\Utility\DeviceFunctions.cpp">
       <Filter>Source Files\Core\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EmptySource\source\Utility\TexturePacking.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptySource\include\Utility\TexturePacking.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\EmptySource\include\Math\IntVector3.inl">
