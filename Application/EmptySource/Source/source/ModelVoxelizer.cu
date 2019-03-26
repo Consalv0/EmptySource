@@ -1,13 +1,13 @@
 
-#include "..\Source\EmptySource\include\Core.h"
-#include "..\Source\EmptySource\include\Graphics.h"
-#include "..\Source\EmptySource\include\CoreTypes.h"
+#include "../include/Core.h"
+#include "../include/Graphics.h"
+#include "../include/CoreTypes.h"
 
-#include "..\Source\EmptySource\include\CoreCuda.h"
-#include "..\Source\EmptySource\include\Utility\Timer.h"
-#include "..\Source\EmptySource\include\Math\CoreMath.h"
-#include "..\Source\EmptySource\include\Texture3D.h"
-#include "..\Source\EmptySource\include\Mesh.h"
+#include "../include/CoreCuda.h"
+#include "../include/Utility/Timer.h"
+#include "../include/Math/CoreMath.h"
+#include "../include/Texture3D.h"
+#include "../include/Mesh.h"
 
 #ifndef __CUDACC__
 #define __CUDACC__

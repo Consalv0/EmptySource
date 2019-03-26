@@ -19,9 +19,6 @@
     <Filter Include="Header Files\External\GLFW">
       <UniqueIdentifier>{1ba83e30-7371-43cc-bee9-a529e0c5e8d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\External">
-      <UniqueIdentifier>{f3ae04b5-3089-4e00-b1e2-9473f66b2efb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Core">
       <UniqueIdentifier>{4af8b778-0f19-4ae1-90ce-717bcecb1ae9}</UniqueIdentifier>
     </Filter>
@@ -68,114 +65,6 @@
     </ClInclude>
     <ClInclude Include="Source\External\GLFW\glfw3native.h">
       <Filter>Header Files\External\GLFW</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Window.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Mesh.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FileManager.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\CoreTypes.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Core.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Application.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\IntVector3.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Matrix3x3.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Matrix4x4.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Vector2.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Vector3.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Vector4.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\FileStream.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Space.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\IIdentifier.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Object.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Material.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\MeshLoader.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Graphics.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Text.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Quaternion.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\MathUtility.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\Timer.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\ShaderStage.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\ShaderProgram.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Texture.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\RenderTarget.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\IntVector2.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Texture2D.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Ray.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Texture3D.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\LogMath.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\LogCore.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\LogGraphics.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\CoreGraphics.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\CoreCUDA.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\freetype.h">
       <Filter>Header Files\External\FreeType</Filter>
@@ -450,18 +339,6 @@
     <ClInclude Include="Source\External\freetype\internal\services\svwinfnt.h">
       <Filter>Header Files\External\FreeType\Internal\Services</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Glyph.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Font.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\LogFreeType.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Text2DGenerator.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\External\tsl\robin_growth_policy.h">
       <Filter>Header Files\External\tsl</Filter>
     </ClInclude>
@@ -477,29 +354,8 @@
     <ClInclude Include="Source\External\ft2build.h">
       <Filter>Header Files\External\FreeType</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Bitmap.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\EdgeHolder.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\EdgeSegments.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\SDFGenerator.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\Box2D.h">
-      <Filter>Header Files\Core\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\ShapeContour.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Shape.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\GLAD\glad.h">
       <Filter>Header Files\External\GLAD</Filter>
@@ -507,177 +363,322 @@
     <ClInclude Include="Source\External\GLAD\khrplatform.h">
       <Filter>Header Files\External\GLAD</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Math\CoreMath.h">
+    <ClInclude Include="Source\include\Math\Box2D.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\CoreTime.h">
+    <ClInclude Include="Source\include\Math\CoreMath.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\IntVector2.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\IntVector3.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\MathUtility.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Matrix3x3.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Matrix4x4.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Quaternion.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Ray.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector2.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector3.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector4.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\DeviceFunctions.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogCore.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogFreeType.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogGraphics.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogMath.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\TexturePacking.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\Timer.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Application.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptySource\include\Utility\DeviceFunctions.h">
-      <Filter>Header Files\Core\Utility</Filter>
+    <ClInclude Include="Source\include\Bitmap.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Core.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreCUDA.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreGraphics.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreTime.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreTypes.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\EdgeHolder.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\EdgeSegments.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\FileManager.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\FileStream.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Font.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Glyph.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Graphics.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\IIdentifier.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Material.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Mesh.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\MeshLoader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Object.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\RenderTarget.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\SDFGenerator.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ShaderProgram.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ShaderStage.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Shape.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ShapeContour.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Space.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Text.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Text2DGenerator.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Texture.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Texture2D.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Texture3D.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Window.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EmptySource\source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Application.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\FileManager.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Mesh.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Window.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\FileStream.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Space.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\IIdentifier.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Object.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Material.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\MeshLoader.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Utility\Timer.cpp">
-      <Filter>Source Files\Core\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\ShaderStage.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\ShaderProgram.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Texture.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Texture3D.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\RenderTarget.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Texture2D.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Font.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Text2DGenerator.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Glyph.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Bitmap.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\EdgeHolder.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\EdgeSegments.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Utility\SDFGenerator.cpp">
-      <Filter>Source Files\Core\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Shape.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\ShapeContour.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\External\GLAD\glad.c">
       <Filter>Header Files\External\GLAD</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\CoreTime.cpp">
+    <ClCompile Include="Source\source\Application.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Utility\DeviceFunctions.cpp">
+    <ClCompile Include="Source\source\Bitmap.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\CoreTime.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\EdgeHolder.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\EdgeSegments.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\FileManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\FileStream.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Font.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Glyph.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\IIdentifier.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Material.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Mesh.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\MeshLoader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Object.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\RenderTarget.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ShaderProgram.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ShaderStage.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Shape.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ShapeContour.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Space.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Text2DGenerator.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Texture.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Texture2D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Texture3D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Window.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\DeviceFunctions.cpp">
       <Filter>Source Files\Core\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\source\Utility\TexturePacking.cpp">
+    <ClCompile Include="Source\source\Utility\SDFGenerator.cpp">
       <Filter>Source Files\Core\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptySource\include\Utility\TexturePacking.h">
-      <Filter>Header Files\Core\Utility</Filter>
+    <ClCompile Include="Source\source\Utility\TexturePacking.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\Timer.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source\EmptySource\include\Math\IntVector3.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Source\EmptySource\include\Math\Matrix3x3.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Source\EmptySource\include\Math\Matrix4x4.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Source\EmptySource\include\Math\Vector2.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Source\EmptySource\include\Math\Vector3.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Source\EmptySource\include\Math\Vector4.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Source\EmptySource\include\Math\Quaternion.inl">
-      <Filter>Header Files\Core\Math</Filter>
-    </None>
-    <None Include="Data\Shaders\Base.vertex.glsl">
+    <None Include="Resources\Shaders\Base.vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\BRDF.fragment.glsl">
+    <None Include="Resources\Shaders\BRDF.fragment.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\DSPBR.fragment.glsl">
+    <None Include="Resources\Shaders\DSPBR.fragment.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\PBRBase.fragment.glsl">
+    <None Include="Resources\Shaders\GeometryBase.vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\Unlit.fragment.glsl">
+    <None Include="Resources\Shaders\Passthrough.vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\UnlitBase.fragment.glsl">
+    <None Include="Resources\Shaders\PBRBase.fragment.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Source\EmptySource\include\Math\MathUtility.inl">
+    <None Include="Resources\Shaders\RenderText.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\RenderTexture.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Unlit.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\UnlitBase.fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Voxelizer.geometry.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\Voxelizer.vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Source\include\Math\IntVector2.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\Math\IntVector2.inl">
+    <None Include="Source\include\Math\IntVector3.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
-    <None Include="Source\EmptySource\include\Math\Ray.inl">
+    <None Include="Source\include\Math\MathUtility.inl">
       <Filter>Header Files\Core\Math</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="Source\EmptySource\source\BoundingBox.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
-    <CudaCompile Include="Source\EmptySource\source\ModelVoxelizer.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
-    <CudaCompile Include="Source\EmptySource\source\RTRenderer.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
-    <CudaCompile Include="Source\EmptySource\source\CudaRandArray.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
+    <None Include="Source\include\Math\Matrix3x3.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\include\Math\Matrix4x4.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\include\Math\Quaternion.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\include\Math\Ray.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\include\Math\Vector2.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\include\Math\Vector3.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="Source\include\Math\Vector4.inl">
+      <Filter>Header Files\Core\Math</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EmptySource.rc">
@@ -688,5 +689,19 @@
     <Image Include="EmptySource.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Source\source\BoundingBox.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Source\source\CudaRandArray.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Source\source\ModelVoxelizer.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Source\source\RTRenderer.cu">
+      <Filter>Source Files\CUDA Test</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>
