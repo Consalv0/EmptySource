@@ -8,52 +8,126 @@
 
 /* Begin PBXBuildFile section */
 		DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
-		DD23A6F922482AB700F3C46E /* DeviceFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */; };
-		DD23A6FB2248705B00F3C46E /* TexturePacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */; };
-		DD88808B2241B1D60052F499 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
-		DD8880A02241B9910052F499 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
-		DD8880B12241E10C0052F499 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880B02241E10C0052F499 /* Window.cpp */; };
+		DD45349A22494385002F6BEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD45349922494385002F6BEF /* Assets.xcassets */; };
+		DD45349D22494385002F6BEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD45349B22494385002F6BEF /* Main.storyboard */; };
+		DD4534AA22494707002F6BEF /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = DD4534A922494707002F6BEF /* Fonts */; };
+		DD4F19E0224947BF00C102FB /* Models in Resources */ = {isa = PBXBuildFile; fileRef = DD4F19DF224947BF00C102FB /* Models */; };
+		DD4F19E2224947CB00C102FB /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = DD4F19E1224947CB00C102FB /* Shaders */; };
+		DD4F19E4224958AB00C102FB /* TexturePacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */; };
+		DD4F19E5224958AB00C102FB /* SDFGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39CD2244774E00A6373B /* SDFGenerator.cpp */; };
+		DD4F19E6224958AB00C102FB /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880EB224319F30052F499 /* Timer.cpp */; };
+		DD4F19E7224958AB00C102FB /* DeviceFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */; };
+		DD4F19E8224958AB00C102FB /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880DF224310070052F499 /* Application.cpp */; };
+		DD4F19E9224958AB00C102FB /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810C2243604C0052F499 /* Bitmap.cpp */; };
+		DD4F19EA224958AB00C102FB /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810E2243604C0052F499 /* Material.cpp */; };
+		DD4F19EB224958AB00C102FB /* RenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8881102243604D0052F499 /* RenderTarget.cpp */; };
+		DD4F19EC224958AB00C102FB /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8881112243604D0052F499 /* ShaderProgram.cpp */; };
+		DD4F19ED224958AB00C102FB /* ShaderStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810D2243604C0052F499 /* ShaderStage.cpp */; };
+		DD4F19EE224958AB00C102FB /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810A2243604C0052F499 /* Texture.cpp */; };
+		DD4F19EF224958AB00C102FB /* Texture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810B2243604C0052F499 /* Texture2D.cpp */; };
+		DD4F19F0224958AB00C102FB /* Texture3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810F2243604C0052F499 /* Texture3D.cpp */; };
+		DD4F19F1224958AB00C102FB /* CoreTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880E8224317450052F499 /* CoreTime.cpp */; };
+		DD4F19F2224958AB00C102FB /* Space.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD888100224355AC0052F499 /* Space.cpp */; };
+		DD4F19F3224958AB00C102FB /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F7224355670052F499 /* Object.cpp */; };
+		DD4F19F4224958AB00C102FB /* IIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F9224355670052F499 /* IIdentifier.cpp */; };
+		DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F8224355670052F499 /* Mesh.cpp */; };
+		DD4F19F6224958AB00C102FB /* MeshLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880FA224355670052F499 /* MeshLoader.cpp */; };
+		DD4F19F7224958AB00C102FB /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880EF224348E20052F499 /* FileManager.cpp */; };
+		DD4F19F8224958AB00C102FB /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F0224348E20052F499 /* FileStream.cpp */; };
+		DD4F19F9224958AB00C102FB /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880B02241E10C0052F499 /* Window.cpp */; };
+		DD4F19FA224958AB00C102FB /* EdgeHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C52244773D00A6373B /* EdgeHolder.cpp */; };
+		DD4F19FB224958AB00C102FB /* EdgeSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */; };
+		DD4F19FC224958AB00C102FB /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C32244773C00A6373B /* Font.cpp */; };
+		DD4F19FD224958AB00C102FB /* Glyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C02244773C00A6373B /* Glyph.cpp */; };
+		DD4F19FE224958AB00C102FB /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C42244773D00A6373B /* Shape.cpp */; };
+		DD4F19FF224958AB00C102FB /* ShapeContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C12244773C00A6373B /* ShapeContour.cpp */; };
+		DD4F1A00224958AB00C102FB /* Text2DGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */; };
+		DD4F1A01224958AB00C102FB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
+		DD4F1A02224958E900C102FB /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
+		DD4F1A062249597500C102FB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8880B62241E3870052F499 /* OpenGL.framework */; };
+		DD4F1A1F22496A1E00C102FB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
 		DD8880B72241E3870052F499 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8880B62241E3870052F499 /* OpenGL.framework */; };
-		DD8880B92241F25E0052F499 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8880B82241F25E0052F499 /* libglfw.3.3.dylib */; };
-		DD8880E0224310070052F499 /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880DF224310070052F499 /* Application.cpp */; };
-		DD8880E9224317450052F499 /* CoreTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880E8224317450052F499 /* CoreTime.cpp */; };
-		DD8880EC224319F30052F499 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880EB224319F30052F499 /* Timer.cpp */; };
-		DD8880F1224348E20052F499 /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880EF224348E20052F499 /* FileManager.cpp */; };
-		DD8880F2224348E20052F499 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F0224348E20052F499 /* FileStream.cpp */; };
-		DD8880FB224355680052F499 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F7224355670052F499 /* Object.cpp */; };
-		DD8880FC224355680052F499 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F8224355670052F499 /* Mesh.cpp */; };
-		DD8880FD224355680052F499 /* IIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F9224355670052F499 /* IIdentifier.cpp */; };
-		DD8880FE224355680052F499 /* MeshLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880FA224355670052F499 /* MeshLoader.cpp */; };
-		DD888101224355AC0052F499 /* Space.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD888100224355AC0052F499 /* Space.cpp */; };
-		DD8881122243604D0052F499 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810A2243604C0052F499 /* Texture.cpp */; };
-		DD8881132243604D0052F499 /* Texture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810B2243604C0052F499 /* Texture2D.cpp */; };
-		DD8881142243604D0052F499 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810C2243604C0052F499 /* Bitmap.cpp */; };
-		DD8881152243604D0052F499 /* ShaderStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810D2243604C0052F499 /* ShaderStage.cpp */; };
-		DD8881162243604D0052F499 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810E2243604C0052F499 /* Material.cpp */; };
-		DD8881172243604D0052F499 /* Texture3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810F2243604C0052F499 /* Texture3D.cpp */; };
-		DD8881182243604D0052F499 /* RenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8881102243604D0052F499 /* RenderTarget.cpp */; };
-		DD8881192243604D0052F499 /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8881112243604D0052F499 /* ShaderProgram.cpp */; };
-		DDCA395D224474F000A6373B /* libfreetype.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCA395C224474F000A6373B /* libfreetype.6.dylib */; };
-		DDCA39C62244773D00A6373B /* EdgeSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */; };
-		DDCA39C72244773D00A6373B /* Glyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C02244773C00A6373B /* Glyph.cpp */; };
-		DDCA39C82244773D00A6373B /* ShapeContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C12244773C00A6373B /* ShapeContour.cpp */; };
-		DDCA39C92244773D00A6373B /* Text2DGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */; };
-		DDCA39CA2244773D00A6373B /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C32244773C00A6373B /* Font.cpp */; };
-		DDCA39CB2244773D00A6373B /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C42244773D00A6373B /* Shape.cpp */; };
-		DDCA39CC2244773D00A6373B /* EdgeHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C52244773D00A6373B /* EdgeHolder.cpp */; };
-		DDCA39CE2244774F00A6373B /* SDFGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39CD2244774E00A6373B /* SDFGenerator.cpp */; };
+		DD988C9F22496D7000D342DA /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880DF224310070052F499 /* Application.cpp */; };
+		DD988CA022496D7000D342DA /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810C2243604C0052F499 /* Bitmap.cpp */; };
+		DD988CA122496D7000D342DA /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810E2243604C0052F499 /* Material.cpp */; };
+		DD988CA222496D7000D342DA /* RenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8881102243604D0052F499 /* RenderTarget.cpp */; };
+		DD988CA322496D7000D342DA /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8881112243604D0052F499 /* ShaderProgram.cpp */; };
+		DD988CA422496D7000D342DA /* ShaderStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810D2243604C0052F499 /* ShaderStage.cpp */; };
+		DD988CA522496D7000D342DA /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810A2243604C0052F499 /* Texture.cpp */; };
+		DD988CA622496D7000D342DA /* Texture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810B2243604C0052F499 /* Texture2D.cpp */; };
+		DD988CA722496D7000D342DA /* Texture3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810F2243604C0052F499 /* Texture3D.cpp */; };
+		DD988CA822496D7000D342DA /* CoreTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880E8224317450052F499 /* CoreTime.cpp */; };
+		DD988CA922496D7000D342DA /* Space.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD888100224355AC0052F499 /* Space.cpp */; };
+		DD988CAA22496D7000D342DA /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F7224355670052F499 /* Object.cpp */; };
+		DD988CAB22496D7000D342DA /* IIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F9224355670052F499 /* IIdentifier.cpp */; };
+		DD988CAC22496D7000D342DA /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F8224355670052F499 /* Mesh.cpp */; };
+		DD988CAD22496D7000D342DA /* MeshLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880FA224355670052F499 /* MeshLoader.cpp */; };
+		DD988CAE22496D7000D342DA /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880EF224348E20052F499 /* FileManager.cpp */; };
+		DD988CAF22496D7000D342DA /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880F0224348E20052F499 /* FileStream.cpp */; };
+		DD988CB022496D7000D342DA /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880B02241E10C0052F499 /* Window.cpp */; };
+		DD988CB122496D7000D342DA /* EdgeHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C52244773D00A6373B /* EdgeHolder.cpp */; };
+		DD988CB222496D7000D342DA /* EdgeSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */; };
+		DD988CB322496D7000D342DA /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C32244773C00A6373B /* Font.cpp */; };
+		DD988CB422496D7000D342DA /* Glyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C02244773C00A6373B /* Glyph.cpp */; };
+		DD988CB522496D7000D342DA /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C42244773D00A6373B /* Shape.cpp */; };
+		DD988CB622496D7000D342DA /* ShapeContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C12244773C00A6373B /* ShapeContour.cpp */; };
+		DD988CB722496D7000D342DA /* Text2DGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */; };
+		DD988CB822496D7000D342DA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
+		DD988CB922496D7500D342DA /* TexturePacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */; };
+		DD988CBA22496D7500D342DA /* SDFGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39CD2244774E00A6373B /* SDFGenerator.cpp */; };
+		DD988CBB22496D7500D342DA /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880EB224319F30052F499 /* Timer.cpp */; };
+		DD988CBC22496D7500D342DA /* DeviceFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */; };
+		DD988CBD22496D8000D342DA /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
+		DD988CBE22496DAF00D342DA /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */; };
+		DD988CC32249700000D342DA /* Shaders in Copy Files */ = {isa = PBXBuildFile; fileRef = DD4F19E1224947CB00C102FB /* Shaders */; };
+		DD988CC42249700000D342DA /* Models in Copy Files */ = {isa = PBXBuildFile; fileRef = DD4F19DF224947BF00C102FB /* Models */; };
+		DD988CC52249700000D342DA /* Fonts in Copy Files */ = {isa = PBXBuildFile; fileRef = DD4534A922494707002F6BEF /* Fonts */; };
+		DD988CC72249720400D342DA /* libglfw.3.3.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		DD988CCE2249E11A00D342DA /* libfreetype.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; };
+		DD988CCF2249E11A00D342DA /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */; };
+		DD988CD02249E12500D342DA /* libfreetype.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		DD988CD12249E12500D342DA /* libglfw.3.3.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		DD988CD42249F82800D342DA /* libfreetype.6.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		DD988CD52249F84600D342DA /* libfreetype.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		DD8880852241B1D60052F499 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = Resources;
+			dstSubfolderSpec = 7;
 			files = (
+				DD988CC32249700000D342DA /* Shaders in Copy Files */,
+				DD988CC42249700000D342DA /* Models in Copy Files */,
+				DD988CC52249700000D342DA /* Fonts in Copy Files */,
 			);
 			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD988CC6224971E800D342DA /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Frameworks;
+			dstSubfolderSpec = 10;
+			files = (
+				DD988CD42249F82800D342DA /* libfreetype.6.dylib in Copy Files */,
+				DD988CC72249720400D342DA /* libglfw.3.3.dylib in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD988CD22249E12500D342DA /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DD988CD12249E12500D342DA /* libglfw.3.3.dylib in Embed Libraries */,
+				DD988CD02249E12500D342DA /* libfreetype.6.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -63,7 +137,16 @@
 		DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceFunctions.cpp; sourceTree = "<group>"; };
 		DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TexturePacking.cpp; sourceTree = "<group>"; };
 		DD23A6FC2248706500F3C46E /* TexturePacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexturePacking.h; sourceTree = "<group>"; };
-		DD8880872241B1D60052F499 /* EmptySource */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EmptySource; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD45348B22494376002F6BEF /* EmptySource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmptySource.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD45349922494385002F6BEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DD45349C22494385002F6BEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DD45349E22494385002F6BEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DD4534A122494385002F6BEF /* EmptySource.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EmptySource.entitlements; sourceTree = "<group>"; };
+		DD4534A922494707002F6BEF /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = EmptySource/Resources/Fonts; sourceTree = "<group>"; };
+		DD4F19DF224947BF00C102FB /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = EmptySource/Resources/Models; sourceTree = "<group>"; };
+		DD4F19E1224947CB00C102FB /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shaders; path = EmptySource/Resources/Shaders; sourceTree = "<group>"; };
+		DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = EmptySource/Libraries/libglfw.3.3.dylib; sourceTree = "<group>"; };
+		DD8880872241B1D60052F499 /* EmptySourceCLT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EmptySourceCLT; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD88808A2241B1D60052F499 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DD88809F2241B9910052F499 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
 		DD8880A22241B9C60052F499 /* khrplatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = khrplatform.h; sourceTree = "<group>"; };
@@ -72,9 +155,7 @@
 		DD8880AA2241D9160052F499 /* glfw3native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glfw3native.h; sourceTree = "<group>"; };
 		DD8880B02241E10C0052F499 /* Window.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Window.cpp; sourceTree = "<group>"; };
 		DD8880B22241E1580052F499 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
-		DD8880B42241E37A0052F499 /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = EmptySource/Libraries/libglfw.3.2.dylib; sourceTree = "<group>"; };
 		DD8880B62241E3870052F499 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		DD8880B82241F25E0052F499 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = EmptySource/Libraries/libglfw.3.3.dylib; sourceTree = "<group>"; };
 		DD8880BA224224C60052F499 /* Text.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
 		DD8880BC2242D96C0052F499 /* LogCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogCore.h; sourceTree = "<group>"; };
 		DD8880BE2242E39A0052F499 /* robin_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = robin_map.h; sourceTree = "<group>"; };
@@ -145,8 +226,7 @@
 		DD88810F2243604C0052F499 /* Texture3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Texture3D.cpp; sourceTree = "<group>"; };
 		DD8881102243604D0052F499 /* RenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTarget.cpp; sourceTree = "<group>"; };
 		DD8881112243604D0052F499 /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
-		DD88811A2243653C0052F499 /* Data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Data; sourceTree = "<group>"; };
-		DDCA395C224474F000A6373B /* libfreetype.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfreetype.6.dylib; path = EmptySource/Libraries/libfreetype.6.dylib; sourceTree = "<group>"; };
+		DD988CCB2249B82000D342DA /* libfreetype.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfreetype.6.dylib; path = EmptySource/Libraries/libfreetype.6.dylib; sourceTree = "<group>"; };
 		DDCA3962224475E100A6373B /* svgldict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svgldict.h; sourceTree = "<group>"; };
 		DDCA3963224475E100A6373B /* svsfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svsfnt.h; sourceTree = "<group>"; };
 		DDCA3964224475E100A6373B /* svkern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svkern.h; sourceTree = "<group>"; };
@@ -259,24 +339,50 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DD45348822494376002F6BEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD988CCE2249E11A00D342DA /* libfreetype.6.dylib in Frameworks */,
+				DD988CCF2249E11A00D342DA /* libglfw.3.3.dylib in Frameworks */,
+				DD4F1A1F22496A1E00C102FB /* IOKit.framework in Frameworks */,
+				DD4F1A062249597500C102FB /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD8880842241B1D60052F499 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD988CD52249F84600D342DA /* libfreetype.6.dylib in Frameworks */,
+				DD988CBE22496DAF00D342DA /* libglfw.3.3.dylib in Frameworks */,
 				DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */,
-				DDCA395D224474F000A6373B /* libfreetype.6.dylib in Frameworks */,
 				DD8880B72241E3870052F499 /* OpenGL.framework in Frameworks */,
-				DD8880B92241F25E0052F499 /* libglfw.3.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DD45348C22494376002F6BEF /* EmptySource */ = {
+			isa = PBXGroup;
+			children = (
+				DD8880AB2241DD380052F499 /* Source */,
+				DD45349922494385002F6BEF /* Assets.xcassets */,
+				DD45349B22494385002F6BEF /* Main.storyboard */,
+				DD45349E22494385002F6BEF /* Info.plist */,
+				DD4534A122494385002F6BEF /* EmptySource.entitlements */,
+			);
+			path = EmptySource;
+			sourceTree = "<group>";
+		};
 		DD88807E2241B1D60052F499 = {
 			isa = PBXGroup;
 			children = (
-				DD8880892241B1D60052F499 /* EmptySource */,
+				DD4F19E1224947CB00C102FB /* Shaders */,
+				DD4F19DF224947BF00C102FB /* Models */,
+				DD4534A922494707002F6BEF /* Fonts */,
+				DD45348C22494376002F6BEF /* EmptySource */,
 				DD8880882241B1D60052F499 /* Products */,
 				DD8880B32241E37A0052F499 /* Frameworks */,
 			);
@@ -285,18 +391,10 @@
 		DD8880882241B1D60052F499 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DD8880872241B1D60052F499 /* EmptySource */,
+				DD8880872241B1D60052F499 /* EmptySourceCLT */,
+				DD45348B22494376002F6BEF /* EmptySource.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		DD8880892241B1D60052F499 /* EmptySource */ = {
-			isa = PBXGroup;
-			children = (
-				DD88811A2243653C0052F499 /* Data */,
-				DD8880AB2241DD380052F499 /* Source */,
-			);
-			path = EmptySource;
 			sourceTree = "<group>";
 		};
 		DD88809A2241B9380052F499 /* External */ = {
@@ -333,19 +431,11 @@
 		DD8880AB2241DD380052F499 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				DD8880AC2241E0820052F499 /* EmptySource */,
+				DD8880AD2241E0C90052F499 /* include */,
+				DD8880AE2241E0D30052F499 /* source */,
 				DD88809A2241B9380052F499 /* External */,
 			);
 			path = Source;
-			sourceTree = "<group>";
-		};
-		DD8880AC2241E0820052F499 /* EmptySource */ = {
-			isa = PBXGroup;
-			children = (
-				DD8880AD2241E0C90052F499 /* include */,
-				DD8880AE2241E0D30052F499 /* source */,
-			);
-			path = EmptySource;
 			sourceTree = "<group>";
 		};
 		DD8880AD2241E0C90052F499 /* include */ = {
@@ -426,10 +516,9 @@
 			isa = PBXGroup;
 			children = (
 				DD23A6F52248277100F3C46E /* IOKit.framework */,
-				DDCA395C224474F000A6373B /* libfreetype.6.dylib */,
-				DD8880B82241F25E0052F499 /* libglfw.3.3.dylib */,
 				DD8880B62241E3870052F499 /* OpenGL.framework */,
-				DD8880B42241E37A0052F499 /* libglfw.3.2.dylib */,
+				DD988CCB2249B82000D342DA /* libfreetype.6.dylib */,
+				DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -624,13 +713,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DD8880862241B1D60052F499 /* EmptySource */ = {
+		DD45348A22494376002F6BEF /* EmptySource */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DD88808E2241B1D60052F499 /* Build configuration list for PBXNativeTarget "EmptySource" */;
+			buildConfigurationList = DD4534A222494385002F6BEF /* Build configuration list for PBXNativeTarget "EmptySource" */;
 			buildPhases = (
-				DD8880832241B1D60052F499 /* Sources */,
-				DD8880842241B1D60052F499 /* Frameworks */,
-				DD8880852241B1D60052F499 /* Copy Files */,
+				DD45348722494376002F6BEF /* Sources */,
+				DD45348822494376002F6BEF /* Frameworks */,
+				DD45348922494376002F6BEF /* Resources */,
+				DD988CD22249E12500D342DA /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -638,7 +728,25 @@
 			);
 			name = EmptySource;
 			productName = EmptySource;
-			productReference = DD8880872241B1D60052F499 /* EmptySource */;
+			productReference = DD45348B22494376002F6BEF /* EmptySource.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DD8880862241B1D60052F499 /* EmptySourceCLT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD88808E2241B1D60052F499 /* Build configuration list for PBXNativeTarget "EmptySourceCLT" */;
+			buildPhases = (
+				DD8880832241B1D60052F499 /* Sources */,
+				DD8880842241B1D60052F499 /* Frameworks */,
+				DD8880852241B1D60052F499 /* Copy Files */,
+				DD988CC6224971E800D342DA /* Copy Files */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EmptySourceCLT;
+			productName = EmptySource;
+			productReference = DD8880872241B1D60052F499 /* EmptySourceCLT */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -650,6 +758,10 @@
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Gonzalo Ceciliano";
 				TargetAttributes = {
+					DD45348A22494376002F6BEF = {
+						CreatedOnToolsVersion = 10.1;
+						ProvisioningStyle = Automatic;
+					};
 					DD8880862241B1D60052F499 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -662,59 +774,202 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = DD88807E2241B1D60052F499;
 			productRefGroup = DD8880882241B1D60052F499 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DD8880862241B1D60052F499 /* EmptySource */,
+				DD8880862241B1D60052F499 /* EmptySourceCLT */,
+				DD45348A22494376002F6BEF /* EmptySource */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		DD45348922494376002F6BEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD45349A22494385002F6BEF /* Assets.xcassets in Resources */,
+				DD4F19E2224947CB00C102FB /* Shaders in Resources */,
+				DD45349D22494385002F6BEF /* Main.storyboard in Resources */,
+				DD4F19E0224947BF00C102FB /* Models in Resources */,
+				DD4534AA22494707002F6BEF /* Fonts in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		DD45348722494376002F6BEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */,
+				DD4F19EB224958AB00C102FB /* RenderTarget.cpp in Sources */,
+				DD4F19FA224958AB00C102FB /* EdgeHolder.cpp in Sources */,
+				DD4F19EF224958AB00C102FB /* Texture2D.cpp in Sources */,
+				DD4F19F7224958AB00C102FB /* FileManager.cpp in Sources */,
+				DD4F19F3224958AB00C102FB /* Object.cpp in Sources */,
+				DD4F19F2224958AB00C102FB /* Space.cpp in Sources */,
+				DD4F19ED224958AB00C102FB /* ShaderStage.cpp in Sources */,
+				DD4F1A01224958AB00C102FB /* main.cpp in Sources */,
+				DD4F19FE224958AB00C102FB /* Shape.cpp in Sources */,
+				DD4F19E6224958AB00C102FB /* Timer.cpp in Sources */,
+				DD4F19FC224958AB00C102FB /* Font.cpp in Sources */,
+				DD4F19EA224958AB00C102FB /* Material.cpp in Sources */,
+				DD4F19E7224958AB00C102FB /* DeviceFunctions.cpp in Sources */,
+				DD4F1A02224958E900C102FB /* glad.c in Sources */,
+				DD4F19F8224958AB00C102FB /* FileStream.cpp in Sources */,
+				DD4F19F9224958AB00C102FB /* Window.cpp in Sources */,
+				DD4F19E9224958AB00C102FB /* Bitmap.cpp in Sources */,
+				DD4F19FF224958AB00C102FB /* ShapeContour.cpp in Sources */,
+				DD4F19F6224958AB00C102FB /* MeshLoader.cpp in Sources */,
+				DD4F19E8224958AB00C102FB /* Application.cpp in Sources */,
+				DD4F19F4224958AB00C102FB /* IIdentifier.cpp in Sources */,
+				DD4F19FD224958AB00C102FB /* Glyph.cpp in Sources */,
+				DD4F19F0224958AB00C102FB /* Texture3D.cpp in Sources */,
+				DD4F19F1224958AB00C102FB /* CoreTime.cpp in Sources */,
+				DD4F19EC224958AB00C102FB /* ShaderProgram.cpp in Sources */,
+				DD4F19FB224958AB00C102FB /* EdgeSegments.cpp in Sources */,
+				DD4F19E4224958AB00C102FB /* TexturePacking.cpp in Sources */,
+				DD4F19E5224958AB00C102FB /* SDFGenerator.cpp in Sources */,
+				DD4F19EE224958AB00C102FB /* Texture.cpp in Sources */,
+				DD4F1A00224958AB00C102FB /* Text2DGenerator.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD8880832241B1D60052F499 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDCA39CA2244773D00A6373B /* Font.cpp in Sources */,
-				DD8880E0224310070052F499 /* Application.cpp in Sources */,
-				DD8881122243604D0052F499 /* Texture.cpp in Sources */,
-				DD88808B2241B1D60052F499 /* main.cpp in Sources */,
-				DD8881192243604D0052F499 /* ShaderProgram.cpp in Sources */,
-				DDCA39CE2244774F00A6373B /* SDFGenerator.cpp in Sources */,
-				DD8881172243604D0052F499 /* Texture3D.cpp in Sources */,
-				DD888101224355AC0052F499 /* Space.cpp in Sources */,
-				DDCA39C92244773D00A6373B /* Text2DGenerator.cpp in Sources */,
-				DD23A6F922482AB700F3C46E /* DeviceFunctions.cpp in Sources */,
-				DDCA39CB2244773D00A6373B /* Shape.cpp in Sources */,
-				DD8881132243604D0052F499 /* Texture2D.cpp in Sources */,
-				DD8880B12241E10C0052F499 /* Window.cpp in Sources */,
-				DD8881152243604D0052F499 /* ShaderStage.cpp in Sources */,
-				DD8880FE224355680052F499 /* MeshLoader.cpp in Sources */,
-				DD8881162243604D0052F499 /* Material.cpp in Sources */,
-				DD8880F2224348E20052F499 /* FileStream.cpp in Sources */,
-				DD23A6FB2248705B00F3C46E /* TexturePacking.cpp in Sources */,
-				DDCA39C72244773D00A6373B /* Glyph.cpp in Sources */,
-				DDCA39C62244773D00A6373B /* EdgeSegments.cpp in Sources */,
-				DD8881142243604D0052F499 /* Bitmap.cpp in Sources */,
-				DDCA39CC2244773D00A6373B /* EdgeHolder.cpp in Sources */,
-				DD8881182243604D0052F499 /* RenderTarget.cpp in Sources */,
-				DD8880FC224355680052F499 /* Mesh.cpp in Sources */,
-				DD8880EC224319F30052F499 /* Timer.cpp in Sources */,
-				DD8880F1224348E20052F499 /* FileManager.cpp in Sources */,
-				DD8880A02241B9910052F499 /* glad.c in Sources */,
-				DDCA39C82244773D00A6373B /* ShapeContour.cpp in Sources */,
-				DD8880FD224355680052F499 /* IIdentifier.cpp in Sources */,
-				DD8880E9224317450052F499 /* CoreTime.cpp in Sources */,
-				DD8880FB224355680052F499 /* Object.cpp in Sources */,
+				DD988CB422496D7000D342DA /* Glyph.cpp in Sources */,
+				DD988CA222496D7000D342DA /* RenderTarget.cpp in Sources */,
+				DD988CA522496D7000D342DA /* Texture.cpp in Sources */,
+				DD988CAA22496D7000D342DA /* Object.cpp in Sources */,
+				DD988CA322496D7000D342DA /* ShaderProgram.cpp in Sources */,
+				DD988CA022496D7000D342DA /* Bitmap.cpp in Sources */,
+				DD988CB722496D7000D342DA /* Text2DGenerator.cpp in Sources */,
+				DD988CB122496D7000D342DA /* EdgeHolder.cpp in Sources */,
+				DD988CB322496D7000D342DA /* Font.cpp in Sources */,
+				DD988CBC22496D7500D342DA /* DeviceFunctions.cpp in Sources */,
+				DD988CA922496D7000D342DA /* Space.cpp in Sources */,
+				DD988CB822496D7000D342DA /* main.cpp in Sources */,
+				DD988CAF22496D7000D342DA /* FileStream.cpp in Sources */,
+				DD988CB222496D7000D342DA /* EdgeSegments.cpp in Sources */,
+				DD988CBD22496D8000D342DA /* glad.c in Sources */,
+				DD988C9F22496D7000D342DA /* Application.cpp in Sources */,
+				DD988CA622496D7000D342DA /* Texture2D.cpp in Sources */,
+				DD988CA122496D7000D342DA /* Material.cpp in Sources */,
+				DD988CB922496D7500D342DA /* TexturePacking.cpp in Sources */,
+				DD988CA722496D7000D342DA /* Texture3D.cpp in Sources */,
+				DD988CB522496D7000D342DA /* Shape.cpp in Sources */,
+				DD988CAC22496D7000D342DA /* Mesh.cpp in Sources */,
+				DD988CAE22496D7000D342DA /* FileManager.cpp in Sources */,
+				DD988CB022496D7000D342DA /* Window.cpp in Sources */,
+				DD988CA422496D7000D342DA /* ShaderStage.cpp in Sources */,
+				DD988CB622496D7000D342DA /* ShapeContour.cpp in Sources */,
+				DD988CAD22496D7000D342DA /* MeshLoader.cpp in Sources */,
+				DD988CBA22496D7500D342DA /* SDFGenerator.cpp in Sources */,
+				DD988CA822496D7000D342DA /* CoreTime.cpp in Sources */,
+				DD988CBB22496D7500D342DA /* Timer.cpp in Sources */,
+				DD988CAB22496D7000D342DA /* IIdentifier.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		DD45349B22494385002F6BEF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DD45349C22494385002F6BEF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		DD4534A322494385002F6BEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_MODULES_AUTOLINK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = EmptySource/EmptySource.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEVELOPMENT_TEAM = C9GQXBUGV9;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GENERATE_MASTER_OBJECT_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/EmptySource/Source/**",
+					"$(SRCROOT)/EmptySource/Source/External",
+				);
+				INFOPLIST_FILE = EmptySource/Info.plist;
+				LD_DYLIB_INSTALL_NAME = "";
+				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/../Frameworks @executable_path";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/EmptySource/Libraries",
+					"$(PROJECT_DIR)/EmptySource/Libraries",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_BUNDLE_IDENTIFIER = Consalvo.EmptySource;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				REEXPORTED_LIBRARY_NAMES = "";
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+			};
+			name = Debug;
+		};
+		DD4534A422494385002F6BEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_MODULES_AUTOLINK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = EmptySource/EmptySource.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEVELOPMENT_TEAM = C9GQXBUGV9;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GENERATE_MASTER_OBJECT_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/EmptySource/Source/**",
+					"$(SRCROOT)/EmptySource/Source/External",
+				);
+				INFOPLIST_FILE = EmptySource/Info.plist;
+				LD_DYLIB_INSTALL_NAME = "";
+				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/../Frameworks @executable_path";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/EmptySource/Libraries",
+					"$(PROJECT_DIR)/EmptySource/Libraries",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_FAST_MATH = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_BUNDLE_IDENTIFIER = Consalvo.EmptySource;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				REEXPORTED_LIBRARY_NAMES = "";
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+			};
+			name = Release;
+		};
 		DD88808C2241B1D60052F499 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -830,11 +1085,12 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
+				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Source/**",
 					"$(SRCROOT)/EmptySource/Source/External",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/Libraries @executable_path";
+				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/Frameworks @executable_path";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Libraries",
 					"$(PROJECT_DIR)/EmptySource/Libraries",
@@ -842,7 +1098,9 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
 				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = "";
 			};
 			name = Debug;
 		};
@@ -854,11 +1112,12 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
+				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Source/**",
 					"$(SRCROOT)/EmptySource/Source/External",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/Libraries @executable_path";
+				LD_RUNPATH_SEARCH_PATHS = "@(inherited) @executable_path/Frameworks @executable_path";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Libraries",
 					"$(PROJECT_DIR)/EmptySource/Libraries",
@@ -866,13 +1125,24 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
 				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = "";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DD4534A222494385002F6BEF /* Build configuration list for PBXNativeTarget "EmptySource" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD4534A322494385002F6BEF /* Debug */,
+				DD4534A422494385002F6BEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DD8880822241B1D60052F499 /* Build configuration list for PBXProject "EmptySource" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -882,7 +1152,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD88808E2241B1D60052F499 /* Build configuration list for PBXNativeTarget "EmptySource" */ = {
+		DD88808E2241B1D60052F499 /* Build configuration list for PBXNativeTarget "EmptySourceCLT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD88808F2241B1D60052F499 /* Debug */,
