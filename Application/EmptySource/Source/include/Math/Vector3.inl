@@ -190,3 +190,11 @@ FORCEINLINE Vector3& Vector3::operator/=(const float& Value) {
 	z /= Value;
 	return *this;
 }
+
+inline Vector3 operator*(float Value, const Vector3 & Vector) {
+	return Vector3(Value * Vector.x, Value * Vector.y, Value / Vector.z);
+}
+
+inline Vector3 operator/(float Value, const Vector3 & Vector) {
+	return Vector3(Value / Vector.x, Value / Vector.y, Value / Vector.z);
+}

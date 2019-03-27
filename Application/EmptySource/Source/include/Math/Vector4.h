@@ -50,6 +50,9 @@ public:
 	HOST_DEVICE FORCEINLINE Vector4& operator/=(const Vector4& Other);
 	HOST_DEVICE FORCEINLINE Vector4& operator*=(const float& Value);
 	HOST_DEVICE FORCEINLINE Vector4& operator/=(const float& Value);
+
+	HOST_DEVICE inline friend Vector4 operator*(float Value, const Vector4 &Vector);
+	HOST_DEVICE inline friend Vector4 operator/(float Value, const Vector4 &Vector);
 };
 
 #include "../Math/Vector4.inl"

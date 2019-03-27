@@ -172,3 +172,11 @@ FORCEINLINE IntVector3& IntVector3::operator/=(const int& Value) {
 	z /= Value;
 	return *this;
 }
+
+inline IntVector3 operator*(float Value, const IntVector3 & Vector) {
+	return IntVector3(Value * Vector.x, Value * Vector.y, Value / Vector.z);
+}
+
+inline IntVector3 operator/(float Value, const IntVector3 & Vector) {
+	return IntVector3(Value / Vector.x, Value / Vector.y, Value / Vector.z);
+}
