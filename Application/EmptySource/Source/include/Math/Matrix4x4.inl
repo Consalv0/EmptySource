@@ -56,22 +56,23 @@ inline HOST_DEVICE Matrix4x4 Matrix4x4::Orthographic(const float & Left, const f
 inline Matrix4x4 Matrix4x4::LookAt(const Vector3 & Eye, const Vector3 & Target, const Vector3 & Up) {
 	Matrix4x4 Result = Matrix4x4();
 
-	Vector3 const f((Target - Eye).Normalized());
-	Vector3 const s(f.Cross(Up).Normalized());
-	Vector3 const u(s.Cross(f));
+	Vector3 const Forward((Target - Eye).Normalized());
+	Vector3 const Side(Forward.Cross(Up).Normalized());
+	Vector3 const Upper(Side.Cross(Forward));
 
-	Result.m0[0] = s.x;
-	Result.m1[0] = s.y;
-	Result.m2[0] = s.z;
-	Result.m0[1] = u.x;
-	Result.m1[1] = u.y;
-	Result.m2[1] = u.z;
-	Result.m0[2] = -f.x;
-	Result.m1[2] = -f.y;
-	Result.m2[2] = -f.z;
-	Result.m3[0] = -s.Dot(Eye);
-	Result.m3[1] = -u.Dot(Eye);
-	Result.m3[2] = f.Dot(Eye);
+	Result.m0[0] = Side.x;
+	Result.m1[0] = Side.y;
+	Result.m2[0] = Side.z;
+	Result.m0[1] = Upper.x;
+	Result.m1[1] = Upper.y;
+	Result.m2[1] = Upper.z;
+	Result.m0[2] = -Forward.x;
+	Result.m1[2] = -Forward.y;
+	Result.m2[2] = -Forward.z;
+
+	Result.m3[0] = -Side.Dot(Eye);
+	Result.m3[1] = -Upper.Dot(Eye);
+	Result.m3[2] = Forward.Dot(Eye);
 	return Result;
 }
 
