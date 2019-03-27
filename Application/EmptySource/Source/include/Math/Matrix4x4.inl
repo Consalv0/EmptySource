@@ -39,6 +39,7 @@ inline Matrix4x4 Matrix4x4::Perspective(const float & FOV, const float & Aspect,
 	Result.m2[2] = -(Far + Near) / (Far - Near);
 	Result.m2[3] = -1.F;
 	Result.m3[2] = -(2.F * Far * Near) / (Far - Near);
+	Result.m3[3] = 0.F;
 	
 	return Result;
 }
@@ -74,17 +75,49 @@ inline Matrix4x4 Matrix4x4::LookAt(const Vector3 & Eye, const Vector3 & Target, 
 	return Result;
 }
 
-inline Matrix4x4 Matrix4x4::Translate(const Vector3 & Vector) {
+inline Matrix4x4 Matrix4x4::Translation(const Vector3 & Vector) {
 	Matrix4x4 Result = Matrix4x4();
-	Result[3] = Result[0] * Vector[0] + Result[1] * Vector[1] + Result[2] * Vector[2] + Result[3];
+	Result.w = Result.x * Vector.x + Result.y * Vector.y + Result.z * Vector.z + Result.w;
 	return Result;
 }
 
-inline Matrix4x4 Matrix4x4::Scale(const Vector3 & Vector) {
+inline Matrix4x4 Matrix4x4::Scaling(const Vector3 & Vector) {
 	Matrix4x4 Result = Matrix4x4();
 	Result.m0 = Result.m0 * Vector[0];
 	Result.m1 = Result.m1 * Vector[1];
 	Result.m2 = Result.m2 * Vector[2];
+	return Result;
+}
+
+inline Matrix4x4 Matrix4x4::Rotation(const Vector3 & Axis, const float & Angle) {
+	float const cosA = cos(Angle);
+	float const sinA = sin(Angle);
+
+	Vector3 AxisN(Axis.Normalized());
+	Vector3 Temp((1.F - cosA) * AxisN);
+
+	Matrix4x4 Rotation;
+	Rotation[0][0] = cosA + Temp[0] * AxisN[0];
+	Rotation[0][1] = Temp[0] * AxisN[1] + sinA * AxisN[2];
+	Rotation[0][2] = Temp[0] * AxisN[2] - sinA * AxisN[1];
+
+	Rotation[1][0] = Temp[1] * AxisN[0] - sinA * AxisN[2];
+	Rotation[1][1] = cosA + Temp[1] * AxisN[1];
+	Rotation[1][2] = Temp[1] * AxisN[2] + sinA * AxisN[0];
+
+	Rotation[2][0] = Temp[2] * AxisN[0] + sinA * AxisN[1];
+	Rotation[2][1] = Temp[2] * AxisN[1] - sinA * AxisN[0];
+	Rotation[2][2] = cosA + Temp[2] * AxisN[2];
+
+	Vector4 m0 = { 1, 0, 0, 0 };
+	Vector4 m1 = { 0, 1, 0, 0 };
+	Vector4 m2 = { 0, 0, 1, 0 };
+
+	Matrix4x4 Result;
+	Result[0] = m0 * Rotation[0][0] + m1 * Rotation[0][1] + m2 * Rotation[0][2];
+	Result[1] = m0 * Rotation[1][0] + m1 * Rotation[1][1] + m2 * Rotation[1][2];
+	Result[2] = m0 * Rotation[2][0] + m1 * Rotation[2][1] + m2 * Rotation[2][2];
+	Result[3] = {0, 0, 0, 1};
 	return Result;
 }
 

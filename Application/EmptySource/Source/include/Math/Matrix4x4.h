@@ -6,8 +6,9 @@ struct Vector3;
 struct Matrix4x4 {
 
 public:
-	struct {
-		Vector4 m0, m1, m2, m3;
+	union {
+		struct { Vector4 m0, m1, m2, m3; };
+		struct { Vector4 x, y, z, w; };
 	};
 
 	HOST_DEVICE FORCEINLINE Matrix4x4();
@@ -20,8 +21,9 @@ public:
 	HOST_DEVICE inline static Matrix4x4 Perspective(const float& Aperture, const float& Aspect, const float& Near, const float& Far);
 	HOST_DEVICE inline static Matrix4x4 Orthographic(const float& Left, const float& Right, const float& Bottom, const float& Top);
 	HOST_DEVICE inline static Matrix4x4 LookAt(const Vector3& Position, const Vector3& Direction, const Vector3& Up);
-	HOST_DEVICE inline static Matrix4x4 Translate(const Vector3& Vector);
-	HOST_DEVICE inline static Matrix4x4 Scale(const Vector3& Vector);
+	HOST_DEVICE inline static Matrix4x4 Translation(const Vector3& Vector);
+	HOST_DEVICE inline static Matrix4x4 Scaling(const Vector3& Vector);
+	HOST_DEVICE inline static Matrix4x4 Rotation(const Vector3& Axis, const float& Angle);
 	
 	HOST_DEVICE inline void Transpose();
 	HOST_DEVICE inline Matrix4x4 Transposed() const;
