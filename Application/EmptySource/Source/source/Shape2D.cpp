@@ -18,21 +18,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "../include/Shape.h"
+#include "../include/Shape2D.h"
 
-Shape::Shape() : bInverseYAxis(false) { }
+Shape2D::Shape2D() : bInverseYAxis(false) { }
 
-void Shape::AddContour(const ShapeContour &Contour) {
+void Shape2D::AddContour(const Shape2DContour &Contour) {
 	Contours.push_back(Contour);
 }
 
-ShapeContour & Shape::AddContour() {
+Shape2DContour & Shape2D::AddContour() {
 	Contours.resize(Contours.size() + 1);
 	return Contours[Contours.size() - 1];
 }
 
-bool Shape::Validate() const {
-	for (TArray<ShapeContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour) {
+bool Shape2D::Validate() const {
+	for (TArray<Shape2DContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour) {
 		if (!Contour->Edges.empty()) {
 			Point2 Corner = (*(Contour->Edges.end() - 1))->PointAt(1);
 			for (TArray<EdgeHolder>::const_iterator Edge = Contour->Edges.begin(); Edge != Contour->Edges.end(); ++Edge) {
@@ -47,8 +47,8 @@ bool Shape::Validate() const {
 	return true;
 }
 
-void Shape::Normalize() {
-	for (TArray<ShapeContour>::iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
+void Shape2D::Normalize() {
+	for (TArray<Shape2DContour>::iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
 		if (Contour->Edges.size() == 1) {
 			EdgeSegment *parts[3] = { };
 			Contour->Edges[0]->SplitInThirds(parts[0], parts[1], parts[2]);
@@ -59,7 +59,7 @@ void Shape::Normalize() {
 		}
 }
 
-void Shape::Bounds(Box2D & Bounds) const {
-	for (TArray<ShapeContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
+void Shape2D::Bounds(Box2D & Bounds) const {
+	for (TArray<Shape2DContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
 		Contour->GetBounds(Bounds.Left, Bounds.Bottom, Bounds.Right, Bounds.Top);
 }

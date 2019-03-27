@@ -10,7 +10,7 @@ FontGlyph::FontGlyph() {
 	Height = 0;
 	Advance = 0;
 	UV = { 0, 0, 0, 0 };
-	VectorShape = Shape();
+	VectorShape = Shape2D();
 	SDFResterized = Bitmap<float>();
 }
 
