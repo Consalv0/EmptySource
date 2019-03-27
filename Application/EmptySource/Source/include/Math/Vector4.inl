@@ -184,3 +184,11 @@ FORCEINLINE Vector4& Vector4::operator/=(const float& Value) {
 	w /= Value;
 	return *this;
 }
+
+inline Vector4 operator*(float Value, const Vector4 & Vector) {
+	return Vector4(Value * Vector.x, Value * Vector.y, Value * Vector.z, Value * Vector.w);
+}
+
+inline Vector4 operator/(float Value, const Vector4 & Vector) {
+	return Vector4(Value / Vector.x, Value / Vector.y, Value / Vector.z, Value / Vector.w);
+}

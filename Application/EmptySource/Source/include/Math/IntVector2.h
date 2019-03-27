@@ -50,6 +50,9 @@ public:
 	HOST_DEVICE FORCEINLINE IntVector2& operator/=(const IntVector2& Other);
 	HOST_DEVICE FORCEINLINE IntVector2& operator*=(const int& Value);
 	HOST_DEVICE FORCEINLINE IntVector2& operator/=(const int& Value);
+
+	HOST_DEVICE inline friend IntVector2 operator*(float Value, const IntVector2 &Vector);
+	HOST_DEVICE inline friend IntVector2 operator/(float Value, const IntVector2 &Vector);
 };
 
 #include "../Math/IntVector2.inl"

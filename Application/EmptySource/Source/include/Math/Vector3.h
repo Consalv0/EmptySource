@@ -53,6 +53,9 @@ public:
 	HOST_DEVICE FORCEINLINE Vector3& operator/=(const Vector3& Other);
 	HOST_DEVICE FORCEINLINE Vector3& operator*=(const float& Value);
 	HOST_DEVICE FORCEINLINE Vector3& operator/=(const float& Value);
+
+	HOST_DEVICE inline friend Vector3 operator*(float Value, const Vector3 &Vector);
+	HOST_DEVICE inline friend Vector3 operator/(float Value, const Vector3 &Vector);
 };
 
 #include "../Math/Vector3.inl"
