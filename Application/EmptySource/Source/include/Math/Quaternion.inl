@@ -16,10 +16,10 @@ FORCEINLINE Quaternion::Quaternion(Quaternion const & Other)
 	:w(Other.w), x(Other.x), y(Other.y), z(Other.z)
 { }
 
-inline Quaternion::Quaternion(Vector3 const & Axis, float const & Angle) {
-	float Sine = sinf(Angle * .5F);
+inline Quaternion::Quaternion(Vector3 const & Axis, float const & Radians) {
+	float Sine = sinf(Radians * .5F);
 
-	w = cosf(Angle * .5F);
+	w = cosf(Radians * .5F);
 	x = Axis.x * Sine;
 	y = Axis.y * Sine;
 	z = Axis.z * Sine;
@@ -52,9 +52,10 @@ FORCEINLINE Quaternion::Quaternion(Vector3 const & u, Vector3 const & v) {
 	*this = Quaternion(RealPart, ImgPart.x, ImgPart.y, ImgPart.z).Normalized();
 }
 
-inline Quaternion::Quaternion(Vector3 const & Angles) {
-	Vector3 Vcos = { std::cos(Angles.x * 0.5F), std::cos(Angles.y * 0.5F), std::cos(Angles.z * 0.5F) } ;
-	Vector3 Vsin = { std::sin(Angles.x * 0.5F), std::sin(Angles.y * 0.5F), std::sin(Angles.z * 0.5F) };
+inline Quaternion::Quaternion(Vector3 const & EulerAngles) {
+	float Scale = MathConstants::DegreeToRad * 0.5F;
+	Vector3 Vcos = { std::cos(EulerAngles.x * Scale), std::cos(EulerAngles.y * Scale), std::cos(EulerAngles.z * Scale) } ;
+	Vector3 Vsin = { std::sin(EulerAngles.x * Scale), std::sin(EulerAngles.y * Scale), std::sin(EulerAngles.z * Scale) };
 
 	this->w = Vcos.x * Vcos.y * Vcos.z + Vsin.x * Vsin.y * Vsin.z;
 	this->x = Vsin.x * Vcos.y * Vcos.z - Vcos.x * Vsin.y * Vsin.z;
@@ -160,7 +161,7 @@ inline Vector3 Quaternion::ToEulerAngles() const {
 		EulerAngles.z = atan2( -2.F * (w * x + y * z), ( 1.F - 2.F * ((x * x) + (y * y)) ) );
 	}
 
-	return EulerAngles;
+	return EulerAngles * MathConstants::RadToDegree;
 }
 
 FORCEINLINE float Quaternion::Dot(const Quaternion & Other) const {
