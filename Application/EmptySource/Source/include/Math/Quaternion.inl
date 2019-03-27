@@ -16,36 +16,40 @@ FORCEINLINE Quaternion::Quaternion(Quaternion const & Other)
 	:w(Other.w), x(Other.x), y(Other.y), z(Other.z)
 { }
 
-FORCEINLINE Quaternion::Quaternion(float const & Angle, Vector3 const & Axis) {
+inline Quaternion::Quaternion(Vector3 const & Axis, float const & Angle) {
 	float Sine = sinf(Angle * .5F);
-	
+
 	w = cosf(Angle * .5F);
 	x = Axis.x * Sine;
 	y = Axis.y * Sine;
 	z = Axis.z * Sine;
 }
 
+FORCEINLINE Quaternion::Quaternion(float const & Scale, Vector3 const & Vector)
+	:w(Scale), x(Vector.x), y(Vector.y), z(Vector.z)
+{ }
+
 FORCEINLINE Quaternion::Quaternion(float const& _w, float const& _x, float const& _y, float const& _z) 
 	:w(_w), x(_x), y(_y), z(_z)
 { }
 
 FORCEINLINE Quaternion::Quaternion(Vector3 const & u, Vector3 const & v) {
-	float norm_u_norm_v = sqrt(u.Dot(u) * v.Dot(v));
-	float real_part = norm_u_norm_v + u.Dot(v);
-	Vector3 t;
+	float NormUV = sqrt(u.Dot(u) * v.Dot(v));
+	float RealPart = NormUV + u.Dot(v);
+	Vector3 ImgPart;
 
-	if (real_part < 1.e-6f * norm_u_norm_v) {
+	if (RealPart < 1.e-6f * NormUV) {
 		// If u and v are exactly opposite, rotate 180 degrees
 		// around an arbitrary orthogonal axis. Axis normalisation
 		// can happen later, when we normalise the quaternion.
-		real_part = 0.F;
-		t = abs(u.x) > abs(u.z) ? Vector3(-u.y, u.x) : Vector3(0.F, -u.z, u.y);
+		RealPart = 0.F;
+		ImgPart = abs(u.x) > abs(u.z) ? Vector3(-u.y, u.x) : Vector3(0.F, -u.z, u.y);
 	} else {
 		// Otherwise, build quaternion the standard way.
-		t = u.Cross(v);
+		ImgPart = u.Cross(v);
 	}
 
-	*this = Quaternion(real_part, t.x, t.y, t.z).Normalized();
+	*this = Quaternion(RealPart, ImgPart.x, ImgPart.y, ImgPart.z).Normalized();
 }
 
 inline Quaternion::Quaternion(Vector3 const & Angles) {
@@ -80,6 +84,23 @@ inline Quaternion Quaternion::Normalized() const {
 	return Result /= Magnitude();
 }
 
+inline Quaternion Quaternion::Conjugated() const {
+	return Quaternion(GetScalar(), GetVector() * -1.F);
+}
+
+inline Quaternion Quaternion::Inversed() const {
+	float AbsoluteValue = Magnitude();
+	AbsoluteValue *= AbsoluteValue;
+	AbsoluteValue = 1 / AbsoluteValue;
+
+	Quaternion ConjugateVal = Conjugated();
+
+	float Scalar = ConjugateVal.GetScalar() * AbsoluteValue;
+	Vector3 Imaginary = ConjugateVal.GetVector() * AbsoluteValue;
+
+	return Quaternion(Scalar, Imaginary);
+}
+
 inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	Matrix4x4 Result;
 	float xx(x * x);
@@ -104,6 +125,14 @@ inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	Result[2][1] = 2.F * (yz - wx);
 	Result[2][2] = 1.F - 2.F * (xx + yy);
 	return Result;
+}
+
+inline float Quaternion::GetScalar() const {
+	return w;
+}
+
+inline Vector3 Quaternion::GetVector() const {
+	return Vector3(x, y, z);
 }
 
 inline Vector3 Quaternion::ToEulerAngles() const {

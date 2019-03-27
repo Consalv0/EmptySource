@@ -100,7 +100,7 @@ void CoreApplication::Initalize() {
         Debug::Log(Debug::LogWarning, L"Couldn't initialize device functions");
     };
     
-#ifndef __APPLE__
+#ifdef WIN32
 	CUDA::FindCudaDevice();
 #endif
     
@@ -139,21 +139,21 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PixelRange = 2.F;
 	TextGenerator.Pivot = 0;
     
-    // TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
-	// --- Basic Latin Unicode Range
-	TextGenerator.PrepareCharacters(L'!', L'~');
-	// --- Controls and Latin-1 Unicode Range
-    TextGenerator.PrepareCharacters(L'¡', L'ſ');
-	// --- Greek Unicode Range
-	TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
-	// --- Hiragana
-	TextGenerator.PrepareCharacters(0x3041, 0x309F);
-	// --- Katana
-	TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
-    // --- Arabic
-	TextGenerator.PrepareCharacters(0x2200, 0x22FF);
-    // --- Cientific Symbols
-	TextGenerator.PrepareCharacters(0x0600, 0x06FF);
+    TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
+	// // --- Basic Latin Unicode Range
+	// TextGenerator.PrepareCharacters(L'!', L'~');
+	// // --- Controls and Latin-1 Unicode Range
+    // TextGenerator.PrepareCharacters(L'¡', L'ſ');
+	// // --- Greek Unicode Range
+	// TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
+	// // --- Hiragana
+	// TextGenerator.PrepareCharacters(0x3041, 0x309F);
+	// // --- Katana
+	// TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
+    // // --- Arabic
+	// TextGenerator.PrepareCharacters(0x2200, 0x22FF);
+    // // --- Cientific Symbols
+	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
 	Bitmap<unsigned char> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -180,14 +180,14 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ViewMatrix;
 
 	// --- Create and compile our GLSL shader programs from text files
-	ShaderStage VertexBase =        ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/Base.vertex.glsl"));
-	ShaderStage VoxelizerVertex =   ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/Voxelizer.vertex.glsl"));
-	ShaderStage FragmentBRDF =      ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/BRDF.fragment.glsl"));
-	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/Passthrough.vertex.glsl"));
+	ShaderStage VertexBase        = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Base.vertex.glsl"));
+	ShaderStage VoxelizerVertex   = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Voxelizer.vertex.glsl"));
+	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Passthrough.vertex.glsl"));
+	ShaderStage FragmentBRDF      = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/BRDF.fragment.glsl"));
 	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderTexture.fragment.glsl"));
-	ShaderStage FragRenderText =    ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderText.fragment.glsl"));
-	ShaderStage FragmentUnlit =     ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/Unlit.fragment.glsl"));
-	ShaderStage Voxelizer =         ShaderStage(ShaderType::Geometry, FileManager::Open(L"Resources/Shaders/Voxelizer.geometry.glsl"));
+	ShaderStage FragRenderText    = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderText.fragment.glsl"));
+	ShaderStage FragmentUnlit     = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/Unlit.fragment.glsl"));
+	ShaderStage Voxelizer         = ShaderStage(ShaderType::Geometry, FileManager::Open(L"Resources/Shaders/Voxelizer.geometry.glsl"));
     
 	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
 	VoxelBRDFShader.AppendStage(&VoxelizerVertex);
@@ -246,7 +246,7 @@ void CoreApplication::MainLoop() {
 	float LightIntencity = 100.F;
 
 	TArray<Matrix4x4> Matrices;
-	Matrices.push_back(Matrix4x4());
+	Matrices.push_back(Matrix4x4::Translation({1, .5F, 0}).Inversed());
 
 	///////// Create Matrices Buffer //////////////
 	GLuint ModelMatrixBuffer;
@@ -294,18 +294,18 @@ void CoreApplication::MainLoop() {
 		Time::Tick();
 
 		ProjectionMatrix = Matrix4x4::Perspective(
-			45.0F * MathConstants::DegreeToRad,	// Aperute angle
+			60.0F * MathConstants::DegreeToRad,	// Aperute angle
 			MainWindow->AspectRatio(),	        // Aspect ratio
-			0.1F,						        // Near plane
-			200.0F						        // Far plane
+			0.3F,						        // Near plane
+			1000.0F						        // Far plane
 		);
 
 		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
 		
 		ViewOrientation = { CursorPosition.y * 0.01F, CursorPosition.x * 0.01F, 0.F };
-		Quaternion FrameRotation = Quaternion(ViewOrientation.x, { 1, 0, 0 });
-		           FrameRotation *= Quaternion(ViewOrientation.y, { 0, 1, 0 });
+		Quaternion FrameRotation  = Quaternion({ 1, 0, 0 }, ViewOrientation.x);
+		           FrameRotation *= Quaternion({ 0, 1, 0 }, ViewOrientation.y);
 		
 		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
 			Vector3 Forward = FrameRotation.ToMatrix4x4() * Vector3(0, 0, ViewSpeed);
@@ -327,8 +327,8 @@ void CoreApplication::MainLoop() {
 			EyePosition += Left * Time::GetDeltaTime();
 			// TextPivot.x += (FontSize + 100) * Time::GetDeltaTime();
 		}
-		ViewMatrix =
-			FrameRotation.ToMatrix4x4() * Matrix4x4::Translate(EyePosition);
+		
+		ViewMatrix = FrameRotation.ToMatrix4x4() * Matrix4x4::Translation(EyePosition);
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime();
@@ -377,14 +377,14 @@ void CoreApplication::MainLoop() {
 			if (InputTimeSum > (300)) {
 				for (size_t i = 0; i < 1; i++) {
 					Matrices.push_back(
-						Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
+						Matrix4x4::Translation({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
 					);
 				}
 			}
 			if (MainWindow->GetKeyDown(GLFW_KEY_Q)) {
 				for (size_t i = 0; i < 100; i++) {
 					Matrices.push_back(
-						Matrix4x4::Translate({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
+						Matrix4x4::Translation({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
 					);
 				}
 			}
@@ -438,7 +438,9 @@ void CoreApplication::MainLoop() {
         
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
-        
+
+			// Matrices[0] = Quaternion({0, 1, 0}, Time::GetDeltaTime()).ToMatrix4x4() * Matrices[0];
+			
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
                 OBJModels[MeshCount].BindVertexArray();
             
@@ -448,7 +450,11 @@ void CoreApplication::MainLoop() {
 				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * Matrices.size();
 			}
-        
+
+			LightModels[0].BindVertexArray();
+			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4::Scaling(0.5F).PointerToValue(), ModelMatrixBuffer);
+			LightModels[0].DrawElement();
+
 			UnlitMaterial.Use();
             
 			UnlitMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
@@ -459,8 +465,8 @@ void CoreApplication::MainLoop() {
 			LightModels[0].BindVertexArray();
 
 			vector<Matrix4x4> LightPositions;
-			LightPositions.push_back(Matrix4x4::Translate(LightPosition) * Matrix4x4::Scale(0.1F));
-			LightPositions.push_back(Matrix4x4::Translate(-LightPosition) * Matrix4x4::Scale(0.1F));
+			LightPositions.push_back(Matrix4x4::Translation(LightPosition) * Matrix4x4::Scaling(0.1F));
+			LightPositions.push_back(Matrix4x4::Translation(-LightPosition) * Matrix4x4::Scaling(0.1F));
 
 			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
 
@@ -481,7 +487,7 @@ void CoreApplication::MainLoop() {
 			
 			QuadModels[0].BindVertexArray();
 			
-			Matrix4x4 QuadPosition = Matrix4x4::Translate({ 0, 0, 0 });
+			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
 				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
 				ModelMatrixBuffer

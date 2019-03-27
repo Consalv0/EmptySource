@@ -13,7 +13,8 @@ public:
 
 	HOST_DEVICE FORCEINLINE Quaternion();
 	HOST_DEVICE FORCEINLINE Quaternion(Quaternion const& Other);
-	HOST_DEVICE FORCEINLINE Quaternion(float const& Angle, Vector3 const& Axis);
+	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& Axis, float const& Angle);
+	HOST_DEVICE FORCEINLINE Quaternion(float const& Scalar, Vector3 const& Vector);
 	HOST_DEVICE FORCEINLINE Quaternion(float const& w, float const& x, float const& y, float const& z);
 	// Create a quaternion from two normalized axis
 	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& u, Vector3 const& v);
@@ -24,11 +25,15 @@ public:
 	HOST_DEVICE inline float MagnitudeSquared() const;
 	HOST_DEVICE inline void Normalize();
 	HOST_DEVICE inline Quaternion Normalized() const;
+	HOST_DEVICE inline Quaternion Conjugated() const;
+	HOST_DEVICE inline Quaternion Inversed() const;
 
 	HOST_DEVICE inline Matrix4x4 ToMatrix4x4() const;
 	HOST_DEVICE inline float GetPitch() const;
 	HOST_DEVICE inline float GetYaw() const;
 	HOST_DEVICE inline float GetRoll() const;
+	HOST_DEVICE inline float GetScalar() const;
+	HOST_DEVICE inline Vector3 GetVector() const;
 	HOST_DEVICE inline Vector3 ToEulerAngles() const;
 
 	HOST_DEVICE FORCEINLINE float Dot(const Quaternion& Other) const;
