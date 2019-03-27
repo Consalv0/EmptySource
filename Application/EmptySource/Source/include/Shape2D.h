@@ -20,26 +20,34 @@
 
 #pragma once
 
-#include "../include/EdgeHolder.h"
+#include "../include/Shape2DContour.h"
+#include "../include/Math/Box2D.h"
 
-// A single closed contour of a shape.
-class ShapeContour {
+// Vector shape representation.
+class Shape2D {
 public:
-	// The sequence of edges that make up the contour.
-	TArray<EdgeHolder> Edges;
+	//* The list of contours the shape consists of.
+	TArray<Shape2DContour> Contours;
 
-	// Adds an edge to the contour.
-	void AddEdge(const EdgeHolder & Edge);
+	//* Specifies whether the shape uses bottom-to-top (false) or top-to-bottom (true) Y coordinates.
+	bool bInverseYAxis;
 
-	// Creates a new edge in the contour and returns its reference.
-	EdgeHolder & AddEdge();
-
-	// Computes the bounding box of the contour.
-	void GetBounds(float &Left, float &Bottom, float &Right, float &Top) const;
-
-	// Computes the bounding box of the contour.
-	void GetBounds(Box2D & BBox) const;
+	//* Default constructor
+	Shape2D();
 	
-	// Computes the winding of the contour. Returns 1 if positive, -1 if negative.
-	int Winding() const;
+	//* Adds a contour.
+	void AddContour(const Shape2DContour & Contour);
+
+	//* Adds a blank contour and returns its reference.
+	Shape2DContour & AddContour();
+	
+	//* Normalizes the shape geometry for distance field generation.
+	void Normalize();
+	
+	//* Performs basic checks to determine if the object represents a valid shape.
+	bool Validate() const;
+	
+	//* Computes the shape's bounding box.
+	void Bounds(Box2D & Bounds) const;
+
 };

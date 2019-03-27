@@ -295,8 +295,8 @@
     <ClInclude Include="Source\include\SDFGenerator.h" />
     <ClInclude Include="Source\include\ShaderProgram.h" />
     <ClInclude Include="Source\include\ShaderStage.h" />
-    <ClInclude Include="Source\include\Shape.h" />
-    <ClInclude Include="Source\include\ShapeContour.h" />
+    <ClInclude Include="Source\include\Shape2D.h" />
+    <ClInclude Include="Source\include\Shape2DContour.h" />
     <ClInclude Include="Source\include\Space.h" />
     <ClInclude Include="Source\include\Text.h" />
     <ClInclude Include="Source\include\Text2DGenerator.h" />
@@ -332,8 +332,8 @@
     <ClCompile Include="Source\source\RenderTarget.cpp" />
     <ClCompile Include="Source\source\ShaderProgram.cpp" />
     <ClCompile Include="Source\source\ShaderStage.cpp" />
-    <ClCompile Include="Source\source\Shape.cpp" />
-    <ClCompile Include="Source\source\ShapeContour.cpp" />
+    <ClCompile Include="Source\source\Shape2D.cpp" />
+    <ClCompile Include="Source\source\Shape2DContour.cpp" />
     <ClCompile Include="Source\source\Space.cpp" />
     <ClCompile Include="Source\source\Text2DGenerator.cpp" />
     <ClCompile Include="Source\source\Texture.cpp" />

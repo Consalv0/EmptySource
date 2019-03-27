@@ -250,16 +250,17 @@ void LinearSegment::GetBounds(float &l, float &b, float &r, float &t) const {
 void QuadraticSegment::GetBounds(float &l, float &b, float &r, float &t) const {
     PointBounds(p[0], l, b, r, t);
     PointBounds(p[2], l, b, r, t);
-    Vector2 bot = (p[1]-p[0])-(p[2]-p[1]);
-    if (bot.x) {
-        float param = (p[1].x-p[0].x)/bot.x;
-        if (param > 0 && param < 1)
-            PointBounds(PointAt(param), l, b, r, t);
+    Vector2 Bottom = (p[1]-p[0])-(p[2]-p[1]);
+
+    if (Bottom.x) {
+        float Param = (p[1].x-p[0].x) / Bottom.x;
+        if (Param > 0 && Param < 1)
+            PointBounds(PointAt(Param), l, b, r, t);
     }
-    if (bot.y) {
-        float param = (p[1].y-p[0].y)/bot.y;
-        if (param > 0 && param < 1)
-            PointBounds(PointAt(param), l, b, r, t);
+    if (Bottom.y) {
+        float Param = (p[1].y-p[0].y) / Bottom.y;
+        if (Param > 0 && Param < 1)
+            PointBounds(PointAt(Param), l, b, r, t);
     }
 }
 

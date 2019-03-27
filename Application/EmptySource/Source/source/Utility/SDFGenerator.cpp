@@ -182,9 +182,11 @@ void SDFGenerator::GenerateDistanceTransform() {
 	}
 }
 
-void SDFGenerator::FromBitmap(Bitmap<float>& Output, float MaxInside, float MaxOutside) {
-	Width = Output.GetWidth();
-	Height = Output.GetHeight();
+void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float MaxInside, float MaxOutside) {
+	Width = Input.GetWidth();
+	Height = Input.GetHeight();
+
+	Output = Input;
 
 	if (Pixels != NULL) delete[] Pixels;
 	Pixels = new Pixel[Width * Height];
@@ -238,14 +240,14 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, float MaxInside, float MaxO
 	delete[] Pixels;
 }
 
-void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
+void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape2D & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
 	int ContourCount = (int)Shape.Contours.size();
 	int OutWidth = Output.GetWidth(), OutHeight = Output.GetHeight();
 	int * Windings = new int[ContourCount];
 
 	int ShapeContourCount = 0;
-	for (TArray<ShapeContour>::const_iterator ShapeContour = Shape.Contours.begin(); ShapeContour != Shape.Contours.end(); ++ShapeContour)
-		Windings[ShapeContourCount++] = ShapeContour->Winding();
+	for (TArray<Shape2DContour>::const_iterator Shape2DContour = Shape.Contours.begin(); Shape2DContour != Shape.Contours.end(); ++Shape2DContour)
+		Windings[ShapeContourCount++] = Shape2DContour->Winding();
 	{
 		float * ContourSD = new float[ContourCount];
 
@@ -258,7 +260,7 @@ void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape & Shape, double 
 				float PosDist = -MathConstants::Big_Number;
 				int Winding = 0;
 
-				TArray<ShapeContour>::const_iterator Contour = Shape.Contours.begin();
+				TArray<Shape2DContour>::const_iterator Contour = Shape.Contours.begin();
 				for (int i = 0; i < ContourCount; ++i, ++Contour) {
 					SignedDistance MinDistance;
 					for (TArray<EdgeHolder>::const_iterator Edge = Contour->Edges.begin(); Edge != Contour->Edges.end(); ++Edge) {

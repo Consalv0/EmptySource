@@ -24,7 +24,7 @@ bool ShaderProgram::LinkProgram() {
 
 	glLinkProgram(ProgramObject);
 
-	// Check the program
+	// --- Check the program
 	glGetProgramiv(ProgramObject, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0) {
 		TArray<char> ProgramErrorMessage(InfoLogLength + 1);

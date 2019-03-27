@@ -4,8 +4,8 @@
 
 struct FT_Context {
 	Point2 position;
-	Shape *shape;
-	ShapeContour *contour;
+	Shape2D *shape;
+	Shape2DContour *contour;
 };
 
 class Font {

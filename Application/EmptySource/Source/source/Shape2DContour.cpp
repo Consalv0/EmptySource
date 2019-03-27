@@ -18,29 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "../include/ShapeContour.h"
+#include "../include/Shape2DContour.h"
 #include "../include/Math/MathUtility.h"
 
-void ShapeContour::AddEdge(const EdgeHolder &Edge) {
+void Shape2DContour::AddEdge(const EdgeHolder &Edge) {
 	Edges.push_back(Edge);
 }
 
-EdgeHolder & ShapeContour::AddEdge() {
+EdgeHolder & Shape2DContour::AddEdge() {
 	Edges.resize(Edges.size() + 1);
 	return Edges[Edges.size() - 1];
 }
 
-void ShapeContour::GetBounds(float &Left, float &Bottom, float &Right, float &Top) const {
+void Shape2DContour::GetBounds(float &Left, float &Bottom, float &Right, float &Top) const {
 	for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge)
 		(*Edge)->GetBounds(Left, Bottom, Right, Top);
 }
 
-void ShapeContour::GetBounds(Box2D & BBox) const {
+void Shape2DContour::GetBounds(BoundingBox2D & BBox) const {
 	for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge)
 		(*Edge)->GetBounds(BBox.Left, BBox.Bottom, BBox.Right, BBox.Top);
 }
 
-int ShapeContour::Winding() const {
+int Shape2DContour::Winding() const {
 	if (Edges.empty())
 		return 0;
 	float Total = 0;
@@ -59,7 +59,7 @@ int ShapeContour::Winding() const {
 	}
 	else {
 		Point2 Previous = Edges[Edges.size() - 1]->PointAt(0);
-		for (std::vector<EdgeHolder>::const_iterator edge = Edges.begin(); edge != Edges.end(); ++edge) {
+		for (TArray<EdgeHolder>::const_iterator edge = Edges.begin(); edge != Edges.end(); ++edge) {
 			Point2 Current = (*edge)->PointAt(0);
 			Total += MathEquations::Shoelace2(Previous, Current);
 			Previous = Current;
