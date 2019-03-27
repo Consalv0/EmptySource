@@ -39,8 +39,6 @@
 		DD4F19FB224958AB00C102FB /* EdgeSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */; };
 		DD4F19FC224958AB00C102FB /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C32244773C00A6373B /* Font.cpp */; };
 		DD4F19FD224958AB00C102FB /* Glyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C02244773C00A6373B /* Glyph.cpp */; };
-		DD4F19FE224958AB00C102FB /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C42244773D00A6373B /* Shape.cpp */; };
-		DD4F19FF224958AB00C102FB /* ShapeContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C12244773C00A6373B /* ShapeContour.cpp */; };
 		DD4F1A00224958AB00C102FB /* Text2DGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */; };
 		DD4F1A01224958AB00C102FB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
 		DD4F1A02224958E900C102FB /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
@@ -69,8 +67,6 @@
 		DD988CB222496D7000D342DA /* EdgeSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */; };
 		DD988CB322496D7000D342DA /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C32244773C00A6373B /* Font.cpp */; };
 		DD988CB422496D7000D342DA /* Glyph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C02244773C00A6373B /* Glyph.cpp */; };
-		DD988CB522496D7000D342DA /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C42244773D00A6373B /* Shape.cpp */; };
-		DD988CB622496D7000D342DA /* ShapeContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C12244773C00A6373B /* ShapeContour.cpp */; };
 		DD988CB722496D7000D342DA /* Text2DGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */; };
 		DD988CB822496D7000D342DA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88808A2241B1D60052F499 /* main.cpp */; };
 		DD988CB922496D7500D342DA /* TexturePacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */; };
@@ -89,6 +85,10 @@
 		DD988CD12249E12500D342DA /* libglfw.3.3.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DD988CD42249F82800D342DA /* libfreetype.6.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DD988CD52249F84600D342DA /* libfreetype.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; };
+		DD988CDA224C38B300D342DA /* Shape2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CD8224C38B300D342DA /* Shape2D.cpp */; };
+		DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CD8224C38B300D342DA /* Shape2D.cpp */; };
+		DD988CDC224C38B300D342DA /* Shape2DContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CD9224C38B300D342DA /* Shape2DContour.cpp */; };
+		DD988CDD224C38B300D342DA /* Shape2DContour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CD9224C38B300D342DA /* Shape2DContour.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -227,6 +227,10 @@
 		DD8881102243604D0052F499 /* RenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTarget.cpp; sourceTree = "<group>"; };
 		DD8881112243604D0052F499 /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
 		DD988CCB2249B82000D342DA /* libfreetype.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfreetype.6.dylib; path = EmptySource/Libraries/libfreetype.6.dylib; sourceTree = "<group>"; };
+		DD988CD6224C38A000D342DA /* Shape2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shape2D.h; sourceTree = "<group>"; };
+		DD988CD7224C38A000D342DA /* Shape2DContour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shape2DContour.h; sourceTree = "<group>"; };
+		DD988CD8224C38B300D342DA /* Shape2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shape2D.cpp; sourceTree = "<group>"; };
+		DD988CD9224C38B300D342DA /* Shape2DContour.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shape2DContour.cpp; sourceTree = "<group>"; };
 		DDCA3962224475E100A6373B /* svgldict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svgldict.h; sourceTree = "<group>"; };
 		DDCA3963224475E100A6373B /* svsfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svsfnt.h; sourceTree = "<group>"; };
 		DDCA3964224475E100A6373B /* svkern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svkern.h; sourceTree = "<group>"; };
@@ -322,16 +326,12 @@
 		DDCA39BE224476AE00A6373B /* LogFreeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogFreeType.h; sourceTree = "<group>"; };
 		DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdgeSegments.cpp; sourceTree = "<group>"; };
 		DDCA39C02244773C00A6373B /* Glyph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Glyph.cpp; sourceTree = "<group>"; };
-		DDCA39C12244773C00A6373B /* ShapeContour.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeContour.cpp; sourceTree = "<group>"; };
 		DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Text2DGenerator.cpp; sourceTree = "<group>"; };
 		DDCA39C32244773C00A6373B /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
-		DDCA39C42244773D00A6373B /* Shape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shape.cpp; sourceTree = "<group>"; };
 		DDCA39C52244773D00A6373B /* EdgeHolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdgeHolder.cpp; sourceTree = "<group>"; };
 		DDCA39CD2244774E00A6373B /* SDFGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFGenerator.cpp; sourceTree = "<group>"; };
 		DDCA39CF2244777100A6373B /* Text2DGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text2DGenerator.h; sourceTree = "<group>"; };
 		DDCA39D02244777100A6373B /* EdgeSegments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdgeSegments.h; sourceTree = "<group>"; };
-		DDCA39D12244777200A6373B /* ShapeContour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeContour.h; sourceTree = "<group>"; };
-		DDCA39D22244777200A6373B /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shape.h; sourceTree = "<group>"; };
 		DDCA39D32244777200A6373B /* Glyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glyph.h; sourceTree = "<group>"; };
 		DDCA39D42244777200A6373B /* EdgeHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdgeHolder.h; sourceTree = "<group>"; };
 		DDCA39D52244777200A6373B /* SDFGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFGenerator.h; sourceTree = "<group>"; };
@@ -466,13 +466,13 @@
 				DD8880E7224317270052F499 /* CoreTime.h */,
 				DD8880B22241E1580052F499 /* Window.h */,
 				DD8880BA224224C60052F499 /* Text.h */,
+				DD988CD6224C38A000D342DA /* Shape2D.h */,
+				DD988CD7224C38A000D342DA /* Shape2DContour.h */,
 				DDCA39D42244777200A6373B /* EdgeHolder.h */,
 				DDCA39D02244777100A6373B /* EdgeSegments.h */,
 				DDCA39D62244777300A6373B /* Font.h */,
 				DDCA39D32244777200A6373B /* Glyph.h */,
 				DDCA39D52244777200A6373B /* SDFGenerator.h */,
-				DDCA39D22244777200A6373B /* Shape.h */,
-				DDCA39D12244777200A6373B /* ShapeContour.h */,
 				DDCA39CF2244777100A6373B /* Text2DGenerator.h */,
 			);
 			path = include;
@@ -500,12 +500,12 @@
 				DD8880EF224348E20052F499 /* FileManager.cpp */,
 				DD8880F0224348E20052F499 /* FileStream.cpp */,
 				DD8880B02241E10C0052F499 /* Window.cpp */,
+				DD988CD8224C38B300D342DA /* Shape2D.cpp */,
+				DD988CD9224C38B300D342DA /* Shape2DContour.cpp */,
 				DDCA39C52244773D00A6373B /* EdgeHolder.cpp */,
 				DDCA39BF2244773B00A6373B /* EdgeSegments.cpp */,
 				DDCA39C32244773C00A6373B /* Font.cpp */,
 				DDCA39C02244773C00A6373B /* Glyph.cpp */,
-				DDCA39C42244773D00A6373B /* Shape.cpp */,
-				DDCA39C12244773C00A6373B /* ShapeContour.cpp */,
 				DDCA39C22244773C00A6373B /* Text2DGenerator.cpp */,
 				DD88808A2241B1D60052F499 /* main.cpp */,
 			);
@@ -808,6 +808,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */,
+				DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD4F19EB224958AB00C102FB /* RenderTarget.cpp in Sources */,
 				DD4F19FA224958AB00C102FB /* EdgeHolder.cpp in Sources */,
 				DD4F19EF224958AB00C102FB /* Texture2D.cpp in Sources */,
@@ -816,7 +817,6 @@
 				DD4F19F2224958AB00C102FB /* Space.cpp in Sources */,
 				DD4F19ED224958AB00C102FB /* ShaderStage.cpp in Sources */,
 				DD4F1A01224958AB00C102FB /* main.cpp in Sources */,
-				DD4F19FE224958AB00C102FB /* Shape.cpp in Sources */,
 				DD4F19E6224958AB00C102FB /* Timer.cpp in Sources */,
 				DD4F19FC224958AB00C102FB /* Font.cpp in Sources */,
 				DD4F19EA224958AB00C102FB /* Material.cpp in Sources */,
@@ -824,8 +824,8 @@
 				DD4F1A02224958E900C102FB /* glad.c in Sources */,
 				DD4F19F8224958AB00C102FB /* FileStream.cpp in Sources */,
 				DD4F19F9224958AB00C102FB /* Window.cpp in Sources */,
+				DD988CDD224C38B300D342DA /* Shape2DContour.cpp in Sources */,
 				DD4F19E9224958AB00C102FB /* Bitmap.cpp in Sources */,
-				DD4F19FF224958AB00C102FB /* ShapeContour.cpp in Sources */,
 				DD4F19F6224958AB00C102FB /* MeshLoader.cpp in Sources */,
 				DD4F19E8224958AB00C102FB /* Application.cpp in Sources */,
 				DD4F19F4224958AB00C102FB /* IIdentifier.cpp in Sources */,
@@ -846,6 +846,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD988CB422496D7000D342DA /* Glyph.cpp in Sources */,
+				DD988CDA224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD988CA222496D7000D342DA /* RenderTarget.cpp in Sources */,
 				DD988CA522496D7000D342DA /* Texture.cpp in Sources */,
 				DD988CAA22496D7000D342DA /* Object.cpp in Sources */,
@@ -861,16 +862,15 @@
 				DD988CB222496D7000D342DA /* EdgeSegments.cpp in Sources */,
 				DD988CBD22496D8000D342DA /* glad.c in Sources */,
 				DD988C9F22496D7000D342DA /* Application.cpp in Sources */,
+				DD988CDC224C38B300D342DA /* Shape2DContour.cpp in Sources */,
 				DD988CA622496D7000D342DA /* Texture2D.cpp in Sources */,
 				DD988CA122496D7000D342DA /* Material.cpp in Sources */,
 				DD988CB922496D7500D342DA /* TexturePacking.cpp in Sources */,
 				DD988CA722496D7000D342DA /* Texture3D.cpp in Sources */,
-				DD988CB522496D7000D342DA /* Shape.cpp in Sources */,
 				DD988CAC22496D7000D342DA /* Mesh.cpp in Sources */,
 				DD988CAE22496D7000D342DA /* FileManager.cpp in Sources */,
 				DD988CB022496D7000D342DA /* Window.cpp in Sources */,
 				DD988CA422496D7000D342DA /* ShaderStage.cpp in Sources */,
-				DD988CB622496D7000D342DA /* ShapeContour.cpp in Sources */,
 				DD988CAD22496D7000D342DA /* MeshLoader.cpp in Sources */,
 				DD988CBA22496D7500D342DA /* SDFGenerator.cpp in Sources */,
 				DD988CA822496D7000D342DA /* CoreTime.cpp in Sources */,
