@@ -219,8 +219,8 @@ SignedDistance CubicSegment::GetSignedDistance(Point2 Origin, float &Param) cons
             if (step == MSDFGEN_CUBIC_SEARCH_STEPS)
                 break;
             // --- Improve t
-            Vector2 d1 = 3*as*t*t+6*br*t+3*ab;
-            Vector2 d2 = 6*as*t+6*br;
+            Vector2 d1 = 3.F*as*t*t+6.F*br*t+3.F*ab;
+            Vector2 d2 = 6.F*as*t+6.F*br;
             t -= Vector2::Dot(qpt, d1)/(Vector2::Dot(d1, d1)+Vector2::Dot(qpt, d2));
             if (t < 0 || t > 1)
                 break;
@@ -267,8 +267,8 @@ void CubicSegment::GetBounds(float &l, float &b, float &r, float &t) const {
     PointBounds(p[0], l, b, r, t);
     PointBounds(p[3], l, b, r, t);
     Vector2 a0 = p[1]-p[0];
-    Vector2 a1 = 2*(p[2]-p[1]-a0);
-    Vector2 a2 = p[3]-3*p[2]+3*p[1]-p[0];
+    Vector2 a1 = 2.F*(p[2]-p[1]-a0);
+    Vector2 a2 = p[3]-3.F*p[2]+3.F*p[1]-p[0];
     float Values[2];
     int Solutions;
     Solutions = MathEquations::SolveQuadratic(Values, a2.x, a1.x, a0.x);

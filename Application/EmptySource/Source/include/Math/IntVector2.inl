@@ -156,10 +156,10 @@ FORCEINLINE IntVector2& IntVector2::operator/=(const int& Value) {
 	return *this;
 }
 
-inline IntVector2 operator*(float Value, const IntVector2 & Vector) {
+inline IntVector2 operator*(int Value, const IntVector2 & Vector) {
 	return IntVector2(Value * Vector.x, Value * Vector.y);
 }
 
-inline IntVector2 operator/(float Value, const IntVector2 & Vector) {
+inline IntVector2 operator/(int Value, const IntVector2 & Vector) {
 	return IntVector2(Value / Vector.x, Value / Vector.y);
 }
