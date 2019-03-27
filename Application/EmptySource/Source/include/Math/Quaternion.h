@@ -13,12 +13,12 @@ public:
 
 	HOST_DEVICE FORCEINLINE Quaternion();
 	HOST_DEVICE FORCEINLINE Quaternion(Quaternion const& Other);
-	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& Axis, float const& Angle);
+	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& Axis, float const& Degrees);
 	HOST_DEVICE FORCEINLINE Quaternion(float const& Scalar, Vector3 const& Vector);
 	HOST_DEVICE FORCEINLINE Quaternion(float const& w, float const& x, float const& y, float const& z);
 	// Create a quaternion from two normalized axis
 	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& u, Vector3 const& v);
-	// Create a quaternion from euler angles (pitch, yaw, roll), in radians.
+	// Create a quaternion from euler angles (pitch, yaw, roll).
 	HOST_DEVICE FORCEINLINE Quaternion(Vector3 const& EulerAngles);
 
 	HOST_DEVICE inline float Magnitude() const;

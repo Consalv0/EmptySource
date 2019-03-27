@@ -67,10 +67,10 @@ namespace Math {
 	inline T Clamp01(T Value);
 
 	//* Get the angle in degrees in range of [0, 360)
-	inline float ClampAngle(float Angle);
+	inline float ClampAngle(float Degrees);
 
 	//* Get the angle in degrees in the range of (-180, 180]
-	inline float NormalizeAngle(float Angle);
+	inline float NormalizeAngle(float Degrees);
 
 	//* Get the angles in degrees in the range of (-180, 180) 
 	inline Vector3 NormalizeAngleComponents(Vector3 EulerAngle);

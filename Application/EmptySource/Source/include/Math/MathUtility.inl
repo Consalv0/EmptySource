@@ -135,26 +135,26 @@ T Math::Clamp01(T Value) {
 	return Value;
 }
 
-float Math::ClampAngle(float Angle) {
-	Angle = std::fmod(Angle, 360.F);
+float Math::ClampAngle(float Degrees) {
+	Degrees = std::fmod(Degrees, 360.F);
 
-	if (Angle < 0.F) {
+	if (Degrees < 0.F) {
 		// --- Shift to [0,360)
-		Angle += 360.F;
+		Degrees += 360.F;
 	}
 
-	return Angle;
+	return Degrees;
 }
 
-float Math::NormalizeAngle(float Angle) {
-	Angle = ClampAngle(Angle);
+float Math::NormalizeAngle(float Degrees) {
+	Degrees = ClampAngle(Degrees);
 
-	if (Angle > 180.f) {
+	if (Degrees > 180.f) {
 		// --- Shift to (-180,180]
-		Angle -= 360.f;
+		Degrees -= 360.f;
 	}
 
-	return Angle;
+	return Degrees;
 }
 
 Vector3 Math::NormalizeAngleComponents(Vector3 EulerAngle) {

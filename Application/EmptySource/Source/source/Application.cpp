@@ -303,7 +303,7 @@ void CoreApplication::MainLoop() {
 		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
 		
-		ViewOrientation = { CursorPosition.y * 0.01F, CursorPosition.x * 0.01F, 0.F };
+		ViewOrientation = Vector3( CursorPosition.y, CursorPosition.x, 0.F ) * MathConstants::DegreeToRad;
 		Quaternion FrameRotation  = Quaternion({ 1, 0, 0 }, ViewOrientation.x);
 		           FrameRotation *= Quaternion({ 0, 1, 0 }, ViewOrientation.y);
 		
@@ -442,18 +442,14 @@ void CoreApplication::MainLoop() {
 			// Matrices[0] = Quaternion({0, 1, 0}, Time::GetDeltaTime()).ToMatrix4x4() * Matrices[0];
 			
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
-                OBJModels[MeshCount].BindVertexArray();
-            
+				OBJModels[MeshCount].BindVertexArray();
+
 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", (int)Matrices.size(), &Matrices[0], ModelMatrixBuffer);
-            
+
 				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
 				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * Matrices.size();
 			}
-
-			LightModels[0].BindVertexArray();
-			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4::Scaling(0.5F).PointerToValue(), ModelMatrixBuffer);
-			LightModels[0].DrawElement();
 
 			UnlitMaterial.Use();
             
@@ -530,7 +526,7 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[CurrentRenderText] = Text::Formatted(
-                L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
@@ -539,8 +535,9 @@ void CoreApplication::MainLoop() {
 				Text::FormatUnit(Matrices.size(), 2).c_str(),
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
+				Text::FormatMath(ViewOrientation * MathConstants::RadToDegree).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
-				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles() * MathConstants::RadToDegree)).c_str()
+				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);
 
 			// MainWindow->SetWindowName(RenderingText[CurrentRenderText]);
