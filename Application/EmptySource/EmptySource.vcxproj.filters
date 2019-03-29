@@ -402,16 +402,10 @@
     <ClInclude Include="Source\include\Utility\DeviceFunctions.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\LogCore.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\Utility\LogFreeType.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Utility\LogGraphics.h">
-      <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Utility\LogMath.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Utility\TexturePacking.h">
@@ -516,6 +510,15 @@
     <ClInclude Include="Source\include\Shape2DContour.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogCore.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\TextFormatting.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\TextFormattingMath.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">
@@ -609,6 +612,12 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\Shape2D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\LogCore.cpp">
+      <Filter>Source Files\Core\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Text.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

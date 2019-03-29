@@ -16,9 +16,6 @@ private:
 
 	//* Creates the main window for rendering
 	static bool InitializeWindow();
-
-	//* Initialize Nvidia Managment Library or IOKitLib
-	static bool InitializeDeviceFunctions();
     
 public:
 

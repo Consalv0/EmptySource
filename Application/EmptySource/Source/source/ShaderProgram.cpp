@@ -9,7 +9,7 @@ bool ShaderProgram::LinkProgram() {
 	int InfoLogLength;
 
 	// Link the shader program
-	Debug::Log(Debug::LogNormal, L"Linking shader program '%ls'...", Name.c_str());
+	Debug::Log(Debug::LogInfo, L"Linking shader program '%ls'...", Name.c_str());
 	ProgramObject = glCreateProgram();
 
 	if (VertexShader != NULL && VertexShader->IsValid()) {
@@ -29,7 +29,7 @@ bool ShaderProgram::LinkProgram() {
 	if (InfoLogLength > 0) {
 		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ProgramObject, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		Debug::Log(Debug::LogNormal, L"'%ls'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
+		Debug::Log(Debug::LogInfo, L"'%ls'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
 		return false;
 	}
 

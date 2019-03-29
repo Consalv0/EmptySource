@@ -1,4 +1,5 @@
 ﻿
+#include <cctype>
 #include <cstdio>
 
 #include "../include/Core.h"
@@ -7,7 +8,86 @@
 #include "../include/MeshLoader.h"
 #include "../include/FileStream.h"
 
-std::locale MeshLoader::Locale = std::locale();
+// Original crack_atof version is at http://crackprogramming.blogspot.sg/2012/10/implement-atof.html
+// But it cannot convert floating point with high +/- exponent.
+// The version below by Tian Bo fixes that problem and improves performance by 10%
+// http://coliru.stacked-crooked.com/a/2e28f0d71f47ca5e
+inline float fast_strtof(const char* String, char** Character) {
+
+	*Character = (char*)String;
+	if (!*Character || !**Character)
+		return 0;
+
+	int Sign = 1;
+	float IntPart = 0.0;
+	float FractionPart = 0.0;
+	bool hasFraction = false;
+	bool hasExpo = false;
+
+	// Take care of +/- sign
+	if (**Character == '-') { ++*Character; Sign = -1; }
+	else if (**Character == '+') ++*Character;
+
+	while (**Character != '\0' && **Character != ',' && **Character != ' ') {
+		if (**Character >= '0' && **Character <= '9')
+			IntPart = IntPart * 10 + (**Character - '0');
+		else if (**Character == '.') {
+			hasFraction = true;
+			++*Character; break;
+		}
+		else if (**Character == 'e') {
+			hasExpo = true;
+			++*Character; break;
+		}
+		else
+			return Sign * IntPart;
+
+		++*Character;
+	}
+
+	if (hasFraction) {
+		float FractionExponential = 0.1F;
+
+		while (**Character != '\0' && **Character != ',' && **Character != ' ') {
+			if (**Character >= '0' && **Character <= '9') {
+				FractionPart += FractionExponential * (**Character - '0');
+				FractionExponential *= 0.1F;
+			}
+			else if (**Character == 'e') {
+				hasExpo = true;
+				++*Character;
+				break;
+			}
+			else {
+				return Sign * (IntPart + FractionPart);
+			}
+			++*Character;
+		}
+	}
+
+	float ExponentPart = 1.0F;
+	if ((**Character != '\0' && **Character != ',' && **Character != ' ') && hasExpo) {
+		int ExponentSign = 1;
+		if (**Character == '-') {
+			ExponentSign = -1;
+			++*Character;
+		}
+		else if (**Character == '+') {
+			++*Character;
+		}
+
+		int e = 0;
+		while ((**Character != '\0' && **Character != ',' && **Character != ' ') && **Character >= '0' && **Character <= '9') {
+			e = e * 10 + **Character - '0';
+			++*Character;
+		}
+
+		ExponentPart = Math::Pow10(ExponentSign * e);
+	}
+	++*Character;
+
+	return Sign * (IntPart + FractionPart) * ExponentPart;
+}
 
 bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, TDictionary<MeshVertex, unsigned>& VertexToIndex, unsigned & Result) {
 	TDictionary<MeshVertex, unsigned>::iterator it = VertexToIndex.find(Vertex);
@@ -21,22 +101,22 @@ bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, TDictionary<Me
 
 void MeshLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
 	Char* LineState;
-	Vector->x = (float)StringToDouble(Text, &LineState);
-	Vector->y = (float)StringToDouble(LineState, &LineState);
-	Vector->z = (float)StringToDouble(LineState, &LineState);
+	Vector->x = fast_strtof(Text, &LineState);
+	Vector->y = fast_strtof(LineState, &LineState);
+	Vector->z = fast_strtof(LineState, &LineState);
 }
 
 void MeshLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
 	Char* LineState;
-	Vector->x = (float)StringToDouble(Text, &LineState);
-	Vector->y = (float)StringToDouble(LineState, &LineState);
+	Vector->x = fast_strtof(Text, &LineState);
+	Vector->y = fast_strtof(LineState, &LineState);
 }
 
 void MeshLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
 	Char* LineState;
-	Vector->x = (int)StringToDouble(Text, &LineState);
-	Vector->y = (int)StringToDouble(LineState, &LineState);
-	Vector->z = (int)StringToDouble(LineState, NULL);
+	Vector->x = (int)fast_strtof(Text, &LineState);
+	Vector->y = (int)fast_strtof(LineState, &LineState);
+	Vector->z = (int)fast_strtof(LineState, NULL);
 }
 
 void MeshLoader::ParseOBJLine(
@@ -46,35 +126,35 @@ void MeshLoader::ParseOBJLine(
 	int ObjectCount)
 {
 	bool bWarned = false;
-	OBJObjectData* Data = &ModelData.Objects[ObjectCount];
+	OBJObjectData* ObjectData = &ModelData.Objects[ObjectCount];
 
 	if (Keyword == CSType && !bWarned) {
 		bWarned = true;
-		Debug::Log(Debug::NoLog, L"\r");
+		Debug::LogClearLine(Debug::LogWarning);
 		Debug::Log(Debug::LogWarning, L"The object contains free-form geometry, this is not supported");
 		return;
 	}
 		
 	if (Keyword == Object) {
-		Data->Name = Line;
+		ObjectData->Name = Line;
 		return;
 	}
 		
 	if (Keyword == Vertex) {
 		ExtractVector3(Line, &ModelData.ListPositions[ModelData.PositionCount++]);
-		Data->PositionCount++;
+		ObjectData->PositionCount++;
 		return;
 	}
 		
 	if (Keyword == Normal) {
 		ExtractVector3(Line, &ModelData.ListNormals[ModelData.NormalCount++]);
-		Data->NormalCount++;
+		ObjectData->NormalCount++;
 		return;
 	}
 		
 	if (Keyword == TextureCoord) {
 		ExtractVector2(Line, &ModelData.ListUVs[ModelData.UVsCount++]);
-		Data->UVsCount++;
+		ObjectData->UVsCount++;
 		return;
 	}
 		
@@ -92,8 +172,8 @@ void MeshLoader::ParseOBJLine(
 		while (Token != NULL) {
 			int Empty;
 
-			if (Data->UVsCount <= 0) {
-				if (Data->NormalCount <= 0) {
+			if (ObjectData->UVsCount <= 0) {
+				if (ObjectData->NormalCount <= 0) {
 #ifdef WIN32
 					Empty = sscanf_s(Token, "%d", &VertexIndex[0]);
 #else
@@ -106,8 +186,8 @@ void MeshLoader::ParseOBJLine(
                     Empty = sscanf(Token, "%d//%d", &VertexIndex[0], &VertexIndex[2]);
 #endif
 				}
-			} else if (Data->NormalCount <= 0) {
-				if (Data->UVsCount <= 0) {
+			} else if (ObjectData->NormalCount <= 0) {
+				if (ObjectData->UVsCount <= 0) {
 #ifdef WIN32
 					Empty = sscanf_s(Token, "%d", &VertexIndex[0]);
 				} else {
@@ -139,7 +219,7 @@ void MeshLoader::ParseOBJLine(
 #endif
 			if (VertexIndex[0] < 0 && !bWarned) {
 				bWarned = true;
-				Debug::Log(Debug::NoLog, L"\r");
+				Debug::LogClearLine(Debug::LogWarning);
 				Debug::Log(Debug::LogWarning, L"The model contains negative references, this is not supported");
 				continue;
 			}
@@ -153,18 +233,18 @@ void MeshLoader::ParseOBJLine(
 				ModelData.VertexIndices.push_back(ModelData.VertexIndices[ModelData.VertexIndices.size() - 3]);
 				ModelData.VertexIndices.push_back(ModelData.VertexIndices[ModelData.VertexIndices.size() - 2]);
 				ModelData.VertexIndices.push_back(VertexIndex);
-				Data->VertexIndicesCount += 3;
+				ObjectData->VertexIndicesCount += 3;
 				ModelData.VertexIndicesCount += 3;
 			} else {
 				ModelData.VertexIndices.push_back(VertexIndex);
-				Data->VertexIndicesCount++;
+				ObjectData->VertexIndicesCount++;
 				ModelData.VertexIndicesCount++;
 			}
 		}
 
 		if (VertexCount > 4 && !bWarned) {
 			bWarned = true;
-			Debug::Log(Debug::NoLog, L"\r");
+			Debug::LogClearLine(Debug::LogWarning);
 			Debug::Log(Debug::LogWarning, L"The model has n-gons, this may lead to unwanted geometry");
 		}
 
@@ -186,7 +266,7 @@ MeshLoader::OBJKeyword MeshLoader::GetOBJKeyword(const Char * Word) {
 	return Undefined;
 }
 
-void MeshLoader::ReadOBJByLine(
+size_t MeshLoader::ReadOBJByLine(
 	const Char * InFile,
 	OBJFileData& ModelData)
 {
@@ -201,7 +281,7 @@ void MeshLoader::ReadOBJByLine(
 
 	while (CharacterCount <= MaxCharacterCount) {
 		CharacterCount++;
-		if (std::isspace(*(Pointer++), Locale)) {
+		if (std::isspace(*(Pointer++))) {
 			Char* Key = (Char*)&InFile[LastSplitPosition++];
 			LastSplitPosition = CharacterCount;
 
@@ -232,16 +312,18 @@ void MeshLoader::ReadOBJByLine(
 		if (--LogCount <= 0) {
 			LogCount = LogCountBottleNeck;
 			float cur = std::ceil(Progress * 12);
-			Debug::Log(Debug::NoLog, L"\r [%ls%ls] %.2f%% %ls lines",
+			Debug::LogUnadorned(Debug::LogInfo, L"\r [%ls%ls] %.2f%% %ls lines",
 				WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(),
 				100 * Progress, Text::FormatUnit(LineCount, 2).c_str()
 			);
 		}
 		
 		if (CharacterCount == MaxCharacterCount) {
-			Debug::Log(Debug::NoLog, L"\r");
+			Debug::LogClearLine(Debug::LogInfo);
 		}
 	}
+
+	return LineCount;
 }
 
 void MeshLoader::PrepareOBJData(const Char * InFile, OBJFileData& ModelData) {
@@ -308,22 +390,21 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	{
 		Debug::Timer Timer;
 
-		Debug::Log(Debug::LogNormal, L"Parsing File Model '%ls'", File->GetShortPath().c_str());
+		Debug::Log(Debug::LogInfo, L"Reading File Model '%ls'", File->GetShortPath().c_str());
 		
 		Timer.Start();
 		String* MemoryText = new String();
 		File->ReadNarrowStream(MemoryText);
 
-		String KeyWord;
-
 		PrepareOBJData(MemoryText->c_str(), ModelData);
-		ReadOBJByLine(MemoryText->c_str(), ModelData);
+		size_t LineCount = ReadOBJByLine(MemoryText->c_str(), ModelData);
 		delete MemoryText;
 
 		Timer.Stop();
 		VertexIndexCount = ModelData.VertexIndicesCount;
-		Debug::Log(Debug::LogNormal,
-			L"├> Parsed %ls vertices and %ls triangles in %.3fs",
+		Debug::Log(Debug::LogInfo,
+			L"├> Readed %ls lines with %ls vertices and %ls triangles in %.3fs",
+			Text::FormatUnit(LineCount, 0).c_str(),
 			Text::FormatUnit(VertexIndexCount, 2).c_str(),
 			Text::FormatUnit(VertexIndexCount / 3, 2).c_str(),
 			Timer.GetEnlapsedSeconds()
@@ -359,7 +440,7 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 				LogCount = LogCountBottleNeck;
 				float cur = std::ceil(prog * 12);
 				float cur2 = std::ceil(prog2 * 12);
-				Debug::Log(Debug::NoLog, L"\r %ls : [%ls%ls|%ls%ls] %.2f%% %ls vertices",
+				Debug::LogUnadorned(Debug::LogInfo, L"\r %ls : [%ls%ls|%ls%ls] %.2f%% %ls vertices",
 					StringToWString(Data->Name).c_str(),
 					WString(int(cur2), L'%').c_str(), WString(int(12 + 1 - cur2), L' ').c_str(),
 					WString(int(cur), L'#').c_str(), WString(int(12 + 1 - cur), L' ').c_str(),
@@ -404,9 +485,9 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 			}
 		}
 
-		Debug::Log(Debug::NoLog, L"\r");
+		Debug::LogClearLine(Debug::LogInfo);
 		Debug::Log(
-			Debug::LogNormal,
+			Debug::LogInfo,
 			L"├> Parsed %ls	vertices in %ls	at [%d]'%ls'",
 			Text::FormatUnit(Data->VertexIndicesCount, 2).c_str(),
 			Text::FormatData(sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size(), 2).c_str(),
@@ -417,11 +498,11 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
 	}
 
-	Debug::Log(Debug::NoLog, L"\r");
-	Debug::Log(Debug::LogNormal, L"├> [%ls] 100.00%% %ls vertices", WString(25, L'#').c_str(), Text::FormatUnit(VertexIndexCount, 2).c_str());
+	Debug::LogClearLine(Debug::LogInfo);
+	Debug::Log(Debug::LogInfo, L"├> [%ls] 100.00%% %ls vertices", WString(25, L'#').c_str(), Text::FormatUnit(VertexIndexCount, 2).c_str());
 	if (hasOptimize) {
 		Debug::Log(
-			Debug::LogNormal, L"├> Vertex optimization from %ls to %ls (%.2f%%)",
+			Debug::LogInfo, L"├> Vertex optimization from %ls to %ls (%.2f%%)",
 			Text::FormatUnit(VertexIndexCount, 2).c_str(), 
 			Text::FormatUnit(VertexToIndex.size(), 2).c_str(),
 			(float(VertexToIndex.size()) - VertexIndexCount) / VertexIndexCount * 100
@@ -429,7 +510,7 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	}
 
 	Timer.Stop();
-	Debug::Log(Debug::LogNormal, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
+	Debug::Log(Debug::LogInfo, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
 
 	return true;
 }

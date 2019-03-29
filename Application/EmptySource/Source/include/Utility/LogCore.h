@@ -6,26 +6,41 @@
 #include <Windows.h>
 #endif
 
-#ifndef LOG_CORE
-#define LOG_CORE
-
 namespace Debug {
-    constexpr unsigned char       NoLog = 0x00;
-    constexpr unsigned char   LogNormal = 0x01;
-    constexpr unsigned char  LogWarning = 0x02;
-    constexpr unsigned char    LogError = 0x04;
-    constexpr unsigned char LogCritical = 0x08;
-    constexpr unsigned char    LogDebug = 0x16;
+    constexpr unsigned char       NoLog = 0;
+    constexpr unsigned char   LogNormal = 1 << 0;
+    constexpr unsigned char  LogWarning = 1 << 1;
+    constexpr unsigned char    LogError = 1 << 2;
+    constexpr unsigned char LogCritical = 1 << 3;
+	constexpr unsigned char     LogInfo = 1 << 4;
+	constexpr unsigned char    LogDebug = 1 << 5;
     
-    static unsigned char LogFilter = LogNormal | LogWarning | LogError | LogCritical | LogDebug;
-    
+	struct LogFilter {
+		static unsigned char Value;
+
+		static void AddFilter(const unsigned char& Filter);
+		static void RemoveFilter(const unsigned char& Filter);
+		static void SetFilter(const unsigned char& Filter);
+	};
+
+	void LogClearLine(unsigned char Filter);
+
+	template<typename ... Arguments>
+	void LogUnadorned(unsigned char Filter, WString Text, Arguments ... Args) {
+		if ((Filter & LogFilter::Value) == NoLog) {
+			return;
+		}
+
+		setlocale(LC_ALL, "en_US.UTF-8");
+		std::wprintf(Text.c_str(), Args ...);
+	}
+
     template<typename ... Arguments>
-    inline void Log(unsigned char Filter, WString Text, Arguments ... Args) {
-        if (Filter == NoLog) {
-            std::wprintf(Text.c_str(), Args ...);
-            return;
-        }
-        
+    void Log(unsigned char Filter, WString Text, Arguments ... Args) {
+		if ((Filter & LogFilter::Value) == NoLog) {
+			return;
+		}
+
         WString LogText = L"";
         
 #ifdef WIN32
@@ -35,25 +50,26 @@ namespace Debug {
         GetConsoleScreenBufferInfo(hstdout, &csbi); \
         
         switch (Filter) {
-            case LogNormal: LogText += L"[LOG] "; break;
-            case LogWarning: LogText += L"[WARNING] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY); break;
-            case LogError: LogText += L"[Error] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_INTENSITY); break;
+            case LogNormal:   LogText += L"[LOG] "; break;
+			case LogInfo:     LogText += L"[INFO] "; SetConsoleTextAttribute(hstdout, FOREGROUND_INTENSITY ); break;
+            case LogWarning:  LogText += L"[WARNING] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY); break;
+            case LogError:    LogText += L"[ERROR] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_INTENSITY); break;
             case LogCritical: LogText += L"[CRITICAL] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED); break;
-            case LogDebug: LogText += L"[DEBUG] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;
+            case LogDebug:    LogText += L"[DEBUG] "; SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;
         }
 
 		setlocale(LC_ALL, "en_US.UTF-8");
-        
         std::wprintf((LogText + (Text + L"\n")).c_str(), Args ...);
         SetConsoleTextAttribute(hstdout, csbi.wAttributes);
 #else
         
         switch (Filter) {
-            case LogNormal: LogText += L"\033[40m[LOG]\033[0m "; break;
-            case LogWarning: LogText += L"\033[33;40m[WARNING]\033[33;49m "; break;
-            case LogError: LogText += L"\033[31;40m[Error]\033[31;49m "; break;
+            case LogNormal:   LogText += L"\033[40m[LOG]\033[0m "; break;
+			case LogInfo:     LogText += L"\033[90;40m[INFO]\033[90;49m "; break;
+            case LogWarning:  LogText += L"\033[33;40m[WARNING]\033[33;49m "; break;
+            case LogError:    LogText += L"\033[31;40m[ERROR]\033[31;49m "; break;
             case LogCritical: LogText += L"\033[31;40m[CRITICAL]\033[31;49m "; break;
-            case LogDebug: LogText += L"\033[32;40m[DEBUG]\033[32;49m "; break;
+            case LogDebug:    LogText += L"\033[32;40m[DEBUG]\033[32;49m "; break;
         }
         
         setlocale(LC_ALL, "en_US.UTF-8");
@@ -61,5 +77,3 @@ namespace Debug {
 #endif
     }
 }
-
-#endif // !LOG_CORE

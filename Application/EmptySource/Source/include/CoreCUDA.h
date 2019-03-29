@@ -174,9 +174,9 @@ namespace CUDA {
 		DeviceID = GetMaxGflopsDeviceId();
 		Check(cudaSetDevice(DeviceID));
 		Check(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
-		Debug::Log(Debug::LogNormal, L"GPU CUDA Device");
+		Debug::Log(Debug::LogInfo, L"GPU CUDA Device");
 		Debug::Log(
-			Debug::LogNormal, L"\u2514> GPU Device #%d: '%s' with compute capability %d.%d", DeviceID,
+			Debug::LogInfo, L"\u2514> GPU Device #%d: '%s' with compute capability %d.%d", DeviceID,
 			CharToWChar(DeviceProperties.name), DeviceProperties.major, DeviceProperties.minor
 		);
 

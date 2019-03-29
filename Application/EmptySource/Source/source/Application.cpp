@@ -7,7 +7,7 @@
 
 #include "../include/Utility/LogGraphics.h"
 #include "../include/Utility/DeviceFunctions.h"
-#include "../include/Utility/LogMath.h"
+#include "../include/Utility/TextFormattingMath.h"
 #include "../include/Utility/Timer.h"
 
 #include "../include/CoreTime.h"
@@ -256,7 +256,7 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+	MeshLoader::FromOBJ(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {

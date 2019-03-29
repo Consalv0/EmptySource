@@ -5,7 +5,6 @@
 #include "External/GLAD/glad.h"
 #endif // !__gl_h_
 
-#ifdef LOG_CORE
 namespace Debug {
 	//* Error Callback related to GLFW
 	inline void GLFWError(int ErrorID, const char* Description) {
@@ -46,11 +45,10 @@ namespace Debug {
 		const GLubyte     *Version = glGetString(GL_VERSION);
 		const GLubyte *GLSLVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-		Log(LogNormal, L"GPU Render Device Info");
-		Log(LogNormal, L"├> GC Vendor	: %ls", CharToWChar((const char*)Vendor));
-		Log(LogNormal, L"├> GC Renderer	: %ls", CharToWChar((const char*)Renderer));
-		Log(LogNormal, L"├> GL Version	: %ls", CharToWChar((const char*)Version));
-		Log(LogNormal, L"└> GLSL Version	: %ls", CharToWChar((const char*)GLSLVersion));
+		Log(LogInfo, L"GPU Render Device Info");
+		Log(LogInfo, L"├> GC Vendor	: %ls", CharToWChar((const char*)Vendor));
+		Log(LogInfo, L"├> GC Renderer	: %ls", CharToWChar((const char*)Renderer));
+		Log(LogInfo, L"├> GL Version	: %ls", CharToWChar((const char*)Version));
+		Log(LogInfo, L"└> GLSL Version	: %ls", CharToWChar((const char*)GLSLVersion));
 	}
 }
-#endif // LOG_CORE

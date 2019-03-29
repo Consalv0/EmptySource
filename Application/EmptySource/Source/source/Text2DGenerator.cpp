@@ -23,7 +23,7 @@ void Text2DGenerator::PrepareCharacters(const WChar * Characters, const size_t &
 }
 
 void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
-	Debug::Log(Debug::LogNormal, L"Loading %d font glyphs from %lc(%d) to %lc(%d)", To - From, From, From, To, To);
+	Debug::Log(Debug::LogInfo, L"Loading %d font glyphs from %lc(%d) to %lc(%d)", To - From, From, From, To, To);
 	Debug::Timer Timer;
 	Timer.Start();
 	TextFont->SetGlyphHeight(GlyphHeight);
@@ -39,7 +39,7 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 		}
 	}
 	Timer.Stop();
-	Debug::Log(Debug::LogNormal, L"└> Glyphs loaded in %.3fs", Timer.GetEnlapsedSeconds());
+	Debug::Log(Debug::LogInfo, L"└> Glyphs loaded in %.3fs", Timer.GetEnlapsedSeconds());
 }
 
 void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {

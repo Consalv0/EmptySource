@@ -16,14 +16,13 @@ int main(int argc, char **argv) {
 #ifdef WIN32
     _setmode(_fileno(stdout), _O_U8TEXT);
 #endif
-    
-    Debug::Log(Debug::LogNormal, L"Initalizing Application:\n");
+    Debug::Log(Debug::LogInfo, L"Initalizing Application:\n");
     CoreApplication::Initalize();
     CoreApplication::MainLoop();
     CoreApplication::Close();
     
 #ifdef WIN32
-    Debug::Log(Debug::LogNormal, L"Press any key to close...");
+    Debug::Log(Debug::LogInfo, L"Press any key to close...");
     _getch();
 #endif
 }

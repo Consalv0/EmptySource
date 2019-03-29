@@ -307,7 +307,8 @@
     <ClInclude Include="Source\include\Utility\LogCore.h" />
     <ClInclude Include="Source\include\Utility\LogFreeType.h" />
     <ClInclude Include="Source\include\Utility\LogGraphics.h" />
-    <ClInclude Include="Source\include\Utility\LogMath.h" />
+    <ClInclude Include="Source\include\Utility\TextFormattingMath.h" />
+    <ClInclude Include="Source\include\Utility\TextFormatting.h" />
     <ClInclude Include="Source\include\Utility\TexturePacking.h" />
     <ClInclude Include="Source\include\Utility\Timer.h" />
     <ClInclude Include="Source\include\Window.h" />
@@ -335,11 +336,13 @@
     <ClCompile Include="Source\source\Shape2D.cpp" />
     <ClCompile Include="Source\source\Shape2DContour.cpp" />
     <ClCompile Include="Source\source\Space.cpp" />
+    <ClCompile Include="Source\source\Text.cpp" />
     <ClCompile Include="Source\source\Text2DGenerator.cpp" />
     <ClCompile Include="Source\source\Texture.cpp" />
     <ClCompile Include="Source\source\Texture2D.cpp" />
     <ClCompile Include="Source\source\Texture3D.cpp" />
     <ClCompile Include="Source\source\Utility\DeviceFunctions.cpp" />
+    <ClCompile Include="Source\source\Utility\LogCore.cpp" />
     <ClCompile Include="Source\source\Utility\SDFGenerator.cpp" />
     <ClCompile Include="Source\source\Utility\TexturePacking.cpp" />
     <ClCompile Include="Source\source\Utility\Timer.cpp" />
