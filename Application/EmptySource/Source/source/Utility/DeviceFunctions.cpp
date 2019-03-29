@@ -180,7 +180,7 @@ float Debug::GetDeviceTemperature(const int & DeviceIndex) {
 #ifdef WIN32
     nvmlDevice_t Device;
     nvmlReturn_t DeviceResult;
-    unsigned int DeviceTemperature = 0.F;
+    unsigned int DeviceTemperature = 0;
     
     DeviceResult = nvmlDeviceGetHandleByIndex(DeviceIndex, &Device);
     if (NVML_SUCCESS != DeviceResult) {
