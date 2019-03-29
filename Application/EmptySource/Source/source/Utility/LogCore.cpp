@@ -16,7 +16,7 @@ namespace Debug {
 		Value = Filter;
 	}
 
-	void Debug::LogClearLine(unsigned char Filter) {
+	void LogClearLine(unsigned char Filter) {
 		if ((Filter & LogFilter::Value) == NoLog) {
 			return;
 		}
