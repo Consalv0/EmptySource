@@ -10,7 +10,7 @@ The objective of this proyect is learn, graphics, software arquitecture, convent
 ## Using
 - C++ ***Language***
 - OpenGL ***Graphics API***
-- GLUT ***OpenGL Utility Toolkit***
+- GLAD ***OpenGL Function Loader***
 - GLFW3 ***Input, Windows***
 - CUDA ***Rendering, Processing***
 - FreeType2 ***Text Rendering***
