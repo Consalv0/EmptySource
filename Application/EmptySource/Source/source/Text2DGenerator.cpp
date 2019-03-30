@@ -31,7 +31,7 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 		FontGlyph Glyph;
 		if (TextFont->GetGlyph(Glyph, (unsigned int)Character)) {
 			if (!Glyph.VectorShape.Validate())
-				Debug::Log(Debug::LogWarning, L"├> The geometry of the loaded shape is invalid.");
+				Debug::Log(Debug::LogInfo | Debug::LogWarning, L"├> The geometry of the loaded shape is invalid.");
 			Glyph.VectorShape.Normalize();
 			
 			Glyph.GenerateSDF(PixelRange);
@@ -120,7 +120,7 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 		FontGlyph * Character = *Begin;
 		TexturePacking<Bitmap<float>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
 		if (!ResultNode.bValid || ResultNode.Element == NULL) {
-			Debug::Log(Debug::LogError, L"Error writting in %lc(%d)", Character->UnicodeValue, Character->UnicodeValue);
+			Debug::Log(Debug::LogError, L"Error writting texture of %lc(%d)", Character->UnicodeValue, Character->UnicodeValue);
 			continue;
 		}
 
