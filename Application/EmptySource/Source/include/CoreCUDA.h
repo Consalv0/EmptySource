@@ -18,7 +18,7 @@
 namespace CUDA {
 
 	template <typename T>
-	void __CheckFunction(T Result, WChar const *const FunctionName, const char *const FileName, int const Line) {
+	void __CheckFunction(T Result, WChar const *const FunctionName, const bool& bSafe, const char *const FileName, int const Line) {
 		if (Result) {
 			Debug::Log(
 				Debug::LogCritical, L"CUDA error at %s:%d [%d](%s) '%s'", CharToWChar(FileName), Line,
@@ -27,16 +27,20 @@ namespace CUDA {
 
 			// --- Make sure we call CUDA Device Reset before exiting
 			cudaDeviceReset();
-			Debug::Log(Debug::LogNormal, L"Press any key to close...");
-			_getch();
-			exit(EXIT_FAILURE);
+			if (!bSafe) {
+				Debug::Log(Debug::LogNormal, L"Press any key to close...");
+				_getch();
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 
 	/* This will output the proper CUDA error strings in the event
 	 *  that a CUDA host call returns an error
 	 */
-#define Check(func) __CheckFunction((func), L#func, __FILE__, __LINE__)
+#define Check(func) __CheckFunction((func), L#func, true, __FILE__, __LINE__)
+
+#define CheckUnsafe(func) __CheckFunction((func), L#func, false, __FILE__, __LINE__)
 
 	//* This will output the proper error string when calling cudaGetLastError
 #define GetLastCudaError(msg) __GetLastCudaError(msg, __FILE__, __LINE__)
@@ -46,17 +50,14 @@ namespace CUDA {
 
 		if (cudaSuccess != CUDAError) {
 			Debug::Log(
-				Debug::LogCritical,
+				Debug::LogError,
 				L"%s(%i) : CUDA error : %s : (%d) %s.",
 				CharToWChar(FileName), Line, CharToWChar(ErrorMessage), static_cast<int>(CUDAError),
 				CharToWChar(cudaGetErrorString(CUDAError))
 			);
 
-			// Make sure we call CUDA Device Reset before exiting
+			// --- Make sure we call CUDA Device Reset before exiting
 			cudaDeviceReset();
-			Debug::Log(Debug::LogNormal, L"Press any key to close...");
-			_getch();
-			exit(EXIT_FAILURE);
 		}
 	}
 
@@ -110,17 +111,15 @@ namespace CUDA {
 
 		uint64_t MaxComputePerformance = 0;
 		cudaDeviceProp DeviceProperties;
-		Check(cudaGetDeviceCount(&DeviceCount));
+		CheckUnsafe(cudaGetDeviceCount(&DeviceCount));
 
 		if (DeviceCount == 0) {
 			Debug::Log(
-				Debug::LogCritical,
+				Debug::LogError,
 				L"GetMaxGflopsDeviceId(): No devices supporting CUDA."
 			);
 
-			Debug::Log(Debug::LogNormal, L"Press any key to close...");
-			_getch();
-			exit(EXIT_FAILURE);
+			return -1;
 		}
 
 		// --- Find the best CUDA capable GPU device
@@ -158,9 +157,7 @@ namespace CUDA {
 				L"GetMaxGflopsDeviceId(): All devices have compute mode prohibited."
 			);
 
-			Debug::Log(Debug::LogNormal, L"Press any key to close...");
-			_getch();
-			exit(EXIT_FAILURE);
+			return -1;
 		}
 
 		return MaxPreformaceDevice;
@@ -172,6 +169,14 @@ namespace CUDA {
 		int DeviceID = 0;
 
 		DeviceID = GetMaxGflopsDeviceId();
+
+		if (DeviceID == -1) {
+			Debug::Log(Debug::LogInfo, L"GPU CUDA Device");
+			Debug::Log(Debug::LogInfo, L"\u2514> No GPU Device supporting CUDA");
+
+			return -1; 
+		}
+
 		Check(cudaSetDevice(DeviceID));
 		Check(cudaGetDeviceProperties(&DeviceProperties, DeviceID));
 		Debug::Log(Debug::LogInfo, L"GPU CUDA Device");
