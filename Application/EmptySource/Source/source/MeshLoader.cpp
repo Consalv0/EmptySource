@@ -89,7 +89,7 @@ inline float fast_strtof(const char* String, char** Character) {
 	return Sign * (IntPart + FractionPart) * ExponentPart;
 }
 
-bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, TDictionary<MeshVertex, unsigned>& VertexToIndex, unsigned & Result) {
+bool OBJLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, TDictionary<MeshVertex, unsigned>& VertexToIndex, unsigned & Result) {
 	TDictionary<MeshVertex, unsigned>::iterator it = VertexToIndex.find(Vertex);
 	if (it == VertexToIndex.end()) {
 		return false;
@@ -99,34 +99,34 @@ bool MeshLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, TDictionary<Me
 	}
 }
 
-void MeshLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
+void OBJLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
 	Char* LineState;
 	Vector->x = fast_strtof(Text, &LineState);
 	Vector->y = fast_strtof(LineState, &LineState);
 	Vector->z = fast_strtof(LineState, &LineState);
 }
 
-void MeshLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
+void OBJLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
 	Char* LineState;
 	Vector->x = fast_strtof(Text, &LineState);
 	Vector->y = fast_strtof(LineState, &LineState);
 }
 
-void MeshLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
+void OBJLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
 	Char* LineState;
 	Vector->x = (int)fast_strtof(Text, &LineState);
 	Vector->y = (int)fast_strtof(LineState, &LineState);
 	Vector->z = (int)fast_strtof(LineState, NULL);
 }
 
-void MeshLoader::ParseOBJLine(
-	const OBJKeyword& Keyword,
+void OBJLoader::ParseLine(
+	const Keyword& Keyword,
 	Char * Line,
-	OBJFileData& ModelData,
+	FileData& ModelData,
 	int ObjectCount)
 {
 	bool bWarned = false;
-	OBJObjectData* ObjectData = &ModelData.Objects[ObjectCount];
+	ObjectData* ObjectData = &ModelData.Objects[ObjectCount];
 
 	if (Keyword == CSType && !bWarned) {
 		bWarned = true;
@@ -252,7 +252,7 @@ void MeshLoader::ParseOBJLine(
 	}
 }
 
-MeshLoader::OBJKeyword MeshLoader::GetOBJKeyword(const Char * Word) {
+OBJLoader::Keyword OBJLoader::GetKeyword(const Char * Word) {
 	if (Word[0] == 'f' ) return Face;
 	if (Word[0] == 'v') {
 		if (Word[1] == ' ') return Vertex;
@@ -266,9 +266,9 @@ MeshLoader::OBJKeyword MeshLoader::GetOBJKeyword(const Char * Word) {
 	return Undefined;
 }
 
-size_t MeshLoader::ReadOBJByLine(
+size_t OBJLoader::ReadByLine(
 	const Char * InFile,
-	OBJFileData& ModelData)
+	FileData& ModelData)
 {
 	const size_t LogCountBottleNeck = 86273;
 	size_t LogCount = 1;
@@ -292,12 +292,12 @@ size_t MeshLoader::ReadOBJByLine(
 					Char* Line = (Char*)&InFile[LastSplitPosition];
 					Line[LineSize - 1] = '\0';
 					
-					OBJKeyword LineKey = GetOBJKeyword(Key);
+					Keyword LineKey = GetKeyword(Key);
 					if (LineKey == Object) {
 						++ObjectCount;
 					}
 
-					ParseOBJLine(
+					ParseLine(
 						LineKey, Line, ModelData, ObjectCount == 0 ? ObjectCount : ObjectCount - 1
 					);
 
@@ -326,17 +326,17 @@ size_t MeshLoader::ReadOBJByLine(
 	return LineCount;
 }
 
-void MeshLoader::PrepareOBJData(const Char * InFile, OBJFileData& ModelData) {
+void OBJLoader::PrepareData(const Char * InFile, FileData& ModelData) {
 	const Char* Pointer = InFile;
 	int VertexCount = 0;
 	int NormalCount = 0;
 	int UVCount = 0;
 	int FaceCount = 0;
 	int ObjectCount = 0;
-	OBJKeyword Keyword;
+	Keyword Keyword;
 
 	while (*Pointer != '\0') {
-		Keyword = GetOBJKeyword(Pointer);
+		Keyword = GetKeyword(Pointer);
 		if (Keyword == Comment) {
 			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
 			++Pointer;
@@ -366,24 +366,24 @@ void MeshLoader::PrepareOBJData(const Char * InFile, OBJFileData& ModelData) {
 			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
 			if (ObjectCount++ <= 0) continue;
 
-			ModelData.Objects.push_back(OBJObjectData());
+			ModelData.Objects.push_back(ObjectData());
 			continue;
 		}
 
 		++Pointer;
 	}
 	
-	ModelData.Objects.push_back(OBJObjectData());
+	ModelData.Objects.push_back(ObjectData());
 	ModelData.ListPositions.resize(VertexCount);
 	ModelData.ListNormals.resize(NormalCount);
 	ModelData.ListUVs.resize(UVCount);
 	ModelData.VertexIndices.reserve(FaceCount * 4);
 }
 
-bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std::vector<MeshVertices> * Vertices, bool hasOptimize) {
+bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vector<MeshVertices> * Vertices, bool hasOptimize) {
 	if (File == NULL || !File->IsValid()) return false;
 
-	OBJFileData ModelData;
+	FileData ModelData;
 	int VertexIndexCount = 0;
 
 	// --- Read File
@@ -396,8 +396,8 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 		String* MemoryText = new String();
 		File->ReadNarrowStream(MemoryText);
 
-		PrepareOBJData(MemoryText->c_str(), ModelData);
-		size_t LineCount = ReadOBJByLine(MemoryText->c_str(), ModelData);
+		PrepareData(MemoryText->c_str(), ModelData);
+		size_t LineCount = ReadByLine(MemoryText->c_str(), ModelData);
 		delete MemoryText;
 
 		Timer.Stop();
@@ -427,7 +427,7 @@ bool MeshLoader::FromOBJ(FileStream * File, std::vector<MeshFaces> * Faces, std:
 	Debug::Timer Timer;
 	Timer.Start();
 	for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
-		OBJObjectData* Data = &ModelData.Objects[ObjectCount];
+		ObjectData* Data = &ModelData.Objects[ObjectCount];
 		Vertices->push_back(MeshVertices());
 		Faces->push_back(MeshFaces());
 		int InitialCount = Count;
