@@ -1375,7 +1375,7 @@ struct ExtractZlib { // Zlib decompression and information extraction
       BFINAL = readBitFromStream(bp, &in[inpos]);
       unsigned long BTYPE = readBitFromStream(bp, &in[inpos]); BTYPE += 2 * readBitFromStream(bp, &in[inpos]);
       zlibinfo->resize(zlibinfo->size() + 1);
-      zlibinfo->back().btype = BTYPE;
+      zlibinfo->back().btype = (int)BTYPE;
       if(BTYPE == 3) { error = 20; return; } //error: invalid BTYPE
       else if(BTYPE == 0) inflateNoCompression(out, &in[inpos], bp, pos, in.size());
       else inflateHuffmanBlock(out, &in[inpos], bp, pos, in.size(), BTYPE);
@@ -1415,18 +1415,18 @@ struct ExtractZlib { // Zlib decompression and information extraction
     size_t HLIT =  readBitsFromStream(bp, in, 5) + 257; //number of literal/length codes + 257
     size_t HDIST = readBitsFromStream(bp, in, 5) + 1; //number of dist codes + 1
     size_t HCLEN = readBitsFromStream(bp, in, 4) + 4; //number of code length codes + 4
-    zlibinfo->back().hlit = HLIT - 257;
-    zlibinfo->back().hdist = HDIST - 1;
-    zlibinfo->back().hclen = HCLEN - 4;
+    zlibinfo->back().hlit = (int)HLIT - 257;
+    zlibinfo->back().hdist = (int)HDIST - 1;
+    zlibinfo->back().hclen = (int)HCLEN - 4;
     std::vector<unsigned long> codelengthcode(19); //lengths of tree to decode the lengths of the dynamic tree
     for(size_t i = 0; i < 19; i++) codelengthcode[CLCL[i]] = (i < HCLEN) ? readBitsFromStream(bp, in, 3) : 0;
     //code length code lengths
-    for(size_t i = 0; i < codelengthcode.size(); i++) zlibinfo->back().clcl.push_back(codelengthcode[i]);
+    for(size_t i = 0; i < codelengthcode.size(); i++) zlibinfo->back().clcl.push_back((int)codelengthcode[i]);
     error = codelengthcodetree.makeFromLengths(codelengthcode, 7); if(error) return;
     size_t i = 0, replength;
     while(i < HLIT + HDIST) {
       unsigned long code = huffmanDecodeSymbol(in, bp, codelengthcodetree, inlength); if(error) return;
-      zlibinfo->back().treecodes.push_back(code); //tree symbol code
+      zlibinfo->back().treecodes.push_back((int)code); //tree symbol code
       if(code <= 15)  { if(i < HLIT) bitlen[i++] = code; else bitlenD[i++ - HLIT] = code; } //a length code
       else if(code == 16) { //repeat previous
         if(bp >> 3 >= inlength) { error = 50; return; } //error, bit pointer jumps past memory
@@ -1441,7 +1441,7 @@ struct ExtractZlib { // Zlib decompression and information extraction
       } else if(code == 17) { //repeat "0" 3-10 times
         if(bp >> 3 >= inlength) { error = 50; return; } //error, bit pointer jumps past memory
         replength = 3 + readBitsFromStream(bp, in, 3);
-        zlibinfo->back().treecodes.push_back(replength); //tree symbol code repetitions
+        zlibinfo->back().treecodes.push_back((int)replength); //tree symbol code repetitions
         for(size_t n = 0; n < replength; n++) { //repeat this value in the next lengths
           if(i >= HLIT + HDIST) { error = 14; return; } //error: i is larger than the amount of codes
           if(i < HLIT) bitlen[i++] = 0; else bitlenD[i++ - HLIT] = 0;
@@ -1449,7 +1449,7 @@ struct ExtractZlib { // Zlib decompression and information extraction
       } else if(code == 18) { //repeat "0" 11-138 times
         if(bp >> 3 >= inlength) { error = 50; return; } //error, bit pointer jumps past memory
         replength = 11 + readBitsFromStream(bp, in, 7);
-        zlibinfo->back().treecodes.push_back(replength); //tree symbol code repetitions
+        zlibinfo->back().treecodes.push_back((int)replength); //tree symbol code repetitions
         for(size_t n = 0; n < replength; n++) { //repeat this value in the next lengths
           if(i >= HLIT + HDIST) { error = 15; return; } //error: i is larger than the amount of codes
           if(i < HLIT) bitlen[i++] = 0; else bitlenD[i++ - HLIT] = 0;
@@ -1464,9 +1464,9 @@ struct ExtractZlib { // Zlib decompression and information extraction
     if(error) return;
     zlibinfo->back().treebits = bp - bpstart;
     //lit/len/end symbol lengths
-    for(size_t j = 0; j < bitlen.size(); j++) zlibinfo->back().litlenlengths.push_back(bitlen[j]);
+    for(size_t j = 0; j < bitlen.size(); j++) zlibinfo->back().litlenlengths.push_back((int)bitlen[j]);
     //dist lengths
-    for(size_t j = 0; j < bitlenD.size(); j++) zlibinfo->back().distlengths.push_back(bitlenD[j]);
+    for(size_t j = 0; j < bitlenD.size(); j++) zlibinfo->back().distlengths.push_back((int)bitlenD[j]);
   }
 
   void inflateHuffmanBlock(std::vector<unsigned char>& out,
@@ -1477,7 +1477,7 @@ struct ExtractZlib { // Zlib decompression and information extraction
     for(;;) {
       unsigned long code = huffmanDecodeSymbol(in, bp, codetree, inlength); if(error) return;
       numcodes++;
-      zlibinfo->back().lz77_lcode.push_back(code); //output code
+      zlibinfo->back().lz77_lcode.push_back((int)code); //output code
       zlibinfo->back().lz77_dcode.push_back(0);
       zlibinfo->back().lz77_lbits.push_back(0);
       zlibinfo->back().lz77_dbits.push_back(0);
@@ -1506,11 +1506,11 @@ struct ExtractZlib { // Zlib decompression and information extraction
           if(back >= start) back = start - dist;
         }
         numlen++;
-        zlibinfo->back().lz77_dcode.back() = codeD; //output distance code
-        zlibinfo->back().lz77_lbits.back() = numextrabits; //output length extra bits
-        zlibinfo->back().lz77_dbits.back() = numextrabitsD; //output dist extra bits
-        zlibinfo->back().lz77_lvalue.back() = length; //output length
-        zlibinfo->back().lz77_dvalue.back() = dist; //output dist
+        zlibinfo->back().lz77_dcode.back() = (int)codeD; //output distance code
+        zlibinfo->back().lz77_lbits.back() = (int)numextrabits; //output length extra bits
+        zlibinfo->back().lz77_dbits.back() = (int)numextrabitsD; //output dist extra bits
+        zlibinfo->back().lz77_lvalue.back() = (int)length; //output length
+        zlibinfo->back().lz77_dvalue.back() = (int)dist; //output dist
       }
     }
     zlibinfo->back().numlit = numlit; //output number of literal symbols
