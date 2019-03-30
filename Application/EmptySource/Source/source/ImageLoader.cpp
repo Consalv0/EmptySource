@@ -6,35 +6,35 @@
 #include "External/LodePNG/lodepng.h"
 // #include "External/LodePNG/lodepng_util.h"
 
-bool JPEGLoader::Load(const Bitmap<float>& RefBitmap, FileStream* File) {
+bool JPEGLoader::Load(const Bitmap<FloatRed>& RefBitmap, FileStream* File) {
 	return false;
 }
 
-bool PNGLoader::Load(Bitmap<_RGBA>& RefBitmap, FileStream * File) {
+bool PNGLoader::Load(Bitmap<UCharRGBA>& RefBitmap, FileStream * File) {
 	TArray<unsigned char> Image;
 	unsigned int Width, Height;
 	lodepng::State State;
 	lodepng::decode(Image, Width, Height, WStringToString(File->GetPath()), LodePNGColorType::LCT_RGBA);
 	
-	RefBitmap = Bitmap<_RGBA>(Width, Height);
-	memmove( &RefBitmap[0], &Image[0], Width * Height * sizeof(_RGBA) );
+	RefBitmap = Bitmap<UCharRGBA>(Width, Height);
+	memmove( &RefBitmap[0], &Image[0], Width * Height * sizeof(UCharRGBA) );
 
 	return true;
 }
 
-bool PNGLoader::Load(Bitmap<_RGB>& RefBitmap, FileStream * File) {
+bool PNGLoader::Load(Bitmap<UCharRGB>& RefBitmap, FileStream * File) {
 	TArray<unsigned char> Image;
 	unsigned int Width, Height;
 	lodepng::State State;
 	lodepng::decode(Image, Width, Height, WStringToString(File->GetPath()), LodePNGColorType::LCT_RGB);
 
-	RefBitmap = Bitmap<_RGB>(Width, Height);
-	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(_RGB));
+	RefBitmap = Bitmap<UCharRGB>(Width, Height);
+	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(UCharRGB));
 
 	return true;
 }
 
-bool PNGLoader::Write(const Bitmap<float>& RefBitmap, FileStream * File) {
+bool PNGLoader::Write(const Bitmap<FloatRed>& RefBitmap, FileStream * File) {
 	TArray<unsigned char> Pixels(RefBitmap.GetWidth() * RefBitmap.GetHeight());
 	TArray<unsigned char>::iterator it = Pixels.begin();
 	for (int y = RefBitmap.GetHeight() - 1; y >= 0; --y)

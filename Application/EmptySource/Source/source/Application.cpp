@@ -156,7 +156,7 @@ void CoreApplication::MainLoop() {
     // // --- Cientific Symbols
 	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
-	Bitmap<_RGBA> ExternalImage;
+	Bitmap<UCharRGBA> ExternalImage;
 	PNGLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
 
 	Texture2D ExternalImageTexture = Texture2D(
@@ -169,7 +169,7 @@ void CoreApplication::MainLoop() {
 		ExternalImage.PointerToValue()
 	);
 
-	Bitmap<unsigned char> FontAtlas;
+	Bitmap<UCharRed> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
     
 	Texture2D FontMap = Texture2D(

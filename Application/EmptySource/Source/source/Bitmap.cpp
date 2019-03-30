@@ -65,7 +65,9 @@ const T & Bitmap<T>::operator()(int x, int y) const {
 	return Data[y * Width + x];
 }
 
-template class Bitmap<float>;
-template class Bitmap<_Red>;
-template class Bitmap<_RGB>;
-template class Bitmap<_RGBA>;
+template class Bitmap<UCharRed>;
+template class Bitmap<UCharRGB>;
+template class Bitmap<UCharRGBA>;
+template class Bitmap<FloatRed>;
+template class Bitmap<FloatRGB>;
+template class Bitmap<FloatRGBA>;

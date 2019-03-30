@@ -2,9 +2,12 @@
 
 #include <functional>
 
-typedef unsigned char _Red;
-typedef struct { unsigned char R; unsigned char G; unsigned char B; } _RGB;
-typedef struct { unsigned char R; unsigned char G; unsigned char B; unsigned char A; } _RGBA;
+typedef unsigned char UCharRed;
+typedef struct { unsigned char R; unsigned char G; unsigned char B; } UCharRGB;
+typedef struct { unsigned char R; unsigned char G; unsigned char B; unsigned char A; } UCharRGBA;
+typedef float FloatRed;
+typedef struct { float R; float G; float B; } FloatRGB;
+typedef struct { float R; float G; float B; float A; } FloatRGBA;
 
 template <typename T>
 class Bitmap {

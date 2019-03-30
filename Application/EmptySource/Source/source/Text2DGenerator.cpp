@@ -90,10 +90,10 @@ void Text2DGenerator::Clear() {
 	LoadedCharacters.clear();
 }
 
-bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
+bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas) {
 	int Value = 0;
 	int AtlasSizeSqr = AtlasSize * AtlasSize;
-	Atlas = Bitmap<unsigned char>(AtlasSize, AtlasSize);
+	Atlas = Bitmap<UCharRed>(AtlasSize, AtlasSize);
 
 	for (int i = 0; i < AtlasSizeSqr; i++) {
 		// if (i % GlyphHeight == 0 || (i / (AtlasSize)) % GlyphHeight == 0) {
@@ -104,7 +104,7 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 		// }
 	}
 	
-	TexturePacking<Bitmap<float>> TextureAtlas;
+	TexturePacking<Bitmap<FloatRed>> TextureAtlas;
 	TextureAtlas.CreateTexture({ AtlasSize, AtlasSize });
 
 	size_t Count = 0;
@@ -118,7 +118,7 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas) {
 
 	for (TArray<FontGlyph * >::const_iterator Begin = GlyphArray.begin(); Begin != GlyphArray.end(); Begin++) {
 		FontGlyph * Character = *Begin;
-		TexturePacking<Bitmap<float>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
+		TexturePacking<Bitmap<FloatRed>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
 		if (!ResultNode.bValid || ResultNode.Element == NULL) {
 			Debug::Log(Debug::LogError, L"Error writting texture of %lc(%d)", Character->UnicodeValue, Character->UnicodeValue);
 			continue;

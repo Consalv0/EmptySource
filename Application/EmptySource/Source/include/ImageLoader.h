@@ -5,8 +5,8 @@
 
 class PNGLoader {
 public:
-	static bool Load(Bitmap<_RGBA> & RefBitmap, FileStream * File);
-	static bool Load(Bitmap<_RGB> & RefBitmap, FileStream * File);
+	static bool Load(Bitmap<UCharRGBA> & RefBitmap, FileStream * File);
+	static bool Load(Bitmap<UCharRGB> & RefBitmap, FileStream * File);
 	static bool Write(const Bitmap<float> & RefBitmap, FileStream * File);
 };
 
