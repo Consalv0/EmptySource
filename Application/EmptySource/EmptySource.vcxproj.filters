@@ -58,6 +58,9 @@
     <Filter Include="Header Files\External\tsl">
       <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\External\LodePNG">
+      <UniqueIdentifier>{209bf964-c5fd-4bd8-ab89-8aeca03d769e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\External\GLFW\glfw3.h">
@@ -519,6 +522,15 @@
     <ClInclude Include="Source\include\Utility\TextFormattingMath.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\External\LodePNG\lodepng.h">
+      <Filter>Header Files\External\LodePNG</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ImageLoader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\External\LodePNG\lodepng_util.h">
+      <Filter>Header Files\External\LodePNG</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">
@@ -619,6 +631,15 @@
     </ClCompile>
     <ClCompile Include="Source\source\Text.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\External\LodePNG\lodepng.cpp">
+      <Filter>Header Files\External\LodePNG</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ImageLoader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\External\LodePNG\lodepng_util.cpp">
+      <Filter>Header Files\External\LodePNG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

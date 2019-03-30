@@ -256,6 +256,8 @@
     <ClInclude Include="Source\External\GLAD\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
+    <ClInclude Include="Source\External\LodePNG\lodepng.h" />
+    <ClInclude Include="Source\External\LodePNG\lodepng_util.h" />
     <ClInclude Include="Source\External\tsl\robin_growth_policy.h" />
     <ClInclude Include="Source\External\tsl\robin_hash.h" />
     <ClInclude Include="Source\External\tsl\robin_map.h" />
@@ -275,6 +277,7 @@
     <ClInclude Include="Source\include\Glyph.h" />
     <ClInclude Include="Source\include\Graphics.h" />
     <ClInclude Include="Source\include\IIdentifier.h" />
+    <ClInclude Include="Source\include\ImageLoader.h" />
     <ClInclude Include="Source\include\Material.h" />
     <ClInclude Include="Source\include\Math\Box2D.h" />
     <ClInclude Include="Source\include\Math\CoreMath.h" />
@@ -315,6 +318,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c" />
+    <ClCompile Include="Source\External\LodePNG\lodepng.cpp" />
+    <ClCompile Include="Source\External\LodePNG\lodepng_util.cpp" />
     <ClCompile Include="Source\source\Application.cpp" />
     <ClCompile Include="Source\source\Bitmap.cpp" />
     <ClCompile Include="Source\source\CoreTime.cpp" />
@@ -325,6 +330,7 @@
     <ClCompile Include="Source\source\Font.cpp" />
     <ClCompile Include="Source\source\Glyph.cpp" />
     <ClCompile Include="Source\source\IIdentifier.cpp" />
+    <ClCompile Include="Source\source\ImageLoader.cpp" />
     <ClCompile Include="Source\source\main.cpp" />
     <ClCompile Include="Source\source\Material.cpp" />
     <ClCompile Include="Source\source\Mesh.cpp" />
