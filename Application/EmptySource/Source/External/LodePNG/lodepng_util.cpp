@@ -118,12 +118,12 @@ unsigned insertChunks(std::vector<unsigned char>& png,
     if (next <= chunk) return 1; // integer overflow
 
     if(name == "PLTE") {
-      if(l0 == 0) l0 = chunk - begin + 8;
+      if(l0 == 0) l0 = long(chunk - begin + 8);
     } else if(name == "IDAT") {
-      if(l0 == 0) l0 = chunk - begin + 8;
-      if(l1 == 0) l1 = chunk - begin + 8;
+      if(l0 == 0) l0 = long(chunk - begin + 8);
+      if(l1 == 0) l1 = long(chunk - begin + 8);
     } else if(name == "IEND") {
-      if(l2 == 0) l2 = chunk - begin + 8;
+      if(l2 == 0) l2 = long(chunk - begin + 8);
     }
 
     chunk = next;
@@ -465,7 +465,7 @@ static int decodeICCInt32(const unsigned char* data, size_t size, size_t* pos) {
 }
 
 static float decodeICC15Fixed16(const unsigned char* data, size_t size, size_t* pos) {
-  return decodeICCInt32(data, size, pos) / 65536.0;
+  return decodeICCInt32(data, size, pos) / 65536.0F;
 }
 
 static unsigned isICCword(const unsigned char* data, size_t size, size_t pos, const char* word) {
@@ -643,9 +643,9 @@ static unsigned parseICC(LodePNGICC* icc, const unsigned char* data, size_t size
 static void mulMatrix(float* x2, float* y2, float* z2, const float* m, double x, double y, double z) {
   /* double used as inputs even though in general the images are float, so the sums happen in
   double precision, because float can give numerical problems for nearby values */
-  *x2 = x * m[0] + y * m[1] + z * m[2];
-  *y2 = x * m[3] + y * m[4] + z * m[5];
-  *z2 = x * m[6] + y * m[7] + z * m[8];
+  *x2 = float(x * m[0] + y * m[1] + z * m[2]);
+  *y2 = float(x * m[3] + y * m[4] + z * m[5]);
+  *z2 = float(x * m[6] + y * m[7] + z * m[8]);
 }
 
 static void mulMatrixMatrix(float* result, const float* a, const float* b) {
@@ -669,15 +669,15 @@ static unsigned invMatrix(float* m) {
   double d = 1.0 / (m[0] * e0 + m[1] * e3 + m[2] * e6);
   float result[9];
   if(abs(d) > 1e15) return 1; /* error, likely not invertible */
-  result[0] = e0 * d;
-  result[1] = ((double)m[2] * m[7] - (double)m[1] * m[8]) * d;
-  result[2] = ((double)m[1] * m[5] - (double)m[2] * m[4]) * d;
-  result[3] = e3 * d;
-  result[4] = ((double)m[0] * m[8] - (double)m[2] * m[6]) * d;
-  result[5] = ((double)m[3] * m[2] - (double)m[0] * m[5]) * d;
-  result[6] = e6 * d;
-  result[7] = ((double)m[6] * m[1] - (double)m[0] * m[7]) * d;
-  result[8] = ((double)m[0] * m[4] - (double)m[3] * m[1]) * d;
+  result[0] = float(e0 * d);
+  result[1] = float(((double)m[2] * m[7] - (double)m[1] * m[8]) * d);
+  result[2] = float(((double)m[1] * m[5] - (double)m[2] * m[4]) * d);
+  result[3] = float(e3 * d);
+  result[4] = float(((double)m[0] * m[8] - (double)m[2] * m[6]) * d);
+  result[5] = float(((double)m[3] * m[2] - (double)m[0] * m[5]) * d);
+  result[6] = float(e6 * d);
+  result[7] = float(((double)m[6] * m[1] - (double)m[0] * m[7]) * d);
+  result[8] = float(((double)m[0] * m[4] - (double)m[3] * m[1]) * d);
   for(i = 0; i < 9; i++) m[i] = result[i];
   return 0; /* ok */
 }
@@ -725,24 +725,24 @@ static unsigned getAdaptationMatrix(float* m, int type,
                                     float wx1, float wy1, float wz1) {
   int i;
   static const float bradford[9] = {
-    0.8951, 0.2664, -0.1614,
-    -0.7502, 1.7135, 0.0367,
-    0.0389, -0.0685, 1.0296
+    0.8951F, 0.2664F, -0.1614F,
+    -0.7502F, 1.7135F, 0.0367F,
+    0.0389F, -0.0685F, 1.0296F
   };
   static const float bradfordinv[9] = {
-    0.9869929, -0.1470543, 0.1599627,
-    0.4323053, 0.5183603, 0.0492912,
-   -0.0085287, 0.0400428, 0.9684867
+    0.9869929F, -0.1470543F, 0.1599627F,
+    0.4323053F, 0.5183603F, 0.0492912F,
+   -0.0085287F, 0.0400428F, 0.9684867F
   };
   static const float vonkries[9] = {
-    0.4002400, 0.7076000, -0.0808100,
-    -0.2263000, 1.1653200, 0.0457000,
-    0.0000000, 0.0000000, 0.9182200,
+    0.4002400F, 0.7076000F, -0.0808100F,
+    -0.2263000F, 1.1653200F, 0.0457000F,
+    0.0000000F, 0.0000000F, 0.9182200F,
   };
   static const float vonkriesinv[9] = {
-    1.8599364, -1.1293816, 0.2198974,
-    0.3611914, 0.6388125, -0.0000064,
-   0.0000000, 0.0000000, 1.0890636
+    1.8599364F, -1.1293816F, 0.2198974F,
+    0.3611914F, 0.6388125F, -0.0000064F,
+   0.0000000F, 0.0000000F, 1.0890636F
   };
   if(type == 0) {
     for(i = 0; i < 9; i++) m[i] = 0;
@@ -774,7 +774,7 @@ bits is the amount of input bits of the integer image values, it must be 8 or 16
 type is 0 for power, 1 for srgb (then gamma parameter is ignored since the srgb formula is used) */
 void makeGammaTable(float* result, int bits, int type, float gamma) {
   size_t i;
-  size_t num = 1u << bits;
+  size_t num = size_t(1u) << bits;
   float mul = 1.0f / (num - 1);
   if(type == 1) { /* sRGB */
     for(i = 0; i < num; i++) {
@@ -1052,14 +1052,14 @@ unsigned convertToXYZ(float* out, float whitepoint[3], const unsigned char* in,
         out[i * 4 + 0] = gammatable_r[data[i * 8 + 0] * 256u + data[i * 8 + 1]];
         out[i * 4 + 1] = gammatable_g[data[i * 8 + 2] * 256u + data[i * 8 + 3]];
         out[i * 4 + 2] = gammatable_b[data[i * 8 + 4] * 256u + data[i * 8 + 5]];
-        out[i * 4 + 3] = (data[i * 8 + 6] * 256 + data[i * 8 + 7]) * (1 / 65535.0);
+        out[i * 4 + 3] = (data[i * 8 + 6] * 256 + data[i * 8 + 7]) * (1 / 65535.0F);
       }
     } else {
       for(i = 0; i < n; i++) {
         out[i * 4 + 0] = gammatable_r[data[i * 4 + 0]];
         out[i * 4 + 1] = gammatable_g[data[i * 4 + 1]];
         out[i * 4 + 2] = gammatable_b[data[i * 4 + 2]];
-        out[i * 4 + 3] = data[i * 4 + 3] * (1 / 255.0);
+        out[i * 4 + 3] = data[i * 4 + 3] * (1 / 255.0F);
       }
     }
   }
@@ -1069,17 +1069,17 @@ unsigned convertToXYZ(float* out, float whitepoint[3], const unsigned char* in,
   (void)backwardTRC;
   if(bit16) {
     for(i = 0; i < n; i++) {
-      out[i * 4 + 0] = (data[i * 8 + 0] * 256 + data[i * 8 + 1]) * (1 / 65535.0);
-      out[i * 4 + 1] = (data[i * 8 + 2] * 256 + data[i * 8 + 3]) * (1 / 65535.0);
-      out[i * 4 + 2] = (data[i * 8 + 4] * 256 + data[i * 8 + 5]) * (1 / 65535.0);
-      out[i * 4 + 3] = (data[i * 8 + 6] * 256 + data[i * 8 + 7]) * (1 / 65535.0);
+      out[i * 4 + 0] = (data[i * 8 + 0] * 256 + data[i * 8 + 1]) * (1 / 65535.0F);
+      out[i * 4 + 1] = (data[i * 8 + 2] * 256 + data[i * 8 + 3]) * (1 / 65535.0F);
+      out[i * 4 + 2] = (data[i * 8 + 4] * 256 + data[i * 8 + 5]) * (1 / 65535.0F);
+      out[i * 4 + 3] = (data[i * 8 + 6] * 256 + data[i * 8 + 7]) * (1 / 65535.0F);
     }
   } else {
     for(i = 0; i < n; i++) {
-      out[i * 4 + 0] = data[i * 4 + 0] * (1 / 255.0);
-      out[i * 4 + 1] = data[i * 4 + 1] * (1 / 255.0);
-      out[i * 4 + 2] = data[i * 4 + 2] * (1 / 255.0);
-      out[i * 4 + 3] = data[i * 4 + 3] * (1 / 255.0);
+      out[i * 4 + 0] = data[i * 4 + 0] * (1 / 255.0F);
+      out[i * 4 + 1] = data[i * 4 + 1] * (1 / 255.0F);
+      out[i * 4 + 2] = data[i * 4 + 2] * (1 / 255.0F);
+      out[i * 4 + 3] = data[i * 4 + 3] * (1 / 255.0F);
     }
   }
 #endif /* !DISABLE_GAMMA */
