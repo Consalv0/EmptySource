@@ -26,6 +26,7 @@
 #include "../include/RenderTarget.h"
 #include "../include/Texture2D.h"
 #include "../include/Texture3D.h"
+#include "../include/ImageLoader.h"
 
 // int FindBoundingBox(int N, MeshVertex * Vertices);
 // int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
@@ -155,6 +156,19 @@ void CoreApplication::MainLoop() {
     // // --- Cientific Symbols
 	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
+	Bitmap<_RGBA> ExternalImage;
+	PNGLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+
+	Texture2D ExternalImageTexture = Texture2D(
+		IntVector2(ExternalImage.GetWidth(), ExternalImage.GetHeight()),
+		Graphics::CF_RGBA,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Border,
+		Graphics::CF_RGBA,
+		GL_UNSIGNED_BYTE,
+		ExternalImage.PointerToValue()
+	);
+
 	Bitmap<unsigned char> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
     
@@ -256,25 +270,25 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	MeshLoader::FromOBJ(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
         OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
     
-	MeshLoader::FromOBJ(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
+	OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> QuadModels;;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 		QuadModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 	}
     
-	MeshLoader::FromOBJ(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
+	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
 	TArray<Mesh> LightModels;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
         LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
     }
-    
+
 	double InputTimeSum = 0;
 	int CurrentRenderText = 0;
 	const int TextCount = 1;
@@ -296,7 +310,7 @@ void CoreApplication::MainLoop() {
 		ProjectionMatrix = Matrix4x4::Perspective(
 			60.0F * MathConstants::DegreeToRad,	// Aperute angle
 			MainWindow->AspectRatio(),	        // Aspect ratio
-			0.3F,						        // Near plane
+			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
 
@@ -470,21 +484,19 @@ void CoreApplication::MainLoop() {
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
+			glViewport(0, 0, ExternalImageTexture.GetDimension().x, ExternalImageTexture.GetDimension().y);
 			
-			RenderTextMaterial.Use();
+			RenderTextureMaterial.Use();
 
-			RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
-			RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
-			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
-			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
+			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", ExternalImageTexture.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
 			
 			QuadModels[0].BindVertexArray();
 			
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-			RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
 				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
 				ModelMatrixBuffer
 			);
