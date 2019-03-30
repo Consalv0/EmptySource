@@ -1,5 +1,8 @@
 #pragma once
 
+#include <fstream>
+#include "../include/Text.h"
+
 struct FileStream {
 private:
 	std::wfstream* Stream;
