@@ -4,9 +4,9 @@
 #include "../include/Mesh.h"
 #include "../include/Core.h"
 
-class MeshLoader {
+class OBJLoader {
 private:
-	struct OBJObjectData {
+	struct ObjectData {
 		String Name;
 		int VertexIndicesCount = 0;
 		int PositionCount = 0;
@@ -14,8 +14,8 @@ private:
 		int UVsCount = 0;
 	};
 
-	struct OBJFileData {
-		TArray<OBJObjectData> Objects;
+	struct FileData {
+		TArray<ObjectData> Objects;
 		TArray<IntVector3> VertexIndices;
 		MeshVector3D ListPositions;
 		MeshVector3D ListNormals;
@@ -26,11 +26,11 @@ private:
 		int UVsCount = 0;
 	};
 
-	enum OBJKeyword {
+	enum Keyword {
 		Comment, Object, Vertex, Normal, TextureCoord, Face, CSType, Undefined
 	};
 
-	static OBJKeyword GetOBJKeyword(const Char* Line);
+	static Keyword GetKeyword(const Char* Line);
 
 	static bool GetSimilarVertexIndex(
 		const MeshVertex & Vertex,
@@ -42,36 +42,36 @@ private:
 	static void ExtractVector2(const Char * Text, Vector2* Vertex);
 	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
 
-	static size_t ReadOBJByLine(
+	static size_t ReadByLine(
 		const Char * InFile,
-		OBJFileData& FileData
+		FileData& FileData
 	);
 
-	static void PrepareOBJData(
+	static void PrepareData(
 		const Char * InFile,
-		OBJFileData& FileData
+		FileData& FileData
 	);
 
-	static void ParseOBJLine(
-		const OBJKeyword& Keyword,
+	static void ParseLine(
+		const Keyword& Keyword,
 		Char* Line,
-		OBJFileData& FileData,
+		FileData& FileData,
 		int ObjectCount
 	);
 
 public:
 	/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
 	  * there's a way to optimize the vertices. */
-	static bool FromOBJ(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
+	static bool Load(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
 };
 
-inline void hash_combine(std::size_t& seed) { }
+inline void HashCombine(std::size_t& seed) { }
 
 template <typename T, typename... Rest>
-inline void hash_combine(std::size_t& seed, const T& v, Rest... rest) {
-	std::hash<T> hasher;
-	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	hash_combine(seed, rest...);
+inline void HashCombine(std::size_t& seed, const T& v, Rest... rest) {
+	std::hash<T> Hasher;
+	seed ^= Hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+	HashCombine(seed, rest...);
 }
 
 #define MAKE_HASHABLE(type, ...) \
@@ -79,7 +79,7 @@ inline void hash_combine(std::size_t& seed, const T& v, Rest... rest) {
         template<> struct hash<type> {\
             std::size_t operator()(const type &t) const {\
                 std::size_t ret = 0;\
-                hash_combine(ret, __VA_ARGS__);\
+                HashCombine(ret, __VA_ARGS__);\
                 return ret;\
             }\
         };\
