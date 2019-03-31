@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../include/FileManager.h"
 #include "../include/FileStream.h"
 
-typedef std::vector<FileStream*> FileList;
+typedef TArray<FileStream*> FileList;
 
 class FileManager {
 private:
