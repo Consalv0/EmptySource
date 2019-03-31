@@ -81,8 +81,10 @@ const T & Bitmap<T>::operator()(int x, int y) const {
 }
 
 template class Bitmap<UCharRed>;
+template class Bitmap<UCharRG>;
 template class Bitmap<UCharRGB>;
 template class Bitmap<UCharRGBA>;
 template class Bitmap<FloatRed>;
+template class Bitmap<FloatRG>;
 template class Bitmap<FloatRGB>;
 template class Bitmap<FloatRGBA>;
