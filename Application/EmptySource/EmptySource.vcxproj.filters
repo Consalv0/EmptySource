@@ -55,9 +55,6 @@
     <Filter Include="Header Files\External\FreeType\Internal\Services">
       <UniqueIdentifier>{77cefc87-7bcd-4c00-b9d4-1783f4a76dbb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\LodePNG">
-      <UniqueIdentifier>{209bf964-c5fd-4bd8-ab89-8aeca03d769e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\External\TSL">
       <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
     </Filter>
@@ -525,14 +522,8 @@
     <ClInclude Include="Source\include\Utility\TextFormattingMath.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\External\LodePNG\lodepng.h">
-      <Filter>Header Files\External\LodePNG</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\ImageLoader.h">
       <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\LodePNG\lodepng_util.h">
-      <Filter>Header Files\External\LodePNG</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\STB\stb_image.h">
       <Filter>Header Files\External\STB</Filter>
@@ -641,14 +632,8 @@
     <ClCompile Include="Source\source\Text.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\External\LodePNG\lodepng.cpp">
-      <Filter>Header Files\External\LodePNG</Filter>
-    </ClCompile>
     <ClCompile Include="Source\source\ImageLoader.cpp">
       <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\External\LodePNG\lodepng_util.cpp">
-      <Filter>Header Files\External\LodePNG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

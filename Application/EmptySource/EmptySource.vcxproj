@@ -256,8 +256,6 @@
     <ClInclude Include="Source\External\GLAD\khrplatform.h" />
     <ClInclude Include="Source\External\GLFW\glfw3.h" />
     <ClInclude Include="Source\External\GLFW\glfw3native.h" />
-    <ClInclude Include="Source\External\LodePNG\lodepng.h" />
-    <ClInclude Include="Source\External\LodePNG\lodepng_util.h" />
     <ClInclude Include="Source\External\STB\stb_image.h" />
     <ClInclude Include="Source\External\STB\stb_image_write.h" />
     <ClInclude Include="Source\External\tsl\robin_growth_policy.h" />
@@ -320,8 +318,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c" />
-    <ClCompile Include="Source\External\LodePNG\lodepng.cpp" />
-    <ClCompile Include="Source\External\LodePNG\lodepng_util.cpp" />
     <ClCompile Include="Source\source\Application.cpp" />
     <ClCompile Include="Source\source\Bitmap.cpp" />
     <ClCompile Include="Source\source\CoreTime.cpp" />
