@@ -8,6 +8,14 @@
 #include "../include/MeshLoader.h"
 #include "../include/FileStream.h"
 
+// --- Visual Studio
+#ifdef _MSC_VER 
+#define strtok_r strtok_s
+#if (_MSC_VER >= 1310) 
+#pragma warning( disable : 4996 ) /*VS does not like fopen, but fopen_s is not standard C so unusable here*/
+#endif
+#endif
+
 // Original crack_atof version is at http://crackprogramming.blogspot.sg/2012/10/implement-atof.html
 // But it cannot convert floating point with high +/- exponent.
 // The version below by Tian Bo fixes that problem and improves performance by 10%
@@ -162,11 +170,8 @@ void OBJLoader::ParseLine(
 		// 0 = Vertex, 1 = TextureCoords, 2 = Normal
 		IntVector3 VertexIndex = IntVector3(1);
 		Char *LineState, *Token;
-#ifdef WIN32
-		Token = strtok_s(Line, " ", &LineState);
-#else
         Token = strtok_r(Line, " ", &LineState);
-#endif
+
 		int VertexCount = 0;
 
 		while (Token != NULL) {
@@ -174,32 +179,12 @@ void OBJLoader::ParseLine(
 
 			if (ObjectData->UVsCount <= 0) {
 				if (ObjectData->NormalCount <= 0) {
-#ifdef WIN32
-					Empty = sscanf_s(Token, "%d", &VertexIndex[0]);
-#else
                     Empty = sscanf(Token, "%d", &VertexIndex[0]);
-#endif
 				} else {
-#ifdef WIN32
-					Empty = sscanf_s(Token, "%d//%d", &VertexIndex[0], &VertexIndex[2]);
-#else
                     Empty = sscanf(Token, "%d//%d", &VertexIndex[0], &VertexIndex[2]);
-#endif
 				}
 			} else if (ObjectData->NormalCount <= 0) {
 				if (ObjectData->UVsCount <= 0) {
-#ifdef WIN32
-					Empty = sscanf_s(Token, "%d", &VertexIndex[0]);
-				} else {
-					Empty = sscanf_s(Token, "%d/%d", &VertexIndex[0], &VertexIndex[1]);
-				}
-			} else {
-				Empty = sscanf_s(Token, "%d/%d/%d",
-					&VertexIndex[0],
-					&VertexIndex[1],
-					&VertexIndex[2]
-				);
-#else
                     Empty = sscanf(Token, "%d", &VertexIndex[0]);
                 } else {
                     Empty = sscanf(Token, "%d/%d", &VertexIndex[0], &VertexIndex[1]);
@@ -210,13 +195,9 @@ void OBJLoader::ParseLine(
                     &VertexIndex[1],
                     &VertexIndex[2]
                 );
-#endif
 			}
-#ifdef WIN32
-			Token = strtok_s(NULL, " ", &LineState);
-#else
             Token = strtok_r(NULL, " ", &LineState);
-#endif
+
 			if (VertexIndex[0] < 0 && !bWarned) {
 				bWarned = true;
 				Debug::LogClearLine(Debug::LogWarning);
