@@ -157,7 +157,8 @@ void CoreApplication::MainLoop() {
 	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
 	Bitmap<UCharRGBA> ExternalImage;
-	PNGLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	// ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/BowlsDesignerSet001_COL_1K.jpg"));
 	ExternalImage.FlipVertically();
 
 	Texture2D ExternalImageTexture = Texture2D(
@@ -258,7 +259,7 @@ void CoreApplication::MainLoop() {
 
 	float MaterialMetalness = 0.F;
 	float MaterialRoughness = 0.54F;
-	float LightIntencity = 100.F;
+	float LightIntencity = 50.F;
 
 	TArray<Matrix4x4> Matrices;
 	Matrices.push_back(Matrix4x4::Translation({1, .5F, 0}).Inversed());
