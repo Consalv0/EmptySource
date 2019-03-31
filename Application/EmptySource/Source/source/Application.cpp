@@ -131,16 +131,16 @@ void CoreApplication::MainLoop() {
 
 	Font FontFace;
 	Font::InitializeFreeType();
-	FontFace.Initialize(FileManager::Open(L"Resources/Fonts/ArialUnicode.ttf"));
+	FontFace.Initialize(FileManager::Open(L"Resources/Fonts/SourceSansPro.ttf"));
     
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
 	TextGenerator.GlyphHeight = 32;
-	TextGenerator.AtlasSize = 1024;
-	TextGenerator.PixelRange = 2.F;
+	TextGenerator.AtlasSize = 512;
+	TextGenerator.PixelRange = 1.5F;
 	TextGenerator.Pivot = 0;
-    
-    TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
+
+	// TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
 	// // --- Basic Latin Unicode Range
 	// TextGenerator.PrepareCharacters(L'!', L'~');
 	// // --- Controls and Latin-1 Unicode Range
@@ -164,7 +164,7 @@ void CoreApplication::MainLoop() {
 	Texture2D ExternalImageTexture = Texture2D(
 		IntVector2(ExternalImage.GetWidth(), ExternalImage.GetHeight()),
 		Graphics::CF_RGBA,
-		Graphics::FM_MinMagLinear,
+		Graphics::FM_MinLinearMagNearest,
 		Graphics::AM_Border,
 		Graphics::CF_RGBA,
 		GL_UNSIGNED_BYTE,
@@ -191,7 +191,7 @@ void CoreApplication::MainLoop() {
 	Vector3 EyePosition = 0;
 	Vector3 LightPosition = Vector3(2, 1);
 	// --- Camera rotation, position Matrix
-	float ViewSpeed = 5;
+	float ViewSpeed = 3;
 	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix;
 
@@ -272,7 +272,7 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
@@ -292,8 +292,7 @@ void CoreApplication::MainLoop() {
     }
 
 	double InputTimeSum = 0;
-	int CurrentRenderText = 0;
-	const int TextCount = 1;
+	const int TextCount = 2;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
 	WString RenderingText[TextCount];
@@ -424,6 +423,28 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
+		if (MainWindow->GetKeyDown(GLFW_KEY_V)) {
+			for (int i = 0; i < 10; i++) {
+				RenderingText[1] += (unsigned long)(rand() % 0x3ff);
+			}
+		}
+
+		for (int i = 0; i < TextCount; i++) {
+			if (TextGenerator.FindCharacters(RenderingText[i]) > 0) {
+				TextGenerator.GenerateGlyphAtlas(FontAtlas);
+				FontMap.Delete();
+				FontMap = Texture2D(
+					IntVector2(TextGenerator.AtlasSize),
+					Graphics::CF_Red,
+					Graphics::FM_MinMagLinear,
+					Graphics::AM_Border,
+					Graphics::CF_Red,
+					GL_UNSIGNED_BYTE,
+					FontAtlas.PointerToValue()
+				);
+			}
+		}
+
 		// --- Draw the meshs(es) !
 		RenderTimeSum += Time::GetDeltaTime();
 		if (RenderTimeSum > (1 / 60)) {
@@ -487,24 +508,24 @@ void CoreApplication::MainLoop() {
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			// glViewport(0, 0, ExternalImageTexture.GetDimension().x, ExternalImageTexture.GetDimension().y);
-			// 
-			// RenderTextureMaterial.Use();
-			// 
-			// RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			// RenderTextureMaterial.SetFloat2Array("_MainTextureSize", ExternalImageTexture.GetDimension().FloatVector2().PointerToValue());
-			// RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			// RenderTextureMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
-			// 
-			// QuadModels[0].BindVertexArray();
-			// 
-			// Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-			// RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-			// 	ModelMatrixBuffer
-			// );
-			// 
-			// QuadModels[0].DrawInstanciated(1);
+			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
+			
+			RenderTextureMaterial.Use();
+			
+			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			
+			QuadModels[0].BindVertexArray();
+			
+			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+				ModelMatrixBuffer
+			);
+			
+			QuadModels[0].DrawInstanciated(1);
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// --- Activate corresponding render state
@@ -540,7 +561,7 @@ void CoreApplication::MainLoop() {
 				DynamicMesh.DrawElement();
 			}
 
-			RenderingText[CurrentRenderText] = Text::Formatted(
+			RenderingText[0] = Text::Formatted(
 				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
@@ -554,10 +575,6 @@ void CoreApplication::MainLoop() {
 				Text::FormatMath(EyePosition).c_str(),
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);
-
-			// MainWindow->SetWindowName(RenderingText[CurrentRenderText]);
-
-			CurrentRenderText = (CurrentRenderText + 1) < TextCount ? CurrentRenderText + 1 : 0;
 
 			MainWindow->EndOfFrame();
 			glBindVertexArray(0);

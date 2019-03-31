@@ -86,6 +86,46 @@ void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WStrin
 	Vertices->resize(InitialVerticesSize + VertexCount);
 }
 
+Vector2 Text2DGenerator::GetLenght(float HeightSize, const WString & InText) {
+	Vector2 Pivot = { 0, HeightSize / GlyphHeight };
+	if (InText.size() == 0) return Pivot;
+
+	float ScaleFactor = HeightSize / GlyphHeight;
+	size_t InTextSize = InText.size();
+
+	// --- Iterate through all characters
+	for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
+		FontGlyph * Glyph = LoadedCharacters[*Character];
+		if (Glyph == NULL) {
+			Pivot.x += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
+			continue;
+		}
+
+		Pivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+	}
+
+	return Pivot;
+}
+
+int Text2DGenerator::FindCharacters(const WString & InText) {
+	TextFont->SetGlyphHeight(GlyphHeight);
+	int Count = 0;
+	for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
+		if (LoadedCharacters.find(*Character) == LoadedCharacters.end()) {
+			Count++; FontGlyph Glyph;
+			if (TextFont->GetGlyph(Glyph, (unsigned int)*Character)) {
+				if (!Glyph.VectorShape.Validate())
+					Debug::Log(Debug::LogInfo | Debug::LogWarning, L" The geometry of the loaded shape is invalid.");
+				Glyph.VectorShape.Normalize();
+
+				Glyph.GenerateSDF(PixelRange);
+				LoadedCharacters.insert_or_assign(*Character, new FontGlyph(Glyph));
+			}
+		}
+	}
+	return Count;
+}
+
 void Text2DGenerator::Clear() {
 	LoadedCharacters.clear();
 }

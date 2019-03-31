@@ -25,6 +25,12 @@ public:
 	//* Generate mesh geometry for rasterization. 
 	void GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
 
+	//* Precalculate the leght of the text rendered.
+	Vector2 GetLenght(float HeightSize, const WString & InText);
+
+	//* Update needed characters (returns the number of characters added)
+	int FindCharacters(const WString & InText);
+
 	//* Clear generator memory
 	void Clear();
 
