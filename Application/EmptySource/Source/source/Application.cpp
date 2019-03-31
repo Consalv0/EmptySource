@@ -158,6 +158,7 @@ void CoreApplication::MainLoop() {
     
 	Bitmap<UCharRGBA> ExternalImage;
 	PNGLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	ExternalImage.FlipVertically();
 
 	Texture2D ExternalImageTexture = Texture2D(
 		IntVector2(ExternalImage.GetWidth(), ExternalImage.GetHeight()),
@@ -452,6 +453,7 @@ void CoreApplication::MainLoop() {
         
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
+			BaseMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
 
 			// Matrices[0] = Quaternion({0, 1, 0}, Time::GetDeltaTime()).ToMatrix4x4() * Matrices[0];
 			
@@ -484,24 +486,24 @@ void CoreApplication::MainLoop() {
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, ExternalImageTexture.GetDimension().x, ExternalImageTexture.GetDimension().y);
-			
-			RenderTextureMaterial.Use();
-
-			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", ExternalImageTexture.GetDimension().FloatVector2().PointerToValue());
-			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
-			
-			QuadModels[0].BindVertexArray();
-			
-			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-				ModelMatrixBuffer
-			);
-			
-			QuadModels[0].DrawInstanciated(1);
+			// glViewport(0, 0, ExternalImageTexture.GetDimension().x, ExternalImageTexture.GetDimension().y);
+			// 
+			// RenderTextureMaterial.Use();
+			// 
+			// RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
+			// RenderTextureMaterial.SetFloat2Array("_MainTextureSize", ExternalImageTexture.GetDimension().FloatVector2().PointerToValue());
+			// RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			// RenderTextureMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
+			// 
+			// QuadModels[0].BindVertexArray();
+			// 
+			// Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+			// RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			// 	/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+			// 	ModelMatrixBuffer
+			// );
+			// 
+			// QuadModels[0].DrawInstanciated(1);
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// --- Activate corresponding render state
