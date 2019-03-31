@@ -65,8 +65,6 @@ void main() {
   for( int i = 0; i < 2; i++ ) {
     Sum += MicrofacetModel(i, Vertex.Position.xyz, Vertex.NormalDirection);
   }
- 
-  Sum = pow( Sum, vec3(1.0/Gamma) );
 
   FragColor = vec4(Sum, 1);
 }

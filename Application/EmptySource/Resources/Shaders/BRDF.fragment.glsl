@@ -7,6 +7,8 @@ uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;
 uniform vec3 _ViewPosition;
 
+uniform sampler2D _MainTexture;
+
 uniform struct LightInfo {
 	vec3 Position;        // Light Position in camera coords.
   vec3 Color;           // Light Color
@@ -107,8 +109,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
   float Metalness = _Material.Metalness;
 
   vec3 SpecularColor = mix(vec3(1), _Material.Color, Metalness);
-  vec3 DiffuseColor = NormalColor * (1 - Metalness);
-  // DiffuseColor *= texture(_texture, uv).rgb;
+  vec3 DiffuseColor = texture(_MainTexture, Vertex.UV0).rgb * (1 - Metalness);
   
   float SpecularDistribution = TrowbridgeReitzNormalDistribution(NDotH, Roughness);
   float GeometricShadow = WalterEtAlGeometricShadowingFunction(NDotL, NDotV, Roughness);
@@ -129,8 +130,6 @@ void main() {
   for( int i = 0; i < 2; i++ ) {
     Sum += MicrofacetModel(i, Vertex.Position.xyz, Vertex.NormalDirection);
   }
- 
-  Sum = pow( Sum, vec3(1.0/Gamma) );
 
   FragColor = vec4(Sum, 1);
 }
