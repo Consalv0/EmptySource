@@ -17,11 +17,13 @@ public:
 	Bitmap(int width, int height);
 	Bitmap(const Bitmap<T> &orig);
 
-	// Width in pixels. 
+	// --- Width in pixels. 
 	int GetWidth() const;
 
-	// Height in pixels.
+	// --- Height in pixels.
 	int GetHeight() const;
+
+	void FlipVertically();
 
 	Bitmap<T> & operator=(const Bitmap<T> & Other);
 	T & operator[](int i);

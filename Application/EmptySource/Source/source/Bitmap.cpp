@@ -55,6 +55,21 @@ int Bitmap<T>::GetHeight() const {
 	return Height;
 }
 
+template<typename T>
+void Bitmap<T>::FlipVertically() {
+	unsigned Rows = Height / 2; // Iterate only half the buffer to get a full flip
+	T* TempRow = (T*)malloc(Width * sizeof(T));
+
+	for (unsigned RowIndex = 0; RowIndex < Rows; RowIndex++)
+	{
+		memcpy(TempRow, Data + RowIndex * Width, Width * sizeof(T));
+		memcpy(Data + RowIndex * Width, Data + (Height - RowIndex - 1) * Width, Width * sizeof(T));
+		memcpy(Data + (Height - RowIndex - 1) * Width, TempRow, Width * sizeof(T));
+	}
+
+	free(TempRow);
+}
+
 template <typename T>
 T & Bitmap<T>::operator()(int x, int y) {
 	return Data[y * Width + x];
