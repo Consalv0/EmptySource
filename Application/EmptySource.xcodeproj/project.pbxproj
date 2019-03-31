@@ -95,10 +95,6 @@
 		DD988CE5224DC0BA00D342DA /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CE3224DC0B900D342DA /* Text.cpp */; };
 		DD988CE7225010E200D342DA /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CE6225010E200D342DA /* ImageLoader.cpp */; };
 		DD988CE8225010E200D342DA /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CE6225010E200D342DA /* ImageLoader.cpp */; };
-		DD988CF72250115D00D342DA /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CF42250115D00D342DA /* lodepng.cpp */; };
-		DD988CF82250115D00D342DA /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CF42250115D00D342DA /* lodepng.cpp */; };
-		DD988CF92250115D00D342DA /* lodepng_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CF62250115D00D342DA /* lodepng_util.cpp */; };
-		DD988CFA2250115D00D342DA /* lodepng_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CF62250115D00D342DA /* lodepng_util.cpp */; };
 		DD988CFC225011FF00D342DA /* Textures in Resources */ = {isa = PBXBuildFile; fileRef = DD988CFB225011FE00D342DA /* Textures */; };
 /* End PBXBuildFile section */
 
@@ -247,11 +243,9 @@
 		DD988CE3224DC0B900D342DA /* Text.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
 		DD988CE6225010E200D342DA /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
 		DD988CE9225010F200D342DA /* ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageLoader.h; sourceTree = "<group>"; };
-		DD988CF32250115D00D342DA /* lodepng_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng_util.h; sourceTree = "<group>"; };
-		DD988CF42250115D00D342DA /* lodepng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lodepng.cpp; sourceTree = "<group>"; };
-		DD988CF52250115D00D342DA /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
-		DD988CF62250115D00D342DA /* lodepng_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lodepng_util.cpp; sourceTree = "<group>"; };
 		DD988CFB225011FE00D342DA /* Textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Textures; path = EmptySource/Resources/Textures; sourceTree = "<group>"; };
+		DD988D002250925100D342DA /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image_write.h; sourceTree = "<group>"; };
+		DD988D012250925100D342DA /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		DDCA3962224475E100A6373B /* svgldict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svgldict.h; sourceTree = "<group>"; };
 		DDCA3963224475E100A6373B /* svsfnt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svsfnt.h; sourceTree = "<group>"; };
 		DDCA3964224475E100A6373B /* svkern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svkern.h; sourceTree = "<group>"; };
@@ -423,9 +417,9 @@
 			isa = PBXGroup;
 			children = (
 				DDCA39BD2244766F00A6373B /* ft2build.h */,
-				DD988CF22250112F00D342DA /* LodePNG */,
-				DDCA395E2244755B00A6373B /* freetype */,
-				DD8880BD2242E3790052F499 /* tsl */,
+				DD988CFF225091DD00D342DA /* STB */,
+				DDCA395E2244755B00A6373B /* FreeType */,
+				DD8880BD2242E3790052F499 /* TSL */,
 				DD8880A82241D9050052F499 /* GLFW */,
 				DD88809C2241B9570052F499 /* GLAD */,
 			);
@@ -564,7 +558,7 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
-		DD8880BD2242E3790052F499 /* tsl */ = {
+		DD8880BD2242E3790052F499 /* TSL */ = {
 			isa = PBXGroup;
 			children = (
 				DD8880C12242E39A0052F499 /* robin_growth_policy.h */,
@@ -572,7 +566,7 @@
 				DD8880BE2242E39A0052F499 /* robin_map.h */,
 				DD8880BF2242E39A0052F499 /* robin_set.h */,
 			);
-			path = tsl;
+			path = TSL;
 			sourceTree = "<group>";
 		};
 		DD8880C72242FBA50052F499 /* Math */ = {
@@ -616,18 +610,16 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
-		DD988CF22250112F00D342DA /* LodePNG */ = {
+		DD988CFF225091DD00D342DA /* STB */ = {
 			isa = PBXGroup;
 			children = (
-				DD988CF62250115D00D342DA /* lodepng_util.cpp */,
-				DD988CF32250115D00D342DA /* lodepng_util.h */,
-				DD988CF42250115D00D342DA /* lodepng.cpp */,
-				DD988CF52250115D00D342DA /* lodepng.h */,
+				DD988D002250925100D342DA /* stb_image_write.h */,
+				DD988D012250925100D342DA /* stb_image.h */,
 			);
-			path = LodePNG;
+			path = STB;
 			sourceTree = "<group>";
 		};
-		DDCA395E2244755B00A6373B /* freetype */ = {
+		DDCA395E2244755B00A6373B /* FreeType */ = {
 			isa = PBXGroup;
 			children = (
 				DDCA399D2244764800A6373B /* freetype.h */,
@@ -676,7 +668,7 @@
 				DDCA39602244758D00A6373B /* internal */,
 				DDCA395F2244758400A6373B /* config */,
 			);
-			path = freetype;
+			path = FreeType;
 			sourceTree = "<group>";
 		};
 		DDCA395F2244758400A6373B /* config */ = {
@@ -874,11 +866,9 @@
 				DD4F19F4224958AB00C102FB /* IIdentifier.cpp in Sources */,
 				DD4F19FD224958AB00C102FB /* Glyph.cpp in Sources */,
 				DD4F19F0224958AB00C102FB /* Texture3D.cpp in Sources */,
-				DD988CF82250115D00D342DA /* lodepng.cpp in Sources */,
 				DD4F19F1224958AB00C102FB /* CoreTime.cpp in Sources */,
 				DD4F19EC224958AB00C102FB /* ShaderProgram.cpp in Sources */,
 				DD4F19FB224958AB00C102FB /* EdgeSegments.cpp in Sources */,
-				DD988CFA2250115D00D342DA /* lodepng_util.cpp in Sources */,
 				DD4F19E4224958AB00C102FB /* TexturePacking.cpp in Sources */,
 				DD4F19E5224958AB00C102FB /* SDFGenerator.cpp in Sources */,
 				DD4F19EE224958AB00C102FB /* Texture.cpp in Sources */,
@@ -917,11 +907,9 @@
 				DD988CA722496D7000D342DA /* Texture3D.cpp in Sources */,
 				DD988CAC22496D7000D342DA /* Mesh.cpp in Sources */,
 				DD988CAE22496D7000D342DA /* FileManager.cpp in Sources */,
-				DD988CF72250115D00D342DA /* lodepng.cpp in Sources */,
 				DD988CB022496D7000D342DA /* Window.cpp in Sources */,
 				DD988CA422496D7000D342DA /* ShaderStage.cpp in Sources */,
 				DD988CAD22496D7000D342DA /* MeshLoader.cpp in Sources */,
-				DD988CF92250115D00D342DA /* lodepng_util.cpp in Sources */,
 				DD988CBA22496D7500D342DA /* SDFGenerator.cpp in Sources */,
 				DD988CA822496D7000D342DA /* CoreTime.cpp in Sources */,
 				DD988CBB22496D7500D342DA /* Timer.cpp in Sources */,
@@ -1024,7 +1012,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1068,6 +1056,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/EmptySource/Source/**",
+					"$(SRCROOT)/EmptySource/Source/External",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1081,7 +1073,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1119,6 +1111,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/EmptySource/Source/**",
+					"$(SRCROOT)/EmptySource/Source/External",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
