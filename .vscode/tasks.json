@@ -18,6 +18,7 @@
         "/D' '_UNICODE",
         "/D' 'UNICODE",
         "-Wno-deprecated-declarations",
+        "-Wno-sign-compare",
         "/Od",
         "/o\"${workspaceFolder}\\Application\\x64\\Debug\\_EmptySource.exe\"",
         "/link",
