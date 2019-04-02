@@ -13,6 +13,7 @@ The objective of this proyect is learn, graphics, software arquitecture, convent
 - GLAD ***OpenGL Function Loader***
 - GLFW3 ***Input, Windows***
 - CUDA ***Rendering, Processing***
+- STB_Image ***Load Images***
 - FreeType2 ***Text Rendering***
 - NVML ***Temperature Display***
 - TSL Map ***Replace of std::map***
