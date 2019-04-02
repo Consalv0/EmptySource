@@ -3,8 +3,10 @@
 #define NOMINMAX
 
 // Include windows headers
-#ifdef WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 #include <windows.h>
+#include <io.h>
+#include <conio.h>
 #endif // _WIN32
 
 // Include main standard headers
@@ -12,18 +14,12 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef WIN32
-#include <io.h>
-#endif
 #include <fcntl.h>
 #include <assert.h>
 
 // Include standar headers
 #include <vector>
 #include <iomanip>
-#ifdef WIN32
-#include <conio.h>
-#endif
 #include <memory>
 
 #include <string>

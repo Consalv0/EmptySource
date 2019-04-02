@@ -26,12 +26,12 @@ public:
         return (std::move(*Stream) >> _Str);
 	}
 
-	inline const float GetProgress() const {
+	inline float GetProgress() const {
 		long Progress = long(Stream->tellg());
 		return Progress / float(Lenght);
 	}
 
-	inline const long GetPosition() const {
+	inline long GetPosition() const {
 		return (long)Stream->tellg();
 	}
 

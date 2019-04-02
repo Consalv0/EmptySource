@@ -15,8 +15,8 @@ FontGlyph::FontGlyph() {
 }
 
 FontGlyph::FontGlyph(const FontGlyph & Other) :
-	UnicodeValue(Other.UnicodeValue), Bearing(Other.Bearing), Advance(Other.Advance),
-	Width(Other.Width), Height(Other.Height), UV(Other.UV) {
+	UnicodeValue(Other.UnicodeValue), Width(Other.Width), Height(Other.Height),
+	Bearing(Other.Bearing), Advance(Other.Advance), UV(Other.UV) {
 	VectorShape = Other.VectorShape;
 	SDFResterized = Other.SDFResterized;
 }

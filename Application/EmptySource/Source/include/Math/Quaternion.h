@@ -8,7 +8,7 @@ struct Matrix4x4;
 struct Quaternion {
 public:
 	union {
-		struct { float x, y, z, w; };
+		struct { float w, x, y, z; };
 	};
 
 	HOST_DEVICE FORCEINLINE Quaternion();
