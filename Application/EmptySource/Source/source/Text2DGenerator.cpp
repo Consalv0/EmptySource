@@ -91,7 +91,6 @@ Vector2 Text2DGenerator::GetLenght(float HeightSize, const WString & InText) {
 	if (InText.size() == 0) return Pivot;
 
 	float ScaleFactor = HeightSize / GlyphHeight;
-	size_t InTextSize = InText.size();
 
 	// --- Iterate through all characters
 	for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
