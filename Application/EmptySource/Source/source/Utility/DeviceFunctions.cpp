@@ -3,7 +3,7 @@
 
 #ifdef __APPLE__
 #include <IOKit/IOKitLib.h>
-#elif WIN32
+#elif _WIN32
 #include <nvml.h>
 #endif
 

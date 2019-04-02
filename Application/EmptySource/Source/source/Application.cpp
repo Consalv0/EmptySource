@@ -50,7 +50,7 @@ bool CoreApplication::InitalizeGLAD() {
 	// --- Enable all messages, all sources, all levels, and all IDs:
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 #endif
-    
+
 	Debug::PrintGraphicsInformation();
 
 	return true;
@@ -100,11 +100,11 @@ void CoreApplication::Initalize() {
     if (Debug::InitializeDeviceFunctions() == false) {
         Debug::Log(Debug::LogWarning, L"Couldn't initialize device functions");
     };
-    
+
 #ifdef WIN32
 	CUDA::FindCudaDevice();
 #endif
-    
+
 	bInitialized = true;
 }
 
@@ -132,7 +132,7 @@ void CoreApplication::MainLoop() {
 	Font FontFace;
 	Font::InitializeFreeType();
 	FontFace.Initialize(FileManager::Open(L"Resources/Fonts/SourceSansPro.ttf"));
-    
+ 
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
 	TextGenerator.GlyphHeight = 32;
@@ -472,7 +472,7 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetFloat1Array( "_Material.Metalness",                &MaterialMetalness );
 			BaseMaterial.SetFloat1Array( "_Material.Roughness",                &MaterialRoughness );
 			BaseMaterial.SetFloat3Array( "_Material.Color", Vector3(.6F, .2F, 0).PointerToValue() );
-        
+
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			BaseMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
