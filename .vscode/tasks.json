@@ -2,6 +2,10 @@
   "tasks": [
     {
       "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "label": "clang-cl.exe build active file",
       "command": "C:\\Program Files\\LLVM\\bin\\clang-cl.exe",
       "args": [
