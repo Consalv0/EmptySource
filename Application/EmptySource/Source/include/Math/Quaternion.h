@@ -50,6 +50,7 @@ public:
 	HOST_DEVICE FORCEINLINE Quaternion operator*(const float& Value) const;
 	HOST_DEVICE FORCEINLINE Quaternion operator/(const float& Value) const;
 	HOST_DEVICE FORCEINLINE Quaternion operator*(const Quaternion& Other) const;
+	HOST_DEVICE FORCEINLINE Vector3 operator*(const Vector3& Vector) const;
 	
 	HOST_DEVICE FORCEINLINE Quaternion& operator*=(const Quaternion& Other);
 	HOST_DEVICE FORCEINLINE Quaternion& operator*=(const float& Value);

@@ -221,6 +221,14 @@ FORCEINLINE Quaternion Quaternion::operator*(const Quaternion & Other) const {
 	return Result;
 }
 
+inline Vector3 Quaternion::operator*(const Vector3 & Vector) const {
+	Vector3 const QuatVector(x, y, z);
+	Vector3 const QV(Vector3::Cross(QuatVector, Vector));
+	Vector3 const QQV(Vector3::Cross(QuatVector, QV));
+
+	return Vector + ((QV * w) + QQV) * 2.F;
+}
+
 FORCEINLINE Quaternion & Quaternion::operator*=(const Quaternion & Other) {
 	*this = *this * Other;
 	return *this;
