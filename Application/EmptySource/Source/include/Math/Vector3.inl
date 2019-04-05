@@ -69,8 +69,20 @@ FORCEINLINE Vector3 Vector3::Cross(const Vector3& Other) const {
 	);
 }
 
+inline Vector3 Vector3::Cross(const Vector3 & A, const Vector3 & B) {
+	return Vector3(
+		A.y * B.z - A.z * B.y,
+		A.z * B.x - A.x * B.z,
+		A.x * B.y - A.y * B.x
+	);
+}
+
 FORCEINLINE float Vector3::Dot(const Vector3& Other) const {
 	return (x * Other.x) + (y * Other.y) + (z * Other.z);
+}
+
+inline float Vector3::Dot(const Vector3 & A, const Vector3 & B) {
+	return (A.x * B.x) + (A.y * B.y) + (A.z * B.z);
 }
 
 inline const float * Vector3::PointerToValue() const {
@@ -192,7 +204,7 @@ FORCEINLINE Vector3& Vector3::operator/=(const float& Value) {
 }
 
 inline Vector3 operator*(float Value, const Vector3 & Vector) {
-	return Vector3(Value * Vector.x, Value * Vector.y, Value / Vector.z);
+	return Vector3(Value * Vector.x, Value * Vector.y, Value * Vector.z);
 }
 
 inline Vector3 operator/(float Value, const Vector3 & Vector) {
