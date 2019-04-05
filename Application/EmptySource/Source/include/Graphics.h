@@ -35,6 +35,7 @@ namespace Graphics {
 		CF_Red,
 		CF_RGB,
 		CF_RGBA,
+		CF_RGBA16F,
 		CF_RGBA32F,
 	};
 

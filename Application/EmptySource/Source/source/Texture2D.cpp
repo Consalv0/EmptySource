@@ -12,6 +12,8 @@ GLuint GL_GetColorFormat(const Graphics::ColorFormat & CF) {
 			GLColorFormat = GL_RGB; break;
 		case Graphics::CF_RGBA:
 			GLColorFormat = GL_RGBA; break;
+		case Graphics::CF_RGBA16F:
+			GLColorFormat = GL_RGBA16F; break;
 		case Graphics::CF_RGBA32F:
 			GLColorFormat = GL_RGBA32F; break;	
 		default:
