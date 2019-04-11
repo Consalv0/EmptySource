@@ -19,6 +19,7 @@
 #include "../include/ShaderProgram.h"
 #include "../include/Space.h"
 #include "../include/Object.h"
+#include "../include/Transform.h"
 
 #include "../include/Font.h"
 #include "../include/Text2DGenerator.h"
@@ -30,7 +31,7 @@
 
 // int FindBoundingBox(int N, MeshVertex * Vertices);
 // int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
-// int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, const void * dRandState);
+int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
 const void * GetRandomArray(IntVector2 Dimension);
 
 ApplicationWindow* CoreApplication::MainWindow = NULL;
@@ -119,7 +120,21 @@ void CoreApplication::Close() {
 };
 
 void CoreApplication::MainLoop() {
-	
+
+	Quaternion qu = Quaternion::AxisAngle(Vector3(1, 1, 1).Normalized(), 35.F * MathConstants::DegreeToRad);
+	Matrix4x4 tra = Matrix4x4::Translation(Vector3(0, 1, 2));
+	Matrix4x4 ma = Matrix4x4::Rotation(qu) * tra;
+	Matrix4x4 persp = Matrix4x4::Perspective(45.F * MathConstants::DegreeToRad, 1000/200, 0.01F, 1000.F);
+	Vector3 ve = persp * Vector3(1, 2, 3);
+	Vector3 va = tra * Vector3(0, 0, 0);
+
+	Transform transform;
+
+	transform.Position = Vector3(1, 2, 3);
+	transform.Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0), 45 * MathConstants::DegreeToRad);
+	transform.Scale = Vector3(1, 1, 1);
+	Matrix4x4 rts = transform.GetWorldMatrix();
+
 	if (!bInitialized) return;
 
 	Space NewSpace; Space OtherNewSpace(NewSpace);
@@ -188,8 +203,9 @@ void CoreApplication::MainLoop() {
 	// --- Perpective matrix (ProjectionMatrix)
 	Matrix4x4 ProjectionMatrix;
 
-	Vector3 EyePosition = 0;
-	Vector3 LightPosition = Vector3(2, 1);
+	Vector3 EyePosition = { -1.132F , 2.692F , -4.048F };
+	Vector3 LightPosition0 = Vector3(2, 1);
+	Vector3 LightPosition1 = Vector3(2, 1);
 	// --- Camera rotation, position Matrix
 	float ViewSpeed = 3;
 	Vector3 ViewOrientation;
@@ -254,15 +270,15 @@ void CoreApplication::MainLoop() {
 	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
 	);
 	RenderTarget Framebuffer = RenderTarget(
-		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, &RenderedTexture, true
+		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, &RenderedTexture, false
 	);
 
 	float MaterialMetalness = 0.F;
 	float MaterialRoughness = 0.54F;
-	float LightIntencity = 50.F;
+	float LightIntencity = 20.F;
 
-	TArray<Matrix4x4> Matrices;
-	Matrices.push_back(Matrix4x4::Translation({1, .5F, 0}).Inversed());
+	TArray<Transform> Transforms;
+	Transforms.push_back(Transform());
 
 	///////// Create Matrices Buffer //////////////
 	GLuint ModelMatrixBuffer;
@@ -272,7 +288,7 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 
 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
 	float MeshSelector = 0;
 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
@@ -292,15 +308,15 @@ void CoreApplication::MainLoop() {
     }
 
 	double InputTimeSum = 0;
-	const int TextCount = 2;
+	const int TextCount = 3;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
 	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
 	Point2 TextPivot;
 
-	// bool bRandomArray = false;
-	// const void* curandomStateArray = 0;
+	bool bRandomArray = false;
+	const void* curandomStateArray = 0;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -318,32 +334,30 @@ void CoreApplication::MainLoop() {
 		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
 		
-		ViewOrientation = Vector3( CursorPosition.y, CursorPosition.x, 0.F ) * MathConstants::DegreeToRad;
-		Quaternion FrameRotation  = Quaternion({ 1, 0, 0 }, ViewOrientation.x);
-		           FrameRotation *= Quaternion({ 0, 1, 0 }, ViewOrientation.y);
-		
+		Quaternion FrameRotation  = Quaternion::EulerAngles(Vector3(CursorPosition.y, -CursorPosition.x));
+
 		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
-			Vector3 Forward = FrameRotation.ToMatrix4x4() * Vector3(0, 0, ViewSpeed);
+			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
 			EyePosition += Forward * Time::GetDeltaTime();
 			// TextPivot.y += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
-			Vector3 Right = FrameRotation.ToMatrix4x4() * Vector3(ViewSpeed, 0, 0);
+			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
 			EyePosition += Right * Time::GetDeltaTime();
 			// TextPivot.x -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
-			Vector3 Back = FrameRotation.ToMatrix4x4() * Vector3(0, 0, -ViewSpeed);
+			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
 			EyePosition += Back * Time::GetDeltaTime();
 			// TextPivot.y -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
-			Vector3 Left = FrameRotation.ToMatrix4x4() * Vector3(-ViewSpeed, 0, 0);
+			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
 			EyePosition += Left * Time::GetDeltaTime();
 			// TextPivot.x += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		
-		ViewMatrix = FrameRotation.ToMatrix4x4() * Matrix4x4::Translation(EyePosition);
+		ViewMatrix = Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1));
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime();
@@ -385,24 +399,6 @@ void CoreApplication::MainLoop() {
 		if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
 			MeshSelector -= Time::GetDeltaTime() * 10;
 			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
-		}
-
-		if (MainWindow->GetKeyDown(GLFW_KEY_U)) {
-			InputTimeSum += Time::GetDeltaTimeMilis();
-			if (InputTimeSum > (300)) {
-				for (size_t i = 0; i < 1; i++) {
-					Matrices.push_back(
-						Matrix4x4::Translation({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
-					);
-				}
-			}
-			if (MainWindow->GetKeyDown(GLFW_KEY_Q)) {
-				for (size_t i = 0; i < 100; i++) {
-					Matrices.push_back(
-						Matrix4x4::Translation({ ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128, ((rand() % 500) * 0.5F) - 128 })
-					);
-				}
-			}
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
@@ -453,20 +449,37 @@ void CoreApplication::MainLoop() {
 			size_t VerticesCount = 0;
 		
 			MainWindow->ClearWindow();
-			// Framebuffer.Clear();
+			Framebuffer.Clear();
 		
 			Debug::Timer Timer;
-		
+
+			// --- Run the device part of the program
+			if (!bRandomArray) {
+				curandomStateArray = GetRandomArray(RenderedTexture.GetDimension());
+				bRandomArray = true;
+			}
+			bool bTestResult = false;
+
+			LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 2));
+			LightPosition1 = Vector3();
+
+			TArray<Vector4> Spheres = TArray<Vector4>();
+			Spheres.push_back(Vector4(Matrix4x4::Translation(Vector3(0, 0, -1.F)) * Vector4(0.F, 0.F, 0.F, 1.F), 0.25F));
+			Spheres.push_back(Vector4((Matrix4x4::Translation(Vector3(0, 0, -1.F)) * Quaternion::EulerAngles(
+				Vector3(MainWindow->GetMousePosition().x, MainWindow->GetMousePosition().y, 0)
+			).ToMatrix4x4() * Matrix4x4::Translation(Vector3(0.5F))) * Vector4(0.F, 0.F, 0.F, 1.F), 0.5F));
+			bTestResult = RTRenderToTexture2D(&RenderedTexture, &Spheres, curandomStateArray);
+
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// Framebuffer.Use();
 			BaseMaterial.Use();
 			
 			BaseMaterial.SetFloat3Array( "_ViewPosition",            EyePosition.PointerToValue() );
-			BaseMaterial.SetFloat3Array( "_Lights[0].Position",    LightPosition.PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Lights[0].Position",   LightPosition0.PointerToValue() );
 			BaseMaterial.SetFloat3Array( "_Lights[0].Color",          Vector3(1).PointerToValue() );
 			BaseMaterial.SetFloat1Array( "_Lights[0].Intencity",                  &LightIntencity );
-			BaseMaterial.SetFloat3Array( "_Lights[1].Position", (-LightPosition).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Lights[1].Position",   LightPosition1.PointerToValue() );
 			BaseMaterial.SetFloat3Array( "_Lights[1].Color",          Vector3(1).PointerToValue() );
 			BaseMaterial.SetFloat1Array( "_Lights[1].Intencity",                  &LightIntencity );
 			BaseMaterial.SetFloat1Array( "_Material.Metalness",                &MaterialMetalness );
@@ -477,16 +490,18 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			BaseMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
 
-			// Matrices[0] = Quaternion({0, 1, 0}, Time::GetDeltaTime()).ToMatrix4x4() * Matrices[0];
+			Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime()) * Transforms[0].Rotation;
+			Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
+			Matrix4x4 TransformMat = Transforms[0].GetWorldMatrix();
 			
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
 				OBJModels[MeshCount].BindVertexArray();
 
-				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", (int)Matrices.size(), &Matrices[0], ModelMatrixBuffer);
+				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(TransformMat), ModelMatrixBuffer);
 
-				OBJModels[MeshCount].DrawInstanciated((GLsizei)Matrices.size());
-				TriangleCount += OBJModels[MeshCount].Faces.size() * Matrices.size();
-				VerticesCount += OBJModels[MeshCount].Vertices.size() * Matrices.size();
+				OBJModels[MeshCount].DrawInstanciated((GLsizei)1);
+				TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
+				VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
 			}
 
 			UnlitMaterial.Use();
@@ -498,9 +513,9 @@ void CoreApplication::MainLoop() {
 			
 			LightModels[0].BindVertexArray();
 
-			vector<Matrix4x4> LightPositions;
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition) * Matrix4x4::Scaling(0.1F));
-			LightPositions.push_back(Matrix4x4::Translation(-LightPosition) * Matrix4x4::Scaling(0.1F));
+			TArray<Matrix4x4> LightPositions;
+			LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
+			LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
 
 			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
 
@@ -508,14 +523,14 @@ void CoreApplication::MainLoop() {
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, FontMap.GetDimension().x, FontMap.GetDimension().y);
+			glViewport(0, 0, RenderedTexture.GetWidth(), RenderedTexture.GetHeight());
 			
 			RenderTextureMaterial.Use();
-			
+
 			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", FontMap.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", RenderedTexture.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &RenderedTexture, 0);
 			
 			QuadModels[0].BindVertexArray();
 			
@@ -561,17 +576,23 @@ void CoreApplication::MainLoop() {
 				DynamicMesh.DrawElement();
 			}
 
+			RenderingText[2] = Text::Formatted(
+				L"Sphere Position(%ls), Sphere2 Position(%ls)",
+				Text::FormatMath(Spheres[0]).c_str(),
+				Text::FormatMath(Spheres[1]).c_str()
+			);
+
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Instances(%ls), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), TimeScale(%.3f), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
 				Time::GetFrameRatePerSecond(),
 				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
-				Text::FormatUnit(Matrices.size(), 2).c_str(),
+				Time::GetDeltaTime(),
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
-				Text::FormatMath(ViewOrientation * MathConstants::RadToDegree).c_str(),
+				Text::FormatMath(CursorPosition).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);

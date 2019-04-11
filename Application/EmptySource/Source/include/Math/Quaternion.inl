@@ -16,51 +16,55 @@ FORCEINLINE Quaternion::Quaternion(Quaternion const & Other)
 	:w(Other.w), x(Other.x), y(Other.y), z(Other.z)
 { }
 
-inline Quaternion::Quaternion(Vector3 const & Axis, float const & Radians) {
-	float Sine = sinf(Radians * .5F);
-
-	w = cosf(Radians * .5F);
-	x = Axis.x * Sine;
-	y = Axis.y * Sine;
-	z = Axis.z * Sine;
-}
-
 FORCEINLINE Quaternion::Quaternion(float const & Scale, Vector3 const & Vector)
 	:w(Scale), x(Vector.x), y(Vector.y), z(Vector.z)
 { }
 
-FORCEINLINE Quaternion::Quaternion(float const& _w, float const& _x, float const& _y, float const& _z) 
-	:w(_w), x(_x), y(_y), z(_z)
+FORCEINLINE Quaternion::Quaternion(float const& w, float const& x, float const& y, float const& z) 
+	:w(w), x(x), y(y), z(z)
 { }
 
-FORCEINLINE Quaternion::Quaternion(Vector3 const & u, Vector3 const & v) {
+inline Quaternion Quaternion::EulerAngles(Vector3 const & EulerAngles) {
+	float Scale = MathConstants::DegreeToRad * 0.5F;
+	Vector3 Vcos = { std::cos(EulerAngles.x * Scale), std::cos(EulerAngles.y * Scale), std::cos(EulerAngles.z * Scale) };
+	Vector3 Vsin = { std::sin(EulerAngles.x * Scale), std::sin(EulerAngles.y * Scale), std::sin(EulerAngles.z * Scale) };
+
+	return Quaternion (
+		Vcos.x * Vcos.y * Vcos.z + Vsin.x * Vsin.y * Vsin.z,
+		Vsin.x * Vcos.y * Vcos.z - Vcos.x * Vsin.y * Vsin.z,
+		Vcos.x * Vsin.y * Vcos.z + Vsin.x * Vcos.y * Vsin.z,
+		Vcos.x * Vcos.y * Vsin.z - Vsin.x * Vsin.y * Vcos.z
+	);
+}
+
+FORCEINLINE Quaternion Quaternion::VectorAngle(Vector3 const & u, Vector3 const & v) {
 	float NormUV = sqrt(u.Dot(u) * v.Dot(v));
 	float RealPart = NormUV + u.Dot(v);
 	Vector3 ImgPart;
 
 	if (RealPart < 1.e-6f * NormUV) {
-		// If u and v are exactly opposite, rotate 180 degrees
-		// around an arbitrary orthogonal axis. Axis normalisation
-		// can happen later, when we normalise the quaternion.
+		// --- If u and v are exactly opposite, rotate 180 degrees
+		// --- around an arbitrary orthogonal axis. Axis normalisation
+		// --- can happen later, when we normalise the quaternion.
 		RealPart = 0.F;
 		ImgPart = abs(u.x) > abs(u.z) ? Vector3(-u.y, u.x) : Vector3(0.F, -u.z, u.y);
 	} else {
-		// Otherwise, build quaternion the standard way.
+		// --- Otherwise, build quaternion the standard way.
 		ImgPart = u.Cross(v);
 	}
 
-	*this = Quaternion(RealPart, ImgPart.x, ImgPart.y, ImgPart.z).Normalized();
+	return Quaternion(RealPart, ImgPart.x, ImgPart.y, ImgPart.z).Normalized();
 }
 
-inline Quaternion::Quaternion(Vector3 const & EulerAngles) {
-	float Scale = MathConstants::DegreeToRad * 0.5F;
-	Vector3 Vcos = { std::cos(EulerAngles.x * Scale), std::cos(EulerAngles.y * Scale), std::cos(EulerAngles.z * Scale) } ;
-	Vector3 Vsin = { std::sin(EulerAngles.x * Scale), std::sin(EulerAngles.y * Scale), std::sin(EulerAngles.z * Scale) };
+inline Quaternion Quaternion::AxisAngle(Vector3 const & Axis, float const & Radians) {
+	float Sine = sinf(Radians * .5F);
 
-	this->w = Vcos.x * Vcos.y * Vcos.z + Vsin.x * Vsin.y * Vsin.z;
-	this->x = Vsin.x * Vcos.y * Vcos.z - Vcos.x * Vsin.y * Vsin.z;
-	this->y = Vcos.x * Vsin.y * Vcos.z + Vsin.x * Vcos.y * Vsin.z;
-	this->z = Vcos.x * Vcos.y * Vsin.z - Vsin.x * Vsin.y * Vcos.z;
+	return Quaternion (	
+		cosf(Radians * .5F),
+		Axis.x * Sine,
+		Axis.y * Sine,
+		Axis.z * Sine
+	);
 }
 
 inline float Quaternion::Magnitude() const {
@@ -137,30 +141,31 @@ inline Vector3 Quaternion::GetVector() const {
 }
 
 inline Vector3 Quaternion::ToEulerAngles() const {
-	// Is close to the pole?
-	const float SingularityTest = z * x - w * y;
-	const float YawY = 2.F * (w * z + x * y);
-	const float YawX = ( 1.F - 2.F*((y * y) + (z * z)) );
-
-	// Reference 
-	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+	// --- Reference 
+	// --- http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
 	Vector3 EulerAngles;
 
-	if (SingularityTest > 0.4999F) { // NortPole
-		EulerAngles.x = 1.5708F;
-		EulerAngles.y = atan2(YawY, YawX);
-		EulerAngles.z = EulerAngles.y - ( 2.F * atan2(x, w) );
-	} else if (SingularityTest < -0.4999F) { // SouthPole
-		EulerAngles.x = -1.5708F;
-		EulerAngles.y = atan2f(YawY, YawX);
-		EulerAngles.z = -EulerAngles.y - ( 2.F * atan2f(x, w) );
-	} else {
-		EulerAngles.x = asin( 2.F * (SingularityTest) );
-		EulerAngles.y = atan2(YawY, YawX);
-		EulerAngles.z = atan2( -2.F * (w * x + y * z), ( 1.F - 2.F * ((x * x) + (y * y)) ) );
+	// --- Is close to the pole?
+	float SingularityTest = x * y + z * w;
+	if (SingularityTest > 0.499F) {
+		EulerAngles[Yaw]   = 2 * atan2(x, w);
+		EulerAngles[Roll]  = MathConstants::HalfPi;
+		EulerAngles[Pitch] = 0;
 	}
-
+	else if (SingularityTest < -0.499F) {
+		EulerAngles[Yaw]   = -2 * atan2(x, w);
+		EulerAngles[Roll]  = -MathConstants::HalfPi;
+		EulerAngles[Pitch] = 0;
+	}
+	else {
+		const float sqx = x * x;
+		const float sqy = y * y;
+		const float sqz = z * z;
+		EulerAngles[Yaw] = atan2((2 * y * w) - (2 * x * z), 1 - (2 * sqy) - (2 * sqz));
+		EulerAngles[Roll] = asin(2 * SingularityTest);
+		EulerAngles[Pitch] = atan2((2 * x * w) - (2 * y * z), 1 - (2 * sqx) - (2 * sqz));
+	}
 	return EulerAngles * MathConstants::RadToDegree;
 }
 
@@ -206,7 +211,7 @@ FORCEINLINE Quaternion Quaternion::operator*(const float& Value) const {
 }
 
 FORCEINLINE Quaternion Quaternion::operator/(const float& Value) const {
-	if (Value == 0) Quaternion();
+	if (Value == 0.F) Quaternion();
 	return Quaternion(w / Value, x / Value, y / Value, z / Value);
 }
 
@@ -222,10 +227,28 @@ FORCEINLINE Quaternion Quaternion::operator*(const Quaternion & Other) const {
 }
 
 inline Vector3 Quaternion::operator*(const Vector3 & Vector) const {
-	Vector3 const QuatVector(x, y, z);
+	// float num = x * 2.F;
+	// float num2 = y * 2.f;
+	// float num3 = z * 2.f;
+	// float num4 = x * num;
+	// float num5 = y * num2;
+	// float num6 = z * num3;
+	// float num7 = x * num2;
+	// float num8 = x * num3;
+	// float num9 = y * num3;
+	// float num10 = w * num;
+	// float num11 = w * num2;
+	// float num12 = w * num3;
+	// return Vector3 (
+	// 	(1.F - (num5 + num6)) * Vector.x + (num7 - num12) * Vector.y + (num8 + num11) * Vector.z,
+	// 	(num7 + num12) * Vector.x + (1.F - (num4 + num6)) * Vector.y + (num9 - num10) * Vector.z,
+	// 	(num8 - num11) * Vector.x + (num9 + num10) * Vector.y + (1.F - (num4 + num5)) * Vector.z
+	// );
+
+	Vector3 const QuatVector(GetVector());
 	Vector3 const QV(Vector3::Cross(QuatVector, Vector));
 	Vector3 const QQV(Vector3::Cross(QuatVector, QV));
-
+	
 	return Vector + ((QV * w) + QQV) * 2.F;
 }
 
@@ -243,7 +266,7 @@ FORCEINLINE Quaternion& Quaternion::operator*=(const float& Value) {
 }
 
 FORCEINLINE Quaternion& Quaternion::operator/=(const float& Value) {
-	if (Value == 0) w = x = y = z = 0;
+	if (Value == 0.F) w = x = y = z = 0;
 	w /= Value;
 	x /= Value;
 	y /= Value;

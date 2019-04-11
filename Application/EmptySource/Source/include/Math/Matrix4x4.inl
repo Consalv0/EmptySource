@@ -25,69 +25,82 @@ FORCEINLINE Matrix4x4::Matrix4x4(const Vector4 & Row0, const Vector4 & Row1, con
 	m3[0] = Row3.x; m3[1] = Row3.y; m3[2] = Row3.z; m3[3] = Row3.w;
 }
 
+inline Matrix4x4::Matrix4x4(
+	float m00, float m01, float m02, float m03, 
+	float m10, float m11, float m12, float m13, 
+	float m20, float m21, float m22, float m23, 
+	float m30, float m31, float m32, float m33) {
+
+	m0[0] = m00; m0[1] = m01; m0[2] = m02; m0[3] = m03;
+	m1[0] = m10; m1[1] = m11; m1[2] = m12; m1[3] = m13;
+	m2[0] = m20; m2[1] = m21; m2[2] = m22; m2[3] = m23;
+	m3[0] = m30; m3[1] = m31; m3[2] = m32; m3[3] = m33;
+}
+
 inline Matrix4x4 Matrix4x4::Identity() {
 	return Matrix4x4();
 }
 
 inline Matrix4x4 Matrix4x4::Perspective(const float & FOV, const float & Aspect, const float & Near, const float & Far) {
-	Matrix4x4 Result = Matrix4x4();
-	
-	float const TangentHalfFOV = tan(FOV / 2.F);
-
-	Result.m0[0] = 1.F / (Aspect * TangentHalfFOV);
-	Result.m1[1] = 1.F / (TangentHalfFOV);
-	Result.m2[2] = -(Far + Near) / (Far - Near);
-	Result.m2[3] = -1.F;
-	Result.m3[2] = -(2.F * Far * Near) / (Far - Near);
-	Result.m3[3] = 0.F;
-	
+	float const TanHalfFOV = tan(FOV / 2.F);
+	Matrix4x4 Result(
+		1.F / (Aspect * TanHalfFOV), 0.F,                0.F,                                0.F,
+		0.F,                         1.F / (TanHalfFOV), 0.F,                                0.F,
+		0.F,                         0.F,                -(Far + Near) / (Far - Near),      -1.F,
+		0.F,                         0.F,                -(2.F * Far * Near) / (Far - Near), 0.F
+	);
 	return Result;
 }
 
-inline HOST_DEVICE Matrix4x4 Matrix4x4::Orthographic(const float & Left, const float & Right, const float & Bottom, const float & Top) {
-	Matrix4x4 Result = Matrix4x4();
-	Result.m0[0] = 2.F / (Right - Left);
-	Result.m1[1] = 2.F / (Top - Bottom);
-	Result.m3[0] = -(Right + Left) / (Right - Left);
-	Result.m3[1] = -(Top + Bottom) / (Top - Bottom);
+inline Matrix4x4 Matrix4x4::Orthographic(const float & Left, const float & Right, const float & Bottom, const float & Top) {
+	Matrix4x4 Result(
+		2.F / (Right - Left),             0.F,                              0.F, 0.F,
+		0.F,                              2.F / (Top - Bottom),             0.F, 0.F,
+		0.F,                              0.F,                              1.F, 0.F,
+		-(Right + Left) / (Right - Left), -(Top + Bottom) / (Top - Bottom), 0.F, 1.F
+	);
+	return Result;
+}
+
+inline Matrix4x4 Matrix4x4::Orthographic(const float & Left, const float & Right, const float & Bottom, const float & Top, const float & Near, const float & Far) {
+	Matrix4x4 Result(
+		2.F / (Right - Left),             0.F,                              0.F,                 0.F,
+		0.F,                              2.F / (Top - Bottom),             0.F,                 0.F,
+		0.F,                              0.F,                              1.F / (Near - Far),  0.F,
+		-(Right + Left) / (Right - Left), -(Top + Bottom) / (Top - Bottom), Near / (Near - Far), 1.F
+	);
 	return Result;
 }
 
 inline Matrix4x4 Matrix4x4::LookAt(const Vector3 & Eye, const Vector3 & Target, const Vector3 & Up) {
-	Matrix4x4 Result = Matrix4x4();
-
 	Vector3 const Forward((Target - Eye).Normalized());
 	Vector3 const Side(Forward.Cross(Up).Normalized());
 	Vector3 const Upper(Side.Cross(Forward));
 
-	Result.m0[0] = Side.x;
-	Result.m1[0] = Side.y;
-	Result.m2[0] = Side.z;
-	Result.m0[1] = Upper.x;
-	Result.m1[1] = Upper.y;
-	Result.m2[1] = Upper.z;
-	Result.m0[2] = -Forward.x;
-	Result.m1[2] = -Forward.y;
-	Result.m2[2] = -Forward.z;
-
-	Result.m3[0] = -Side.Dot(Eye);
-	Result.m3[1] = -Upper.Dot(Eye);
-	Result.m3[2] = Forward.Dot(Eye);
-	return Result;
+	return Matrix4x4(
+		 Side.x,         Upper.x,        -Forward.x,        0,
+		 Side.y,         Upper.y,        -Forward.y,        0,
+		 Side.z,         Upper.z,        -Forward.z,        0,
+		-Side.Dot(Eye), -Upper.Dot(Eye),  Forward.Dot(Eye), 1
+	);
 }
 
 inline Matrix4x4 Matrix4x4::Translation(const Vector3 & Vector) {
-	Matrix4x4 Result = Matrix4x4();
-	Result.w = Result.x * Vector.x + Result.y * Vector.y + Result.z * Vector.z + Result.w;
-	return Result;
+	return Matrix4x4(
+		1.F,      0.F,      0.F,      0.F,
+		0.F,      1.F,      0.F,      0.F,
+		0.F,      0.F,      1.F,      0.F,
+		Vector.x, Vector.y, Vector.z, 1.F
+	);
 }
 
 inline Matrix4x4 Matrix4x4::Scaling(const Vector3 & Vector) {
-	Matrix4x4 Result = Matrix4x4();
-	Result.m0 = Result.m0 * Vector[0];
-	Result.m1 = Result.m1 * Vector[1];
-	Result.m2 = Result.m2 * Vector[2];
-	return Result;
+	return Matrix4x4(
+		Vector.x, 0.F,      0.F,      0.F,
+		0.F,      Vector.y, 0.F,      0.F,
+		0.F,      0.F,      Vector.z, 0.F,
+		0.F,      0.F,      0.F,      1.F
+	);
 }
 
 inline Matrix4x4 Matrix4x4::Rotation(const Vector3 & Axis, const float & Angle) {
@@ -95,31 +108,57 @@ inline Matrix4x4 Matrix4x4::Rotation(const Vector3 & Axis, const float & Angle) 
 	float const sinA = sin(Angle);
 
 	Vector3 AxisN(Axis.Normalized());
-	Vector3 Temp((1.F - cosA) * AxisN);
+	Vector3 Temp(AxisN * (1.F - cosA));
 
 	Matrix4x4 Rotation;
-	Rotation[0][0] = cosA + Temp[0] * AxisN[0];
-	Rotation[0][1] = Temp[0] * AxisN[1] + sinA * AxisN[2];
-	Rotation[0][2] = Temp[0] * AxisN[2] - sinA * AxisN[1];
+	Rotation.m0[0] = cosA + Temp[0] * AxisN[0];
+	Rotation.m0[1] = Temp[0] * AxisN[1] + sinA * AxisN[2];
+	Rotation.m0[2] = Temp[0] * AxisN[2] - sinA * AxisN[1];
 
-	Rotation[1][0] = Temp[1] * AxisN[0] - sinA * AxisN[2];
-	Rotation[1][1] = cosA + Temp[1] * AxisN[1];
-	Rotation[1][2] = Temp[1] * AxisN[2] + sinA * AxisN[0];
+	Rotation.m1[0] = Temp[1] * AxisN[0] - sinA * AxisN[2];
+	Rotation.m1[1] = cosA + Temp[1] * AxisN[1];
+	Rotation.m1[2] = Temp[1] * AxisN[2] + sinA * AxisN[0];
 
-	Rotation[2][0] = Temp[2] * AxisN[0] + sinA * AxisN[1];
-	Rotation[2][1] = Temp[2] * AxisN[1] - sinA * AxisN[0];
-	Rotation[2][2] = cosA + Temp[2] * AxisN[2];
+	Rotation.m2[0] = Temp[2] * AxisN[0] + sinA * AxisN[1];
+	Rotation.m2[1] = Temp[2] * AxisN[1] - sinA * AxisN[0];
+	Rotation.m2[2] = cosA + Temp[2] * AxisN[2];
 
-	Vector4 m0 = { 1, 0, 0, 0 };
-	Vector4 m1 = { 0, 1, 0, 0 };
-	Vector4 m2 = { 0, 0, 1, 0 };
+	return Rotation;
+}
 
+inline Matrix4x4 Matrix4x4::Rotation(const Vector3 & EulerAngles) {
 	Matrix4x4 Result;
-	Result[0] = m0 * Rotation[0][0] + m1 * Rotation[0][1] + m2 * Rotation[0][2];
-	Result[1] = m0 * Rotation[1][0] + m1 * Rotation[1][1] + m2 * Rotation[1][2];
-	Result[2] = m0 * Rotation[2][0] + m1 * Rotation[2][1] + m2 * Rotation[2][2];
-	Result[3] = {0, 0, 0, 1};
+	float Sinr, Sinp, Siny, Cosr, Cosp, Cosy;
+
+	Siny = std::sin(EulerAngles[Yaw] * MathConstants::DegreeToRad);
+	Cosy = std::cos(EulerAngles[Yaw] * MathConstants::DegreeToRad);
+	Sinp = std::sin(EulerAngles[Pitch] * MathConstants::DegreeToRad);
+	Cosp = std::cos(EulerAngles[Pitch] * MathConstants::DegreeToRad);
+	Sinr = std::sin(EulerAngles[Roll] * MathConstants::DegreeToRad);
+	Cosr = std::cos(EulerAngles[Roll] * MathConstants::DegreeToRad);
+
+	Result.m0[0] = Cosp * Cosy;
+	Result.m0[1] = Cosp * Siny;
+	Result.m0[2] = -Sinp;
+
+	Result.m1[0] = Sinr * Sinp*Cosy + Cosr * -Siny;
+	Result.m1[1] = Sinr * Sinp*Siny + Cosr * Cosy;
+	Result.m1[2] = Sinr * Cosp;
+
+	Result.m2[0] = (Cosr*Sinp*Cosy + -Sinr * -Siny);
+	Result.m2[1] = (Cosr*Sinp*Siny + -Sinr * Cosy);
+	Result.m2[2] = Cosr * Cosp;
+
+	Result.m3[0] = 0.F;
+	Result.m3[1] = 0.F;
+	Result.m3[2] = 0.F;
+	Result.m3[3] = 1.F;
+
 	return Result;
+}
+
+inline Matrix4x4 Matrix4x4::Rotation(const Quaternion & Quat) {
+	return Quat.ToMatrix4x4();
 }
 
 inline void Matrix4x4::Transpose() {
@@ -211,23 +250,24 @@ inline Vector4 Matrix4x4::Column(const int & i) const {
 }
 
 inline Vector4 & Matrix4x4::operator[](unsigned int i) {
-	switch (i) {
-		case 0:  return m0;
-		case 1:  return m1;
-		case 2:  return m2;
-		case 3:  return m3;
-		default: return m3;
-	}
+	if ((i >= 4)) return m3;
+	return ((Vector4*)this)[i];
 }
 
 inline Vector4 const & Matrix4x4::operator[](unsigned int i) const {
-	switch (i) {
-		case 0:  return m0;
-		case 1:  return m1;
-		case 2:  return m2;
-		case 3:  return m3;
-		default: return m3;
-	}
+	if ((i >= 4)) return m3;
+	return ((Vector4*)this)[i];
+}
+
+inline HOST_DEVICE Vector3 Matrix4x4::MultiplyPoint(const Vector3 & Vector) const {
+	Vector3 Result = *this * Vector;
+	Result += Column(3);
+	Result *= 1.F / Column(3).Dot(Vector4(Vector, 1.F));
+	return Result;
+}
+
+inline Vector3 Matrix4x4::MultiplyVector(const Vector3 & Vector) const {
+	return *this * Vector;
 }
 
 FORCEINLINE Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & Other) const {
@@ -260,22 +300,22 @@ FORCEINLINE Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & Other) const {
 
 FORCEINLINE Vector4 Matrix4x4::operator*(const Vector4 & Vector) const {
 	Vector4 Result(
-		Row(0).Dot(Vector),
-		Row(1).Dot(Vector),
-		Row(2).Dot(Vector),
-		Row(3).Dot(Vector)
+		Column(0).Dot(Vector),
+		Column(1).Dot(Vector),
+		Column(2).Dot(Vector),
+		Column(3).Dot(Vector)
 	);
 
 	return Result;
 }
 
 FORCEINLINE Vector3 Matrix4x4::operator*(const Vector3 & Vector) const {
+	Vector4 const Vect = Vector4(Vector, 0.F);
 	Vector3 Result(
-		Row(0).Dot(Vector),
-		Row(1).Dot(Vector),
-		Row(2).Dot(Vector)
+		Column(0).Dot(Vect),
+		Column(1).Dot(Vect),
+		Column(2).Dot(Vect)
 	);
-
 	return Result;
 }
 

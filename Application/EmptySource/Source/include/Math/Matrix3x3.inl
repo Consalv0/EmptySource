@@ -58,21 +58,13 @@ inline Vector3 FMatrix3x3::Column(const int & i) const {
 }
 
 inline Vector3 & FMatrix3x3::operator[](unsigned int i) {
-	switch (i) {
-		case 0:  return m0;
-		case 1:  return m1;
-		case 2:  return m2;
-		default: return m2;
-	}
+	if ((i >= 3)) return m2;
+	return ((Vector3*)this)[i];
 }
 
 inline Vector3 const & FMatrix3x3::operator[](unsigned int i) const {
-	switch (i) {
-		case 0:  return m0;
-		case 1:  return m1;
-		case 2:  return m2;
-		default: return m2;
-	}
+	if ((i >= 3)) return m2;
+	return ((Vector3*)this)[i];
 }
 
 FORCEINLINE FMatrix3x3 FMatrix3x3::operator*(const FMatrix3x3& Other) const {
