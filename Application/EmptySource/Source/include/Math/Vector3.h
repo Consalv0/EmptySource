@@ -60,4 +60,12 @@ public:
 	HOST_DEVICE inline friend Vector3 operator/(float Value, const Vector3 &Vector);
 };
 
+namespace Math {
+	//* Get the angles in degrees in the range of (-180, 180) 
+	inline Vector3 NormalizeAngleComponents(Vector3 EulerAngle);
+
+	//* Get the angles in degrees in the range of [0, 360)
+	inline Vector3 ClampAngleComponents(Vector3 EulerAngle);
+}
+
 #include "../Math/Vector3.inl"

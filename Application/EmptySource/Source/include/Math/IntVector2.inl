@@ -61,19 +61,13 @@ inline const int * IntVector2::PointerToValue() const {
 }
 
 inline int & IntVector2::operator[](unsigned int i) {
-	switch (i) {
-	case 0: return x;
-	case 1: return y;
-	default: return y;
-	}
+	if ((i >= 2)) return y;
+	return ((int*)this)[i];
 }
 
 inline int const & IntVector2::operator[](unsigned int i) const {
-	switch (i) {
-	case 0: return x;
-	case 1: return y;
-	default: return y;
-	}
+	if ((i >= 2)) return y;
+	return ((int*)this)[i];
 }
 
 FORCEINLINE IntVector2 IntVector2::operator * (const IntVector2& Other) const {

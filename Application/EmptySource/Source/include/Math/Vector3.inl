@@ -98,21 +98,13 @@ inline HOST_DEVICE Vector3 Vector3::Reflect(const Vector3 & Incident, const Vect
 }
 
 inline float & Vector3::operator[](unsigned int i) {
-	switch (i) {
-		case 0: return x;
-		case 1: return y;
-		case 2: return z;
-		default: return z;
-	}
+	if ((i >= 3)) return z;
+	return ((float*)this)[i];
 }
 
 inline float const & Vector3::operator[](unsigned int i) const {
-	switch (i) {
-		case 0: return x;
-		case 1: return y;
-		case 2: return z;
-		default: return z;
-	}
+	if ((i >= 3)) return z;
+	return ((float*)this)[i];
 }
 
 FORCEINLINE Vector3 Vector3::operator * (const Vector3& Other) const {
@@ -209,4 +201,20 @@ inline Vector3 operator*(float Value, const Vector3 & Vector) {
 
 inline Vector3 operator/(float Value, const Vector3 & Vector) {
 	return Vector3(Value / Vector.x, Value / Vector.y, Value / Vector.z);
+}
+
+inline Vector3 Math::NormalizeAngleComponents(Vector3 EulerAngle) {
+	EulerAngle.x = NormalizeAngle(EulerAngle.x);
+	EulerAngle.y = NormalizeAngle(EulerAngle.y);
+	EulerAngle.z = NormalizeAngle(EulerAngle.z);
+
+	return EulerAngle;
+}
+
+inline Vector3 Math::ClampAngleComponents(Vector3 EulerAngle) {
+	EulerAngle.x = ClampAngle(EulerAngle.x);
+	EulerAngle.y = ClampAngle(EulerAngle.y);
+	EulerAngle.z = ClampAngle(EulerAngle.z);
+
+	return EulerAngle;
 }
