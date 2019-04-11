@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MathUtility.h"
 #include "Vector2.h"
 
 struct Box2D {

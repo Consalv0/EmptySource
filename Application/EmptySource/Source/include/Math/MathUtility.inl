@@ -157,22 +157,6 @@ float Math::NormalizeAngle(float Degrees) {
 	return Degrees;
 }
 
-Vector3 Math::NormalizeAngleComponents(Vector3 EulerAngle) {
-	EulerAngle.x = NormalizeAngle(EulerAngle.x);
-	EulerAngle.y = NormalizeAngle(EulerAngle.y);
-	EulerAngle.z = NormalizeAngle(EulerAngle.z);
-
-	return EulerAngle;
-}
-
-Vector3 Math::ClampAngleComponents(Vector3 EulerAngle) {
-	EulerAngle.x = ClampAngle(EulerAngle.x);
-	EulerAngle.y = ClampAngle(EulerAngle.y);
-	EulerAngle.z = ClampAngle(EulerAngle.z);
-
-	return EulerAngle;
-}
-
 float Math::Pow10(int Number) {
 	float Ret = 1.0F;
 	float R = 10.0F;

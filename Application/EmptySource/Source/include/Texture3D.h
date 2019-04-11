@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../include/Texture.h"
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/CoreMath.h"
 
 struct Texture3D : public Texture {
 private:

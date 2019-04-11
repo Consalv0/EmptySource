@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "../include/Shape2DContour.h"
 #include "../include/Math/MathUtility.h"
+#include "../include/Shape2DContour.h"
 
 void Shape2DContour::AddEdge(const EdgeHolder &Edge) {
 	Edges.push_back(Edge);
