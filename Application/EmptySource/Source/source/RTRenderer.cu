@@ -16,6 +16,7 @@
 #include <curand.h>
 #include <curand_kernel.h>
 #include <surface_functions.h>
+#include <cuda_fp16.h>
 
 surface<void, cudaSurfaceType2D> SurfaceWrite;
 
@@ -58,57 +59,57 @@ __device__ Vector3 RandomSphericalDir(curandState LocalRandState) {
 }
 
 template <unsigned char Bounces>
-__device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState);
+__device__ Vector4 CastRay(const Ray& RayCast, Vector4 * Spheres, curandState LocalRandState);
 
 template <>
-__device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres, curandState LocalRandState);
+__device__ Vector4 CastRay<0>(const Ray& RayCast, Vector4 * Spheres, curandState LocalRandState);
 
 template <unsigned char Bounces>
-__device__ Vector4 CastScreenRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
-	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, ray);
-	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, ray);
+__device__ Vector4 CastScreenRay(const Ray& RayCast, Vector4 * Spheres, curandState LocalRandState) {
+	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, RayCast);
+	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, RayCast);
 	RayHit * Hit = (Hit1.bHit && Hit2.bHit) ? (Hit1.Stamp < Hit2.Stamp ? &Hit1 : &Hit2) : (Hit1.bHit ? &Hit1 : &Hit2);
 
-	Vector3 Color = Vector3(1.F);
+	Vector3 Color = Vector3(0.F);
 	if (Hit->bHit) {
 		float Diffuse = 1;
-		for (int i = 0; i < 10; i++) {
-			Vector3 Target = ray.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
-			Target.Normalize();
+		for (int i = 0; i < 1; i++) {
+			Vector3 Target = RayCast.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
+			// Target.Normalize();
 			Diffuse *= 0.5F;
 			// Color = ((Target + 1.F) * 0.5F);
-			Color *= CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Target - ray.PointAt(Hit->Stamp)), Spheres, LocalRandState) * 0.5F;
+			Color += CastRay<Bounces - 1>(Ray(RayCast.PointAt(Hit->Stamp), Target - RayCast.PointAt(Hit->Stamp)), Spheres, LocalRandState);
 		}
-		return Color * Diffuse;
+		return Vector4(Color * Diffuse, 1);
 	}
 
-	return CastRay<0>(ray, Spheres, LocalRandState);;
+	return CastRay<0>(RayCast, Spheres, LocalRandState);
 }
 
 template <unsigned char Bounces>
-__device__ Vector4 CastRay(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
-	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, ray);
-	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, ray);
+__device__ Vector4 CastRay(const Ray& RayCast, Vector4 * Spheres, curandState LocalRandState) {
+	RayHit Hit1 = HitSphere(Spheres[0], Spheres[0].w, 0.001F, FLT_MAX, RayCast);
+	RayHit Hit2 = HitSphere(Spheres[1], Spheres[1].w, 0.001F, Hit1.Stamp, RayCast);
 	RayHit * Hit = (Hit1.bHit && Hit2.bHit) ? (Hit1.Stamp < Hit2.Stamp ? &Hit1 : &Hit2) : ( Hit1.bHit ? &Hit1 : &Hit2 );
 
-	Vector3 Color = Vector3(1.F);
+	Vector3 Color = Vector3(0.F);
 	if (Hit->bHit) {
-		Vector3 Target = ray.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
-		Target.Normalize();
+		Vector3 Target = RayCast.PointAt(Hit->Stamp) + Hit->Normal + RandomSphericalDir(LocalRandState) * 0.1F;
+		// Target.Normalize();
 		// Color = ((Target + 1.F) * 0.5F);
-		Color *= CastRay<Bounces - 1>(Ray(ray.PointAt(Hit->Stamp), Target - ray.PointAt(Hit->Stamp)), Spheres, LocalRandState) * 0.5F;
-		return Color;
+		Color += CastRay<Bounces - 1>(Ray(RayCast.PointAt(Hit->Stamp), Target - RayCast.PointAt(Hit->Stamp)), Spheres, LocalRandState);
+		return Vector4(Color, 1);
 	}
 
-	return CastRay<0>(ray, Spheres, LocalRandState);;
+	return CastRay<0>(RayCast, Spheres, LocalRandState);
 }
 
 template <>
-__device__ Vector4 CastRay<0>(const Ray& ray, Vector4 * Spheres, curandState LocalRandState) {
-	Vector3 NormalizedDirection = ray.Direction().Normalized();
+__device__ Vector4 CastRay<0>(const Ray& RayCast, Vector4 * Spheres, curandState LocalRandState) {
+	Vector3 NormalizedDirection = RayCast.Direction().Normalized();
 	float NHit = 0.5F * (NormalizedDirection.y + 1.F);
 	Vector3 Color = Vector3(1.F) * (1.F - NHit) + Vector3(0.5F, 0.7F, 1.F) * NHit * 0.5F;
-	return Color;
+	return Vector4(Color, 1);
 }
 
 __global__ void WirteTextureKernel(
@@ -130,19 +131,16 @@ __global__ void WirteTextureKernel(
 	// float4 element = make_float4(0, 0, 0, 0);
 	// surf2Dread(&element, SurfaceWrite, x * sizeof(float4), y);
 	Vector4 Color = Vector4();
-	Vector2 Coord; Ray ray;
-	// for (int s = 0; s < 4; s++) {
-		Coord.u = float(x + 0.25F) / float(TextSize.x);
-		Coord.v = float(y + 0.1F) / float(TextSize.y);
-		ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
-		Color += CastScreenRay<4>(ray, Spheres, LocalRandState);
-		Coord.u = float(x - 0.5) / float(TextSize.x);
-		Coord.v = float(y - 0.2) / float(TextSize.y);
-		ray = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
-		Color += CastScreenRay<4>(ray, Spheres, LocalRandState);
-	// }
-	Color = Vector4(sqrtf(Color.x / 2.0F), sqrtf(Color.y / 2.0F), sqrtf(Color.z / 2.0F), 1);
-	surf2Dwrite(Color, SurfaceWrite, x * sizeof(float4), y);
+	Vector2 Coord; Ray RayCast;
+	const int Samples = 2;
+	for (int s = 0; s < Samples; s++) {
+		Coord.u = float(x + (curand_uniform(&LocalRandState) - 1) / 2.F) / float(TextSize.x);
+		Coord.v = float(y + (curand_uniform(&LocalRandState) - 1) / 2.F) / float(TextSize.y);
+		RayCast = Ray(Origin, LowLeft + (Horizontal * Coord.u) + (Vertical * Coord.v));
+		Color += CastScreenRay<2>(RayCast, Spheres, LocalRandState);
+	}
+	Vector4 OutColor = { sqrtf(Color.x / Samples), sqrtf(Color.y / Samples), sqrtf(Color.z / Samples), Color.w / Samples};
+	surf2Dwrite(OutColor, SurfaceWrite, x * sizeof(Vector4), y);
 }
 
 extern "C"
@@ -198,7 +196,7 @@ int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, con
 
 	Timer.Stop();
 	Debug::Log(
-		Debug::LogDebug, L"CUDA Texture Write/Read with total volume (%s): %dms",
+		Debug::LogDebug, L"CUDA Texture Write/Read with total volume (%ls): %.2fms",
 		Text::FormatUnit(TextureDim.x * TextureDim.y, 3).c_str(),
 		Timer.GetEnlapsedMili()
 	);
