@@ -306,6 +306,7 @@
     <ClInclude Include="Source\include\Texture.h" />
     <ClInclude Include="Source\include\Texture2D.h" />
     <ClInclude Include="Source\include\Texture3D.h" />
+    <ClInclude Include="Source\include\Transform.h" />
     <ClInclude Include="Source\include\Utility\DeviceFunctions.h" />
     <ClInclude Include="Source\include\Utility\LogCore.h" />
     <ClInclude Include="Source\include\Utility\LogFreeType.h" />
@@ -345,6 +346,7 @@
     <ClCompile Include="Source\source\Texture.cpp" />
     <ClCompile Include="Source\source\Texture2D.cpp" />
     <ClCompile Include="Source\source\Texture3D.cpp" />
+    <ClCompile Include="Source\source\Transform.cpp" />
     <ClCompile Include="Source\source\Utility\DeviceFunctions.cpp" />
     <ClCompile Include="Source\source\Utility\LogCore.cpp" />
     <ClCompile Include="Source\source\Utility\SDFGenerator.cpp" />
