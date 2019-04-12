@@ -179,8 +179,6 @@ int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, con
 		texture->GetTextureObject(), GL_TEXTURE_2D, cudaGraphicsRegisterFlagsSurfaceLoadStore) 
 	);
 
-	Debug::Timer Timer;
-	Timer.Start();
 	// --- Map CUDA resource
 	CUDA::Check( cudaGraphicsMapResources(1, &cudaTextureResource, 0) );
 	{
@@ -193,14 +191,6 @@ int RTRenderToTexture2D(Texture2D * texture, std::vector<Vector4> * Spheres, con
 
 	// --- Wait for GPU to finish
 	CUDA::Check( cudaDeviceSynchronize() );
-
-	Timer.Stop();
-	Debug::Log(
-		Debug::LogDebug, L"CUDA Texture Write/Read with total volume (%ls): %.2fms",
-		Text::FormatUnit(TextureDim.x * TextureDim.y, 3).c_str(),
-		Timer.GetEnlapsedMili()
-	);
-
 	CUDA::Check( cudaGraphicsUnregisterResource(cudaTextureResource) );
 
 	return 0;
