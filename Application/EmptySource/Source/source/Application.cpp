@@ -29,6 +29,8 @@
 #include "../include/Texture3D.h"
 #include "../include/ImageLoader.h"
 
+#include <thread>
+
 // int FindBoundingBox(int N, MeshVertex * Vertices);
 // int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
 int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
@@ -267,10 +269,10 @@ void CoreApplication::MainLoop() {
 	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
     
 	Texture2D RenderedTexture = Texture2D(
-	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
+	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()), Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
 	);
 	RenderTarget Framebuffer = RenderTarget(
-		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, &RenderedTexture, false
+		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()), &RenderedTexture, false
 	);
 
 	float MaterialMetalness = 0.F;
@@ -286,26 +288,35 @@ void CoreApplication::MainLoop() {
 	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
 
 	srand((unsigned int)glfwGetTime());
-
-	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
 	TArray<Mesh> OBJModels;
-	float MeshSelector = 0;
-	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-        OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-	}
-    
-	OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
-	TArray<Mesh> QuadModels;;
-	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-		QuadModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-	}
-    
-	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
+	TArray<Mesh> QuadModels;
 	TArray<Mesh> LightModels;
-	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-        LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-    }
+	float MeshSelector = 0;
+
+	TArray<std::thread> Threads;
+	Threads.push_back(std::thread([&OBJModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		}
+	}));
+
+	Threads.push_back(std::thread([&QuadModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			QuadModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		}
+	}));
+
+	Threads.push_back(std::thread([&LightModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		}
+	}));
 
 	double InputTimeSum = 0;
 	const int TextCount = 3;
@@ -495,6 +506,7 @@ void CoreApplication::MainLoop() {
 			Matrix4x4 TransformMat = Transforms[0].GetWorldMatrix();
 			
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
+				OBJModels[MeshCount].SetUpBuffers();
 				OBJModels[MeshCount].BindVertexArray();
 
 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(TransformMat), ModelMatrixBuffer);
@@ -511,15 +523,18 @@ void CoreApplication::MainLoop() {
 			UnlitMaterial.SetFloat3Array( "_ViewPosition",             EyePosition.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_Material.Color",            Vector3(1).PointerToValue() );
 			
-			LightModels[0].BindVertexArray();
+			if (LightModels.size() >= 1) {
+				LightModels[0].SetUpBuffers();
+				LightModels[0].BindVertexArray();
 
-			TArray<Matrix4x4> LightPositions;
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
+				TArray<Matrix4x4> LightPositions;
+				LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
+				LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
 
-			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
+				UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
 
-			LightModels[0].DrawInstanciated(2);
+				LightModels[0].DrawInstanciated(2);
+			}
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -532,15 +547,18 @@ void CoreApplication::MainLoop() {
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			RenderTextureMaterial.SetTexture2D("_MainTexture", &RenderedTexture, 0);
 			
-			QuadModels[0].BindVertexArray();
-			
-			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-				ModelMatrixBuffer
-			);
-			
-			QuadModels[0].DrawInstanciated(1);
+			if (QuadModels.size() >= 1) {
+				QuadModels[0].SetUpBuffers();
+				QuadModels[0].BindVertexArray();
+
+				Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+				RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+					/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+					ModelMatrixBuffer
+				);
+
+				QuadModels[0].DrawInstanciated(1);
+			}
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// --- Activate corresponding render state
@@ -555,8 +573,10 @@ void CoreApplication::MainLoop() {
 			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
 			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
 
-			QuadModels[0].BindVertexArray();
-            
+			if (QuadModels.size() >= 1) {
+				QuadModels[0].BindVertexArray();
+			}
+
 			double TimeCount = 0;
 			int TotalCharacterSize = 0;
 			DynamicMesh.Clear();
@@ -608,5 +628,8 @@ void CoreApplication::MainLoop() {
 		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
 
+	for (int i = 0; i < Threads.size(); i++) {
+		Threads[i].join();
+	}
 	// delete[] Positions;
 }
