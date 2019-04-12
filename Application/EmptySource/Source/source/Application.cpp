@@ -122,21 +122,6 @@ void CoreApplication::Close() {
 };
 
 void CoreApplication::MainLoop() {
-
-	Quaternion qu = Quaternion::AxisAngle(Vector3(1, 1, 1).Normalized(), 35.F * MathConstants::DegreeToRad);
-	Matrix4x4 tra = Matrix4x4::Translation(Vector3(0, 1, 2));
-	Matrix4x4 ma = Matrix4x4::Rotation(qu) * tra;
-	Matrix4x4 persp = Matrix4x4::Perspective(45.F * MathConstants::DegreeToRad, 1000/200, 0.01F, 1000.F);
-	Vector3 ve = persp * Vector3(1, 2, 3);
-	Vector3 va = tra * Vector3(0, 0, 0);
-
-	Transform transform;
-
-	transform.Position = Vector3(1, 2, 3);
-	transform.Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0), 45 * MathConstants::DegreeToRad);
-	transform.Scale = Vector3(1, 1, 1);
-	Matrix4x4 rts = transform.GetWorldMatrix();
-
 	if (!bInitialized) return;
 
 	Space NewSpace; Space OtherNewSpace(NewSpace);
@@ -174,7 +159,7 @@ void CoreApplication::MainLoop() {
 	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
 	Bitmap<UCharRGBA> ExternalImage;
-	ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/PinappleHouse_DefaultMaterial_BaseColor.png"));
 	// ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/BowlsDesignerSet001_COL_1K.jpg"));
 	ExternalImage.FlipVertically();
 
@@ -269,10 +254,10 @@ void CoreApplication::MainLoop() {
 	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
     
 	Texture2D RenderedTexture = Texture2D(
-	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()), Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
+	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
 	);
 	RenderTarget Framebuffer = RenderTarget(
-		IntVector3(MainWindow->GetWidth(), MainWindow->GetHeight()), &RenderedTexture, false
+		RenderedTexture.GetDimension(), &RenderedTexture, false
 	);
 
 	float MaterialMetalness = 0.F;
@@ -296,7 +281,21 @@ void CoreApplication::MainLoop() {
 	TArray<std::thread> Threads;
 	Threads.push_back(std::thread([&OBJModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		}
+	}));
+	Threads.push_back(std::thread([&OBJModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
 		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		}
+	}));
+	Threads.push_back(std::thread([&OBJModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/xyzrgbDragon.obj"), &Faces, &Vertices, false);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
@@ -312,7 +311,7 @@ void CoreApplication::MainLoop() {
 
 	Threads.push_back(std::thread([&LightModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Monkey.obj"), &Faces, &Vertices, true);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
@@ -572,10 +571,6 @@ void CoreApplication::MainLoop() {
 			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
 			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
 			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
-
-			if (QuadModels.size() >= 1) {
-				QuadModels[0].BindVertexArray();
-			}
 
 			double TimeCount = 0;
 			int TotalCharacterSize = 0;
