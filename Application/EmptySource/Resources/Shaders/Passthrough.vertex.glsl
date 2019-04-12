@@ -26,6 +26,6 @@ void main() {
   vVertex.Color = _iVertexColor;
   	
   // Now set the position in model space
-  vVertex.Position = _iModelMatrix * vVertex.Position;
   gl_Position = _ProjectionMatrix * _iModelMatrix * vVertex.Position;
+  vVertex.Position = _iModelMatrix * vVertex.Position;
 }

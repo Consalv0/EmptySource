@@ -67,6 +67,8 @@ void Mesh::BindVertexArray() const {
 }
 
 void Mesh::DrawInstanciated(int Count) const {
+	if (VertexArrayObject == 0) return;
+
 	glDrawElementsInstanced(
 		GL_TRIANGLES,	         // mode
 		(int)Faces.size() * 3,	 // mode count
@@ -88,6 +90,7 @@ void Mesh::DrawElement() const {
 bool Mesh::SetUpBuffers() {
 
 	if (Vertices.size() <= 0 || Faces.size() <= 0) return false;
+	if (VertexArrayObject != 0 && VertexBuffer != 0 && ElementBuffer != 0) return true;
 
 	glGenVertexArrays(1, &VertexArrayObject);
 	glBindVertexArray(VertexArrayObject);
@@ -127,6 +130,10 @@ void Mesh::ClearBuffers() {
 	glDeleteVertexArrays(1, &VertexArrayObject);
 	glDeleteBuffers(1, &VertexBuffer);
 	glDeleteBuffers(1, &ElementBuffer);
+
+	VertexArrayObject = 0;
+	VertexBuffer = 0;
+	ElementBuffer = 0;
 }
 
 void Mesh::Clear() {

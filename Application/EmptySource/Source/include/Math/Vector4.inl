@@ -80,23 +80,13 @@ FORCEINLINE Vector4 Vector4::Lerp(const Vector4 & Start, const Vector4 & End, fl
 }
 
 inline float & Vector4::operator[](unsigned int i) {
-	switch (i) {
-		case 0:  return x;
-		case 1:  return y; 
-		case 2:  return z; 
-		case 3:  return w; 
-		default: return w;
-	}
+	if ((i >= 4)) return w;
+	return ((float*)this)[i];
 }
 
 inline float const & Vector4::operator[](unsigned int i) const {
-	switch (i) {
-		case 0:  return x;
-		case 1:  return y;
-		case 2:  return z;
-		case 3:  return w;
-		default: return w;
-	}
+	if ((i >= 4)) return w;
+	return ((float*)this)[i];
 }
 
 FORCEINLINE bool Vector4::operator==(const Vector4& Other) const {

@@ -14,5 +14,3 @@
 
 #include "Ray.h"
 #include "Box2D.h"
-
-#include "MathUtility.inl"

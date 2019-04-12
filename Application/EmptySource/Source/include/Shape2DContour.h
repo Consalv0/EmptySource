@@ -21,6 +21,7 @@
 #pragma once
 
 #include "../include/EdgeHolder.h"
+#include "../include/Math/Box2D.h"
 
 // A single closed contour of a shape.
 class Shape2DContour {

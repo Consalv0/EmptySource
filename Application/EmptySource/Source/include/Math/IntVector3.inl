@@ -68,21 +68,13 @@ inline const int * IntVector3::PointerToValue() const {
 }
 
 inline int & IntVector3::operator[](unsigned int i) {
-	switch (i) {
-	case 0: return x;
-	case 1: return y;
-	case 2: return z;
-	default: return z;
-	}
+	if ((i >= 3)) return z;
+	return ((int*)this)[i];
 }
 
 inline int const & IntVector3::operator[](unsigned int i) const {
-	switch (i) {
-	case 0: return x;
-	case 1: return y;
-	case 2: return z;
-	default: return z;
-	}
+	if ((i >= 3)) return z;
+	return ((int*)this)[i];
 }
 
 FORCEINLINE IntVector3 IntVector3::operator * (const IntVector3& Other) const {

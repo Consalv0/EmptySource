@@ -2,7 +2,6 @@
 
 #include "../include/Core.h"
 #include "../include/Graphics.h"
-#include "../include/Math/CoreMath.h"
 
 struct Texture {
 protected:

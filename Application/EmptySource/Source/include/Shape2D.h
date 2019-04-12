@@ -20,7 +20,9 @@
 
 #pragma once
 
+#include "../include/Math/MathUtility.h"
 #include "../include/Shape2DContour.h"
+#include "../include/Math/Vector3.h"
 #include "../include/Math/Box2D.h"
 
 // Vector shape representation.

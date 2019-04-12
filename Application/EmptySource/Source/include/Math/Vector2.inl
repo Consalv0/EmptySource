@@ -84,19 +84,13 @@ FORCEINLINE Vector2 Vector2::Lerp(const Vector2 & Start, const Vector2 & End, fl
 }
 
 inline float & Vector2::operator[](unsigned int i) {
-	switch (i) {
-		case 0: return x;
-		case 1: return y;
-		default: return y;
-	}
+	if ((i >= 2)) return y;
+	return ((float*)this)[i];
 }
 
 inline float const & Vector2::operator[](unsigned int i) const {
-	switch (i) {
-		case 0: return x;
-		case 1: return y;
-		default: return y;
-	}
+	if ((i >= 2)) return y;
+	return ((float*)this)[i];
 }
 
 FORCEINLINE bool Vector2::operator==(const Vector2& Other) const {
@@ -104,7 +98,7 @@ FORCEINLINE bool Vector2::operator==(const Vector2& Other) const {
 }
 
 inline HOST_DEVICE bool Vector2::operator!() const {
-	return !x && !y;
+	return !x || !y;
 }
 
 FORCEINLINE bool Vector2::operator!=(const Vector2& Other) const {
