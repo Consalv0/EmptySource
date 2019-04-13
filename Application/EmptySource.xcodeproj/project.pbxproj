@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
+		DD3D8EC422617F42003A3346 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD3D8EC322617F41003A3346 /* Transform.cpp */; };
+		DD3D8EC522617F42003A3346 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD3D8EC322617F41003A3346 /* Transform.cpp */; };
 		DD45349A22494385002F6BEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD45349922494385002F6BEF /* Assets.xcassets */; };
 		DD45349D22494385002F6BEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD45349B22494385002F6BEF /* Main.storyboard */; };
 		DD4534AA22494707002F6BEF /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = DD4534A922494707002F6BEF /* Fonts */; };
@@ -144,6 +146,8 @@
 		DD23A6F822482AB700F3C46E /* DeviceFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceFunctions.cpp; sourceTree = "<group>"; };
 		DD23A6FA2248705A00F3C46E /* TexturePacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TexturePacking.cpp; sourceTree = "<group>"; };
 		DD23A6FC2248706500F3C46E /* TexturePacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexturePacking.h; sourceTree = "<group>"; };
+		DD3D8EC222617F31003A3346 /* Transform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transform.h; sourceTree = "<group>"; };
+		DD3D8EC322617F41003A3346 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
 		DD45348B22494376002F6BEF /* EmptySource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmptySource.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD45349922494385002F6BEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD45349C22494385002F6BEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -476,6 +480,7 @@
 				DD8881062243600C0052F499 /* Material.h */,
 				DD8880F6224355410052F499 /* Mesh.h */,
 				DD8880F5224355410052F499 /* MeshLoader.h */,
+				DD3D8EC222617F31003A3346 /* Transform.h */,
 				DD8881022243600B0052F499 /* Texture.h */,
 				DD8881092243600C0052F499 /* Texture2D.h */,
 				DD8881082243600C0052F499 /* Texture3D.h */,
@@ -506,6 +511,7 @@
 				DD8881102243604D0052F499 /* RenderTarget.cpp */,
 				DD8881112243604D0052F499 /* ShaderProgram.cpp */,
 				DD88810D2243604C0052F499 /* ShaderStage.cpp */,
+				DD3D8EC322617F41003A3346 /* Transform.cpp */,
 				DD988CE3224DC0B900D342DA /* Text.cpp */,
 				DD88810A2243604C0052F499 /* Texture.cpp */,
 				DD88810B2243604C0052F499 /* Texture2D.cpp */,
@@ -839,6 +845,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD3D8EC522617F42003A3346 /* Transform.cpp in Sources */,
 				DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */,
 				DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD4F19EB224958AB00C102FB /* RenderTarget.cpp in Sources */,
@@ -880,6 +887,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD3D8EC422617F42003A3346 /* Transform.cpp in Sources */,
 				DD988CB422496D7000D342DA /* Glyph.cpp in Sources */,
 				DD988CDA224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD988CA222496D7000D342DA /* RenderTarget.cpp in Sources */,
