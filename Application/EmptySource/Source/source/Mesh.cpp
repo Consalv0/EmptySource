@@ -42,7 +42,6 @@ Mesh::Mesh(const MeshFaces faces, const MeshVertices vertices) {
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
-	SetUpBuffers();
 }
 
 Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices) {
@@ -52,7 +51,6 @@ Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices) {
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
-	SetUpBuffers();
 }
 
 void Mesh::BindVertexArray() const {
