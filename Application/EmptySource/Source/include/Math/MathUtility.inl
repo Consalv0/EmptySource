@@ -136,7 +136,7 @@ T Math::Clamp01(T Value) {
 }
 
 float Math::ClampAngle(float Degrees) {
-	Degrees = std::fmod(Degrees, 360.F);
+	Degrees = fmod(Degrees, 360.F);
 
 	if (Degrees < 0.F) {
 		// --- Shift to [0,360)
