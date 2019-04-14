@@ -50,6 +50,7 @@ private:
 
 template struct Cubemap::TextureData<UCharRGB>;
 
+template<>
 inline bool Cubemap::TextureData<UCharRGB>::CheckDimensions(const int Width) const {
 	if ( Right.GetHeight() != Width ||  Right.GetWidth() != Width) return false;
 	if (  Left.GetHeight() != Width ||   Left.GetWidth() != Width) return false;
