@@ -534,6 +534,9 @@
     <ClInclude Include="Source\include\Transform.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Cubemap.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">
@@ -639,6 +642,9 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\Transform.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Cubemap.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

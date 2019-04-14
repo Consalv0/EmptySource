@@ -42,6 +42,9 @@ public:
 	//* Pass Texture 2D array
 	void SetTexture2D(const Char * UniformName, struct Texture2D* Tex, const unsigned int& Position) const;
 
+	//* Pass Cubemap array
+	void SetTextureCubemap(const Char * UniformName, struct Cubemap* Tex, const unsigned int& Position) const;
+
 	//* Use shader program and render mode
 	void Use();
 };

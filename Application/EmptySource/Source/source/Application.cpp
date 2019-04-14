@@ -27,6 +27,7 @@
 #include "../include/RenderTarget.h"
 #include "../include/Texture2D.h"
 #include "../include/Texture3D.h"
+#include "../include/Cubemap.h"
 #include "../include/ImageLoader.h"
 
 #include <thread>
@@ -158,6 +159,15 @@ void CoreApplication::MainLoop() {
     // // --- Cientific Symbols
 	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
     
+	Cubemap::TextureData<UCharRGB> CubemapData;
+	ImageLoader::Load( CubemapData.Right, FileManager::Open(L"Resources/Textures/skybox_right.jpg"));
+	ImageLoader::Load(  CubemapData.Left, FileManager::Open(L"Resources/Textures/skybox_left.jpg"));
+	ImageLoader::Load(   CubemapData.Top, FileManager::Open(L"Resources/Textures/skybox_top.jpg"));
+	ImageLoader::Load(CubemapData.Bottom, FileManager::Open(L"Resources/Textures/skybox_bottom.jpg"));
+	ImageLoader::Load( CubemapData.Front, FileManager::Open(L"Resources/Textures/skybox_front.jpg"));
+	ImageLoader::Load(  CubemapData.Back, FileManager::Open(L"Resources/Textures/skybox_back.jpg"));
+	Cubemap CubemapTexture(CubemapData.Back.GetWidth(), CubemapData, Graphics::CF_RGB, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+
 	Bitmap<UCharRGBA> ExternalImage;
 	ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/PinappleHouse_DefaultMaterial_BaseColor.png"));
 	// ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/BowlsDesignerSet001_COL_1K.jpg"));
@@ -205,6 +215,7 @@ void CoreApplication::MainLoop() {
 	ShaderStage FragmentBRDF      = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/BRDF.fragment.glsl"));
 	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderTexture.fragment.glsl"));
 	ShaderStage FragRenderText    = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderText.fragment.glsl"));
+	ShaderStage FragRenderCubemap = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderCubemap.fragment.glsl"));
 	ShaderStage FragmentUnlit     = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/Unlit.fragment.glsl"));
 	ShaderStage Voxelizer         = ShaderStage(ShaderType::Geometry, FileManager::Open(L"Resources/Shaders/Voxelizer.geometry.glsl"));
     
@@ -233,7 +244,12 @@ void CoreApplication::MainLoop() {
 	RenderTextShader.AppendStage(&PassthroughVertex);
 	RenderTextShader.AppendStage(&FragRenderText);
 	RenderTextShader.Compile();
-    
+
+	ShaderProgram RenderCubemapShader = ShaderProgram(L"RenderCubemap");
+	RenderCubemapShader.AppendStage(&VertexBase);
+	RenderCubemapShader.AppendStage(&FragRenderCubemap);
+	RenderCubemapShader.Compile();
+
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(&BRDFShader);
     
@@ -252,6 +268,10 @@ void CoreApplication::MainLoop() {
 	RenderTextMaterial.DepthFunction = Graphics::DF_Always;
 	RenderTextMaterial.CullMode = Graphics::CM_None;
 	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
+
+	Material RenderCubemapMaterial = Material();
+	RenderCubemapMaterial.SetShaderProgram(&RenderCubemapShader);
+	RenderCubemapMaterial.CullMode = Graphics::CM_None;
     
 	Texture2D RenderedTexture = Texture2D(
 	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
@@ -276,6 +296,7 @@ void CoreApplication::MainLoop() {
 	TArray<Mesh> OBJModels;
 	TArray<Mesh> QuadModels;
 	TArray<Mesh> LightModels;
+	Mesh CubeModel;
 	float MeshSelector = 0;
 
 	TArray<std::thread> Threads;
@@ -295,7 +316,7 @@ void CoreApplication::MainLoop() {
 	}));
 	Threads.push_back(std::thread([&OBJModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/xyzrgbDragon.obj"), &Faces, &Vertices, false);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Serapis.obj"), &Faces, &Vertices, false);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
@@ -315,6 +336,12 @@ void CoreApplication::MainLoop() {
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
+	}));
+
+	Threads.push_back(std::thread([&CubeModel]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
+		CubeModel = Mesh(&Faces[0], &Vertices[0]);
 	}));
 
 	double InputTimeSum = 0;
@@ -465,7 +492,7 @@ void CoreApplication::MainLoop() {
 
 			// --- Run the device part of the program
 			if (!bRandomArray) {
-				curandomStateArray = GetRandomArray(RenderedTexture.GetDimension());
+				// curandomStateArray = GetRandomArray(RenderedTexture.GetDimension());
 				bRandomArray = true;
 			}
 			bool bTestResult = false;
@@ -478,11 +505,26 @@ void CoreApplication::MainLoop() {
 			Spheres.push_back(Vector4((Matrix4x4::Translation(Vector3(0, 0, -1.F)) * Quaternion::EulerAngles(
 				Vector3(MainWindow->GetMousePosition().x, MainWindow->GetMousePosition().y, 0)
 			).ToMatrix4x4() * Matrix4x4::Translation(Vector3(0.5F))) * Vector4(0.F, 0.F, 0.F, 1.F), 0.5F));
-			bTestResult = RTRenderToTexture2D(&RenderedTexture, &Spheres, curandomStateArray);
+			// bTestResult = RTRenderToTexture2D(&RenderedTexture, &Spheres, curandomStateArray);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// Framebuffer.Use();
+
+			RenderCubemapMaterial.Use();
+
+			RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
+			RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
+			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
+
+			if (CubeModel.Faces.size() >= 1) {
+				CubeModel.SetUpBuffers();
+				CubeModel.BindVertexArray();
+
+				RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &Matrix4x4::Scaling({ 500, 500, 500 }), ModelMatrixBuffer);
+				CubeModel.DrawElement();
+			}
+
 			BaseMaterial.Use();
 			
 			BaseMaterial.SetFloat3Array( "_ViewPosition",            EyePosition.PointerToValue() );
@@ -500,8 +542,8 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			BaseMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
 
-			Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime()) * Transforms[0].Rotation;
-			Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
+			// Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime()) * Transforms[0].Rotation;
+			// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
 			Matrix4x4 TransformMat = Transforms[0].GetWorldMatrix();
 			
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {

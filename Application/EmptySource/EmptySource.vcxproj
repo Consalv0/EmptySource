@@ -269,6 +269,7 @@
     <ClInclude Include="Source\include\CoreGraphics.h" />
     <ClInclude Include="Source\include\CoreTime.h" />
     <ClInclude Include="Source\include\CoreTypes.h" />
+    <ClInclude Include="Source\include\Cubemap.h" />
     <ClInclude Include="Source\include\EdgeHolder.h" />
     <ClInclude Include="Source\include\EdgeSegments.h" />
     <ClInclude Include="Source\include\FileManager.h" />
@@ -322,6 +323,7 @@
     <ClCompile Include="Source\source\Application.cpp" />
     <ClCompile Include="Source\source\Bitmap.cpp" />
     <ClCompile Include="Source\source\CoreTime.cpp" />
+    <ClCompile Include="Source\source\Cubemap.cpp" />
     <ClCompile Include="Source\source\EdgeHolder.cpp" />
     <ClCompile Include="Source\source\EdgeSegments.cpp" />
     <ClCompile Include="Source\source\FileManager.cpp" />

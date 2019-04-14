@@ -3,6 +3,7 @@
 #include "../include/Material.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Texture2D.h"
+#include "../include/Cubemap.h"
 
 Material::Material() {
 	MaterialShader = NULL;
@@ -89,6 +90,15 @@ void Material::SetTexture2D(const Char * UniformName, Texture2D * Tex, const uns
     ShaderProgram * Program = GetShaderProgram();
     if (Program == NULL) return;
     unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
+	glUniform1i(UniformLocation, Position);
+	glActiveTexture(GL_TEXTURE0 + Position);
+	Tex->Use();
+}
+
+void Material::SetTextureCubemap(const Char * UniformName, Cubemap * Tex, const unsigned int & Position) const {
+	ShaderProgram * Program = GetShaderProgram();
+	if (Program == NULL) return;
+	unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform1i(UniformLocation, Position);
 	glActiveTexture(GL_TEXTURE0 + Position);
 	Tex->Use();
