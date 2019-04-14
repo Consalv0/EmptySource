@@ -1,4 +1,4 @@
-﻿#include "../include/Core.h"
+#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
@@ -344,7 +344,6 @@ void CoreApplication::MainLoop() {
 		CubeModel = Mesh(&Faces[0], &Vertices[0]);
 	}));
 
-	double InputTimeSum = 0;
 	const int TextCount = 3;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
@@ -520,8 +519,9 @@ void CoreApplication::MainLoop() {
 			if (CubeModel.Faces.size() >= 1) {
 				CubeModel.SetUpBuffers();
 				CubeModel.BindVertexArray();
-
-				RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &Matrix4x4::Scaling({ 500, 500, 500 }), ModelMatrixBuffer);
+                
+                Matrix4x4 MatrixScale = Matrix4x4::Scaling({ 500, 500, 500 });
+				RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, MatrixScale.PointerToValue(), ModelMatrixBuffer);
 				CubeModel.DrawElement();
 			}
 
