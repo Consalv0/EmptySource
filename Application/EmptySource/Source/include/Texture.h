@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../include/Core.h"
-#include "../include/Graphics.h"
+#include "../include/CoreGraphics.h"
 
 struct Texture {
 protected:
@@ -32,4 +32,6 @@ public:
 	virtual void SetAddressMode(const Graphics::AddressMode& Mode) = 0;
 
 	virtual void Delete() = 0;
+
+	static GLuint GetColorFormat(const Graphics::ColorFormat & CF);
 };

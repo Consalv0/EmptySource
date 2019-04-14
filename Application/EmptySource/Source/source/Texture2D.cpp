@@ -1,28 +1,6 @@
 
 #include "../include/Texture2D.h"
-#include "../include/CoreGraphics.h"
 #include "../include/Utility/LogCore.h"
-
-GLuint GL_GetColorFormat(const Graphics::ColorFormat & CF) {
-	GLuint GLColorFormat = 0;
-	switch (CF) {
-		case Graphics::CF_Red:
-			GLColorFormat = GL_RED; break;
-		case Graphics::CF_RGB:
-			GLColorFormat = GL_RGB; break;
-		case Graphics::CF_RGBA:
-			GLColorFormat = GL_RGBA; break;
-		case Graphics::CF_RGBA16F:
-			GLColorFormat = GL_RGBA16F; break;
-		case Graphics::CF_RGBA32F:
-			GLColorFormat = GL_RGBA32F; break;	
-		default:
-			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
-			GLColorFormat = GL_RGBA; break;
-	}
-
-	return GLColorFormat;
-}
 
 Texture2D::Texture2D(
 	const IntVector2 & Size,
@@ -39,7 +17,7 @@ Texture2D::Texture2D(
 
 	{
 		Use();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
@@ -62,7 +40,7 @@ Texture2D::Texture2D(
 
 	{
 		Use();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GL_GetColorFormat(InputFormat), InputMode, BufferData);
+		glTexImage2D(GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GetColorFormat(InputFormat), InputMode, BufferData);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
