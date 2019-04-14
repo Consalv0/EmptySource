@@ -10,6 +10,8 @@
 		DD23A6F62248277100F3C46E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
 		DD3D8EC422617F42003A3346 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD3D8EC322617F41003A3346 /* Transform.cpp */; };
 		DD3D8EC522617F42003A3346 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD3D8EC322617F41003A3346 /* Transform.cpp */; };
+		DD3D8EC72262B73C003A3346 /* Cubemap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD3D8EC62262B73C003A3346 /* Cubemap.cpp */; };
+		DD3D8EC82262B73C003A3346 /* Cubemap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD3D8EC62262B73C003A3346 /* Cubemap.cpp */; };
 		DD45349A22494385002F6BEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD45349922494385002F6BEF /* Assets.xcassets */; };
 		DD45349D22494385002F6BEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD45349B22494385002F6BEF /* Main.storyboard */; };
 		DD4534AA22494707002F6BEF /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = DD4534A922494707002F6BEF /* Fonts */; };
@@ -148,6 +150,8 @@
 		DD23A6FC2248706500F3C46E /* TexturePacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexturePacking.h; sourceTree = "<group>"; };
 		DD3D8EC222617F31003A3346 /* Transform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transform.h; sourceTree = "<group>"; };
 		DD3D8EC322617F41003A3346 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
+		DD3D8EC62262B73C003A3346 /* Cubemap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cubemap.cpp; sourceTree = "<group>"; };
+		DD3D8EC92262B74C003A3346 /* Cubemap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cubemap.h; sourceTree = "<group>"; };
 		DD45348B22494376002F6BEF /* EmptySource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmptySource.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD45349922494385002F6BEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD45349C22494385002F6BEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -484,6 +488,7 @@
 				DD8881022243600B0052F499 /* Texture.h */,
 				DD8881092243600C0052F499 /* Texture2D.h */,
 				DD8881082243600C0052F499 /* Texture3D.h */,
+				DD3D8EC92262B74C003A3346 /* Cubemap.h */,
 				DD988CE9225010F200D342DA /* ImageLoader.h */,
 				DD8880C32242E45F0052F499 /* Core.h */,
 				DD8880E7224317270052F499 /* CoreTime.h */,
@@ -516,6 +521,7 @@
 				DD88810A2243604C0052F499 /* Texture.cpp */,
 				DD88810B2243604C0052F499 /* Texture2D.cpp */,
 				DD88810F2243604C0052F499 /* Texture3D.cpp */,
+				DD3D8EC62262B73C003A3346 /* Cubemap.cpp */,
 				DD988CE6225010E200D342DA /* ImageLoader.cpp */,
 				DD8880E8224317450052F499 /* CoreTime.cpp */,
 				DD888100224355AC0052F499 /* Space.cpp */,
@@ -858,6 +864,7 @@
 				DD4F19ED224958AB00C102FB /* ShaderStage.cpp in Sources */,
 				DD4F1A01224958AB00C102FB /* main.cpp in Sources */,
 				DD4F19E6224958AB00C102FB /* Timer.cpp in Sources */,
+				DD3D8EC82262B73C003A3346 /* Cubemap.cpp in Sources */,
 				DD4F19FC224958AB00C102FB /* Font.cpp in Sources */,
 				DD4F19EA224958AB00C102FB /* Material.cpp in Sources */,
 				DD4F19E7224958AB00C102FB /* DeviceFunctions.cpp in Sources */,
@@ -900,6 +907,7 @@
 				DD988CB122496D7000D342DA /* EdgeHolder.cpp in Sources */,
 				DD988CB322496D7000D342DA /* Font.cpp in Sources */,
 				DD988CBC22496D7500D342DA /* DeviceFunctions.cpp in Sources */,
+				DD3D8EC72262B73C003A3346 /* Cubemap.cpp in Sources */,
 				DD988CA922496D7000D342DA /* Space.cpp in Sources */,
 				DD988CB822496D7000D342DA /* main.cpp in Sources */,
 				DD988CAF22496D7000D342DA /* FileStream.cpp in Sources */,
