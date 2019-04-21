@@ -29,6 +29,7 @@ IntVector3 Texture3D::GetDimension() const {
 
 void Texture3D::GenerateMipMaps() {
 	if (IsValid()) {
+		Use();
 		bLods = true;
 		SetFilterMode(FilterMode);
 		glGenerateMipmap(GL_TEXTURE_3D);

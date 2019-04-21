@@ -157,6 +157,20 @@ void CoreApplication::MainLoop() {
 	ImageLoader::Load(Black, FileManager::Open(L"Resources/Textures/Black.jpg"));
 	Black.FlipVertically();
 
+	Bitmap<FloatRGB> Equirectangular;
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+	Equirectangular.FlipVertically();
+
+	Texture2D EquirectangularTexture = Texture2D(
+		IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
+		Graphics::CF_RGB16F,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		GL_FLOAT,
+		Equirectangular.PointerToValue()
+	);
+	EquirectangularTexture.GenerateMipMaps();
 	Texture2D BaseAlbedoTexture = Texture2D(
 		IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
 		Graphics::CF_RGBA,
@@ -319,8 +333,6 @@ void CoreApplication::MainLoop() {
 	IntegrateBRDFMaterial.CullMode = Graphics::CM_None;
 	IntegrateBRDFMaterial.SetShaderProgram(&IntegrateBRDFShader);
 
-
-
 	srand((unsigned int)glfwGetTime());
 	TArray<Mesh> OBJModels;
 	TArray<Mesh> LightModels;
@@ -392,22 +404,8 @@ void CoreApplication::MainLoop() {
 		QuadModel.DrawInstanciated(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		IntegrateRB.Delete();
-		BRDFLut.GenerateMipMaps();
+		// BRDFLut.GenerateMipMaps();
 	}
-
-	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
-	Equirectangular.FlipVertically();
-	Texture2D EquirectangularTexture = Texture2D(
-		IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-		Graphics::CF_RGB16F,
-		Graphics::FM_MinMagLinear,
-		Graphics::AM_Repeat,
-		Graphics::CF_RGB,
-		GL_FLOAT,
-		Equirectangular.PointerToValue()
-	);
-	EquirectangularTexture.GenerateMipMaps();
 
 	Cubemap CubemapTexture(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
 	{
@@ -584,7 +582,7 @@ void CoreApplication::MainLoop() {
 			}
 			bool bTestResult = false;
 
-			LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 2));
+			LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 4));
 			LightPosition1 = Vector3();
 
 			TArray<Vector4> Spheres = TArray<Vector4>();
@@ -682,14 +680,14 @@ void CoreApplication::MainLoop() {
 			}
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
-			glViewport(0, 0, BRDFLut.GetWidth(), BRDFLut.GetHeight());
+			glViewport(0, 0, RenderedTexture.GetWidth(), RenderedTexture.GetHeight());
 			
 			RenderTextureMaterial.Use();
 
 			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", BRDFLut.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", RenderedTexture.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetTexture2D("_MainTexture", &BRDFLut, 0);
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &RenderedTexture, 0);
 			
 			if (QuadModel.Faces.size() >= 1) {
 				QuadModel.SetUpBuffers();

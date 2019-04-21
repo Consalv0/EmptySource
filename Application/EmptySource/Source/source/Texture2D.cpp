@@ -61,9 +61,10 @@ int Texture2D::GetHeight() const {
 
 void Texture2D::GenerateMipMaps() {
 	if (IsValid()) {
+		Use();
 		bLods = true;
 		SetFilterMode(FilterMode);
-		glGenerateTextureMipmap(TextureObject);
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 }
 

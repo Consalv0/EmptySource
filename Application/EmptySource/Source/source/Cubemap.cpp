@@ -52,9 +52,10 @@ float Cubemap::GetMipmapCount() const {
 
 void Cubemap::GenerateMipMaps() {
 	if (IsValid()) {
+		Use();
 		bLods = true;
 		SetFilterMode(FilterMode);
-		glGenerateTextureMipmap(TextureObject);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
 }
 
