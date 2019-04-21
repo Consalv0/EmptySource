@@ -1,52 +1,64 @@
 #include "../include/RenderTarget.h"
+#include "../include/Texture2D.h"
+#include "../include/Cubemap.h"
 #include "../include/CoreGraphics.h"
 #include "../include/Utility/LogCore.h"
 
 RenderTarget::RenderTarget() {
-	Dimension = 0;
+	Resolution = 0;
 	TextureColor0Target = NULL;
-	TextureDepthTarget = 0;
-}
-
-RenderTarget::RenderTarget(const IntVector2 & Size, Texture* Target, bool bUseDepth) {
-	Dimension = Size;
-	TextureColor0Target = Target;
-
-	if (Target != NULL) {
-		glGenFramebuffers(1, &FramebufferObject);
-		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferObject);
-
-		// --- All future texture functions will modify this texture
-		glBindTexture(GL_TEXTURE_2D, Target->GetTextureObject());
-
-		// --- Set "RenderedTexture" as our colour attachement #0
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, Target->GetTextureObject(), 0);
-
-		if (bUseDepth) {
-			glGenRenderbuffers(1, &TextureDepthTarget);
-			glBindRenderbuffer(GL_RENDERBUFFER, TextureDepthTarget);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Size.x, Size.y);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, TextureDepthTarget);
-		}
-
-		// --- Set the list of draw buffers.
-		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
-
-		// --- Always check that our framebuffer is ok
-		glCheckFramebufferStatus(GL_FRAMEBUFFER);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
+	RenderbufferObject = 0;
+	FramebufferObject = 0;
 }
 
 IntVector2 RenderTarget::GetDimension() const {
-	return Dimension;
+	return Resolution;
+}
+
+void RenderTarget::PrepareTexture(const Texture2D * Texture, const int& Lod, const int& TextureAttachment) {
+	TextureColor0Target = Texture;
+	if (!IsValid()) return;
+	Use();
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, TextureColor0Target->GetTextureObject(), Lod);
+	// Set the list of draw buffers.
+	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
+	glDrawBuffers(1, DrawBuffers);
+}
+
+void RenderTarget::PrepareTexture(const Cubemap * Texture, const int& TexturePos, const int& Lod, const int& TextureAttachment) {
+	TextureColor0Target = Texture;
+	if (!IsValid()) return;
+	Use();
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
+		GL_TEXTURE_CUBE_MAP_POSITIVE_X + TexturePos, TextureColor0Target->GetTextureObject(), Lod);
+}
+
+void RenderTarget::Resize(const int & x, const int & y) {
+	Use();
+	Resolution = { x, y };
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, x, y);
+	glViewport(0, 0, Resolution.x, Resolution.y);
+}
+
+void RenderTarget::SetUpBuffers() {
+	if (FramebufferObject != NULL && RenderbufferObject != NULL) return;
+
+	glGenFramebuffers(1, &FramebufferObject);
+	glGenRenderbuffers(1, &RenderbufferObject);
+}
+
+bool RenderTarget::CheckStatus() const {
+	const GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	return Status == GL_FRAMEBUFFER_COMPLETE;
 }
 
 void RenderTarget::Use() const {
-	glViewport(0, 0, Dimension.x, Dimension.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferObject);
+	glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
 }
 
 void RenderTarget::Clear() const {
@@ -55,9 +67,10 @@ void RenderTarget::Clear() const {
 }
 
 bool RenderTarget::IsValid() const {
-	return TextureColor0Target != NULL && TextureColor0Target->IsValid();
+	return TextureColor0Target != NULL && TextureColor0Target->IsValid() && FramebufferObject != NULL && RenderbufferObject != NULL;
 }
 
 void RenderTarget::Delete() {
 	glDeleteFramebuffers(1, &FramebufferObject);
+	glDeleteRenderbuffers(1, &RenderbufferObject);
 }
