@@ -22,7 +22,7 @@ __global__ void InitRandomKernel(int2 Dimension, curandState * RandState) {
 
 	int Index = y * Dimension.x + x;
 	// --- Each thread gets same seed, a different sequence number, no offset
-	curand_init(1984, Index, 0, &RandState[Index]);
+	curand_init(1984 + Index, 0, 0, &RandState[Index]);
 }
 
 extern "C"
