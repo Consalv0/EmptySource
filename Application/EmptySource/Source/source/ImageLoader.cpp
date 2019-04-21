@@ -23,6 +23,16 @@
 	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(BitmapFormat)); \
 	return true;
 
+#define _LoadImagef(BitmapFormat, STBIFormat) \
+	if (File == NULL) return false; \
+	int Width, Height, Comp; \
+	FILE * FILEFile = fopen(WStringToString(File->GetPath()).c_str(), "rb"); \
+	float * Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, STBIFormat); \
+	if (Image == NULL) return false; \
+	RefBitmap = Bitmap<BitmapFormat>(Width, Height); \
+	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(BitmapFormat)); \
+	return true;
+
 bool ImageLoader::Load(Bitmap<UCharRGBA>& RefBitmap, FileStream * File) {
 	_LoadImage(UCharRGBA, STBI_rgb_alpha);
 }
@@ -37,6 +47,10 @@ bool ImageLoader::Load(Bitmap<UCharRG>& RefBitmap, FileStream * File) {
 
 bool ImageLoader::Load(Bitmap<UCharRed>& RefBitmap, FileStream * File) {
 	_LoadImage(UCharRed, STBI_grey);
+}
+
+bool ImageLoader::Load(Bitmap<FloatRGB>& RefBitmap, FileStream * File) {
+	_LoadImagef(FloatRGB, STBI_rgb);
 }
 
 bool ImageLoader::Write(const Bitmap<FloatRed>& RefBitmap, FileStream * File) {

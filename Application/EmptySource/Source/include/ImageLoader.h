@@ -9,5 +9,6 @@ public:
 	static bool Load(Bitmap<UCharRGB> & RefBitmap, FileStream * File);
 	static bool Load(Bitmap<UCharRG> & RefBitmap, FileStream * File);
 	static bool Load(Bitmap<UCharRed> & RefBitmap, FileStream * File);
+	static bool Load(Bitmap<FloatRGB> & RefBitmap, FileStream * File);
 	static bool Write(const Bitmap<FloatRed> & RefBitmap, FileStream * File);
 };
