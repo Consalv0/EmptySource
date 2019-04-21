@@ -10,15 +10,16 @@ Texture2D::Texture2D(
 {
 	Dimension = Size;
 	ColorFormat = Format;
+	bLods = false;
 
 	glGenTextures(1, &TextureObject);
+	Use();
 	SetFilterMode(Filter);
 	SetAddressMode(Address);
 
 	{
-		Use();
 		glTexImage2D(GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GL_RGBA, GL_FLOAT, NULL);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		Deuse();
 	}
 }
 
@@ -33,15 +34,16 @@ Texture2D::Texture2D(
 {
 	Dimension = Size;
 	ColorFormat = Format;
+	bLods = false;
 
 	glGenTextures(1, &TextureObject);
+	Use();
 	SetFilterMode(Filter);
 	SetAddressMode(Address);
 
 	{
-		Use();
 		glTexImage2D(GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GetColorFormat(InputFormat), InputMode, BufferData);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		Deuse();
 	}
 }
 
@@ -55,6 +57,14 @@ int Texture2D::GetWidth() const {
 
 int Texture2D::GetHeight() const {
 	return Dimension.y;
+}
+
+void Texture2D::GenerateMipMaps() {
+	if (IsValid()) {
+		bLods = true;
+		SetFilterMode(FilterMode);
+		glGenerateTextureMipmap(TextureObject);
+	}
 }
 
 void Texture2D::Use() const {
@@ -72,33 +82,29 @@ bool Texture2D::IsValid() const {
 
 void Texture2D::SetFilterMode(const Graphics::FilterMode & Mode) {
 	FilterMode = Mode;
-	Use();
 
 	switch (Mode) {
 	case Graphics::FM_MinMagLinear:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 		break;
 	case Graphics::FM_MinMagNearest:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
 		break;
 	case Graphics::FM_MinLinearMagNearest:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 		break;
 	case Graphics::FM_MinNearestMagLinear:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
 		break;
 	}
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture2D::SetAddressMode(const Graphics::AddressMode & Mode) {
 	AddressMode = Mode;
-	Use();
 
 	switch (Mode) {
 	case Graphics::AM_Repeat:
@@ -118,8 +124,6 @@ void Texture2D::SetAddressMode(const Graphics::AddressMode & Mode) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		break;
 	}
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture2D::Delete() {

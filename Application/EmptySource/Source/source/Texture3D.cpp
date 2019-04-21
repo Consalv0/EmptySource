@@ -13,11 +13,11 @@ Texture3D::Texture3D(
 	ColorFormat = Format;
 
 	glGenTextures(1, &TextureObject);
+	Use();
 	SetFilterMode(Filter);
 	SetAddressMode(Address);
-	// TODO COLOR FORMATS
+	
 	{
-		Use();
 		glTexImage3D(GL_TEXTURE_3D, 0, (int)ColorFormat, Dimension.x, Dimension.y, Dimension.z, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_3D, 0);
 	}
@@ -25,6 +25,14 @@ Texture3D::Texture3D(
 
 IntVector3 Texture3D::GetDimension() const {
 	return Dimension;
+}
+
+void Texture3D::GenerateMipMaps() {
+	if (IsValid()) {
+		bLods = true;
+		SetFilterMode(FilterMode);
+		glGenerateMipmap(GL_TEXTURE_3D);
+	}
 }
 
 void Texture3D::Use() const {
@@ -42,33 +50,29 @@ bool Texture3D::IsValid() const {
 
 void Texture3D::SetFilterMode(const Graphics::FilterMode & Mode) {
 	FilterMode = Mode;
-	Use();
 
 	switch (Mode) {
 	case Graphics::FM_MinMagLinear:
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 		break;
 	case Graphics::FM_MinMagNearest:
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
 		break;
 	case Graphics::FM_MinLinearMagNearest:
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 		break;
 	case Graphics::FM_MinNearestMagLinear:
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
 		break;
 	}
-
-	glBindTexture(GL_TEXTURE_3D, 0);
 }
 
 void Texture3D::SetAddressMode(const Graphics::AddressMode & Mode) {
 	AddressMode = Mode;
-	Use();
 
 	switch (Mode) {
 	case Graphics::AM_Repeat:
@@ -92,8 +96,6 @@ void Texture3D::SetAddressMode(const Graphics::AddressMode & Mode) {
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
 		break;
 	}
-
-	glBindTexture(GL_TEXTURE_3D, 0);
 }
 
 void Texture3D::Delete() {

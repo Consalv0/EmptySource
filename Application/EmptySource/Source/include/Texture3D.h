@@ -19,6 +19,8 @@ public:
 	//* Get Dimension of the texture
 	IntVector3 GetDimension() const;
 
+	void GenerateMipMaps();
+	
 	//* Use the texture
 	void Use() const;
 

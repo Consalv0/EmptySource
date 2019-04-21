@@ -30,6 +30,8 @@ public:
 
 	int GetHeight() const;
 
+	void GenerateMipMaps();
+
 	//* Use the texture
 	void Use() const;
 

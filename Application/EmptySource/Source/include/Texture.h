@@ -12,6 +12,8 @@ protected:
 	Graphics::AddressMode AddressMode;
 	Graphics::ColorFormat ColorFormat;
 
+	bool bLods;
+
 public:
 	//* Default Constructor
 	Texture();
@@ -19,11 +21,16 @@ public:
 	//* Use the texture
 	virtual void Use() const = 0;
 
+	//* Use the texture
+	static void Deuse();
+
 	//* Check if texture is valid
 	virtual bool IsValid() const = 0;
 
 	//* Returns the GL Object of this texture
 	unsigned int GetTextureObject() const { return TextureObject; };
+
+	virtual void GenerateMipMaps() = 0;
 
 	Graphics::FilterMode GetFilterMode() { return FilterMode; };
 	Graphics::AddressMode GetAddressMode() { return AddressMode; };
