@@ -158,7 +158,7 @@ void CoreApplication::MainLoop() {
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Milkyway.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
@@ -343,7 +343,7 @@ void CoreApplication::MainLoop() {
 	TArray<std::thread> Threads;
 	Threads.push_back(std::thread([&OBJModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
