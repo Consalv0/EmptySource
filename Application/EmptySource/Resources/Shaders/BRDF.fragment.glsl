@@ -93,7 +93,7 @@ vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 VertNormal ) {
 
   vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
 
-  EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, _EnviromentMapLods - 2));
+  EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, _EnviromentMapLods - 1));
 
   // vec3 Color = (kD * DiffuseColor * EnviromentLight) + Specular;
   vec3 Color = (1 - (Fresnel * Metalness)) * DiffuseColor * EnviromentLight + Specular;
