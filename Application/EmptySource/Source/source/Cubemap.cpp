@@ -272,7 +272,7 @@ bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular,
 	const unsigned int MaxMipLevels = (unsigned int)Map.GetMipmapCount() + 1;
 	for (unsigned int Lod = 0; Lod < MaxMipLevels; ++Lod) {
 		// --- Reisze framebuffer according to mip-level size.
-		unsigned int LodWidth = unsigned int(Map.Width) >> Lod;
+		unsigned int LodWidth = (unsigned int)(Map.Width) >> Lod;
 		Renderer.Resize(LodWidth, LodWidth);
 	
 		float Roughness = (float)Lod / (float)(MaxMipLevels - 1);

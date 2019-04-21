@@ -45,7 +45,7 @@ void RenderTarget::Resize(const int & x, const int & y) {
 }
 
 void RenderTarget::SetUpBuffers() {
-	if (FramebufferObject != NULL && RenderbufferObject != NULL) return;
+    if (FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE) return;
 
 	glGenFramebuffers(1, &FramebufferObject);
 	glGenRenderbuffers(1, &RenderbufferObject);

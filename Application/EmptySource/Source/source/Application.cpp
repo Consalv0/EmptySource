@@ -1,4 +1,4 @@
-﻿#include "../include/Core.h"
+#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
@@ -653,7 +653,8 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetTexture2D("_MainTexture", &WhiteTexture, 0);
 			BaseMaterial.SetTexture2D("_RoughnessTexture", &WhiteTexture, 1);
 			BaseMaterial.SetTexture2D("_MetallicTexture", &WhiteTexture, 2);
-			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(Matrix4x4::Translation(Vector3(0, 2, 0))), ModelMatrixBuffer);
+            Matrix4x4 ModelMatrix = (Matrix4x4::Translation(Vector3(0, 2, 0)));
+			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
 			CubeModel.DrawInstanciated((GLsizei)1);
 			TriangleCount += CubeModel.Faces.size() * 1;
