@@ -1,6 +1,7 @@
 #version 410 core
 
 const float PI = 3.14159265359;
+const vec2 InvAtan = vec2(0.1591, 0.3183);
 
 in struct VertexData {
   vec4 Position;
