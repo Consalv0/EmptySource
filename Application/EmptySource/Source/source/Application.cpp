@@ -1,4 +1,4 @@
-#include "../include/Core.h"
+﻿#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
@@ -143,45 +143,70 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PixelRange = 1.5F;
 	TextGenerator.Pivot = 0;
 
-	// TextGenerator.PrepareCharacters(L"ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0987654321{}¨´*+~-_\\'?¿[]¡=)(/&%^$#\"!°/*+.:;,μ", 113);
-	// // --- Basic Latin Unicode Range
-	// TextGenerator.PrepareCharacters(L'!', L'~');
-	// // --- Controls and Latin-1 Unicode Range
-    // TextGenerator.PrepareCharacters(L'¡', L'ſ');
-	// // --- Greek Unicode Range
-	// TextGenerator.PrepareCharacters(L'Ͱ', L'Ͽ');
-	// // --- Hiragana
-	// TextGenerator.PrepareCharacters(0x3041, 0x309F);
-	// // --- Katana
-	// TextGenerator.PrepareCharacters(0x30A0, 0x30FF);
-    // // --- Arabic
-	// TextGenerator.PrepareCharacters(0x2200, 0x22FF);
-    // // --- Cientific Symbols
-	// TextGenerator.PrepareCharacters(0x0600, 0x06FF);
-    
-	Cubemap::TextureData<UCharRGB> CubemapData;
-	ImageLoader::Load( CubemapData.Right, FileManager::Open(L"Resources/Textures/skybox_right.jpg"));
-	ImageLoader::Load(  CubemapData.Left, FileManager::Open(L"Resources/Textures/skybox_left.jpg"));
-	ImageLoader::Load(   CubemapData.Top, FileManager::Open(L"Resources/Textures/skybox_top.jpg"));
-	ImageLoader::Load(CubemapData.Bottom, FileManager::Open(L"Resources/Textures/skybox_bottom.jpg"));
-	ImageLoader::Load( CubemapData.Front, FileManager::Open(L"Resources/Textures/skybox_front.jpg"));
-	ImageLoader::Load(  CubemapData.Back, FileManager::Open(L"Resources/Textures/skybox_back.jpg"));
-	Cubemap CubemapTexture(CubemapData.Back.GetWidth(), CubemapData, Graphics::CF_RGB, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	Bitmap<UCharRGBA> BaseAlbedo;
+	Bitmap<UCharRed> BaseMetallic, BaseRoughness;
+	ImageLoader::Load(BaseAlbedo, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	BaseAlbedo.FlipVertically();
+	ImageLoader::Load(BaseMetallic, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
+	BaseMetallic.FlipVertically();
+	ImageLoader::Load(BaseRoughness, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
+	BaseRoughness.FlipVertically();
+	Bitmap<UCharRGB> White, Black;
+	ImageLoader::Load(White, FileManager::Open(L"Resources/Textures/White.jpg"));
+	White.FlipVertically();
+	ImageLoader::Load(Black, FileManager::Open(L"Resources/Textures/Black.jpg"));
+	Black.FlipVertically();
 
-	Bitmap<UCharRGBA> ExternalImage;
-	ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/PinappleHouse_DefaultMaterial_BaseColor.png"));
-	// ImageLoader::Load(ExternalImage, FileManager::Open(L"Resources/Textures/BowlsDesignerSet001_COL_1K.jpg"));
-	ExternalImage.FlipVertically();
-
-	Texture2D ExternalImageTexture = Texture2D(
-		IntVector2(ExternalImage.GetWidth(), ExternalImage.GetHeight()),
+	Texture2D BaseAlbedoTexture = Texture2D(
+		IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
 		Graphics::CF_RGBA,
-		Graphics::FM_MinLinearMagNearest,
+		Graphics::FM_MinMagLinear,
 		Graphics::AM_Border,
 		Graphics::CF_RGBA,
 		GL_UNSIGNED_BYTE,
-		ExternalImage.PointerToValue()
+		BaseAlbedo.PointerToValue()
 	);
+	BaseAlbedoTexture.GenerateMipMaps();
+	Texture2D BaseMetallicTexture = Texture2D(
+		IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
+		Graphics::CF_Red,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_Red,
+		GL_UNSIGNED_BYTE,
+		BaseMetallic.PointerToValue()
+	);
+	BaseMetallicTexture.GenerateMipMaps();
+	Texture2D BaseRoughnessTexture = Texture2D(
+		IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
+		Graphics::CF_Red,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_Red,
+		GL_UNSIGNED_BYTE,
+		BaseRoughness.PointerToValue()
+	);
+	BaseRoughnessTexture.GenerateMipMaps();
+	Texture2D WhiteTexture = Texture2D(
+		IntVector2(White.GetWidth(), White.GetHeight()),
+		Graphics::CF_RGB,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		GL_UNSIGNED_BYTE,
+		White.PointerToValue()
+	);
+	WhiteTexture.GenerateMipMaps();
+	Texture2D BlackTexture = Texture2D(
+		IntVector2(Black.GetWidth(), Black.GetHeight()),
+		Graphics::CF_RGB,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		GL_UNSIGNED_BYTE,
+		Black.PointerToValue()
+	);
+	BlackTexture.GenerateMipMaps();
 
 	Bitmap<UCharRed> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -195,6 +220,7 @@ void CoreApplication::MainLoop() {
 		GL_UNSIGNED_BYTE,
 		FontAtlas.PointerToValue()
 	);
+	FontMap.GenerateMipMaps();
 
 	/////////// Creating MVP (ModelMatrix, ViewMatrix, Poryection) Matrix //////////////
 	// --- Perpective matrix (ProjectionMatrix)
@@ -209,16 +235,26 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ViewMatrix;
 
 	// --- Create and compile our GLSL shader programs from text files
+	ShaderStage EquirectangularToCubemapVert =
+		ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl"));
+	ShaderStage EquirectangularToCubemapFrag =
+		ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl"));
 	ShaderStage VertexBase        = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Base.vertex.glsl"));
 	ShaderStage VoxelizerVertex   = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Voxelizer.vertex.glsl"));
 	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Passthrough.vertex.glsl"));
 	ShaderStage FragmentBRDF      = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/BRDF.fragment.glsl"));
+	ShaderStage IntegrateBRDF     = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/IntegrateBRDF.fragment.glsl"));
 	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderTexture.fragment.glsl"));
 	ShaderStage FragRenderText    = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderText.fragment.glsl"));
 	ShaderStage FragRenderCubemap = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderCubemap.fragment.glsl"));
 	ShaderStage FragmentUnlit     = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/Unlit.fragment.glsl"));
 	ShaderStage Voxelizer         = ShaderStage(ShaderType::Geometry, FileManager::Open(L"Resources/Shaders/Voxelizer.geometry.glsl"));
-    
+
+	ShaderProgram EquirectangularToCubemapShader = ShaderProgram(L"EquirectangularToCubemap");
+	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapVert);
+	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapFrag);
+	EquirectangularToCubemapShader.Compile();
+
 	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
 	VoxelBRDFShader.AppendStage(&VoxelizerVertex);
 	VoxelBRDFShader.AppendStage(&Voxelizer);
@@ -239,6 +275,11 @@ void CoreApplication::MainLoop() {
 	RenderTextureShader.AppendStage(&PassthroughVertex);
 	RenderTextureShader.AppendStage(&FragRenderTexture);
 	RenderTextureShader.Compile();
+
+	ShaderProgram IntegrateBRDFShader = ShaderProgram(L"IntegrateBRDF");
+	IntegrateBRDFShader.AppendStage(&PassthroughVertex);
+	IntegrateBRDFShader.AppendStage(&IntegrateBRDF);
+	IntegrateBRDFShader.Compile();
     
 	ShaderProgram RenderTextShader = ShaderProgram(L"RenderText");
 	RenderTextShader.AppendStage(&PassthroughVertex);
@@ -270,33 +311,21 @@ void CoreApplication::MainLoop() {
 	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
 
 	Material RenderCubemapMaterial = Material();
-	RenderCubemapMaterial.SetShaderProgram(&RenderCubemapShader);
 	RenderCubemapMaterial.CullMode = Graphics::CM_None;
-    
-	Texture2D RenderedTexture = Texture2D(
-	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
-	);
-	RenderTarget Framebuffer = RenderTarget(
-		RenderedTexture.GetDimension(), &RenderedTexture, false
-	);
+	RenderCubemapMaterial.SetShaderProgram(&RenderCubemapShader);
 
-	float MaterialMetalness = 0.F;
-	float MaterialRoughness = 0.54F;
-	float LightIntencity = 20.F;
+	Material IntegrateBRDFMaterial = Material();
+	IntegrateBRDFMaterial.DepthFunction = Graphics::DF_Always;
+	IntegrateBRDFMaterial.CullMode = Graphics::CM_None;
+	IntegrateBRDFMaterial.SetShaderProgram(&IntegrateBRDFShader);
 
-	TArray<Transform> Transforms;
-	Transforms.push_back(Transform());
 
-	///////// Create Matrices Buffer //////////////
-	GLuint ModelMatrixBuffer;
-	glGenBuffers(1, &ModelMatrixBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
 
 	srand((unsigned int)glfwGetTime());
 	TArray<Mesh> OBJModels;
-	TArray<Mesh> QuadModels;
 	TArray<Mesh> LightModels;
 	Mesh CubeModel;
+	Mesh QuadModel;
 	float MeshSelector = 0;
 
 	TArray<std::thread> Threads;
@@ -307,28 +336,13 @@ void CoreApplication::MainLoop() {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
 	}));
-	Threads.push_back(std::thread([&OBJModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-		}
-	}));
-	Threads.push_back(std::thread([&OBJModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Serapis.obj"), &Faces, &Vertices, false);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-		}
-	}));
-
-	Threads.push_back(std::thread([&QuadModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			QuadModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-		}
-	}));
+	// Threads.push_back(std::thread([&OBJModels]() {
+	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+	// 	}
+	// }));
 
 	Threads.push_back(std::thread([&LightModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
@@ -343,6 +357,75 @@ void CoreApplication::MainLoop() {
 		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
 		CubeModel = Mesh(&Faces[0], &Vertices[0]);
 	}));
+    
+	Texture2D RenderedTexture = Texture2D(
+	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
+	);
+
+	///////// Create Matrices Buffer //////////////
+	GLuint ModelMatrixBuffer;
+	glGenBuffers(1, &ModelMatrixBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+
+	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+	OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
+	QuadModel = (Mesh(&Faces[0], &Vertices[0]));
+
+	Texture2D BRDFLut(IntVector2(512), Graphics::CF_RG16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	{
+		RenderTarget IntegrateRB = RenderTarget();
+		IntegrateRB.SetUpBuffers();
+		BRDFLut.Use();
+		IntegrateBRDFMaterial.Use();
+		IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+		IntegrateRB.Resize(BRDFLut.GetWidth(), BRDFLut.GetHeight());
+		QuadModel.SetUpBuffers();
+		QuadModel.BindVertexArray();
+		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+		IntegrateBRDFMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+			/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+			ModelMatrixBuffer
+		);
+
+		IntegrateRB.PrepareTexture(&BRDFLut);
+		IntegrateRB.Clear();
+		QuadModel.DrawInstanciated(1);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		IntegrateRB.Delete();
+		BRDFLut.GenerateMipMaps();
+	}
+
+	Bitmap<FloatRGB> Equirectangular;
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+	Equirectangular.FlipVertically();
+	Texture2D EquirectangularTexture = Texture2D(
+		IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
+		Graphics::CF_RGB16F,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		GL_FLOAT,
+		Equirectangular.PointerToValue()
+	);
+	EquirectangularTexture.GenerateMipMaps();
+
+	Cubemap CubemapTexture(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	{
+		Mesh CubeModel;
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Cube.obj"), &Faces, &Vertices, false);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			CubeModel = Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]);
+		}
+		Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTexture, &CubeModel, &EquirectangularToCubemapShader);
+	}
+
+	float MaterialMetalness = 1.F;
+	float MaterialRoughness = 1.F;
+	float LightIntencity = 20.F;
+
+	TArray<Transform> Transforms;
+	Transforms.push_back(Transform());
 
 	const int TextCount = 3;
 	float FontSize = 14;
@@ -355,6 +438,7 @@ void CoreApplication::MainLoop() {
 	const void* curandomStateArray = 0;
 
 	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	do {
@@ -374,22 +458,22 @@ void CoreApplication::MainLoop() {
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
-			EyePosition += Forward * Time::GetDeltaTime();
+			EyePosition += Forward * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
 			// TextPivot.y += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
 			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
-			EyePosition += Right * Time::GetDeltaTime();
+			EyePosition += Right * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
 			// TextPivot.x -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
 			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
-			EyePosition += Back * Time::GetDeltaTime();
+			EyePosition += Back * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
 			// TextPivot.y -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
 			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
-			EyePosition += Left * Time::GetDeltaTime();
+			EyePosition += Left * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
 			// TextPivot.x += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		
@@ -404,11 +488,11 @@ void CoreApplication::MainLoop() {
 			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_E)) {
-			MaterialRoughness -= 0.1F * Time::GetDeltaTime();
+			MaterialRoughness -= 0.5F * Time::GetDeltaTime();
 			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_R)) {
-			MaterialRoughness += 0.1F * Time::GetDeltaTime();
+			MaterialRoughness += 0.5F * Time::GetDeltaTime();
 			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_L)) {
@@ -474,18 +558,22 @@ void CoreApplication::MainLoop() {
 					GL_UNSIGNED_BYTE,
 					FontAtlas.PointerToValue()
 				);
+				FontMap.GenerateMipMaps();
 			}
 		}
 
-		// --- Draw the meshs(es) !
+		Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.4F) * Transforms[0].Rotation;
+
 		RenderTimeSum += Time::GetDeltaTime();
-		if (RenderTimeSum > (1 / 60)) {
+		const float MaxFramerate = (1 / 65.F);
+		if (RenderTimeSum > MaxFramerate) {
 			RenderTimeSum = 0;
 			size_t TriangleCount = 0;
 			size_t VerticesCount = 0;
-		
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			MainWindow->ClearWindow();
-			Framebuffer.Clear();
 		
 			Debug::Timer Timer;
 
@@ -506,15 +594,15 @@ void CoreApplication::MainLoop() {
 			).ToMatrix4x4() * Matrix4x4::Translation(Vector3(0.5F))) * Vector4(0.F, 0.F, 0.F, 1.F), 0.5F));
 			// bTestResult = RTRenderToTexture2D(&RenderedTexture, &Spheres, curandomStateArray);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// Framebuffer.Use();
 
 			RenderCubemapMaterial.Use();
 
+			float MaterialRoughnessPow = (1 - MaterialRoughness) * CubemapTexture.GetMipmapCount();
 			RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 			RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
+			RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessPow);
 
 			if (CubeModel.Faces.size() >= 1) {
 				CubeModel.SetUpBuffers();
@@ -536,13 +624,18 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetFloat1Array( "_Lights[1].Intencity",                  &LightIntencity );
 			BaseMaterial.SetFloat1Array( "_Material.Metalness",                &MaterialMetalness );
 			BaseMaterial.SetFloat1Array( "_Material.Roughness",                &MaterialRoughness );
-			BaseMaterial.SetFloat3Array( "_Material.Color", Vector3(.6F, .2F, 0).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Material.Color", Vector3(.97F, .8F, 0.75F).PointerToValue() );
 
-			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
-			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
-			BaseMaterial.SetTexture2D("_MainTexture", &ExternalImageTexture, 0);
+			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix",       ProjectionMatrix.PointerToValue() );
+			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",                   ViewMatrix.PointerToValue() );
+			BaseMaterial.SetTexture2D("_MainTexture", &BaseAlbedoTexture, 0);
+			BaseMaterial.SetTexture2D("_RoughnessTexture", &BaseRoughnessTexture, 1);
+			BaseMaterial.SetTexture2D("_MetallicTexture", &BaseMetallicTexture, 2);
+			BaseMaterial.SetTexture2D("_BRDFLUT", &BRDFLut, 3);
+			BaseMaterial.SetTextureCubemap("_EnviromentMap", &CubemapTexture, 4);
+			float CubemapTextureMipmaps = CubemapTexture.GetMipmapCount();
+			BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
-			// Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime()) * Transforms[0].Rotation;
 			// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
 			Matrix4x4 TransformMat = Transforms[0].GetWorldMatrix();
 			
@@ -556,6 +649,17 @@ void CoreApplication::MainLoop() {
 				TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
 			}
+			CubeModel.SetUpBuffers();
+			CubeModel.BindVertexArray();
+
+			BaseMaterial.SetTexture2D("_MainTexture", &WhiteTexture, 0);
+			BaseMaterial.SetTexture2D("_RoughnessTexture", &WhiteTexture, 1);
+			BaseMaterial.SetTexture2D("_MetallicTexture", &WhiteTexture, 2);
+			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(Matrix4x4::Translation(Vector3(0, 2, 0))), ModelMatrixBuffer);
+
+			CubeModel.DrawInstanciated((GLsizei)1);
+			TriangleCount += CubeModel.Faces.size() * 1;
+			VerticesCount += CubeModel.Vertices.size() * 1;
 
 			UnlitMaterial.Use();
             
@@ -578,19 +682,18 @@ void CoreApplication::MainLoop() {
 			}
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, RenderedTexture.GetWidth(), RenderedTexture.GetHeight());
+			glViewport(0, 0, BRDFLut.GetWidth(), BRDFLut.GetHeight());
 			
 			RenderTextureMaterial.Use();
 
 			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", RenderedTexture.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", BRDFLut.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetTexture2D("_MainTexture", &RenderedTexture, 0);
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &BRDFLut, 0);
 			
-			if (QuadModels.size() >= 1) {
-				QuadModels[0].SetUpBuffers();
-				QuadModels[0].BindVertexArray();
+			if (QuadModel.Faces.size() >= 1) {
+				QuadModel.SetUpBuffers();
+				QuadModel.BindVertexArray();
 
 				Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 				RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
@@ -598,7 +701,7 @@ void CoreApplication::MainLoop() {
 					ModelMatrixBuffer
 				);
 
-				QuadModels[0].DrawInstanciated(1);
+				QuadModel.DrawInstanciated(1);
 			}
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
@@ -640,13 +743,13 @@ void CoreApplication::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), TimeScale(%.3f), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
 				Time::GetFrameRatePerSecond(),
 				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
-				Time::GetDeltaTime(),
+				MaterialRoughnessPow,
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
 				Text::FormatMath(CursorPosition).c_str(),

@@ -22,6 +22,7 @@ void main() {
   vVertex.Position = vec4(_iVertexPosition, 1.0);
   
   vVertex.NormalDirection = normalize(vec4( _iVertexNormal, 1.0 )).xyz; 
+  vVertex.TangentDirection = _iVertexTangent;
   vVertex.UV0 = _iVertexUV0;
   vVertex.Color = _iVertexColor;
   	

@@ -20,13 +20,19 @@ public:
 		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z Front
 		Bitmap<T> Front;
 
-		inline bool CheckDimensions(const int Width) const;
+		inline bool CheckDimensions(const int Width) const {
+			if (Right.GetHeight() != Width || Right.GetWidth() != Width) return false;
+			if (Left.GetHeight() != Width || Left.GetWidth() != Width) return false;
+			if (Top.GetHeight() != Width || Top.GetWidth() != Width) return false;
+			if (Bottom.GetHeight() != Width || Bottom.GetWidth() != Width) return false;
+			if (Back.GetHeight() != Width || Back.GetWidth() != Width) return false;
+			return true;
+		}
 	};
 
 	Cubemap(
 		const int & Width,
-		const TextureData<UCharRGB>& Textures,
-		const Graphics::ColorFormat Format,
+		const Graphics::ColorFormat & Format,
 		const Graphics::FilterMode & Filter,
 		const Graphics::AddressMode & Address
 	);
@@ -37,25 +43,30 @@ public:
 	//* Check if cubemap is valid
 	bool IsValid() const;
 
-	void SetFilterMode(const Graphics::FilterMode& Mode);
+	int GetWidth() const;
 
-	void SetAddressMode(const Graphics::AddressMode& Mode);
+	float GetMipmapCount() const;
+	void GenerateMipMaps();
+
+	bool CalculateIrradianceMap() const;
+
+	static bool FromCube(Cubemap& Map, const TextureData<UCharRGB>& Textures);
+	static bool FromHDRCube(Cubemap& Map, const TextureData<FloatRGB>& Textures);
+
+	static bool FromEquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class Mesh* CubeModel, class ShaderProgram* ShaderConverter);
+	static bool FromHDREquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class Mesh* CubeModel, class ShaderProgram* ShaderConverter);
+
 
 	//* 
 	void Delete();
 
 private:
+	void SetFilterMode(const Graphics::FilterMode& Mode);
+
+	void SetAddressMode(const Graphics::AddressMode& Mode);
+
 	int Width;
 };
 
 template struct Cubemap::TextureData<UCharRGB>;
-
-template<>
-inline bool Cubemap::TextureData<UCharRGB>::CheckDimensions(const int Width) const {
-	if ( Right.GetHeight() != Width ||  Right.GetWidth() != Width) return false;
-	if (  Left.GetHeight() != Width ||   Left.GetWidth() != Width) return false;
-	if (   Top.GetHeight() != Width ||    Top.GetWidth() != Width) return false;
-	if (Bottom.GetHeight() != Width || Bottom.GetWidth() != Width) return false;
-	if (  Back.GetHeight() != Width ||   Back.GetWidth() != Width) return false;
-	return true;
-}
+template struct Cubemap::TextureData<FloatRGB>;

@@ -4,7 +4,7 @@
 // to do a 1 in 1 out shader producing a single triangle output for
 // each one input.
 layout (points) in;
-layout (triangle_strip, max_vertices=36) out;
+layout (triangle_strip, max_vertices=35) out;
 
 uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;
