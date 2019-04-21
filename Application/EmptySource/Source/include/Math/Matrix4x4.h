@@ -2,6 +2,7 @@
 
 struct Vector4;
 struct Vector3;
+struct Quaternion;
 
 struct Matrix4x4 {
 
