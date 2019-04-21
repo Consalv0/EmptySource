@@ -77,6 +77,8 @@ void Mesh::DrawInstanciated(int Count) const {
 }
 
 void Mesh::DrawElement() const {
+	if (VertexArrayObject == 0) return;
+
 	glDrawElements(
 		GL_TRIANGLES,	                        // mode
 		(int)Faces.size() * 3,	                // mode count
