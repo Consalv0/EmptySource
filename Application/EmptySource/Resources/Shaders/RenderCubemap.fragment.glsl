@@ -1,7 +1,7 @@
 #version 410
 
 uniform samplerCube _Skybox;
-uniform float _Time;
+uniform float _Roughness;
 
 uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;
@@ -22,6 +22,8 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main(){
-    vec4 Color = texture(_Skybox, normalize((Vertex.Position).xyz));
-    FragColor = Color;
+    vec3 Color = textureLod(_Skybox, normalize((Vertex.Position).xyz), _Roughness).xyz;
+    Color = Color / (Color + vec3(1.0));
+    Color = pow(Color, vec3(1.0/1.8));
+    FragColor = vec4(Color, 1.0);
 } 
