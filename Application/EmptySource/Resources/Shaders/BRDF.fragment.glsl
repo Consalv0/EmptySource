@@ -149,4 +149,8 @@ void main() {
   Sum = pow(Sum, vec3(1.0/Gamma));
 
   FragColor = vec4(Sum, 1);
+
+  if (FragColor.x < 0) {
+    FragColor *= Matrix.Model * vec4(0);
+  }
 }

@@ -22,8 +22,12 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main(){
-    vec3 Color = textureLod(_Skybox, normalize((Vertex.Position).xyz), _Roughness).xyz;
-    Color = Color / (Color + vec3(1.0));
-    Color = pow(Color, vec3(1.0/1.8));
-    FragColor = vec4(Color, 1.0);
+  vec3 Color = textureLod(_Skybox, normalize((Vertex.Position).xyz), _Roughness).xyz;
+  Color = Color / (Color + vec3(1.0));
+  Color = pow(Color, vec3(1.0/1.8));
+  FragColor = vec4(Color, 1.0);
+  
+  if (FragColor.x < 0) {
+    FragColor *= Matrix.Model * vec4(0);
+  }
 } 

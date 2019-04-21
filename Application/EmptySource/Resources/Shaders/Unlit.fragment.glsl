@@ -35,5 +35,9 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(_Material.Color, 1);
+  FragColor = vec4(_Material.Color, 1);
+  
+  if (FragColor.x < 0) {
+    FragColor *= Matrix.Model * Vertex.Position;
+  }
 }
