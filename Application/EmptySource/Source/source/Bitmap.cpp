@@ -60,8 +60,7 @@ void Bitmap<T>::FlipVertically() {
 	unsigned Rows = Height / 2; // Iterate only half the buffer to get a full flip
 	T* TempRow = (T*)malloc(Width * sizeof(T));
 
-	for (unsigned RowIndex = 0; RowIndex < Rows; RowIndex++)
-	{
+	for (unsigned RowIndex = 0; RowIndex < Rows; RowIndex++) {
 		memcpy(TempRow, Data + RowIndex * Width, Width * sizeof(T));
 		memcpy(Data + RowIndex * Width, Data + (Height - RowIndex - 1) * Width, Width * sizeof(T));
 		memcpy(Data + (Height - RowIndex - 1) * Width, TempRow, Width * sizeof(T));
