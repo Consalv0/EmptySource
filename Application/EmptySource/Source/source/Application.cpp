@@ -158,7 +158,7 @@ void CoreApplication::MainLoop() {
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/flower_road_2k_constrast.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Factory_Catwalk_2k.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
@@ -245,8 +245,7 @@ void CoreApplication::MainLoop() {
 		ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl"));
 	ShaderStage EquirectangularToCubemapFrag =
 		ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl"));
-	ShaderStage EquirectangularIrradiance = 
-		ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/EquirectangularIrradiance.fragment.glsl"));
+	ShaderStage HDRClamping       = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/HDRClamping.fragment.glsl"));
 	ShaderStage VertexBase        = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Base.vertex.glsl"));
 	ShaderStage VoxelizerVertex   = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Voxelizer.vertex.glsl"));
 	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Passthrough.vertex.glsl"));
@@ -263,10 +262,10 @@ void CoreApplication::MainLoop() {
 	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapFrag);
 	EquirectangularToCubemapShader.Compile();
 
-	ShaderProgram EquirectangularIrradianceShader = ShaderProgram(L"EquirectangularIrradiance");
-	EquirectangularIrradianceShader.AppendStage(&PassthroughVertex);
-	EquirectangularIrradianceShader.AppendStage(&EquirectangularIrradiance);
-	EquirectangularIrradianceShader.Compile();
+	ShaderProgram HDRClampingShader = ShaderProgram(L"HDRClampingShader");
+	HDRClampingShader.AppendStage(&PassthroughVertex);
+	HDRClampingShader.AppendStage(&HDRClamping);
+	HDRClampingShader.Compile();
 
 	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
 	VoxelBRDFShader.AppendStage(&VoxelizerVertex);
@@ -332,10 +331,10 @@ void CoreApplication::MainLoop() {
 	IntegrateBRDFMaterial.CullMode = Graphics::CM_None;
 	IntegrateBRDFMaterial.SetShaderProgram(&IntegrateBRDFShader);
 
-	Material EquirectangularIrradianceMaterial = Material();
-	EquirectangularIrradianceMaterial.DepthFunction = Graphics::DF_Always;
-	EquirectangularIrradianceMaterial.CullMode = Graphics::CM_None;
-	EquirectangularIrradianceMaterial.SetShaderProgram(&EquirectangularIrradianceShader);
+	Material HDRClampingMaterial = Material();
+	HDRClampingMaterial.DepthFunction = Graphics::DF_Always;
+	HDRClampingMaterial.CullMode = Graphics::CM_None;
+	HDRClampingMaterial.SetShaderProgram(&HDRClampingShader);
 
 	srand((unsigned int)glfwGetTime());
 	TArray<Mesh> OBJModels;
@@ -347,7 +346,7 @@ void CoreApplication::MainLoop() {
 	TArray<std::thread> Threads;
 	Threads.push_back(std::thread([&OBJModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
@@ -394,14 +393,14 @@ void CoreApplication::MainLoop() {
 		RenderTarget Renderer = RenderTarget();
 		Renderer.SetUpBuffers();
 		EquirectangularTextureHDR.Use();
-		EquirectangularIrradianceMaterial.Use();
-		EquirectangularIrradianceMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-		EquirectangularIrradianceMaterial.SetTexture2D("_EquirectangularMap", &EquirectangularTexture, 0);
+		HDRClampingMaterial.Use();
+		HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+		HDRClampingMaterial.SetTexture2D("_EquirectangularMap", &EquirectangularTexture, 0);
 		Renderer.Resize(EquirectangularTextureHDR.GetWidth(), EquirectangularTextureHDR.GetHeight());
 		QuadModel.SetUpBuffers();
 		QuadModel.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-		EquirectangularIrradianceMaterial.SetAttribMatrix4x4Array(
+		HDRClampingMaterial.SetAttribMatrix4x4Array(
 			"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 		);
 
@@ -454,6 +453,7 @@ void CoreApplication::MainLoop() {
 	TArray<Transform> Transforms;
 	Transforms.push_back(Transform());
 
+	float MultiuseValue = 1;
 	const int TextCount = 3;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
@@ -547,6 +547,12 @@ void CoreApplication::MainLoop() {
 			MeshSelector -= Time::GetDeltaTime() * 10;
 			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
 		}
+		if(MainWindow->GetKeyDown(GLFW_KEY_RIGHT)) {
+			MultiuseValue += Time::GetDeltaTime() * MultiuseValue;
+		}
+		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT)) {
+			MultiuseValue -= Time::GetDeltaTime() * MultiuseValue;
+		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
 			if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
@@ -624,11 +630,11 @@ void CoreApplication::MainLoop() {
 
 			RenderCubemapMaterial.Use();
 
-			float MaterialRoughnessPow = (1 - MaterialRoughness) * CubemapTexture.GetMipmapCount();
+			float MaterialRoughnessTemp = MaterialRoughness * CubemapTexture.GetMipmapCount();
 			RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 			RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
-			RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessPow);
+			RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessTemp);
 
 			if (CubeModel.Faces.size() >= 1) {
 				CubeModel.SetUpBuffers();
@@ -717,6 +723,8 @@ void CoreApplication::MainLoop() {
 			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			RenderTextureMaterial.SetTexture2D("_MainTexture", &EquirectangularTextureHDR, 0);
+			float LodLevel = log2f((float)EquirectangularTextureHDR.GetWidth()) * MultiuseValue;
+			RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
 			
 			if (QuadModel.Faces.size() >= 1) {
 				QuadModel.SetUpBuffers();
@@ -770,16 +778,16 @@ void CoreApplication::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Mouse(%ls) Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), MUV(%ls) Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
 				Time::GetFrameRatePerSecond(),
 				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
-				MaterialRoughnessPow,
+				MaterialRoughness,
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
-				Text::FormatMath(CursorPosition).c_str(),
+				Text::FormatUnit(MultiuseValue, 2).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);
