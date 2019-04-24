@@ -158,7 +158,7 @@ void CoreApplication::MainLoop() {
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Factory_Catwalk_2k.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
