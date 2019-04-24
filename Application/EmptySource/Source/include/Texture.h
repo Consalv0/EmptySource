@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../include/Core.h"
-#include "../include/CoreGraphics.h"
+#include "../include/Graphics.h"
 
 struct Texture {
 protected:
@@ -29,7 +29,7 @@ public:
 
 	//* Returns the GL Object of this texture
 	unsigned int GetTextureObject() const { return TextureObject; };
-
+	
 	virtual void GenerateMipMaps() = 0;
 
 	Graphics::FilterMode GetFilterMode() { return FilterMode; };
@@ -40,5 +40,7 @@ public:
 
 	virtual void Delete() = 0;
 
-	static GLuint GetColorFormat(const Graphics::ColorFormat & CF);
+	static unsigned int GetColorFormat(const Graphics::ColorFormat & CF);
+	static unsigned int GetColorFormatInput(const Graphics::ColorFormat & CF);
+	static unsigned int GetInputType(const Graphics::ColorFormat & CF);
 };

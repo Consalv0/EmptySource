@@ -18,7 +18,10 @@ Texture3D::Texture3D(
 	SetAddressMode(Address);
 	
 	{
-		glTexImage3D(GL_TEXTURE_3D, 0, (int)ColorFormat, Dimension.x, Dimension.y, Dimension.z, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexImage3D(
+			GL_TEXTURE_3D, 0, (int)ColorFormat, Dimension.x, Dimension.y, Dimension.z, 0,
+			GL_RGBA, GL_FLOAT, NULL
+		);
 		glBindTexture(GL_TEXTURE_3D, 0);
 	}
 }

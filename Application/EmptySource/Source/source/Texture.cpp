@@ -1,33 +1,71 @@
 
 #include "../include/Texture.h"
+#include "../include/CoreGraphics.h"
 
-GLuint Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
-	GLuint GLColorFormat = 0;
+unsigned int Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
 	switch (CF) {
 		case Graphics::CF_Red:
-			GLColorFormat = GL_RED; break;
+			return GL_RED;
 		case Graphics::CF_RG:
-			GLColorFormat = GL_RG; break;
+			return GL_RG;
 		case Graphics::CF_RGB:
-			GLColorFormat = GL_RGB; break;
+			return GL_RGB;
 		case Graphics::CF_RGBA:
-			GLColorFormat = GL_RGBA; break;
+			return GL_RGBA;
 		case Graphics::CF_RG16F:
-			GLColorFormat = GL_RG16F; break;
+			return GL_RG16F;
 		case Graphics::CF_RGB16F:
-			GLColorFormat = GL_RGB16F; break;
+			return GL_RGB16F;
 		case Graphics::CF_RGBA16F:
-			GLColorFormat = GL_RGBA16F; break;
+			return GL_RGBA16F;
 		case Graphics::CF_RGBA32F:
-			GLColorFormat = GL_RGBA32F; break;
+			return GL_RGBA32F;
 		case Graphics::CF_RGB32F:
-			GLColorFormat = GL_RGB32F; break;
+			return GL_RGB32F;
 		default:
 			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
-			GLColorFormat = GL_RGBA; break;
+			return GL_RGBA;
 	}
+}
 
-	return GLColorFormat;
+unsigned int Texture::GetColorFormatInput(const Graphics::ColorFormat & CF) {
+	switch (CF) {
+		case Graphics::CF_Red:
+			return GL_RED;
+		case Graphics::CF_RG16F:
+		case Graphics::CF_RG:
+			return GL_RG;
+		case Graphics::CF_RGB32F:
+		case Graphics::CF_RGB16F:
+		case Graphics::CF_RGB:
+			return GL_RGB;
+		case Graphics::CF_RGBA32F:
+		case Graphics::CF_RGBA16F:
+		case Graphics::CF_RGBA:
+			return GL_RGBA;
+		default:
+			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
+			return GL_RGBA;
+	}
+}
+
+unsigned int Texture::GetInputType(const Graphics::ColorFormat & CF) {
+	switch (CF) {
+		case Graphics::CF_Red:
+		case Graphics::CF_RG:
+		case Graphics::CF_RGB:
+		case Graphics::CF_RGBA:
+			return GL_UNSIGNED_BYTE;
+		case Graphics::CF_RG16F:
+		case Graphics::CF_RGB16F:
+		case Graphics::CF_RGBA16F:
+		case Graphics::CF_RGBA32F:
+		case Graphics::CF_RGB32F:
+			return GL_FLOAT;
+		default:
+			Debug::Log(Debug::LogWarning, L"Color not implemented, using unsigned byte");
+			return GL_UNSIGNED_BYTE;
+	}
 }
 
 Texture::Texture() {

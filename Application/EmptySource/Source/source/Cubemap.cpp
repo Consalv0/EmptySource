@@ -1,4 +1,5 @@
 #include "../include/Cubemap.h"
+#include "../include/CoreGraphics.h"
 #include "../include/Utility/LogCore.h"
 #include "../include/Texture2D.h"
 #include "../include/RenderTarget.h"

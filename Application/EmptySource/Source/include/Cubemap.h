@@ -56,7 +56,6 @@ public:
 	static bool FromEquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class Mesh* CubeModel, class ShaderProgram* ShaderConverter);
 	static bool FromHDREquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class Mesh* CubeModel, class ShaderProgram* ShaderConverter);
 
-
 	//* 
 	void Delete();
 

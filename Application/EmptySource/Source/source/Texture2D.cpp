@@ -1,5 +1,6 @@
 
 #include "../include/Texture2D.h"
+#include "../include/CoreGraphics.h"
 #include "../include/Utility/LogCore.h"
 
 Texture2D::Texture2D(
@@ -18,7 +19,10 @@ Texture2D::Texture2D(
 	SetAddressMode(Address);
 
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0,
+			GL_RGBA, GL_FLOAT, NULL
+		);
 		Deuse();
 	}
 }
@@ -29,7 +33,6 @@ Texture2D::Texture2D(
 	const Graphics::FilterMode & Filter,
 	const Graphics::AddressMode & Address,
 	const Graphics::ColorFormat InputFormat,
-	const unsigned int InputMode,
 	const void * BufferData) 
 {
 	Dimension = Size;
@@ -42,7 +45,10 @@ Texture2D::Texture2D(
 	SetAddressMode(Address);
 
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0, GetColorFormat(InputFormat), InputMode, BufferData);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GetColorFormat(ColorFormat), Dimension.x, Dimension.y, 0,
+			GetColorFormatInput(InputFormat), GetInputType(InputFormat), BufferData
+		);
 		Deuse();
 	}
 }

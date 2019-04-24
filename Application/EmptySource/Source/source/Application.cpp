@@ -1,4 +1,4 @@
-#include "../include/Core.h"
+﻿#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 #ifndef __APPLE__
@@ -158,7 +158,7 @@ void CoreApplication::MainLoop() {
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Milkyway.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/flower_road_2k_constrast.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
@@ -166,18 +166,15 @@ void CoreApplication::MainLoop() {
 		Graphics::CF_RGB16F,
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Repeat,
-		Graphics::CF_RGB,
-		GL_FLOAT,
+		Graphics::CF_RGB16F,
 		Equirectangular.PointerToValue()
 	);
-	EquirectangularTexture.GenerateMipMaps();
 	Texture2D BaseAlbedoTexture = Texture2D(
 		IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
 		Graphics::CF_RGBA,
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Border,
 		Graphics::CF_RGBA,
-		GL_UNSIGNED_BYTE,
 		BaseAlbedo.PointerToValue()
 	);
 	BaseAlbedoTexture.GenerateMipMaps();
@@ -187,7 +184,6 @@ void CoreApplication::MainLoop() {
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Repeat,
 		Graphics::CF_Red,
-		GL_UNSIGNED_BYTE,
 		BaseMetallic.PointerToValue()
 	);
 	BaseMetallicTexture.GenerateMipMaps();
@@ -197,7 +193,6 @@ void CoreApplication::MainLoop() {
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Repeat,
 		Graphics::CF_Red,
-		GL_UNSIGNED_BYTE,
 		BaseRoughness.PointerToValue()
 	);
 	BaseRoughnessTexture.GenerateMipMaps();
@@ -207,7 +202,6 @@ void CoreApplication::MainLoop() {
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Repeat,
 		Graphics::CF_RGB,
-		GL_UNSIGNED_BYTE,
 		White.PointerToValue()
 	);
 	WhiteTexture.GenerateMipMaps();
@@ -217,7 +211,6 @@ void CoreApplication::MainLoop() {
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Repeat,
 		Graphics::CF_RGB,
-		GL_UNSIGNED_BYTE,
 		Black.PointerToValue()
 	);
 	BlackTexture.GenerateMipMaps();
@@ -231,7 +224,6 @@ void CoreApplication::MainLoop() {
 		Graphics::FM_MinMagLinear,
 		Graphics::AM_Border,
 		Graphics::CF_Red,
-		GL_UNSIGNED_BYTE,
 		FontAtlas.PointerToValue()
 	);
 	FontMap.GenerateMipMaps();
@@ -253,6 +245,8 @@ void CoreApplication::MainLoop() {
 		ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl"));
 	ShaderStage EquirectangularToCubemapFrag =
 		ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl"));
+	ShaderStage EquirectangularIrradiance = 
+		ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/EquirectangularIrradiance.fragment.glsl"));
 	ShaderStage VertexBase        = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Base.vertex.glsl"));
 	ShaderStage VoxelizerVertex   = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Voxelizer.vertex.glsl"));
 	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Passthrough.vertex.glsl"));
@@ -268,6 +262,11 @@ void CoreApplication::MainLoop() {
 	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapVert);
 	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapFrag);
 	EquirectangularToCubemapShader.Compile();
+
+	ShaderProgram EquirectangularIrradianceShader = ShaderProgram(L"EquirectangularIrradiance");
+	EquirectangularIrradianceShader.AppendStage(&PassthroughVertex);
+	EquirectangularIrradianceShader.AppendStage(&EquirectangularIrradiance);
+	EquirectangularIrradianceShader.Compile();
 
 	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
 	VoxelBRDFShader.AppendStage(&VoxelizerVertex);
@@ -333,6 +332,11 @@ void CoreApplication::MainLoop() {
 	IntegrateBRDFMaterial.CullMode = Graphics::CM_None;
 	IntegrateBRDFMaterial.SetShaderProgram(&IntegrateBRDFShader);
 
+	Material EquirectangularIrradianceMaterial = Material();
+	EquirectangularIrradianceMaterial.DepthFunction = Graphics::DF_Always;
+	EquirectangularIrradianceMaterial.CullMode = Graphics::CM_None;
+	EquirectangularIrradianceMaterial.SetShaderProgram(&EquirectangularIrradianceShader);
+
 	srand((unsigned int)glfwGetTime());
 	TArray<Mesh> OBJModels;
 	TArray<Mesh> LightModels;
@@ -343,7 +347,7 @@ void CoreApplication::MainLoop() {
 	TArray<std::thread> Threads;
 	Threads.push_back(std::thread([&OBJModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
@@ -383,27 +387,52 @@ void CoreApplication::MainLoop() {
 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
 	QuadModel = (Mesh(&Faces[0], &Vertices[0]));
 
-	Texture2D BRDFLut(IntVector2(512), Graphics::CF_RG16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	Texture2D EquirectangularTextureHDR = Texture2D(
+		IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Repeat
+	);
 	{
-		RenderTarget IntegrateRB = RenderTarget();
-		IntegrateRB.SetUpBuffers();
-		BRDFLut.Use();
-		IntegrateBRDFMaterial.Use();
-		IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-		IntegrateRB.Resize(BRDFLut.GetWidth(), BRDFLut.GetHeight());
+		RenderTarget Renderer = RenderTarget();
+		Renderer.SetUpBuffers();
+		EquirectangularTextureHDR.Use();
+		EquirectangularIrradianceMaterial.Use();
+		EquirectangularIrradianceMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+		EquirectangularIrradianceMaterial.SetTexture2D("_EquirectangularMap", &EquirectangularTexture, 0);
+		Renderer.Resize(EquirectangularTextureHDR.GetWidth(), EquirectangularTextureHDR.GetHeight());
 		QuadModel.SetUpBuffers();
 		QuadModel.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-		IntegrateBRDFMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-			/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-			ModelMatrixBuffer
+		EquirectangularIrradianceMaterial.SetAttribMatrix4x4Array(
+			"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 		);
 
-		IntegrateRB.PrepareTexture(&BRDFLut);
-		IntegrateRB.Clear();
+		Renderer.PrepareTexture(&EquirectangularTextureHDR);
+		Renderer.Clear();
 		QuadModel.DrawInstanciated(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		IntegrateRB.Delete();
+		Renderer.Delete();
+		EquirectangularTextureHDR.GenerateMipMaps();
+	}
+
+	Texture2D BRDFLut(IntVector2(512), Graphics::CF_RG16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	{
+		RenderTarget Renderer = RenderTarget();
+		Renderer.SetUpBuffers();
+		Renderer.Use();
+		IntegrateBRDFMaterial.Use();
+		IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+		Renderer.Resize(BRDFLut.GetWidth(), BRDFLut.GetHeight());
+		QuadModel.SetUpBuffers();
+		QuadModel.BindVertexArray();
+		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+		IntegrateBRDFMaterial.SetAttribMatrix4x4Array(
+			"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
+		);
+
+		Renderer.PrepareTexture(&BRDFLut);
+		Renderer.Clear();
+		QuadModel.DrawInstanciated(1);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		Renderer.Delete();
 		// BRDFLut.GenerateMipMaps();
 	}
 
@@ -415,7 +444,7 @@ void CoreApplication::MainLoop() {
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			CubeModel = Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]);
 		}
-		Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTexture, &CubeModel, &EquirectangularToCubemapShader);
+		Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTextureHDR, &CubeModel, &EquirectangularToCubemapShader);
 	}
 
 	float MaterialMetalness = 1.F;
@@ -494,10 +523,10 @@ void CoreApplication::MainLoop() {
 			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_L)) {
-			LightIntencity += 10 * Time::GetDeltaTime();
+			LightIntencity += LightIntencity * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-			LightIntencity -= 10 * Time::GetDeltaTime();
+			LightIntencity -= LightIntencity * Time::GetDeltaTime();
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
@@ -553,7 +582,6 @@ void CoreApplication::MainLoop() {
 					Graphics::FM_MinMagLinear,
 					Graphics::AM_Border,
 					Graphics::CF_Red,
-					GL_UNSIGNED_BYTE,
 					FontAtlas.PointerToValue()
 				);
 				FontMap.GenerateMipMaps();
@@ -615,14 +643,14 @@ void CoreApplication::MainLoop() {
 			
 			BaseMaterial.SetFloat3Array( "_ViewPosition",            EyePosition.PointerToValue() );
 			BaseMaterial.SetFloat3Array( "_Lights[0].Position",   LightPosition0.PointerToValue() );
-			BaseMaterial.SetFloat3Array( "_Lights[0].Color",          Vector3(1).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Lights[0].Color",    Vector3(0, 0, 1).PointerToValue() );
 			BaseMaterial.SetFloat1Array( "_Lights[0].Intencity",                  &LightIntencity );
 			BaseMaterial.SetFloat3Array( "_Lights[1].Position",   LightPosition1.PointerToValue() );
-			BaseMaterial.SetFloat3Array( "_Lights[1].Color",          Vector3(1).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Lights[1].Color",    Vector3(1, 0, 0).PointerToValue() );
 			BaseMaterial.SetFloat1Array( "_Lights[1].Intencity",                  &LightIntencity );
 			BaseMaterial.SetFloat1Array( "_Material.Metalness",                &MaterialMetalness );
 			BaseMaterial.SetFloat1Array( "_Material.Roughness",                &MaterialRoughness );
-			BaseMaterial.SetFloat3Array( "_Material.Color", Vector3(.97F, .8F, 0.75F).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Material.Color",         Vector3(1.F).PointerToValue() );
 
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix",       ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",                   ViewMatrix.PointerToValue() );
@@ -681,14 +709,14 @@ void CoreApplication::MainLoop() {
 			}
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
-			glViewport(0, 0, RenderedTexture.GetWidth(), RenderedTexture.GetHeight());
+			glViewport(0, 0, EquirectangularTextureHDR.GetWidth() / 4, EquirectangularTextureHDR.GetHeight() / 4);
 			
 			RenderTextureMaterial.Use();
 
 			RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", RenderedTexture.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetTexture2D("_MainTexture", &RenderedTexture, 0);
+			RenderTextureMaterial.SetTexture2D("_MainTexture", &EquirectangularTextureHDR, 0);
 			
 			if (QuadModel.Faces.size() >= 1) {
 				QuadModel.SetUpBuffers();
