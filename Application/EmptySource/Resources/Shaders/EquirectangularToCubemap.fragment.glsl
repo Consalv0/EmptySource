@@ -97,6 +97,8 @@ void main() {
         }
     }
     PrefilteredColor = PrefilteredColor / max(TotalWeight, 0.001);
+    vec3 Intensity = vec3(dot(PrefilteredColor, vec3(0.2125, 0.7154, 0.0721)));
+    PrefilteredColor = mix(Intensity, PrefilteredColor, 1 + _Roughness * 0.3);
 
     FragColor = vec4(PrefilteredColor, 1.0);
 }
