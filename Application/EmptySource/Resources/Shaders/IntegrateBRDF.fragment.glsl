@@ -7,6 +7,7 @@ in struct VertexData {
   vec4 Position;
   vec3 NormalDirection;
   vec3 TangentDirection;
+  vec3 BitangentDirection;
   vec2 UV0;
   vec4 Color;
 } vVertex;

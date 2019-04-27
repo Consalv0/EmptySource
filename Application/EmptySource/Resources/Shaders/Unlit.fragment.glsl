@@ -28,6 +28,7 @@ in struct VertexData {
   vec4 Position;
   vec3 NormalDirection;
   vec3 TangentDirection;
+  vec3 BitangentDirection;
   vec2 UV0;
   vec4 Color;
 } Vertex;
@@ -35,9 +36,11 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main() {
-  FragColor = vec4(_Material.Color, 1);
+  vec3 Color = normalize(_Material.Color);
+  float Intensity = dot(_Material.Color, vec3(0.3, 0.7, 0.07));
+  FragColor = vec4(pow(vec3(Intensity) * Color + vec3(Color), Intensity * vec3(0.3, 0.7, 0.07)), 1);
   
   if (FragColor.x < 0) {
-    FragColor *= Matrix.Model * Vertex.Position;
+    FragColor *= Matrix.Model * Vertex.Color;
   }
 }

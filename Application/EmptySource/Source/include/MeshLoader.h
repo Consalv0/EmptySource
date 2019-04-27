@@ -42,6 +42,8 @@ private:
 	static void ExtractVector2(const Char * Text, Vector2* Vertex);
 	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
 
+	static void ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices);
+
 	static size_t ReadByLine(
 		const Char * InFile,
 		FileData& FileData
@@ -63,6 +65,7 @@ public:
 	/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
 	  * there's a way to optimize the vertices. */
 	static bool Load(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
+
 };
 
 inline void HashCombine(std::size_t& seed) { }

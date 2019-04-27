@@ -477,6 +477,7 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 		);
 
 		TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
+		OBJLoader::ComputeTangents(Faces->back(), Vertices->back());
 	}
 
 	Debug::LogClearLine(Debug::LogInfo);
@@ -494,4 +495,45 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 	Debug::Log(Debug::LogInfo, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
 
 	return true;
+}
+
+void OBJLoader::ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices) {
+
+	const int Size = (int)Faces.size();
+
+	// For each triangle, compute the edge (DeltaPos) and the DeltaUV
+	for (int i = 0; i < Size; ++i) {
+		const Vector3 & VertexA = Vertices[Faces[i][0]].Position;
+		const Vector3 & VertexB = Vertices[Faces[i][1]].Position;
+		const Vector3 & VertexC = Vertices[Faces[i][2]].Position;
+
+		const Vector2 & UVA = Vertices[Faces[i][0]].UV0;
+		const Vector2 & UVB = Vertices[Faces[i][1]].UV0;
+		const Vector2 & UVC = Vertices[Faces[i][2]].UV0;
+
+		// --- Edges of the triangle : position delta
+		const Vector3 Edge1 = VertexB - VertexA;
+		const Vector3 Edge2 = VertexC - VertexA;
+
+		// --- UV delta
+		const Vector2 DeltaUV1 = UVB - UVA;
+		const Vector2 DeltaUV2 = UVC - UVA;
+
+		// --- We can now use our formula to compute the tangent :
+		float r = 1.F / (DeltaUV1.x * DeltaUV2.y - DeltaUV1.y * DeltaUV2.x);
+		      r = std::isfinite(r) ? r : 0;
+		
+		Vector3 Tangent;
+		Tangent.x = r * (DeltaUV2.y * Edge1.x - DeltaUV1.y * Edge2.x);
+		Tangent.y = r * (DeltaUV2.y * Edge1.y - DeltaUV1.y * Edge2.y);
+		Tangent.z = r * (DeltaUV2.y * Edge1.z - DeltaUV1.y * Edge2.z);
+		Tangent.Normalize();
+
+		Vertices[Faces[i][0]].Tangent = Tangent;
+		Vertices[Faces[i][1]].Tangent = Tangent;
+		Vertices[Faces[i][2]].Tangent = Tangent;
+
+		// Same thing for binormals
+		// binormals[i * 3 + 0] = tan2[i].x; binormals[i * 3 + 1] = tan2[i].y; binormals[i * 3 + 2] = tan2[i].z;
+	}
 }

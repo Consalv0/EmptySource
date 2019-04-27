@@ -8,6 +8,7 @@ uniform mat4 _ViewMatrix;
 uniform vec3 _ViewPosition;
 
 uniform sampler2D _MainTexture;
+uniform sampler2D _NormalTexture;
 uniform sampler2D _RoughnessTexture;
 uniform sampler2D _MetallicTexture;
 uniform float _EnviromentMapLods;
@@ -35,6 +36,7 @@ in struct VertexData {
   vec4 Position;
   vec3 NormalDirection;
   vec3 TangentDirection;
+  vec3 BitangentDirection;
   vec2 UV0;
   vec4 Color;
 } Vertex;
@@ -83,20 +85,21 @@ vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 VertNormal ) {
   float Metalness = _Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r;
   float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
   vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma));
-  vec3 SpecularColor = mix(vec3(1), _Material.Color, Metalness);
+  vec3 SpecularColor = mix(vec3(0), DiffuseColor, Metalness);
   
-  vec3 F0 = vec3(SpecularColor * 0.04); 
+  float NDotV = clamp(abs( dot( Normal, EyeDirection ) ) + 0.01, 0, 1);
+
+  vec3 F0 = vec3(0.2); 
   F0 = mix(F0, DiffuseColor, Metalness);
-  vec3 Fresnel = FresnelSchlickRoughness(max(dot(Normal, EyeDirection), 0.0), F0, Roughness);
-  vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(max(dot(Normal, EyeDirection), 0.0), Roughness)).rg;
+  vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
+  vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
   vec3 Irradiance = vec3(textureLod(_EnviromentMap, WorldReflection, _EnviromentMapLods - 2));
        Irradiance = dot(Irradiance, vec3(0.2126, 0.7152, 0.0722) / 2) * Irradiance;
-  vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 4)));
+  vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3)));
 
   vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
+  vec3 Color = ((vec3(1.0) - Fresnel) * (1 - Metalness) * DiffuseColor + Specular);
 
-  // vec3 Color = (kD * DiffuseColor * EnviromentLight) + Specular;
-  vec3 Color = (1 - (Fresnel * Metalness)) * DiffuseColor * Irradiance + Specular;
   return Color;
 }
 
@@ -115,7 +118,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
   float LDotH = clamp( dot( LightDirection, HalfWayDirection ), 0, 1 );
   float NDotH = clamp( dot( Normal, HalfWayDirection ), 0, 1 );
   float NDotL = clamp( dot( Normal, LightDirection ), 0, 1 );
-  float NDotV =   abs( dot( Normal, EyeDirection )) + 0.001; // Avoids artifact
+  float NDotV = clamp( dot( Normal, EyeDirection ), 0, 1);
   float HDotV = clamp( dot( HalfWayDirection, EyeDirection ), 0, 1 );
 
   float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
@@ -125,15 +128,15 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
   vec3 SpecularColor = mix(vec3(1), _Material.Color, Metalness);
   vec3 LightColor = pow(_Lights[LightIndex].Color, vec3(Gamma));
   vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma));
-  vec3 F0 = vec3(SpecularColor * 0.04);
+  vec3 F0 = vec3(0.2);
   F0 = mix(F0, DiffuseColor, Metalness);
   
   float NormalDistribution = TrowbridgeReitzNormalDistribution(NDotH, Roughness);
   float GeometricShadow = GeometrySmithSchlickGGX(NDotL, NDotV, Roughness);
-  vec3  Fresnel = clamp(FresnelSchlick(HDotV, F0), 0, 1);
+  vec3  Fresnel = FresnelSchlick(HDotV, F0);
 
   vec3 Specular = (NormalDistribution * Fresnel * GeometricShadow) / (4 * (NDotL * NDotV) + 0.001);
-  vec3 SurfaceColor = ((1 - (Fresnel * Metalness)) * DiffuseColor / PI + Specular) * Attenuation * LightColor * NDotL * NDotL;
+  vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * LightColor * NDotL;
 
   return SurfaceColor;
 }
@@ -141,17 +144,24 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
 void main() {  
   vec3 Sum = vec3(0);
 
+  vec3 TangentNormal = texture(_NormalTexture, Vertex.UV0).rgb * 2 - 1;
+  mat3 TBN = mat3(Vertex.TangentDirection, Vertex.BitangentDirection, Vertex.NormalDirection);
+  vec3 VertNormal = normalize(TBN * TangentNormal);
+
   for( int i = 0; i < 2; i++ ) {
-    Sum += MicrofacetModel(i, Vertex.Position.xyz, Vertex.NormalDirection);
+    Sum += MicrofacetModel(i, Vertex.Position.xyz, VertNormal);
   }
-  Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, Vertex.NormalDirection);
+  Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, VertNormal);
 
   Sum = Sum / (Sum + vec3(1.0));
   Sum = pow(Sum, vec3(1.0/Gamma));
+  
+  vec3 Intensity = vec3(dot(Sum, vec3(0.2125, 0.7154, 0.0721)));
+  Sum = mix(Intensity, Sum, 1.3);
 
   FragColor = vec4(Sum, 1);
 
-  if (FragColor.x < 0) {
+  if (FragColor.x == 0.001) {
     FragColor *= Matrix.Model * vec4(0);
   }
 }

@@ -151,6 +151,9 @@ void CoreApplication::MainLoop() {
 	BaseMetallic.FlipVertically();
 	ImageLoader::Load(BaseRoughness, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
 	BaseRoughness.FlipVertically();
+	Bitmap<UCharRGB> BaseNormal;
+	ImageLoader::Load(BaseNormal, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Normal.png"));
+	BaseNormal.FlipVertically();
 	Bitmap<UCharRGB> White, Black;
 	ImageLoader::Load(White, FileManager::Open(L"Resources/Textures/White.jpg"));
 	White.FlipVertically();
@@ -158,7 +161,7 @@ void CoreApplication::MainLoop() {
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Milkyway.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
@@ -205,6 +208,15 @@ void CoreApplication::MainLoop() {
 		White.PointerToValue()
 	);
 	WhiteTexture.GenerateMipMaps();
+	Texture2D BaseNormalTexture = Texture2D(
+		IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
+		Graphics::CF_RGB,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		BaseNormal.PointerToValue()
+	);
+	BaseNormalTexture.GenerateMipMaps();
 	Texture2D BlackTexture = Texture2D(
 		IntVector2(Black.GetWidth(), Black.GetHeight()),
 		Graphics::CF_RGB,
@@ -346,18 +358,18 @@ void CoreApplication::MainLoop() {
 	TArray<std::thread> Threads;
 	Threads.push_back(std::thread([&OBJModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, true);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
 			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
 		}
 	}));
-	// Threads.push_back(std::thread([&OBJModels]() {
-	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, false);
-	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-	// 	}
-	// }));
+	Threads.push_back(std::thread([&OBJModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+		}
+	}));
 
 	Threads.push_back(std::thread([&LightModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
@@ -485,22 +497,26 @@ void CoreApplication::MainLoop() {
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
-			EyePosition += Forward * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
+			EyePosition += Forward * Time::GetDeltaTime() * 
+				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
 			// TextPivot.y += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
 			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
-			EyePosition += Right * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
+			EyePosition += Right * Time::GetDeltaTime() *
+				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
 			// TextPivot.x -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
 			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
-			EyePosition += Back * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
+			EyePosition += Back * Time::GetDeltaTime() *
+				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
 			// TextPivot.y -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
 			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
-			EyePosition += Left * Time::GetDeltaTime() * (!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? 1.F : 4.F);
+			EyePosition += Left * Time::GetDeltaTime() *
+				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
 			// TextPivot.x += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		
@@ -594,7 +610,7 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
-		Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.4F) * Transforms[0].Rotation;
+		// Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.4F) * Transforms[0].Rotation;
 
 		RenderTimeSum += Time::GetDeltaTime();
 		const float MaxFramerate = (1 / 65.F);
@@ -630,7 +646,7 @@ void CoreApplication::MainLoop() {
 
 			RenderCubemapMaterial.Use();
 
-			float MaterialRoughnessTemp = MaterialRoughness * CubemapTexture.GetMipmapCount();
+			float MaterialRoughnessTemp = (1 - MaterialRoughness) * (CubemapTexture.GetMipmapCount() - 3);
 			RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 			RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
@@ -661,10 +677,11 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix",       ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",                   ViewMatrix.PointerToValue() );
 			BaseMaterial.SetTexture2D("_MainTexture", &BaseAlbedoTexture, 0);
-			BaseMaterial.SetTexture2D("_RoughnessTexture", &BaseRoughnessTexture, 1);
-			BaseMaterial.SetTexture2D("_MetallicTexture", &BaseMetallicTexture, 2);
-			BaseMaterial.SetTexture2D("_BRDFLUT", &BRDFLut, 3);
-			BaseMaterial.SetTextureCubemap("_EnviromentMap", &CubemapTexture, 4);
+			BaseMaterial.SetTexture2D("_NormalTexture", &BaseNormalTexture, 1);
+			BaseMaterial.SetTexture2D("_RoughnessTexture", &BaseRoughnessTexture, 2);
+			BaseMaterial.SetTexture2D("_MetallicTexture", &BaseMetallicTexture, 3);
+			BaseMaterial.SetTexture2D("_BRDFLUT", &BRDFLut, 4);
+			BaseMaterial.SetTextureCubemap("_EnviromentMap", &CubemapTexture, 5);
 			float CubemapTextureMipmaps = CubemapTexture.GetMipmapCount();
 			BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
@@ -684,9 +701,6 @@ void CoreApplication::MainLoop() {
 			CubeModel.SetUpBuffers();
 			CubeModel.BindVertexArray();
 
-			BaseMaterial.SetTexture2D("_MainTexture", &WhiteTexture, 0);
-			BaseMaterial.SetTexture2D("_RoughnessTexture", &WhiteTexture, 1);
-			BaseMaterial.SetTexture2D("_MetallicTexture", &WhiteTexture, 2);
             Matrix4x4 ModelMatrix = (Matrix4x4::Translation(Vector3(0, 2, 0)));
 			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
@@ -699,7 +713,7 @@ void CoreApplication::MainLoop() {
 			UnlitMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			UnlitMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_ViewPosition",             EyePosition.PointerToValue() );
-			UnlitMaterial.SetFloat3Array( "_Material.Color",            Vector3(1).PointerToValue() );
+			UnlitMaterial.SetFloat3Array( "_Material.Color", Vector3(LightIntencity, 0, 0).PointerToValue() );
 			
 			if (LightModels.size() >= 1) {
 				LightModels[0].SetUpBuffers();
@@ -715,7 +729,7 @@ void CoreApplication::MainLoop() {
 			}
 
 			float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
-			glViewport(0, 0, EquirectangularTextureHDR.GetWidth() / 4, EquirectangularTextureHDR.GetHeight() / 4);
+			glViewport(0, 0, EquirectangularTextureHDR.GetWidth() / 4 * abs(1 - MultiuseValue), EquirectangularTextureHDR.GetHeight() / 4 * abs(1 - MultiuseValue));
 			
 			RenderTextureMaterial.Use();
 
@@ -723,7 +737,7 @@ void CoreApplication::MainLoop() {
 			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			RenderTextureMaterial.SetTexture2D("_MainTexture", &EquirectangularTextureHDR, 0);
-			float LodLevel = log2f((float)EquirectangularTextureHDR.GetWidth()) * MultiuseValue;
+			float LodLevel = log2f((float)EquirectangularTextureHDR.GetWidth()) * abs(MultiuseValue);
 			RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
 			
 			if (QuadModel.Faces.size() >= 1) {
