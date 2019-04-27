@@ -27,6 +27,7 @@ public:
 	HOST_DEVICE inline Vector4 Normalized() const;
 	
 	HOST_DEVICE FORCEINLINE float Dot(const Vector4& Other) const;
+	HOST_DEVICE FORCEINLINE static float Dot(const Vector4 &A, const Vector4 &B);
 	HOST_DEVICE FORCEINLINE static Vector4 Lerp(const Vector4& Start, const Vector4& End, float t); 
 	
 	HOST_DEVICE inline float & operator[](unsigned int i);

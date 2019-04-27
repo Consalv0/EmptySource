@@ -66,6 +66,10 @@ FORCEINLINE float Vector4::Dot(const Vector4& Other) const {
 	return x * Other.x + y * Other.y + z * Other.z + w * Other.w;
 }
 
+FORCEINLINE float Vector4::Dot(const Vector4 & A, const Vector4 & B) {
+	return A.x * B.x + A.y * B.y + A.z * B.z + A.w * B.w;
+}
+
 inline const float * Vector4::PointerToValue() const {
 	return &x;
 }
