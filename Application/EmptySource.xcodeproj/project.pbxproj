@@ -161,6 +161,8 @@
 		DD4F19DF224947BF00C102FB /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = EmptySource/Resources/Models; sourceTree = "<group>"; };
 		DD4F19E1224947CB00C102FB /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shaders; path = EmptySource/Resources/Shaders; sourceTree = "<group>"; };
 		DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = EmptySource/Libraries/libglfw.3.3.dylib; sourceTree = "<group>"; };
+		DD8603892277807E00E7B58B /* MeshPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshPrimitives.h; sourceTree = "<group>"; };
+		DD86038A2277808800E7B58B /* Box3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box3D.h; sourceTree = "<group>"; };
 		DD8880872241B1D60052F499 /* EmptySourceCLT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EmptySourceCLT; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD88808A2241B1D60052F499 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DD88809F2241B9910052F499 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
@@ -558,6 +560,7 @@
 		DD8880BB2242D9560052F499 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				DD8603892277807E00E7B58B /* MeshPrimitives.h */,
 				DD23A6FC2248706500F3C46E /* TexturePacking.h */,
 				DDCA39BE224476AE00A6373B /* LogFreeType.h */,
 				DD8880E3224311430052F499 /* LogGraphics.h */,
@@ -584,6 +587,7 @@
 		DD8880C72242FBA50052F499 /* Math */ = {
 			isa = PBXGroup;
 			children = (
+				DD86038A2277808800E7B58B /* Box3D.h */,
 				DD8880D12242FBCA0052F499 /* Box2D.h */,
 				DD8880D52242FBCA0052F499 /* IntVector2.h */,
 				DD8880CB2242FBCA0052F499 /* IntVector2.inl */,

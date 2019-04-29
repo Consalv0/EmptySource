@@ -67,7 +67,7 @@ void RenderTarget::Clear() const {
 }
 
 bool RenderTarget::IsValid() const {
-	return TextureColor0Target != NULL && TextureColor0Target->IsValid() && FramebufferObject != NULL && RenderbufferObject != NULL;
+	return TextureColor0Target != NULL && TextureColor0Target->IsValid() && FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE;
 }
 
 void RenderTarget::Delete() {
