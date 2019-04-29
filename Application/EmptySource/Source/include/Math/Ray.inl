@@ -1,4 +1,4 @@
 
 FORCEINLINE Ray::Ray() {
-	A = B = Vector3();
+	Origin = Direction = Vector3();
 }

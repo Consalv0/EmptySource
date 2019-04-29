@@ -21,14 +21,14 @@ public:
 
 class Ray {
 public:
-	Vector3 A;
-	Vector3 B;
+	Vector3 Origin;
+	Vector3 Direction;
 	
 	HOST_DEVICE FORCEINLINE Ray();
-	HOST_DEVICE FORCEINLINE Ray(const Vector3& a, const Vector3& b) { A = a; B = b; }
-	HOST_DEVICE FORCEINLINE Vector3 Origin() const { return A; }
-	HOST_DEVICE FORCEINLINE Vector3 Direction() const { return B; }
-	HOST_DEVICE FORCEINLINE Vector3 PointAt(float t) const { return A + (B * t); };
+	HOST_DEVICE FORCEINLINE Ray(const Vector3& Origin, const Vector3& Direction) : Origin(Origin), Direction(Direction) { }
+	HOST_DEVICE FORCEINLINE Vector3 GetOrigin() const { return Origin; }
+	HOST_DEVICE FORCEINLINE Vector3 GetDirection() const { return Direction; }
+	HOST_DEVICE FORCEINLINE Vector3 PointAt(float t) const { return Origin + (Direction * t); };
 };
 
 #include "Ray.inl"

@@ -22,9 +22,9 @@ surface<void, cudaSurfaceType2D> SurfaceWrite;
 
 __device__ RayHit HitSphere(const Vector3& Center, const float& Radius, const float& MinDistance, const float& MaxDistance, const Ray& ray) {
 	RayHit Hit;
-	Vector3 OC = ray.Origin() - Center;
-	float a = ray.Direction().Dot(ray.Direction());
-	float b = OC.Dot(ray.Direction());
+	Vector3 OC = ray.GetOrigin() - Center;
+	float a = ray.GetDirection().Dot(ray.GetDirection());
+	float b = OC.Dot(ray.GetDirection());
 	float c = OC.Dot(OC) - Radius * Radius;
 	float Discriminant = sqrtf((b * b) - (a * c));
 	
@@ -106,7 +106,7 @@ __device__ Vector4 CastRay(const Ray& RayCast, Vector4 * Spheres, curandState Lo
 
 template <>
 __device__ Vector4 CastRay<0>(const Ray& RayCast, Vector4 * Spheres, curandState LocalRandState) {
-	Vector3 NormalizedDirection = RayCast.Direction().Normalized();
+	Vector3 NormalizedDirection = RayCast.GetDirection().Normalized();
 	float NHit = 0.5F * (NormalizedDirection.y + 1.F);
 	Vector3 Color = Vector3(1.F) * (1.F - NHit) + Vector3(0.5F, 0.7F, 1.F) * NHit * 0.5F;
 	return Vector4(Color, 1);

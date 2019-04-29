@@ -69,3 +69,5 @@ namespace Math {
 }
 
 #include "../Math/Vector3.inl"
+
+typedef Vector3 Point3;
