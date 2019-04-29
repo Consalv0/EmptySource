@@ -53,8 +53,8 @@ public:
 	static bool FromCube(Cubemap& Map, const TextureData<UCharRGB>& Textures);
 	static bool FromHDRCube(Cubemap& Map, const TextureData<FloatRGB>& Textures);
 
-	static bool FromEquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class Mesh* CubeModel, class ShaderProgram* ShaderConverter);
-	static bool FromHDREquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class Mesh* CubeModel, class ShaderProgram* ShaderConverter);
+	static bool FromEquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class ShaderProgram* ShaderConverter);
+	static bool FromHDREquirectangular(Cubemap& Map, struct Texture2D* Equirectangular, class ShaderProgram* ShaderConverter);
 
 	//* 
 	void Delete();

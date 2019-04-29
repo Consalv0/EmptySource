@@ -5,6 +5,7 @@
 #include "../include/RenderTarget.h"
 #include "../include/Material.h"
 #include "../include/Mesh.h"
+#include "../include/Utility/MeshPrimitives.h"
 #include "../include/Math/Matrix4x4.h"
 #include "../include/Math/MathUtility.h"
 
@@ -167,7 +168,7 @@ bool Cubemap::FromHDRCube(Cubemap & Map, const TextureData<FloatRGB>& Textures) 
 	return true;
 }
 
-bool Cubemap::FromEquirectangular(Cubemap & Map, Texture2D * Equirectangular, Mesh * CubeModel, ShaderProgram * ShaderConverter) {
+bool Cubemap::FromEquirectangular(Cubemap & Map, Texture2D * Equirectangular, ShaderProgram * ShaderConverter) {
 	if (!Map.IsValid()) return false;
 
 	Material EquirectangularToCubemapMaterial = Material();
@@ -211,13 +212,13 @@ bool Cubemap::FromEquirectangular(Cubemap & Map, Texture2D * Equirectangular, Me
 	for (unsigned int i = 0; i < 6; ++i) {
 		EquirectangularToCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", CaptureViews[i].PointerToValue());
 
-		CubeModel->SetUpBuffers();
-		CubeModel->BindVertexArray();
+		MeshPrimitives::Cube.SetUpBuffers();
+		MeshPrimitives::Cube.BindVertexArray();
 		EquirectangularToCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 		Renderer.PrepareTexture(&Map, i);
 		Renderer.Clear();
 
-		CubeModel->DrawElement();
+		MeshPrimitives::Cube.DrawElement();
 	}
 	Map.GenerateMipMaps();
 	Map.Deuse();
@@ -228,7 +229,7 @@ bool Cubemap::FromEquirectangular(Cubemap & Map, Texture2D * Equirectangular, Me
 	return true;
 }
 
-bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular, Mesh * CubeModel, ShaderProgram * ShaderConverter) {
+bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular, ShaderProgram * ShaderConverter) {
 	if (!Map.IsValid()) return false;
 
 	Material EquirectangularToCubemapMaterial = Material();
@@ -281,14 +282,14 @@ bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular,
 		for (unsigned int i = 0; i < 6; ++i) {
 			EquirectangularToCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", CaptureViews[i].PointerToValue());
 	
-			CubeModel->SetUpBuffers();
-			CubeModel->BindVertexArray();
+			MeshPrimitives::Cube.SetUpBuffers();
+			MeshPrimitives::Cube.BindVertexArray();
 			EquirectangularToCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 			
 			Renderer.PrepareTexture(&Map, i, Lod);
 			Renderer.Clear();
 			
-			CubeModel->DrawElement();
+			MeshPrimitives::Cube.DrawElement();
 			if (!Renderer.CheckStatus()) return false;
 		}
 	}

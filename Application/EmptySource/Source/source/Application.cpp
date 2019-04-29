@@ -15,6 +15,7 @@
 #include "../include/FileManager.h"
 #include "../include/Mesh.h"
 #include "../include/MeshLoader.h"
+#include "../include/Utility/MeshPrimitives.h"
 #include "../include/Material.h"
 #include "../include/ShaderProgram.h"
 #include "../include/Space.h"
@@ -351,25 +352,24 @@ void CoreApplication::MainLoop() {
 	srand((unsigned int)glfwGetTime());
 	TArray<Mesh> OBJModels;
 	TArray<Mesh> LightModels;
-	Mesh CubeModel;
-	Mesh QuadModel;
+	Mesh SphereModel;
 	float MeshSelector = 0;
 
 	TArray<std::thread> Threads;
-	Threads.push_back(std::thread([&OBJModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, true);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-		}
-	}));
-	Threads.push_back(std::thread([&OBJModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-		}
-	}));
+	// Threads.push_back(std::thread([&OBJModels]() {
+	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, true);
+	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+	// 	}
+	// }));
+	// Threads.push_back(std::thread([&OBJModels]() {
+	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
+	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
+	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+	// 	}
+	// }));
 
 	Threads.push_back(std::thread([&LightModels]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
@@ -379,10 +379,10 @@ void CoreApplication::MainLoop() {
 		}
 	}));
 
-	Threads.push_back(std::thread([&CubeModel]() {
+	Threads.push_back(std::thread([&SphereModel]() {
 		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sphere.obj"), &Faces, &Vertices, true);
-		CubeModel = Mesh(&Faces[0], &Vertices[0]);
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/SphereUV.obj"), &Faces, &Vertices, true);
+		SphereModel = Mesh(&Faces[0], &Vertices[0]);
 	}));
     
 	Texture2D RenderedTexture = Texture2D(
@@ -393,10 +393,6 @@ void CoreApplication::MainLoop() {
 	GLuint ModelMatrixBuffer;
 	glGenBuffers(1, &ModelMatrixBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-
-	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	OBJLoader::Load(FileManager::Open(L"Resources/Models/Quad.obj"), &Faces, &Vertices, false);
-	QuadModel = (Mesh(&Faces[0], &Vertices[0]));
 
 	Texture2D EquirectangularTextureHDR = Texture2D(
 		IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Repeat
@@ -409,8 +405,8 @@ void CoreApplication::MainLoop() {
 		HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		HDRClampingMaterial.SetTexture2D("_EquirectangularMap", &EquirectangularTexture, 0);
 		Renderer.Resize(EquirectangularTextureHDR.GetWidth(), EquirectangularTextureHDR.GetHeight());
-		QuadModel.SetUpBuffers();
-		QuadModel.BindVertexArray();
+		MeshPrimitives::Quad.SetUpBuffers();
+		MeshPrimitives::Quad.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 		HDRClampingMaterial.SetAttribMatrix4x4Array(
 			"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
@@ -418,7 +414,7 @@ void CoreApplication::MainLoop() {
 
 		Renderer.PrepareTexture(&EquirectangularTextureHDR);
 		Renderer.Clear();
-		QuadModel.DrawInstanciated(1);
+		MeshPrimitives::Quad.DrawInstanciated(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		Renderer.Delete();
 		EquirectangularTextureHDR.GenerateMipMaps();
@@ -432,8 +428,8 @@ void CoreApplication::MainLoop() {
 		IntegrateBRDFMaterial.Use();
 		IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		Renderer.Resize(BRDFLut.GetWidth(), BRDFLut.GetHeight());
-		QuadModel.SetUpBuffers();
-		QuadModel.BindVertexArray();
+		MeshPrimitives::Quad.SetUpBuffers();
+		MeshPrimitives::Quad.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 		IntegrateBRDFMaterial.SetAttribMatrix4x4Array(
 			"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
@@ -441,22 +437,14 @@ void CoreApplication::MainLoop() {
 
 		Renderer.PrepareTexture(&BRDFLut);
 		Renderer.Clear();
-		QuadModel.DrawInstanciated(1);
+		MeshPrimitives::Quad.DrawInstanciated(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		Renderer.Delete();
 		// BRDFLut.GenerateMipMaps();
 	}
 
 	Cubemap CubemapTexture(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
-	{
-		Mesh CubeModel;
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Cube.obj"), &Faces, &Vertices, false);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			CubeModel = Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]);
-		}
-		Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTextureHDR, &CubeModel, &EquirectangularToCubemapShader);
-	}
+	Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTextureHDR, &EquirectangularToCubemapShader);
 
 	float MaterialMetalness = 1.F;
 	float MaterialRoughness = 1.F;
@@ -652,13 +640,13 @@ void CoreApplication::MainLoop() {
 			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
 			RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessTemp);
 
-			if (CubeModel.Faces.size() >= 1) {
-				CubeModel.SetUpBuffers();
-				CubeModel.BindVertexArray();
+			if (SphereModel.Faces.size() >= 1) {
+				SphereModel.SetUpBuffers();
+				SphereModel.BindVertexArray();
                 
                 Matrix4x4 MatrixScale = Matrix4x4::Scaling({ 500, 500, 500 });
 				RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, MatrixScale.PointerToValue(), ModelMatrixBuffer);
-				CubeModel.DrawElement();
+				SphereModel.DrawElement();
 			}
 
 			BaseMaterial.Use();
@@ -698,15 +686,15 @@ void CoreApplication::MainLoop() {
 				TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
 			}
-			CubeModel.SetUpBuffers();
-			CubeModel.BindVertexArray();
+			SphereModel.SetUpBuffers();
+			SphereModel.BindVertexArray();
 
             Matrix4x4 ModelMatrix = (Matrix4x4::Translation(Vector3(0, 2, 0)));
 			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
-			CubeModel.DrawInstanciated((GLsizei)1);
-			TriangleCount += CubeModel.Faces.size() * 1;
-			VerticesCount += CubeModel.Vertices.size() * 1;
+			SphereModel.DrawInstanciated((GLsizei)1);
+			TriangleCount += SphereModel.Faces.size() * 1;
+			VerticesCount += SphereModel.Vertices.size() * 1;
 
 			UnlitMaterial.Use();
             
@@ -740,9 +728,9 @@ void CoreApplication::MainLoop() {
 			float LodLevel = log2f((float)EquirectangularTextureHDR.GetWidth()) * abs(MultiuseValue);
 			RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
 			
-			if (QuadModel.Faces.size() >= 1) {
-				QuadModel.SetUpBuffers();
-				QuadModel.BindVertexArray();
+			if (MeshPrimitives::Quad.Faces.size() >= 1) {
+				MeshPrimitives::Quad.SetUpBuffers();
+				MeshPrimitives::Quad.BindVertexArray();
 
 				Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 				RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
@@ -750,7 +738,7 @@ void CoreApplication::MainLoop() {
 					ModelMatrixBuffer
 				);
 
-				QuadModel.DrawInstanciated(1);
+				MeshPrimitives::Quad.DrawInstanciated(1);
 			}
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
