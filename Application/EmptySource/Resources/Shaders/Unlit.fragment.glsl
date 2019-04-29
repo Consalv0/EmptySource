@@ -16,7 +16,7 @@ uniform struct LightInfo {
 uniform struct MaterialInfo {
   float Roughness;     // Roughness
   float Metalness;     // Metallic (0) or dielectric (1)
-  vec3 Color;          // Diffuse color for dielectrics, f0 for metallic
+  vec4 Color;          // Diffuse color for dielectrics, f0 for metallic
 } _Material;
 
 in struct Matrices {
@@ -36,9 +36,11 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main() {
-  vec3 Color = normalize(_Material.Color);
-  float Intensity = dot(_Material.Color, vec3(0.3, 0.7, 0.07));
-  FragColor = vec4(pow(vec3(Intensity) * Color + vec3(Color), Intensity * vec3(0.3, 0.7, 0.07)), 1);
+  vec3 Color = normalize(_Material.Color.xyz);
+  float Intensity = dot(_Material.Color.xyz, vec3(0.3, 0.7, 0.07));
+  
+  FragColor.xyz = pow(vec3(Intensity) * Color + vec3(Color), Intensity * vec3(0.3, 0.7, 0.07));
+  FragColor.a = _Material.Color.a * Vertex.Color.a;
   
   if (FragColor.x < 0) {
     FragColor *= Matrix.Model * Vertex.Color;
