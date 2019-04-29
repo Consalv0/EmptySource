@@ -75,17 +75,9 @@ float SmoothDistanceAttenuation (vec3 UnormalizedLightVector, float AttenuationR
 }
 
 // Enviroment Light
-vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 VertNormal ) {
-
-  vec3 Normal = normalize(VertNormal);
-
+vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 Normal, float Roughness, float Metalness, vec3 DiffuseColor ) {
   vec3 EyeDirection = normalize(_ViewPosition.xyz - VertPosition.xyz);
   vec3 WorldReflection = reflect(-EyeDirection, normalize(Normal));
-  
-  float Metalness = _Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r;
-  float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
-  vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma));
-  vec3 SpecularColor = mix(vec3(0), DiffuseColor, Metalness);
   
   float NDotV = clamp(abs( dot( Normal, EyeDirection ) ) + 0.01, 0, 1);
 
@@ -104,10 +96,7 @@ vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 VertNormal ) {
 }
 
 // Light Calculation
-vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
-
-  vec3 Normal = normalize(VertNormal);
-
+vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 Normal, float Roughness, float Metalness, vec3 DiffuseColor ) {
   vec3 UnormalizedLightDirection = (_Lights[LightIndex].Position - VertPosition).xyz;
   float LightDistance = length(UnormalizedLightDirection);
 
@@ -118,16 +107,12 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 VertNormal ) {
   float LDotH = clamp( dot( LightDirection, HalfWayDirection ), 0, 1 );
   float NDotH = clamp( dot( Normal, HalfWayDirection ), 0, 1 );
   float NDotL = clamp( dot( Normal, LightDirection ), 0, 1 );
-  float NDotV = clamp( dot( Normal, EyeDirection ), 0, 1);
+  float NDotV = clamp( abs( dot( Normal, EyeDirection ) ) + 0.01, 0, 1);
   float HDotV = clamp( dot( HalfWayDirection, EyeDirection ), 0, 1 );
 
-  float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
-  float Metalness = _Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r;
   float Attenuation = SmoothDistanceAttenuation(UnormalizedLightDirection, _Lights[LightIndex].Intencity);
 
-  vec3 SpecularColor = mix(vec3(1), _Material.Color, Metalness);
   vec3 LightColor = pow(_Lights[LightIndex].Color, vec3(Gamma));
-  vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma));
   vec3 F0 = vec3(0.2);
   F0 = mix(F0, DiffuseColor, Metalness);
   
@@ -147,11 +132,14 @@ void main() {
   vec3 TangentNormal = texture(_NormalTexture, Vertex.UV0).rgb * 2 - 1;
   mat3 TBN = mat3(Vertex.TangentDirection, Vertex.BitangentDirection, Vertex.NormalDirection);
   vec3 VertNormal = normalize(TBN * TangentNormal);
+  float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
+  float Metalness = _Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r;
+  vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma));
 
   for( int i = 0; i < 2; i++ ) {
-    Sum += MicrofacetModel(i, Vertex.Position.xyz, VertNormal);
+    Sum += MicrofacetModel(i, Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);
   }
-  Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, VertNormal);
+  Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);
 
   Sum = Sum / (Sum + vec3(1.0));
   Sum = pow(Sum, vec3(1.0/Gamma));
