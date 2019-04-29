@@ -714,7 +714,7 @@ void CoreApplication::MainLoop() {
 				MeshPrimitives::Cube.BindVertexArray();
 
 				TArray<Matrix4x4> transforms;
-				BoundingBox3D Box = OBJModels[MeshCount].BoundingBox.Transform(TransformMat);
+				BoundingBox3D Box = OBJModels[MeshCount].Bounding.Transform(TransformMat);
 				Vector3 Center = Vector3((Box.xMin + Box.xMax) / 2, (Box.yMin + Box.yMax) / 2, (Box.zMin + Box.zMax) / 2);
 				Matrix4x4 CubeTransform = Matrix4x4::Translation(Center) * Matrix4x4::Scaling(Box.Size());
 
