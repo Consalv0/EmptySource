@@ -441,8 +441,6 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
 				1
 			};
-			// NewVertex.Color = Vector4(1);
-			// NewVertex.Tangent = Vector3();
 
 			unsigned Index = Count;
 			bool bFoundIndex = false;
@@ -466,6 +464,8 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 			}
 		}
 
+		OBJLoader::ComputeTangents(Faces->back(), Vertices->back());
+
 		Debug::LogClearLine(Debug::LogInfo);
 		Debug::Log(
 			Debug::LogInfo,
@@ -477,7 +477,6 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 		);
 
 		TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
-		OBJLoader::ComputeTangents(Faces->back(), Vertices->back());
 	}
 
 	Debug::LogClearLine(Debug::LogInfo);
@@ -501,7 +500,7 @@ void OBJLoader::ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices
 
 	const int Size = (int)Faces.size();
 
-	// For each triangle, compute the edge (DeltaPos) and the DeltaUV
+	// --- For each triangle, compute the edge (DeltaPos) and the DeltaUV
 	for (int i = 0; i < Size; ++i) {
 		const Vector3 & VertexA = Vertices[Faces[i][0]].Position;
 		const Vector3 & VertexB = Vertices[Faces[i][1]].Position;
@@ -519,7 +518,6 @@ void OBJLoader::ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices
 		const Vector2 DeltaUV1 = UVB - UVA;
 		const Vector2 DeltaUV2 = UVC - UVA;
 
-		// --- We can now use our formula to compute the tangent :
 		float r = 1.F / (DeltaUV1.x * DeltaUV2.y - DeltaUV1.y * DeltaUV2.x);
 		      r = std::isfinite(r) ? r : 0;
 		
@@ -532,8 +530,5 @@ void OBJLoader::ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices
 		Vertices[Faces[i][0]].Tangent = Tangent;
 		Vertices[Faces[i][1]].Tangent = Tangent;
 		Vertices[Faces[i][2]].Tangent = Tangent;
-
-		// Same thing for binormals
-		// binormals[i * 3 + 0] = tan2[i].x; binormals[i * 3 + 1] = tan2[i].y; binormals[i * 3 + 2] = tan2[i].z;
 	}
 }
