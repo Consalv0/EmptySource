@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../include/Math/Box3D.h"
+
 // Default vertex Locations
 constexpr auto PositionLocation = 0;
 constexpr auto NormalLocation = 1;
@@ -9,12 +11,8 @@ constexpr auto UV1Location = 4;
 constexpr auto ColorLocation = 5;
 constexpr auto WeightsLocation = 9;
 
-#include <vector>
-using std::vector;
-
 struct IntVector3;
 struct Vector2;
-struct Vector3;
 struct Vector4;
 
 struct MeshVertex {
@@ -34,11 +32,11 @@ struct MeshVertex {
 	bool operator==(const MeshVertex &Other) const;
 };
 
-typedef vector<IntVector3> MeshFaces;
-typedef vector<Vector3>    MeshVector3D;
-typedef vector<Vector2>    MeshUVs;
-typedef vector<Vector4>    MeshColors;
-typedef vector<MeshVertex> MeshVertices;
+typedef TArray<IntVector3> MeshFaces;
+typedef TArray<Vector3>    MeshVector3D;
+typedef TArray<Vector2>    MeshUVs;
+typedef TArray<Vector4>    MeshColors;
+typedef TArray<MeshVertex> MeshVertices;
 
 class Mesh {
 private:
@@ -50,12 +48,15 @@ private:
 public:
 	MeshFaces Faces;
 	MeshVertices Vertices;
+	BoundingBox3D Bounding;
 
 	Mesh();
-	//* Copy the information to the mesh, the data will be coppied
+	//* Copy the information to the mesh, the data will be duplicated
 	Mesh(const MeshFaces Faces, const MeshVertices Vertices);
-	//* Transfer information to the mesh, the data will be swapped
+	//* Transfer information to the mesh, the data will be swapped, the bounding box will be computed
 	Mesh(MeshFaces* Faces, MeshVertices* Vertices);
+	//* Transfer information to the mesh, the data will be swapped
+	Mesh(MeshFaces* Faces, MeshVertices* Vertices, const BoundingBox3D & BBox);
 
 	//* *Create or Bind Vertex Array Object
 	void BindVertexArray() const;

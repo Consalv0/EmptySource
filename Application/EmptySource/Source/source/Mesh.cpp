@@ -3,6 +3,7 @@
 #include "../include/CoreGraphics.h"
 
 #include "../include/Math/CoreMath.h"
+#include "../include/Math/Box3D.h"
 #include "../include/Mesh.h"
 
 MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV) :
@@ -39,6 +40,10 @@ Mesh::Mesh(const MeshFaces faces, const MeshVertices vertices) {
 	Faces = faces;
 	Vertices = vertices;
 
+	Bounding = BoundingBox3D();
+	for (MeshVertices::const_iterator Vertex = Vertices.begin(); Vertex != Vertices.end(); ++Vertex) {
+		Bounding.Add(Vertex->Position);
+	}
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
@@ -48,6 +53,20 @@ Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices) {
 	Faces.swap(*faces);
 	Vertices.swap(*vertices);
 
+	Bounding = BoundingBox3D();
+	for (MeshVertices::const_iterator Vertex = Vertices.begin(); Vertex != Vertices.end(); ++Vertex) {
+		Bounding.Add(Vertex->Position);
+	}
+	VertexArrayObject = 0;
+	ElementBuffer = 0;
+	VertexBuffer = 0;
+}
+
+Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices, const Box3D & BBox) {
+	Faces.swap(*faces);
+	Vertices.swap(*vertices);
+
+	Bounding = BBox;
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;

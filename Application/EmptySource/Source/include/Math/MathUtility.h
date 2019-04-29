@@ -6,7 +6,7 @@
 namespace MathConstants {
 	static const float Pi = 3.1415926535897932F;
 	static const float SmallNumber = 1.e-8F;
-	static const float Big_Number = 3.4e+38f;
+	static const float BigNumber = 3.4e+38f;
 	static const float Euler = 2.71828182845904523536F;
 	static const float InversePi = 0.31830988618F;
 	static const float HalfPi = 1.57079632679F;

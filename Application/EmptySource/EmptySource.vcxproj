@@ -281,6 +281,7 @@
     <ClInclude Include="Source\include\ImageLoader.h" />
     <ClInclude Include="Source\include\Material.h" />
     <ClInclude Include="Source\include\Math\Box2D.h" />
+    <ClInclude Include="Source\include\Math\Box3D.h" />
     <ClInclude Include="Source\include\Math\CoreMath.h" />
     <ClInclude Include="Source\include\Math\IntVector2.h" />
     <ClInclude Include="Source\include\Math\IntVector3.h" />
@@ -312,6 +313,7 @@
     <ClInclude Include="Source\include\Utility\LogCore.h" />
     <ClInclude Include="Source\include\Utility\LogFreeType.h" />
     <ClInclude Include="Source\include\Utility\LogGraphics.h" />
+    <ClInclude Include="Source\include\Utility\MeshPrimitives.h" />
     <ClInclude Include="Source\include\Utility\TextFormattingMath.h" />
     <ClInclude Include="Source\include\Utility\TextFormatting.h" />
     <ClInclude Include="Source\include\Utility\TexturePacking.h" />

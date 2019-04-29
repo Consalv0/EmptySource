@@ -21,7 +21,7 @@
 #include "../include/EdgeSegments.h"
 #include "../include/Math/MathUtility.h"
 
-SignedDistance::SignedDistance() : Distance(-MathConstants::Big_Number), Dot(1) { }
+SignedDistance::SignedDistance() : Distance(-MathConstants::BigNumber), Dot(1) { }
 
 SignedDistance::SignedDistance(float Distance, float Dot) : Distance(Distance), Dot(Dot) { }
 

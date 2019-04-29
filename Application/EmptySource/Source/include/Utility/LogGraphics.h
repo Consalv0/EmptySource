@@ -51,4 +51,14 @@ namespace Debug {
 		Log(LogInfo, L"├> GL Version	: %ls", CharToWChar((const char*)Version));
 		Log(LogInfo, L"└> GLSL Version	: %ls", CharToWChar((const char*)GLSLVersion));
 	}
+
+	inline void DebugBox(float MinX, float MinY, float MinZ, float MaxX, float MaxY, float MaxZ, Matrix4x4 * Transform) {
+		GLuint ModelMatrixBuffer;
+		glGenBuffers(1, &ModelMatrixBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+
+		Vector3 size = Vector3(MaxX - MinX, MaxY - MinY, MaxZ - MinZ);
+		Vector3 center = Vector3((MinX + MaxX) / 2, (MinY + MaxY) / 2, (MinZ + MaxZ) / 2);
+		Matrix4x4 transform = Matrix4x4::Translation(center) * Matrix4x4::Scaling(size);
+	}
 }

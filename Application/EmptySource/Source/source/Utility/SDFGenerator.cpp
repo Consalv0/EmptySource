@@ -91,7 +91,7 @@ void SDFGenerator::GenerateDistanceTransform() {
 			p->Delta.y = 0;
 			if (p->Alpha <= 0.F) {
 				// outside
-				p->Distance = MathConstants::Big_Number;
+				p->Distance = MathConstants::BigNumber;
 			}
 			else if (p->Alpha < 1.F) {
 				// on the edge
@@ -256,8 +256,8 @@ void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape2D & Shape, doubl
 			for (int x = 0; x < OutWidth; ++x) {
 				float Dummy;
 				Point2 Point = Vector2(x + .5F, y + .5F) / Scale - Translate;
-				float NegDist = MathConstants::Big_Number;
-				float PosDist = -MathConstants::Big_Number;
+				float NegDist = MathConstants::BigNumber;
+				float PosDist = -MathConstants::BigNumber;
 				int Winding = 0;
 
 				TArray<Shape2DContour>::const_iterator Contour = Shape.Contours.begin();
@@ -275,7 +275,7 @@ void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape2D & Shape, doubl
 						NegDist = MinDistance.Distance;
 				}
 
-				float SignedDist = -MathConstants::Big_Number;
+				float SignedDist = -MathConstants::BigNumber;
 				if (PosDist >= 0 && fabs(PosDist) <= fabs(NegDist)) {
 					SignedDist = PosDist;
 					Winding = 1;

@@ -3,11 +3,13 @@
 #include "../include/FileManager.h"
 #include "../include/Mesh.h"
 #include "../include/Core.h"
+#include "../include/Math/Box3D.h"
 
 class OBJLoader {
 private:
 	struct ObjectData {
 		String Name;
+		Box3D Bounding;
 		int VertexIndicesCount = 0;
 		int PositionCount = 0;
 		int NormalCount = 0;
@@ -64,7 +66,7 @@ private:
 public:
 	/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
 	  * there's a way to optimize the vertices. */
-	static bool Load(FileStream* File, std::vector<MeshFaces>* Faces, std::vector<MeshVertices>* Vertices, bool Optimize = true);
+	static bool Load(FileStream* File, TArray<MeshFaces>* Faces, TArray<MeshVertices>* Vertices, TArray<Box3D>* BoundingBoxes, bool Optimize = true);
 
 };
 

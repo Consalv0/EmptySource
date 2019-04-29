@@ -324,7 +324,12 @@ void CoreApplication::MainLoop() {
     
 	Material UnlitMaterial = Material();
 	UnlitMaterial.SetShaderProgram(&UnlitShader);
-    
+
+	Material UnlitMaterialWire = Material();
+	UnlitMaterialWire.SetShaderProgram(&UnlitShader);
+	UnlitMaterialWire.RenderMode = Graphics::RM_Wire;
+	UnlitMaterialWire.CullMode = Graphics::CM_None;
+
 	Material RenderTextureMaterial = Material();
 	RenderTextureMaterial.DepthFunction = Graphics::DF_Always;
 	RenderTextureMaterial.CullMode = Graphics::CM_None;
@@ -356,33 +361,33 @@ void CoreApplication::MainLoop() {
 	float MeshSelector = 0;
 
 	TArray<std::thread> Threads;
+	Threads.push_back(std::thread([&OBJModels]() {
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, &BBoxes, true);
+		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
+			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount], BBoxes[MeshDataCount]));
+		}
+	}));
 	// Threads.push_back(std::thread([&OBJModels]() {
-	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Escafandra.obj"), &Faces, &Vertices, true);
+	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
+	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, &BBoxes, false);
 	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
-	// 	}
-	// }));
-	// Threads.push_back(std::thread([&OBJModels]() {
-	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, false);
-	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount], BBoxes[MeshDataCount]));
 	// 	}
 	// }));
 
 	Threads.push_back(std::thread([&LightModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Monkey.obj"), &Faces, &Vertices, true);
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/Monkey.obj"), &Faces, &Vertices, &BBoxes, true);
 		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount]));
+			LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount], BBoxes[MeshDataCount]));
 		}
 	}));
 
 	Threads.push_back(std::thread([&SphereModel]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/SphereUV.obj"), &Faces, &Vertices, true);
-		SphereModel = Mesh(&Faces[0], &Vertices[0]);
+		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
+		OBJLoader::Load(FileManager::Open(L"Resources/Models/SphereUV.obj"), &Faces, &Vertices, &BBoxes, true);
+		SphereModel = Mesh(&Faces[0], &Vertices[0], BBoxes[0]);
 	}));
     
 	Texture2D RenderedTexture = Texture2D(
@@ -598,7 +603,7 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
-		// Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.4F) * Transforms[0].Rotation;
+		Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.04F) * Transforms[0].Rotation;
 
 		RenderTimeSum += Time::GetDeltaTime();
 		const float MaxFramerate = (1 / 65.F);
@@ -683,9 +688,11 @@ void CoreApplication::MainLoop() {
 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(TransformMat), ModelMatrixBuffer);
 
 				OBJModels[MeshCount].DrawInstanciated((GLsizei)1);
+
 				TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
 				VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
 			}
+
 			SphereModel.SetUpBuffers();
 			SphereModel.BindVertexArray();
 
@@ -696,12 +703,32 @@ void CoreApplication::MainLoop() {
 			TriangleCount += SphereModel.Faces.size() * 1;
 			VerticesCount += SphereModel.Vertices.size() * 1;
 
+			UnlitMaterialWire.Use();
+			
+			UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
+			UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
+			UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
+			UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.2F, .7F, .07F, .3F).PointerToValue());
+			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
+				MeshPrimitives::Cube.SetUpBuffers();
+				MeshPrimitives::Cube.BindVertexArray();
+
+				TArray<Matrix4x4> transforms;
+				BoundingBox3D Box = OBJModels[MeshCount].BoundingBox.Transform(TransformMat);
+				Vector3 Center = Vector3((Box.xMin + Box.xMax) / 2, (Box.yMin + Box.yMax) / 2, (Box.zMin + Box.zMax) / 2);
+				Matrix4x4 CubeTransform = Matrix4x4::Translation(Center) * Matrix4x4::Scaling(Box.Size());
+
+				UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(CubeTransform[0]), ModelMatrixBuffer);
+
+				MeshPrimitives::Cube.DrawInstanciated(1);
+			}
+
 			UnlitMaterial.Use();
             
 			UnlitMaterial.SetMatrix4x4Array( "_ProjectionMatrix", ProjectionMatrix.PointerToValue() );
 			UnlitMaterial.SetMatrix4x4Array( "_ViewMatrix",             ViewMatrix.PointerToValue() );
 			UnlitMaterial.SetFloat3Array( "_ViewPosition",             EyePosition.PointerToValue() );
-			UnlitMaterial.SetFloat3Array( "_Material.Color", Vector3(LightIntencity, 0, 0).PointerToValue() );
+			UnlitMaterial.SetFloat4Array( "_Material.Color", Vector4(LightIntencity, 0, 0, 1).PointerToValue() );
 			
 			if (LightModels.size() >= 1) {
 				LightModels[0].SetUpBuffers();

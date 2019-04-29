@@ -292,9 +292,9 @@ size_t OBJLoader::ReadByLine(
 		float Progress = CharacterCount / float(MaxCharacterCount);
 		if (--LogCount <= 0) {
 			LogCount = LogCountBottleNeck;
-			float cur = std::ceil(Progress * 12);
+			float Cur = std::ceil(Progress * 12);
 			Debug::LogUnadorned(Debug::LogInfo, L"\r [%ls%ls] %.2f%% %ls lines",
-				WString(int(cur), L'#').c_str(), WString(int(25 + 1 - cur), L' ').c_str(),
+				WString(int(Cur), L'#').c_str(), WString(int(25 + 1 - Cur), L' ').c_str(),
 				100 * Progress, Text::FormatUnit(LineCount, 2).c_str()
 			);
 		}
@@ -361,7 +361,7 @@ void OBJLoader::PrepareData(const Char * InFile, FileData& ModelData) {
 	ModelData.VertexIndices.reserve(FaceCount * 4);
 }
 
-bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vector<MeshVertices> * Vertices, bool hasOptimize) {
+bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVertices> * Vertices, TArray<Box3D> * BoundingBoxes, bool hasOptimize) {
 	if (File == NULL || !File->IsValid()) return false;
 
 	FileData ModelData;
@@ -439,7 +439,7 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
 				Data->UVsCount > 0 ?
 					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
-				1
+				Vector4(1.F)
 			};
 
 			unsigned Index = Count;
@@ -454,6 +454,7 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 			} else { 
 				// --- If not, it needs to be added in the output data.
 				Vertices->back().push_back(NewVertex);
+				Data->Bounding.Add(NewVertex.Position);
 				unsigned NewIndex = (unsigned)Vertices->back().size() - 1;
 				Indices[Count] = NewIndex;
 				if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
@@ -465,6 +466,7 @@ bool OBJLoader::Load(FileStream * File, std::vector<MeshFaces> * Faces, std::vec
 		}
 
 		OBJLoader::ComputeTangents(Faces->back(), Vertices->back());
+		BoundingBoxes->push_back(Data->Bounding);
 
 		Debug::LogClearLine(Debug::LogInfo);
 		Debug::Log(

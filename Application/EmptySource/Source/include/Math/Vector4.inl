@@ -37,7 +37,7 @@ FORCEINLINE Vector4::Vector4(const Vector3 & Vector, const float & w)
 };
 
 FORCEINLINE Vector4::Vector4(const float& Value)
-	: x(Value), y(Value), z(Value) {
+	: x(Value), y(Value), z(Value), w(Value) {
 }
 
 inline float Vector4::Magnitude() const {

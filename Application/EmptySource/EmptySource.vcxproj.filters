@@ -537,6 +537,12 @@
     <ClInclude Include="Source\include\Cubemap.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Math\Box3D.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\MeshPrimitives.h">
+      <Filter>Header Files\Core\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">
