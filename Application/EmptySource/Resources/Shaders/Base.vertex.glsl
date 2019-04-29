@@ -27,7 +27,7 @@ out struct VertexData {
 
 void main() {
 	Matrix.Model = _iModelMatrix;
-	Matrix.WorldNormal = transpose(inverse(_iModelMatrix));
+	Matrix.WorldNormal = transpose(inverse(Matrix.Model));
 
  	Vertex.Position = vec4(_iVertexPosition, 1.0);
  	Vertex.NormalDirection = normalize(Matrix.WorldNormal * vec4( _iVertexNormal, 1.0 )).xyz; 
@@ -38,6 +38,6 @@ void main() {
 	Vertex.Color = _iVertexColor;
   	
   	// Now set the position in model space
-  	gl_Position = _ProjectionMatrix * _ViewMatrix * _iModelMatrix * Vertex.Position;
-  	Vertex.Position = _iModelMatrix * Vertex.Position;
+  	gl_Position = _ProjectionMatrix * _ViewMatrix * Matrix.Model * Vertex.Position;
+  	Vertex.Position = Matrix.Model * Vertex.Position;
 }
