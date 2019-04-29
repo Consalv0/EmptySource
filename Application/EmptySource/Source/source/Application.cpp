@@ -710,15 +710,12 @@ void CoreApplication::MainLoop() {
 			UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
 			UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.2F, .7F, .07F, .3F).PointerToValue());
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
+				BoundingBox3D Box = OBJModels[MeshCount].Bounding.Transform(TransformMat);
 				MeshPrimitives::Cube.SetUpBuffers();
 				MeshPrimitives::Cube.BindVertexArray();
 
-				TArray<Matrix4x4> transforms;
-				BoundingBox3D Box = OBJModels[MeshCount].Bounding.Transform(TransformMat);
-				Vector3 Center = Vector3((Box.xMin + Box.xMax) / 2, (Box.yMin + Box.yMax) / 2, (Box.zMin + Box.zMax) / 2);
-				Matrix4x4 CubeTransform = Matrix4x4::Translation(Center) * Matrix4x4::Scaling(Box.Size());
-
-				UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(CubeTransform[0]), ModelMatrixBuffer);
+				Matrix4x4 Transform = Matrix4x4::Translation(Box.GetCenter()) * Matrix4x4::Scaling(Box.GetSize());
+				UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
 
 				MeshPrimitives::Cube.DrawInstanciated(1);
 			}

@@ -45,7 +45,10 @@ public:
 	};
 
 	//* Get the dimensions of the bounding box
-	inline Vector3 Size() const { return Vector3(GetWidth(), GetHeight(), GetDepth()); }
+	inline Vector3 GetSize() const { return Vector3(GetWidth(), GetHeight(), GetDepth()); }
+
+	//* Get the center position of the bounding box
+	inline Vector3 GetCenter() const { return Vector3(xMin + xMax, yMin + yMax, zMin + zMax) * .5F; }
 
 	//* Get the lower point of the bounding box
 	inline Point3 GetMinPoint() const { return { Math::Min(Left, Right), Math::Min(Top, Bottom), Math::Min(Front, Back) }; }
