@@ -67,6 +67,18 @@ inline Quaternion Quaternion::AxisAngle(Vector3 const & Axis, float const & Radi
 	);
 }
 
+inline Quaternion Quaternion::FromToRotation(Vector3 const & From, Vector3 const & To) {
+	Vector3 Half = From + To;
+	Half.Normalize();
+
+	return Quaternion(
+		From.Dot(Half),
+		From.y * Half.z - From.z * Half.y,
+		From.z * Half.x - From.x * Half.z,
+		From.x * Half.y - From.y * Half.x
+	).Normalized();
+}
+
 inline float Quaternion::Magnitude() const {
 	return sqrtf(x * x + y * y + z * z + w * w);
 }
