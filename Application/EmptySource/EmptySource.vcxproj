@@ -288,6 +288,7 @@
     <ClInclude Include="Source\include\Math\MathUtility.h" />
     <ClInclude Include="Source\include\Math\Matrix3x3.h" />
     <ClInclude Include="Source\include\Math\Matrix4x4.h" />
+    <ClInclude Include="Source\include\Math\Physics.h" />
     <ClInclude Include="Source\include\Math\Quaternion.h" />
     <ClInclude Include="Source\include\Math\Ray.h" />
     <ClInclude Include="Source\include\Math\Vector2.h" />

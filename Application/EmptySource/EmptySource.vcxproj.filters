@@ -543,6 +543,9 @@
     <ClInclude Include="Source\include\Utility\MeshPrimitives.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Math\Physics.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">

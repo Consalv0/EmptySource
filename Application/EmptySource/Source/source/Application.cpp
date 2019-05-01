@@ -30,6 +30,7 @@
 #include "../include/Texture3D.h"
 #include "../include/Cubemap.h"
 #include "../include/ImageLoader.h"
+#include "../include/Math/Physics.h"
 
 #include <thread>
 
@@ -162,7 +163,7 @@ void CoreApplication::MainLoop() {
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Milkyway.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
@@ -458,6 +459,7 @@ void CoreApplication::MainLoop() {
 	TArray<Transform> Transforms;
 	Transforms.push_back(Transform());
 
+	TArray<int> ElementsIntersected;
 	float MultiuseValue = 1;
 	const int TextCount = 3;
 	float FontSize = 14;
@@ -679,18 +681,64 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
 			// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
-			Matrix4x4 TransformMat = Transforms[0].GetWorldMatrix();
+			Matrix4x4 TransformMat = Transforms[0].GetLocalToWorldMatrix();
+			Matrix4x4 InverseTransform = Transforms[0].GetWorldToLocalMatrix();
+			Vector3 CameraRayDirection = { 
+				(2.F * MainWindow->GetMousePosition().x) / MainWindow->GetWidth() - 1.F,
+				1.F - ( 2.F * MainWindow->GetMousePosition().y) / MainWindow->GetHeight(),
+				-1.F,
+			};
+			CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
+			CameraRayDirection.z = -1.F;
+			CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
+			CameraRayDirection.Normalize();
+
+			Ray CameraRay = Ray(
+				InverseTransform.MultiplyPoint(EyePosition),
+				InverseTransform.MultiplyVector(CameraRayDirection)
+			);
 			
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
-				OBJModels[MeshCount].SetUpBuffers();
-				OBJModels[MeshCount].BindVertexArray();
+				BoundingBox3D AABox = OBJModels[MeshCount].Bounding;
+				if (Physics::CheckIntersection(CameraRay, AABox)) {
+					RayHit Hit;
+					for (MeshFaces::const_iterator Face = OBJModels[MeshCount].Faces.begin(); Face != OBJModels[MeshCount].Faces.end(); ++Face) {
+						if (Physics::CheckIntersection(
+							Hit, CameraRay,
+							OBJModels[MeshCount].Vertices[(*Face)[0]].Position, 
+							OBJModels[MeshCount].Vertices[(*Face)[1]].Position, 
+							OBJModels[MeshCount].Vertices[(*Face)[2]].Position
+						)) {
+							break;
+						}
+					}
+					if (Hit.bHit) {
+						LightModels[0].SetUpBuffers();
+						LightModels[0].BindVertexArray();
 
-				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &(TransformMat), ModelMatrixBuffer);
+						Ray CameraRayWorld = Ray(EyePosition, CameraRayDirection);
+						Hit.Normal = TransformMat.MultiplyVector(Hit.Normal.Normalized());
+						Matrix4x4 ModelMatrix =
+							Matrix4x4::Translation(CameraRayWorld.PointAt(Hit.Stamp)) * 
+							Matrix4x4::Rotation(Quaternion::FromToRotation(Vector3(0, 1, 0), Hit.Normal)) * 
+							Matrix4x4::Scaling(0.05F)
+						;
+						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
-				OBJModels[MeshCount].DrawInstanciated((GLsizei)1);
+						LightModels[0].DrawInstanciated((GLsizei)1);
+						TriangleCount += LightModels[0].Faces.size() * 1;
+						VerticesCount += LightModels[0].Vertices.size() * 1;
 
-				TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
-				VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
+						OBJModels[MeshCount].SetUpBuffers();
+						OBJModels[MeshCount].BindVertexArray();
+
+						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
+						OBJModels[MeshCount].DrawInstanciated((GLsizei)1);
+
+						TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
+						VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
+					}
+				}
 			}
 
 			SphereModel.SetUpBuffers();
@@ -708,16 +756,23 @@ void CoreApplication::MainLoop() {
 			UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 			UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 			UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-			UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.2F, .7F, .07F, .3F).PointerToValue());
+			
+			ElementsIntersected.clear();
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
-				BoundingBox3D Box = OBJModels[MeshCount].Bounding.Transform(TransformMat);
-				MeshPrimitives::Cube.SetUpBuffers();
-				MeshPrimitives::Cube.BindVertexArray();
+				BoundingBox3D AABox = OBJModels[MeshCount].Bounding;
+				if (Physics::CheckIntersection(CameraRay, AABox)) {
+					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.2F, .7F, .07F, .3F).PointerToValue());
+					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
+					MeshPrimitives::Cube.SetUpBuffers();
+					MeshPrimitives::Cube.BindVertexArray();
 
-				Matrix4x4 Transform = Matrix4x4::Translation(Box.GetCenter()) * Matrix4x4::Scaling(Box.GetSize());
-				UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
+					ElementsIntersected.push_back(MeshCount);
+					AABox = OBJModels[MeshCount].Bounding.Transform(TransformMat);
+					Matrix4x4 Transform = Matrix4x4::Translation(AABox.GetCenter()) * Matrix4x4::Scaling(AABox.GetSize());
+					UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
 
-				MeshPrimitives::Cube.DrawInstanciated(1);
+					MeshPrimitives::Cube.DrawInstanciated(1);
+				}
 			}
 
 			UnlitMaterial.Use();
@@ -798,9 +853,10 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[2] = Text::Formatted(
-				L"Sphere Position(%ls), Sphere2 Position(%ls)",
+				L"Sphere Position(%ls), Sphere2 Position(%ls), ElementsIntersected(%d)",
 				Text::FormatMath(Spheres[0]).c_str(),
-				Text::FormatMath(Spheres[1]).c_str()
+				Text::FormatMath(Spheres[1]).c_str(),
+				ElementsIntersected.size()
 			);
 
 			RenderingText[0] = Text::Formatted(
