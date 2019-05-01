@@ -3,7 +3,11 @@
 Transform::Transform() : Position(), Rotation(), Scale(1) {
 }
 
-Matrix4x4 Transform::GetWorldMatrix() const {
+Matrix4x4 Transform::GetWorldToLocalMatrix() const {
+	return GetLocalToWorldMatrix().Inversed();
+}
+
+Matrix4x4 Transform::GetLocalToWorldMatrix() const {
 	return Matrix4x4::Translation(Position) * Rotation.ToMatrix4x4() * Matrix4x4::Scaling(Scale);
 }
 
