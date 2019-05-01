@@ -4,7 +4,9 @@
 
 #include "../include/Core.h"
 #include "../include/Utility/Timer.h"
-#include "../include/Math/CoreMath.h"
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/Vector3.h"
+#include "../include/Math/Vector2.h"
 #include "../include/MeshLoader.h"
 #include "../include/FileStream.h"
 
@@ -392,11 +394,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 		);
 	}
 
-	TDictionary<MeshVertex, unsigned> VertexToIndex;
-	ModelData.VertexIndices.shrink_to_fit();
-	VertexToIndex.reserve(VertexIndexCount);
 	int* Indices = new int[VertexIndexCount];
-
 	const size_t LogCountBottleNeck = 36273;
 	size_t LogCount = 1; 
 	int Count = 0;
@@ -404,11 +402,16 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 	Vertices->clear();
 	Faces->clear();
 	size_t TotalAllocatedSize = 0;
+	size_t TotalUniqueVertices = 0;
 
 	Debug::Timer Timer;
 	Timer.Start();
 	for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
 		ObjectData* Data = &ModelData.Objects[ObjectCount];
+
+		TDictionary<MeshVertex, unsigned> VertexToIndex;
+		VertexToIndex.reserve(Data->VertexIndicesCount);
+
 		Vertices->push_back(MeshVertices());
 		Faces->push_back(MeshFaces());
 		int InitialCount = Count;
@@ -441,6 +444,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
 				Vector4(1.F)
 			};
+			Data->Bounding.Add(NewVertex.Position);
 
 			unsigned Index = Count;
 			bool bFoundIndex = false;
@@ -454,10 +458,10 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 			} else { 
 				// --- If not, it needs to be added in the output data.
 				Vertices->back().push_back(NewVertex);
-				Data->Bounding.Add(NewVertex.Position);
 				unsigned NewIndex = (unsigned)Vertices->back().size() - 1;
 				Indices[Count] = NewIndex;
 				if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
+				TotalUniqueVertices++;
 			}
 
 			if ((Count + 1) % 3 == 0) {
@@ -487,8 +491,8 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 		Debug::Log(
 			Debug::LogInfo, L"├> Vertex optimization from %ls to %ls (%.2f%%)",
 			Text::FormatUnit(VertexIndexCount, 2).c_str(), 
-			Text::FormatUnit(VertexToIndex.size(), 2).c_str(),
-			(float(VertexToIndex.size()) - VertexIndexCount) / VertexIndexCount * 100
+			Text::FormatUnit(TotalUniqueVertices, 2).c_str(),
+			(float(TotalUniqueVertices) - VertexIndexCount) / VertexIndexCount * 100
 		);
 	}
 
