@@ -213,8 +213,8 @@ inline Matrix4x4 Matrix4x4::Inversed() const {
 	Vector4 Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
 	Vector4 Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
 
-	Vector4 SignA(+1, -1, +1, -1);
-	Vector4 SignB(-1, +1, -1, +1);
+	Vector4 SignA(+1.F, -1.F, +1.F, -1.F);
+	Vector4 SignB(-1.F, +1.F, -1.F, +1.F);
 
 	Matrix4x4 Result(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
 
@@ -223,7 +223,7 @@ inline Matrix4x4 Matrix4x4::Inversed() const {
 	Vector4 Dot0(Row(0) * Result.Column(0));
 	float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
 
-	float OneOverDeterminant = float(1) / Dot1;
+	float OneOverDeterminant = 1.F / Dot1;
 
 	return Result * OneOverDeterminant;
 }
