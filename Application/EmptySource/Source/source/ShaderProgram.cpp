@@ -3,8 +3,6 @@
 #include "../include/FileManager.h"
 #include "../include/ShaderProgram.h"
 
-#include "../include/Math/CoreMath.h"
-
 bool ShaderProgram::LinkProgram() {
 	int InfoLogLength;
 

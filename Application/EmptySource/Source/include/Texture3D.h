@@ -2,7 +2,8 @@
 
 #include "../include/Texture.h"
 #include "../include/Math/MathUtility.h"
-#include "../include/Math/CoreMath.h"
+#include "../include/Math/IntVector2.h"
+#include "../include/Math/Box2D.h"
 
 struct Texture3D : public Texture {
 private:

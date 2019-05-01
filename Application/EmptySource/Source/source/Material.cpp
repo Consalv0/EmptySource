@@ -1,7 +1,10 @@
 #include "../include/Core.h"
 #include "../include/CoreGraphics.h"
 #include "../include/Material.h"
-#include "../include/Math/CoreMath.h"
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/Vector4.h"
+#include "../include/Math/Quaternion.h"
+#include "../include/Math/Matrix4x4.h"
 #include "../include/Texture2D.h"
 #include "../include/Cubemap.h"
 

@@ -2,7 +2,9 @@
 #include "../include/Core.h"
 #include "../include/CoreGraphics.h"
 #include "../include/Window.h"
-#include "../include/Math/CoreMath.h"
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/Vector2.h"
+#include "../include/Math/Vector3.h"
 
 ApplicationWindow::ApplicationWindow() {
     Window = NULL;

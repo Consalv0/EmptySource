@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../include/Math/CoreMath.h"
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/IntVector2.h"
+#include "../include/Math/Vector2.h"
+#include "../include/Math/Box2D.h"
 #include "../include/Shape2D.h"
 #include "../include/Bitmap.h"
 

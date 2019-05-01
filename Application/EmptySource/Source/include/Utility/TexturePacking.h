@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../Math/CoreMath.h"
+#include "../Math/MathUtility.h"
+#include "../Math/Vector2.h"
+#include "../Math/IntVector2.h"
+#include "../Math/Box2D.h"
 
 template <typename T>
 class TexturePacking {

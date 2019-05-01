@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/Core.h"
 #include "../include/FileManager.h"
 #include "../include/Bitmap.h"
 

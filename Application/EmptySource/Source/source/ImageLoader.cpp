@@ -1,7 +1,5 @@
 
-#include "../include/Math/CoreMath.h"
 #include "../include/ImageLoader.h"
-#include "../include/Core.h"
 
 // --- Visual Studio
 #if defined(_MSC_VER) && (_MSC_VER >= 1310) 
