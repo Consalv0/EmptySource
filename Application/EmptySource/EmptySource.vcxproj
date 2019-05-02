@@ -85,7 +85,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -95,8 +95,8 @@
       </MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -131,7 +131,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>
@@ -142,8 +142,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <Include>$(CUDA_INC_PATH)</Include>
@@ -272,6 +272,7 @@
     <ClInclude Include="Source\include\Cubemap.h" />
     <ClInclude Include="Source\include\EdgeHolder.h" />
     <ClInclude Include="Source\include\EdgeSegments.h" />
+    <ClInclude Include="Source\include\FBXLoader.h" />
     <ClInclude Include="Source\include\FileManager.h" />
     <ClInclude Include="Source\include\FileStream.h" />
     <ClInclude Include="Source\include\Font.h" />
@@ -297,6 +298,7 @@
     <ClInclude Include="Source\include\Mesh.h" />
     <ClInclude Include="Source\include\MeshLoader.h" />
     <ClInclude Include="Source\include\Object.h" />
+    <ClInclude Include="Source\include\OBJLoader.h" />
     <ClInclude Include="Source\include\RenderTarget.h" />
     <ClInclude Include="Source\include\SDFGenerator.h" />
     <ClInclude Include="Source\include\ShaderProgram.h" />
@@ -329,6 +331,7 @@
     <ClCompile Include="Source\source\Cubemap.cpp" />
     <ClCompile Include="Source\source\EdgeHolder.cpp" />
     <ClCompile Include="Source\source\EdgeSegments.cpp" />
+    <ClCompile Include="Source\source\FBXLoader.cpp" />
     <ClCompile Include="Source\source\FileManager.cpp" />
     <ClCompile Include="Source\source\FileStream.cpp" />
     <ClCompile Include="Source\source\Font.cpp" />
@@ -340,6 +343,7 @@
     <ClCompile Include="Source\source\Mesh.cpp" />
     <ClCompile Include="Source\source\MeshLoader.cpp" />
     <ClCompile Include="Source\source\Object.cpp" />
+    <ClCompile Include="Source\source\OBJLoader.cpp" />
     <ClCompile Include="Source\source\RenderTarget.cpp" />
     <ClCompile Include="Source\source\ShaderProgram.cpp" />
     <ClCompile Include="Source\source\ShaderStage.cpp" />
@@ -390,9 +394,7 @@
     <ResourceCompile Include="EmptySource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Source\source\BoundingBox.cu" />
     <CudaCompile Include="Source\source\CudaRandArray.cu" />
-    <CudaCompile Include="Source\source\ModelVoxelizer.cu" />
     <CudaCompile Include="Source\source\RTRenderer.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

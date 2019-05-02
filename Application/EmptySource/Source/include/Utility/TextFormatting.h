@@ -1,9 +1,17 @@
 #pragma once
 
 #include "../include/Text.h"
+#include <algorithm>
 
 namespace Text {
-    // Replace part of string with another string
+	inline bool CompareIgnoreCase(WString A, WString B) {
+		transform(A.begin(), A.end(), A.begin(), toupper);
+		transform(B.begin(), B.end(), B.begin(), toupper);
+
+		return (A == B);
+	}
+
+	//* Replace part of string with another string
     template<class T>
     inline bool Replace(T& String, const T& From, const T& To) {
         size_t StartPos = String.find(From);

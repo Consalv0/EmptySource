@@ -356,41 +356,21 @@ void CoreApplication::MainLoop() {
 	HDRClampingMaterial.SetShaderProgram(&HDRClampingShader);
 
 	srand((unsigned int)glfwGetTime());
-	TArray<Mesh> OBJModels;
+	TArray<Mesh> SceneModels;
 	TArray<Mesh> LightModels;
 	Mesh SphereModel;
 	float MeshSelector = 0;
 
 	TArray<std::thread> Threads;
-	Threads.push_back(std::thread([&OBJModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, &BBoxes, true);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount], BBoxes[MeshDataCount]));
-		}
-	}));
-	// Threads.push_back(std::thread([&OBJModels]() {
-	// 	TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
-	// 	OBJLoader::Load(FileManager::Open(L"Resources/Models/Sponza.obj"), &Faces, &Vertices, &BBoxes, false);
-	// 	for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-	// 		OBJModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount], BBoxes[MeshDataCount]));
-	// 	}
-	// }));
-
-	Threads.push_back(std::thread([&LightModels]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/Monkey.obj"), &Faces, &Vertices, &BBoxes, true);
-		for (int MeshDataCount = 0; MeshDataCount < Faces.size(); ++MeshDataCount) {
-			LightModels.push_back(Mesh(&Faces[MeshDataCount], &Vertices[MeshDataCount], BBoxes[MeshDataCount]));
-		}
+	Threads.push_back(std::thread([&SceneModels, &LightModels, &SphereModel]() {
+		TArray<Mesh> Meshes;
+		MeshLoader::Load(Meshes, FileManager::Open(L"Resources/Models/SphereUV.obj"), true);
+		std::swap(SphereModel, *Meshes.begin());
+		MeshLoader::Load(LightModels, FileManager::Open(L"Resources/Models/Monkey.obj"), true);
+		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/Sponza.obj"), true);
+		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/Flamer.fbx"), true);
 	}));
 
-	Threads.push_back(std::thread([&SphereModel]() {
-		TArray<MeshFaces> Faces; TArray<MeshVertices> Vertices; TArray<BoundingBox3D> BBoxes;
-		OBJLoader::Load(FileManager::Open(L"Resources/Models/SphereUV.obj"), &Faces, &Vertices, &BBoxes, true);
-		SphereModel = Mesh(&Faces[0], &Vertices[0], BBoxes[0]);
-	}));
-    
 	Texture2D RenderedTexture = Texture2D(
 	 	IntVector2(MainWindow->GetWidth(), MainWindow->GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
 	);
@@ -552,7 +532,7 @@ void CoreApplication::MainLoop() {
         
 		if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
             MeshSelector += Time::GetDeltaTime() * 10;
-			MeshSelector = MeshSelector > OBJModels.size() - 1 ? OBJModels.size() - 1 : MeshSelector;
+			MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
 			MeshSelector -= Time::GetDeltaTime() * 10;
@@ -698,16 +678,16 @@ void CoreApplication::MainLoop() {
 				InverseTransform.MultiplyVector(CameraRayDirection)
 			);
 			
-			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
-				BoundingBox3D AABox = OBJModels[MeshCount].Bounding;
+			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+				BoundingBox3D AABox = SceneModels[MeshCount].Bounding;
 				if (Physics::CheckIntersection(CameraRay, AABox)) {
 					RayHit Hit;
-					for (MeshFaces::const_iterator Face = OBJModels[MeshCount].Faces.begin(); Face != OBJModels[MeshCount].Faces.end(); ++Face) {
+					for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Faces.begin(); Face != SceneModels[MeshCount].Faces.end(); ++Face) {
 						if (Physics::CheckIntersection(
 							Hit, CameraRay,
-							OBJModels[MeshCount].Vertices[(*Face)[0]].Position, 
-							OBJModels[MeshCount].Vertices[(*Face)[1]].Position, 
-							OBJModels[MeshCount].Vertices[(*Face)[2]].Position
+							SceneModels[MeshCount].Vertices[(*Face)[0]].Position, 
+							SceneModels[MeshCount].Vertices[(*Face)[1]].Position, 
+							SceneModels[MeshCount].Vertices[(*Face)[2]].Position
 						)) {
 							break;
 						}
@@ -729,14 +709,14 @@ void CoreApplication::MainLoop() {
 						TriangleCount += LightModels[0].Faces.size() * 1;
 						VerticesCount += LightModels[0].Vertices.size() * 1;
 
-						OBJModels[MeshCount].SetUpBuffers();
-						OBJModels[MeshCount].BindVertexArray();
+						SceneModels[MeshCount].SetUpBuffers();
+						SceneModels[MeshCount].BindVertexArray();
 
 						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
-						OBJModels[MeshCount].DrawInstanciated((GLsizei)1);
+						SceneModels[MeshCount].DrawInstanciated((GLsizei)1);
 
-						TriangleCount += OBJModels[MeshCount].Faces.size() * 1;
-						VerticesCount += OBJModels[MeshCount].Vertices.size() * 1;
+						TriangleCount += SceneModels[MeshCount].Faces.size() * 1;
+						VerticesCount += SceneModels[MeshCount].Vertices.size() * 1;
 					}
 				}
 			}
@@ -758,8 +738,8 @@ void CoreApplication::MainLoop() {
 			UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
 			
 			ElementsIntersected.clear();
-			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)OBJModels.size(); ++MeshCount) {
-				BoundingBox3D AABox = OBJModels[MeshCount].Bounding;
+			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+				BoundingBox3D AABox = SceneModels[MeshCount].Bounding;
 				if (Physics::CheckIntersection(CameraRay, AABox)) {
 					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.2F, .7F, .07F, .3F).PointerToValue());
 					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
@@ -767,7 +747,7 @@ void CoreApplication::MainLoop() {
 					MeshPrimitives::Cube.BindVertexArray();
 
 					ElementsIntersected.push_back(MeshCount);
-					AABox = OBJModels[MeshCount].Bounding.Transform(TransformMat);
+					AABox = SceneModels[MeshCount].Bounding.Transform(TransformMat);
 					Matrix4x4 Transform = Matrix4x4::Translation(AABox.GetCenter()) * Matrix4x4::Scaling(AABox.GetSize());
 					UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
 

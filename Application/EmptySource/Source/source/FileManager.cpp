@@ -21,6 +21,19 @@ FileStream* FileManager::Open(const WString & FilePath) {
 	return NewStream;
 }
 
+WString FileManager::GetFileExtension(const WString & Path) {
+	WString::size_type ExtensionIndex;
+
+	ExtensionIndex = Path.rfind('.');
+
+	if (ExtensionIndex != WString::npos) {
+		return Path.substr(ExtensionIndex + 1);
+	}
+	else {
+		return L"";
+	}
+}
+
 WString FileManager::GetFullPath(const WString & Path) {
 #ifdef WIN32
 	WChar FullPath[MAX_PATH + 1];

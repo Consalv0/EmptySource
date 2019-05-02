@@ -1,12 +1,6 @@
 
 #include "../include/Core.h"
 #include "../include/CoreGraphics.h"
-
-#include "../include/Math/MathUtility.h"
-#include "../include/Math/Vector2.h"
-#include "../include/Math/Vector3.h"
-#include "../include/Math/Vector4.h"
-#include "../include/Math/Box3D.h"
 #include "../include/Mesh.h"
 
 MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV) :

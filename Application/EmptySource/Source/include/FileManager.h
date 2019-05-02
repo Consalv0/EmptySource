@@ -12,6 +12,9 @@ private:
 
 public:
 	static FileStream* Open(const WString& FilePath);
+
+	static WString GetFileExtension(const WString& Path);
+
 	static WString GetFullPath(const WString& Path);
 
 	//* ReadStreams the file streams of the shader code

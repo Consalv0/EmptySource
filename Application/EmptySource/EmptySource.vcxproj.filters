@@ -546,6 +546,12 @@
     <ClInclude Include="Source\include\Math\Physics.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\OBJLoader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\FBXLoader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">
@@ -656,6 +662,12 @@
     <ClCompile Include="Source\source\Cubemap.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\source\OBJLoader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\FBXLoader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Base.vertex.glsl">
@@ -736,13 +748,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Source\source\BoundingBox.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
     <CudaCompile Include="Source\source\CudaRandArray.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
-    <CudaCompile Include="Source\source\ModelVoxelizer.cu">
       <Filter>Source Files\CUDA Test</Filter>
     </CudaCompile>
     <CudaCompile Include="Source\source\RTRenderer.cu">
