@@ -5,7 +5,8 @@
 
 #include "../include/Graphics.h"
 #include "../include/Utility/Timer.h"
-#include "../include/Math/CoreMath.h"
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/IntVector2.h"
 
 #ifndef __CUDACC__
 #define __CUDACC__

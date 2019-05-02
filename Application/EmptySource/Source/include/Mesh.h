@@ -1,5 +1,10 @@
 #pragma once
 
+#include "../include/Math/MathUtility.h"
+#include "../include/Math/Vector2.h"
+#include "../include/Math/Vector3.h"
+#include "../include/Math/IntVector3.h"
+#include "../include/Math/Vector4.h"
 #include "../include/Math/Box3D.h"
 
 // Default vertex Locations
@@ -10,10 +15,6 @@ constexpr auto UV0Location = 3;
 constexpr auto UV1Location = 4;
 constexpr auto ColorLocation = 5;
 constexpr auto WeightsLocation = 9;
-
-struct IntVector3;
-struct Vector2;
-struct Vector4;
 
 struct MeshVertex {
 	Vector3 Position;
