@@ -69,8 +69,6 @@ bool Physics::CheckIntersection(const Ray & CastedRay, const Point3 & A, const P
 	float v = CastedRay.Direction.Dot(TriangleRayPerpendicular) * InverseDet;
 	if (v < 0 || u + v > 1) return false;
 
-	float t = EdgeAC.Dot(TriangleRayPerpendicular) * InverseDet;
-
 	return true;
 }
 
