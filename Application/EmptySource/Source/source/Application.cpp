@@ -368,7 +368,7 @@ void CoreApplication::MainLoop() {
 		std::swap(SphereModel, *Meshes.begin());
 		MeshLoader::Load(LightModels, FileManager::Open(L"Resources/Models/Monkey.obj"), true);
 		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/Sponza.obj"), true);
-		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/Flamer.fbx"), true);
+		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/EscafandraMV1971.fbx"), true);
 	}));
 
 	Texture2D RenderedTexture = Texture2D(
@@ -474,25 +474,21 @@ void CoreApplication::MainLoop() {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
 			EyePosition += Forward * Time::GetDeltaTime() * 
 				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-			// TextPivot.y += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
 			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
 			EyePosition += Right * Time::GetDeltaTime() *
 				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-			// TextPivot.x -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
 			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
 			EyePosition += Back * Time::GetDeltaTime() *
 				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-			// TextPivot.y -= (FontSize + 100) * Time::GetDeltaTime();
 		}
 		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
 			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
 			EyePosition += Left * Time::GetDeltaTime() *
 				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-			// TextPivot.x += (FontSize + 100) * Time::GetDeltaTime();
 		}
 		
 		ViewMatrix = Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1));
@@ -840,7 +836,7 @@ void CoreApplication::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), MUV(%ls) Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), MultiuseVal(%ls) Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
