@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     CoreApplication::MainLoop();
 	CoreApplication::Close();
     
-#ifdef WIN32
+#ifdef _DEBUG
     Debug::Log(Debug::LogInfo, L"Press any key to close...");
     _getch();
 #endif
