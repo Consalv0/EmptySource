@@ -1,4 +1,4 @@
-﻿
+
 #include <cctype>
 #include <cstdio>
 
@@ -262,8 +262,10 @@ size_t OBJLoader::ReadByLine(
 	const Char * InFile,
 	FileData& ModelData)
 {
+#ifdef _DEBUG
 	const size_t LogCountBottleNeck = 86273;
 	size_t LogCount = 1;
+#endif
 	size_t CharacterCount = 0;
 	size_t LastSplitPosition = 0;
 	size_t MaxCharacterCount = std::strlen(InFile);
