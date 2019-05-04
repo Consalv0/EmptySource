@@ -138,9 +138,9 @@ void OBJLoader::ParseLine(
 
 	if (Keyword == CSType && !bWarned) {
 		bWarned = true;
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 		Debug::LogClearLine(Debug::LogWarning);
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 		Debug::Log(Debug::LogWarning, L"The object contains free-form geometry, this is not supported");
 		return;
 	}
@@ -206,9 +206,9 @@ void OBJLoader::ParseLine(
 
 			if (VertexIndex[0] < 0 && !bWarned) {
 				bWarned = true;
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 				Debug::LogClearLine(Debug::LogWarning);
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 				Debug::Log(Debug::LogWarning, L"The model contains negative references, this is not supported");
 				continue;
 			}
@@ -234,9 +234,9 @@ void OBJLoader::ParseLine(
 
 		if (VertexCount > 4 && !bWarned) {
 			bWarned = true;
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 			Debug::LogClearLine(Debug::LogWarning);
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 			Debug::Log(Debug::LogWarning, L"The model has n-gons, this may lead to unwanted geometry");
 		}
 
@@ -300,7 +300,7 @@ size_t OBJLoader::ReadByLine(
 			}
 		}
 
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 		Debug::LogClearLine(Debug::LogWarning);
 		float Progress = CharacterCount / float(MaxCharacterCount);
 		if (--LogCount <= 0) {
@@ -315,7 +315,7 @@ size_t OBJLoader::ReadByLine(
 		if (CharacterCount == MaxCharacterCount) {
 			Debug::LogClearLine(Debug::LogInfo);
 		}
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 	}
 
 	return LineCount;
@@ -405,10 +405,10 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 	}
 
 	int* Indices = new int[VertexIndexCount];
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 	const size_t LogCountBottleNeck = 36273;
 	size_t LogCount = 1;
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 	int Count = 0;
 
 	Vertices->clear();
@@ -430,7 +430,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 
 		for (; Count < InitialCount + Data->VertexIndicesCount; ++Count) {
 
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 			if (--LogCount <= 0) {
 				float prog = Count / float(ModelData.VertexIndicesCount);
 				float prog2 = (Count - InitialCount) / float(Data->VertexIndicesCount);
@@ -444,7 +444,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 					100 * prog, Text::FormatUnit(Count, 2).c_str()
 				);
 			}
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 
 			MeshVertex NewVertex = {
 				Data->PositionCount > 0 ?
@@ -487,7 +487,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 		OBJLoader::ComputeTangents(Faces->back(), Vertices->back());
 		BoundingBoxes->push_back(Data->Bounding);
 
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 		Debug::LogClearLine(Debug::LogInfo);
 		Debug::Log(
 			Debug::LogInfo,
@@ -497,12 +497,12 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 			Vertices->size(),
 			StringToWString(Data->Name).c_str()
 		);
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 
 		TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
 	}
 
-#ifdef LOG_OBJLOADER
+#ifdef _DEBUG
 	Debug::LogClearLine(Debug::LogInfo);
 	Debug::Log(Debug::LogInfo, L"├> [%ls] 100.00%% %ls vertices", WString(25, L'#').c_str(), Text::FormatUnit(VertexIndexCount, 2).c_str());
 	if (hasOptimize) {
@@ -513,7 +513,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 			(float(TotalUniqueVertices) - VertexIndexCount) / VertexIndexCount * 100
 		);
 	}
-#endif // LOG_OBJLOADER
+#endif // _DEBUG
 
 	Timer.Stop();
 	Debug::Log(Debug::LogInfo, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());

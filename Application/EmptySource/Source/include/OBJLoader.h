@@ -1,7 +1,5 @@
 #pragma once
 
-// #define LOG_OBJLOADER
-
 #include "../include/FileManager.h"
 #include "../include/Mesh.h"
 #include "../include/Core.h"
