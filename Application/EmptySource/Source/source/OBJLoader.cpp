@@ -1,4 +1,4 @@
-
+﻿
 #include <cctype>
 #include <cstdio>
 
@@ -11,7 +11,8 @@
 #ifdef _MSC_VER 
 #define strtok_r strtok_s
 #if (_MSC_VER >= 1310) 
-#pragma warning( disable : 4996 ) /*VS does not like fopen, but fopen_s is not standard C so unusable here*/
+/*VS does not like fopen, but fopen_s is not standard C so unusable here*/
+#pragma warning( disable : 4996 ) 
 #endif
 #endif
 
@@ -20,7 +21,6 @@
 // The version below by Tian Bo fixes that problem and improves performance by 10%
 // http://coliru.stacked-crooked.com/a/2e28f0d71f47ca5e
 inline float fast_strtof(const char* String, char** Character) {
-
 	*Character = (char*)String;
 	if (!*Character || !**Character)
 		return 0;
@@ -258,19 +258,19 @@ OBJLoader::Keyword OBJLoader::GetKeyword(const Char * Word) {
 	return Undefined;
 }
 
-size_t OBJLoader::ReadByLine(
+void OBJLoader::ReadLineByLine(
 	const Char * InFile,
 	FileData& ModelData)
 {
 #ifdef _DEBUG
 	const size_t LogCountBottleNeck = 86273;
 	size_t LogCount = 1;
+	size_t LineCount = 0;
 #endif
 	size_t CharacterCount = 0;
 	size_t LastSplitPosition = 0;
 	size_t MaxCharacterCount = std::strlen(InFile);
 	const Char* Pointer = InFile;
-	size_t LineCount = 0;
 	int ObjectCount = 0;
 
 	while (CharacterCount <= MaxCharacterCount) {
@@ -295,7 +295,9 @@ size_t OBJLoader::ReadByLine(
 						LineKey, Line, ModelData, ObjectCount == 0 ? ObjectCount : ObjectCount - 1
 					);
 
+#ifdef _DEBUG
 					LineCount++;
+#endif // _DEBUG
 					LastSplitPosition = CharacterCount;
 					break;
 				}
@@ -319,8 +321,6 @@ size_t OBJLoader::ReadByLine(
 		}
 #endif // _DEBUG
 	}
-
-	return LineCount;
 }
 
 void OBJLoader::PrepareData(const Char * InFile, FileData& ModelData) {
@@ -392,14 +392,13 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 		File->ReadNarrowStream(MemoryText);
 
 		PrepareData(MemoryText->c_str(), ModelData);
-		size_t LineCount = ReadByLine(MemoryText->c_str(), ModelData);
+		ReadLineByLine(MemoryText->c_str(), ModelData);
 		delete MemoryText;
 
 		Timer.Stop();
 		VertexIndexCount = ModelData.VertexIndicesCount;
 		Debug::Log(Debug::LogInfo,
-			L"├> Readed %ls lines with %ls vertices and %ls triangles in %.3fs",
-			Text::FormatUnit(LineCount, 0).c_str(),
+			L"├> Parsed %ls vertices and %ls triangles in %.3fs",
 			Text::FormatUnit(VertexIndexCount, 2).c_str(),
 			Text::FormatUnit(VertexIndexCount / 3, 2).c_str(),
 			Timer.GetEnlapsedSeconds()

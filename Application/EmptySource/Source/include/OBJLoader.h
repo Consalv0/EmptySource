@@ -45,7 +45,7 @@ private:
 
 	static void ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices);
 
-	static size_t ReadByLine(
+	static void ReadLineByLine(
 		const Char * InFile,
 		FileData& FileData
 	);
