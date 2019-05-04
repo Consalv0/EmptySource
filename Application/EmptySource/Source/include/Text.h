@@ -12,9 +12,9 @@ typedef char Char;
 typedef std::wstring WString;
 typedef wchar_t WChar;
 
-Char* WCharToChar(const WChar* From);
+String WCharToString(const WChar* From);
 
-WChar* CharToWChar(const Char* From);
+WString CharToWString(const Char* From);
 
 String WStringToString(const WString &From);
 

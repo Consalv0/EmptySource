@@ -117,7 +117,7 @@ bool Debug::InitializeDeviceFunctions() {
     nvmlReturn_t DeviceResult = nvmlInit();
     
     if (NVML_SUCCESS != DeviceResult) {
-        Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWChar(nvmlErrorString(DeviceResult)));
+        Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWString(nvmlErrorString(DeviceResult)).c_str());
         return false;
     }
 
@@ -157,7 +157,7 @@ bool Debug::CloseDeviceFunctions() {
     nvmlReturn_t DeviceResult = nvmlShutdown();
     
     if (NVML_SUCCESS != DeviceResult) {
-        Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWChar(nvmlErrorString(DeviceResult)));
+        Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWString(nvmlErrorString(DeviceResult)).c_str());
         return false;
     }
 

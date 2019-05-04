@@ -27,7 +27,7 @@ bool ShaderProgram::LinkProgram() {
 	if (InfoLogLength > 0) {
 		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(ProgramObject, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		Debug::Log(Debug::LogInfo, L"'%ls'", CharToWChar((const Char*)&ProgramErrorMessage[0]));
+		Debug::Log(Debug::LogInfo, L"'%ls'", CharToWString((const Char*)&ProgramErrorMessage[0]).c_str());
 		return false;
 	}
 

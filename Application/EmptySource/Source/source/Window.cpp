@@ -42,7 +42,7 @@ bool ApplicationWindow::Create() {
     
     Window = glfwCreateWindow(Width, Height, Name.c_str(), PrimaryMonitor, NULL);
     
-    Debug::Log(Debug::LogInfo, L"Window: \"%ls\" initialized!", CharToWChar(Name.c_str()));
+    Debug::Log(Debug::LogInfo, L"Window: \"%ls\" initialized!", CharToWString(Name.c_str()).c_str());
     
     return false;
 }

@@ -21,8 +21,8 @@ namespace CUDA {
 	void __CheckFunction(T Result, WChar const *const FunctionName, const bool& bSafe, const char *const FileName, int const Line) {
 		if (Result) {
 			Debug::Log(
-				Debug::LogCritical, L"CUDA error at %s:%d [%d](%s) '%s'", CharToWChar(FileName), Line,
-				static_cast<unsigned int>(Result), CharToWChar(cudaGetErrorName(Result)), FunctionName
+				Debug::LogCritical, L"CUDA error at %s:%d [%d](%s) '%s'", CharToWString(FileName).c_str(), Line,
+				static_cast<unsigned int>(Result), CharToWString(cudaGetErrorName(Result)).c_str(), FunctionName
 			);
 
 			// --- Make sure we call CUDA Device Reset before exiting
@@ -52,8 +52,8 @@ namespace CUDA {
 			Debug::Log(
 				Debug::LogError,
 				L"%s(%i) : CUDA error : %s : (%d) %s.",
-				CharToWChar(FileName), Line, CharToWChar(ErrorMessage), static_cast<int>(CUDAError),
-				CharToWChar(cudaGetErrorString(CUDAError))
+				CharToWString(FileName).c_str(), Line, CharToWString(ErrorMessage).c_str(), static_cast<int>(CUDAError),
+				CharToWString(cudaGetErrorString(CUDAError)).c_str()
 			);
 
 			// --- Make sure we call CUDA Device Reset before exiting
@@ -182,7 +182,7 @@ namespace CUDA {
 		Debug::Log(Debug::LogInfo, L"GPU CUDA Device");
 		Debug::Log(
 			Debug::LogInfo, L"\u2514> GPU Device #%d: '%s' with compute capability %d.%d", DeviceID,
-			CharToWChar(DeviceProperties.name), DeviceProperties.major, DeviceProperties.minor
+			CharToWString(DeviceProperties.name).c_str(), DeviceProperties.major, DeviceProperties.minor
 		);
 
 		return DeviceID;

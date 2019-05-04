@@ -8,7 +8,7 @@
 namespace Debug {
 	//* Error Callback related to GLFW
 	inline void GLFWError(int ErrorID, const char* Description) {
-		Debug::Log(Debug::LogError, L"%ls", CharToWChar(Description));
+		Debug::Log(Debug::LogError, L"%ls", CharToWString(Description).c_str());
 	}
     
 #ifndef __APPLE__
@@ -34,7 +34,7 @@ namespace Debug {
 		case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = L"other";       break;
 		}
 
-		Debug::Log(Debug::LogError, L"<%ls>(%i) %ls", ErrorPrefix, ErrorID, CharToWChar(ErrorMessage));
+		Debug::Log(Debug::LogError, L"<%ls>(%i) %ls", ErrorPrefix, ErrorID, CharToWString(ErrorMessage).c_str());
 	}
 #endif
     
@@ -46,9 +46,9 @@ namespace Debug {
 		const GLubyte *GLSLVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
 		Log(LogInfo, L"GPU Render Device Info");
-		Log(LogInfo, L"├> GC Vendor	: %ls", CharToWChar((const char*)Vendor));
-		Log(LogInfo, L"├> GC Renderer	: %ls", CharToWChar((const char*)Renderer));
-		Log(LogInfo, L"├> GL Version	: %ls", CharToWChar((const char*)Version));
-		Log(LogInfo, L"└> GLSL Version	: %ls", CharToWChar((const char*)GLSLVersion));
+		Log(LogInfo, L"├> GC Vendor	: %ls", CharToWString((const char*)Vendor).c_str());
+		Log(LogInfo, L"├> GC Renderer	: %ls", CharToWString((const char*)Renderer).c_str());
+		Log(LogInfo, L"├> GL Version	: %ls", CharToWString((const char*)Version).c_str());
+		Log(LogInfo, L"└> GLSL Version	: %ls", CharToWString((const char*)GLSLVersion).c_str());
 	}
 }
