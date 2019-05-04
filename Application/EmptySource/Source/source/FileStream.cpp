@@ -40,7 +40,7 @@ WString FileStream::GetPath() const {
 
 WString FileStream::GetShortPath() const {
 #ifdef WIN32
-    WChar CurrentDirectory[_MAX_DIR + 1];
+    WString CurrentDirectory = WString(_MAX_DIR, L'\0');
 	GetCurrentDirectory(_MAX_DIR, CurrentDirectory);
 #else
     long Size = pathconf(".", _PC_PATH_MAX);
@@ -49,11 +49,11 @@ WString FileStream::GetShortPath() const {
     if ((Buffer = (Char *)malloc((size_t)Size)) != NULL) {
         Ptr = getcwd(Buffer, (size_t)Size);
     }
-    WChar * CurrentDirectory = CharToWChar(Buffer);
+    WString CurrentDirectory = CharToWString(Buffer);
 #endif
     
 	WString ReturnValue = Path;
-	Text::Replace(ReturnValue, WString(CurrentDirectory), WString(L".."));
+	Text::Replace(ReturnValue, CurrentDirectory, WString(L".."));
 
 	return ReturnValue;
 }

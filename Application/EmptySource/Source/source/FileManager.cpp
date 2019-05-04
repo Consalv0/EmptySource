@@ -47,10 +47,10 @@ WString FileManager::GetFullPath(const WString & Path) {
         auto x = String(&FullPath[strlen(FullPath) - 20], 20);
         if (x == "/Resources/Resources") {
             FullPath[strlen(FullPath) - 19] = 0;
-            return CharToWChar(FullPath) + Path;
+            return CharToWString(FullPath) + Path;
         }
     }
-    return CharToWChar(FullPath);
+    return CharToWString(FullPath);
 #else
     Char FullPath[PATH_MAX + 1];
     Char * Ptr;

@@ -48,6 +48,12 @@
 		DD4F1A02224958E900C102FB /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = DD88809F2241B9910052F499 /* glad.c */; };
 		DD4F1A062249597500C102FB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8880B62241E3870052F499 /* OpenGL.framework */; };
 		DD4F1A1F22496A1E00C102FB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD23A6F52248277100F3C46E /* IOKit.framework */; };
+		DD521FF2227E0ED200A4C7DC /* FBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD521FF0227E0ED200A4C7DC /* FBXLoader.cpp */; };
+		DD521FF3227E0ED200A4C7DC /* FBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD521FF0227E0ED200A4C7DC /* FBXLoader.cpp */; };
+		DD521FF4227E0ED200A4C7DC /* OBJLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD521FF1227E0ED200A4C7DC /* OBJLoader.cpp */; };
+		DD521FF5227E0ED200A4C7DC /* OBJLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD521FF1227E0ED200A4C7DC /* OBJLoader.cpp */; };
+		DD522013227E1E1F00A4C7DC /* libfbxsdk.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = DD521FF9227E10E500A4C7DC /* libfbxsdk.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		DD522015227E1FB500A4C7DC /* libfbxsdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD52200E227E1DC400A4C7DC /* libfbxsdk.a */; };
 		DD8880B72241E3870052F499 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8880B62241E3870052F499 /* OpenGL.framework */; };
 		DD988C9F22496D7000D342DA /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD8880DF224310070052F499 /* Application.cpp */; };
 		DD988CA022496D7000D342DA /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD88810C2243604C0052F499 /* Bitmap.cpp */; };
@@ -134,6 +140,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				DD522013227E1E1F00A4C7DC /* libfbxsdk.dylib in Embed Libraries */,
 				DD988CD12249E12500D342DA /* libglfw.3.3.dylib in Embed Libraries */,
 				DD988CD02249E12500D342DA /* libfreetype.6.dylib in Embed Libraries */,
 			);
@@ -161,6 +168,15 @@
 		DD4F19DF224947BF00C102FB /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = EmptySource/Resources/Models; sourceTree = "<group>"; };
 		DD4F19E1224947CB00C102FB /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shaders; path = EmptySource/Resources/Shaders; sourceTree = "<group>"; };
 		DD4F1A1022495CA900C102FB /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = EmptySource/Libraries/libglfw.3.3.dylib; sourceTree = "<group>"; };
+		DD521FF0227E0ED200A4C7DC /* FBXLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FBXLoader.cpp; sourceTree = "<group>"; };
+		DD521FF1227E0ED200A4C7DC /* OBJLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OBJLoader.cpp; sourceTree = "<group>"; };
+		DD521FF6227E0EED00A4C7DC /* OBJLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBJLoader.h; sourceTree = "<group>"; };
+		DD521FF7227E0EED00A4C7DC /* FBXLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBXLoader.h; sourceTree = "<group>"; };
+		DD521FF8227E0F1300A4C7DC /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Physics.h; sourceTree = "<group>"; };
+		DD521FF9227E10E500A4C7DC /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = "../../../../../../Applications/Autodesk/FBX SDK/2019.0/lib/clang/debug/libfbxsdk.dylib"; sourceTree = "<group>"; };
+		DD522008227E1C1D00A4C7DC /* libfbxsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfbxsdk.a; path = "../../../../../../Applications/Autodesk/FBX SDK/2019.0/lib/clang/release/libfbxsdk.a"; sourceTree = "<group>"; };
+		DD522009227E1C1D00A4C7DC /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = "../../../../../../Applications/Autodesk/FBX SDK/2019.0/lib/clang/release/libfbxsdk.dylib"; sourceTree = "<group>"; };
+		DD52200E227E1DC400A4C7DC /* libfbxsdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfbxsdk.a; path = "../../../../../../Applications/Autodesk/FBX SDK/2019.0/lib/clang/debug/libfbxsdk.a"; sourceTree = "<group>"; };
 		DD8603892277807E00E7B58B /* MeshPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshPrimitives.h; sourceTree = "<group>"; };
 		DD86038A2277808800E7B58B /* Box3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box3D.h; sourceTree = "<group>"; };
 		DD8880872241B1D60052F499 /* EmptySourceCLT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EmptySourceCLT; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -368,6 +384,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD522015227E1FB500A4C7DC /* libfbxsdk.a in Frameworks */,
 				DD988CCE2249E11A00D342DA /* libfreetype.6.dylib in Frameworks */,
 				DD988CCF2249E11A00D342DA /* libglfw.3.3.dylib in Frameworks */,
 				DD4F1A1F22496A1E00C102FB /* IOKit.framework in Frameworks */,
@@ -485,6 +502,8 @@
 				DD8880E6224315320052F499 /* Graphics.h */,
 				DD8881062243600C0052F499 /* Material.h */,
 				DD8880F6224355410052F499 /* Mesh.h */,
+				DD521FF7227E0EED00A4C7DC /* FBXLoader.h */,
+				DD521FF6227E0EED00A4C7DC /* OBJLoader.h */,
 				DD8880F5224355410052F499 /* MeshLoader.h */,
 				DD3D8EC222617F31003A3346 /* Transform.h */,
 				DD8881022243600B0052F499 /* Texture.h */,
@@ -530,6 +549,8 @@
 				DD8880F7224355670052F499 /* Object.cpp */,
 				DD8880F9224355670052F499 /* IIdentifier.cpp */,
 				DD8880F8224355670052F499 /* Mesh.cpp */,
+				DD521FF0227E0ED200A4C7DC /* FBXLoader.cpp */,
+				DD521FF1227E0ED200A4C7DC /* OBJLoader.cpp */,
 				DD8880FA224355670052F499 /* MeshLoader.cpp */,
 				DD8880EF224348E20052F499 /* FileManager.cpp */,
 				DD8880F0224348E20052F499 /* FileStream.cpp */,
@@ -549,6 +570,10 @@
 		DD8880B32241E37A0052F499 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD52200E227E1DC400A4C7DC /* libfbxsdk.a */,
+				DD521FF9227E10E500A4C7DC /* libfbxsdk.dylib */,
+				DD522008227E1C1D00A4C7DC /* libfbxsdk.a */,
+				DD522009227E1C1D00A4C7DC /* libfbxsdk.dylib */,
 				DD23A6F52248277100F3C46E /* IOKit.framework */,
 				DD8880B62241E3870052F499 /* OpenGL.framework */,
 				DD988CCB2249B82000D342DA /* libfreetype.6.dylib */,
@@ -587,6 +612,7 @@
 		DD8880C72242FBA50052F499 /* Math */ = {
 			isa = PBXGroup;
 			children = (
+				DD521FF8227E0F1300A4C7DC /* Physics.h */,
 				DD86038A2277808800E7B58B /* Box3D.h */,
 				DD8880D12242FBCA0052F499 /* Box2D.h */,
 				DD8880D52242FBCA0052F499 /* IntVector2.h */,
@@ -859,6 +885,7 @@
 				DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */,
 				DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD4F19EB224958AB00C102FB /* RenderTarget.cpp in Sources */,
+				DD521FF5227E0ED200A4C7DC /* OBJLoader.cpp in Sources */,
 				DD4F19FA224958AB00C102FB /* EdgeHolder.cpp in Sources */,
 				DD4F19EF224958AB00C102FB /* Texture2D.cpp in Sources */,
 				DD4F19F7224958AB00C102FB /* FileManager.cpp in Sources */,
@@ -885,6 +912,7 @@
 				DD4F19FD224958AB00C102FB /* Glyph.cpp in Sources */,
 				DD4F19F0224958AB00C102FB /* Texture3D.cpp in Sources */,
 				DD4F19F1224958AB00C102FB /* CoreTime.cpp in Sources */,
+				DD521FF3227E0ED200A4C7DC /* FBXLoader.cpp in Sources */,
 				DD4F19EC224958AB00C102FB /* ShaderProgram.cpp in Sources */,
 				DD4F19FB224958AB00C102FB /* EdgeSegments.cpp in Sources */,
 				DD4F19E4224958AB00C102FB /* TexturePacking.cpp in Sources */,
@@ -902,6 +930,7 @@
 				DD988CB422496D7000D342DA /* Glyph.cpp in Sources */,
 				DD988CDA224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD988CA222496D7000D342DA /* RenderTarget.cpp in Sources */,
+				DD521FF4227E0ED200A4C7DC /* OBJLoader.cpp in Sources */,
 				DD988CA522496D7000D342DA /* Texture.cpp in Sources */,
 				DD988CAA22496D7000D342DA /* Object.cpp in Sources */,
 				DD988CA322496D7000D342DA /* ShaderProgram.cpp in Sources */,
@@ -928,6 +957,7 @@
 				DD988CAC22496D7000D342DA /* Mesh.cpp in Sources */,
 				DD988CAE22496D7000D342DA /* FileManager.cpp in Sources */,
 				DD988CB022496D7000D342DA /* Window.cpp in Sources */,
+				DD521FF2227E0ED200A4C7DC /* FBXLoader.cpp in Sources */,
 				DD988CA422496D7000D342DA /* ShaderStage.cpp in Sources */,
 				DD988CAD22496D7000D342DA /* MeshLoader.cpp in Sources */,
 				DD988CBA22496D7500D342DA /* SDFGenerator.cpp in Sources */,
@@ -969,6 +999,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Source/**",
 					"$(SRCROOT)/EmptySource/Source/External",
+					"\"/Applications/Autodesk/FBX SDK/2019.0/include\"",
 				);
 				INFOPLIST_FILE = EmptySource/Info.plist;
 				LD_DYLIB_INSTALL_NAME = "";
@@ -976,6 +1007,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Libraries",
 					"$(PROJECT_DIR)/EmptySource/Libraries",
+					"\"/Applications/Autodesk/FBX SDK/2019.0/lib/clang/debug\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -985,6 +1017,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				REEXPORTED_LIBRARY_NAMES = "";
+				REEXPORTED_LIBRARY_PATHS = "";
 				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
 			};
 			name = Debug;
@@ -1007,6 +1040,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Source/**",
 					"$(SRCROOT)/EmptySource/Source/External",
+					"\"/Applications/Autodesk/FBX SDK/2019.0/include\"",
 				);
 				INFOPLIST_FILE = EmptySource/Info.plist;
 				LD_DYLIB_INSTALL_NAME = "";
@@ -1014,6 +1048,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/EmptySource/Libraries",
 					"$(PROJECT_DIR)/EmptySource/Libraries",
+					"\"/Applications/Autodesk/FBX SDK/2019.0/lib/clang/release\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
@@ -1022,6 +1057,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				REEXPORTED_LIBRARY_NAMES = "";
+				REEXPORTED_LIBRARY_PATHS = "";
 				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
 			};
 			name = Release;
