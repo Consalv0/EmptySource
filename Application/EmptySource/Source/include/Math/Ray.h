@@ -8,6 +8,8 @@ public:
 	bool bHit;
 	float Stamp;
 	Vector3 Normal;
+	Vector3 BaricenterCoordinates;
+	int TriangleIndex;
 
 	HOST_DEVICE FORCEINLINE RayHit() {
 		bHit = false;
@@ -16,7 +18,13 @@ public:
 #else
 		Stamp = 3.4e+38f;
 #endif
-		Normal = Vector3();
+		Normal = 0;
+		BaricenterCoordinates = 0;
+		TriangleIndex = -1;
+	}
+
+	HOST_DEVICE inline bool operator < (const RayHit& Other) const {
+		return (Stamp < Other.Stamp);
 	}
 };
 

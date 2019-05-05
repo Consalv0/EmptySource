@@ -366,7 +366,7 @@ void CoreApplication::MainLoop() {
 		TArray<Mesh> Meshes;
 		MeshLoader::Load(Meshes, FileManager::Open(L"Resources/Models/SphereUV.obj"), true);
 		std::swap(SphereModel, *Meshes.begin());
-		MeshLoader::Load(LightModels, FileManager::Open(L"Resources/Models/Monkey.obj"), true);
+		MeshLoader::Load(LightModels, FileManager::Open(L"Resources/Models/Arrow.fbx"), false);
 		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/Sponza.obj"), true);
 		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/EscafandraMV1971.fbx"), true);
 	}));
@@ -669,37 +669,54 @@ void CoreApplication::MainLoop() {
 			CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
 			CameraRayDirection.Normalize();
 
-			Ray CameraRay = Ray(
-				InverseTransform.MultiplyPoint(EyePosition),
-				InverseTransform.MultiplyVector(CameraRayDirection)
-			);
-			
+			size_t TotalHitCount = 0;
+			Ray CameraRay (EyePosition, CameraRayDirection);
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D AABox = SceneModels[MeshCount].Bounding;
-				if (Physics::CheckIntersection(CameraRay, AABox)) {
+				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Bounding.Transform(TransformMat);
+				TArray<RayHit> Hits;
+				
+				if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
 					RayHit Hit;
+					Ray ModelSpaceCameraRay (
+						InverseTransform.MultiplyPoint(EyePosition),
+						InverseTransform.MultiplyVector(CameraRayDirection)
+					);
 					for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Faces.begin(); Face != SceneModels[MeshCount].Faces.end(); ++Face) {
-						if (Physics::CheckIntersection(
-							Hit, CameraRay,
-							SceneModels[MeshCount].Vertices[(*Face)[0]].Position, 
-							SceneModels[MeshCount].Vertices[(*Face)[1]].Position, 
-							SceneModels[MeshCount].Vertices[(*Face)[2]].Position
+						if (Physics::RaycastTriangle(
+							Hit, ModelSpaceCameraRay,
+							SceneModels[MeshCount].Vertices[(*Face)[0]].Position,
+							SceneModels[MeshCount].Vertices[(*Face)[1]].Position,
+							SceneModels[MeshCount].Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
 						)) {
-							break;
+							Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Faces.begin());
+							Hits.push_back(Hit);
 						}
 					}
-					if (Hit.bHit) {
+					
+					std::sort(Hits.begin(), Hits.end()); 
+					TotalHitCount += Hits.size();
+					
+					if (Hits.size() > 0 && Hits[0].bHit) {
 						LightModels[0].SetUpBuffers();
 						LightModels[0].BindVertexArray();
 
-						Ray CameraRayWorld = Ray(EyePosition, CameraRayDirection);
-						Hit.Normal = TransformMat.MultiplyVector(Hit.Normal.Normalized());
-						Matrix4x4 ModelMatrix =
-							Matrix4x4::Translation(CameraRayWorld.PointAt(Hit.Stamp)) * 
-							Matrix4x4::Rotation(Quaternion::FromToRotation(Vector3(0, 1, 0), Hit.Normal)) * 
+						IntVector3 Face = SceneModels[MeshCount].Faces[Hits[0].TriangleIndex];
+						const Vector3 & N0 = SceneModels[MeshCount].Vertices[Face[0]].Normal;
+						const Vector3 & N1 = SceneModels[MeshCount].Vertices[Face[1]].Normal;
+						const Vector3 & N2 = SceneModels[MeshCount].Vertices[Face[2]].Normal;
+						Vector3 InterpolatedNormal = 
+							N0 * Hits[0].BaricenterCoordinates[0] + 
+							N1 * Hits[0].BaricenterCoordinates[1] + 
+							N2 * Hits[0].BaricenterCoordinates[2]
+						;
+
+						Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+						Matrix4x4 HitMatrix =
+							Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
+							Matrix4x4::Rotation(Quaternion::LookRotation(Hits[0].Normal, Vector3(0, 1, 0))) *
 							Matrix4x4::Scaling(0.05F)
 						;
-						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
+						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &HitMatrix, ModelMatrixBuffer);
 
 						LightModels[0].DrawInstanciated((GLsizei)1);
 						TriangleCount += LightModels[0].Faces.size() * 1;
@@ -735,16 +752,14 @@ void CoreApplication::MainLoop() {
 			
 			ElementsIntersected.clear();
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D AABox = SceneModels[MeshCount].Bounding;
-				if (Physics::CheckIntersection(CameraRay, AABox)) {
-					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.2F, .7F, .07F, .3F).PointerToValue());
+				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Bounding.Transform(TransformMat);
+				if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
 					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
 					MeshPrimitives::Cube.SetUpBuffers();
 					MeshPrimitives::Cube.BindVertexArray();
 
 					ElementsIntersected.push_back(MeshCount);
-					AABox = SceneModels[MeshCount].Bounding.Transform(TransformMat);
-					Matrix4x4 Transform = Matrix4x4::Translation(AABox.GetCenter()) * Matrix4x4::Scaling(AABox.GetSize());
+					Matrix4x4 Transform = Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize());
 					UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
 
 					MeshPrimitives::Cube.DrawInstanciated(1);
@@ -829,14 +844,15 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[2] = Text::Formatted(
-				L"Sphere Position(%ls), Sphere2 Position(%ls), ElementsIntersected(%d)",
+				L"Sphere Position(%ls), Sphere2 Position(%ls), ElementsIntersected(%d), RayHits(%d)",
 				Text::FormatMath(Spheres[0]).c_str(),
 				Text::FormatMath(Spheres[1]).c_str(),
-				ElementsIntersected.size()
+				ElementsIntersected.size(),
+				TotalHitCount
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), MultiuseVal(%ls) Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
@@ -845,7 +861,6 @@ void CoreApplication::MainLoop() {
 				MaterialRoughness,
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
-				Text::FormatUnit(MultiuseValue, 2).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);

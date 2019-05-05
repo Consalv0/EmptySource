@@ -4,12 +4,12 @@
 #include "../include/Math/Box3D.h"
 
 namespace Physics {
-	inline static bool CheckIntersection(const Ray & CastedRay, const Box3D & AABox);
-	inline static bool CheckIntersection(const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C);
-	inline static bool CheckIntersection(RayHit & Hit, const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C);
+	inline static bool RaycastAxisAlignedBox(const Ray & CastedRay, const Box3D & AABox);
+	inline static bool RaycastTriangle(const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C, bool DoubleSided);
+	inline static bool RaycastTriangle(RayHit & Hit, const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C, bool DoubleSided);
 }
 
-inline bool Physics::CheckIntersection(const Ray & CastedRay, const Box3D & AABox) {
+inline bool Physics::RaycastAxisAlignedBox(const Ray & CastedRay, const Box3D & AABox) {
 	Vector3 InverseRay = 1.F / CastedRay.Direction;
 	const Vector3 MinPoint = AABox.GetMinPoint();
 	const Vector3 MaxPoint = AABox.GetMaxPoint();
@@ -41,12 +41,13 @@ inline bool Physics::CheckIntersection(const Ray & CastedRay, const Box3D & AABo
 	// --- Behind ray
 	// if (tmin < 0)
 	// --- Front ray
-	if (tmax > 0) return true;
+	if (tmax > 0) 
+		return true;
 
 	return false;
 }
 
-bool Physics::CheckIntersection(const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C) {
+bool Physics::RaycastTriangle(const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C, bool DoubleSided = false) {
 	const Vector3 EdgeAB = B - A;
 	const Vector3 EdgeAC = C - A;
 	// const Vector3 Normal = Vector3::Cross(EdgeAB, EdgeAC);
@@ -55,33 +56,7 @@ bool Physics::CheckIntersection(const Ray & CastedRay, const Point3 & A, const P
 
 	// --- The determinant is negative the triangle is backfacing
 	// --- The determinant is close to 0, the ray misses the triangle
-	if (Determinant < MathConstants::SmallNumber)
-		return false;
-
-	const float InverseDet = 1.F / Determinant;
-
-	Vector3 TriangleRay = CastedRay.Origin - A;
-	float u = TriangleRay.Dot(Perpendicular) * InverseDet;
-	if (u < 0 || u > 1)
-		return false;
-
-	Vector3 TriangleRayPerpendicular = TriangleRay.Cross(EdgeAB);
-	float v = CastedRay.Direction.Dot(TriangleRayPerpendicular) * InverseDet;
-	if (v < 0 || u + v > 1) return false;
-
-	return true;
-}
-
-bool Physics::CheckIntersection(RayHit & Hit, const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C) {
-	Hit.bHit = false;
-	const Vector3 EdgeAB = B - A;
-	const Vector3 EdgeAC = C - A;
-	const Vector3 Perpendicular = CastedRay.Direction.Cross(EdgeAC);
-	const float Determinant = EdgeAB.Dot(Perpendicular);
-
-	// --- The determinant is negative the triangle is backfacing
-	// --- The determinant is close to 0, the ray misses the triangle
-	if (Determinant < MathConstants::SmallNumber)
+	if ((DoubleSided ? fabs(Determinant) : Determinant) < MathConstants::SmallNumber)
 		return false;
 
 	const float InverseDet = 1.F / Determinant;
@@ -96,9 +71,45 @@ bool Physics::CheckIntersection(RayHit & Hit, const Ray & CastedRay, const Point
 	if (v < 0 || u + v > 1) 
 		return false;
 
+	const float t = EdgeAC.Dot(TriangleRayPerpendicular) * InverseDet;
+	if (t < 0)
+		return false;
+
+	return true;
+}
+
+bool Physics::RaycastTriangle(RayHit & Hit, const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C, bool DoubleSided = false) {
+	Hit.bHit = false;
+	const Vector3 EdgeAB = B - A;
+	const Vector3 EdgeAC = C - A;
+	const Vector3 Perpendicular = CastedRay.Direction.Cross(EdgeAC);
+	const float Determinant = EdgeAB.Dot(Perpendicular);
+
+	// --- The determinant is negative the triangle is backfacing
+	// --- The determinant is close to 0, the ray misses the triangle
+	if ((DoubleSided ? fabs(Determinant) : Determinant) < MathConstants::SmallNumber)
+		return false;
+
+	const float InverseDet = 1.F / Determinant;
+
+	Vector3 TriangleRay = CastedRay.Origin - A;
+	float u = TriangleRay.Dot(Perpendicular) * InverseDet;
+	if (u < 0 || u > 1)
+		return false;
+
+	Vector3 TriangleRayPerpendicular = TriangleRay.Cross(EdgeAB);
+	float v = CastedRay.Direction.Dot(TriangleRayPerpendicular) * InverseDet;
+	if (v < 0 || (u + v) > 1) 
+		return false;
+
+	const float t = EdgeAC.Dot(TriangleRayPerpendicular) * InverseDet;
+	if (t < 0)
+		return false;
+
 	Hit.bHit = true;
-	Hit.Stamp = EdgeAC.Dot(TriangleRayPerpendicular) * InverseDet;
+	Hit.Stamp = t;
 	Hit.Normal = Vector3::Cross(EdgeAB, EdgeAC);
+	Hit.BaricenterCoordinates = Vector3(1.F - u - v, u, v);
 
 	return true;
 }
