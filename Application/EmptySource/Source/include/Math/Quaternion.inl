@@ -6,6 +6,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "Matrix3x3.h"
 #include "Quaternion.h"
 
 FORCEINLINE Quaternion::Quaternion()
@@ -37,23 +38,16 @@ inline Quaternion Quaternion::EulerAngles(Vector3 const & EulerAngles) {
 	);
 }
 
-FORCEINLINE Quaternion Quaternion::VectorAngle(Vector3 const & u, Vector3 const & v) {
-	float NormUV = sqrt(u.Dot(u) * v.Dot(v));
-	float RealPart = NormUV + u.Dot(v);
-	Vector3 ImgPart;
+FORCEINLINE Quaternion Quaternion::FromToRotation(Vector3 const & From, Vector3 const & To) {
+	Vector3 Half = From + To;
+	Half.Normalize();
 
-	if (RealPart < 1.e-6f * NormUV) {
-		// --- If u and v are exactly opposite, rotate 180 degrees
-		// --- around an arbitrary orthogonal axis. Axis normalisation
-		// --- can happen later, when we normalise the quaternion.
-		RealPart = 0.F;
-		ImgPart = abs(u.x) > abs(u.z) ? Vector3(-u.y, u.x) : Vector3(0.F, -u.z, u.y);
-	} else {
-		// --- Otherwise, build quaternion the standard way.
-		ImgPart = u.Cross(v);
-	}
-
-	return Quaternion(RealPart, ImgPart.x, ImgPart.y, ImgPart.z).Normalized();
+	return Quaternion(
+		From.Dot(Half),
+		From.y * Half.z - From.z * Half.y,
+		From.z * Half.x - From.x * Half.z,
+		From.x * Half.y - From.y * Half.x
+	).Normalized();
 }
 
 inline Quaternion Quaternion::AxisAngle(Vector3 const & Axis, float const & Radians) {
@@ -67,16 +61,60 @@ inline Quaternion Quaternion::AxisAngle(Vector3 const & Axis, float const & Radi
 	);
 }
 
-inline Quaternion Quaternion::FromToRotation(Vector3 const & From, Vector3 const & To) {
-	Vector3 Half = From + To;
-	Half.Normalize();
+inline Quaternion Quaternion::LookRotation(Vector3 const & Forward, Vector3 const & Up) {
+	const Vector3 Normal = Forward.Normalized();
+	const Vector3 Tangent = Vector3::Cross(Up == Normal ? Up + 0.001F : Up, Normal).Normalized();
+	const Vector3 Bitangent = Vector3::Cross(Normal, Tangent);
 
+	Matrix3x3 LookSpace(
+		Tangent, Bitangent, Normal
+	);
+
+	return Quaternion::FromMatrix(LookSpace);
+}
+
+inline Quaternion Quaternion::FromMatrix(Matrix3x3 const & Matrix) {
+	const float tr = Matrix.m0[0] + Matrix.m1[1] + Matrix.m2[2];
+
+	if (tr > 0.F)	{
+		float num0 = sqrtf(tr + 1.F);
+		float num1 = 0.5f / num0;
+		return Quaternion(
+			num0 * 0.5f,
+			(Matrix.m1[2] - Matrix.m2[1]) * num1,
+			(Matrix.m2[0] - Matrix.m0[2]) * num1,
+			(Matrix.m0[1] - Matrix.m1[0]) * num1
+		);
+	}
+	if ((Matrix.m0[0] >= Matrix.m1[1]) && (Matrix.m0[0] >= Matrix.m2[2])) {
+		float num7 = sqrtf(((1.F + Matrix.m0[0]) - Matrix.m1[1]) - Matrix.m2[2]);
+		float num4 = 0.5f / num7;
+		return Quaternion(
+			(Matrix.m1[2] - Matrix.m2[1]) * num4,
+			0.5f * num7,
+			(Matrix.m0[1] + Matrix.m1[0]) * num4,
+			(Matrix.m0[2] + Matrix.m2[0]) * num4
+		);
+	}
+	if (Matrix.m1[1] > Matrix.m2[2]) {
+		float num6 = sqrtf(((1.F + Matrix.m1[1]) - Matrix.m0[0]) - Matrix.m2[2]);
+		float num3 = 0.5f / num6;
+		return Quaternion(
+			(Matrix.m2[0] - Matrix.m0[2]) * num3,
+			(Matrix.m1[0] + Matrix.m0[1]) * num3,
+			0.5f * num6,
+			(Matrix.m2[1] + Matrix.m1[2]) * num3
+		);
+	}
+
+	float num5 = sqrtf(((1.F + Matrix.m2[2]) - Matrix.m0[0]) - Matrix.m1[1]);
+	float num2 = 0.5F / num5;
 	return Quaternion(
-		From.Dot(Half),
-		From.y * Half.z - From.z * Half.y,
-		From.z * Half.x - From.x * Half.z,
-		From.x * Half.y - From.y * Half.x
-	).Normalized();
+		(Matrix.m0[1] - Matrix.m1[0]) * num2,
+		(Matrix.m2[0] + Matrix.m0[2]) * num2,
+		(Matrix.m2[1] + Matrix.m1[2]) * num2,
+		0.5F * num5
+	);
 }
 
 inline float Quaternion::Magnitude() const {

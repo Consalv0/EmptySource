@@ -4,6 +4,7 @@
 
 struct Vector3;
 struct Matrix4x4;
+struct Matrix3x3;
 
 enum AngleAxes {
 	Pitch = 0, // up - down
@@ -25,9 +26,11 @@ public:
 	//* Create a quaternion from euler angles (pitch, yaw, roll).
 	HOST_DEVICE static FORCEINLINE Quaternion EulerAngles(Vector3 const& EulerAngles);
 	//* Create a quaternion from two normalized axis
-	HOST_DEVICE static FORCEINLINE Quaternion VectorAngle(Vector3 const& u, Vector3 const& v);
-	HOST_DEVICE static FORCEINLINE Quaternion AxisAngle(Vector3 const& Axis, float const& Degrees);
 	HOST_DEVICE static FORCEINLINE Quaternion FromToRotation(Vector3 const& From, Vector3 const& To);
+	HOST_DEVICE static FORCEINLINE Quaternion AxisAngle(Vector3 const& Axis, float const& Degrees);
+	//* Ctreate quaternion from two basis vectors
+	HOST_DEVICE static FORCEINLINE Quaternion LookRotation(Vector3 const& Forward, Vector3 const& Up);
+	HOST_DEVICE static FORCEINLINE Quaternion FromMatrix(Matrix3x3 const & Matrix);
 
 	HOST_DEVICE inline float Magnitude() const;
 	HOST_DEVICE inline float MagnitudeSquared() const;
