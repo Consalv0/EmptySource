@@ -3,6 +3,7 @@
 // Used by EmptySource.rc
 //
 #define IDI_ICON1                       101
+#define GLFW_ICON                       101
 
 // Next default values for new objects
 // 

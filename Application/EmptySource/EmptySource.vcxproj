@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -144,6 +144,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\release</AdditionalLibraryDirectories>
       <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <CudaCompile>
       <Include>$(CUDA_INC_PATH)</Include>

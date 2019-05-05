@@ -3,6 +3,8 @@
 // Include GLFW
 // Library to make crossplataform input and window creation
 #include "External/GLFW/glfw3.h"
+
+#include "../include/Graphics.h"
 #include "../include/Text.h"
 
 enum WindowMode {
@@ -10,7 +12,10 @@ enum WindowMode {
     FullScreen = 1
 };
 
-/*
+template <typename T>
+class Bitmap;
+
+	/*
  ** Cointaina the properties and functions of a GLFW window
  */
 struct ApplicationWindow {
@@ -82,6 +87,14 @@ public:
     //* Window update frame
     void EndOfFrame();
     
+	//* Sets the window icon
+	void SetIcon(class Bitmap<UCharRGBA> * Icon);
+
+	//* Sets the window icon using the resources.h
+#ifdef WIN32
+	void SetIcon(const int & IconResource);
+#endif
+
     //* Window update events
     void PollEvents();
     

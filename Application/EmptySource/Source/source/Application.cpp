@@ -4,7 +4,6 @@
 #ifndef __APPLE__
 #include "../include/CoreCUDA.h"
 #endif
-
 #include "../include/Utility/LogGraphics.h"
 #include "../include/Utility/DeviceFunctions.h"
 #include "../include/Utility/TextFormattingMath.h"
@@ -31,6 +30,10 @@
 #include "../include/Cubemap.h"
 #include "../include/ImageLoader.h"
 #include "../include/Math/Physics.h"
+
+#ifdef WIN32
+#include <../resource.h>
+#endif
 
 #include <thread>
 
@@ -65,12 +68,15 @@ bool CoreApplication::InitalizeGLAD() {
 bool CoreApplication::InitializeWindow() {
 	MainWindow = new ApplicationWindow();
 
-	if (MainWindow->Create("EmptySource - Debug", WindowMode::Windowed, 1366, 768)) {
+	if (!MainWindow->Create("EmptySource - Debug", WindowMode::Windowed, 1366, 768)) {
 		Debug::Log(Debug::LogCritical, L"Application Window couldn't be created!");
 		glfwTerminate();
 		return false;
 	}
 
+#ifdef WIN32
+	MainWindow->SetIcon(IDI_ICON1);
+#endif // WIN32
 	MainWindow->MakeContext();
 	MainWindow->InitializeInputs();
 

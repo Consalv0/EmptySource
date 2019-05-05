@@ -2,9 +2,15 @@
 #include "../include/Core.h"
 #include "../include/CoreGraphics.h"
 #include "../include/Window.h"
+#include "../include/Bitmap.h"
 #include "../include/Math/MathUtility.h"
 #include "../include/Math/Vector2.h"
 #include "../include/Math/Vector3.h"
+
+#ifdef WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <../External/GLFW/glfw3native.h>
+#endif
 
 ApplicationWindow::ApplicationWindow() {
     Window = NULL;
@@ -44,7 +50,7 @@ bool ApplicationWindow::Create() {
     
     Debug::Log(Debug::LogInfo, L"Window: \"%ls\" initialized!", CharToWString(Name.c_str()).c_str());
     
-    return false;
+    return true;
 }
 
 bool ApplicationWindow::Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height) {
@@ -104,6 +110,25 @@ void ApplicationWindow::EndOfFrame() {
     
     FrameCount++;
 }
+
+void ApplicationWindow::SetIcon(Bitmap<UCharRGBA>* Icon) {
+	GLFWimage Images = {Icon->GetWidth(), Icon->GetHeight(), &(*Icon)[0].R};
+	glfwSetWindowIcon(Window, 1, &Images);
+}
+
+#ifdef WIN32
+void ApplicationWindow::SetIcon(const int & IconResource) {
+
+	HICON Icon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IconResource));
+	if (!Icon) {
+		Icon = LoadIconW(NULL, IDI_WINLOGO);
+	}
+
+	HWND WindowHandle = glfwGetWin32Window(Window);
+	::SendMessage(WindowHandle, WM_SETICON, ICON_SMALL2, (LPARAM)Icon);
+	::SendMessage(WindowHandle, WM_SETICON, ICON_BIG, (LPARAM)Icon);
+}
+#endif
 
 void ApplicationWindow::PollEvents() {
     glfwPollEvents();
