@@ -274,7 +274,7 @@ inline Vector3 Matrix4x4::MultiplyVector(const Vector3 & Vector) const {
 FORCEINLINE Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & Other) const {
 	Matrix4x4 Result = Matrix4x4();
 
-	Vector4 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2), Col3 = Column(3);
+	const Vector4 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2), Col3 = Column(3);
 
 	Result.m0[0] = Other.m0.Dot(Col0);
 	Result.m1[0] = Other.m1.Dot(Col0);
