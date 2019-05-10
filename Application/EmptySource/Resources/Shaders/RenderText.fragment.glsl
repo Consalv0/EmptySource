@@ -29,12 +29,11 @@ float Sample(in vec2 UV, float Width) {
 void main(){
   float Smoothing = 1 / _TextSize;
   float Distance = texture(_MainTexture, vVertex.UV0).r;
-  float Width = fwidth(Distance);
+  float Width = fwidth(Distance) * 0.93 + Smoothing * 0.07;
 
   float Alpha = Contour( Distance, Width );
   
-  // ------- (comment this block out to get your original behavior)
-  // Supersample, 4 extra points
+  // Supersample
   float DistScale = 0.354; // half of 1/sqrt2; you can play with this
   vec2 DistUV = DistScale * (dFdx(vVertex.UV0) + dFdy(vVertex.UV0));
   vec4 Box = vec4(vVertex.UV0 - DistUV, vVertex.UV0 + DistUV);
@@ -42,9 +41,8 @@ void main(){
             + Sample( Box.zw, Width )
             + Sample( Box.xw, Width )
             + Sample( Box.zy, Width );
-  // weighted average, with 4 extra points having 0.5 weight each,
-  // so 1 + 0.5*4 = 3 is the divisor
-  Alpha = (Alpha + 0.5 * Sum) / 1.5;
+            
+  Alpha = (Alpha + 0.5 * Sum) / 1.8;
   // Alpha = smoothstep(_TextBold - Smoothing, _TextBold + Smoothing, Distance);
   FragColor = vec4(1, 1, 1, Alpha);
 } 

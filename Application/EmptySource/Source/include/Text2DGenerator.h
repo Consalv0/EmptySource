@@ -23,7 +23,7 @@ public:
 	void PrepareCharacters(const unsigned long & From, const unsigned long & To);
 
 	//* Generate mesh geometry for rasterization. 
-	void GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
+	void GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
 
 	//* Precalculate the leght of the text rendered.
 	Vector2 GetLenght(float HeightSize, const WString & InText);

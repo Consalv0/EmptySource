@@ -42,7 +42,7 @@ void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsign
 	Debug::Log(Debug::LogInfo, L"└> Glyphs loaded in %.3fs", Timer.GetEnlapsedSeconds());
 }
 
-void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
+void Text2DGenerator::GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
 	
 	if (InText.size() == 0) return;
 
@@ -58,15 +58,35 @@ void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WStrin
 	IntVector3 * TextFacesEnd = &Faces->at(InitialFacesSize);
 	MeshVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
 
+	Vector2 CursorPivot = { Box.xMin, Box.yMax };
+
 	// --- Iterate through all characters
 	for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
+		if (*(Character) == L'\n' || *(Character) == L'\r') {
+			CursorPivot.x = Box.xMin;
+			CursorPivot.y -= HeightSize;
+			continue;
+		}
+		if (*(Character) == L'	') {
+			float TabModule = fmodf(CursorPivot.x, (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor * 4);
+			CursorPivot.x += TabModule;
+			continue;
+		}
+		
 		FontGlyph * Glyph = LoadedCharacters[*Character];
 		if (Glyph == NULL) {
-			Pivot.x += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
+			CursorPivot.x += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
 			continue;
 		}
 
-		Glyph->GetQuadMesh(Pivot, PixelRange, ScaleFactor, TextVerticesEnd);
+		if (CursorPivot.x + (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor > Box.xMax) {
+			CursorPivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			continue;
+		}
+		if (CursorPivot.y < Box.yMin)
+			break;
+
+		Glyph->GetQuadMesh(CursorPivot, PixelRange, ScaleFactor, TextVerticesEnd);
 		TextFacesEnd->x = VertexCount;
 		TextFacesEnd->y = VertexCount + 1;
 		(TextFacesEnd++)->z = VertexCount + 2;
@@ -77,7 +97,7 @@ void Text2DGenerator::GenerateMesh(Vector2 Pivot, float HeightSize, const WStrin
 		VertexCount += 4;
 		TextVerticesEnd += 4;
 
-		Pivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+		CursorPivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 	}
 
 	// --- The VertexCount was initialized with the initial VertexCount
