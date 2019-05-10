@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/Text.h"
 #include "../include/Math/MathUtility.h"
 #include "../include/Math/Vector2.h"
 #include "../include/Math/Vector3.h"
@@ -39,6 +40,25 @@ typedef TArray<Vector2>    MeshUVs;
 typedef TArray<Vector4>    MeshColors;
 typedef TArray<MeshVertex> MeshVertices;
 
+struct MeshData {
+	WString Name;
+	MeshFaces Faces;
+	MeshVertices Vertices;
+	BoundingBox3D Bounding;
+
+	bool hasNormals;
+	bool hasTangents;
+	bool hasVertexColor;
+	int TextureCoordsCount;
+	bool hasBoundingBox;
+	bool hasWeights;
+
+	void Swap(MeshData & Other);
+	void ComputeBounding();
+	void ComputeTangents();
+	void Clear();
+};
+
 class Mesh {
 private:
 	//* Vertex Array Object 
@@ -47,17 +67,13 @@ private:
 	unsigned int ElementBuffer;
 
 public:
-	MeshFaces Faces;
-	MeshVertices Vertices;
-	BoundingBox3D Bounding;
+	MeshData Data;
 
 	Mesh();
 	//* Copy the information to the mesh, the data will be duplicated
-	Mesh(const MeshFaces Faces, const MeshVertices Vertices);
-	//* Transfer information to the mesh, the data will be swapped, the bounding box will be computed
-	Mesh(MeshFaces* Faces, MeshVertices* Vertices);
+	Mesh(const MeshData & OtherData);
 	//* Transfer information to the mesh, the data will be swapped
-	Mesh(MeshFaces* Faces, MeshVertices* Vertices, const BoundingBox3D & BBox);
+	Mesh(MeshData * OtherData);
 
 	//* *Create or Bind Vertex Array Object
 	void BindVertexArray() const;

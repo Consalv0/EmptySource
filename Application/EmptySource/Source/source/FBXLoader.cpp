@@ -132,11 +132,14 @@ bool FBXLoader::LoadScene(FbxScene * pScene, FileStream * File) {
 	return lStatus;
 }
 
-void FBXLoader::ExtractVertexData(FbxMesh * pMesh, TArray<IntVector3>& Faces, TArray<MeshVertex>& Vertices, Box3D & BoundingBox) {
+void FBXLoader::ExtractVertexData(FbxMesh * pMesh, MeshData & OutData) {
 	int PolygonCount = pMesh->GetPolygonCount();
 	FbxVector4 * ControlPoints = pMesh->GetControlPoints();
 	int PolygonIndex; int PolygonVertexIndex;
-	bool bComputeTangents = true;
+
+	if (pMesh->GetElementUVCount() != NULL) OutData.TextureCoordsCount = Math::Clamp(pMesh->GetElementUVCount(), 0, 2);
+	if (pMesh->GetElementNormalCount() != NULL) OutData.hasNormals = true;
+	if (pMesh->GetElementVertexColorCount() != NULL) OutData.hasVertexColor = true;
 
 	int VertexIndex = 0;
 	for (PolygonIndex = 0; PolygonIndex < PolygonCount; ++PolygonIndex) {
@@ -152,21 +155,20 @@ void FBXLoader::ExtractVertexData(FbxMesh * pMesh, TArray<IntVector3>& Faces, TA
 			Vertex.Position.y = (float)ControlPoints[ControlPointIndex][1];
 			Vertex.Position.z = (float)ControlPoints[ControlPointIndex][2];
 
-			BoundingBox.Add(Vertex.Position);
+			OutData.Bounding.Add(Vertex.Position);
 
 			ExtractTextureCoords(pMesh, Vertex, ControlPointIndex, PolygonIndex, PolygonVertexIndex);
 			ExtractNormal(pMesh, Vertex, ControlPointIndex, VertexIndex);
 			ExtractVertexColor(pMesh, Vertex, ControlPointIndex, VertexIndex);
-			bComputeTangents = !ExtractTangent(pMesh, Vertex, ControlPointIndex, VertexIndex);
+			OutData.hasTangents = ExtractTangent(pMesh, Vertex, ControlPointIndex, VertexIndex);
 
 			VertexIndex++;
-			Vertices.push_back(Vertex);
+			OutData.Vertices.push_back(Vertex);
 		}
-		Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+		OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
 	}
 
-	if (bComputeTangents)
-		ComputeTangents(Faces, Vertices);
+	OutData.ComputeTangents();
 }
 
 void FBXLoader::ExtractTextureCoords(
@@ -421,44 +423,7 @@ bool FBXLoader::ExtractTangent(FbxMesh * pMesh, MeshVertex & Vertex, const int &
 	return false;
 }
 
-void FBXLoader::ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices) {
-
-	const int Size = (int)Faces.size();
-
-	// --- For each triangle, compute the edge (DeltaPos) and the DeltaUV
-	for (int i = 0; i < Size; ++i) {
-		const Vector3 & VertexA = Vertices[Faces[i][0]].Position;
-		const Vector3 & VertexB = Vertices[Faces[i][1]].Position;
-		const Vector3 & VertexC = Vertices[Faces[i][2]].Position;
-
-		const Vector2 & UVA = Vertices[Faces[i][0]].UV0;
-		const Vector2 & UVB = Vertices[Faces[i][1]].UV0;
-		const Vector2 & UVC = Vertices[Faces[i][2]].UV0;
-
-		// --- Edges of the triangle : position delta
-		const Vector3 Edge1 = VertexB - VertexA;
-		const Vector3 Edge2 = VertexC - VertexA;
-
-		// --- UV delta
-		const Vector2 DeltaUV1 = UVB - UVA;
-		const Vector2 DeltaUV2 = UVC - UVA;
-
-		float r = 1.F / (DeltaUV1.x * DeltaUV2.y - DeltaUV1.y * DeltaUV2.x);
-		r = std::isfinite(r) ? r : 0;
-
-		Vector3 Tangent;
-		Tangent.x = r * (DeltaUV2.y * Edge1.x - DeltaUV1.y * Edge2.x);
-		Tangent.y = r * (DeltaUV2.y * Edge1.y - DeltaUV1.y * Edge2.y);
-		Tangent.z = r * (DeltaUV2.y * Edge1.z - DeltaUV1.y * Edge2.z);
-		Tangent.Normalize();
-
-		Vertices[Faces[i][0]].Tangent = Tangent;
-		Vertices[Faces[i][1]].Tangent = Tangent;
-		Vertices[Faces[i][2]].Tangent = Tangent;
-	}
-}
-
-bool FBXLoader::Load(FileStream * File, TArray<MeshFaces>* Faces, TArray<MeshVertices>* Vertices, TArray<Box3D>* BoundingBoxes, bool Optimize) {
+bool FBXLoader::Load(FileStream * File, MeshLoader::FileData & Data, bool Optimize) {
 	if (gSdkManager == NULL)
 		InitializeSdkManager();
 
@@ -489,21 +454,19 @@ bool FBXLoader::Load(FileStream * File, TArray<MeshFaces>* Faces, TArray<MeshVer
 		FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
 		FbxMesh* lMesh = Node->GetMesh();
 		if (lMesh) {
-			Vertices->push_back(MeshVertices());
-			Faces->push_back(MeshFaces());
-			BoundingBoxes->push_back(BoundingBox3D());
-			ExtractVertexData(lMesh, Faces->back(), Vertices->back(), BoundingBoxes->back());
+			Data.Meshes.push_back(MeshData());
+			ExtractVertexData(lMesh, Data.Meshes.back());
 #ifdef _DEBUG
 			Debug::Log(
 				Debug::LogInfo,
 				L"├> Parsed %ls	vertices in %ls	at [%d]'%ls'",
-				Text::FormatUnit(Vertices->back().size(), 2).c_str(),
-				Text::FormatData(sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size(), 2).c_str(),
-				Vertices->size(),
+				Text::FormatUnit(Data.Meshes.back().Vertices.size(), 2).c_str(),
+				Text::FormatData(sizeof(IntVector3) * Data.Meshes.back().Faces.size() + sizeof(MeshVertex) * Data.Meshes.back().Vertices.size(), 2).c_str(),
+				Data.Meshes.size(),
 				StringToWString(Node->GetName()).c_str()
 			);
 #endif
-			TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
+			TotalAllocatedSize += sizeof(IntVector3) * Data.Meshes.back().Faces.size() + sizeof(MeshVertex) * Data.Meshes.back().Vertices.size();
 		}
 	}
 

@@ -7,6 +7,7 @@
 #include "../include/FileStream.h"
 #include "../include/OBJLoader.h"
 
+
 // --- Visual Studio
 #ifdef _MSC_VER 
 #define strtok_r strtok_s
@@ -377,7 +378,7 @@ void OBJLoader::PrepareData(const Char * InFile, FileData& ModelData) {
 	ModelData.VertexIndices.reserve(FaceCount * 4);
 }
 
-bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVertices> * Vertices, TArray<Box3D> * BoundingBoxes, bool hasOptimize) {
+bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool hasOptimize) {
 	if (File == NULL || !File->IsValid()) return false;
 
 	FileData ModelData;
@@ -412,8 +413,6 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 #endif // _DEBUG
 	int Count = 0;
 
-	Vertices->clear();
-	Faces->clear();
 	size_t TotalAllocatedSize = 0;
 	size_t TotalUniqueVertices = 0;
 
@@ -425,10 +424,13 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 		TDictionary<MeshVertex, unsigned> VertexToIndex;
 		VertexToIndex.reserve(Data->VertexIndicesCount);
 
-		Vertices->push_back(MeshVertices());
-		Faces->push_back(MeshFaces());
-		int InitialCount = Count;
+		OutData.Meshes.push_back(MeshData());
+		MeshData* OutMesh = &OutData.Meshes.back();
+		OutMesh->Name = StringToWString(Data->Name);
+		if (Data->UVsCount > 0) OutMesh->TextureCoordsCount = 1;
+		if (Data->NormalCount > 0) OutMesh->hasNormals = true;
 
+		int InitialCount = Count;
 		for (; Count < InitialCount + Data->VertexIndicesCount; ++Count) {
 
 #ifdef _DEBUG
@@ -439,7 +441,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 				float cur = std::ceil(prog * 12);
 				float cur2 = std::ceil(prog2 * 12);
 				Debug::LogUnadorned(Debug::LogInfo, L"\r %ls : [%ls%ls|%ls%ls] %.2f%% %ls vertices",
-					StringToWString(Data->Name).c_str(),
+					OutMesh->Name.c_str(),
 					WString(int(cur2), L'%').c_str(), WString(int(12 + 1 - cur2), L' ').c_str(),
 					WString(int(cur), L'#').c_str(), WString(int(12 + 1 - cur), L' ').c_str(),
 					100 * prog, Text::FormatUnit(Count, 2).c_str()
@@ -451,7 +453,7 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 				Data->PositionCount > 0 ?
 					ModelData.ListPositions[ModelData.VertexIndices[Count][0] - 1] : 0,
 				Data->NormalCount > 0 ?
-					ModelData.ListNormals[ModelData.VertexIndices[Count][2] - 1] : Vector3(0.3F, 0.3F, 0.4F),
+					ModelData.ListNormals[ModelData.VertexIndices[Count][2] - 1] : Vector3(0.F, 1.F, 0.F),
 				0,
 				Data->UVsCount > 0 ?
 					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
@@ -473,20 +475,21 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 			}
 			else {
 				// --- If not, it needs to be added in the output data.
-				Vertices->back().push_back(NewVertex);
-				unsigned NewIndex = (unsigned)Vertices->back().size() - 1;
+				OutMesh->Vertices.push_back(NewVertex);
+				unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
 				Indices[Count] = NewIndex;
 				if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
 				TotalUniqueVertices++;
 			}
 
 			if ((Count + 1) % 3 == 0) {
-				Faces->back().push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+				OutMesh->Faces.push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
 			}
 		}
 
-		OBJLoader::ComputeTangents(Faces->back(), Vertices->back());
-		BoundingBoxes->push_back(Data->Bounding);
+		OutMesh->ComputeTangents();
+		OutMesh->Bounding = Data->Bounding;
+		OutMesh->hasBoundingBox = true;
 
 #ifdef _DEBUG
 		Debug::LogClearLine(Debug::LogInfo);
@@ -494,13 +497,13 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 			Debug::LogInfo,
 			L"├> Parsed %ls	vertices in %ls	at [%d]'%ls'",
 			Text::FormatUnit(Data->VertexIndicesCount, 2).c_str(),
-			Text::FormatData(sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size(), 2).c_str(),
-			Vertices->size(),
+			Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2).c_str(),
+			OutData.Meshes.size(),
 			StringToWString(Data->Name).c_str()
 		);
 #endif // _DEBUG
 
-		TotalAllocatedSize += sizeof(IntVector3) * Faces->back().size() + sizeof(MeshVertex) * Vertices->back().size();
+		TotalAllocatedSize += sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size();
 	}
 
 #ifdef _DEBUG
@@ -520,41 +523,4 @@ bool OBJLoader::Load(FileStream * File, TArray<MeshFaces> * Faces, TArray<MeshVe
 	Debug::Log(Debug::LogInfo, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
 
 	return true;
-}
-
-void OBJLoader::ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices) {
-
-	const int Size = (int)Faces.size();
-
-	// --- For each triangle, compute the edge (DeltaPos) and the DeltaUV
-	for (int i = 0; i < Size; ++i) {
-		const Vector3 & VertexA = Vertices[Faces[i][0]].Position;
-		const Vector3 & VertexB = Vertices[Faces[i][1]].Position;
-		const Vector3 & VertexC = Vertices[Faces[i][2]].Position;
-
-		const Vector2 & UVA = Vertices[Faces[i][0]].UV0;
-		const Vector2 & UVB = Vertices[Faces[i][1]].UV0;
-		const Vector2 & UVC = Vertices[Faces[i][2]].UV0;
-
-		// --- Edges of the triangle : position delta
-		const Vector3 Edge1 = VertexB - VertexA;
-		const Vector3 Edge2 = VertexC - VertexA;
-
-		// --- UV delta
-		const Vector2 DeltaUV1 = UVB - UVA;
-		const Vector2 DeltaUV2 = UVC - UVA;
-
-		float r = 1.F / (DeltaUV1.x * DeltaUV2.y - DeltaUV1.y * DeltaUV2.x);
-		r = std::isfinite(r) ? r : 0;
-
-		Vector3 Tangent;
-		Tangent.x = r * (DeltaUV2.y * Edge1.x - DeltaUV1.y * Edge2.x);
-		Tangent.y = r * (DeltaUV2.y * Edge1.y - DeltaUV1.y * Edge2.y);
-		Tangent.z = r * (DeltaUV2.y * Edge1.z - DeltaUV1.y * Edge2.z);
-		Tangent.Normalize();
-
-		Vertices[Faces[i][0]].Tangent = Tangent;
-		Vertices[Faces[i][1]].Tangent = Tangent;
-		Vertices[Faces[i][2]].Tangent = Tangent;
-	}
 }

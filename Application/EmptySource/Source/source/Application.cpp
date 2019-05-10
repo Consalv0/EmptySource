@@ -36,6 +36,8 @@
 #endif
 
 #include <thread>
+Mesh MeshPrimitives::Cube;
+Mesh MeshPrimitives::Quad;
 
 // int FindBoundingBox(int N, MeshVertex * Vertices);
 // int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
@@ -116,6 +118,8 @@ void CoreApplication::Initalize() {
 #ifdef WIN32
 	CUDA::FindCudaDevice();
 #endif
+
+	MeshPrimitives::Initialize();
 
 	bInitialized = true;
 }
@@ -362,19 +366,21 @@ void CoreApplication::MainLoop() {
 	HDRClampingMaterial.SetShaderProgram(&HDRClampingShader);
 
 	srand((unsigned int)glfwGetTime());
+	MeshLoader::FileData LightModelData;
+	MeshLoader::FileData SceneModelData0;
+	MeshLoader::FileData SceneModelData1;
+	MeshLoader::FileData SphereData;
 	TArray<Mesh> SceneModels;
 	TArray<Mesh> LightModels;
 	Mesh SphereModel;
 	float MeshSelector = 0;
 
 	TArray<std::thread> Threads;
-	Threads.push_back(std::thread([&SceneModels, &LightModels, &SphereModel]() {
-		TArray<Mesh> Meshes;
-		MeshLoader::Load(Meshes, FileManager::Open(L"Resources/Models/SphereUV.obj"), true);
-		std::swap(SphereModel, *Meshes.begin());
-		MeshLoader::Load(LightModels, FileManager::Open(L"Resources/Models/Arrow.fbx"), false);
-		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/Sponza.obj"), true);
-		MeshLoader::Load(SceneModels, FileManager::Open(L"Resources/Models/EscafandraMV1971.fbx"), true);
+	Threads.push_back(std::thread([&SphereData, &LightModelData, &SceneModelData0, &SceneModelData1]() {
+		MeshLoader::Load(SphereData, FileManager::Open(L"Resources/Models/SphereUV.obj"), true);
+		MeshLoader::Load(LightModelData, FileManager::Open(L"Resources/Models/Arrow.fbx"), false);
+		MeshLoader::Load(SceneModelData0, FileManager::Open(L"Resources/Models/Sponza.obj"), true);
+		MeshLoader::Load(SceneModelData1, FileManager::Open(L"Resources/Models/EscafandraMV1971.fbx"), true);
 	}));
 
 	Texture2D RenderedTexture = Texture2D(
@@ -397,7 +403,6 @@ void CoreApplication::MainLoop() {
 		HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		HDRClampingMaterial.SetTexture2D("_EquirectangularMap", &EquirectangularTexture, 0);
 		Renderer.Resize(EquirectangularTextureHDR.GetWidth(), EquirectangularTextureHDR.GetHeight());
-		MeshPrimitives::Quad.SetUpBuffers();
 		MeshPrimitives::Quad.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 		HDRClampingMaterial.SetAttribMatrix4x4Array(
@@ -420,7 +425,6 @@ void CoreApplication::MainLoop() {
 		IntegrateBRDFMaterial.Use();
 		IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		Renderer.Resize(BRDFLut.GetWidth(), BRDFLut.GetHeight());
-		MeshPrimitives::Quad.SetUpBuffers();
 		MeshPrimitives::Quad.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 		IntegrateBRDFMaterial.SetAttribMatrix4x4Array(
@@ -447,12 +451,17 @@ void CoreApplication::MainLoop() {
 
 	TArray<int> ElementsIntersected;
 	float MultiuseValue = 1;
-	const int TextCount = 3;
+	const int TextCount = 4;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
 	WString RenderingText[TextCount];
 	Mesh DynamicMesh;
 	Point2 TextPivot;
+
+	Transform TestSphereTransform;
+	TestSphereTransform.Scale = 0.1F;
+	Vector3 TestSphereDirection = 0;
+	float TestSphereVelocity = .5F;
 
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
@@ -470,6 +479,38 @@ void CoreApplication::MainLoop() {
 			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
+
+		if (SceneModelData0.bLoaded) {
+			for (TArray<MeshData>::iterator Data = SceneModelData0.Meshes.begin(); Data != SceneModelData0.Meshes.end(); ++Data) {
+				SceneModels.push_back(Mesh(&(*Data)));
+				SceneModels.back().SetUpBuffers();
+			}
+			SceneModelData0.bLoaded = false;
+		}
+
+		if (SceneModelData1.bLoaded) {
+			for (TArray<MeshData>::iterator Data = SceneModelData1.Meshes.begin(); Data != SceneModelData1.Meshes.end(); ++Data) {
+				SceneModels.push_back(Mesh(&(*Data)));
+				SceneModels.back().SetUpBuffers();
+			}
+			SceneModelData1.bLoaded = false;
+		}
+
+		if (LightModelData.bLoaded) {
+			for (TArray<MeshData>::iterator Data = LightModelData.Meshes.begin(); Data != LightModelData.Meshes.end(); ++Data) {
+				LightModels.push_back(Mesh(&(*Data)));
+				LightModels.back().SetUpBuffers();
+			}
+			LightModelData.bLoaded = false;
+		}
+
+		if (SphereData.bLoaded) {
+			for (TArray<MeshData>::iterator Data = SphereData.Meshes.begin(); Data != SphereData.Meshes.end(); ++Data) {
+				SphereModel = Mesh(&(*Data));
+				SphereModel.SetUpBuffers();
+			}
+			SphereData.bLoaded = false;
+		}
 
 		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = MainWindow->GetMousePosition();
@@ -496,7 +537,17 @@ void CoreApplication::MainLoop() {
 			EyePosition += Left * Time::GetDeltaTime() *
 				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
 		}
-		
+
+		Vector3 CameraRayDirection = {
+			(2.F * MainWindow->GetMousePosition().x) / MainWindow->GetWidth() - 1.F,
+			1.F - (2.F * MainWindow->GetMousePosition().y) / MainWindow->GetHeight(),
+			-1.F,
+		};
+		CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
+		CameraRayDirection.z = -1.F;
+		CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
+		CameraRayDirection.Normalize();
+
 		ViewMatrix = Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1));
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
@@ -571,6 +622,12 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
+		if (MainWindow->GetKeyDown(GLFW_KEY_SPACE)) {
+			TestSphereTransform.Position = EyePosition;
+			TestSphereDirection = CameraRayDirection;
+			TestSphereTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
+		}
+
 		for (int i = 0; i < TextCount; i++) {
 			if (TextGenerator.FindCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -588,6 +645,59 @@ void CoreApplication::MainLoop() {
 		}
 
 		Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.04F) * Transforms[0].Rotation;
+		Matrix4x4 TransformMat = Transforms[0].GetLocalToWorldMatrix();
+		Matrix4x4 InverseTransform = Transforms[0].GetWorldToLocalMatrix();
+
+		TestSphereTransform.Position += TestSphereDirection * TestSphereVelocity * Time::GetDeltaTime();
+		Ray TestRaySphere(TestSphereTransform.Position, TestSphereDirection);
+		if (SceneModels.size() > 100)
+		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Data.Bounding.Transform(TransformMat);
+			TArray<RayHit> Hits;
+
+			if (Physics::RaycastAxisAlignedBox(TestRaySphere, ModelSpaceAABox)) {
+				RayHit Hit;
+				Ray ModelSpaceCameraRay(
+					InverseTransform.MultiplyPoint(TestSphereTransform.Position),
+					InverseTransform.MultiplyVector(TestSphereDirection)
+				);
+				for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Data.Faces.begin(); Face != SceneModels[MeshCount].Data.Faces.end(); ++Face) {
+					if (Physics::RaycastTriangle(
+						Hit, ModelSpaceCameraRay,
+						SceneModels[MeshCount].Data.Vertices[(*Face)[0]].Position,
+						SceneModels[MeshCount].Data.Vertices[(*Face)[1]].Position,
+						SceneModels[MeshCount].Data.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
+					)) {
+						Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Data.Faces.begin());
+						Hits.push_back(Hit);
+					}
+				}
+
+				std::sort(Hits.begin(), Hits.end());
+
+				if (Hits.size() > 0 && Hits[0].bHit) {
+					Vector3 SphereClosestContactPoint = TestSphereTransform.Position;
+					Vector3 ClosestContactPoint = TestRaySphere.PointAt(Hits[0].Stamp);
+
+					if ((SphereClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestSphereTransform.Scale.x * TestSphereTransform.Scale.x)
+					{
+						IntVector3 Face = SceneModels[MeshCount].Data.Faces[Hits[0].TriangleIndex];
+						const Vector3 & N0 = SceneModels[MeshCount].Data.Vertices[Face[0]].Normal;
+						const Vector3 & N1 = SceneModels[MeshCount].Data.Vertices[Face[1]].Normal;
+						const Vector3 & N2 = SceneModels[MeshCount].Data.Vertices[Face[2]].Normal;
+						Vector3 InterpolatedNormal =
+							N0 * Hits[0].BaricenterCoordinates[0] +
+							N1 * Hits[0].BaricenterCoordinates[1] +
+							N2 * Hits[0].BaricenterCoordinates[2];
+
+						Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+						Vector3 ReflectedDirection = Vector3::Reflect(TestSphereDirection, Hits[0].Normal);
+						TestSphereDirection = ReflectedDirection.Normalized();
+						TestSphereTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
+					}
+				}
+			}
+		}
 
 		RenderTimeSum += Time::GetDeltaTime();
 		const float MaxFramerate = (1 / 65.F);
@@ -629,7 +739,7 @@ void CoreApplication::MainLoop() {
 			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
 			RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessTemp);
 
-			if (SphereModel.Faces.size() >= 1) {
+			if (SphereModel.Data.Faces.size() >= 1) {
 				SphereModel.SetUpBuffers();
 				SphereModel.BindVertexArray();
                 
@@ -663,22 +773,12 @@ void CoreApplication::MainLoop() {
 			BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
 			// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
-			Matrix4x4 TransformMat = Transforms[0].GetLocalToWorldMatrix();
-			Matrix4x4 InverseTransform = Transforms[0].GetWorldToLocalMatrix();
-			Vector3 CameraRayDirection = { 
-				(2.F * MainWindow->GetMousePosition().x) / MainWindow->GetWidth() - 1.F,
-				1.F - ( 2.F * MainWindow->GetMousePosition().y) / MainWindow->GetHeight(),
-				-1.F,
-			};
-			CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
-			CameraRayDirection.z = -1.F;
-			CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
-			CameraRayDirection.Normalize();
 
 			size_t TotalHitCount = 0;
 			Ray CameraRay (EyePosition, CameraRayDirection);
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Bounding.Transform(TransformMat);
+				const MeshData & ModelData = SceneModels[MeshCount].Data;
+				BoundingBox3D ModelSpaceAABox = ModelData.Bounding.Transform(TransformMat);
 				TArray<RayHit> Hits;
 				
 				if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
@@ -687,14 +787,14 @@ void CoreApplication::MainLoop() {
 						InverseTransform.MultiplyPoint(EyePosition),
 						InverseTransform.MultiplyVector(CameraRayDirection)
 					);
-					for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Faces.begin(); Face != SceneModels[MeshCount].Faces.end(); ++Face) {
+					for (MeshFaces::const_iterator Face = ModelData.Faces.begin(); Face != ModelData.Faces.end(); ++Face) {
 						if (Physics::RaycastTriangle(
 							Hit, ModelSpaceCameraRay,
-							SceneModels[MeshCount].Vertices[(*Face)[0]].Position,
-							SceneModels[MeshCount].Vertices[(*Face)[1]].Position,
-							SceneModels[MeshCount].Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
+							ModelData.Vertices[(*Face)[0]].Position,
+							ModelData.Vertices[(*Face)[1]].Position,
+							ModelData.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
 						)) {
-							Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Faces.begin());
+							Hit.TriangleIndex = int(Face - ModelData.Faces.begin());
 							Hits.push_back(Hit);
 						}
 					}
@@ -703,30 +803,32 @@ void CoreApplication::MainLoop() {
 					TotalHitCount += Hits.size();
 					
 					if (Hits.size() > 0 && Hits[0].bHit) {
-						LightModels[0].SetUpBuffers();
-						LightModels[0].BindVertexArray();
+						if (LightModels.size() > 0) {
+							LightModels[0].SetUpBuffers();
+							LightModels[0].BindVertexArray();
 
-						IntVector3 Face = SceneModels[MeshCount].Faces[Hits[0].TriangleIndex];
-						const Vector3 & N0 = SceneModels[MeshCount].Vertices[Face[0]].Normal;
-						const Vector3 & N1 = SceneModels[MeshCount].Vertices[Face[1]].Normal;
-						const Vector3 & N2 = SceneModels[MeshCount].Vertices[Face[2]].Normal;
-						Vector3 InterpolatedNormal = 
-							N0 * Hits[0].BaricenterCoordinates[0] + 
-							N1 * Hits[0].BaricenterCoordinates[1] + 
-							N2 * Hits[0].BaricenterCoordinates[2]
-						;
+							IntVector3 Face = ModelData.Faces[Hits[0].TriangleIndex];
+							const Vector3 & N0 = ModelData.Vertices[Face[0]].Normal;
+							const Vector3 & N1 = ModelData.Vertices[Face[1]].Normal;
+							const Vector3 & N2 = ModelData.Vertices[Face[2]].Normal;
+							Vector3 InterpolatedNormal =
+								N0 * Hits[0].BaricenterCoordinates[0] +
+								N1 * Hits[0].BaricenterCoordinates[1] +
+								N2 * Hits[0].BaricenterCoordinates[2];
 
-						Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-						Matrix4x4 HitMatrix =
-							Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
-							Matrix4x4::Rotation(Quaternion::LookRotation(Hits[0].Normal, Vector3(0, 1, 0))) *
-							Matrix4x4::Scaling(0.05F)
-						;
-						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &HitMatrix, ModelMatrixBuffer);
+							Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+							Vector3 ReflectedCameraDir = Vector3::Reflect(CameraRayDirection, Hits[0].Normal);
+							Matrix4x4 HitMatrix =
+								Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
+								Matrix4x4::Rotation(Quaternion::LookRotation(ReflectedCameraDir, Vector3(0, 1, 0))) *
+								Matrix4x4::Scaling(0.05F)
+								;
+							BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &HitMatrix, ModelMatrixBuffer);
 
-						LightModels[0].DrawInstanciated((GLsizei)1);
-						TriangleCount += LightModels[0].Faces.size() * 1;
-						VerticesCount += LightModels[0].Vertices.size() * 1;
+							LightModels[0].DrawInstanciated((GLsizei)1);
+							TriangleCount += LightModels[0].Data.Faces.size() * 1;
+							VerticesCount += LightModels[0].Data.Vertices.size() * 1;
+						}
 
 						SceneModels[MeshCount].SetUpBuffers();
 						SceneModels[MeshCount].BindVertexArray();
@@ -734,21 +836,23 @@ void CoreApplication::MainLoop() {
 						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
 						SceneModels[MeshCount].DrawInstanciated((GLsizei)1);
 
-						TriangleCount += SceneModels[MeshCount].Faces.size() * 1;
-						VerticesCount += SceneModels[MeshCount].Vertices.size() * 1;
+						TriangleCount += ModelData.Faces.size() * 1;
+						VerticesCount += ModelData.Vertices.size() * 1;
 					}
 				}
 			}
 
-			SphereModel.SetUpBuffers();
-			SphereModel.BindVertexArray();
+			if (LightModels.size() > 0) {
+				LightModels[0].SetUpBuffers();
+				LightModels[0].BindVertexArray();
 
-            Matrix4x4 ModelMatrix = (Matrix4x4::Translation(Vector3(0, 2, 0)));
-			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
+				Matrix4x4 ModelMatrix = TestSphereTransform.GetLocalToWorldMatrix();
+				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
-			SphereModel.DrawInstanciated((GLsizei)1);
-			TriangleCount += SphereModel.Faces.size() * 1;
-			VerticesCount += SphereModel.Vertices.size() * 1;
+				LightModels[0].DrawInstanciated((GLsizei)1);
+				TriangleCount += LightModels[0].Data.Faces.size() * 1;
+				VerticesCount += LightModels[0].Data.Vertices.size() * 1;
+			}
 
 			UnlitMaterialWire.Use();
 			
@@ -758,16 +862,14 @@ void CoreApplication::MainLoop() {
 			
 			ElementsIntersected.clear();
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Bounding.Transform(TransformMat);
+				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Data.Bounding.Transform(TransformMat);
 				if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
 					UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
-					MeshPrimitives::Cube.SetUpBuffers();
+					
 					MeshPrimitives::Cube.BindVertexArray();
-
 					ElementsIntersected.push_back(MeshCount);
 					Matrix4x4 Transform = Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize());
 					UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
-
 					MeshPrimitives::Cube.DrawInstanciated(1);
 				}
 			}
@@ -804,18 +906,15 @@ void CoreApplication::MainLoop() {
 			float LodLevel = log2f((float)EquirectangularTextureHDR.GetWidth()) * abs(MultiuseValue);
 			RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
 			
-			if (MeshPrimitives::Quad.Faces.size() >= 1) {
-				MeshPrimitives::Quad.SetUpBuffers();
-				MeshPrimitives::Quad.BindVertexArray();
+			MeshPrimitives::Quad.BindVertexArray();
 
-				Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-				RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-					/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-					ModelMatrixBuffer
-				);
+			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+			RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
+				/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
+				ModelMatrixBuffer
+			);
 
-				MeshPrimitives::Quad.DrawInstanciated(1);
-			}
+			MeshPrimitives::Quad.DrawInstanciated(1);
 
 			glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 			// --- Activate corresponding render state
@@ -826,8 +925,9 @@ void CoreApplication::MainLoop() {
 				Matrix4x4::Orthographic(0.F, (float)MainWindow->GetWidth(), 0.F, (float)MainWindow->GetHeight()).PointerToValue()
 			);
 
+			float FontScale = (FontSize / TextGenerator.GlyphHeight);
 			RenderTextMaterial.SetTexture2D("_MainTexture", &FontMap, 0);
-			RenderTextMaterial.SetFloat1Array("_TextSize", &FontSize);
+			RenderTextMaterial.SetFloat1Array("_TextSize", &FontScale);
 			RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
 
 			double TimeCount = 0;
@@ -835,9 +935,10 @@ void CoreApplication::MainLoop() {
 			DynamicMesh.Clear();
 			for (int i = 0; i < TextCount; i++) {
 				Timer.Start();
-				TextGenerator.GenerateMesh(
-					TextPivot + Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight),
-					FontSize, RenderingText[i], &DynamicMesh.Faces, &DynamicMesh.Vertices
+				Vector2 Pivot = TextPivot + Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
+				TextGenerator.GenerateMesh( 
+					Box2D(0, 0, MainWindow->GetWidth(), Pivot.y),
+					FontSize, RenderingText[i], &DynamicMesh.Data.Faces, &DynamicMesh.Data.Vertices
 				);
 				Timer.Stop();
 				TimeCount += Timer.GetEnlapsedMili();
@@ -850,7 +951,7 @@ void CoreApplication::MainLoop() {
 			}
 
 			RenderingText[2] = Text::Formatted(
-				L"Sphere Position(%ls), Sphere2 Position(%ls), ElementsIntersected(%d), RayHits(%d)",
+				L"└> Sphere Position(%ls), Sphere2 Position(%ls), ElementsIntersected(%d), RayHits(%d)",
 				Text::FormatMath(Spheres[0]).c_str(),
 				Text::FormatMath(Spheres[1]).c_str(),
 				ElementsIntersected.size(),

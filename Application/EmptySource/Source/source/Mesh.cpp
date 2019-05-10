@@ -29,41 +29,20 @@ Mesh::Mesh() {
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
-	Faces = MeshFaces();
-	Vertices = MeshVertices();
+	Data = MeshData();
 }
 
-Mesh::Mesh(const MeshFaces faces, const MeshVertices vertices) {
-	Faces = faces;
-	Vertices = vertices;
+Mesh::Mesh(const MeshData & OtherData) {
+	Data = OtherData;
 
-	Bounding = BoundingBox3D();
-	for (MeshVertices::const_iterator Vertex = Vertices.begin(); Vertex != Vertices.end(); ++Vertex) {
-		Bounding.Add(Vertex->Position);
-	}
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
 }
 
-Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices) {
-	Faces.swap(*faces);
-	Vertices.swap(*vertices);
+Mesh::Mesh(MeshData * OtherData) {
+	Data.Swap(*OtherData);
 
-	Bounding = BoundingBox3D();
-	for (MeshVertices::const_iterator Vertex = Vertices.begin(); Vertex != Vertices.end(); ++Vertex) {
-		Bounding.Add(Vertex->Position);
-	}
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
-	VertexBuffer = 0;
-}
-
-Mesh::Mesh(MeshFaces * faces, MeshVertices * vertices, const Box3D & BBox) {
-	Faces.swap(*faces);
-	Vertices.swap(*vertices);
-
-	Bounding = BBox;
 	VertexArrayObject = 0;
 	ElementBuffer = 0;
 	VertexBuffer = 0;
@@ -84,11 +63,11 @@ void Mesh::DrawInstanciated(int Count) const {
 	if (VertexArrayObject == 0) return;
 
 	glDrawElementsInstanced(
-		GL_TRIANGLES,	         // mode
-		(int)Faces.size() * 3,	 // mode count
-		GL_UNSIGNED_INT,         // type
-		(void*)0,		         // element array buffer offset
-		Count                    // element count
+		GL_TRIANGLES,	             // mode
+		(int)Data.Faces.size() * 3,	 // mode count
+		GL_UNSIGNED_INT,             // type
+		(void*)0,		             // element array buffer offset
+		Count                        // element count
 	);
 }
 
@@ -96,16 +75,16 @@ void Mesh::DrawElement() const {
 	if (VertexArrayObject == 0) return;
 
 	glDrawElements(
-		GL_TRIANGLES,	                        // mode
-		(int)Faces.size() * 3,	                // mode count
-		GL_UNSIGNED_INT,                        // type
-		(void*)0		                        // element array buffer offset
+		GL_TRIANGLES,	             // mode
+		(int)Data.Faces.size() * 3,	 // mode count
+		GL_UNSIGNED_INT,             // type
+		(void*)0		             // element array buffer offset
 	); // Starting from vertex 0; to vertices total
 }
 
 bool Mesh::SetUpBuffers() {
 
-	if (Vertices.size() <= 0 || Faces.size() <= 0) return false;
+	if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
 	if (VertexArrayObject != 0 && VertexBuffer != 0 && ElementBuffer != 0) return true;
 
 	glGenVertexArrays(1, &VertexArrayObject);
@@ -115,12 +94,12 @@ bool Mesh::SetUpBuffers() {
 	glGenBuffers(1, &VertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(MeshVertex), &Vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, Data.Vertices.size() * sizeof(MeshVertex), &Data.Vertices[0], GL_STATIC_DRAW);
 
 	// Generate a Element Buffer for the indices
 	glGenBuffers(1, &ElementBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Faces.size() * sizeof(IntVector3), &Faces[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Data.Faces.size() * sizeof(IntVector3), &Data.Faces[0], GL_STATIC_DRAW);
 
 	// Set the vertex attribute pointers layouts
 	glEnableVertexAttribArray( PositionLocation );
@@ -153,7 +132,82 @@ void Mesh::ClearBuffers() {
 }
 
 void Mesh::Clear() {
-	Faces.clear();
-	Vertices.clear();
+	Data.Clear();
 	ClearBuffers();
+}
+
+void MeshData::Swap(MeshData & Other) {
+	Name = Other.Name;
+	Faces.swap(Other.Faces);
+	Vertices.swap(Other.Vertices);
+	Bounding = Other.Bounding;
+
+	hasNormals = Other.hasNormals;
+	hasTangents = Other.hasTangents;
+	hasVertexColor = Other.hasVertexColor;
+	TextureCoordsCount = Other.TextureCoordsCount;
+	hasBoundingBox = Other.hasBoundingBox;
+	hasWeights = Other.hasWeights;
+}
+
+void MeshData::ComputeBounding() {
+	if (!hasBoundingBox) {
+		Bounding = BoundingBox3D();
+		for (MeshVertices::const_iterator Vertex = Vertices.begin(); Vertex != Vertices.end(); ++Vertex) {
+			Bounding.Add(Vertex->Position);
+		}
+		hasBoundingBox = true;
+	}
+}
+
+void MeshData::ComputeTangents() {
+	if (TextureCoordsCount <= 0 || hasTangents)
+		return;
+
+	// --- For each triangle, compute the edge (DeltaPos) and the DeltaUV
+	for (MeshFaces::const_iterator Triangle = Faces.begin(); Triangle != Faces.end(); ++Triangle) {
+		const Vector3 & VertexA = Vertices[(*Triangle)[0]].Position;
+		const Vector3 & VertexB = Vertices[(*Triangle)[1]].Position;
+		const Vector3 & VertexC = Vertices[(*Triangle)[2]].Position;
+
+		const Vector2 & UVA = Vertices[(*Triangle)[0]].UV0;
+		const Vector2 & UVB = Vertices[(*Triangle)[1]].UV0;
+		const Vector2 & UVC = Vertices[(*Triangle)[2]].UV0;
+
+		// --- Edges of the triangle : position delta
+		const Vector3 Edge1 = VertexB - VertexA;
+		const Vector3 Edge2 = VertexC - VertexA;
+
+		// --- UV delta
+		const Vector2 DeltaUV1 = UVB - UVA;
+		const Vector2 DeltaUV2 = UVC - UVA;
+
+		float r = 1.F / (DeltaUV1.x * DeltaUV2.y - DeltaUV1.y * DeltaUV2.x);
+		r = std::isfinite(r) ? r : 0;
+
+		Vector3 Tangent;
+		Tangent.x = r * (DeltaUV2.y * Edge1.x - DeltaUV1.y * Edge2.x);
+		Tangent.y = r * (DeltaUV2.y * Edge1.y - DeltaUV1.y * Edge2.y);
+		Tangent.z = r * (DeltaUV2.y * Edge1.z - DeltaUV1.y * Edge2.z);
+		Tangent.Normalize();
+
+		Vertices[(*Triangle)[0]].Tangent = Tangent;
+		Vertices[(*Triangle)[1]].Tangent = Tangent;
+		Vertices[(*Triangle)[2]].Tangent = Tangent;
+	}
+
+	hasTangents = true;
+}
+
+void MeshData::Clear() {
+	Name.clear();
+	Faces.clear();
+	Vertices.clear(); 
+	Bounding = BoundingBox3D();
+	hasNormals = false;
+	hasTangents = false;
+	hasVertexColor = false;
+	TextureCoordsCount = 0;
+	hasBoundingBox = true;
+	hasWeights = false;
 }

@@ -282,7 +282,6 @@ bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular,
 		for (unsigned int i = 0; i < 6; ++i) {
 			EquirectangularToCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", CaptureViews[i].PointerToValue());
 	
-			MeshPrimitives::Cube.SetUpBuffers();
 			MeshPrimitives::Cube.BindVertexArray();
 			EquirectangularToCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 			

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../include/FileManager.h"
-#include "../include/Mesh.h"
+#include "../include/MeshLoader.h"
 #include "../include/Core.h"
 
 class OBJLoader {
@@ -43,8 +43,6 @@ private:
 	static void ExtractVector2(const Char * Text, Vector2* Vertex);
 	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
 
-	static void ComputeTangents(const MeshFaces & Faces, MeshVertices & Vertices);
-
 	static void ReadLineByLine(
 		const Char * InFile,
 		FileData& FileData
@@ -65,7 +63,7 @@ private:
 public:
 	/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
 	  * there's a way to optimize the vertices. */
-	static bool Load(FileStream* File, TArray<MeshFaces>* Faces, TArray<MeshVertices>* Vertices, TArray<Box3D>* BoundingBoxes, bool Optimize = true);
+	static bool Load(FileStream* File, MeshLoader::FileData & OutData, bool Optimize = true);
 
 };
 
