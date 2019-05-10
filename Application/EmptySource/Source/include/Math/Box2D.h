@@ -10,6 +10,12 @@ public:
 		struct { float xMin, yMin, xMax, yMax; };
 	};
 
+	Box2D() = default;
+
+	Box2D(const float & xMin, const float & yMin, const float & xMax, const float & yMax)
+		: xMin(xMin), yMin(yMin), xMax(xMax), yMax(yMax)
+	{ }
+
 	//* Get the lower point of the bounding box
 	inline Point2 GetMinPoint() const { return { Math::Min(Left, Right), Math::Min(Top, Bottom) }; }
 
