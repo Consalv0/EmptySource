@@ -9,26 +9,27 @@ private:
 	struct ObjectData {
 		String Name;
 		Box3D Bounding;
+		bool hasNormals;
+		bool hasTextureCoords;
+		int VertexIndicesPos = 0;
 		int VertexIndicesCount = 0;
-		int PositionCount = 0;
-		int NormalCount = 0;
-		int UVsCount = 0;
 	};
 
 	struct FileData {
+		TArray<String> Groups;
 		TArray<ObjectData> Objects;
 		TArray<IntVector3> VertexIndices;
 		MeshVector3D ListPositions;
 		MeshVector3D ListNormals;
 		MeshUVs ListUVs;
-		int VertexIndicesCount = 0;
-		int PositionCount = 0;
-		int NormalCount = 0;
-		int UVsCount = 0;
+		TArray<const Char *> LineVertexIndices;
+		TArray<const Char *> LinePositions;
+		TArray<const Char *> LineNormals;
+		TArray<const Char *> LineUVs;
 	};
 
 	enum Keyword {
-		Comment, Object, Vertex, Normal, TextureCoord, Face, CSType, Undefined
+		Comment, Object, Group, Vertex, Normal, TextureCoord, Face, CSType, Undefined
 	};
 
 	static Keyword GetKeyword(const Char* Line);
@@ -43,22 +44,12 @@ private:
 	static void ExtractVector2(const Char * Text, Vector2* Vertex);
 	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
 
-	static void ReadLineByLine(
-		const Char * InFile,
-		FileData& FileData
-	);
+	static void PrepareData(const Char * InFile, FileData& Data);
 
-	static void PrepareData(
-		const Char * InFile,
-		FileData& FileData
-	);
-
-	static void ParseLine(
-		const Keyword& Keyword,
-		Char* Line,
-		FileData& FileData,
-		int ObjectCount
-	);
+	static void ParseVertexPositions(FileData& Data);
+	static void ParseVertexNormals(FileData& Data);
+	static void ParseVertexUVs(FileData& Data);
+	static void ParseFaces(FileData& Data);
 
 public:
 	/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly

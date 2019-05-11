@@ -108,6 +108,7 @@
       </AdditionalCompilerOptions>
       <AdditionalOptions>-Xcudafe "--diag_suppress=bad_friend_decl" %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
+    <CudaLink />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -144,7 +145,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\release</AdditionalLibraryDirectories>
       <AdditionalDependencies>freetype.lib;glfw3.lib;glfw3dll.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <CudaCompile>
