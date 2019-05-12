@@ -458,9 +458,9 @@ void CoreApplication::MainLoop() {
 	Mesh DynamicMesh;
 	Point2 TextPivot;
 
-	Transform TestSphereTransform;
-	TestSphereTransform.Scale = 0.1F;
-	Vector3 TestSphereDirection = 0;
+	Transform TestArrowTransform;
+	TestArrowTransform.Scale = 0.1F;
+	Vector3 TestArrowDirection = 0;
 	float TestSphereVelocity = .5F;
 
 	bool bRandomArray = false;
@@ -623,9 +623,9 @@ void CoreApplication::MainLoop() {
 		}
 
 		if (MainWindow->GetKeyDown(GLFW_KEY_SPACE)) {
-			TestSphereTransform.Position = EyePosition;
-			TestSphereDirection = CameraRayDirection;
-			TestSphereTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
+			TestArrowTransform.Position = EyePosition;
+			TestArrowDirection = CameraRayDirection;
+			TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
 		}
 
 		for (int i = 0; i < TextCount; i++) {
@@ -648,56 +648,7 @@ void CoreApplication::MainLoop() {
 		Matrix4x4 TransformMat = Transforms[0].GetLocalToWorldMatrix();
 		Matrix4x4 InverseTransform = Transforms[0].GetWorldToLocalMatrix();
 
-		TestSphereTransform.Position += TestSphereDirection * TestSphereVelocity * Time::GetDeltaTime();
-		Ray TestRaySphere(TestSphereTransform.Position, TestSphereDirection);
-		if (SceneModels.size() > 100)
-		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Data.Bounding.Transform(TransformMat);
-			TArray<RayHit> Hits;
-
-			if (Physics::RaycastAxisAlignedBox(TestRaySphere, ModelSpaceAABox)) {
-				RayHit Hit;
-				Ray ModelSpaceCameraRay(
-					InverseTransform.MultiplyPoint(TestSphereTransform.Position),
-					InverseTransform.MultiplyVector(TestSphereDirection)
-				);
-				for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Data.Faces.begin(); Face != SceneModels[MeshCount].Data.Faces.end(); ++Face) {
-					if (Physics::RaycastTriangle(
-						Hit, ModelSpaceCameraRay,
-						SceneModels[MeshCount].Data.Vertices[(*Face)[0]].Position,
-						SceneModels[MeshCount].Data.Vertices[(*Face)[1]].Position,
-						SceneModels[MeshCount].Data.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
-					)) {
-						Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Data.Faces.begin());
-						Hits.push_back(Hit);
-					}
-				}
-
-				std::sort(Hits.begin(), Hits.end());
-
-				if (Hits.size() > 0 && Hits[0].bHit) {
-					Vector3 SphereClosestContactPoint = TestSphereTransform.Position;
-					Vector3 ClosestContactPoint = TestRaySphere.PointAt(Hits[0].Stamp);
-
-					if ((SphereClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestSphereTransform.Scale.x * TestSphereTransform.Scale.x)
-					{
-						IntVector3 Face = SceneModels[MeshCount].Data.Faces[Hits[0].TriangleIndex];
-						const Vector3 & N0 = SceneModels[MeshCount].Data.Vertices[Face[0]].Normal;
-						const Vector3 & N1 = SceneModels[MeshCount].Data.Vertices[Face[1]].Normal;
-						const Vector3 & N2 = SceneModels[MeshCount].Data.Vertices[Face[2]].Normal;
-						Vector3 InterpolatedNormal =
-							N0 * Hits[0].BaricenterCoordinates[0] +
-							N1 * Hits[0].BaricenterCoordinates[1] +
-							N2 * Hits[0].BaricenterCoordinates[2];
-
-						Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-						Vector3 ReflectedDirection = Vector3::Reflect(TestSphereDirection, Hits[0].Normal);
-						TestSphereDirection = ReflectedDirection.Normalized();
-						TestSphereTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
-					}
-				}
-			}
-		}
+		TestArrowTransform.Position += TestArrowDirection * TestSphereVelocity * Time::GetDeltaTime();
 
 		RenderTimeSum += Time::GetDeltaTime();
 		const float MaxFramerate = (1 / 65.F);
@@ -718,6 +669,57 @@ void CoreApplication::MainLoop() {
 				bRandomArray = true;
 			}
 			bool bTestResult = false;
+
+			Ray TestRayArrow(TestArrowTransform.Position, TestArrowDirection);
+			if (SceneModels.size() > 100)
+				for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+					BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Data.Bounding.Transform(TransformMat);
+					TArray<RayHit> Hits;
+
+					if (Physics::RaycastAxisAlignedBox(TestRayArrow, ModelSpaceAABox)) {
+						RayHit Hit;
+						Ray ModelSpaceCameraRay(
+							InverseTransform.MultiplyPoint(TestArrowTransform.Position),
+							InverseTransform.MultiplyVector(TestArrowDirection)
+						);
+						for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Data.Faces.begin(); Face != SceneModels[MeshCount].Data.Faces.end(); ++Face) {
+							if (Physics::RaycastTriangle(
+								Hit, ModelSpaceCameraRay,
+								SceneModels[MeshCount].Data.Vertices[(*Face)[0]].Position,
+								SceneModels[MeshCount].Data.Vertices[(*Face)[1]].Position,
+								SceneModels[MeshCount].Data.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
+							)) {
+								Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Data.Faces.begin());
+								Hits.push_back(Hit);
+							}
+						}
+
+						std::sort(Hits.begin(), Hits.end());
+
+						if (Hits.size() > 0 && Hits[0].bHit) {
+							Vector3 ArrowClosestContactPoint = TestArrowTransform.Position;
+							Vector3 ClosestContactPoint = TestRayArrow.PointAt(Hits[0].Stamp);
+
+							if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
+							{
+								const IntVector3 & Face = SceneModels[MeshCount].Data.Faces[Hits[0].TriangleIndex];
+								const Vector3 & N0 = SceneModels[MeshCount].Data.Vertices[Face[0]].Normal;
+								const Vector3 & N1 = SceneModels[MeshCount].Data.Vertices[Face[1]].Normal;
+								const Vector3 & N2 = SceneModels[MeshCount].Data.Vertices[Face[2]].Normal;
+								Vector3 InterpolatedNormal =
+									N0 * Hits[0].BaricenterCoordinates[0] +
+									N1 * Hits[0].BaricenterCoordinates[1] +
+									N2 * Hits[0].BaricenterCoordinates[2];
+
+								Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+								Vector3 ReflectedDirection = Vector3::Reflect(TestArrowDirection, Hits[0].Normal);
+								TestArrowDirection = ReflectedDirection.Normalized();
+								TestArrowTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
+							}
+						}
+					}
+				}
+
 
 			LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 4));
 			LightPosition1 = Vector3();
@@ -846,7 +848,7 @@ void CoreApplication::MainLoop() {
 				LightModels[0].SetUpBuffers();
 				LightModels[0].BindVertexArray();
 
-				Matrix4x4 ModelMatrix = TestSphereTransform.GetLocalToWorldMatrix();
+				Matrix4x4 ModelMatrix = TestArrowTransform.GetLocalToWorldMatrix();
 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
 				LightModels[0].DrawInstanciated((GLsizei)1);

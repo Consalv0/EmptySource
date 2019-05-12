@@ -82,8 +82,8 @@ bool Physics::RaycastTriangle(RayHit & Hit, const Ray & CastedRay, const Point3 
 	Hit.bHit = false;
 	const Vector3 EdgeAB = B - A;
 	const Vector3 EdgeAC = C - A;
-	const Vector3 Perpendicular = CastedRay.Direction.Cross(EdgeAC);
-	const float Determinant = EdgeAB.Dot(Perpendicular);
+	const Vector3 Perpendicular = Vector3::Cross(CastedRay.Direction, EdgeAC);
+	const float Determinant = Vector3::Dot(EdgeAB, Perpendicular);
 
 	// --- The determinant is negative the triangle is backfacing
 	// --- The determinant is close to 0, the ray misses the triangle
@@ -92,17 +92,17 @@ bool Physics::RaycastTriangle(RayHit & Hit, const Ray & CastedRay, const Point3 
 
 	const float InverseDet = 1.F / Determinant;
 
-	Vector3 TriangleRay = CastedRay.Origin - A;
-	float u = TriangleRay.Dot(Perpendicular) * InverseDet;
+	const Vector3 TriangleRay = CastedRay.Origin - A;
+	const float u = Vector3::Dot(TriangleRay, Perpendicular) * InverseDet;
 	if (u < 0 || u > 1)
 		return false;
 
-	Vector3 TriangleRayPerpendicular = TriangleRay.Cross(EdgeAB);
-	float v = CastedRay.Direction.Dot(TriangleRayPerpendicular) * InverseDet;
+	const Vector3 TriangleRayPerpendicular = TriangleRay.Cross(EdgeAB);
+	const float v = Vector3::Dot(CastedRay.Direction, TriangleRayPerpendicular) * InverseDet;
 	if (v < 0 || (u + v) > 1) 
 		return false;
 
-	const float t = EdgeAC.Dot(TriangleRayPerpendicular) * InverseDet;
+	const float t = Vector3::Dot(EdgeAC, TriangleRayPerpendicular) * InverseDet;
 	if (t < 0)
 		return false;
 
