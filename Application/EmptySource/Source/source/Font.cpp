@@ -1,8 +1,8 @@
 
-#include "../External/ft2build.h"
+#include "../External/FreeType/include/ft2build.h"
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
-#include "../External/FreeType/freetype.h"
+#include "../External/FreeType/include/freetype/freetype.h"
 
 #include "../include/Core.h"
 #include "../include/Utility/LogFreeType.h"

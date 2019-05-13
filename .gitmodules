@@ -1,3 +1,6 @@
 [submodule "Application/EmptySource/External/SDL"]
 	path = Application/EmptySource/External/SDL
 	url = https://github.com/spurious/SDL-mirror.git
+[submodule "Application/EmptySource/External/FreeType"]
+	path = Application/EmptySource/External/FreeType
+	url = https://github.com/ubawurinna/freetype-windows-binaries.git
