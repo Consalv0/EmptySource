@@ -13,17 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\External">
-      <UniqueIdentifier>{e23ff412-a445-4c33-b0a2-d4194bdff52c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\External\GLFW">
-      <UniqueIdentifier>{1ba83e30-7371-43cc-bee9-a529e0c5e8d7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Core">
       <UniqueIdentifier>{4af8b778-0f19-4ae1-90ce-717bcecb1ae9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\External\GLAD">
-      <UniqueIdentifier>{68600d9b-8bbc-4e1c-8b10-00a387caa922}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{3a6cfacd-6be6-4a4a-9b76-2fae258ad588}</UniqueIdentifier>
@@ -43,328 +34,331 @@
     <Filter Include="Source Files\CUDA Test">
       <UniqueIdentifier>{f7a409a1-077c-45cf-8e36-6918fc925195}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\FreeType">
+    <Filter Include="External">
+      <UniqueIdentifier>{e23ff412-a445-4c33-b0a2-d4194bdff52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\GLAD">
+      <UniqueIdentifier>{68600d9b-8bbc-4e1c-8b10-00a387caa922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\FreeType">
       <UniqueIdentifier>{4ab4cee8-f6e7-4207-a585-42f10554f751}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\FreeType\Config">
+    <Filter Include="External\FreeType\Config">
       <UniqueIdentifier>{65b0d24d-9ccd-4362-b873-33a9e8266998}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\FreeType\Internal">
+    <Filter Include="External\FreeType\Internal">
       <UniqueIdentifier>{39270f3f-95ba-470b-9503-7c1a1808823b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\FreeType\Internal\Services">
+    <Filter Include="External\FreeType\Internal\Services">
       <UniqueIdentifier>{77cefc87-7bcd-4c00-b9d4-1783f4a76dbb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\TSL">
+    <Filter Include="External\TSL">
       <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\STB">
+    <Filter Include="External\STB">
       <UniqueIdentifier>{aa5a3bde-04cd-4874-b0b5-c80969ccbe5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2">
+      <UniqueIdentifier>{d2be09b4-f303-4de9-bdf2-5bc0dddb7553}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\External\GLFW\glfw3.h">
-      <Filter>Header Files\External\GLFW</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\GLFW\glfw3native.h">
-      <Filter>Header Files\External\GLFW</Filter>
-    </ClInclude>
     <ClInclude Include="Source\External\freetype\freetype.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftadvanc.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftbbox.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftbdf.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftbitmap.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftbzip2.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftcache.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftchapters.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftcid.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftdriver.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\fterrdef.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\fterrors.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftfntfmt.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftgasp.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftglyph.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftgxval.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftgzip.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftimage.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftincrem.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftlcdfil.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftlist.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftlzw.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftmac.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftmm.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftmodapi.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftmoderr.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftotval.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftoutln.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftparams.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftpfr.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftrender.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftsizes.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftsnames.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftstroke.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftsynth.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftsystem.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\fttrigon.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\fttypes.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ftwinfnt.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\t1tables.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\ttnameid.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\tttables.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\tttags.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\config\ftconfig.h">
-      <Filter>Header Files\External\FreeType\Config</Filter>
+      <Filter>External\FreeType\Config</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\config\ftheader.h">
-      <Filter>Header Files\External\FreeType\Config</Filter>
+      <Filter>External\FreeType\Config</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\config\ftmodule.h">
-      <Filter>Header Files\External\FreeType\Config</Filter>
+      <Filter>External\FreeType\Config</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\config\ftoption.h">
-      <Filter>Header Files\External\FreeType\Config</Filter>
+      <Filter>External\FreeType\Config</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\config\ftstdlib.h">
-      <Filter>Header Files\External\FreeType\Config</Filter>
+      <Filter>External\FreeType\Config</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\autohint.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\cffotypes.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\cfftypes.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftcalc.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftdebug.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftdrv.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftgloadr.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\fthash.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftmemory.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftobjs.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftpic.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftpsprop.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftrfork.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftserv.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftstream.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\fttrace.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\ftvalid.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\internal.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\psaux.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\pshints.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\sfnt.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\t1types.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\tttypes.h">
-      <Filter>Header Files\External\FreeType\Internal</Filter>
+      <Filter>External\FreeType\Internal</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svbdf.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svcfftl.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svcid.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svfntfmt.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svgldict.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svgxval.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svkern.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svmetric.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svmm.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svotval.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svpfr.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svpostnm.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svprop.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svpscmap.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svpsinfo.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svsfnt.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svttcmap.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svtteng.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svttglyf.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\freetype\internal\services\svwinfnt.h">
-      <Filter>Header Files\External\FreeType\Internal\Services</Filter>
+      <Filter>External\FreeType\Internal\Services</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\tsl\robin_growth_policy.h">
-      <Filter>Header Files\External\TSL</Filter>
+      <Filter>External\TSL</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\tsl\robin_hash.h">
-      <Filter>Header Files\External\TSL</Filter>
+      <Filter>External\TSL</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\tsl\robin_map.h">
-      <Filter>Header Files\External\TSL</Filter>
+      <Filter>External\TSL</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\tsl\robin_set.h">
-      <Filter>Header Files\External\TSL</Filter>
+      <Filter>External\TSL</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\ft2build.h">
-      <Filter>Header Files\External\FreeType</Filter>
+      <Filter>External\FreeType</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\GLAD\glad.h">
-      <Filter>Header Files\External\GLAD</Filter>
+      <Filter>External\GLAD</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\GLAD\khrplatform.h">
-      <Filter>Header Files\External\GLAD</Filter>
+      <Filter>External\GLAD</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Math\Box2D.h">
       <Filter>Header Files\Core\Math</Filter>
@@ -526,10 +520,10 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\STB\stb_image.h">
-      <Filter>Header Files\External\STB</Filter>
+      <Filter>External\STB</Filter>
     </ClInclude>
     <ClInclude Include="Source\External\STB\stb_image_write.h">
-      <Filter>Header Files\External\STB</Filter>
+      <Filter>External\STB</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Transform.h">
       <Filter>Header Files\Core</Filter>
@@ -552,10 +546,262 @@
     <ClInclude Include="Source\include\FBXLoader.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="External\SDL\include\begin_code.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\close_code.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_assert.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_atomic.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_audio.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_bits.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_blendmode.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_clipboard.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_android.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_iphoneos.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_macosx.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_minimal.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_os2.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_pandora.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_psp.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_windows.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_winrt.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_config_wiz.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_copying.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_cpuinfo.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_egl.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_endian.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_error.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_events.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_filesystem.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_gamecontroller.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_gesture.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_haptic.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_hints.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_joystick.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_keyboard.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_keycode.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_loadso.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_log.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_main.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_messagebox.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_mouse.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_mutex.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_name.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengl.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengl_glext.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengles.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengles2.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengles2_gl2.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengles2_gl2ext.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengles2_gl2platform.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_opengles2_khrplatform.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_pixels.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_platform.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_power.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_quit.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_rect.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_render.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_revision.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_rwops.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_scancode.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_sensor.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_shape.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_stdinc.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_surface.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_system.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_syswm.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_assert.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_common.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_compare.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_crc32.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_font.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_fuzzer.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_harness.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_images.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_log.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_md5.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_memory.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_test_random.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_thread.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_timer.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_touch.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_types.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_version.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_video.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL\include\SDL_vulkan.h">
+      <Filter>External\SDL2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\External\GLAD\glad.c">
-      <Filter>Header Files\External\GLAD</Filter>
+      <Filter>External\GLAD</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\Application.cpp">
       <Filter>Source Files\Core</Filter>
@@ -735,6 +981,12 @@
     </None>
     <None Include="Source\include\Math\Vector4.inl">
       <Filter>Header Files\Core\Math</Filter>
+    </None>
+    <None Include="External\SDL\include\SDL_config.h.cmake">
+      <Filter>External\SDL2</Filter>
+    </None>
+    <None Include="External\SDL\include\SDL_config.h.in">
+      <Filter>External\SDL2</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

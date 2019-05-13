@@ -4,6 +4,7 @@
 #ifndef __APPLE__
 #include "../include/CoreCUDA.h"
 #endif
+
 #include "../include/Utility/LogGraphics.h"
 #include "../include/Utility/DeviceFunctions.h"
 #include "../include/Utility/TextFormattingMath.h"
@@ -31,9 +32,10 @@
 #include "../include/ImageLoader.h"
 #include "../include/Math/Physics.h"
 
-#ifdef WIN32
-#include <../resource.h>
-#endif
+// SDL 2.0.9
+#include "../External/SDL/include/SDL.h"
+#include "../External/SDL/include/SDL_opengl.h"
+
 
 #include <thread>
 Mesh MeshPrimitives::Cube;
@@ -67,37 +69,33 @@ bool CoreApplication::InitalizeGLAD() {
 	return true;
 }
 
-bool CoreApplication::InitializeWindow() {
-	MainWindow = new ApplicationWindow();
-
-	if (!MainWindow->Create("EmptySource - Debug", WindowMode::Windowed, 1366, 768)) {
-		Debug::Log(Debug::LogCritical, L"Application Window couldn't be created!");
-		glfwTerminate();
+bool CoreApplication::InitializeSDL(unsigned int VersionMajor, unsigned int VersionMinor) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+		Debug::Log(Debug::LogCritical, L"Failed to initialize SDL 2.0.9: %s\n", SDL_GetError());
 		return false;
 	}
 
-#ifdef WIN32
-	MainWindow->SetIcon(IDI_ICON1);
-#endif // WIN32
-	MainWindow->MakeContext();
-	MainWindow->InitializeInputs();
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, VersionMajor);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, VersionMinor);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	return true;
 }
 
-bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor) {
-	if (!glfwInit()) {
-		Debug::Log(Debug::LogCritical, L"Failed to initialize GLFW\n");
+bool CoreApplication::InitializeWindow() {
+	MainWindow = new ApplicationWindow();
+
+	if (!MainWindow->Create(
+#ifdef _DEBUG
+		"EmptySource - Debug",
+#else
+		"EmptySource",
+#endif
+		WindowMode::Windowed, 1366, 768))
+	{
 		return false;
 	}
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, VersionMajor);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, VersionMinor);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-	glfwSetErrorCallback(&Debug::GLFWError);
 
 	return true;
 }
@@ -105,9 +103,9 @@ bool CoreApplication::InitializeGLFW(unsigned int VersionMajor, unsigned int Ver
 void CoreApplication::Initalize() {
 	if (bInitialized) return;
 #ifdef __APPLE__
-    if (InitializeGLFW(4, 1) == false) return;
+    if (InitializeSDL(4, 1) == false) return;
 #else
-    if (InitializeGLFW(4, 6) == false) return;
+    if (InitializeSDL(4, 6) == false) return;
 #endif
 	if (InitializeWindow() == false) return;
 	if (InitalizeGLAD() == false) return;
@@ -130,7 +128,7 @@ void CoreApplication::Close() {
 		delete MainWindow;
 	}
 
-	glfwTerminate();
+	SDL_Quit();
     Debug::CloseDeviceFunctions();
 };
 
@@ -141,7 +139,7 @@ void CoreApplication::MainLoop() {
 	Object* GObject = Space::GetFirstSpace()->MakeObject();
 	GObject->Delete();
 
-	glfwSwapInterval(0);
+	SDL_GL_SetSwapInterval(0);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	Font FontFace;
@@ -365,7 +363,8 @@ void CoreApplication::MainLoop() {
 	HDRClampingMaterial.CullMode = Graphics::CM_None;
 	HDRClampingMaterial.SetShaderProgram(&HDRClampingShader);
 
-	srand((unsigned int)glfwGetTime());
+	// srand((unsigned int)glfwGetTime());
+	srand(SDL_GetTicks());
 	MeshLoader::FileData LightModelData;
 	MeshLoader::FileData SceneModelData0;
 	MeshLoader::FileData SceneModelData1;
@@ -517,26 +516,26 @@ void CoreApplication::MainLoop() {
 		
 		Quaternion FrameRotation  = Quaternion::EulerAngles(Vector3(CursorPosition.y, -CursorPosition.x));
 
-		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
-			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
-			EyePosition += Forward * Time::GetDeltaTime() * 
-				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
-			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
-			EyePosition += Right * Time::GetDeltaTime() *
-				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
-			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
-			EyePosition += Back * Time::GetDeltaTime() *
-				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
-			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
-			EyePosition += Left * Time::GetDeltaTime() *
-				(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		}
+		// if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
+		// 	Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
+		// 	EyePosition += Forward * Time::GetDeltaTime() * 
+		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
+		// 	Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
+		// 	EyePosition += Right * Time::GetDeltaTime() *
+		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
+		// 	Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
+		// 	EyePosition += Back * Time::GetDeltaTime() *
+		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
+		// 	Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
+		// 	EyePosition += Left * Time::GetDeltaTime() *
+		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
+		// }
 
 		Vector3 CameraRayDirection = {
 			(2.F * MainWindow->GetMousePosition().x) / MainWindow->GetWidth() - 1.F,
@@ -550,83 +549,83 @@ void CoreApplication::MainLoop() {
 
 		ViewMatrix = Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1));
 
-		if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
-			MaterialMetalness -= 1.F * Time::GetDeltaTime();
-			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_M)) {
-			MaterialMetalness += 1.F * Time::GetDeltaTime();
-			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_E)) {
-			MaterialRoughness -= 0.5F * Time::GetDeltaTime();
-			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_R)) {
-			MaterialRoughness += 0.5F * Time::GetDeltaTime();
-			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_L)) {
-			LightIntencity += LightIntencity * Time::GetDeltaTime();
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-			LightIntencity -= LightIntencity * Time::GetDeltaTime();
-		}
-
-		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
-		if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
-				if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
-					BaseMaterial.RenderMode = Graphics::RM_Wire;
-				} else {
-					BaseMaterial.RenderMode = Graphics::RM_Fill;
-				}
-			}
-		}
-        
-		if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
-            MeshSelector += Time::GetDeltaTime() * 10;
-			MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
-			MeshSelector -= Time::GetDeltaTime() * 10;
-			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
-		}
-		if(MainWindow->GetKeyDown(GLFW_KEY_RIGHT)) {
-			MultiuseValue += Time::GetDeltaTime() * MultiuseValue;
-		}
-		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT)) {
-			MultiuseValue -= Time::GetDeltaTime() * MultiuseValue;
-		}
-
-		if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
-			if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
-				FontSize += Time::GetDeltaTime() * FontSize;
-			}
-
-			if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-				FontSize -= Time::GetDeltaTime() * FontSize;
-			}
-		} else {
-			if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
-				FontBoldness += Time::GetDeltaTime() / 10;
-			}
-
-			if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-				FontBoldness -= Time::GetDeltaTime() / 10;
-			}
-		}
-
-		if (MainWindow->GetKeyDown(GLFW_KEY_V)) {
-			for (int i = 0; i < 10; i++) {
-				RenderingText[1] += (unsigned long)(rand() % 0x3ff);
-			}
-		}
-
-		if (MainWindow->GetKeyDown(GLFW_KEY_SPACE)) {
-			TestArrowTransform.Position = EyePosition;
-			TestArrowDirection = CameraRayDirection;
-			TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
-		}
+		// if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
+		// 	MaterialMetalness -= 1.F * Time::GetDeltaTime();
+		// 	MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_M)) {
+		// 	MaterialMetalness += 1.F * Time::GetDeltaTime();
+		// 	MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_E)) {
+		// 	MaterialRoughness -= 0.5F * Time::GetDeltaTime();
+		// 	MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_R)) {
+		// 	MaterialRoughness += 0.5F * Time::GetDeltaTime();
+		// 	MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_L)) {
+		// 	LightIntencity += LightIntencity * Time::GetDeltaTime();
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
+		// 	LightIntencity -= LightIntencity * Time::GetDeltaTime();
+		// }
+		// 
+		// if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
+		// if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
+		// 		if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
+		// 			BaseMaterial.RenderMode = Graphics::RM_Wire;
+		// 		} else {
+		// 			BaseMaterial.RenderMode = Graphics::RM_Fill;
+		// 		}
+		// 	}
+		// }
+        // 
+		// if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
+        //     MeshSelector += Time::GetDeltaTime() * 10;
+		// 	MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
+		// 	MeshSelector -= Time::GetDeltaTime() * 10;
+		// 	MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
+		// }
+		// if(MainWindow->GetKeyDown(GLFW_KEY_RIGHT)) {
+		// 	MultiuseValue += Time::GetDeltaTime() * MultiuseValue;
+		// }
+		// if (MainWindow->GetKeyDown(GLFW_KEY_LEFT)) {
+		// 	MultiuseValue -= Time::GetDeltaTime() * MultiuseValue;
+		// }
+		// 
+		// if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
+		// 	if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
+		// 		FontSize += Time::GetDeltaTime() * FontSize;
+		// 	}
+		// 
+		// 	if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
+		// 		FontSize -= Time::GetDeltaTime() * FontSize;
+		// 	}
+		// } else {
+		// 	if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
+		// 		FontBoldness += Time::GetDeltaTime() / 10;
+		// 	}
+		// 
+		// 	if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
+		// 		FontBoldness -= Time::GetDeltaTime() / 10;
+		// 	}
+		// }
+		// 
+		// if (MainWindow->GetKeyDown(GLFW_KEY_V)) {
+		// 	for (int i = 0; i < 10; i++) {
+		// 		RenderingText[1] += (unsigned long)(rand() % 0x3ff);
+		// 	}
+		// }
+		// 
+		// if (MainWindow->GetKeyDown(GLFW_KEY_SPACE)) {
+		// 	TestArrowTransform.Position = EyePosition;
+		// 	TestArrowDirection = CameraRayDirection;
+		// 	TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
+		// }
 
 		for (int i = 0; i < TextCount; i++) {
 			if (TextGenerator.FindCharacters(RenderingText[i]) > 0) {
@@ -961,7 +960,7 @@ void CoreApplication::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls), WindowSize(%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
@@ -971,7 +970,8 @@ void CoreApplication::MainLoop() {
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
-				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
+				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str(),
+				Text::FormatMath(Vector2(MainWindow->GetWidth(), MainWindow->GetHeight())).c_str()
 			);
 
 			MainWindow->EndOfFrame();
@@ -982,7 +982,7 @@ void CoreApplication::MainLoop() {
 
 
 	} while (
-		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
+		MainWindow->ShouldClose() == false // && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
 	);
 
 	for (int i = 0; i < Threads.size(); i++) {

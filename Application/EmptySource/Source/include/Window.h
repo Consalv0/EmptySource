@@ -1,9 +1,5 @@
 #pragma once
 
-// Include GLFW
-// Library to make crossplataform input and window creation
-#include "External/GLFW/glfw3.h"
-
 #include "../include/Graphics.h"
 #include "../include/Text.h"
 
@@ -20,12 +16,13 @@ class Bitmap;
  */
 struct ApplicationWindow {
 private:
-    //* GLFW Window
-    struct GLFWwindow * Window;
+    //* Window Handle
+    struct SDL_Window * Window;
+	void * GLContext;
     
     //* External on resized function
     void(*OnWindowResizedFunc)(int Width, int Height);
-    
+
     //* Name displayed in header window
     String Name;
     unsigned int Width = 1080;
@@ -33,10 +30,21 @@ private:
     WindowMode Mode = WindowMode::Windowed;
     
     //* Frame Count
-    unsigned long FrameCount;
+    unsigned long long FrameCount;
+
+	//* The window should close
+	bool bShouldClose;
     
     //* Event callback that resizes this window
     void OnWindowResized(int Width, int Height);
+
+	void CreateWindowEvents();
+
+	//* Initialize inputs in this window
+	void InitializeInputs();
+
+	//* Make context for this window
+	void MakeContext();
     
     //* Creates the main Rendering Window
     bool Create();
@@ -50,6 +58,9 @@ public:
     
     //* Get the height in pixels of the window
     int GetHeight();
+
+	//* Resize the size of the window
+	void Resize(const unsigned int& Width, const unsigned int& Height);
     
     //* Rename the window title
     void SetWindowName(const WString & NewName);
@@ -63,20 +74,17 @@ public:
     //* Creates a Window with a Name, Width and Height
     bool Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height);
     
-    //* Wrapper for glfwShouldClose, asks if window should be closed
+    //* Asks if window should be closed
     bool ShouldClose();
-    
-    //* Make context in GLFW for this window
-    void MakeContext();
     
     //* Returns true if window has been created
     bool IsCreated();
     
     //* Total frames drawed since the creation of this window
-    unsigned long GetFrameCount();
+    unsigned long long GetFrameCount();
     
     //* Get mouse position in screen coordinates relative to the upper left position of this window
-    struct Vector2 GetMousePosition();
+    struct Vector2 GetMousePosition(bool Clamp = false);
     
     //* Get key pressed
     bool GetKeyDown(unsigned int Key);
@@ -90,16 +98,8 @@ public:
 	//* Sets the window icon
 	void SetIcon(class Bitmap<UCharRGBA> * Icon);
 
-	//* Sets the window icon using the resources.h
-#ifdef WIN32
-	void SetIcon(const int & IconResource);
-#endif
-
     //* Window update events
     void PollEvents();
-    
-    //* Initialize inputs in this window
-    void InitializeInputs();
     
     //* Terminates this window
     void Terminate();

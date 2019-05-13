@@ -8,8 +8,8 @@ private:
 	static bool bInitialized;
 	static double RenderTimeSum;
 	
-	//* Initialize GLFW Functions using OpenGL Versions, returns true if initialized correctly
-	static bool InitializeGLFW(unsigned int VersionMajor, unsigned int VersionMinor);
+	//* Initialize SDL Functions using OpenGL Versions, returns true if initialized correctly
+	static bool InitializeSDL(unsigned int VersionMajor, unsigned int VersionMinor);
 	
 	//* Initialize GLAD OpenGL Functions
 	static bool InitalizeGLAD();
