@@ -1,4 +1,4 @@
-﻿
+
 #include <cctype>
 #include <cstdio>
 
@@ -412,7 +412,7 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 	ModelData.ListUVs.clear();
 	ModelData.VertexIndices.clear();
 
-	delete Indices;
+	delete[] Indices;
 
 	Timer.Stop();
 	Debug::Log(Debug::LogInfo, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());

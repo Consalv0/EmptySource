@@ -4,6 +4,7 @@
 #endif
 #include "../include/Core.h"
 #include "../include/FileStream.h"
+#include "../include/FileManager.h"
 
 FileStream::FileStream() {
 	Stream = NULL;
@@ -39,21 +40,7 @@ WString FileStream::GetPath() const {
 }
 
 WString FileStream::GetShortPath() const {
-#ifdef WIN32
-	WChar Buffer[MAX_PATH];
-	GetCurrentDirectory(_MAX_DIR, Buffer);
-	WString CurrentDirectory(Buffer);
-
-#else
-    long Size = pathconf(".", _PC_PATH_MAX);
-    Char * Buffer;
-    Char * Ptr;
-    if ((Buffer = (Char *)malloc((size_t)Size)) != NULL) {
-        Ptr = getcwd(Buffer, (size_t)Size);
-    }
-    WString CurrentDirectory = CharToWString(Buffer);
-#endif
-    
+    WString CurrentDirectory = FileManager::GetCurrentDirectory();
 	WString ReturnValue = Path;
 	Text::Replace(ReturnValue, CurrentDirectory, WString(L".."));
 

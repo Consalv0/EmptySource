@@ -1,4 +1,4 @@
-﻿#include "../include/Core.h"
+#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 
@@ -141,7 +141,9 @@ void CoreApplication::MainLoop() {
 
 	SDL_GL_SetSwapInterval(0);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
+    
+    Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetCurrentDirectory().c_str());
+    
 	Font FontFace;
 	Font::InitializeFreeType();
 	FontFace.Initialize(FileManager::Open(L"Resources/Fonts/SourceSansPro.ttf"));

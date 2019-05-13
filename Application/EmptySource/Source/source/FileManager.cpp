@@ -1,8 +1,13 @@
 
+#ifdef __APPLE__
+#include <unistd.h>
+#import <Foundation/Foundation.h>
+#endif
 #include <algorithm>
 #include <stdlib.h>
 #include "../include/Core.h"
 #include "../include/FileManager.h"
+#include "../include/Text.h"
 
 FileList FileManager::Files = FileList();
 
@@ -40,23 +45,37 @@ WString FileManager::GetFullPath(const WString & Path) {
 	GetFullPathName(Path.c_str(), MAX_PATH, FullPath, NULL);
     return FullPath;
 #elif __APPLE__
-    Char FullPath[PATH_MAX + 1];
-    Char * Ptr;
-    Ptr = realpath(WStringToString(Path).c_str(), FullPath);
-    if (strlen(FullPath) > 20) {
-        auto x = String(&FullPath[strlen(FullPath) - 20], 20);
-        if (x == "/Resources/Resources") {
-            FullPath[strlen(FullPath) - 19] = 0;
-            return CharToWString(FullPath) + Path;
-        }
-    }
-    return CharToWString(FullPath);
+    WString ResourcesPath = Path;
+    WString ResourcesFolderName = L"Resources/";
+    Text::Replace(ResourcesPath, ResourcesFolderName, WString(L""));
+    NSString * NSStringToResourcesPath = [[NSString alloc] initWithBytes:ResourcesPath.data()
+                                        length:ResourcesPath.size() * sizeof(wchar_t)
+                                        encoding:NSUTF32LittleEndianStringEncoding];
+    NSString * FilePath = [[NSBundle mainBundle] pathForResource:NSStringToResourcesPath ofType:@""];
+    NSStringEncoding Encode    =   CFStringConvertEncodingToNSStringEncoding ( kCFStringEncodingUTF32LE );
+    NSData * SData              =   [ FilePath dataUsingEncoding : Encode ];
+    
+    return WString ( (wchar_t*) [ SData bytes ], [ SData length ] / sizeof ( wchar_t ) );
 #else
     Char FullPath[PATH_MAX + 1];
     Char * Ptr;
     Ptr = realpath(WStringToString(Path).c_str(), FullPath);
     return CharToWChar(FullPath);
 #endif
+}
+
+WString FileManager::GetCurrentDirectory() {
+#ifdef WIN32
+    WChar Buffer[MAX_PATH];
+    GetCurrentDirectory(_MAX_DIR, Buffer);
+    WString CurrentDirectory(Buffer);
+#else
+    NSStringEncoding Encode    =   CFStringConvertEncodingToNSStringEncoding ( kCFStringEncodingUTF32LE );
+    NSData * SData              =   [ [[NSBundle mainBundle] resourcePath] dataUsingEncoding : Encode ];
+    
+    WString CurrentDirectory ( (wchar_t*) [ SData bytes ], [ SData length ] / sizeof ( wchar_t ) );
+#endif
+    return CurrentDirectory;
 }
 
 FileList::iterator FileManager::FindInFiles(const WString & FilePath) {

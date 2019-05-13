@@ -1,4 +1,4 @@
-﻿
+
 #include <fbxsdk.h>
 #include "../include/FBXLoader.h"
 #include "../include/Utility/Timer.h"
@@ -135,9 +135,9 @@ void FBXLoader::ExtractVertexData(FbxMesh * pMesh, MeshData & OutData) {
 	FbxVector4 * ControlPoints = pMesh->GetControlPoints();
 	int PolygonIndex; int PolygonVertexIndex;
 
-	if (pMesh->GetElementUVCount() != NULL) OutData.TextureCoordsCount = Math::Clamp(pMesh->GetElementUVCount(), 0, 2);
-	if (pMesh->GetElementNormalCount() != NULL) OutData.hasNormals = true;
-	if (pMesh->GetElementVertexColorCount() != NULL) OutData.hasVertexColor = true;
+	if (pMesh->GetElementUVCount() != 0) OutData.TextureCoordsCount = Math::Clamp(pMesh->GetElementUVCount(), 0, 2);
+	if (pMesh->GetElementNormalCount() != 0) OutData.hasNormals = true;
+	if (pMesh->GetElementVertexColorCount() != 0) OutData.hasVertexColor = true;
 
 	int VertexIndex = 0;
 	for (PolygonIndex = 0; PolygonIndex < PolygonCount; ++PolygonIndex) {

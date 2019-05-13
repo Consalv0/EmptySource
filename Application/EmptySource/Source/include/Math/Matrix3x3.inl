@@ -69,7 +69,7 @@ inline Vector3 const & Matrix3x3::operator[](unsigned int i) const {
 
 FORCEINLINE Matrix3x3 Matrix3x3::operator*(const Matrix3x3& Other) const {
 	Matrix3x3 Result = Matrix3x3();
-	const Vector3 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2), Col3 = Column(3);
+    const Vector3 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2);
 	
 	Result.m0[0] = Other.m0.Dot(Col0);
 	Result.m1[0] = Other.m1.Dot(Col0);
