@@ -1,4 +1,4 @@
-
+﻿
 #include <fbxsdk.h>
 #include "../include/FBXLoader.h"
 #include "../include/Utility/Timer.h"

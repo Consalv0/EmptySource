@@ -17,7 +17,7 @@ public:
 
 	static WString GetFullPath(const WString& Path);
     
-    static WString GetCurrentDirectory();
+    static WString GetAppDirectory();
 
 	//* ReadStreams the file streams of the shader code
 	static WString ReadStream(FileStream* Stream);

@@ -1,4 +1,4 @@
-
+﻿
 #ifdef __APPLE__
 #include <unistd.h>
 #import <Foundation/Foundation.h>
@@ -64,7 +64,7 @@ WString FileManager::GetFullPath(const WString & Path) {
 #endif
 }
 
-WString FileManager::GetCurrentDirectory() {
+WString FileManager::GetAppDirectory() {
 #ifdef WIN32
     WChar Buffer[MAX_PATH];
     GetCurrentDirectory(_MAX_DIR, Buffer);

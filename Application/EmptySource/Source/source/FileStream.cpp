@@ -1,4 +1,4 @@
-
+﻿
 #ifdef __APPLE__
 #include <unistd.h>
 #endif
@@ -40,7 +40,7 @@ WString FileStream::GetPath() const {
 }
 
 WString FileStream::GetShortPath() const {
-    WString CurrentDirectory = FileManager::GetCurrentDirectory();
+    WString CurrentDirectory = FileManager::GetAppDirectory();
 	WString ReturnValue = Path;
 	Text::Replace(ReturnValue, CurrentDirectory, WString(L".."));
 
