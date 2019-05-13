@@ -1,6 +1,6 @@
 
 #include "../include/Core.h"
-#include "../include/CoreGraphics.h"
+#include "../include/GLFunctions.h"
 
 // SDL 2.0.9
 #include "../External/SDL/include/SDL.h"
@@ -161,7 +161,7 @@ void ApplicationWindow::SetIcon(Bitmap<UCharRGBA>* Icon) {
 		(void*)Icon->PointerToValue(),
 		Icon->GetWidth(), Icon->GetHeight(),
 		32, 4 * Icon->GetWidth(),
-		0x0f00, 0x00f0, 0x000f, 0xf000
+		0xF000, 0x0F00, 0x00F0, 0x000F
 	);
 	SDL_SetWindowIcon(Window, Surface);
 	SDL_FreeSurface(Surface);

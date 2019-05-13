@@ -46,37 +46,19 @@
     <Filter Include="External\FreeType\Config">
       <UniqueIdentifier>{65b0d24d-9ccd-4362-b873-33a9e8266998}</UniqueIdentifier>
     </Filter>
-    <Filter Include="External\TSL">
-      <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
-    </Filter>
     <Filter Include="External\STB">
       <UniqueIdentifier>{aa5a3bde-04cd-4874-b0b5-c80969ccbe5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="External\SDL2">
       <UniqueIdentifier>{d2be09b4-f303-4de9-bdf2-5bc0dddb7553}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External\RobinMap">
+      <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\External\tsl\robin_growth_policy.h">
-      <Filter>External\TSL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\tsl\robin_hash.h">
-      <Filter>External\TSL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\tsl\robin_map.h">
-      <Filter>External\TSL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\tsl\robin_set.h">
-      <Filter>External\TSL</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\GLAD\glad.h">
-      <Filter>External\GLAD</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\GLAD\khrplatform.h">
-      <Filter>External\GLAD</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Math\Box2D.h">
       <Filter>Header Files\Core\Math</Filter>
@@ -139,9 +121,6 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\CoreCUDA.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\CoreGraphics.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\CoreTime.h">
@@ -236,12 +215,6 @@
     </ClInclude>
     <ClInclude Include="Source\include\ImageLoader.h">
       <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\STB\stb_image.h">
-      <Filter>External\STB</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\External\STB\stb_image_write.h">
-      <Filter>External\STB</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Transform.h">
       <Filter>Header Files\Core</Filter>
@@ -666,11 +639,35 @@
     <ClInclude Include="External\FreeType\include\freetype\config\ftstdlib.h">
       <Filter>External\FreeType\Config</Filter>
     </ClInclude>
+    <ClInclude Include="External\GLAD\glad.h">
+      <Filter>External\GLAD</Filter>
+    </ClInclude>
+    <ClInclude Include="External\GLAD\khrplatform.h">
+      <Filter>External\GLAD</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_image.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_image_write.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_growth_policy.h">
+      <Filter>External\RobinMap</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_hash.h">
+      <Filter>External\RobinMap</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_map.h">
+      <Filter>External\RobinMap</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_set.h">
+      <Filter>External\RobinMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GLFunctions.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\External\GLAD\glad.c">
-      <Filter>External\GLAD</Filter>
-    </ClCompile>
     <ClCompile Include="Source\source\Application.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
@@ -781,6 +778,9 @@
     </ClCompile>
     <ClCompile Include="Source\source\FBXLoader.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="External\GLAD\glad.c">
+      <Filter>External\GLAD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

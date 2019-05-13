@@ -4,3 +4,9 @@
 [submodule "Application/EmptySource/External/FreeType"]
 	path = Application/EmptySource/External/FreeType
 	url = https://github.com/ubawurinna/freetype-windows-binaries.git
+[submodule "Application/EmptySource/External/STB"]
+	path = Application/EmptySource/External/STB
+	url = https://github.com/nothings/stb.git
+[submodule "Application/EmptySource/External/RobinMap"]
+	path = Application/EmptySource/External/RobinMap
+	url = https://github.com/Tessil/robin-map.git

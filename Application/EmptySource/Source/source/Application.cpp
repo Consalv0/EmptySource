@@ -1,14 +1,14 @@
 ﻿#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
-#ifndef __APPLE__
-#include "../include/CoreCUDA.h"
-#endif
 
 #include "../include/Utility/LogGraphics.h"
 #include "../include/Utility/DeviceFunctions.h"
 #include "../include/Utility/TextFormattingMath.h"
 #include "../include/Utility/Timer.h"
+#ifndef __APPLE__
+#include "../include/CoreCUDA.h"
+#endif
 
 #include "../include/CoreTime.h"
 #include "../include/Window.h"

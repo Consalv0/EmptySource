@@ -11,12 +11,10 @@ void FBXLoader::InitializeSdkManager() {
 	// for almost all the classes in the SDK.
 	gSdkManager = FbxManager::Create();
 
-	// create an IOSettings object
 	FbxIOSettings * IOS = FbxIOSettings::Create(gSdkManager, IOSROOT);
 	gSdkManager->SetIOSettings(IOS);
 
 }
-
 
 bool FBXLoader::LoadScene(FbxScene * pScene, FileStream * File) {
 	int FileMajor, FileMinor, FileRevision;

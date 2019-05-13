@@ -1,5 +1,5 @@
 #include "../include/Core.h"
-#include "../include/CoreGraphics.h"
+#include "../include/GLFunctions.h"
 #include "../include/Material.h"
 #include "../include/Math/MathUtility.h"
 #include "../include/Math/Vector4.h"

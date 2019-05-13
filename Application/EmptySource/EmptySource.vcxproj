@@ -213,6 +213,12 @@
     <ClInclude Include="External\FreeType\include\freetype\tttables.h" />
     <ClInclude Include="External\FreeType\include\freetype\tttags.h" />
     <ClInclude Include="External\FreeType\include\ft2build.h" />
+    <ClInclude Include="External\GLAD\glad.h" />
+    <ClInclude Include="External\GLAD\khrplatform.h" />
+    <ClInclude Include="External\RobinMap\include\tsl\robin_growth_policy.h" />
+    <ClInclude Include="External\RobinMap\include\tsl\robin_hash.h" />
+    <ClInclude Include="External\RobinMap\include\tsl\robin_map.h" />
+    <ClInclude Include="External\RobinMap\include\tsl\robin_set.h" />
     <ClInclude Include="External\SDL\include\begin_code.h" />
     <ClInclude Include="External\SDL\include\close_code.h" />
     <ClInclude Include="External\SDL\include\SDL.h" />
@@ -297,20 +303,14 @@
     <ClInclude Include="External\SDL\include\SDL_version.h" />
     <ClInclude Include="External\SDL\include\SDL_video.h" />
     <ClInclude Include="External\SDL\include\SDL_vulkan.h" />
+    <ClInclude Include="External\STB\stb_image.h" />
+    <ClInclude Include="External\STB\stb_image_write.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Source\External\GLAD\glad.h" />
-    <ClInclude Include="Source\External\GLAD\khrplatform.h" />
-    <ClInclude Include="Source\External\STB\stb_image.h" />
-    <ClInclude Include="Source\External\STB\stb_image_write.h" />
-    <ClInclude Include="Source\External\tsl\robin_growth_policy.h" />
-    <ClInclude Include="Source\External\tsl\robin_hash.h" />
-    <ClInclude Include="Source\External\tsl\robin_map.h" />
-    <ClInclude Include="Source\External\tsl\robin_set.h" />
     <ClInclude Include="Source\include\Application.h" />
     <ClInclude Include="Source\include\Bitmap.h" />
     <ClInclude Include="Source\include\Core.h" />
     <ClInclude Include="Source\include\CoreCUDA.h" />
-    <ClInclude Include="Source\include\CoreGraphics.h" />
+    <ClInclude Include="Source\include\GLFunctions.h" />
     <ClInclude Include="Source\include\CoreTime.h" />
     <ClInclude Include="Source\include\CoreTypes.h" />
     <ClInclude Include="Source\include\Cubemap.h" />
@@ -368,7 +368,7 @@
     <ClInclude Include="Source\include\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\External\GLAD\glad.c" />
+    <ClCompile Include="External\GLAD\glad.c" />
     <ClCompile Include="Source\source\Application.cpp" />
     <ClCompile Include="Source\source\Bitmap.cpp" />
     <ClCompile Include="Source\source\CoreTime.cpp" />

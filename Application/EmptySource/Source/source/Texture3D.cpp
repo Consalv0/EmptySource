@@ -1,6 +1,6 @@
 
 #include "../include/Texture3D.h"
-#include "../include/CoreGraphics.h"
+#include "../include/GLFunctions.h"
 #include "../include/Utility/LogCore.h"
 
 Texture3D::Texture3D(

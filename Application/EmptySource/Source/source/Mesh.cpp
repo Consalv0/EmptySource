@@ -1,6 +1,6 @@
 
 #include "../include/Core.h"
-#include "../include/CoreGraphics.h"
+#include "../include/GLFunctions.h"
 #include "../include/Mesh.h"
 
 MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV) :

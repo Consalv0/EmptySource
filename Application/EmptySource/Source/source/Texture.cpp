@@ -1,6 +1,6 @@
 
 #include "../include/Texture.h"
-#include "../include/CoreGraphics.h"
+#include "../include/GLFunctions.h"
 
 unsigned int Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
 	switch (CF) {

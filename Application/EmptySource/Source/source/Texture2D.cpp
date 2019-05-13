@@ -1,6 +1,6 @@
 
 #include "../include/Texture2D.h"
-#include "../include/CoreGraphics.h"
+#include "../include/GLFunctions.h"
 #include "../include/Utility/LogCore.h"
 
 Texture2D::Texture2D(

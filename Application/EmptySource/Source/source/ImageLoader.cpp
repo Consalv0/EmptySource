@@ -7,9 +7,9 @@
 #endif
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "External/STB/stb_image.h"
+#include "../External/STB/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "External/STB/stb_image_write.h"
+#include "../External/STB/stb_image_write.h"
 
 #define _LoadImage(BitmapFormat, STBIFormat) \
 	if (File == NULL) return false; \
