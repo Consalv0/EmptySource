@@ -37,6 +37,44 @@ ApplicationWindow::ApplicationWindow() {
     OnWindowResizedFunc = 0;
 }
 
+bool ApplicationWindow::Create() {
+	Window = SDL_CreateWindow(
+		Name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Width, Height,
+		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | Mode
+	);
+	if (!IsCreated()) {
+		Debug::Log(Debug::LogCritical, L"Window: \"%ls\" could not be initialized: %s", CharToWString(Name.c_str()).c_str(), SDL_GetError());
+		return false;
+	}
+
+	Debug::Log(Debug::LogInfo, L"Window: \"%ls\" initialized!", CharToWString(Name.c_str()).c_str());
+
+	CreateWindowEvents();
+	MakeContext();
+	InitializeInputs();
+
+	return true;
+}
+
+bool ApplicationWindow::Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height) {
+	if (IsCreated()) {
+		Debug::Log(Debug::LogWarning, L"Window Already Created!");
+		return false;
+	}
+
+	this->Width = Width;
+	this->Height = Height;
+	this->Name = Name;
+	this->Mode = Mode;
+	this->bShouldClose = !Create();
+
+	return !bShouldClose;
+}
+
+void ApplicationWindow::MakeContext() {
+	GLContext = SDL_GL_CreateContext(Window);
+}
+
 int ApplicationWindow::GetWidth() {
     return Width;
 }
@@ -45,10 +83,26 @@ int ApplicationWindow::GetHeight() {
     return Height;
 }
 
+float ApplicationWindow::AspectRatio() {
+	return (float)Width / (float)Height;
+}
+
 void ApplicationWindow::Resize(const unsigned int& SizeX, const unsigned int& SizeY) {
 	if (Width != SizeX || Height != SizeY) {
 		OnWindowResized(SizeX, SizeY);
 		SDL_SetWindowSize(Window, SizeX, SizeY);
+	}
+}
+
+void ApplicationWindow::SetOnResizedEvent(void(*OnWindowResizedFunc)(int Width, int Height)) {
+	this->OnWindowResizedFunc = OnWindowResizedFunc;
+}
+
+void ApplicationWindow::OnWindowResized(int Width, int Height) {
+	this->Width = Width;
+	this->Height = Height;
+	if (OnWindowResizedFunc != 0) {
+		OnWindowResizedFunc(Width, Height);
 	}
 }
 
@@ -61,56 +115,12 @@ WString ApplicationWindow::GetWindowName() {
     return StringToWString(Name);
 }
 
-float ApplicationWindow::AspectRatio() {
-    return (float)Width / (float)Height;
-}
-
-bool ApplicationWindow::Create() {
-	Window = SDL_CreateWindow(
-		Name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Width, Height,
-		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | Mode
-	);
-	if (!IsCreated()) {
-		Debug::Log(Debug::LogCritical, L"Window: \"%ls\" could not be initialized: %s", CharToWString(Name.c_str()).c_str(), SDL_GetError());
-		return false;
-	}
-    
-    Debug::Log(Debug::LogInfo, L"Window: \"%ls\" initialized!", CharToWString(Name.c_str()).c_str());
-	
-	CreateWindowEvents();
-	MakeContext();
-	InitializeInputs();
-    
-    return true;
-}
-
-bool ApplicationWindow::Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height) {
-    if (IsCreated()) {
-        Debug::Log(Debug::LogWarning, L"Window Already Created!");
-        return false;
-    }
-    
-    this->Width = Width;
-    this->Height = Height;
-    this->Name = Name;
-    this->Mode = Mode;
-	this->bShouldClose = !Create();
-
-    return !bShouldClose;
+bool ApplicationWindow::IsCreated() {
+	return Window != NULL;
 }
 
 bool ApplicationWindow::ShouldClose() {
 	return bShouldClose;
-	// return glfwWindowShouldClose(Window);
-}
-
-void ApplicationWindow::MakeContext() {
-	GLContext = SDL_GL_CreateContext(Window);
-	// glfwMakeContextCurrent(Window);
-}
-
-bool ApplicationWindow::IsCreated() {
-    return Window != NULL;
 }
 
 unsigned long long ApplicationWindow::GetFrameCount() {
@@ -133,8 +143,8 @@ Vector2 ApplicationWindow::GetMousePosition(bool Clamp) {
 }
 
 bool ApplicationWindow::GetKeyDown(unsigned int Key) {
-    // return glfwGetKey(Window, Key) == GLFW_PRESS;
-	return false;
+	const Uint8 * Keys = SDL_GetKeyboardState(NULL);
+	return Keys[Key];
 }
 
 void ApplicationWindow::ClearWindow() {
@@ -180,18 +190,6 @@ void ApplicationWindow::Terminate() {
 		SDL_DelEventWatch(OnCloseWindow, (void *)&bShouldClose);
 		SDL_DelEventWatch(OnResizeWindow, this);
 		bShouldClose = true;
-    }
-}
-
-void ApplicationWindow::SetOnResizedEvent(void(*OnWindowResizedFunc)(int Width, int Height)) {
-    this->OnWindowResizedFunc = OnWindowResizedFunc;
-}
-
-void ApplicationWindow::OnWindowResized(int Width, int Height) {
-    this->Width = Width;
-    this->Height = Height;
-    if (OnWindowResizedFunc != 0) {
-        OnWindowResizedFunc(Width, Height);
     }
 }
 

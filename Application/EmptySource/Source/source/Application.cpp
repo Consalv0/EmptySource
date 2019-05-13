@@ -516,26 +516,26 @@ void CoreApplication::MainLoop() {
 		
 		Quaternion FrameRotation  = Quaternion::EulerAngles(Vector3(CursorPosition.y, -CursorPosition.x));
 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
-		// 	Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
-		// 	EyePosition += Forward * Time::GetDeltaTime() * 
-		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_A)) {
-		// 	Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
-		// 	EyePosition += Right * Time::GetDeltaTime() *
-		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_S)) {
-		// 	Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
-		// 	EyePosition += Back * Time::GetDeltaTime() *
-		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_D)) {
-		// 	Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
-		// 	EyePosition += Left * Time::GetDeltaTime() *
-		// 		(!MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT) ? !MainWindow->GetKeyDown(GLFW_KEY_LEFT_CONTROL) ? 1.F : .1F : 4.F);
-		// }
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_W)) {
+			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
+			EyePosition += Forward * Time::GetDeltaTime() * 
+				(!MainWindow->GetKeyDown(SDL_SCANCODE_LSHIFT) ? !MainWindow->GetKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_A)) {
+			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
+			EyePosition += Right * Time::GetDeltaTime() *
+				(!MainWindow->GetKeyDown(SDL_SCANCODE_LSHIFT) ? !MainWindow->GetKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_S)) {
+			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
+			EyePosition += Back * Time::GetDeltaTime() *
+				(!MainWindow->GetKeyDown(SDL_SCANCODE_LSHIFT) ? !MainWindow->GetKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_D)) {
+			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
+			EyePosition += Left * Time::GetDeltaTime() *
+				(!MainWindow->GetKeyDown(SDL_SCANCODE_LSHIFT) ? !MainWindow->GetKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
+		}
 
 		Vector3 CameraRayDirection = {
 			(2.F * MainWindow->GetMousePosition().x) / MainWindow->GetWidth() - 1.F,
@@ -549,83 +549,83 @@ void CoreApplication::MainLoop() {
 
 		ViewMatrix = Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1));
 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_N)) {
-		// 	MaterialMetalness -= 1.F * Time::GetDeltaTime();
-		// 	MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_M)) {
-		// 	MaterialMetalness += 1.F * Time::GetDeltaTime();
-		// 	MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_E)) {
-		// 	MaterialRoughness -= 0.5F * Time::GetDeltaTime();
-		// 	MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_R)) {
-		// 	MaterialRoughness += 0.5F * Time::GetDeltaTime();
-		// 	MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_L)) {
-		// 	LightIntencity += LightIntencity * Time::GetDeltaTime();
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-		// 	LightIntencity -= LightIntencity * Time::GetDeltaTime();
-		// }
-		// 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
-		// if (MainWindow->GetKeyDown(GLFW_KEY_W)) {
-		// 		if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
-		// 			BaseMaterial.RenderMode = Graphics::RM_Wire;
-		// 		} else {
-		// 			BaseMaterial.RenderMode = Graphics::RM_Fill;
-		// 		}
-		// 	}
-		// }
-        // 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_UP)) {
-        //     MeshSelector += Time::GetDeltaTime() * 10;
-		// 	MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_DOWN)) {
-		// 	MeshSelector -= Time::GetDeltaTime() * 10;
-		// 	MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
-		// }
-		// if(MainWindow->GetKeyDown(GLFW_KEY_RIGHT)) {
-		// 	MultiuseValue += Time::GetDeltaTime() * MultiuseValue;
-		// }
-		// if (MainWindow->GetKeyDown(GLFW_KEY_LEFT)) {
-		// 	MultiuseValue -= Time::GetDeltaTime() * MultiuseValue;
-		// }
-		// 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_LEFT_SHIFT)) {
-		// 	if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
-		// 		FontSize += Time::GetDeltaTime() * FontSize;
-		// 	}
-		// 
-		// 	if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-		// 		FontSize -= Time::GetDeltaTime() * FontSize;
-		// 	}
-		// } else {
-		// 	if (MainWindow->GetKeyDown(GLFW_KEY_I)) {
-		// 		FontBoldness += Time::GetDeltaTime() / 10;
-		// 	}
-		// 
-		// 	if (MainWindow->GetKeyDown(GLFW_KEY_K)) {
-		// 		FontBoldness -= Time::GetDeltaTime() / 10;
-		// 	}
-		// }
-		// 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_V)) {
-		// 	for (int i = 0; i < 10; i++) {
-		// 		RenderingText[1] += (unsigned long)(rand() % 0x3ff);
-		// 	}
-		// }
-		// 
-		// if (MainWindow->GetKeyDown(GLFW_KEY_SPACE)) {
-		// 	TestArrowTransform.Position = EyePosition;
-		// 	TestArrowDirection = CameraRayDirection;
-		// 	TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
-		// }
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_N)) {
+			MaterialMetalness -= 1.F * Time::GetDeltaTime();
+			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_M)) {
+			MaterialMetalness += 1.F * Time::GetDeltaTime();
+			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_E)) {
+			MaterialRoughness -= 0.5F * Time::GetDeltaTime();
+			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_R)) {
+			MaterialRoughness += 0.5F * Time::GetDeltaTime();
+			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_L)) {
+			LightIntencity += LightIntencity * Time::GetDeltaTime();
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_K)) {
+			LightIntencity -= LightIntencity * Time::GetDeltaTime();
+		}
+		
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_LSHIFT)) {
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_W)) {
+				if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
+					BaseMaterial.RenderMode = Graphics::RM_Wire;
+				} else {
+					BaseMaterial.RenderMode = Graphics::RM_Fill;
+				}
+			}
+		}
+        
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_UP)) {
+            MeshSelector += Time::GetDeltaTime() * 10;
+			MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_DOWN)) {
+			MeshSelector -= Time::GetDeltaTime() * 10;
+			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
+		}
+		if(MainWindow->GetKeyDown(SDL_SCANCODE_RIGHT)) {
+			MultiuseValue += Time::GetDeltaTime() * MultiuseValue;
+		}
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_LEFT)) {
+			MultiuseValue -= Time::GetDeltaTime() * MultiuseValue;
+		}
+		
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_LSHIFT)) {
+			if (MainWindow->GetKeyDown(SDL_SCANCODE_I)) {
+				FontSize += Time::GetDeltaTime() * FontSize;
+			}
+		
+			if (MainWindow->GetKeyDown(SDL_SCANCODE_K)) {
+				FontSize -= Time::GetDeltaTime() * FontSize;
+			}
+		} else {
+			if (MainWindow->GetKeyDown(SDL_SCANCODE_I)) {
+				FontBoldness += Time::GetDeltaTime() / 10;
+			}
+		
+			if (MainWindow->GetKeyDown(SDL_SCANCODE_K)) {
+				FontBoldness -= Time::GetDeltaTime() / 10;
+			}
+		}
+		
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_V)) {
+			for (int i = 0; i < 10; i++) {
+				RenderingText[1] += (unsigned long)(rand() % 0x3ff);
+			}
+		}
+		
+		if (MainWindow->GetKeyDown(SDL_SCANCODE_SPACE)) {
+			TestArrowTransform.Position = EyePosition;
+			TestArrowDirection = CameraRayDirection;
+			TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
+		}
 
 		for (int i = 0; i < TextCount; i++) {
 			if (TextGenerator.FindCharacters(RenderingText[i]) > 0) {
@@ -938,7 +938,7 @@ void CoreApplication::MainLoop() {
 				Timer.Start();
 				Vector2 Pivot = TextPivot + Vector2(0.F, MainWindow->GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 				TextGenerator.GenerateMesh( 
-					Box2D(0, 0, MainWindow->GetWidth(), Pivot.y),
+					Box2D(0, 0, (float)MainWindow->GetWidth(), Pivot.y),
 					FontSize, RenderingText[i], &DynamicMesh.Data.Faces, &DynamicMesh.Data.Vertices
 				);
 				Timer.Stop();
@@ -960,7 +960,7 @@ void CoreApplication::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls), WindowSize(%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
@@ -970,8 +970,7 @@ void CoreApplication::MainLoop() {
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatUnit(TriangleCount, 2).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
-				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str(),
-				Text::FormatMath(Vector2(MainWindow->GetWidth(), MainWindow->GetHeight())).c_str()
+				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);
 
 			MainWindow->EndOfFrame();
@@ -982,7 +981,7 @@ void CoreApplication::MainLoop() {
 
 
 	} while (
-		MainWindow->ShouldClose() == false // && !MainWindow->GetKeyDown(GLFW_KEY_ESCAPE)
+		MainWindow->ShouldClose() == false && !MainWindow->GetKeyDown(SDL_SCANCODE_ESCAPE)
 	);
 
 	for (int i = 0; i < Threads.size(); i++) {
