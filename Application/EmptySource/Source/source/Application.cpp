@@ -365,7 +365,6 @@ void CoreApplication::MainLoop() {
 	HDRClampingMaterial.CullMode = Graphics::CM_None;
 	HDRClampingMaterial.SetShaderProgram(&HDRClampingShader);
 
-	// srand((unsigned int)glfwGetTime());
 	srand(SDL_GetTicks());
 	MeshLoader::FileData LightModelData;
 	MeshLoader::FileData SceneModelData0;

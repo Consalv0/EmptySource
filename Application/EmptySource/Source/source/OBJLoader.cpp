@@ -297,13 +297,13 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 	if (File == NULL || !File->IsValid()) return false;
 
 	FileData ModelData;
-	String* MemoryText = new String();
 
 	// --- Read File
 	{
 		Debug::Timer Timer;
 
 		Timer.Start();
+		String* MemoryText = new String();
 		File->ReadNarrowStream(MemoryText);
 
 		PrepareData(MemoryText->c_str(), ModelData);
@@ -328,7 +328,7 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 		);
 	}
 
-	int* Indices = new int[ModelData.VertexIndices.size()];
+	int * Indices = new int[ModelData.VertexIndices.size()];
 	int Count = 0;
 
 	size_t TotalAllocatedSize = 0;
