@@ -135,9 +135,10 @@ void CoreApplication::Close() {
 void CoreApplication::MainLoop() {
 	if (!bInitialized) return;
 
-	Space NewSpace; Space OtherNewSpace(NewSpace);
-	Object* GObject = Space::GetFirstSpace()->MakeObject();
-	GObject->Delete();
+	Space * OtherNewSpace = Space::CreateSpace(L"Other Space");
+	Space * NewSpace = Space::CreateSpace(L"Main Space 1"); 
+	Object * GObject = Space::GetFirstSpace()->MakeObject<Object>();
+	Space::Destroy(NewSpace);
 
 	SDL_GL_SetSwapInterval(0);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -823,8 +824,7 @@ void CoreApplication::MainLoop() {
 							Matrix4x4 HitMatrix =
 								Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
 								Matrix4x4::Rotation(Quaternion::LookRotation(ReflectedCameraDir, Vector3(0, 1, 0))) *
-								Matrix4x4::Scaling(0.05F)
-								;
+								Matrix4x4::Scaling(0.07F);
 							BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &HitMatrix, ModelMatrixBuffer);
 
 							LightModels[0].DrawInstanciated((GLsizei)1);

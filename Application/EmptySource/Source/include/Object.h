@@ -7,11 +7,12 @@ class Object : public IIdentifier {
 private:
 	friend class Space;
 
-	WString InternalName;
-
 	Space* SpaceIn;
 
 	Object();
+
+	// Space initializer
+	virtual void Initialize() {};
 
 public:
 

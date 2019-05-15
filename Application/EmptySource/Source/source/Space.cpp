@@ -6,26 +6,47 @@
 TDictionary<size_t, Space*> Space::AllSpaces = TDictionary<size_t, Space*>();
 
 Space::Space() : IIdentifier() {
-	AllSpaces.insert(std::pair<const size_t, Space*>(GetIdentifier(), this));
+	InternalName = L"Space_" + std::to_wstring(GetIdentifier());
+	Name = L"Space";
 }
 
-Space::Space(Space & space) : IIdentifier() {
-	AllSpaces.insert(std::pair<const size_t, Space*>(GetIdentifier(), this));
+Space::Space(const WString& InName) : IIdentifier() {
+	InternalName = InName;
+	if (!Text::ReplaceUntil(InternalName, L"_", L"_" + std::to_wstring(GetIdentifier()))) {
+		InternalName += L"_" + std::to_wstring(GetIdentifier());
+	}
+	Name = InName;
 	ObjectsIn = TDictionary<size_t, Object*>();
 }
 
-size_t Space::GetIdentifier() {
-	return IdentifierNum;
+Space::Space(Space & OtherSpace) : IIdentifier() {
+	InternalName = OtherSpace.InternalName;
+	if (!Text::ReplaceUntil(InternalName, L"_", L"_" + std::to_wstring(GetIdentifier()))) {
+		InternalName += L"_" + std::to_wstring(GetIdentifier());
+	}
+	WString Number, Residue;
+	if (Text::GetLastNotOf(OtherSpace.Name, Residue, Number, L"0123456789"))
+		Name = Residue + std::to_wstring(std::stoi(Number) + 1);
+	else 
+		Name = OtherSpace.Name + L"_1";
+	ObjectsIn = TDictionary<size_t, Object*>();
+}
+
+WString Space::GetName() {
+	return Name;
 }
 
 Space * Space::GetFirstSpace() {
+	if (AllSpaces.size() == 0)
+		return NULL;
+
 	return AllSpaces.begin()->second;
 }
 
-Object * Space::MakeObject() {
-	Object* NewObject = new Object();
-	Add(NewObject);
-	return NewObject;
+Space * Space::CreateSpace(const WString & Name) {
+	Space * NewSpace = new Space(Name);
+	AllSpaces.insert(std::pair<const size_t, Space*>(NewSpace->GetIdentifier(), NewSpace));
+	return NewSpace;
 }
 
 void Space::DestroyAllObjects() {
@@ -39,7 +60,14 @@ void Space::DestroyObject(Object * object) {
 	delete object;
 }
 
+void Space::Destroy(Space * OtherSpace) {
+	OtherSpace->DestroyAllObjects();
+	AllSpaces.erase(OtherSpace->GetIdentifier());
+	delete OtherSpace;
+}
+
 void Space::Add(Object * object) {
 	ObjectsIn.insert(std::pair<const size_t, Object*>(object->GetIdentifier(), object));
 	object->SpaceIn = this;
+	object->Initialize();
 }
