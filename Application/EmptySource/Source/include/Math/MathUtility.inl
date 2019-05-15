@@ -130,9 +130,7 @@ T Math::Clamp(const T & Value, const T & A, const T & B) {
 
 template <typename T>
 T Math::Clamp01(const T & Value) {
-	if (Value < T(0)) Value = T(0);
-	else if (Value > T(1)) Value = T(1);
-	return Value;
+	return Value >= T(0) && Value <= T(1) ? Value : Value < T(0) ? T(0) : T(1);
 }
 
 float Math::ClampAngle(float Degrees) {
