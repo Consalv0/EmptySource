@@ -12,8 +12,8 @@ namespace Text {
 	}
 
 	//* Replace part of string with another string
-    template<class T>
-    inline bool Replace(T& String, const T& From, const T& To) {
+    template<class T, class C, class S>
+    inline bool Replace(T& String, const C& From, const S& To) {
         size_t StartPos = String.find(From);
         
         if (StartPos == T::npos) {
@@ -23,7 +23,34 @@ namespace Text {
         String.replace(StartPos, From.length(), To);
         return true;
     }
-    
+
+	//* Replace part of string to the end of the string with another string
+	template<class T, class C, class S>
+	inline bool ReplaceUntil(T& String, const C& From, const S& To) {
+		size_t StartPos = String.rfind(From);
+
+		if (StartPos == T::npos) {
+			return false;
+		}
+
+		String.replace(StartPos, String.length() - StartPos, To);
+		return true;
+	}
+	
+	//* Get the last part not containing the elements in string
+	template<class T, class C>
+	inline bool GetLastNotOf(const T& String, T& Residue, T& Last, const C& Elements) {
+		size_t StartPos = String.find_last_not_of(Elements);
+
+		if (StartPos == T::npos) {
+			return false;
+		}
+
+		Last = String.substr(StartPos + 1);
+		Residue = String.substr(0, StartPos + 1);
+		return true;
+	}
+
     template<typename ... Arguments>
     WString Formatted(const WString& Format, Arguments ... Args) {
         const WChar* FormatBuffer = Format.c_str();
