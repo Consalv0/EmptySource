@@ -40,8 +40,11 @@ public:
 	HOST_DEVICE inline Quaternion Inversed() const;
 
 	HOST_DEVICE inline Matrix4x4 ToMatrix4x4() const;
+	//* Deconstruct quaternion to euler angles pitch (degrees)
 	HOST_DEVICE inline float GetPitch() const;
+	//* Deconstruct quaternion to euler angles yaw (degrees)
 	HOST_DEVICE inline float GetYaw() const;
+	//* Deconstruct quaternion to euler angles roll (degrees)
 	HOST_DEVICE inline float GetRoll() const;
 	HOST_DEVICE inline float GetScalar() const;
 	HOST_DEVICE inline Vector3 GetVector() const;

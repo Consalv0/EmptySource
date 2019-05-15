@@ -182,6 +182,52 @@ inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 	return Result;
 }
 
+inline float Quaternion::GetPitch() const {
+	float Pitch;
+	const float SingularityTest = x * y + z * w;
+	if (abs(SingularityTest) > 0.499F) {
+		return 0.F;
+	}
+	else {
+		const float sqx = x * x;
+		const float sqz = z * z;
+		Pitch = atan2((2 * x * w) - (2 * y * z), 1 - (2 * sqx) - (2 * sqz));
+	}
+	return Pitch * MathConstants::RadToDegree;
+}
+
+inline float Quaternion::GetYaw() const {
+	float Yaw;
+	const float SingularityTest = x * y + z * w;
+	if (SingularityTest > 0.499F) {
+		Yaw = 2 * atan2(x, w);
+	}
+	else if (SingularityTest < -0.499F) {
+		Yaw = -2 * atan2(x, w);
+	}
+	else {
+		const float sqy = y * y;
+		const float sqz = z * z;
+		Yaw = atan2((2 * y * w) - (2 * x * z), 1 - (2 * sqy) - (2 * sqz));
+	}
+	return Yaw * MathConstants::RadToDegree;
+}
+
+inline float Quaternion::GetRoll() const {
+	float Roll;
+	const float SingularityTest = x * y + z * w;
+	if (SingularityTest > 0.499F) {
+		Roll = MathConstants::HalfPi;
+	}
+	else if (SingularityTest < -0.499F) {
+		Roll = -MathConstants::HalfPi;
+	}
+	else {
+		Roll = asin(2 * SingularityTest);
+	}
+	return Roll * MathConstants::RadToDegree;
+}
+
 inline float Quaternion::GetScalar() const {
 	return w;
 }
