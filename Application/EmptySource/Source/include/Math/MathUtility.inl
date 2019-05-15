@@ -99,37 +99,37 @@ T Math::Max(const T & A, const T & B) {
 }
 
 template <typename T, typename S>
-T Math::Median(T A, T B, S Alpha) {
+T Math::Median(const T& A, const T& B, const S& Alpha) {
 	return Max(Min(A, B), Min(Max(A, B), Alpha));
 }
 
 template <typename T, typename S>
-T Math::Mix(T A, T B, S Weight) {
+T Math::Mix(const T& A, const T& B, const S& Weight) {
 	return T((S(1) - Weight) * A + Weight * B);
 }
 
 template<typename T>
-int Math::Sign(T Value) {
+int Math::Sign(const T& Value) {
 	return (0.F < Value) - (Value < 0.F);
 }
 
 template<typename T>
-int Math::NonZeroSign(T Value) {
+int Math::NonZeroSign(const T & Value) {
 	return 2 * (Value > T(0)) - 1;
 }
 
 template <typename T>
-T Math::Clamp(T Value, const T & A) {
+T Math::Clamp(const T& Value, const T & A) {
 	return Value >= T(0) && Value <= A ? Value : T(Value > T(0)) * A;
 }
 
 template <typename T>
-T Math::Clamp(T Value, const T & A, const T & B) {
+T Math::Clamp(const T & Value, const T & A, const T & B) {
 	return Value >= A && Value <= B ? Value : Value < A ? A : B;
 }
 
 template <typename T>
-T Math::Clamp01(T Value) {
+T Math::Clamp01(const T & Value) {
 	if (Value < T(0)) Value = T(0);
 	else if (Value > T(1)) Value = T(1);
 	return Value;
