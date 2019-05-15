@@ -56,6 +56,7 @@ struct MeshData {
 	void Swap(MeshData & Other);
 	void ComputeBounding();
 	void ComputeTangents();
+	void ComputeNormals();
 	void Clear();
 };
 

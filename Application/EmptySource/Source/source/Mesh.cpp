@@ -199,6 +199,28 @@ void MeshData::ComputeTangents() {
 	hasTangents = true;
 }
 
+void MeshData::ComputeNormals() {
+	if (Vertices.size() <= 0 || hasNormals)
+		return;
+
+	for (MeshFaces::const_iterator Triangle = Faces.begin(); Triangle != Faces.end(); ++Triangle) {
+		const Vector3 & VertexA = Vertices[(*Triangle)[0]].Position;
+		const Vector3 & VertexB = Vertices[(*Triangle)[1]].Position;
+		const Vector3 & VertexC = Vertices[(*Triangle)[2]].Position;
+
+		const Vector3 Edge1 = VertexB - VertexA;
+		const Vector3 Edge2 = VertexC - VertexA;
+
+		const Vector3 Normal = Vector3::Cross(Edge1, Edge2).Normalized();
+
+		Vertices[(*Triangle)[0]].Normal = Normal;
+		Vertices[(*Triangle)[1]].Normal = Normal;
+		Vertices[(*Triangle)[2]].Normal = Normal;
+	}
+
+	hasNormals = true;
+}
+
 void MeshData::Clear() {
 	Name.clear();
 	Faces.clear();
