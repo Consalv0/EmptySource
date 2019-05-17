@@ -2,17 +2,17 @@
 #include "../include/GameObject.h"
 
 GameObject::GameObject() : Object(L"GameObject") {
-	SpaceMatrix = Transform();
+	Transformation = Transform();
 }
 
 GameObject::GameObject(const WString & Name) : Object(Name) {
-	SpaceMatrix = Transform();
+	Transformation = Transform();
 }
 
 GameObject::GameObject(const Transform & LocalTransform) : Object(L"GameObject") {
-	SpaceMatrix = LocalTransform;
+	Transformation = LocalTransform;
 }
 
 GameObject::GameObject(const WString & Name, const Transform & LocalTransform) : Object(Name) {
-	SpaceMatrix = LocalTransform;
+	Transformation = LocalTransform;
 }

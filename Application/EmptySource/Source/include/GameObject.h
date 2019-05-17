@@ -14,5 +14,5 @@ private:
 	GameObject(const WString & Name, const Transform & LocalTransform);
 
 public:
-	Transform SpaceMatrix;
+	Transform Transformation;
 };
