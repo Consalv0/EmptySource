@@ -42,7 +42,7 @@ WString FileStream::GetPath() const {
 WString FileStream::GetShortPath() const {
     WString CurrentDirectory = FileManager::GetAppDirectory();
 	WString ReturnValue = Path;
-	Text::Replace(ReturnValue, CurrentDirectory, WString(L".."));
+	Text::Replace(ReturnValue, CurrentDirectory, L"..");
 
 	return ReturnValue;
 }

@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include "IIdentifier.h"
 
-class EmptyObject;
+class Object;
 
 class Space : public IIdentifier {
 public:
@@ -21,7 +21,7 @@ public:
 	void DestroyAllObjects();
 
 	// Destroy specific object in this Space
-	void DestroyObject(EmptyObject* object);
+	void DestroyObject(Object* object);
 
 	WString GetName();
 
@@ -29,6 +29,14 @@ public:
 	template<typename T>
 	T * CreateObject() {
 		T* NewObject = new T();
+		Add(NewObject);
+		return NewObject;
+	}
+
+	// Creates an object with name in this space
+	template<typename T, typename... Rest>
+	T * CreateObject(Rest... Args) {
+		T* NewObject = new T(Args...);
 		Add(NewObject);
 		return NewObject;
 	}
@@ -43,10 +51,10 @@ private:
 	WString Name;
 
 	// Dictionary that contains all the Objects in this Space
-	TDictionary<size_t, EmptyObject*> ObjectsIn;
+	TDictionary<size_t, Object*> ObjectsIn;
 
 	// Add object in this space
-	void Add(EmptyObject* Object);
+	void Add(Object* Object);
 
 protected:
 

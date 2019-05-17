@@ -14,7 +14,7 @@ class Bitmap;
 	/*
  ** Cointaina the properties and functions of a GLFW window
  */
-struct ApplicationWindow {
+struct ContextWindow {
 private:
     //* Window Handle
     struct SDL_Window * Window;
@@ -51,7 +51,7 @@ private:
     
 public:
     
-    ApplicationWindow();
+    ContextWindow();
     
     //* Get the width in pixels of the window
     int GetWidth();
@@ -66,7 +66,7 @@ public:
     void SetWindowName(const WString & NewName);
     
     //* Get the window title name
-    WString GetWindowName();
+    WString GetName();
     
     //* Get the aspect of width divided by height in pixels of the window
     float AspectRatio();

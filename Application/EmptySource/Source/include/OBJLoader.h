@@ -3,6 +3,7 @@
 #include "../include/FileManager.h"
 #include "../include/MeshLoader.h"
 #include "../include/Core.h"
+#include "../include/Utility/Hasher.h"
 
 class OBJLoader {
 private:
@@ -57,26 +58,6 @@ public:
 	static bool Load(FileStream* File, MeshLoader::FileData & OutData, bool Optimize = true);
 
 };
-
-inline void HashCombine(std::size_t& seed) { }
-
-template <typename T, typename... Rest>
-inline void HashCombine(std::size_t& seed, const T& v, Rest... rest) {
-	std::hash<T> Hasher;
-	seed ^= Hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	HashCombine(seed, rest...);
-}
-
-#define MAKE_HASHABLE(type, ...) \
-    namespace std {\
-        template<> struct hash<type> {\
-            std::size_t operator()(const type &t) const {\
-                std::size_t ret = 0;\
-                HashCombine(ret, __VA_ARGS__);\
-                return ret;\
-            }\
-        };\
-    }
 
 MAKE_HASHABLE(Vector2, t.x, t.y)
 MAKE_HASHABLE(Vector3, t.x, t.y, t.z)

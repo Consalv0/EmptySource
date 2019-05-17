@@ -1,9 +1,6 @@
 #pragma once
 
 class CoreApplication {
-public:
-	static struct ApplicationWindow* MainWindow;
-
 private:
 	static bool bInitialized;
 	static double RenderTimeSum;
@@ -18,6 +15,7 @@ private:
 	static bool InitializeWindow();
     
 public:
+	static struct ContextWindow & GetMainWindow();
 
 	//* Initialize the application, it creates a window, a context and loads the OpenGL functions. Returns the error
 	static void Initalize();
@@ -25,6 +23,6 @@ public:
 	//* Application Loop, draw is done here
 	static void MainLoop();
 
-	//* Terminates window, 
-	static void Close();
+	//* Terminates Application
+	static void Terminate();
 };

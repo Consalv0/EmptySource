@@ -3,13 +3,16 @@
 #include "../include/Space.h"
 #include "../include/IIdentifier.h"
 
-class EmptyObject : public IIdentifier {
-private:
+class Object : public IIdentifier {
+protected:
 	friend class Space;
 
 	Space* SpaceIn;
 
-	EmptyObject();
+	WString Name;
+
+	Object();
+	Object(const WString& Name);
 
 	// Space initializer
 	virtual void Initialize() {};
@@ -19,6 +22,6 @@ public:
 	// Safe methos to delete this object removing it from the Space
 	virtual void Delete();
 
-	// Internal name of this object
+	// Name of this object
 	WString GetName();
 };

@@ -26,7 +26,7 @@ namespace Text {
 
 	//* Replace part of string to the end of the string with another string
 	template<class T, class C, class S>
-	inline bool ReplaceUntil(T& String, const C& From, const S& To) {
+	inline bool ReplaceFromLast(T& String, const C& From, const S& To) {
 		size_t StartPos = String.rfind(From);
 
 		if (StartPos == T::npos) {

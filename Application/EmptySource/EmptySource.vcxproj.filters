@@ -663,8 +663,14 @@
     <ClInclude Include="Source\include\GLFunctions.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\EmptyObject.h">
+    <ClInclude Include="Source\include\Object.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GameObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\Hasher.h">
+      <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -779,7 +785,10 @@
     <ClCompile Include="External\GLAD\glad.c">
       <Filter>External\GLAD</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\EmptyObject.cpp">
+    <ClCompile Include="Source\source\Object.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\GameObject.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     Debug::Log(Debug::LogInfo, L"Initalizing Application:\n");
     CoreApplication::Initalize();
     CoreApplication::MainLoop();
-	CoreApplication::Close();
+	CoreApplication::Terminate();
     
 #ifdef _DEBUG
     Debug::Log(Debug::LogInfo, L"Press any key to close...");

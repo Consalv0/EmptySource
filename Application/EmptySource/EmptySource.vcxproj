@@ -310,6 +310,7 @@
     <ClInclude Include="Source\include\Bitmap.h" />
     <ClInclude Include="Source\include\Core.h" />
     <ClInclude Include="Source\include\CoreCUDA.h" />
+    <ClInclude Include="Source\include\GameObject.h" />
     <ClInclude Include="Source\include\GLFunctions.h" />
     <ClInclude Include="Source\include\CoreTime.h" />
     <ClInclude Include="Source\include\CoreTypes.h" />
@@ -341,7 +342,7 @@
     <ClInclude Include="Source\include\Math\Vector4.h" />
     <ClInclude Include="Source\include\Mesh.h" />
     <ClInclude Include="Source\include\MeshLoader.h" />
-    <ClInclude Include="Source\include\EmptyObject.h" />
+    <ClInclude Include="Source\include\Object.h" />
     <ClInclude Include="Source\include\OBJLoader.h" />
     <ClInclude Include="Source\include\RenderTarget.h" />
     <ClInclude Include="Source\include\SDFGenerator.h" />
@@ -357,6 +358,7 @@
     <ClInclude Include="Source\include\Texture3D.h" />
     <ClInclude Include="Source\include\Transform.h" />
     <ClInclude Include="Source\include\Utility\DeviceFunctions.h" />
+    <ClInclude Include="Source\include\Utility\Hasher.h" />
     <ClInclude Include="Source\include\Utility\LogCore.h" />
     <ClInclude Include="Source\include\Utility\LogFreeType.h" />
     <ClInclude Include="Source\include\Utility\LogGraphics.h" />
@@ -379,6 +381,7 @@
     <ClCompile Include="Source\source\FileManager.cpp" />
     <ClCompile Include="Source\source\FileStream.cpp" />
     <ClCompile Include="Source\source\Font.cpp" />
+    <ClCompile Include="Source\source\GameObject.cpp" />
     <ClCompile Include="Source\source\Glyph.cpp" />
     <ClCompile Include="Source\source\IIdentifier.cpp" />
     <ClCompile Include="Source\source\ImageLoader.cpp" />
@@ -386,7 +389,7 @@
     <ClCompile Include="Source\source\Material.cpp" />
     <ClCompile Include="Source\source\Mesh.cpp" />
     <ClCompile Include="Source\source\MeshLoader.cpp" />
-    <ClCompile Include="Source\source\EmptyObject.cpp" />
+    <ClCompile Include="Source\source\Object.cpp" />
     <ClCompile Include="Source\source\OBJLoader.cpp" />
     <ClCompile Include="Source\source\RenderTarget.cpp" />
     <ClCompile Include="Source\source\ShaderProgram.cpp" />
