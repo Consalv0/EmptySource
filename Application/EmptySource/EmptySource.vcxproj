@@ -341,7 +341,7 @@
     <ClInclude Include="Source\include\Math\Vector4.h" />
     <ClInclude Include="Source\include\Mesh.h" />
     <ClInclude Include="Source\include\MeshLoader.h" />
-    <ClInclude Include="Source\include\Object.h" />
+    <ClInclude Include="Source\include\EmptyObject.h" />
     <ClInclude Include="Source\include\OBJLoader.h" />
     <ClInclude Include="Source\include\RenderTarget.h" />
     <ClInclude Include="Source\include\SDFGenerator.h" />
@@ -386,7 +386,7 @@
     <ClCompile Include="Source\source\Material.cpp" />
     <ClCompile Include="Source\source\Mesh.cpp" />
     <ClCompile Include="Source\source\MeshLoader.cpp" />
-    <ClCompile Include="Source\source\Object.cpp" />
+    <ClCompile Include="Source\source\EmptyObject.cpp" />
     <ClCompile Include="Source\source\OBJLoader.cpp" />
     <ClCompile Include="Source\source\RenderTarget.cpp" />
     <ClCompile Include="Source\source\ShaderProgram.cpp" />

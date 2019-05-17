@@ -19,7 +19,7 @@
 #include "../include/Material.h"
 #include "../include/ShaderProgram.h"
 #include "../include/Space.h"
-#include "../include/Object.h"
+#include "../include/EmptyObject.h"
 #include "../include/Transform.h"
 
 #include "../include/Font.h"
@@ -135,10 +135,9 @@ void CoreApplication::Close() {
 void CoreApplication::MainLoop() {
 	if (!bInitialized) return;
 
-	Space * OtherNewSpace = Space::CreateSpace(L"Other Space");
-	Space * NewSpace = Space::CreateSpace(L"Main Space 1"); 
-	Object * GObject = Space::GetFirstSpace()->MakeObject<Object>();
-	Space::Destroy(NewSpace);
+	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
+	EmptyObject * GObject = Space::GetSpace(0)->CreateObject<EmptyObject>();
+	Space::Destroy(OtherNewSpace);
 
 	SDL_GL_SetSwapInterval(0);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

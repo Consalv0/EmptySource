@@ -3,12 +3,15 @@
 #include "CoreTypes.h"
 #include "IIdentifier.h"
 
-class Object;
+class EmptyObject;
 
 class Space : public IIdentifier {
 public:
-	// Get first Space created
-	static Space* GetFirstSpace();
+	// Get active main Space
+	static Space* GetMainSpace();
+
+	// Get Space by IIdentifier
+	static Space* GetSpace(const size_t& Identifier);
 
 	static Space* CreateSpace(const WString& Name);
 
@@ -18,13 +21,13 @@ public:
 	void DestroyAllObjects();
 
 	// Destroy specific object in this Space
-	void DestroyObject(Object* object);
+	void DestroyObject(EmptyObject* object);
 
 	WString GetName();
 
 	// Creates an object in this space
 	template<typename T>
-	T * MakeObject() {
+	T * CreateObject() {
 		T* NewObject = new T();
 		Add(NewObject);
 		return NewObject;
@@ -39,12 +42,14 @@ private:
 	
 	WString Name;
 
-	// Dictionary of all Spaces created
-	static TDictionary<size_t, Space*> AllSpaces;
-
 	// Dictionary that contains all the Objects in this Space
-	TDictionary<size_t, Object*> ObjectsIn;
+	TDictionary<size_t, EmptyObject*> ObjectsIn;
 
 	// Add object in this space
-	void Add(Object* object);
+	void Add(EmptyObject* Object);
+
+protected:
+
+	// Dictionary of all Spaces created
+	static TDictionary<size_t, Space*> AllSpaces;
 };

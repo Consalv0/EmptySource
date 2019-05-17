@@ -3,13 +3,13 @@
 #include "../include/Space.h"
 #include "../include/IIdentifier.h"
 
-class Object : public IIdentifier {
+class EmptyObject : public IIdentifier {
 private:
 	friend class Space;
 
 	Space* SpaceIn;
 
-	Object();
+	EmptyObject();
 
 	// Space initializer
 	virtual void Initialize() {};

@@ -162,9 +162,6 @@
     <ClInclude Include="Source\include\MeshLoader.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Object.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\RenderTarget.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -666,6 +663,9 @@
     <ClInclude Include="Source\include\GLFunctions.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\EmptyObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\source\Application.cpp">
@@ -705,9 +705,6 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\MeshLoader.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\source\Object.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\RenderTarget.cpp">
@@ -781,6 +778,9 @@
     </ClCompile>
     <ClCompile Include="External\GLAD\glad.c">
       <Filter>External\GLAD</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\EmptyObject.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
