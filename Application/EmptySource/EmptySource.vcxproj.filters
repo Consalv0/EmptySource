@@ -672,6 +672,9 @@
     <ClInclude Include="Source\include\Utility\Hasher.h">
       <Filter>Header Files\Core\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Component.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\source\Application.cpp">
@@ -789,6 +792,9 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\GameObject.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Component.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

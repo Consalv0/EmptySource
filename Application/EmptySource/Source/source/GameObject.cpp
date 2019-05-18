@@ -1,18 +1,37 @@
 
 #include "../include/GameObject.h"
 
-GameObject::GameObject() : Object(L"GameObject") {
+GGameObject::GGameObject() : OObject(L"GameObject") {
 	Transformation = Transform();
 }
 
-GameObject::GameObject(const WString & Name) : Object(Name) {
+GGameObject::GGameObject(const WString & Name) : OObject(Name) {
 	Transformation = Transform();
 }
 
-GameObject::GameObject(const Transform & LocalTransform) : Object(L"GameObject") {
+GGameObject::GGameObject(const Transform & LocalTransform) : OObject(L"GameObject") {
 	Transformation = LocalTransform;
 }
 
-GameObject::GameObject(const WString & Name, const Transform & LocalTransform) : Object(Name) {
+GGameObject::GGameObject(const WString & Name, const Transform & LocalTransform) : OObject(Name) {
 	Transformation = LocalTransform;
+}
+
+void GGameObject::AddComponent(CComponent * Component) {
+	ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->GetIdentifierHash(), Component));
+}
+
+void GGameObject::DeleteComponent(CComponent * Component) {
+	Component->OnDelete();
+	ComponentsIn.erase(Component->GetIdentifierHash());
+	delete Component;
+}
+
+void GGameObject::DeleteAllComponents() {
+	for (TDictionary<size_t, CComponent*>::iterator Iterator = ComponentsIn.begin(); Iterator != ComponentsIn.end(); Iterator++)
+		DeleteComponent(Iterator->second);
+}
+
+void GGameObject::OnDelete() {
+	DeleteAllComponents();
 }

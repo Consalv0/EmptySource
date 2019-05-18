@@ -8,11 +8,14 @@
 
 class Transform {
 public:
-	Vector3 Position;
+	Point3 Position;
 	Quaternion Rotation;
 	Vector3 Scale;
 
 	Transform();
+	Transform(const Point3 & Position, const Quaternion & Rotation, const Vector3 & Scale);
+	Transform(const Point3 & Position, const Quaternion & Rotation);
+	Transform(const Point3 & Position);
 
 	Vector3 Forward() const;
 	Vector3 Up() const;

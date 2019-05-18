@@ -3,7 +3,7 @@
 #include "../include/Space.h"
 #include "../include/IIdentifier.h"
 
-class Object : public IIdentifier {
+class OObject : public IIdentifier {
 protected:
 	friend class Space;
 
@@ -11,8 +11,8 @@ protected:
 
 	WString Name;
 
-	Object();
-	Object(const WString& Name);
+	OObject();
+	OObject(const WString& Name);
 
 	// Space initializer
 	virtual void Initialize() {};
@@ -20,7 +20,7 @@ protected:
 public:
 
 	// Safe methos to delete this object removing it from the Space
-	virtual void Delete();
+	virtual void OnDelete() {};
 
 	// Name of this object
 	WString GetName();

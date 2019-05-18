@@ -3,43 +3,35 @@
 #include "CoreTypes.h"
 #include "IIdentifier.h"
 
-class Object;
+class OObject;
 
 class Space : public IIdentifier {
 public:
-	// Get active main Space
+	//* Get active main Space
 	static Space* GetMainSpace();
 
-	// Get Space by IIdentifier
+	//* Get Space by IIdentifier
 	static Space* GetSpace(const size_t& Identifier);
 
 	static Space* CreateSpace(const WString& Name);
 
 	static void Destroy(Space * OtherSpace);
 
-	// Destroys all objects in this Space
-	void DestroyAllObjects();
+	//* Destroys all objects in this Space
+	void DeleteAllObjects();
 
-	// Destroy specific object in this Space
-	void DestroyObject(Object* object);
+	//* Destroy specific object in this Space
+	void DeleteObject(OObject* object);
 
 	WString GetName();
 
-	// Creates an object in this space
+	//* Creates an object in this space
 	template<typename T>
-	T * CreateObject() {
-		T* NewObject = new T();
-		Add(NewObject);
-		return NewObject;
-	}
+	T * CreateObject();
 
-	// Creates an object with name in this space
+	//* Creates an object with name in this space
 	template<typename T, typename... Rest>
-	T * CreateObject(Rest... Args) {
-		T* NewObject = new T(Args...);
-		Add(NewObject);
-		return NewObject;
-	}
+	T * CreateObject(Rest... Args);
 
 private:
 	Space();
@@ -50,14 +42,28 @@ private:
 	
 	WString Name;
 
-	// Dictionary that contains all the Objects in this Space
-	TDictionary<size_t, Object*> ObjectsIn;
+	//* Dictionary that contains all the Objects in this Space
+	TDictionary<size_t, OObject*> ObjectsIn;
 
-	// Add object in this space
-	void Add(Object* Object);
+	//* Add object in this space
+	void AddObject(OObject* Object);
 
 protected:
 
 	// Dictionary of all Spaces created
 	static TDictionary<size_t, Space*> AllSpaces;
 };
+
+template<typename T>
+T * Space::CreateObject() {
+	T* NewObject = new T();
+	AddObject(NewObject);
+	return NewObject;
+}
+
+template<typename T, typename ...Rest>
+T * Space::CreateObject(Rest ...Args) {
+	T* NewObject = new T(Args...);
+	AddObject(NewObject);
+	return NewObject;
+}

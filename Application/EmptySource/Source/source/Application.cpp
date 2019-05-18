@@ -136,9 +136,8 @@ void CoreApplication::MainLoop() {
 	if (!bInitialized) return;
 
 	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
-	GameObject * GObject = Space::GetSpace(GetHashName(L"MainSpace"))->CreateObject<GameObject>(L"Hola");
-	GameObject * GObject1 = Space::GetSpace(GetHashName(L"MainSpace"))->CreateObject<GameObject>(L"Adios");
-	GameObject * GObject2 = Space::GetSpace(GetHashName(L"MainSpace"))->CreateObject<GameObject>(L"MásTarde");
+	GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"Hola", Transform());
+	CComponent * Component = GameObject->CreateComponent<CComponent>();
 	Space::Destroy(OtherNewSpace);
 
 	SDL_GL_SetSwapInterval(0);

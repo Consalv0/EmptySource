@@ -2,18 +2,14 @@
 #include "../include/Core.h"
 #include "../include/Object.h"
 
-Object::Object() : IIdentifier(L"Object") { 
+OObject::OObject() : IIdentifier(L"Object") { 
 	Name = GetIdentifierName();
 }
 
-Object::Object(const WString & InName) : IIdentifier(InName) {
+OObject::OObject(const WString & InName) : IIdentifier(InName) {
 	Name = InName;
 }
 
-void Object::Delete() {
-	SpaceIn->DestroyObject(this);
-}
-
-WString Object::GetName() {
+WString OObject::GetName() {
 	return Name;
 }

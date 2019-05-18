@@ -8,14 +8,12 @@ public:
 	IIdentifier();
 	IIdentifier(const WString & Name);
 
+	WString GetIdentifierName() const;
+	size_t GetIdentifierHash() const;
+
 private:
 	// Identifier Generator
 	static size_t CurrentIdentifier;
 	WString InternalName;
 	size_t NameHash;
-
-protected:
-	virtual WString GetIdentifierName() const;
-	size_t GetIdentifierHash() const;
-
 };

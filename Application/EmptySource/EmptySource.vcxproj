@@ -308,6 +308,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\include\Application.h" />
     <ClInclude Include="Source\include\Bitmap.h" />
+    <ClInclude Include="Source\include\Component.h" />
     <ClInclude Include="Source\include\Core.h" />
     <ClInclude Include="Source\include\CoreCUDA.h" />
     <ClInclude Include="Source\include\GameObject.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="External\GLAD\glad.c" />
     <ClCompile Include="Source\source\Application.cpp" />
     <ClCompile Include="Source\source\Bitmap.cpp" />
+    <ClCompile Include="Source\source\Component.cpp" />
     <ClCompile Include="Source\source\CoreTime.cpp" />
     <ClCompile Include="Source\source\Cubemap.cpp" />
     <ClCompile Include="Source\source\EdgeHolder.cpp" />

@@ -1,6 +1,18 @@
 #include "../include/Transform.h"
 
-Transform::Transform() : Position(), Rotation(), Scale(1) {
+Transform::Transform() : Position(), Rotation(), Scale(1.F) {
+}
+
+Transform::Transform(const Point3 & Position, const Quaternion & Rotation, const Vector3 & Scale) :
+	Position(Position), Rotation(Rotation), Scale(Scale) {
+}
+
+Transform::Transform(const Point3 & Position, const Quaternion & Rotation) :
+	Position(Position), Rotation(Rotation), Scale(1.F) {
+}
+
+Transform::Transform(const Point3 & Position) :
+	Position(Position), Rotation(), Scale(1.F) {
 }
 
 Matrix4x4 Transform::GetWorldToLocalMatrix() const {

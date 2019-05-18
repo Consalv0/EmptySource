@@ -11,7 +11,7 @@ Space::Space() : IIdentifier(L"Space") {
 
 Space::Space(const WString& InName) : IIdentifier(InName) {
 	Name = InName;
-	ObjectsIn = TDictionary<size_t, Object*>();
+	ObjectsIn = TDictionary<size_t, OObject*>();
 }
 
 Space::Space(Space & OtherSpace) : IIdentifier(OtherSpace.GetIdentifierName()) {
@@ -20,7 +20,7 @@ Space::Space(Space & OtherSpace) : IIdentifier(OtherSpace.GetIdentifierName()) {
 		Name = Residue + std::to_wstring(std::stoi(Number) + 1);
 	else 
 		Name = OtherSpace.Name + L"_1";
-	ObjectsIn = TDictionary<size_t, Object*>();
+	ObjectsIn = TDictionary<size_t, OObject*>();
 }
 
 WString Space::GetName() {
@@ -48,25 +48,26 @@ Space * Space::CreateSpace(const WString & Name) {
 	return NewSpace;
 }
 
-void Space::DestroyAllObjects() {
-	for (TDictionary<size_t, Object*>::iterator Iterator = ObjectsIn.begin(); Iterator != ObjectsIn.end(); Iterator++) {
-		Iterator->second->Delete();
+void Space::DeleteAllObjects() {
+	for (TDictionary<size_t, OObject*>::iterator Iterator = ObjectsIn.begin(); Iterator != ObjectsIn.end(); Iterator++) {
+		DeleteObject(Iterator->second);
 	}
 }
 
-void Space::DestroyObject(Object * object) {
-	ObjectsIn.erase(object->GetIdentifierHash());
-	delete object;
+void Space::DeleteObject(OObject * Object) {
+	Object->OnDelete();
+	ObjectsIn.erase(Object->GetIdentifierHash());
+	delete Object;
 }
 
 void Space::Destroy(Space * OtherSpace) {
-	OtherSpace->DestroyAllObjects();
+	OtherSpace->DeleteAllObjects();
 	AllSpaces.erase(OtherSpace->GetIdentifierHash());
 	delete OtherSpace;
 }
 
-void Space::Add(Object * object) {
-	ObjectsIn.insert(std::pair<const size_t, Object*>(object->GetIdentifierHash(), object));
-	object->SpaceIn = this;
-	object->Initialize();
+void Space::AddObject(OObject * Object) {
+	ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetIdentifierHash(), Object));
+	Object->SpaceIn = this;
+	Object->Initialize();
 }
