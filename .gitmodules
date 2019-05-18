@@ -10,3 +10,6 @@
 [submodule "Application/EmptySource/External/RobinMap"]
 	path = Application/EmptySource/External/RobinMap
 	url = https://github.com/Tessil/robin-map.git
+[submodule "Application/EmptySource/External/YAML"]
+	path = Application/EmptySource/External/YAML
+	url = https://github.com/jbeder/yaml-cpp.git
