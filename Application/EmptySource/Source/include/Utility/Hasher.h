@@ -22,7 +22,7 @@ namespace std {\
     };\
 }
 
-inline size_t GetHashName(const WString & Name) {
+inline size_t WStringToHash(const WString & Name) {
 	static const std::hash<WString> Hasher;
 	return Hasher(Name);
 }

@@ -14,7 +14,7 @@ WString IIdentifier::GetIdentifierName() const {
 
 IIdentifier::IIdentifier() {
 	InternalName = L"Identifier_" + std::to_wstring(++CurrentIdentifier);
-	NameHash = GetHashName(InternalName);
+	NameHash = WStringToHash(InternalName);
 }
 
 IIdentifier::IIdentifier(const WString & Name) {
@@ -22,5 +22,5 @@ IIdentifier::IIdentifier(const WString & Name) {
 	if (!Text::ReplaceFromLast(InternalName, L"_", L"_" + std::to_wstring(++CurrentIdentifier))) {
 		InternalName += L"_" + std::to_wstring(CurrentIdentifier);
 	}
-	NameHash = GetHashName(Name);
+	NameHash = WStringToHash(Name);
 }

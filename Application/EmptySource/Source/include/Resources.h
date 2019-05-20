@@ -11,26 +11,28 @@ enum ResourceType {
 	RT_Texture, RT_ShaderPass, RT_ShaderProgram, RT_Material, RT_Mesh
 };
 
-struct BaseResource : public IIdentifier {
+struct BaseResource {
 protected:
 	friend class ResourceManager;
 	
-	BaseResource(const WString & FilePath);
+	BaseResource(const WString & FilePath, const size_t & GUID);
 	virtual ~BaseResource() { }
-	const WString FilePath;
+	const WString Name;
+	const size_t GUID;
 	bool isDone;
 
 public:
-	bool IsDone();
-	const FileStream * GetFile();
+	bool IsDone() const;
+	size_t GetIdentifier() const;
+	const FileStream * GetFile() const;
 };
 
 template <typename T>
 struct Resource : public BaseResource {
 protected:
 	friend class ResourceManager;
-	Resource(const WString & FilePath) : BaseResource(FilePath), Data(NULL) {}
-	Resource(const WString & FilePath, T * Data) : BaseResource(FilePath), Data(Data) { isDone = true; }
+	Resource(const WString & FilePath, const size_t & GUID) : BaseResource(FilePath, GUID), Data(NULL) {}
+	Resource(const WString & FilePath, const size_t & GUID, T * Data) : BaseResource(FilePath, GUID), Data(Data) { isDone = true; }
 
 	T * Data;
 public:
@@ -45,10 +47,16 @@ class ResourceManager {
 public:
 	template<typename T>
 	static inline Resource<T> * Load(const WString & File);
+	template<typename T>
+	static inline Resource<T> * Load(const size_t & GUID);
 
 private:
 	template<typename T>
-	static bool ResourceToList(const WString & File, T & Data);
+	static bool ResourceToList(const WString & File, T & OutData);
+	template<typename T>
+	static bool ResourceToList(const size_t & GUID, T & OutData);
+
+	static FileStream * GetResourcesFile();
 
 	static TDictionary<size_t, BaseResource*> Resources;
 };

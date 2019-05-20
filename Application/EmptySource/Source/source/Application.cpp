@@ -269,27 +269,8 @@ void CoreApplication::MainLoop() {
 	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix;
 
-	// ResourceManager::AddResource(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl");
-	// FileStream * File = FileManager::GetFile(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl");
-	// ResourceManager::AddResource<ShaderStage>(*File, new ShaderStage(ShaderType::Vertex, File));
-	// ShaderStage * EquirectangularToCubemapVertPtr = ResourceManager::GetResource<ShaderStage>(*File);
-
 	// --- Create and compile our GLSL shader programs from text files
-	Resource<ShaderStage> * EquiToCubemapVert = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl");
-	Resource<ShaderStage> * EquiToCubemapFrag = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl");
-	Resource<ShaderStage> * HDRClamping       = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/HDRClamping.fragment.glsl");
-	Resource<ShaderStage> * VertexBase        = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Base.vertex.glsl");
-	Resource<ShaderStage> * VoxelizerVertex   = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Voxelizer.vertex.glsl");
-	Resource<ShaderStage> * PassthroughVertex = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Passthrough.vertex.glsl");
-	Resource<ShaderStage> * FragmentBRDF      = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/BRDF.fragment.glsl");
-	Resource<ShaderStage> * IntegrateBRDF     = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/IntegrateBRDF.fragment.glsl");
-	Resource<ShaderStage> * FragRenderTexture = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/RenderTexture.fragment.glsl");
-	Resource<ShaderStage> * FragRenderText    = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/RenderText.fragment.glsl");
-	Resource<ShaderStage> * FragRenderCubemap = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/RenderCubemap.fragment.glsl");
-	Resource<ShaderStage> * FragmentUnlit     = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Unlit.fragment.glsl");
-	Resource<ShaderStage> * Voxelizer         = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Voxelizer.geometry.glsl");
-
-	Resource<ShaderProgram> * EquiToCubemapShader = ResourceManager::Load<ShaderProgram>(L"EquirectangularToCubemap");
+	Resource<ShaderProgram> * EquiToCubemapShader = ResourceManager::Load<ShaderProgram>(WStringToHash(L"EquirectangularToCubemap"));
 	Resource<ShaderProgram> * HDRClampingShader   = ResourceManager::Load<ShaderProgram>(L"HDRClampingShader");
 	Resource<ShaderProgram> * BRDFShader          = ResourceManager::Load<ShaderProgram>(L"BRDFShader");
 	Resource<ShaderProgram> * UnlitShader         = ResourceManager::Load<ShaderProgram>(L"UnLitShader");

@@ -24,13 +24,36 @@ inline Resource<ShaderStage> * ResourceManager::Load(const WString & FilePath) {
 	if (!ResourceToList<ShaderStageData>(FilePath, LoadData))
 		return NULL;
 
-	auto ResourceFind = Resources.find(GetHashName(FilePath));
+	auto ResourceFind = Resources.find(LoadData.GUID);
 	if (ResourceFind != Resources.end()) {
 		return dynamic_cast<Resource<ShaderStage>*>(ResourceFind->second);
 	}
 
-	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(FilePath, new ShaderStage(LoadData.Type, File));
-	Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifierHash(), ResourceAdded));
+	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(LoadData.FilePath, LoadData.GUID, new ShaderStage(LoadData.Type, File));
+	Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
+	return ResourceAdded;
+}
+
+template<>
+bool ResourceManager::ResourceToList<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData);
+
+template<>
+inline Resource<ShaderStage> * ResourceManager::Load(const size_t & GUID) {
+	ShaderStageData LoadData;
+	if (!ResourceToList<ShaderStageData>(GUID, LoadData))
+		return NULL;
+
+	FileStream * File;
+	if ((File = FileManager::GetFile(LoadData.FilePath)) == NULL)
+		return NULL;
+
+	auto ResourceFind = Resources.find(LoadData.GUID);
+	if (ResourceFind != Resources.end()) {
+		return dynamic_cast<Resource<ShaderStage>*>(ResourceFind->second);
+	}
+
+	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(LoadData.FilePath, LoadData.GUID, new ShaderStage(LoadData.Type, File));
+	Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
 	return ResourceAdded;
 }
 #endif // RESOURCES_ADD_SHADERSTAGE

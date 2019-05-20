@@ -44,19 +44,14 @@ namespace YAML {
 
 template<>
 bool ResourceManager::ResourceToList<ShaderProgramData>(const WString & Name, ShaderProgramData & ResourceData) {
-	static WString ResourceFile = L"Resources/Resouces.yaml";
-	FileStream * InfoFile = FileManager::GetFile(ResourceFile);
+	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
-	if (InfoFile == NULL) {
-		InfoFile = FileManager::MakeFile(ResourceFile);
-		YAML::Node ResourcesNode;
-		BaseNode["Resources"] = ResourcesNode;
-	}
-	else {
+	bool bNeedsModification = false;
+	{
 		String FileInfo;
-		if (!InfoFile->ReadNarrowStream(&FileInfo))
+		if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
 			return false;
-		BaseNode = YAML::Load(FileInfo.c_str());
+		BaseNode = YAML::Load(FileInfo.c_str()); 
 	}
 
 	YAML::Node ResourcesNode = BaseNode["Resources"];
@@ -64,10 +59,9 @@ bool ResourceManager::ResourceToList<ShaderProgramData>(const WString & Name, Sh
 
 	if (ResourcesNode.IsDefined()) {
 		String FileString = WStringToString(Name);
+		size_t HashName = WStringToHash(Name);
 		for (size_t i = 0; i < ResourcesNode.size(); i++) {
-			if (ResourcesNode[i]["ShaderProgram"].IsDefined() && ResourcesNode[i]["ShaderProgram"]["Name"].IsDefined()
-				&& Text::CompareIgnoreCase(ResourcesNode[i]["ShaderProgram"]["Name"].as<String>(), FileString))
-			{
+			if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == HashName) {
 				FileNodePos = (int)i;
 				break;
 			}
@@ -76,30 +70,72 @@ bool ResourceManager::ResourceToList<ShaderProgramData>(const WString & Name, Sh
 		if (FileNodePos < 0) {
 			FileNodePos = (int)ResourcesNode.size();
 			ResourcesNode.push_back(FileNode);
+			bNeedsModification = true;
 		}
 		FileNode = ResourcesNode[FileNodePos];
-		FileNode["GUID"] = GetHashName(Name);
+		if (FileNode["GUID"].IsNull()) {
+			FileNode["GUID"] = HashName;
+			bNeedsModification = true;
+		}
 		if (!FileNode["ShaderProgram"].IsDefined()) {
 			YAML::Node ShaderProgramNode;
 			ShaderProgramNode["Name"] = FileString;
 			FileNode["ShaderProgram"] = ShaderProgramNode;
+			bNeedsModification = true;
 		}
 		else {
 			if (!FileNode["ShaderProgram"]["Name"].IsDefined()) {
 				FileNode["ShaderProgram"]["Name"] = FileString;
+				bNeedsModification = true;
 			}
 		}
+	}
+	else {
+		return false;
 	}
 
 	ResourceData = ResourcesNode[FileNodePos].as<ShaderProgramData>();
 
-	if (InfoFile->IsValid()) {
-		InfoFile->Clean();
+	if (bNeedsModification && ResourcesFile->IsValid()) {
+		ResourcesFile->Clean();
 		YAML::Emitter Out;
 		Out << BaseNode;
-		(*InfoFile) << Out.c_str();
-		InfoFile->Close();
+		(*ResourcesFile) << Out.c_str();
+		ResourcesFile->Close();
 	}
+
+	return true;
+}
+
+template<>
+bool ResourceManager::ResourceToList<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData) {
+	FileStream * ResourcesFile = GetResourcesFile();
+	YAML::Node BaseNode;
+	{
+		String FileInfo;
+		if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
+			return false;
+		BaseNode = YAML::Load(FileInfo.c_str());
+	}
+
+	YAML::Node ResourcesNode = BaseNode["Resources"];
+	int FileNodePos = -1;
+
+	if (ResourcesNode.IsDefined()) {
+		for (size_t i = 0; i < ResourcesNode.size(); i++) {
+			if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == GUID) {
+				FileNodePos = (int)i;
+				break;
+			}
+		}
+		if (FileNodePos < 0)
+			return false;
+	}
+	else {
+		return false;
+	}
+
+	ResourceData = ResourcesNode[FileNodePos].as<ShaderProgramData>();
 
 	return true;
 }

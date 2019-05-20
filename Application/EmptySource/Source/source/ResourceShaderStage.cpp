@@ -52,17 +52,12 @@ namespace YAML {
 
 template<>
 bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, ShaderStageData & ResourceData) {
-	static WString ResourceFile = L"Resources/Resouces.yaml";
-	FileStream * InfoFile = FileManager::GetFile(ResourceFile);
+	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
-	if (InfoFile == NULL) {
-		InfoFile = FileManager::MakeFile(ResourceFile);
-		YAML::Node ResourcesNode;
-		BaseNode["Resources"] = ResourcesNode;
-	}
-	else {
+	bool bNeedsModification = false;
+	{
 		String FileInfo;
-		if (!InfoFile->ReadNarrowStream(&FileInfo))
+		if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
 			return false;
 		BaseNode = YAML::Load(FileInfo.c_str());
 	}
@@ -72,10 +67,9 @@ bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, Shad
 
 	if (ResourcesNode.IsDefined()) {
 		String FileString = WStringToString(File);
+		size_t HashFile = WStringToHash(File);
 		for (size_t i = 0; i < ResourcesNode.size(); i++) {
-			if (ResourcesNode[i]["ShaderStage"].IsDefined() && ResourcesNode[i]["ShaderStage"]["FilePath"].IsDefined()
-				&& Text::CompareIgnoreCase(ResourcesNode[i]["ShaderStage"]["FilePath"].as<String>(), FileString))
-			{
+			if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == HashFile) {
 				FileNodePos = (int)i;
 				break;
 			}
@@ -84,34 +78,74 @@ bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, Shad
 		if (FileNodePos < 0) {
 			FileNodePos = (int)ResourcesNode.size();
 			ResourcesNode.push_back(FileNode);
+			bNeedsModification = true;
 		}
 		FileNode = ResourcesNode[FileNodePos];
-		FileNode["GUID"] = GetHashName(File);
+		if (!FileNode["GUID"].IsDefined() || FileNode["GUID"].IsNull()) {
+			FileNode["GUID"] = HashFile;
+			bNeedsModification = true;
+		}
 		if (!FileNode["ShaderStage"].IsDefined()) {
 			YAML::Node ShaderStageNode;
 			ShaderStageNode["FilePath"] = FileString;
 			ShaderStageNode["Type"] = "Vertex";
 			FileNode["ShaderStage"] = ShaderStageNode;
+			bNeedsModification = true;
 		}
 		else {
 			if (!FileNode["ShaderStage"]["FilePath"].IsDefined()) {
 				FileNode["ShaderStage"]["FilePath"] = FileString;
+				bNeedsModification = true;
 			}
 			if (!FileNode["ShaderStage"]["Type"].IsDefined()) {
 				FileNode["ShaderStage"]["Type"] = "Vertex";
+				bNeedsModification = true;
 			}
 		}
 	}
 
 	ResourceData = ResourcesNode[FileNodePos].as<ShaderStageData>();
 
-	if (InfoFile->IsValid()) {
-		InfoFile->Clean();
+	if (bNeedsModification && ResourcesFile->IsValid()) {
+		ResourcesFile->Clean();
 		YAML::Emitter Out;
 		Out << BaseNode;
-		(*InfoFile) << Out.c_str();
-		InfoFile->Close();
+		(*ResourcesFile) << Out.c_str();
+		ResourcesFile->Close();
 	}
+
+	return true;
+}
+
+template<>
+bool ResourceManager::ResourceToList<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData) {
+	FileStream * ResourcesFile = GetResourcesFile();
+	YAML::Node BaseNode;
+	{
+		String FileInfo;
+		if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
+			return false;
+		BaseNode = YAML::Load(FileInfo.c_str());
+	}
+
+	YAML::Node ResourcesNode = BaseNode["Resources"];
+	int FileNodePos = -1;
+
+	if (ResourcesNode.IsDefined()) {
+		for (size_t i = 0; i < ResourcesNode.size(); i++) {
+			if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == GUID) {
+				FileNodePos = (int)i;
+				break;
+			}
+		}
+		if (FileNodePos < 0)
+			return false;
+	}
+	else {
+		return false;
+	}
+
+	ResourceData = ResourcesNode[FileNodePos].as<ShaderStageData>();
 
 	return true;
 }
