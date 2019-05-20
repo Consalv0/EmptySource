@@ -82,26 +82,25 @@ unsigned int ShaderProgram::GetAttribLocation(const Char * LocationName) {
 	return Location;
 }
 
-void ShaderProgram::AppendStage(ShaderStage * shader) {
-
+void ShaderProgram::AppendStage(ShaderStage * Shader) {
 	if (IsValid()) {
 		Debug::Log(Debug::LogError, L"Program '%ls' is already linked and compiled, can't modify shader stages", Name.c_str());
 		return;
 	}
 
-	if (!shader->IsValid()) return;
+	if (Shader == NULL || !Shader->IsValid()) return;
 
-	if (shader->GetType() == ShaderType::Vertex) {
-		VertexShader = shader; return;
+	if (Shader->GetType() == ShaderType::Vertex) {
+		VertexShader = Shader; return;
 	}
-	if (shader->GetType() == ShaderType::Fragment) {
-		FragmentShader = shader; return;
+	if (Shader->GetType() == ShaderType::Fragment) {
+		FragmentShader = Shader; return;
 	}
-	if (shader->GetType() == ShaderType::Geometry) {
-		GeometryShader = shader; return;
+	if (Shader->GetType() == ShaderType::Geometry) {
+		GeometryShader = Shader; return;
 	}
-	if (shader->GetType() == ShaderType::Compute) {
-		ComputeShader = shader; return;
+	if (Shader->GetType() == ShaderType::Compute) {
+		ComputeShader = Shader; return;
 	}
 }
 

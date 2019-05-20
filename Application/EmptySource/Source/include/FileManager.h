@@ -11,7 +11,9 @@ private:
 	static FileList::iterator FindInFiles(const WString& FilePath);
 
 public:
-	static FileStream* Open(const WString& FilePath);
+	static FileStream* GetFile(const WString& FilePath);
+
+	static FileStream* MakeFile(const WString& FilePath);
 
 	static WString GetFileExtension(const WString& Path);
 

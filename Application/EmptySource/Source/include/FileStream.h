@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include "../include/Text.h"
+#include "../include/Utility/Hasher.h"
 
 struct FileStream {
 private:
@@ -15,15 +16,22 @@ public:
 	FileStream(WString Path);
 
 	WString GetExtension() const;
+	WString GetFileName() const;
 	WString GetPath() const;
 	WString GetShortPath() const;
 	std::wstringstream ReadStream() const;
 	bool ReadNarrowStream(String* Output) const;
-	WChar* GetLine(long long MaxCount);
+	WString GetLine();
 	bool IsValid() const;
 
-	inline const std::wistream& operator>>(WString& _Str) {
-        return (std::move(*Stream) >> _Str);
+	template <typename T>
+	inline const std::wistream& operator>>(T Value) {
+        return (std::move(*Stream) >> Value);
+	}
+
+	template <typename T>
+	inline const std::wostream& operator<<(T Value) {
+		return (std::move(*Stream) << Value);
 	}
 
 	inline float GetProgress() const {
@@ -35,8 +43,10 @@ public:
 		return (long)Stream->tellg();
 	}
 
+	void LocaleToUTF8();
 	long GetLenght();
 	bool Open();
+	void Clean();
 	void Reset();
 	void Close();
 };

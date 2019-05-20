@@ -31,9 +31,6 @@
     <Filter Include="Source Files\Core\Utility">
       <UniqueIdentifier>{57393333-3b79-40ae-b8ac-b0d51768b942}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CUDA Test">
-      <UniqueIdentifier>{f7a409a1-077c-45cf-8e36-6918fc925195}</UniqueIdentifier>
-    </Filter>
     <Filter Include="External">
       <UniqueIdentifier>{e23ff412-a445-4c33-b0a2-d4194bdff52c}</UniqueIdentifier>
     </Filter>
@@ -54,6 +51,27 @@
     </Filter>
     <Filter Include="External\RobinMap">
       <UniqueIdentifier>{5a5f8d6b-0b7a-437f-a43c-5a649744e367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Components">
+      <UniqueIdentifier>{b33f6162-64ef-4ff9-aee6-05ea137cac07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Components">
+      <UniqueIdentifier>{787a4fa2-f03a-4044-83be-d3b8346073e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML">
+      <UniqueIdentifier>{ccdc319b-48ca-42bc-b46e-b51722066ed8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\Node">
+      <UniqueIdentifier>{64252b0a-a46e-4b66-9680-e3d9ede2e701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\Node\Detail">
+      <UniqueIdentifier>{2c46d1e2-a21e-445b-bdec-ce2fd964e12f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\Contrib">
+      <UniqueIdentifier>{2c4676fd-7396-484d-9d5f-35136861de44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CUDA">
+      <UniqueIdentifier>{f7a409a1-077c-45cf-8e36-6918fc925195}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -675,6 +693,123 @@
     <ClInclude Include="Source\include\Component.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Resources.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\anchor.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\binary.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\dll.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitfromevents.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitter.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitterdef.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emittermanip.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitterstyle.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\eventhandler.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\exceptions.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\mark.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\null.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\ostream_wrapper.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\parser.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\stlemitter.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\traits.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\yaml.h">
+      <Filter>External\YAML</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\bool_type.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\impl.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\iterator.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\iterator_fwd.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\memory.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_data.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_iterator.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_ref.h">
+      <Filter>External\YAML\Node\Detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\convert.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\emit.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\impl.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\iterator.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\node.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\parse.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\ptr.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\type.h">
+      <Filter>External\YAML\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\contrib\anchordict.h">
+      <Filter>External\YAML\Contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\contrib\graphbuilder.h">
+      <Filter>External\YAML\Contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceShaderProgram.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceShaderStage.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\source\Application.cpp">
@@ -797,6 +932,15 @@
     <ClCompile Include="Source\source\Component.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\source\Resources.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceShaderProgram.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceShaderStage.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Base.vertex.glsl">
@@ -881,13 +1025,5 @@
     <Image Include="EmptySource.ico">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="Source\source\CudaRandArray.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
-    <CudaCompile Include="Source\source\RTRenderer.cu">
-      <Filter>Source Files\CUDA Test</Filter>
-    </CudaCompile>
   </ItemGroup>
 </Project>

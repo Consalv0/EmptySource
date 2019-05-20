@@ -4,7 +4,8 @@
 #include <algorithm>
 
 namespace Text {
-	inline bool CompareIgnoreCase(WString A, WString B) {
+	template<class T>
+	inline bool CompareIgnoreCase(T A, T B) {
 		transform(A.begin(), A.end(), A.begin(), toupper);
 		transform(B.begin(), B.end(), B.begin(), toupper);
 

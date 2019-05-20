@@ -5,11 +5,11 @@
 #include "../include/MeshLoader.h"
 
 bool MeshLoader::LoadFromFile(FileStream * File, FileData & Data, bool Optimize) {
-	WString Extension = File->GetExtension();
-	if (Text::CompareIgnoreCase(Extension, L"FBX")) {
+	const WString Extension = File->GetExtension();
+	if (Text::CompareIgnoreCase(Extension, WString(L"FBX"))) {
 		return FBXLoader::Load(File, Data, Optimize);
 	}
-	if (Text::CompareIgnoreCase(Extension, L"OBJ")) {
+	if (Text::CompareIgnoreCase(Extension, WString(L"OBJ"))) {
 		return OBJLoader::Load(File, Data, Optimize);
 	}
 

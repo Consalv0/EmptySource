@@ -20,6 +20,9 @@
 #include "../include/ShaderProgram.h"
 #include "../include/Space.h"
 #include "../include/GameObject.h"
+#define RESOURCES_ADD_SHADERSTAGE
+#define RESOURCES_ADD_SHADERPROGRAM
+#include "../include/Resources.h"
 #include "../include/Transform.h"
 
 #include "../include/Font.h"
@@ -35,7 +38,6 @@
 // SDL 2.0.9
 #include "../External/SDL/include/SDL.h"
 #include "../External/SDL/include/SDL_opengl.h"
-
 
 #include <thread>
 Mesh MeshPrimitives::Cube;
@@ -132,6 +134,8 @@ void CoreApplication::Terminate() {
 	SDL_Quit();
 };
 
+#include <iostream>
+
 void CoreApplication::MainLoop() {
 	if (!bInitialized) return;
 
@@ -147,7 +151,7 @@ void CoreApplication::MainLoop() {
     
 	Font FontFace;
 	Font::InitializeFreeType();
-	FontFace.Initialize(FileManager::Open(L"Resources/Fonts/SourceSansPro.ttf"));
+	FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/SourceSansPro.ttf"));
  
 	Text2DGenerator TextGenerator;
 	TextGenerator.TextFont = &FontFace;
@@ -158,23 +162,23 @@ void CoreApplication::MainLoop() {
 
 	Bitmap<UCharRGBA> BaseAlbedo;
 	Bitmap<UCharRed> BaseMetallic, BaseRoughness;
-	ImageLoader::Load(BaseAlbedo, FileManager::Open(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	ImageLoader::Load(BaseAlbedo, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
 	BaseAlbedo.FlipVertically();
-	ImageLoader::Load(BaseMetallic, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
+	ImageLoader::Load(BaseMetallic, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
 	BaseMetallic.FlipVertically();
-	ImageLoader::Load(BaseRoughness, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
+	ImageLoader::Load(BaseRoughness, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
 	BaseRoughness.FlipVertically();
 	Bitmap<UCharRGB> BaseNormal;
-	ImageLoader::Load(BaseNormal, FileManager::Open(L"Resources/Textures/EscafandraMV1971_Normal.png"));
+	ImageLoader::Load(BaseNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 	BaseNormal.FlipVertically();
 	Bitmap<UCharRGB> White, Black;
-	ImageLoader::Load(White, FileManager::Open(L"Resources/Textures/White.jpg"));
+	ImageLoader::Load(White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
 	White.FlipVertically();
-	ImageLoader::Load(Black, FileManager::Open(L"Resources/Textures/Black.jpg"));
+	ImageLoader::Load(Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
 	Black.FlipVertically();
 
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::Open(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+	ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 	Equirectangular.FlipVertically();
 
 	Texture2D EquirectangularTexture = Texture2D(
@@ -265,106 +269,69 @@ void CoreApplication::MainLoop() {
 	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix;
 
+	// ResourceManager::AddResource(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl");
+	// FileStream * File = FileManager::GetFile(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl");
+	// ResourceManager::AddResource<ShaderStage>(*File, new ShaderStage(ShaderType::Vertex, File));
+	// ShaderStage * EquirectangularToCubemapVertPtr = ResourceManager::GetResource<ShaderStage>(*File);
+
 	// --- Create and compile our GLSL shader programs from text files
-	ShaderStage EquirectangularToCubemapVert =
-		ShaderStage(ShaderType::Vertex, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl"));
-	ShaderStage EquirectangularToCubemapFrag =
-		ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl"));
-	ShaderStage HDRClamping       = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/HDRClamping.fragment.glsl"));
-	ShaderStage VertexBase        = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Base.vertex.glsl"));
-	ShaderStage VoxelizerVertex   = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Voxelizer.vertex.glsl"));
-	ShaderStage PassthroughVertex = ShaderStage(ShaderType::Vertex,   FileManager::Open(L"Resources/Shaders/Passthrough.vertex.glsl"));
-	ShaderStage FragmentBRDF      = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/BRDF.fragment.glsl"));
-	ShaderStage IntegrateBRDF     = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/IntegrateBRDF.fragment.glsl"));
-	ShaderStage FragRenderTexture = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderTexture.fragment.glsl"));
-	ShaderStage FragRenderText    = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderText.fragment.glsl"));
-	ShaderStage FragRenderCubemap = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/RenderCubemap.fragment.glsl"));
-	ShaderStage FragmentUnlit     = ShaderStage(ShaderType::Fragment, FileManager::Open(L"Resources/Shaders/Unlit.fragment.glsl"));
-	ShaderStage Voxelizer         = ShaderStage(ShaderType::Geometry, FileManager::Open(L"Resources/Shaders/Voxelizer.geometry.glsl"));
+	Resource<ShaderStage> * EquiToCubemapVert = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/EquirectangularToCubemap.vertex.glsl");
+	Resource<ShaderStage> * EquiToCubemapFrag = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/EquirectangularToCubemap.fragment.glsl");
+	Resource<ShaderStage> * HDRClamping       = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/HDRClamping.fragment.glsl");
+	Resource<ShaderStage> * VertexBase        = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Base.vertex.glsl");
+	Resource<ShaderStage> * VoxelizerVertex   = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Voxelizer.vertex.glsl");
+	Resource<ShaderStage> * PassthroughVertex = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Passthrough.vertex.glsl");
+	Resource<ShaderStage> * FragmentBRDF      = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/BRDF.fragment.glsl");
+	Resource<ShaderStage> * IntegrateBRDF     = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/IntegrateBRDF.fragment.glsl");
+	Resource<ShaderStage> * FragRenderTexture = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/RenderTexture.fragment.glsl");
+	Resource<ShaderStage> * FragRenderText    = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/RenderText.fragment.glsl");
+	Resource<ShaderStage> * FragRenderCubemap = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/RenderCubemap.fragment.glsl");
+	Resource<ShaderStage> * FragmentUnlit     = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Unlit.fragment.glsl");
+	Resource<ShaderStage> * Voxelizer         = ResourceManager::Load<ShaderStage>(L"Resources/Shaders/Voxelizer.geometry.glsl");
 
-	ShaderProgram EquirectangularToCubemapShader = ShaderProgram(L"EquirectangularToCubemap");
-	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapVert);
-	EquirectangularToCubemapShader.AppendStage(&EquirectangularToCubemapFrag);
-	EquirectangularToCubemapShader.Compile();
-
-	ShaderProgram HDRClampingShader = ShaderProgram(L"HDRClampingShader");
-	HDRClampingShader.AppendStage(&PassthroughVertex);
-	HDRClampingShader.AppendStage(&HDRClamping);
-	HDRClampingShader.Compile();
-
-	ShaderProgram VoxelBRDFShader = ShaderProgram(L"VoxelBRDF");
-	VoxelBRDFShader.AppendStage(&VoxelizerVertex);
-	VoxelBRDFShader.AppendStage(&Voxelizer);
-	VoxelBRDFShader.AppendStage(&FragmentBRDF);
-	VoxelBRDFShader.Compile();
-    
-	ShaderProgram BRDFShader = ShaderProgram(L"BRDF");
-	BRDFShader.AppendStage(&VertexBase);
-	BRDFShader.AppendStage(&FragmentBRDF);
-	BRDFShader.Compile();
-    
-    ShaderProgram UnlitShader = ShaderProgram(L"UnLit");
-	UnlitShader.AppendStage(&VertexBase);
-	UnlitShader.AppendStage(&FragmentUnlit);
-	UnlitShader.Compile();
-    
-	ShaderProgram RenderTextureShader = ShaderProgram(L"RenderTexture");
-	RenderTextureShader.AppendStage(&PassthroughVertex);
-	RenderTextureShader.AppendStage(&FragRenderTexture);
-	RenderTextureShader.Compile();
-
-	ShaderProgram IntegrateBRDFShader = ShaderProgram(L"IntegrateBRDF");
-	IntegrateBRDFShader.AppendStage(&PassthroughVertex);
-	IntegrateBRDFShader.AppendStage(&IntegrateBRDF);
-	IntegrateBRDFShader.Compile();
-    
-	ShaderProgram RenderTextShader = ShaderProgram(L"RenderText");
-	RenderTextShader.AppendStage(&PassthroughVertex);
-	RenderTextShader.AppendStage(&FragRenderText);
-	RenderTextShader.Compile();
-
-	ShaderProgram RenderCubemapShader = ShaderProgram(L"RenderCubemap");
-	RenderCubemapShader.AppendStage(&VertexBase);
-	RenderCubemapShader.AppendStage(&FragRenderCubemap);
-	RenderCubemapShader.Compile();
+	Resource<ShaderProgram> * EquiToCubemapShader = ResourceManager::Load<ShaderProgram>(L"EquirectangularToCubemap");
+	Resource<ShaderProgram> * HDRClampingShader   = ResourceManager::Load<ShaderProgram>(L"HDRClampingShader");
+	Resource<ShaderProgram> * BRDFShader          = ResourceManager::Load<ShaderProgram>(L"BRDFShader");
+	Resource<ShaderProgram> * UnlitShader         = ResourceManager::Load<ShaderProgram>(L"UnLitShader");
+	Resource<ShaderProgram> * RenderTextureShader = ResourceManager::Load<ShaderProgram>(L"RenderTextureShader");
+	Resource<ShaderProgram> * IntegrateBRDFShader = ResourceManager::Load<ShaderProgram>(L"IntegrateBRDFShader");
+	Resource<ShaderProgram> * RenderTextShader    = ResourceManager::Load<ShaderProgram>(L"RenderTextShader");
+	Resource<ShaderProgram> * RenderCubemapShader = ResourceManager::Load<ShaderProgram>(L"RenderCubemapShader");
 
 	Material BaseMaterial = Material();
-	BaseMaterial.SetShaderProgram(&BRDFShader);
-    
-    Material VoxelizeMaterial = Material();
-	VoxelizeMaterial.SetShaderProgram(&VoxelBRDFShader);
+	BaseMaterial.SetShaderProgram(BRDFShader->GetData());
     
 	Material UnlitMaterial = Material();
-	UnlitMaterial.SetShaderProgram(&UnlitShader);
+	UnlitMaterial.SetShaderProgram(UnlitShader->GetData());
 
 	Material UnlitMaterialWire = Material();
-	UnlitMaterialWire.SetShaderProgram(&UnlitShader);
+	UnlitMaterialWire.SetShaderProgram(UnlitShader->GetData());
 	UnlitMaterialWire.RenderMode = Graphics::RM_Wire;
 	UnlitMaterialWire.CullMode = Graphics::CM_None;
 
 	Material RenderTextureMaterial = Material();
 	RenderTextureMaterial.DepthFunction = Graphics::DF_Always;
 	RenderTextureMaterial.CullMode = Graphics::CM_None;
-	RenderTextureMaterial.SetShaderProgram(&RenderTextureShader);
+	RenderTextureMaterial.SetShaderProgram(RenderTextureShader->GetData());
     
 	Material RenderTextMaterial = Material();
 	RenderTextMaterial.DepthFunction = Graphics::DF_Always;
 	RenderTextMaterial.CullMode = Graphics::CM_None;
-	RenderTextMaterial.SetShaderProgram(&RenderTextShader);
+	RenderTextMaterial.SetShaderProgram(RenderTextShader->GetData());
 
 	Material RenderCubemapMaterial = Material();
 	RenderCubemapMaterial.CullMode = Graphics::CM_None;
-	RenderCubemapMaterial.SetShaderProgram(&RenderCubemapShader);
+	RenderCubemapMaterial.SetShaderProgram(RenderCubemapShader->GetData());
 
 	Material IntegrateBRDFMaterial = Material();
 	IntegrateBRDFMaterial.DepthFunction = Graphics::DF_Always;
 	IntegrateBRDFMaterial.CullMode = Graphics::CM_None;
-	IntegrateBRDFMaterial.SetShaderProgram(&IntegrateBRDFShader);
+	IntegrateBRDFMaterial.SetShaderProgram(IntegrateBRDFShader->GetData());
 
 	Material HDRClampingMaterial = Material();
 	HDRClampingMaterial.DepthFunction = Graphics::DF_Always;
 	HDRClampingMaterial.CullMode = Graphics::CM_None;
-	HDRClampingMaterial.SetShaderProgram(&HDRClampingShader);
+	HDRClampingMaterial.SetShaderProgram(HDRClampingShader->GetData());
 
 	srand(SDL_GetTicks());
 	MeshLoader::FileData LightModelData;
@@ -378,10 +345,10 @@ void CoreApplication::MainLoop() {
 
 	TArray<std::thread> Threads;
 	Threads.push_back(std::thread([&SphereData, &LightModelData, &SceneModelData0, &SceneModelData1]() {
-		MeshLoader::Load(SphereData, FileManager::Open(L"Resources/Models/SphereUV.obj"), true);
-		MeshLoader::Load(LightModelData, FileManager::Open(L"Resources/Models/Arrow.fbx"), false);
-		MeshLoader::Load(SceneModelData0, FileManager::Open(L"Resources/Models/Sponza.obj"), true);
-		MeshLoader::Load(SceneModelData1, FileManager::Open(L"Resources/Models/EscafandraMV1971.fbx"), true);
+		MeshLoader::Load(SphereData, FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true);
+		MeshLoader::Load(LightModelData, FileManager::GetFile(L"Resources/Models/Arrow.fbx"), false);
+		MeshLoader::Load(SceneModelData0, FileManager::GetFile(L"Resources/Models/Sponza.obj"), true);
+		MeshLoader::Load(SceneModelData1, FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true);
 	}));
 
 	Texture2D RenderedTexture = Texture2D(
@@ -441,7 +408,7 @@ void CoreApplication::MainLoop() {
 	}
 
 	Cubemap CubemapTexture(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
-	Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTextureHDR, &EquirectangularToCubemapShader);
+	Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTextureHDR, EquiToCubemapShader->GetData());
 
 	float MaterialMetalness = 1.F;
 	float MaterialRoughness = 1.F;

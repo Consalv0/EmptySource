@@ -85,7 +85,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)External;$(ProjectDir)External/FreeType/include;$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)External;$(ProjectDir)External/FreeType/include;$(ProjectDir)External/YAML/include;$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -96,7 +96,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;libyaml-cppmdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -132,7 +132,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)External;$(ProjectDir)External/FreeType/include;$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)External;$(ProjectDir)External/FreeType/include;$(ProjectDir)External/YAML/include;$(ProjectDir)Source/External;$(ProjectDir)Source;%(AdditionalIncludeDirectories);$(CUDA_INC_PATH);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_MBCS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DisableSpecificWarnings>
@@ -144,7 +144,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir);C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;cudart_static.lib;nvml.lib;libfbxsdk-md.lib;libyaml-cppmd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>
       </SubSystem>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
@@ -305,6 +305,42 @@
     <ClInclude Include="External\SDL\include\SDL_vulkan.h" />
     <ClInclude Include="External\STB\stb_image.h" />
     <ClInclude Include="External\STB\stb_image_write.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\anchor.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\binary.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\dll.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitter.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\exceptions.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\mark.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\convert.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\bool_type.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\emit.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\impl.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\node.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\parse.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\type.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\null.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\parser.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\traits.h" />
+    <ClInclude Include="External\YAML\include\yaml-cpp\yaml.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\include\Application.h" />
     <ClInclude Include="Source\include\Bitmap.h" />
@@ -346,6 +382,9 @@
     <ClInclude Include="Source\include\Object.h" />
     <ClInclude Include="Source\include\OBJLoader.h" />
     <ClInclude Include="Source\include\RenderTarget.h" />
+    <ClInclude Include="Source\include\Resources.h" />
+    <ClInclude Include="Source\include\ResourceShaderStage.h" />
+    <ClInclude Include="Source\include\ResourceShaderProgram.h" />
     <ClInclude Include="Source\include\SDFGenerator.h" />
     <ClInclude Include="Source\include\ShaderProgram.h" />
     <ClInclude Include="Source\include\ShaderStage.h" />
@@ -394,6 +433,9 @@
     <ClCompile Include="Source\source\Object.cpp" />
     <ClCompile Include="Source\source\OBJLoader.cpp" />
     <ClCompile Include="Source\source\RenderTarget.cpp" />
+    <ClCompile Include="Source\source\Resources.cpp" />
+    <ClCompile Include="Source\source\ResourceShaderStage.cpp" />
+    <ClCompile Include="Source\source\ResourceShaderProgram.cpp" />
     <ClCompile Include="Source\source\ShaderProgram.cpp" />
     <ClCompile Include="Source\source\ShaderStage.cpp" />
     <ClCompile Include="Source\source\Shape2D.cpp" />
@@ -443,10 +485,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EmptySource.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="Source\source\CudaRandArray.cu" />
-    <CudaCompile Include="Source\source\RTRenderer.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

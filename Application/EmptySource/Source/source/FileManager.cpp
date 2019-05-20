@@ -11,7 +11,7 @@
 
 FileList FileManager::Files = FileList();
 
-FileStream* FileManager::Open(const WString & FilePath) {
+FileStream* FileManager::GetFile(const WString & FilePath) {
 	WString FullFilePath = GetFullPath(FilePath);
 	FileList::iterator Found = FindInFiles(FullFilePath);
 
@@ -24,6 +24,18 @@ FileStream* FileManager::Open(const WString & FilePath) {
 
 	Files.push_back(NewStream);
 	return NewStream;
+}
+
+FileStream * FileManager::MakeFile(const WString & FilePath) {
+	std::fstream Stream;
+#ifdef WIN32
+	Stream.open(FilePath, std::ios::in | std::ios::out | std::ios::trunc);
+#else
+	Stream.open(WStringToString(FilePath), std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+#endif
+	Stream.close();
+
+	return GetFile(FilePath);
 }
 
 WString FileManager::GetFileExtension(const WString & Path) {
