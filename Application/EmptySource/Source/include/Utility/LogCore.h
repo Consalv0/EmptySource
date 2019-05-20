@@ -63,9 +63,9 @@ namespace Debug {
         if ((Filter & LogNormal & LogFilter::Value)   != NoLog) LogText = L"\033[40m[LOG]\033[0m ";
 		if ((Filter & LogInfo & LogFilter::Value)     != NoLog) LogText = L"\033[90;40m[INFO]\033[90;49m ";
         if ((Filter & LogDebug & LogFilter::Value)    != NoLog) LogText = L"\033[32;40m[DEBUG]\033[32;49m ";
-        if ((Filter & LogWarning & LogFilter::Value)  != NoLog) LogText = L"\033[31;40m[ERROR]\033[31;49m ";
-        if ((Filter & LogError & LogFilter::Value)    != NoLog) LogText = L"\033[31;40m[CRITICAL]\033[31;49m ";
-        if ((Filter & LogCritical & LogFilter::Value) != NoLog) LogText = L"\033[33;40m[WARNING]\033[33;49m ";
+        if ((Filter & LogWarning & LogFilter::Value)  != NoLog) LogText = L"\033[33;40m[WARNING]\033[33;49m ";
+        if ((Filter & LogError & LogFilter::Value)    != NoLog) LogText = L"\033[31;40m[ERROR]\033[31;49m ";
+        if ((Filter & LogCritical & LogFilter::Value) != NoLog) LogText = L"\033[33;40m[CRITICAL]\033[33;49m ";
 
         setlocale(LC_ALL, "en_US.UTF-8");
         std::wprintf((LogText + (Text + L"\033[0m\n")).c_str(), Args ...);
