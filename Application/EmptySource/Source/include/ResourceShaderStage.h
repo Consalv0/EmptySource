@@ -12,7 +12,7 @@ struct ShaderStageData {
 };
 
 template<>
-bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, ShaderStageData & ResourceData);
+bool ResourceManager::GetResourceData<ShaderStageData>(const WString & File, ShaderStageData & ResourceData);
 
 template<>
 inline Resource<ShaderStage> * ResourceManager::Load(const WString & FilePath) {
@@ -21,7 +21,7 @@ inline Resource<ShaderStage> * ResourceManager::Load(const WString & FilePath) {
 		return NULL;
 
 	ShaderStageData LoadData;
-	if (!ResourceToList<ShaderStageData>(FilePath, LoadData))
+	if (!GetResourceData<ShaderStageData>(FilePath, LoadData))
 		return NULL;
 
 	auto ResourceFind = Resources.find(LoadData.GUID);
@@ -35,12 +35,12 @@ inline Resource<ShaderStage> * ResourceManager::Load(const WString & FilePath) {
 }
 
 template<>
-bool ResourceManager::ResourceToList<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData);
+bool ResourceManager::GetResourceData<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData);
 
 template<>
 inline Resource<ShaderStage> * ResourceManager::Load(const size_t & GUID) {
 	ShaderStageData LoadData;
-	if (!ResourceToList<ShaderStageData>(GUID, LoadData))
+	if (!GetResourceData<ShaderStageData>(GUID, LoadData))
 		return NULL;
 
 	FileStream * File;

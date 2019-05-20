@@ -51,7 +51,7 @@ namespace YAML {
 }
 
 template<>
-bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, ShaderStageData & ResourceData) {
+bool ResourceManager::GetResourceData<ShaderStageData>(const WString & File, ShaderStageData & ResourceData) {
 	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
 	bool bNeedsModification = false;
@@ -67,9 +67,10 @@ bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, Shad
 
 	if (ResourcesNode.IsDefined()) {
 		String FileString = WStringToString(File);
-		size_t HashFile = WStringToHash(File);
 		for (size_t i = 0; i < ResourcesNode.size(); i++) {
-			if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == HashFile) {
+			if (ResourcesNode[i]["ShaderStage"].IsDefined() && ResourcesNode[i]["ShaderStage"]["FilePath"].IsDefined()
+				&& Text::CompareIgnoreCase(ResourcesNode[i]["ShaderStage"]["FilePath"].as<String>(), FileString))
+			{
 				FileNodePos = (int)i;
 				break;
 			}
@@ -82,7 +83,7 @@ bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, Shad
 		}
 		FileNode = ResourcesNode[FileNodePos];
 		if (!FileNode["GUID"].IsDefined() || FileNode["GUID"].IsNull()) {
-			FileNode["GUID"] = HashFile;
+			FileNode["GUID"] = WStringToHash(File);
 			bNeedsModification = true;
 		}
 		if (!FileNode["ShaderStage"].IsDefined()) {
@@ -118,7 +119,7 @@ bool ResourceManager::ResourceToList<ShaderStageData>(const WString & File, Shad
 }
 
 template<>
-bool ResourceManager::ResourceToList<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData) {
+bool ResourceManager::GetResourceData<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData) {
 	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
 	{

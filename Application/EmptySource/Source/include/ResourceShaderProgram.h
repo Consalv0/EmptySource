@@ -15,12 +15,12 @@ struct ShaderProgramData {
 };
 
 template<>
-bool ResourceManager::ResourceToList<ShaderProgramData>(const WString & File, ShaderProgramData & ResourceData);
+bool ResourceManager::GetResourceData<ShaderProgramData>(const WString & File, ShaderProgramData & ResourceData);
 
 template<>
 inline Resource<ShaderProgram> * ResourceManager::Load(const WString & Name) {
 	ShaderProgramData LoadData;
-	if (!ResourceToList<ShaderProgramData>(Name, LoadData))
+	if (!GetResourceData<ShaderProgramData>(Name, LoadData))
 		return NULL;
 
 	auto ResourceFind = Resources.find(LoadData.GUID);
@@ -61,12 +61,12 @@ inline Resource<ShaderProgram> * ResourceManager::Load(const WString & Name) {
 }
 
 template<>
-bool ResourceManager::ResourceToList<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData);
+bool ResourceManager::GetResourceData<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData);
 
 template<>
 inline Resource<ShaderProgram> * ResourceManager::Load(const size_t & GUID) {
 	ShaderProgramData LoadData;
-	if (!ResourceToList<ShaderProgramData>(GUID, LoadData))
+	if (!GetResourceData<ShaderProgramData>(GUID, LoadData))
 		return NULL;
 
 	auto ResourceFind = Resources.find(LoadData.GUID);

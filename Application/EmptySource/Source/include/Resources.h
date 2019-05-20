@@ -45,16 +45,18 @@ public:
 
 class ResourceManager {
 public:
+	//* Get the resource with the given name, returns NULL if no resource
 	template<typename T>
 	static inline Resource<T> * Load(const WString & File);
+	//* Get the resource with the given name use this if you are shure the file is in Resources.yaml, returns NULL if no resource
 	template<typename T>
 	static inline Resource<T> * Load(const size_t & GUID);
 
 private:
 	template<typename T>
-	static bool ResourceToList(const WString & File, T & OutData);
+	static bool GetResourceData(const WString & File, T & OutData);
 	template<typename T>
-	static bool ResourceToList(const size_t & GUID, T & OutData);
+	static bool GetResourceData(const size_t & GUID, T & OutData);
 
 	static FileStream * GetResourcesFile();
 
