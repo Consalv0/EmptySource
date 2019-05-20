@@ -52,6 +52,13 @@
 		DD5615F12289D98B00BC9505 /* libSDL2-2.0.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = DD5615F02289D98B00BC9505 /* libSDL2-2.0.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DD5615F22289D99800BC9505 /* libSDL2-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD5615F02289D98B00BC9505 /* libSDL2-2.0.0.dylib */; };
 		DD56164C2289ED5700BC9505 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD56164B2289ED5600BC9505 /* Foundation.framework */; };
+		DD7CF5EA22928457007EA171 /* libyaml-cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD7CF5E922928457007EA171 /* libyaml-cpp.a */; };
+		DD7CF5EF22928494007EA171 /* Resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7CF5EB22928494007EA171 /* Resources.cpp */; };
+		DD7CF5F022928494007EA171 /* ResourceShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7CF5EC22928494007EA171 /* ResourceShaderProgram.cpp */; };
+		DD7CF5F122928494007EA171 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7CF5ED22928494007EA171 /* Component.cpp */; };
+		DD7CF5F222928494007EA171 /* ResourceShaderStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7CF5EE22928494007EA171 /* ResourceShaderStage.cpp */; };
+		DD7CF5F9229284E6007EA171 /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD7CF5F8229284E6007EA171 /* GameObject.cpp */; };
+		DD7CF62622928FD7007EA171 /* Resouces.yaml in Resources */ = {isa = PBXBuildFile; fileRef = DD7CF62522928FD7007EA171 /* Resouces.yaml */; };
 		DD988CCE2249E11A00D342DA /* libfreetype.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; };
 		DD988CD02249E12500D342DA /* libfreetype.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = DD988CCB2249B82000D342DA /* libfreetype.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CD8224C38B300D342DA /* Shape2D.cpp */; };
@@ -252,6 +259,54 @@
 		DD5616472289DB8800BC9505 /* SDL_opengles2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDL_opengles2.h; path = include/SDL_opengles2.h; sourceTree = "<group>"; };
 		DD5616482289DB8900BC9505 /* SDL_test_crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDL_test_crc32.h; path = include/SDL_test_crc32.h; sourceTree = "<group>"; };
 		DD56164B2289ED5600BC9505 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		DD7CF5E922928457007EA171 /* libyaml-cpp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libyaml-cpp.a"; path = "EmptySource/Libraries/libyaml-cpp.a"; sourceTree = "<group>"; };
+		DD7CF5EB22928494007EA171 /* Resources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Resources.cpp; sourceTree = "<group>"; };
+		DD7CF5EC22928494007EA171 /* ResourceShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceShaderProgram.cpp; sourceTree = "<group>"; };
+		DD7CF5ED22928494007EA171 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
+		DD7CF5EE22928494007EA171 /* ResourceShaderStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceShaderStage.cpp; sourceTree = "<group>"; };
+		DD7CF5F3229284DA007EA171 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Resources.h; sourceTree = "<group>"; };
+		DD7CF5F4229284DA007EA171 /* ResourceShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceShaderProgram.h; sourceTree = "<group>"; };
+		DD7CF5F5229284DA007EA171 /* ResourceShaderStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceShaderStage.h; sourceTree = "<group>"; };
+		DD7CF5F6229284DA007EA171 /* GameObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameObject.h; sourceTree = "<group>"; };
+		DD7CF5F7229284DA007EA171 /* Component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
+		DD7CF5F8229284E6007EA171 /* GameObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameObject.cpp; sourceTree = "<group>"; };
+		DD7CF5FB22928546007EA171 /* exceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = exceptions.h; path = "include/yaml-cpp/exceptions.h"; sourceTree = "<group>"; };
+		DD7CF5FC22928546007EA171 /* mark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mark.h; path = "include/yaml-cpp/mark.h"; sourceTree = "<group>"; };
+		DD7CF5FE22928546007EA171 /* emitterstyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emitterstyle.h; path = "include/yaml-cpp/emitterstyle.h"; sourceTree = "<group>"; };
+		DD7CF5FF22928546007EA171 /* emittermanip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emittermanip.h; path = "include/yaml-cpp/emittermanip.h"; sourceTree = "<group>"; };
+		DD7CF60022928546007EA171 /* emitterdef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emitterdef.h; path = "include/yaml-cpp/emitterdef.h"; sourceTree = "<group>"; };
+		DD7CF60122928546007EA171 /* null.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = null.h; path = "include/yaml-cpp/null.h"; sourceTree = "<group>"; };
+		DD7CF60222928546007EA171 /* traits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = traits.h; path = "include/yaml-cpp/traits.h"; sourceTree = "<group>"; };
+		DD7CF60322928546007EA171 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parser.h; path = "include/yaml-cpp/parser.h"; sourceTree = "<group>"; };
+		DD7CF60422928546007EA171 /* emitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emitter.h; path = "include/yaml-cpp/emitter.h"; sourceTree = "<group>"; };
+		DD7CF60522928547007EA171 /* anchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = anchor.h; path = "include/yaml-cpp/anchor.h"; sourceTree = "<group>"; };
+		DD7CF60622928547007EA171 /* ostream_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ostream_wrapper.h; path = "include/yaml-cpp/ostream_wrapper.h"; sourceTree = "<group>"; };
+		DD7CF60722928547007EA171 /* binary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = binary.h; path = "include/yaml-cpp/binary.h"; sourceTree = "<group>"; };
+		DD7CF60822928547007EA171 /* stlemitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stlemitter.h; path = "include/yaml-cpp/stlemitter.h"; sourceTree = "<group>"; };
+		DD7CF60922928547007EA171 /* emitfromevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emitfromevents.h; path = "include/yaml-cpp/emitfromevents.h"; sourceTree = "<group>"; };
+		DD7CF60A22928547007EA171 /* yaml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = yaml.h; path = "include/yaml-cpp/yaml.h"; sourceTree = "<group>"; };
+		DD7CF60B22928547007EA171 /* dll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dll.h; path = "include/yaml-cpp/dll.h"; sourceTree = "<group>"; };
+		DD7CF60C22928547007EA171 /* eventhandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eventhandler.h; path = "include/yaml-cpp/eventhandler.h"; sourceTree = "<group>"; };
+		DD7CF60F229285B3007EA171 /* graphbuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graphbuilder.h; sourceTree = "<group>"; };
+		DD7CF610229285B3007EA171 /* anchordict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = anchordict.h; sourceTree = "<group>"; };
+		DD7CF614229285F8007EA171 /* node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node.h; sourceTree = "<group>"; };
+		DD7CF615229285F8007EA171 /* node_iterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node_iterator.h; sourceTree = "<group>"; };
+		DD7CF616229285F8007EA171 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		DD7CF617229285F9007EA171 /* impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = impl.h; sourceTree = "<group>"; };
+		DD7CF618229285F9007EA171 /* node_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node_ref.h; sourceTree = "<group>"; };
+		DD7CF619229285F9007EA171 /* iterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iterator.h; sourceTree = "<group>"; };
+		DD7CF61A229285F9007EA171 /* node_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node_data.h; sourceTree = "<group>"; };
+		DD7CF61B229285F9007EA171 /* bool_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bool_type.h; sourceTree = "<group>"; };
+		DD7CF61C229285F9007EA171 /* iterator_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iterator_fwd.h; sourceTree = "<group>"; };
+		DD7CF61D22928607007EA171 /* parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
+		DD7CF61E22928607007EA171 /* emit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emit.h; sourceTree = "<group>"; };
+		DD7CF61F22928607007EA171 /* impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = impl.h; sourceTree = "<group>"; };
+		DD7CF62022928607007EA171 /* convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert.h; sourceTree = "<group>"; };
+		DD7CF62122928607007EA171 /* type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = type.h; sourceTree = "<group>"; };
+		DD7CF62222928607007EA171 /* iterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iterator.h; sourceTree = "<group>"; };
+		DD7CF62322928608007EA171 /* ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ptr.h; sourceTree = "<group>"; };
+		DD7CF62422928608007EA171 /* node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node.h; sourceTree = "<group>"; };
+		DD7CF62522928FD7007EA171 /* Resouces.yaml */ = {isa = PBXFileReference; lastKnownFileType = text; name = Resouces.yaml; path = EmptySource/Resources/Resouces.yaml; sourceTree = "<group>"; };
 		DD8603892277807E00E7B58B /* MeshPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshPrimitives.h; sourceTree = "<group>"; };
 		DD86038A2277808800E7B58B /* Box3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box3D.h; sourceTree = "<group>"; };
 		DD88808A2241B1D60052F499 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -354,6 +409,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD7CF5EA22928457007EA171 /* libyaml-cpp.a in Frameworks */,
 				DD5615F22289D99800BC9505 /* libSDL2-2.0.0.dylib in Frameworks */,
 				DD522015227E1FB500A4C7DC /* libfbxsdk.a in Frameworks */,
 				DD988CCE2249E11A00D342DA /* libfreetype.6.dylib in Frameworks */,
@@ -382,6 +438,7 @@
 		DD5615112289D0B000BC9505 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				DD7CF5FA22928524007EA171 /* YAML */,
 				DD5615962289D24800BC9505 /* SDL */,
 				DD5615932289D1C000BC9505 /* STB */,
 				DD56158E2289D1A200BC9505 /* RobinMap */,
@@ -587,9 +644,79 @@
 			path = SDL;
 			sourceTree = "<group>";
 		};
+		DD7CF5FA22928524007EA171 /* YAML */ = {
+			isa = PBXGroup;
+			children = (
+				DD7CF611229285C1007EA171 /* node */,
+				DD7CF60E22928556007EA171 /* contrib */,
+				DD7CF60522928547007EA171 /* anchor.h */,
+				DD7CF60722928547007EA171 /* binary.h */,
+				DD7CF60B22928547007EA171 /* dll.h */,
+				DD7CF60922928547007EA171 /* emitfromevents.h */,
+				DD7CF60422928546007EA171 /* emitter.h */,
+				DD7CF60022928546007EA171 /* emitterdef.h */,
+				DD7CF5FF22928546007EA171 /* emittermanip.h */,
+				DD7CF5FE22928546007EA171 /* emitterstyle.h */,
+				DD7CF60C22928547007EA171 /* eventhandler.h */,
+				DD7CF5FB22928546007EA171 /* exceptions.h */,
+				DD7CF5FC22928546007EA171 /* mark.h */,
+				DD7CF60122928546007EA171 /* null.h */,
+				DD7CF60622928547007EA171 /* ostream_wrapper.h */,
+				DD7CF60322928546007EA171 /* parser.h */,
+				DD7CF60822928547007EA171 /* stlemitter.h */,
+				DD7CF60222928546007EA171 /* traits.h */,
+				DD7CF60A22928547007EA171 /* yaml.h */,
+			);
+			path = YAML;
+			sourceTree = "<group>";
+		};
+		DD7CF60E22928556007EA171 /* contrib */ = {
+			isa = PBXGroup;
+			children = (
+				DD7CF610229285B3007EA171 /* anchordict.h */,
+				DD7CF60F229285B3007EA171 /* graphbuilder.h */,
+			);
+			name = contrib;
+			path = "include/yaml-cpp/contrib";
+			sourceTree = "<group>";
+		};
+		DD7CF611229285C1007EA171 /* node */ = {
+			isa = PBXGroup;
+			children = (
+				DD7CF613229285E8007EA171 /* detail */,
+				DD7CF62022928607007EA171 /* convert.h */,
+				DD7CF61E22928607007EA171 /* emit.h */,
+				DD7CF61F22928607007EA171 /* impl.h */,
+				DD7CF62222928607007EA171 /* iterator.h */,
+				DD7CF62422928608007EA171 /* node.h */,
+				DD7CF61D22928607007EA171 /* parse.h */,
+				DD7CF62322928608007EA171 /* ptr.h */,
+				DD7CF62122928607007EA171 /* type.h */,
+			);
+			name = node;
+			path = "include/yaml-cpp/node";
+			sourceTree = "<group>";
+		};
+		DD7CF613229285E8007EA171 /* detail */ = {
+			isa = PBXGroup;
+			children = (
+				DD7CF61B229285F9007EA171 /* bool_type.h */,
+				DD7CF617229285F9007EA171 /* impl.h */,
+				DD7CF61C229285F9007EA171 /* iterator_fwd.h */,
+				DD7CF619229285F9007EA171 /* iterator.h */,
+				DD7CF616229285F8007EA171 /* memory.h */,
+				DD7CF61A229285F9007EA171 /* node_data.h */,
+				DD7CF615229285F8007EA171 /* node_iterator.h */,
+				DD7CF618229285F9007EA171 /* node_ref.h */,
+				DD7CF614229285F8007EA171 /* node.h */,
+			);
+			path = detail;
+			sourceTree = "<group>";
+		};
 		DD88807E2241B1D60052F499 = {
 			isa = PBXGroup;
 			children = (
+				DD7CF62522928FD7007EA171 /* Resouces.yaml */,
 				DD988CFB225011FE00D342DA /* Textures */,
 				DD4F19E1224947CB00C102FB /* Shaders */,
 				DD4F19DF224947BF00C102FB /* Models */,
@@ -625,7 +752,12 @@
 				DD8880E1224310120052F499 /* Application.h */,
 				DD8880FF224355A00052F499 /* Space.h */,
 				DD8880F4224355410052F499 /* Object.h */,
+				DD7CF5F7229284DA007EA171 /* Component.h */,
+				DD7CF5F6229284DA007EA171 /* GameObject.h */,
 				DD8880F3224355410052F499 /* IIdentifier.h */,
+				DD7CF5F3229284DA007EA171 /* Resources.h */,
+				DD7CF5F4229284DA007EA171 /* ResourceShaderProgram.h */,
+				DD7CF5F5229284DA007EA171 /* ResourceShaderStage.h */,
 				DD8880C22242E4300052F499 /* CoreTypes.h */,
 				DD8880EE224348D40052F499 /* FileManager.h */,
 				DD8880ED224348D40052F499 /* FileStream.h */,
@@ -673,6 +805,9 @@
 				DD8881112243604D0052F499 /* ShaderProgram.cpp */,
 				DD88810D2243604C0052F499 /* ShaderStage.cpp */,
 				DD3D8EC322617F41003A3346 /* Transform.cpp */,
+				DD7CF5EB22928494007EA171 /* Resources.cpp */,
+				DD7CF5EC22928494007EA171 /* ResourceShaderProgram.cpp */,
+				DD7CF5EE22928494007EA171 /* ResourceShaderStage.cpp */,
 				DD988CE3224DC0B900D342DA /* Text.cpp */,
 				DD88810A2243604C0052F499 /* Texture.cpp */,
 				DD88810B2243604C0052F499 /* Texture2D.cpp */,
@@ -682,6 +817,8 @@
 				DD8880E8224317450052F499 /* CoreTime.cpp */,
 				DD888100224355AC0052F499 /* Space.cpp */,
 				DD8880F7224355670052F499 /* Object.cpp */,
+				DD7CF5F8229284E6007EA171 /* GameObject.cpp */,
+				DD7CF5ED22928494007EA171 /* Component.cpp */,
 				DD8880F9224355670052F499 /* IIdentifier.cpp */,
 				DD8880F8224355670052F499 /* Mesh.cpp */,
 				DD521FF0227E0ED200A4C7DC /* FBXLoader.cpp */,
@@ -705,6 +842,7 @@
 		DD8880B32241E37A0052F499 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD7CF5E922928457007EA171 /* libyaml-cpp.a */,
 				DD56164B2289ED5600BC9505 /* Foundation.framework */,
 				DD5615F02289D98B00BC9505 /* libSDL2-2.0.0.dylib */,
 				DD52200E227E1DC400A4C7DC /* libfbxsdk.a */,
@@ -841,6 +979,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD7CF62622928FD7007EA171 /* Resouces.yaml in Resources */,
 				DD45349A22494385002F6BEF /* Assets.xcassets in Resources */,
 				DD4F19E2224947CB00C102FB /* Shaders in Resources */,
 				DD45349D22494385002F6BEF /* Main.storyboard in Resources */,
@@ -860,12 +999,16 @@
 				DD3D8EC522617F42003A3346 /* Transform.cpp in Sources */,
 				DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */,
 				DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */,
+				DD7CF5F222928494007EA171 /* ResourceShaderStage.cpp in Sources */,
 				DD4F19EB224958AB00C102FB /* RenderTarget.cpp in Sources */,
 				DD521FF5227E0ED200A4C7DC /* OBJLoader.cpp in Sources */,
 				DD4F19FA224958AB00C102FB /* EdgeHolder.cpp in Sources */,
+				DD7CF5F9229284E6007EA171 /* GameObject.cpp in Sources */,
 				DD4F19EF224958AB00C102FB /* Texture2D.cpp in Sources */,
 				DD4F19F7224958AB00C102FB /* FileManager.cpp in Sources */,
+				DD7CF5F122928494007EA171 /* Component.cpp in Sources */,
 				DD4F19F3224958AB00C102FB /* Object.cpp in Sources */,
+				DD7CF5F022928494007EA171 /* ResourceShaderProgram.cpp in Sources */,
 				DD988CE2224DC0A800D342DA /* LogCore.cpp in Sources */,
 				DD4F19F2224958AB00C102FB /* Space.cpp in Sources */,
 				DD4F19ED224958AB00C102FB /* ShaderStage.cpp in Sources */,
@@ -884,6 +1027,7 @@
 				DD988CE8225010E200D342DA /* ImageLoader.cpp in Sources */,
 				DD4F19E8224958AB00C102FB /* Application.cpp in Sources */,
 				DD4F19F4224958AB00C102FB /* IIdentifier.cpp in Sources */,
+				DD7CF5EF22928494007EA171 /* Resources.cpp in Sources */,
 				DD4F19FD224958AB00C102FB /* Glyph.cpp in Sources */,
 				DD4F19F0224958AB00C102FB /* Texture3D.cpp in Sources */,
 				DD4F19F1224958AB00C102FB /* CoreTime.cpp in Sources */,

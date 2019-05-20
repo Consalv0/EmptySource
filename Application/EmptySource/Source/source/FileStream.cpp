@@ -1,4 +1,4 @@
-﻿
+
 #ifdef __APPLE__
 #include <unistd.h>
 #endif
@@ -18,10 +18,13 @@ FileStream::FileStream(WString FilePath) {
 #else
     Stream = new std::wfstream(WStringToString(FilePath));
 #endif
+    
+    Path = FilePath;
+    Open();
+    
 	if (!IsValid()) 
 		Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", FilePath.c_str());
 	else {
-		Path = FilePath;
 		LocaleToUTF8();
 	}
 }
@@ -110,7 +113,7 @@ WString FileStream::GetLine() {
 }
 
 bool FileStream::IsValid() const {
-	return !Stream->fail() && Stream->good() && Stream != NULL;
+	return Stream != NULL && !Stream->fail() && Stream->good();
 }
 
 void FileStream::LocaleToUTF8() {
