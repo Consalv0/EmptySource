@@ -122,6 +122,7 @@ void CoreApplication::Initalize() {
 #endif
 
 	MeshPrimitives::Initialize();
+	Font::InitializeFreeType();
 
 	bInitialized = true;
 }
@@ -150,7 +151,6 @@ void CoreApplication::MainLoop() {
     Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
     
 	Font FontFace;
-	Font::InitializeFreeType();
 	FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/SourceSansPro.ttf"));
  
 	Text2DGenerator TextGenerator;
@@ -270,7 +270,7 @@ void CoreApplication::MainLoop() {
 	Matrix4x4 ViewMatrix;
 
 	// --- Create and compile our GLSL shader programs from text files
-	Resource<ShaderProgram> * EquiToCubemapShader = ResourceManager::Load<ShaderProgram>(WStringToHash(L"EquirectangularToCubemap"));
+	Resource<ShaderProgram> * EquiToCubemapShader = ResourceManager::Load<ShaderProgram>(L"EquirectangularToCubemap");
 	Resource<ShaderProgram> * HDRClampingShader   = ResourceManager::Load<ShaderProgram>(L"HDRClampingShader");
 	Resource<ShaderProgram> * BRDFShader          = ResourceManager::Load<ShaderProgram>(L"BRDFShader");
 	Resource<ShaderProgram> * UnlitShader         = ResourceManager::Load<ShaderProgram>(L"UnLitShader");

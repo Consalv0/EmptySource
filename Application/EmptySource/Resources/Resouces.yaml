@@ -54,40 +54,40 @@ Resources:
   - GUID: 1065292994571088177
     ShaderProgram:
       Name: EquirectangularToCubemap
-      VertexShader: Resources/Shaders/EquirectangularToCubemap.vertex.glsl
-      FragmentShader: Resources/Shaders/EquirectangularToCubemap.fragment.glsl
+      VertexShader: 13768600653438824142
+      FragmentShader: 9724844382453382494
   - GUID: 13659627102453736913
     ShaderProgram:
       Name: HDRClampingShader
-      VertexShader: Resources/Shaders/Passthrough.vertex.glsl
-      FragmentShader: Resources/Shaders/HDRClamping.fragment.glsl
+      VertexShader: 15491773793180885008
+      FragmentShader: 14487276356520426687
   - GUID: 16680565041064288702
     ShaderProgram:
       Name: BRDFShader
-      VertexShader: Resources/Shaders/Base.vertex.glsl
-      FragmentShader: Resources/Shaders/BRDF.fragment.glsl
+      VertexShader: 16658501045142873423
+      FragmentShader: 1168590647783747496
   - GUID: 9336688078605051222
     ShaderProgram:
       Name: UnLitShader
-      VertexShader: Resources/Shaders/Base.vertex.glsl
-      FragmentShader: Resources/Shaders/Unlit.fragment.glsl
+      VertexShader: 16658501045142873423
+      FragmentShader: 2988000627463272952
   - GUID: 13529331485394247641
     ShaderProgram:
       Name: RenderTextureShader
-      VertexShader: Resources/Shaders/Passthrough.vertex.glsl
-      FragmentShader: Resources/Shaders/RenderTexture.fragment.glsl
+      VertexShader: 15491773793180885008
+      FragmentShader: 4750013093861987399
   - GUID: 7125355921710917221
     ShaderProgram:
       Name: IntegrateBRDFShader
-      VertexShader: Resources/Shaders/Passthrough.vertex.glsl
-      FragmentShader: Resources/Shaders/IntegrateBRDF.fragment.glsl
+      VertexShader: 15491773793180885008
+      FragmentShader: 9154606323356647483
   - GUID: 17535125667370803355
     ShaderProgram:
       Name: RenderTextShader
-      VertexShader: Resources/Shaders/Passthrough.vertex.glsl
-      FragmentShader: Resources/Shaders/RenderText.fragment.glsl
+      VertexShader: 15491773793180885008
+      FragmentShader: 16113507823090325981
   - GUID: 739022771965855291
     ShaderProgram:
       Name: RenderCubemapShader
-      VertexShader: Resources/Shaders/Base.vertex.glsl
-      FragmentShader: Resources/Shaders/RenderCubemap.fragment.glsl
+      VertexShader: 16658501045142873423
+      FragmentShader: 9467077380870312549

@@ -13,10 +13,10 @@ namespace YAML {
 			Node["GUID"] = Element.GUID;
 			YAML::Node ShaderProgramNode;
 			ShaderProgramNode["Name"] = WStringToString(Element.Name);
-			ShaderProgramNode["VertexShader"]   = WStringToString(Element.VertexShader);
-			ShaderProgramNode["FragmentShader"] = WStringToString(Element.FragmentShader);
-			ShaderProgramNode["ComputeShader"]  = WStringToString(Element.ComputeShader);
-			ShaderProgramNode["GeometryShader"] = WStringToString(Element.GeometryShader);
+			ShaderProgramNode["VertexShader"]   = Element.VertexShader;
+			ShaderProgramNode["FragmentShader"] = Element.FragmentShader;
+			ShaderProgramNode["ComputeShader"]  = Element.ComputeShader;
+			ShaderProgramNode["GeometryShader"] = Element.GeometryShader;
 			Node["ShaderProgram"] = ShaderProgramNode;
 			return Node;
 		}
@@ -29,13 +29,13 @@ namespace YAML {
 			Element.GUID = Node["GUID"].as<size_t>();
 			Element.Name = Node["ShaderProgram"]["Name"].IsDefined() ? StringToWString(Node["ShaderProgram"]["Name"].as<String>()) : L"";
 			Element.VertexShader = Node["ShaderProgram"]["VertexShader"].IsDefined() ?
-				StringToWString(Node["ShaderProgram"]["VertexShader"].as<String>()) : L"";
+				Node["ShaderProgram"]["VertexShader"].as<size_t>() : 0;
 			Element.FragmentShader = Node["ShaderProgram"]["FragmentShader"].IsDefined() ?
-				StringToWString(Node["ShaderProgram"]["FragmentShader"].as<String>()) : L"";
+				Node["ShaderProgram"]["FragmentShader"].as<size_t>() : 0;
 			Element.ComputeShader = Node["ShaderProgram"]["ComputeShader"].IsDefined() ?
-				StringToWString(Node["ShaderProgram"]["ComputeShader"].as<String>()) : L"";
+				Node["ShaderProgram"]["ComputeShader"].as<size_t>() : 0;
 			Element.GeometryShader = Node["ShaderProgram"]["GeometryShader"].IsDefined() ?
-				StringToWString(Node["ShaderProgram"]["GeometryShader"].as<String>()) : L"";
+				Node["ShaderProgram"]["GeometryShader"].as<size_t>() : 0;
 
 			return true;
 		}

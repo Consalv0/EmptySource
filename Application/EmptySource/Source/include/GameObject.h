@@ -29,6 +29,8 @@ private:
 public:
 	Transform Transformation;
 
+	TArray<GGameObject> Children;
+
 	template<typename T, typename... Rest>
 	CComponent * CreateComponent(Rest... Args);
 };

@@ -8,10 +8,10 @@
 struct ShaderProgramData {
 	size_t GUID;
 	WString Name;
-	WString VertexShader;
-	WString FragmentShader;
-	WString ComputeShader;
-	WString GeometryShader;
+	size_t VertexShader;
+	size_t FragmentShader;
+	size_t ComputeShader;
+	size_t GeometryShader;
 };
 
 template<>
@@ -29,25 +29,25 @@ inline Resource<ShaderProgram> * ResourceManager::Load(const WString & Name) {
 	}
 
 	ShaderProgram * Program = new ShaderProgram(LoadData.Name);
-	if (LoadData.VertexShader.size() > 0) {
+	if (LoadData.VertexShader > 0) {
 		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.VertexShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
-	if (LoadData.FragmentShader.size() > 0) {
+	if (LoadData.FragmentShader > 0) {
 		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.FragmentShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
-	if (LoadData.ComputeShader.size() > 0) {
+	if (LoadData.ComputeShader > 0) {
 		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.ComputeShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
-	if (LoadData.GeometryShader.size() > 0) {
+	if (LoadData.GeometryShader > 0) {
 		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.GeometryShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
@@ -75,26 +75,26 @@ inline Resource<ShaderProgram> * ResourceManager::Load(const size_t & GUID) {
 	}
 
 	ShaderProgram * Program = new ShaderProgram(LoadData.Name);
-	if (LoadData.VertexShader.size() > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(WStringToHash(LoadData.VertexShader));
+	if (LoadData.VertexShader > 0) {
+		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.VertexShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
-	if (LoadData.FragmentShader.size() > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(WStringToHash(LoadData.FragmentShader));
+	if (LoadData.FragmentShader > 0) {
+		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.FragmentShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
-	if (LoadData.ComputeShader.size() > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(WStringToHash(LoadData.ComputeShader));
+	if (LoadData.ComputeShader > 0) {
+		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.ComputeShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
-	if (LoadData.GeometryShader.size() > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(WStringToHash(LoadData.GeometryShader));
+	if (LoadData.GeometryShader > 0) {
+		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.GeometryShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
