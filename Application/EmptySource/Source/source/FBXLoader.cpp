@@ -5,18 +5,21 @@
 
 FbxManager * FBXLoader::gSdkManager = NULL;
 
-void FBXLoader::InitializeSdkManager() {
+bool FBXLoader::InitializeSdkManager() {
 	// Create the FBX SDK memory manager object.
 	// The SDK Manager allocates and frees memory
 	// for almost all the classes in the SDK.
 	gSdkManager = FbxManager::Create();
+	if (gSdkManager == NULL)
+		return false;
 
 	FbxIOSettings * IOS = FbxIOSettings::Create(gSdkManager, IOSROOT);
 	gSdkManager->SetIOSettings(IOS);
 
+	return true;
 }
 
-bool FBXLoader::LoadScene(FbxScene * pScene, FileStream * File) {
+bool FBXLoader::LoadScene(FbxScene * pScene, const FileStream * File) {
 	int FileMajor, FileMinor, FileRevision;
 	int SDKMajor, SDKMinor, SDKRevision;
 	// int i, lAnimStackCount;
@@ -421,16 +424,16 @@ bool FBXLoader::ExtractTangent(FbxMesh * pMesh, MeshVertex & Vertex, const int &
 	return false;
 }
 
-bool FBXLoader::Load(FileStream * File, MeshLoader::FileData & Data, bool Optimize) {
+bool FBXLoader::Load(MeshLoader::FileData & FileData) {
 	if (gSdkManager == NULL)
-		InitializeSdkManager();
+		return false;
 
 	Debug::Timer Timer;
 	Timer.Start();
 	
-	FbxScene* Scene = FbxScene::Create(gSdkManager, WStringToString(File->GetShortPath()).c_str());
+	FbxScene* Scene = FbxScene::Create(gSdkManager, WStringToString(FileData.File->GetShortPath()).c_str());
 
-	bool bStatus = LoadScene(Scene, File);
+	bool bStatus = LoadScene(Scene, FileData.File);
 	if (bStatus == false) return false;
 
 	FbxAxisSystem::OpenGL.ConvertScene(Scene);
@@ -452,19 +455,19 @@ bool FBXLoader::Load(FileStream * File, MeshLoader::FileData & Data, bool Optimi
 		FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
 		FbxMesh* lMesh = Node->GetMesh();
 		if (lMesh) {
-			Data.Meshes.push_back(MeshData());
-			ExtractVertexData(lMesh, Data.Meshes.back());
+			FileData.Meshes.push_back(MeshData());
+			ExtractVertexData(lMesh, FileData.Meshes.back());
 #ifdef _DEBUG
 			Debug::Log(
 				Debug::LogInfo,
 				L"├> Parsed %ls	vertices in %ls	at [%d]'%ls'",
-				Text::FormatUnit(Data.Meshes.back().Vertices.size(), 2).c_str(),
-				Text::FormatData(sizeof(IntVector3) * Data.Meshes.back().Faces.size() + sizeof(MeshVertex) * Data.Meshes.back().Vertices.size(), 2).c_str(),
-				Data.Meshes.size(),
+				Text::FormatUnit(FileData.Meshes.back().Vertices.size(), 2).c_str(),
+				Text::FormatData(sizeof(IntVector3) * FileData.Meshes.back().Faces.size() + sizeof(MeshVertex) * FileData.Meshes.back().Vertices.size(), 2).c_str(),
+				FileData.Meshes.size(),
 				StringToWString(Node->GetName()).c_str()
 			);
 #endif
-			TotalAllocatedSize += sizeof(IntVector3) * Data.Meshes.back().Faces.size() + sizeof(MeshVertex) * Data.Meshes.back().Vertices.size();
+			TotalAllocatedSize += sizeof(IntVector3) * FileData.Meshes.back().Faces.size() + sizeof(MeshVertex) * FileData.Meshes.back().Vertices.size();
 		}
 	}
 

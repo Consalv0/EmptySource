@@ -4,23 +4,100 @@
 #include "../include/FBXLoader.h"
 #include "../include/MeshLoader.h"
 
-bool MeshLoader::LoadFromFile(FileStream * File, FileData & Data, bool Optimize) {
-	const WString Extension = File->GetExtension();
+#include <future>
+#include <thread>
+
+bool MeshLoader::_TaskRunning;
+std::queue<MeshLoader::Task*> MeshLoader::PendingTasks = std::queue<Task*>();
+std::future<bool> MeshLoader::CurrentFuture;
+std::mutex QueueLock;
+
+bool MeshLoader::RecognizeFileExtensionAndLoad(FileData & Data) {
+	const WString Extension = Data.File->GetExtension();
 	if (Text::CompareIgnoreCase(Extension, WString(L"FBX"))) {
-		return FBXLoader::Load(File, Data, Optimize);
+		return FBXLoader::Load(Data);
 	}
 	if (Text::CompareIgnoreCase(Extension, WString(L"OBJ"))) {
-		return OBJLoader::Load(File, Data, Optimize);
+		return OBJLoader::Load(Data);
 	}
 
 	return false;
 }
 
-bool MeshLoader::Load(FileData & Data, FileStream * File, bool Optimize) {
-	if (File == NULL) return false;
+bool MeshLoader::Initialize()
+{
+	if (std::thread::hardware_concurrency() <= 1) {
+		Debug::Log(Debug::LogWarning, L"The aviable cores (%d) are insuficient for asyncronus loaders", std::thread::hardware_concurrency());
+		return false;
+	}
+	if (!FBXLoader::InitializeSdkManager()) {
+		return false;
+	}
 
-	Debug::Log(Debug::LogInfo, L"Reading File Model '%ls'", File->GetShortPath().c_str());
-	bool bNoError = LoadFromFile(File, Data, Optimize);
-	Data.bLoaded = bNoError;
-	return bNoError;
+	// Initialize with all cores/threads status are free to use
+	// AsyncTask.
+
+	return true;
+}
+
+void MeshLoader::UpdateStatus()
+{
+	if (!PendingTasks.empty() && CurrentFuture.valid() && !_TaskRunning) {
+		CurrentFuture.get();
+		PendingTasks.front()->FinishFunction(PendingTasks.front()->Data);
+		delete PendingTasks.front();
+		PendingTasks.pop();
+	}
+	if (!PendingTasks.empty() && !CurrentFuture.valid() && !_TaskRunning) {
+		CurrentFuture = PendingTasks.front()->Future(PendingTasks.front()->Data);
+	}
+}
+
+void MeshLoader::Exit() {
+	if (CurrentFuture.valid())
+		CurrentFuture.get();
+}
+
+bool MeshLoader::Load(FileData & Data) {
+	if (Data.File == NULL || _TaskRunning) return false;
+
+	_TaskRunning = true;
+	Debug::Log(Debug::LogInfo, L"Reading File Model '%ls'", Data.File->GetShortPath().c_str());
+	Data.bLoaded = RecognizeFileExtensionAndLoad(Data);
+	_TaskRunning = false;
+	return Data.bLoaded;
+}
+
+void MeshLoader::LoadAsync(FileStream * File, bool Optimize, FinishTaskFunction OnSuccess) {
+	if (File == NULL) return;
+
+	PendingTasks.push(new Task {
+		File, Optimize, OnSuccess,
+		[](FileData & Data) -> std::future<bool> {
+			std::future<bool> Task = std::async(std::launch::async, Load, std::ref(Data));
+			return std::move(Task);
+		}
+	});
+}
+
+MeshLoader::FileData::FileData(const FileStream * File, bool Optimize) :
+	File(File), Optimize(Optimize), Meshes(), MeshTransforms(), bLoaded() {
+}
+
+//MeshLoader::FileData::FileData(const FileData & Other) : File(Other.File), Optimize(Other.Optimize), bLoaded(Other.bLoaded) {
+//	Meshes = Other.Meshes;
+//	MeshTransforms = Other.MeshTransforms;
+//}
+
+MeshLoader::FileData & MeshLoader::FileData::operator=(FileData & Other) {
+	File = Other.File; 
+	Optimize = Other.Optimize;
+	Meshes.swap(Other.Meshes);
+	MeshTransforms.swap(Other.MeshTransforms);
+	bLoaded = Other.bLoaded;
+	return *this;
+}
+
+MeshLoader::Task::Task(const FileStream * File, bool Optimize, FinishTaskFunction FinishFunction, FutureTask Future) :
+	Data(File, Optimize), FinishFunction(FinishFunction), Future(Future) {
 }

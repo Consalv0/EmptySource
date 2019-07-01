@@ -128,28 +128,28 @@ void OBJLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
 	Vector->z = (int)fast_strtof(LineState, NULL);
 }
 
-void OBJLoader::ParseVertexPositions(FileData & Data) {
+void OBJLoader::ParseVertexPositions(ExtractedData & Data) {
 	for (TArray<const Char *>::const_iterator Line = Data.LinePositions.begin(); Line != Data.LinePositions.end(); ++Line) {
 		const size_t Pos = Line - Data.LinePositions.begin();
 		ExtractVector3((*Line) + 1, &Data.ListPositions[Pos]);
 	}
 }
 
-void OBJLoader::ParseVertexNormals(FileData & Data) {
+void OBJLoader::ParseVertexNormals(ExtractedData & Data) {
 	for (TArray<const Char *>::const_iterator Line = Data.LineNormals.begin(); Line != Data.LineNormals.end(); ++Line) {
 		const size_t Pos = Line - Data.LineNormals.begin();
 		ExtractVector3((*Line) + 1, &Data.ListNormals[Pos]);
 	}
 }
 
-void OBJLoader::ParseVertexUVs(FileData & Data) {
+void OBJLoader::ParseVertexUVs(ExtractedData & Data) {
 	for (TArray<const Char *>::const_iterator Line = Data.LineUVs.begin(); Line != Data.LineUVs.end(); ++Line) {
 		const size_t Pos = Line - Data.LineUVs.begin();
 		ExtractVector2((*Line) + 1, &Data.ListUVs[Pos]);
 	}
 }
 
-void OBJLoader::ParseFaces(FileData & Data) {
+void OBJLoader::ParseFaces(ExtractedData & Data) {
 	// 0 = Vertex, 1 = TextureCoords, 2 = Normal
 	IntVector3 VertexIndex = IntVector3(-1);
 	bool bWarned = false;
@@ -211,7 +211,7 @@ OBJLoader::Keyword OBJLoader::GetKeyword(const Char * Word) {
 	return Undefined;
 }
 
-void OBJLoader::PrepareData(const Char * InFile, FileData& ModelData) {
+void OBJLoader::PrepareData(const Char * InFile, ExtractedData& ModelData) {
 	const Char* Pointer = InFile;
 	int VertexCount = 0;
 	int NormalCount = 0;
@@ -293,10 +293,10 @@ void OBJLoader::PrepareData(const Char * InFile, FileData& ModelData) {
 	ModelData.VertexIndices.reserve(FaceCount * 4);
 }
 
-bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool hasOptimize) {
-	if (File == NULL || !File->IsValid()) return false;
+bool OBJLoader::Load(MeshLoader::FileData & FileData) {
+	if (FileData.File == NULL || !FileData.File->IsValid()) return false;
 
-	FileData ModelData;
+	ExtractedData ModelData;
 
 	// --- Read File
 	{
@@ -304,7 +304,7 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 
 		Timer.Start();
 		String* MemoryText = new String();
-		File->ReadNarrowStream(MemoryText);
+		FileData.File->ReadNarrowStream(MemoryText);
 
 		PrepareData(MemoryText->c_str(), ModelData);
 		ParseFaces(ModelData);
@@ -342,8 +342,8 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 		TDictionary<MeshVertex, unsigned> VertexToIndex;
 		VertexToIndex.reserve(Data.VertexIndicesCount);
 
-		OutData.Meshes.push_back(MeshData());
-		MeshData* OutMesh = &OutData.Meshes.back();
+		FileData.Meshes.push_back(MeshData());
+		MeshData* OutMesh = &FileData.Meshes.back();
 		OutMesh->Name = StringToWString(Data.Name);
 
 		int InitialCount = Count;
@@ -364,7 +364,7 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 
 			unsigned Index = Count;
 			bool bFoundIndex = false;
-			if (hasOptimize) {
+			if (FileData.Optimize) {
 				bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
 			}
 
@@ -377,7 +377,7 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 				OutMesh->Vertices.push_back(NewVertex);
 				unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
 				Indices[Count] = NewIndex;
-				if (hasOptimize) VertexToIndex[NewVertex] = NewIndex;
+				if (FileData.Optimize) VertexToIndex[NewVertex] = NewIndex;
 				TotalUniqueVertices++;
 			}
 
@@ -399,7 +399,7 @@ bool OBJLoader::Load(FileStream * File, MeshLoader::FileData & OutData, bool has
 			L"├> Parsed %ls	vertices in %ls	at [%d]'%ls'",
 			Text::FormatUnit(Data.VertexIndicesCount, 2).c_str(),
 			Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2).c_str(),
-			OutData.Meshes.size(),
+			FileData.Meshes.size(),
 			OutMesh->Name.c_str()
 		);
 #endif // _DEBUG

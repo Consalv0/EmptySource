@@ -16,7 +16,7 @@ private:
 		int VertexIndicesCount = 0;
 	};
 
-	struct FileData {
+	struct ExtractedData {
 		TArray<String> Groups;
 		TArray<ObjectData> Objects;
 		TArray<IntVector3> VertexIndices;
@@ -45,17 +45,17 @@ private:
 	static void ExtractVector2(const Char * Text, Vector2* Vertex);
 	static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
 
-	static void PrepareData(const Char * InFile, FileData& Data);
+	static void PrepareData(const Char * InFile, ExtractedData& Data);
 
-	static void ParseVertexPositions(FileData& Data);
-	static void ParseVertexNormals(FileData& Data);
-	static void ParseVertexUVs(FileData& Data);
-	static void ParseFaces(FileData& Data);
+	static void ParseVertexPositions(ExtractedData& Data);
+	static void ParseVertexNormals(ExtractedData& Data);
+	static void ParseVertexUVs(ExtractedData& Data);
+	static void ParseFaces(ExtractedData& Data);
 
 public:
 	/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
 	  * there's a way to optimize the vertices. */
-	static bool Load(FileStream* File, MeshLoader::FileData & OutData, bool Optimize = true);
+	static bool Load(MeshLoader::FileData & FileData);
 
 };
 

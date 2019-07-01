@@ -8,11 +8,8 @@ class FBXLoader {
 private:
 	static class FbxManager * gSdkManager;
 
-	//* Creates an instance of the SDK manager.
-	static void InitializeSdkManager();
-
 	//* Creates an importer object, and uses it to import a file into a scene.
-	static bool LoadScene(class FbxScene * Scene, FileStream* File);
+	static bool LoadScene(class FbxScene * Scene, const FileStream* File);
 	
 	static void ExtractVertexData(class FbxMesh * pMesh, MeshData & OutData);
 	static void ExtractTextureCoords(
@@ -33,7 +30,11 @@ private:
 	);
 
 public:
+
+	//* Creates an instance of the SDK manager.
+	static bool InitializeSdkManager();
+
 	/** Load mesh data from FBX, it will return the models separated by objects, optionaly
 	  * there's a way to optimize the vertices. */
-	static bool Load(FileStream* File, MeshLoader::FileData & Data, bool Optimize = true);
+	static bool Load(MeshLoader::FileData & FileData);
 };

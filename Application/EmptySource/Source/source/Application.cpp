@@ -34,6 +34,7 @@
 #include "../include/Cubemap.h"
 #include "../include/ImageLoader.h"
 #include "../include/Math/Physics.h"
+#include "../include/Property.h"
 
 // SDL 2.0.9
 #include "../External/SDL/include/SDL.h"
@@ -45,8 +46,8 @@ Mesh MeshPrimitives::Quad;
 
 // int FindBoundingBox(int N, MeshVertex * Vertices);
 // int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
-int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
-const void * GetRandomArray(IntVector2 Dimension);
+// int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
+// const void * GetRandomArray(IntVector2 Dimension);
 
 bool CoreApplication::bInitialized = false;
 double CoreApplication::RenderTimeSum = 0;
@@ -121,6 +122,9 @@ void CoreApplication::Initalize() {
 	CUDA::FindCudaDevice();
 #endif
 
+	if (!MeshLoader::Initialize())
+		return;
+	
 	MeshPrimitives::Initialize();
 	Font::InitializeFreeType();
 
@@ -129,6 +133,7 @@ void CoreApplication::Initalize() {
 
 void CoreApplication::Terminate() {
     Debug::CloseDeviceFunctions();
+	MeshLoader::Exit();
 	if (GetMainWindow().IsCreated()) {
 		GetMainWindow().Terminate();
 	}
@@ -139,6 +144,15 @@ void CoreApplication::Terminate() {
 
 void CoreApplication::MainLoop() {
 	if (!bInitialized) return;
+
+	Property<int> Value(0);
+
+	Observer IntObserver;
+	IntObserver.AddCallback([&Value]() { Debug::Log(Debug::LogDebug, L"PropertyInt Changed with value %d", (int)Value); });
+	Value.AttachObserver(&IntObserver);
+
+	Value = 1;
+	Value = 3;
 
 	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
 	GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"Hola", Transform());
@@ -315,22 +329,36 @@ void CoreApplication::MainLoop() {
 	HDRClampingMaterial.SetShaderProgram(HDRClampingShader->GetData());
 
 	srand(SDL_GetTicks());
-	MeshLoader::FileData LightModelData;
-	MeshLoader::FileData SceneModelData0;
-	MeshLoader::FileData SceneModelData1;
-	MeshLoader::FileData SphereData;
 	TArray<Mesh> SceneModels;
 	TArray<Mesh> LightModels;
 	Mesh SphereModel;
 	float MeshSelector = 0;
 
-	TArray<std::thread> Threads;
-	Threads.push_back(std::thread([&SphereData, &LightModelData, &SceneModelData0, &SceneModelData1]() {
-		MeshLoader::Load(SphereData, FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true);
-		MeshLoader::Load(LightModelData, FileManager::GetFile(L"Resources/Models/Arrow.fbx"), false);
-		MeshLoader::Load(SceneModelData0, FileManager::GetFile(L"Resources/Models/Sponza.obj"), true);
-		MeshLoader::Load(SceneModelData1, FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true);
-	}));
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [&SphereModel](MeshLoader::FileData & ModelData) {
+		Debug::Log(Debug::LogDebug, L"SphereUV.obj ... Parsing FileData to Mesh");
+		SphereModel = Mesh(&(ModelData.Meshes.back()));
+		SphereModel.SetUpBuffers();
+	});
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Arrow.fbx"), false, [&LightModels](MeshLoader::FileData & ModelData) {
+		Debug::Log(Debug::LogDebug, L"Arrow.fbx ... Parsing FileData to Mesh");
+		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
+			LightModels.push_back(Mesh(&(*Data)));
+			LightModels.back().SetUpBuffers();
+		}
+	});
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Sponza.obj"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
+		Debug::Log(Debug::LogDebug, L"Sponza.obj ... Parsing FileData to Mesh");
+		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
+			SceneModels.push_back(Mesh(&(*Data)));
+			SceneModels.back().SetUpBuffers();
+		}
+	});
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & SceneModelData1) {
+		for (TArray<MeshData>::iterator Data = SceneModelData1.Meshes.begin(); Data != SceneModelData1.Meshes.end(); ++Data) {
+			SceneModels.push_back(Mesh(&(*Data)));
+			SceneModels.back().SetUpBuffers();
+		}
+	});
 
 	Texture2D RenderedTexture = Texture2D(
 	 	IntVector2(GetMainWindow().GetWidth(), GetMainWindow().GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
@@ -420,6 +448,7 @@ void CoreApplication::MainLoop() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	do {
+		MeshLoader::UpdateStatus();
 		Time::Tick();
 
 		ProjectionMatrix = Matrix4x4::Perspective(
@@ -428,38 +457,6 @@ void CoreApplication::MainLoop() {
 			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
-
-		if (SceneModelData0.bLoaded) {
-			for (TArray<MeshData>::iterator Data = SceneModelData0.Meshes.begin(); Data != SceneModelData0.Meshes.end(); ++Data) {
-				SceneModels.push_back(Mesh(&(*Data)));
-				SceneModels.back().SetUpBuffers();
-			}
-			SceneModelData0.bLoaded = false;
-		}
-
-		if (SceneModelData1.bLoaded) {
-			for (TArray<MeshData>::iterator Data = SceneModelData1.Meshes.begin(); Data != SceneModelData1.Meshes.end(); ++Data) {
-				SceneModels.push_back(Mesh(&(*Data)));
-				SceneModels.back().SetUpBuffers();
-			}
-			SceneModelData1.bLoaded = false;
-		}
-
-		if (LightModelData.bLoaded) {
-			for (TArray<MeshData>::iterator Data = LightModelData.Meshes.begin(); Data != LightModelData.Meshes.end(); ++Data) {
-				LightModels.push_back(Mesh(&(*Data)));
-				LightModels.back().SetUpBuffers();
-			}
-			LightModelData.bLoaded = false;
-		}
-
-		if (SphereData.bLoaded) {
-			for (TArray<MeshData>::iterator Data = SphereData.Meshes.begin(); Data != SphereData.Meshes.end(); ++Data) {
-				SphereModel = Mesh(&(*Data));
-				SphereModel.SetUpBuffers();
-			}
-			SphereData.bLoaded = false;
-		}
 
 		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = GetMainWindow().GetMousePosition();
@@ -932,9 +929,5 @@ void CoreApplication::MainLoop() {
 	} while (
 		GetMainWindow().ShouldClose() == false && !GetMainWindow().GetKeyDown(SDL_SCANCODE_ESCAPE)
 	);
-
-	for (int i = 0; i < Threads.size(); i++) {
-		Threads[i].join();
-	}
 	// delete[] Positions;
 }
