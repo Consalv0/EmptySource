@@ -810,6 +810,12 @@
     <ClInclude Include="Source\include\ResourceShaderStage.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Observer.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Property.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\source\Application.cpp">
@@ -939,6 +945,9 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\source\ResourceShaderStage.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Observer.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>

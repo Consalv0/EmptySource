@@ -381,6 +381,8 @@
     <ClInclude Include="Source\include\MeshLoader.h" />
     <ClInclude Include="Source\include\Object.h" />
     <ClInclude Include="Source\include\OBJLoader.h" />
+    <ClInclude Include="Source\include\Observer.h" />
+    <ClInclude Include="Source\include\Property.h" />
     <ClInclude Include="Source\include\RenderTarget.h" />
     <ClInclude Include="Source\include\Resources.h" />
     <ClInclude Include="Source\include\ResourceShaderStage.h" />
@@ -432,6 +434,7 @@
     <ClCompile Include="Source\source\MeshLoader.cpp" />
     <ClCompile Include="Source\source\Object.cpp" />
     <ClCompile Include="Source\source\OBJLoader.cpp" />
+    <ClCompile Include="Source\source\Observer.cpp" />
     <ClCompile Include="Source\source\RenderTarget.cpp" />
     <ClCompile Include="Source\source\Resources.cpp" />
     <ClCompile Include="Source\source\ResourceShaderStage.cpp" />
