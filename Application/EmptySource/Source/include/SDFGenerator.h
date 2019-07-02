@@ -27,7 +27,7 @@ private:
 	static void GenerateDistanceTransform();
 
 public:
-	static void FromShape(Bitmap<float> &Output, const Shape2D &Shape, double Range, const Vector2 &Scale, const Vector2 &Translate);
+	static void FromShape(Bitmap<FloatRed> &Output, const Shape2D &Shape, double Range, const Vector2 &Scale, const Vector2 &Translate);
 
-	static void FromBitmap(Bitmap<float> &Output, Bitmap<float> &Input, float MaxInside, float MaxOutside);
+	static void FromBitmap(Bitmap<FloatRed> &Output, Bitmap<FloatRed> &Input, float MaxInside, float MaxOutside);
 };

@@ -176,24 +176,16 @@ void CoreApplication::MainLoop() {
 
 	Bitmap<UCharRGBA> BaseAlbedo;
 	Bitmap<UCharRed> BaseMetallic, BaseRoughness;
-	ImageLoader::Load(BaseAlbedo, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
-	BaseAlbedo.FlipVertically();
-	ImageLoader::Load(BaseMetallic, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
-	BaseMetallic.FlipVertically();
-	ImageLoader::Load(BaseRoughness, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
-	BaseRoughness.FlipVertically();
 	Bitmap<UCharRGB> BaseNormal;
-	ImageLoader::Load(BaseNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
-	BaseNormal.FlipVertically();
 	Bitmap<UCharRGB> White, Black;
-	ImageLoader::Load(White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
-	White.FlipVertically();
-	ImageLoader::Load(Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
-	Black.FlipVertically();
-
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
-	Equirectangular.FlipVertically();
+	ImageLoader::Load(BaseAlbedo,		FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Color.tga.png"));
+	ImageLoader::Load(BaseMetallic,		FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Metal.tga.png"));
+	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.tga.png"));
+	ImageLoader::Load(BaseNormal,		FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Normal.tga.png"));
+	ImageLoader::Load(White,			FileManager::GetFile(L"Resources/Textures/White.jpg"));
+	ImageLoader::Load(Black,			FileManager::GetFile(L"Resources/Textures/Black.jpg"));
+	ImageLoader::Load(Equirectangular,	FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 
 	Texture2D EquirectangularTexture = Texture2D(
 		IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
@@ -335,26 +327,25 @@ void CoreApplication::MainLoop() {
 	float MeshSelector = 0;
 
 	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [&SphereModel](MeshLoader::FileData & ModelData) {
-		Debug::Log(Debug::LogDebug, L"SphereUV.obj ... Parsing FileData to Mesh");
-		SphereModel = Mesh(&(ModelData.Meshes.back()));
-		SphereModel.SetUpBuffers();
+		if (ModelData.bLoaded) {
+			SphereModel = Mesh(&(ModelData.Meshes.back()));
+			SphereModel.SetUpBuffers();
+		}
 	});
 	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Arrow.fbx"), false, [&LightModels](MeshLoader::FileData & ModelData) {
-		Debug::Log(Debug::LogDebug, L"Arrow.fbx ... Parsing FileData to Mesh");
 		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 			LightModels.push_back(Mesh(&(*Data)));
 			LightModels.back().SetUpBuffers();
 		}
 	});
-	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Sponza.obj"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
-		Debug::Log(Debug::LogDebug, L"Sponza.obj ... Parsing FileData to Mesh");
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/STPB3_40.fbx"), false, [&SceneModels](MeshLoader::FileData & ModelData) {
 		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 			SceneModels.push_back(Mesh(&(*Data)));
 			SceneModels.back().SetUpBuffers();
 		}
 	});
-	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & SceneModelData1) {
-		for (TArray<MeshData>::iterator Data = SceneModelData1.Meshes.begin(); Data != SceneModelData1.Meshes.end(); ++Data) {
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/PirateProps_Barrels.obj"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
+		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 			SceneModels.push_back(Mesh(&(*Data)));
 			SceneModels.back().SetUpBuffers();
 		}
@@ -590,7 +581,7 @@ void CoreApplication::MainLoop() {
 			}
 		}
 
-		Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.04F) * Transforms[0].Rotation;
+		// Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.04F) * Transforms[0].Rotation;
 		Matrix4x4 TransformMat = Transforms[0].GetLocalToWorldMatrix();
 		Matrix4x4 InverseTransform = Transforms[0].GetWorldToLocalMatrix();
 
@@ -776,17 +767,17 @@ void CoreApplication::MainLoop() {
 							TriangleCount += LightModels[0].Data.Faces.size() * 1;
 							VerticesCount += LightModels[0].Data.Vertices.size() * 1;
 						}
-
-						SceneModels[MeshCount].SetUpBuffers();
-						SceneModels[MeshCount].BindVertexArray();
-
-						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
-						SceneModels[MeshCount].DrawInstanciated((GLsizei)1);
-
-						TriangleCount += ModelData.Faces.size() * 1;
-						VerticesCount += ModelData.Vertices.size() * 1;
 					}
 				}
+
+				SceneModels[MeshCount].SetUpBuffers();
+				SceneModels[MeshCount].BindVertexArray();
+
+				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
+				SceneModels[MeshCount].DrawInstanciated((GLsizei)1);
+
+				TriangleCount += ModelData.Faces.size() * 1;
+				VerticesCount += ModelData.Vertices.size() * 1;
 			}
 
 			if (LightModels.size() > 0) {

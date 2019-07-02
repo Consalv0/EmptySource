@@ -36,5 +36,5 @@ public:
 
 	//* Prepare Texture Data
 	//* The UV of the glyph quads are calculated here
-	bool GenerateGlyphAtlas(Bitmap<unsigned char> & Atlas);
+	bool GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas);
 };

@@ -11,7 +11,7 @@ FontGlyph::FontGlyph() {
 	Advance = 0;
 	UV = { 0, 0, 0, 0 };
 	VectorShape = Shape2D();
-	SDFResterized = Bitmap<float>();
+	SDFResterized = Bitmap<FloatRed>();
 }
 
 FontGlyph::FontGlyph(const FontGlyph & Other) :
@@ -23,7 +23,7 @@ FontGlyph::FontGlyph(const FontGlyph & Other) :
 
 void FontGlyph::GenerateSDF(float PixelRange) {
 	IntVector2 Size = { (int)Width, (int)Height };
-	SDFResterized = Bitmap<float>(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4);
+	SDFResterized = Bitmap<FloatRed>(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4);
 	Vector2 Translate(-(float)Bearing.x, Height - (float)Bearing.y);
 	Vector2 Scale = 1;
 	Translate += PixelRange;

@@ -11,44 +11,61 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../External/STB/stb_image_write.h"
 
-#define _LoadImage(BitmapFormat, STBIFormat) \
-	if (File == NULL) return false; \
-	int Width, Height, Comp; \
-	FILE * FILEFile = fopen(WStringToString(File->GetPath()).c_str(), "rb"); \
-	unsigned char * Image = stbi_load_from_file(FILEFile, &Width, &Height, &Comp, STBIFormat); \
-	if (Image == NULL) return false; \
-	RefBitmap = Bitmap<BitmapFormat>(Width, Height); \
-	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(BitmapFormat)); \
+template<typename T>
+struct LoadFromFile {
+	static T * Load(FILE *File, int *Width, int *Height, int *Comp, int Channels) = 0;
+};
+
+template<>
+struct LoadFromFile<unsigned char> {
+	static unsigned char * Load(FILE *File, int *Width, int *Height, int *Comp, int Channels) {
+		return stbi_load_from_file(File, Width, Height, Comp, Channels);
+	}
+};
+
+template<>
+struct LoadFromFile<float> {
+	static float * Load(FILE *File, int *Width, int *Height, int *Comp, int Channels) {
+		return stbi_loadf_from_file(File, Width, Height, Comp, Channels);
+	}
+};
+
+template<typename T>
+bool _LoadBitmap(Bitmap<T>& RefBitmap, FileStream * File, bool FlipVertically = true) {
+	if (File == NULL) return false;
+	int Width, Height, Comp;
+	stbi_set_flip_vertically_on_load(FlipVertically);
+	FILE * FILEFile = fopen(WStringToString(File->GetPath()).c_str(), "rb"); 
+	auto * Image = LoadFromFile<T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
+	if (Image == NULL) return false;
+	RefBitmap = Bitmap<T>(Width, Height);
+	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(T));
 	return true;
-
-#define _LoadImagef(BitmapFormat, STBIFormat) \
-	if (File == NULL) return false; \
-	int Width, Height, Comp; \
-	FILE * FILEFile = fopen(WStringToString(File->GetPath()).c_str(), "rb"); \
-	float * Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, STBIFormat); \
-	if (Image == NULL) return false; \
-	RefBitmap = Bitmap<BitmapFormat>(Width, Height); \
-	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(BitmapFormat)); \
-	return true;
-
-bool ImageLoader::Load(Bitmap<UCharRGBA>& RefBitmap, FileStream * File) {
-	_LoadImage(UCharRGBA, STBI_rgb_alpha);
 }
 
-bool ImageLoader::Load(Bitmap<UCharRGB>& RefBitmap, FileStream * File) {
-	_LoadImage(UCharRGB, STBI_rgb);
+template<>
+bool ImageLoader::Load(Bitmap<UCharRGBA>& RefBitmap, FileStream * File, bool FlipVertically) {
+	return _LoadBitmap<UCharRGBA>(RefBitmap, File, FlipVertically);
 }
 
-bool ImageLoader::Load(Bitmap<UCharRG>& RefBitmap, FileStream * File) {
-	_LoadImage(UCharRG, STBI_grey_alpha);
+template<>
+bool ImageLoader::Load(Bitmap<UCharRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
+	return _LoadBitmap<UCharRGB>(RefBitmap, File, FlipVertically);
 }
 
-bool ImageLoader::Load(Bitmap<UCharRed>& RefBitmap, FileStream * File) {
-	_LoadImage(UCharRed, STBI_grey);
+template<>
+bool ImageLoader::Load(Bitmap<UCharRG>& RefBitmap, FileStream * File, bool FlipVertically) {
+	return _LoadBitmap<UCharRG>(RefBitmap, File, FlipVertically);
 }
 
-bool ImageLoader::Load(Bitmap<FloatRGB>& RefBitmap, FileStream * File) {
-	_LoadImagef(FloatRGB, STBI_rgb);
+template<>
+bool ImageLoader::Load(Bitmap<UCharRed>& RefBitmap, FileStream * File, bool FlipVertically) {
+	return _LoadBitmap<UCharRed>(RefBitmap, File, FlipVertically);
+}
+
+template<>
+bool ImageLoader::Load(Bitmap<FloatRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
+	return _LoadBitmap<FloatRGB>(RefBitmap, File, FlipVertically);
 }
 
 bool ImageLoader::Write(const Bitmap<FloatRed>& RefBitmap, FileStream * File) {

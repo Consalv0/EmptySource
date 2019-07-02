@@ -91,6 +91,6 @@ typename TexturePacking<T>::ReturnElement TexturePacking<T>::Insert(const T & El
 	return { false, BoundingBox2D(), (T*)(NULL) };
 }
 
-template class TexturePacking<Bitmap<float>>;
-template class TexturePacking<Bitmap<unsigned char>>;
+template class TexturePacking<Bitmap<FloatRed>>;
+template class TexturePacking<Bitmap<UCharRed>>;
 template class TexturePacking<Texture2D>;

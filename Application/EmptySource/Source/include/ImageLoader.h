@@ -6,10 +6,8 @@
 
 class ImageLoader {
 public:
-	static bool Load(Bitmap<UCharRGBA> & RefBitmap, FileStream * File);
-	static bool Load(Bitmap<UCharRGB> & RefBitmap, FileStream * File);
-	static bool Load(Bitmap<UCharRG> & RefBitmap, FileStream * File);
-	static bool Load(Bitmap<UCharRed> & RefBitmap, FileStream * File);
-	static bool Load(Bitmap<FloatRGB> & RefBitmap, FileStream * File);
+	template<typename T>
+	static bool Load(Bitmap<T> & RefBitmap, FileStream * File, bool FlipVertically = true);
+
 	static bool Write(const Bitmap<FloatRed> & RefBitmap, FileStream * File);
 };

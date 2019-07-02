@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-typedef unsigned char UCharRed;
-typedef struct { unsigned char R; unsigned char G; } UCharRG;
-typedef struct { unsigned char R; unsigned char G; unsigned char B; } UCharRGB;
-typedef struct { unsigned char R; unsigned char G; unsigned char B; unsigned char A; } UCharRGBA;
-typedef float FloatRed;
-typedef struct { float R; float G; } FloatRG;
-typedef struct { float R; float G; float B; } FloatRGB;
-typedef struct { float R; float G; float B; float A; } FloatRGBA;
+typedef struct { typedef unsigned char Range; static constexpr unsigned char Channels = 1; Range R; } UCharRed;
+typedef struct { typedef unsigned char Range; static constexpr unsigned char Channels = 2; Range R; Range G; } UCharRG;
+typedef struct { typedef unsigned char Range; static constexpr unsigned char Channels = 3; Range R; Range G; Range B; } UCharRGB;
+typedef struct { typedef unsigned char Range; static constexpr unsigned char Channels = 4; Range R; Range G; Range B; Range A; } UCharRGBA;
+typedef struct { typedef float Range; static constexpr unsigned char Channels = 1; Range R; } FloatRed;
+typedef struct { typedef float Range; static constexpr unsigned char Channels = 2; Range R; Range G; } FloatRG;
+typedef struct { typedef float Range; static constexpr unsigned char Channels = 3; Range R; Range G; Range B; } FloatRGB;
+typedef struct { typedef float Range; static constexpr unsigned char Channels = 4; Range R; Range G; Range B; Range A; } FloatRGBA;
 
 namespace Graphics {
 	enum DepthFunction {

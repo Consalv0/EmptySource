@@ -32,18 +32,18 @@ float SDFGenerator::ApproximateEdgeDelta(float gx, float gy, float a) {
 	}
 
 	// normalize (gx, gy)
-	float length = sqrtf(gx * gx + gy * gy);
-	gx = gx / length;
-	gy = gy / length;
+	float Length = sqrtf(gx * gx + gy * gy);
+	gx = gx / Length;
+	gy = gy / Length;
 
 	// reduce symmetrical equation to first octant only
 	// gx >= 0, gy >= 0, gx >= gy
 	gx = abs(gx);
 	gy = abs(gy);
 	if (gx < gy) {
-		float temp = gx;
+		float Temp = gx;
 		gx = gy;
-		gy = temp;
+		gy = Temp;
 	}
 
 	// compute delta
@@ -59,6 +59,7 @@ float SDFGenerator::ApproximateEdgeDelta(float gx, float gy, float a) {
 	// 1-a1 < a <= 1
 	return -0.5F * (gx + gy) + sqrtf(2.F * gx * gy * (1.F - a));
 }
+
 void SDFGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY) {
 	Pixel * neighbor = PixelAt(x + oX, y + oY);
 	Pixel * closest = PixelAt(x + oX - neighbor->Delta.x, y + oY - neighbor->Delta.y);
@@ -78,6 +79,7 @@ void SDFGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY) {
 		p->Delta.y = dY;
 	}
 }
+
 void SDFGenerator::GenerateDistanceTransform() {
 	// perform anti-aliased Euclidean distance transform
 	int x, y;
@@ -182,7 +184,7 @@ void SDFGenerator::GenerateDistanceTransform() {
 	}
 }
 
-void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float MaxInside, float MaxOutside) {
+void SDFGenerator::FromBitmap(Bitmap<FloatRed>& Output, Bitmap<FloatRed>& Input, float MaxInside, float MaxOutside) {
 	Width = Input.GetWidth();
 	Height = Input.GetHeight();
 
@@ -196,7 +198,7 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float
 	if (MaxInside > 0.F) {
 		for (y = 0; y < Height; y++) {
 			for (x = 0; x < Width; x++) {
-				PixelAt(x, y)->Alpha = 1.F - Output(x, y);
+				PixelAt(x, y)->Alpha = 1.F - Output(x, y).R;
 			}
 		}
 		ComputeEdgeGradients();
@@ -205,14 +207,14 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float
 		for (y = 0; y < Height; y++) {
 			for (x = 0; x < Width; x++) {
 				float Alpha = Math::Clamp01(PixelAt(x, y)->Distance * Scale);
-				Output(x, y) = Alpha;
+				Output(x, y).R = Alpha;
 			}
 		}
 	}
 	if (MaxOutside > 0.F) {
 		for (y = 0; y < Height; y++) {
 			for (x = 0; x < Width; x++) {
-				PixelAt(x, y)->Alpha = Output(x, y);
+				PixelAt(x, y)->Alpha = Output(x, y).R;
 			}
 		}
 		ComputeEdgeGradients();
@@ -221,9 +223,9 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float
 		if (MaxInside > 0.F) {
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
-					float Alpha = 0.5f + (Output(x, y) -
+					float Alpha = 0.5f + (Output(x, y).R -
 						Math::Clamp01(PixelAt(x, y)->Distance * Scale)) * 0.5f;
-					Output(x, y) = Alpha;
+					Output(x, y).R = Alpha;
 				}
 			}
 		}
@@ -231,7 +233,7 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
 					float Alpha = Math::Clamp01(1.F - PixelAt(x, y)->Distance * Scale);
-					Output(x, y) = Alpha;
+					Output(x, y).R = Alpha;
 				}
 			}
 		}
@@ -240,7 +242,7 @@ void SDFGenerator::FromBitmap(Bitmap<float>& Output, Bitmap<float>& Input, float
 	delete[] Pixels;
 }
 
-void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape2D & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
+void SDFGenerator::FromShape(Bitmap<FloatRed>& Output, const Shape2D & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
 	int ContourCount = (int)Shape.Contours.size();
 	int OutWidth = Output.GetWidth(), OutHeight = Output.GetHeight();
 	int * Windings = new int[ContourCount];
@@ -294,7 +296,7 @@ void SDFGenerator::FromShape(Bitmap<float>& Output, const Shape2D & Shape, doubl
 					if (Windings[i] != Winding && fabs(ContourSD[i]) < fabs(SignedDist))
 						SignedDist = ContourSD[i];
 
-				Output(x, Row) = float(SignedDist / Range + .5F);
+				Output(x, Row).R = float(SignedDist / Range + .5F);
 			}
 		}
 		delete[] ContourSD;

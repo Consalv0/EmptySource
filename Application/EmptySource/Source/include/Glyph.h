@@ -16,7 +16,7 @@ public:
 	float Advance;
 	Box2D UV;
 	Shape2D VectorShape;
-	Bitmap<float> SDFResterized;
+	Bitmap<FloatRed> SDFResterized;
 
 	FontGlyph();
 

@@ -159,7 +159,7 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas) {
 		// 	Atlas[i] = 255;
 		// }
 		// else {
-			Atlas[i] = 0;
+			Atlas[i].R = 0;
 		// }
 	}
 	
@@ -195,8 +195,8 @@ bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas) {
 		for (int i = 0; i < Character->SDFResterized.GetHeight(); ++i) {
 			for (int j = 0; j < Character->SDFResterized.GetWidth(); ++j) {
 				if (IndexPos < AtlasSizeSqr && IndexPos >= 0) {
-					Value = Math::Clamp(int(Character->SDFResterized[i * Character->SDFResterized.GetWidth() + j] * 0x100), 0xff);
-					Atlas[IndexPos] = Value;
+					Value = Math::Clamp(int(Character->SDFResterized[i * Character->SDFResterized.GetWidth() + j].R * 0x100), 0xff);
+					Atlas[IndexPos].R = Value;
 				}
 				IndexPos++;
 			}
