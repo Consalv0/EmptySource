@@ -36,8 +36,18 @@ FileStream * ResourceManager::GetResourcesFile() {
 		String FileInfo;
 		if (!ResourceFile->ReadNarrowStream(&FileInfo))
 			return false;
-		BaseNode = YAML::Load(FileInfo.c_str());
-		if (!BaseNode["Resources"].IsDefined()) {
+		try {
+			BaseNode = YAML::Load(FileInfo.c_str());
+			if (!BaseNode["Resources"].IsDefined()) {
+				bNeedsModification = true;
+			}
+		}
+		catch (...) {
+			Debug::Log(Debug::LogWarning, L"The Resource.yaml file could not be parsed");
+			FileStream * ResourceFileSave = FileManager::MakeFile(ResourceFilePath + L".save");
+			ResourceFileSave->Clean();
+			(*ResourceFileSave) << FileInfo.c_str();
+			ResourceFileSave->Close();
 			bNeedsModification = true;
 		}
 	}
