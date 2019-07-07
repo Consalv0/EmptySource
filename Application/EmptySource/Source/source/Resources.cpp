@@ -35,7 +35,7 @@ FileStream * ResourceManager::GetResourcesFile() {
 	else {
 		String FileInfo;
 		if (!ResourceFile->ReadNarrowStream(&FileInfo))
-			return false;
+			return NULL;
 		try {
 			BaseNode = YAML::Load(FileInfo.c_str());
 			if (!BaseNode["Resources"].IsDefined()) {

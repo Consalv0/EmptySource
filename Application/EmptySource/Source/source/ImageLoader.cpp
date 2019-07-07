@@ -36,7 +36,7 @@ bool _LoadBitmap(Bitmap<T>& RefBitmap, FileStream * File, bool FlipVertically = 
 	int Width, Height, Comp;
 	stbi_set_flip_vertically_on_load(FlipVertically);
 	FILE * FILEFile = fopen(WStringToString(File->GetPath()).c_str(), "rb"); 
-	auto * Image = LoadFromFile<T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
+	auto * Image = LoadFromFile<typename T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
 	if (Image == NULL) return false;
 	RefBitmap = Bitmap<T>(Width, Height);
 	memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(T));
