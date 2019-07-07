@@ -73,7 +73,7 @@ bool ResourceManager::GetResourceData<ShaderProgramData>(const WString & Name, S
 			bNeedsModification = true;
 		}
 		FileNode = ResourcesNode[FileNodePos];
-		if (FileNode["GUID"].IsNull()) {
+		if (FileNode["GUID"].IsNull() || !FileNode["GUID"].IsDefined()) {
 			FileNode["GUID"] = WStringToHash(Name);
 			bNeedsModification = true;
 		}

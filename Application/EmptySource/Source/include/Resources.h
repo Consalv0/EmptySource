@@ -48,7 +48,8 @@ public:
 	//* Get the resource with the given name, returns NULL if no resource
 	template<typename T>
 	static inline Resource<T> * Load(const WString & File);
-	//* Get the resource with the given name use this if you are shure the file is in Resources.yaml, returns NULL if no resource
+	//* Get the resource with the given GUID. 
+	//  Use this if you are shure the file is in Resources.yaml, returns NULL if no resource
 	template<typename T>
 	static inline Resource<T> * Load(const size_t & GUID);
 

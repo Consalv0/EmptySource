@@ -26,26 +26,30 @@ public:
 private:
 	typedef std::function<void(FileData &)> FinishTaskFunction;
 	typedef std::function<std::future<bool>(FileData &)> FutureTask;
+	
+	static bool _TaskRunning;
+
 	struct Task {
 		FileData Data;
 		FinishTaskFunction FinishFunction;
 		std::function<std::future<bool>(FileData &)> Future;
 
-		Task(const Task& Other);
+		Task(const Task& Other) = delete;
 		Task(const FileStream * File, bool Optimize, FinishTaskFunction FinishFunction, FutureTask Future);
 	};
 
 	static bool RecognizeFileExtensionAndLoad(FileData & Data);
+	static void FinishCurrentAsyncTask();
 
 	//* Mesh Loading Threads
 	static std::queue<Task *> PendingTasks;
 	static std::future<bool> CurrentFuture;
 
 public:
-	static bool _TaskRunning;
-
 	static bool Initialize();
 	static void UpdateStatus();
+	static void FinishAsyncTasks();
+	static size_t GetAsyncTaskCount();
 
 	static void Exit();
 	static bool Load(FileData & Data);

@@ -179,10 +179,10 @@ void CoreApplication::MainLoop() {
 	Bitmap<UCharRGB> BaseNormal;
 	Bitmap<UCharRGB> White, Black;
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(BaseAlbedo,		FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Color.tga.png"));
-	ImageLoader::Load(BaseMetallic,		FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Metal.tga.png"));
-	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.tga.png"));
-	ImageLoader::Load(BaseNormal,		FileManager::GetFile(L"Resources/Textures/PirateProps_Barrel_Texture_Normal.tga.png"));
+	ImageLoader::Load(BaseAlbedo,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	ImageLoader::Load(BaseMetallic,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
+	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
+	ImageLoader::Load(BaseNormal,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 	ImageLoader::Load(White,			FileManager::GetFile(L"Resources/Textures/White.jpg"));
 	ImageLoader::Load(Black,			FileManager::GetFile(L"Resources/Textures/Black.jpg"));
 	ImageLoader::Load(Equirectangular,	FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
@@ -338,13 +338,13 @@ void CoreApplication::MainLoop() {
 			LightModels.back().SetUpBuffers();
 		}
 	});
-	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/STPB3_40.fbx"), false, [&SceneModels](MeshLoader::FileData & ModelData) {
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Sponza.obj"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
 		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 			SceneModels.push_back(Mesh(&(*Data)));
 			SceneModels.back().SetUpBuffers();
 		}
 	});
-	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/PirateProps_Barrels.obj"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
 		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 			SceneModels.push_back(Mesh(&(*Data)));
 			SceneModels.back().SetUpBuffers();
