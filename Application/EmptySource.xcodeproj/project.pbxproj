@@ -67,6 +67,7 @@
 		DD988CE5224DC0BA00D342DA /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CE3224DC0B900D342DA /* Text.cpp */; };
 		DD988CE8225010E200D342DA /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD988CE6225010E200D342DA /* ImageLoader.cpp */; };
 		DD988CFC225011FF00D342DA /* Textures in Resources */ = {isa = PBXBuildFile; fileRef = DD988CFB225011FE00D342DA /* Textures */; };
+		DDEC636C22D16CCA00481521 /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDEC636B22D16CCA00481521 /* Observer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -402,6 +403,9 @@
 		DDCA39D42244777200A6373B /* EdgeHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdgeHolder.h; sourceTree = "<group>"; };
 		DDCA39D52244777200A6373B /* SDFGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFGenerator.h; sourceTree = "<group>"; };
 		DDCA39D62244777300A6373B /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
+		DDEC636922D16CB100481521 /* Property.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Property.h; sourceTree = "<group>"; };
+		DDEC636A22D16CB100481521 /* Observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Observer.h; sourceTree = "<group>"; };
+		DDEC636B22D16CCA00481521 /* Observer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Observer.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -758,6 +762,8 @@
 				DD7CF5F3229284DA007EA171 /* Resources.h */,
 				DD7CF5F4229284DA007EA171 /* ResourceShaderProgram.h */,
 				DD7CF5F5229284DA007EA171 /* ResourceShaderStage.h */,
+				DDEC636A22D16CB100481521 /* Observer.h */,
+				DDEC636922D16CB100481521 /* Property.h */,
 				DD8880C22242E4300052F499 /* CoreTypes.h */,
 				DD8880EE224348D40052F499 /* FileManager.h */,
 				DD8880ED224348D40052F499 /* FileStream.h */,
@@ -820,6 +826,7 @@
 				DD7CF5F8229284E6007EA171 /* GameObject.cpp */,
 				DD7CF5ED22928494007EA171 /* Component.cpp */,
 				DD8880F9224355670052F499 /* IIdentifier.cpp */,
+				DDEC636B22D16CCA00481521 /* Observer.cpp */,
 				DD8880F8224355670052F499 /* Mesh.cpp */,
 				DD521FF0227E0ED200A4C7DC /* FBXLoader.cpp */,
 				DD521FF1227E0ED200A4C7DC /* OBJLoader.cpp */,
@@ -997,6 +1004,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD3D8EC522617F42003A3346 /* Transform.cpp in Sources */,
+				DDEC636C22D16CCA00481521 /* Observer.cpp in Sources */,
 				DD4F19F5224958AB00C102FB /* Mesh.cpp in Sources */,
 				DD988CDB224C38B300D342DA /* Shape2D.cpp in Sources */,
 				DD7CF5F222928494007EA171 /* ResourceShaderStage.cpp in Sources */,

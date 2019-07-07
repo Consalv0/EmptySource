@@ -1,4 +1,4 @@
-#include "..\include\Observer.h"
+#include "../include/Observer.h"
 
 void Observer::Call() const
 {

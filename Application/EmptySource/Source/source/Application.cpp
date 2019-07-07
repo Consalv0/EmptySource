@@ -1,4 +1,4 @@
-﻿#include "../include/Core.h"
+#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 
@@ -353,8 +353,8 @@ void CoreApplication::MainLoop() {
 			SceneModels.back().SetUpBuffers();
 		}
 	});
-	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & SceneModelData1) {
-		for (TArray<MeshData>::iterator Data = SceneModelData1.Meshes.begin(); Data != SceneModelData1.Meshes.end(); ++Data) {
+	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
+		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 			SceneModels.push_back(Mesh(&(*Data)));
 			SceneModels.back().SetUpBuffers();
 		}

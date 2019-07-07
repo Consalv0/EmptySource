@@ -1,4 +1,4 @@
-﻿
+
 #include "../include/FileStream.h"
 #include "../include/Resources.h"
 #include "../include/FileManager.h"
@@ -35,7 +35,7 @@ FileStream * ResourceManager::GetResourcesFile() {
 	else {
 		String FileInfo;
 		if (!ResourceFile->ReadNarrowStream(&FileInfo))
-			return false;
+			return NULL;
 		BaseNode = YAML::Load(FileInfo.c_str());
 		if (!BaseNode["Resources"].IsDefined()) {
 			bNeedsModification = true;
