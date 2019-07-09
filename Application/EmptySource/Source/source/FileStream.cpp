@@ -24,9 +24,8 @@ FileStream::FileStream(WString FilePath) {
     
 	if (!IsValid()) 
 		Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", FilePath.c_str());
-	else {
+	else
 		LocaleToUTF8();
-	}
 }
 
 WString FileStream::GetExtension() const {

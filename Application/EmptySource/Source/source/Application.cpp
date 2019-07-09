@@ -444,7 +444,7 @@ void CoreApplication::MainLoop() {
 
 		ProjectionMatrix = Matrix4x4::Perspective(
 			60.0F * MathConstants::DegreeToRad,	// Aperute angle
-			GetMainWindow().AspectRatio(),	        // Aspect ratio
+			GetMainWindow().AspectRatio(),	    // Aspect ratio
 			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
