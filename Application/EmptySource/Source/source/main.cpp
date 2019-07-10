@@ -1,8 +1,14 @@
-#include "../include/Core.h"
-#include "../include/Graphics.h"
+#include "../include/Utility/LogCore.h"
 #include "../include/Application.h"
 
-#ifdef WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
+#include <windows.h>
+#include <io.h>
+#include <conio.h>
+#include <fcntl.h>
+#endif // _WIN32
+
+#ifdef _WIN32
 // --- Make discrete GPU by default.
 extern "C" {
 	// --- developer.download.nvidia.com/devzone/devcenter/gamegraphics/files/OptimusRenderingPolicies.pdf
