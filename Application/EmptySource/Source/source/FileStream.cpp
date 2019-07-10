@@ -6,6 +6,10 @@
 #include "../include/FileStream.h"
 #include "../include/FileManager.h"
 
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
 FileStream::FileStream() {
 	Stream = NULL;
 	Path = L"";

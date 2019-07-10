@@ -1,11 +1,6 @@
 #pragma once
 
 #include <string>
-#include <locale>
-#include <iostream>
-#include <cstdio>
-#include <stdio.h>
-#include <memory>
 
 typedef std::string String;
 typedef char Char;

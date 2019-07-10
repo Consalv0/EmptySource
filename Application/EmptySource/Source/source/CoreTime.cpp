@@ -3,8 +3,9 @@
 #include "../include/Graphics.h"
 #include "../include/Application.h"
 #include "../include/CoreTime.h"
-
+#ifndef __ANDROID__
 #include <chrono>
+#endif // !__ANDROID__
 #include <ctime>
 
 unsigned long long Time::LastUpdateMicro = GetEpochTimeMicro();
@@ -44,7 +45,11 @@ float Time::GetFrameRatePerSecond() {
 }
 
 unsigned long long Time::GetEpochTimeMicro() {
+#ifndef __ANDROID__
 	using namespace std::chrono;
 	return time_point_cast<microseconds>(steady_clock::now()).time_since_epoch().count();
+#else
+	return 0;
+#endif
 }
 

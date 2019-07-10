@@ -6,7 +6,7 @@
 #include "../include/Utility/DeviceFunctions.h"
 #include "../include/Utility/TextFormattingMath.h"
 #include "../include/Utility/Timer.h"
-#ifndef __APPLE__
+#ifdef _WIN32
 #include "../include/CoreCUDA.h"
 #endif
 
@@ -40,7 +40,6 @@
 #include "../External/SDL/include/SDL.h"
 #include "../External/SDL/include/SDL_opengl.h"
 
-#include <thread>
 Mesh MeshPrimitives::Cube;
 Mesh MeshPrimitives::Quad;
 
@@ -139,8 +138,6 @@ void CoreApplication::Terminate() {
 	}
 	SDL_Quit();
 };
-
-#include <iostream>
 
 void CoreApplication::MainLoop() {
 	if (!bInitialized) return;

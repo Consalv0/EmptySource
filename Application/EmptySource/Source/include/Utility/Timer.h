@@ -1,7 +1,5 @@
 #pragma once
 
-#include <chrono>
-
 namespace Debug {
 
 	// Util class to mesaure time between code

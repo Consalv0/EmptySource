@@ -12,22 +12,9 @@
 // Include main standard headers
 #include <stdexcept>
 #include <errno.h>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <assert.h>
-
-// Include standar headers
-#include <vector>
-#include <iomanip>
-#include <memory>
-
-#include <string>
-#include <locale> 
-#include <codecvt>
-#include <sstream>
-#include <fstream>
-#include <iostream>
 
 #include "../include/CoreTypes.h"
 #include "../include/Utility/LogCore.h"

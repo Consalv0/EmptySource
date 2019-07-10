@@ -1,4 +1,9 @@
 #include "../include/Text.h"
+#include <memory>
+#include <locale>
+#include <iostream>
+#include <cstdio>
+#include <stdio.h>
 
 #ifdef WIN32
 #include <Windows.h>

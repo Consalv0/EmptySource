@@ -1,8 +1,11 @@
 #pragma once
 
-#include <fstream>
 #include "../include/Text.h"
 #include "../include/Utility/Hasher.h"
+
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
 struct FileStream {
 private:

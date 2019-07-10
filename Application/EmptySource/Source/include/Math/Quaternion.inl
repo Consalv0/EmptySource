@@ -185,7 +185,7 @@ inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 inline float Quaternion::GetPitch() const {
 	float Pitch;
 	const float SingularityTest = x * y + z * w;
-	if (abs(SingularityTest) > 0.499F) {
+	if (std::abs(SingularityTest) > 0.499F) {
 		return 0.F;
 	}
 	else {
