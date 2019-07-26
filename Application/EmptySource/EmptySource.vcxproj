@@ -345,8 +345,10 @@
     <ClInclude Include="Source\include\Application.h" />
     <ClInclude Include="Source\include\Bitmap.h" />
     <ClInclude Include="Source\include\Component.h" />
+    <ClInclude Include="Source\include\Components\Renderer.h" />
     <ClInclude Include="Source\include\Core.h" />
     <ClInclude Include="Source\include\CoreCUDA.h" />
+    <ClInclude Include="Source\include\Event.h" />
     <ClInclude Include="Source\include\GameObject.h" />
     <ClInclude Include="Source\include\GLFunctions.h" />
     <ClInclude Include="Source\include\CoreTime.h" />
@@ -383,6 +385,8 @@
     <ClInclude Include="Source\include\OBJLoader.h" />
     <ClInclude Include="Source\include\Observer.h" />
     <ClInclude Include="Source\include\Property.h" />
+    <ClInclude Include="Source\include\RenderPipeline.h" />
+    <ClInclude Include="Source\include\RenderStage.h" />
     <ClInclude Include="Source\include\RenderTarget.h" />
     <ClInclude Include="Source\include\Resources.h" />
     <ClInclude Include="Source\include\ResourceShaderStage.h" />
@@ -393,6 +397,7 @@
     <ClInclude Include="Source\include\Shape2D.h" />
     <ClInclude Include="Source\include\Shape2DContour.h" />
     <ClInclude Include="Source\include\Space.h" />
+    <ClInclude Include="Source\include\Task.h" />
     <ClInclude Include="Source\include\Text.h" />
     <ClInclude Include="Source\include\Text2DGenerator.h" />
     <ClInclude Include="Source\include\Texture.h" />
@@ -416,6 +421,7 @@
     <ClCompile Include="Source\source\Application.cpp" />
     <ClCompile Include="Source\source\Bitmap.cpp" />
     <ClCompile Include="Source\source\Component.cpp" />
+    <ClCompile Include="Source\source\Components\Renderer.cpp" />
     <ClCompile Include="Source\source\CoreTime.cpp" />
     <ClCompile Include="Source\source\Cubemap.cpp" />
     <ClCompile Include="Source\source\EdgeHolder.cpp" />
@@ -435,6 +441,8 @@
     <ClCompile Include="Source\source\Object.cpp" />
     <ClCompile Include="Source\source\OBJLoader.cpp" />
     <ClCompile Include="Source\source\Observer.cpp" />
+    <ClCompile Include="Source\source\RenderPipeline.cpp" />
+    <ClCompile Include="Source\source\RenderStage.cpp" />
     <ClCompile Include="Source\source\RenderTarget.cpp" />
     <ClCompile Include="Source\source\Resources.cpp" />
     <ClCompile Include="Source\source\ResourceShaderStage.cpp" />
