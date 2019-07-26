@@ -7,7 +7,8 @@ MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV)
 	Position(P), Normal(N), Tangent(), UV0(UV), UV1(UV), Color() {
 }
 
-MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector3 & T, const Vector2 & UV0, const Vector2 & UV1, const Vector4 & C) :
+MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector3 & T,
+	const Vector2 & UV0, const Vector2 & UV1, const Vector4 & C) :
 	Position(P), Normal(N), Tangent(T),
 	UV0(UV0), UV1(UV1), Color(C) {
 }
@@ -26,41 +27,51 @@ bool MeshVertex::operator==(const MeshVertex & other) const {
 };
 
 Mesh::Mesh() {
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
+	ElementBufferObject = ElementBuffer();
 	VertexBuffer = 0;
+	ElementBufferSubdivisions = TArray<ElementBuffer>();
 	Data = MeshData();
 }
 
 Mesh::Mesh(const MeshData & OtherData) {
 	Data = OtherData;
 
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
+	ElementBufferObject = ElementBuffer();
 	VertexBuffer = 0;
+	ElementBufferSubdivisions = TArray<ElementBuffer>();
 }
 
 Mesh::Mesh(MeshData * OtherData) {
 	Data.Swap(*OtherData);
 
-	VertexArrayObject = 0;
-	ElementBuffer = 0;
+	ElementBufferObject = ElementBuffer();
 	VertexBuffer = 0;
+	ElementBufferSubdivisions = TArray<ElementBuffer>();
 }
 
 void Mesh::BindVertexArray() const {
 	// Generate 1 VAO, put the resulting identifier in VAO identifier
-	if (VertexArrayObject == 0) {
+	if (!ElementBufferObject.IsValid()) {
 		Debug::Log(Debug::LogWarning, L"Model buffers are empty, use SetUpBuffers first");
 		return;
 	}
-	// The following commands will put in context our VAO for the next commands
-	glBindVertexArray(VertexArrayObject);
+
+	ElementBufferObject.Bind();
+}
+
+void Mesh::BindSubdivisionVertexArray(int MaterialIndex) const {
+	auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
+	if (Subdivision == Data.MaterialSubdivisions.end()) return;
+	if (MaterialIndex >= ElementBufferSubdivisions.size() ||
+		!ElementBufferSubdivisions[MaterialIndex].IsValid()) return;
+
+	ElementBufferSubdivisions[MaterialIndex].Bind();
+
 	return;
 }
 
 void Mesh::DrawInstanciated(int Count) const {
-	if (VertexArrayObject == 0) return;
+	if (!ElementBufferObject.IsValid()) return;
 
 	glDrawElementsInstanced(
 		GL_TRIANGLES,	             // mode
@@ -71,8 +82,23 @@ void Mesh::DrawInstanciated(int Count) const {
 	);
 }
 
+void Mesh::DrawSubdivisionInstanciated(int Count, int MaterialIndex) const {
+	auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
+	if (Subdivision == Data.MaterialSubdivisions.end()) return;
+	if (MaterialIndex >= ElementBufferSubdivisions.size() ||
+		!ElementBufferSubdivisions[MaterialIndex].IsValid()) return;
+
+	glDrawElementsInstanced(
+		GL_TRIANGLES,	             // mode
+		(int)Subdivision->second.size() * 3,	// mode count
+		GL_UNSIGNED_INT,             // type
+		(void*)0,		             // element array buffer offset
+		Count                        // element count
+	);
+}
+
 void Mesh::DrawElement() const {
-	if (VertexArrayObject == 0) return;
+	if (!ElementBufferObject.IsValid()) return;
 
 	glDrawElements(
 		GL_TRIANGLES,	             // mode
@@ -85,35 +111,39 @@ void Mesh::DrawElement() const {
 bool Mesh::SetUpBuffers() {
 
 	if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
-	if (VertexArrayObject != 0 && VertexBuffer != 0 && ElementBuffer != 0) return true;
-
-	glGenVertexArrays(1, &VertexArrayObject);
-	glBindVertexArray(VertexArrayObject);
-
+	if (VertexBuffer != 0 && ElementBufferObject.IsValid()) return true;
+	
 	// This will identify our vertex buffer
 	glGenBuffers(1, &VertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	// Give our vertices to OpenGL.
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, Data.Vertices.size() * sizeof(MeshVertex), &Data.Vertices[0], GL_STATIC_DRAW);
 
-	// Generate a Element Buffer for the indices
-	glGenBuffers(1, &ElementBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Data.Faces.size() * sizeof(IntVector3), &Data.Faces[0], GL_STATIC_DRAW);
+	for (int ElementBufferCount = 0; ElementBufferCount <= Data.MaterialSubdivisions.size(); ElementBufferCount++) {
+		// Generate a Element Buffer from indices
+		if (ElementBufferCount == 0)
+			ElementBufferObject.SetUpBuffers(VertexBuffer, Data.Faces);
+		else {
+			ElementBufferSubdivisions.push_back(ElementBuffer());
+			ElementBufferSubdivisions.back().SetUpBuffers(VertexBuffer, Data.MaterialSubdivisions[ElementBufferCount - 1]);
+		}
 
-	// Set the vertex attribute pointers layouts
-	glEnableVertexAttribArray( PositionLocation );
-	    glVertexAttribPointer( PositionLocation , 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)0);
-	glEnableVertexAttribArray(   NormalLocation );
-	    glVertexAttribPointer(   NormalLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Normal));
-	glEnableVertexAttribArray(  TangentLocation );
-	    glVertexAttribPointer(  TangentLocation , 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Tangent));
-	glEnableVertexAttribArray(      UV0Location );
-	    glVertexAttribPointer(      UV0Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV0));
-	glEnableVertexAttribArray(      UV1Location );
-	    glVertexAttribPointer(      UV1Location , 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV1));
-	glEnableVertexAttribArray(    ColorLocation );
-	    glVertexAttribPointer(    ColorLocation , 4, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Color));
+		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+
+		// Set the vertex attribute pointers layouts
+		glEnableVertexAttribArray( PositionLocation );
+		    glVertexAttribPointer( PositionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)0);
+		glEnableVertexAttribArray(   NormalLocation );
+		    glVertexAttribPointer(   NormalLocation, 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Normal));
+		glEnableVertexAttribArray(  TangentLocation );
+		    glVertexAttribPointer(  TangentLocation, 3, GL_FLOAT,  GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Tangent));
+		glEnableVertexAttribArray(      UV0Location );
+		    glVertexAttribPointer(      UV0Location, 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV0));
+		glEnableVertexAttribArray(      UV1Location );
+		    glVertexAttribPointer(      UV1Location, 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV1));
+		glEnableVertexAttribArray(    ColorLocation );
+		    glVertexAttribPointer(    ColorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Color));
+	}
 
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
@@ -122,13 +152,14 @@ bool Mesh::SetUpBuffers() {
 }
 
 void Mesh::ClearBuffers() {
-	glDeleteVertexArrays(1, &VertexArrayObject);
 	glDeleteBuffers(1, &VertexBuffer);
-	glDeleteBuffers(1, &ElementBuffer);
 
-	VertexArrayObject = 0;
+	ElementBufferObject.Clear();
+	for (ElementBuffer& EBO : ElementBufferSubdivisions) {
+		EBO.Clear();
+	}
+	ElementBufferSubdivisions.clear();
 	VertexBuffer = 0;
-	ElementBuffer = 0;
 }
 
 void Mesh::Clear() {
@@ -140,6 +171,8 @@ void MeshData::Swap(MeshData & Other) {
 	Name = Other.Name;
 	Faces.swap(Other.Faces);
 	Vertices.swap(Other.Vertices);
+	MaterialSubdivisions.swap(Other.MaterialSubdivisions);
+	Materials.swap(Other.Materials);
 	Bounding = Other.Bounding;
 
 	hasNormals = Other.hasNormals;
@@ -224,7 +257,7 @@ void MeshData::ComputeNormals() {
 void MeshData::Clear() {
 	Name.clear();
 	Faces.clear();
-	Vertices.clear(); 
+	Vertices.clear();
 	Bounding = BoundingBox3D();
 	hasNormals = false;
 	hasTangents = false;
@@ -232,4 +265,36 @@ void MeshData::Clear() {
 	TextureCoordsCount = 0;
 	hasBoundingBox = true;
 	hasWeights = false;
+}
+
+void Mesh::ElementBuffer::Clear() {
+	glDeleteVertexArrays(1, &VertexArrayObject);
+	glDeleteBuffers(1, &Buffer);
+
+	VertexArrayObject = 0;
+	Buffer = 0;
+}
+
+bool Mesh::ElementBuffer::SetUpBuffers(const unsigned int & VertexBuffer, const MeshFaces & Indices) {
+	if (Indices.empty()) return false;
+	if (VertexArrayObject != 0 && Buffer != 0) return true;
+
+	glGenVertexArrays(1, &VertexArrayObject);
+	glBindVertexArray(VertexArrayObject);
+
+	// Generate a Element Buffer for the indices
+	glGenBuffers(1, &Buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(IntVector3), &Indices[0], GL_STATIC_DRAW);
+
+	return true;
+}
+
+void Mesh::ElementBuffer::Bind() const {
+	// The following commands will put in context our VAO for the next commands
+	glBindVertexArray(VertexArrayObject);
+}
+
+bool Mesh::ElementBuffer::IsValid() const {
+	return VertexArrayObject != 0 && Buffer != 0;
 }

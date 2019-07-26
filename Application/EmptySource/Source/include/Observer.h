@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../include/CoreTypes.h"
+#include "../include/Text.h"
 #include <functional>
 
 struct Observer {
@@ -9,10 +10,14 @@ public:
 
 	virtual void Call() const;
 
-	int AddCallback(std::function<void()>);
+	bool AddCallback(const String& Identifier, std::function<void()>);
 
-	void RemoveCallback(const int& Identifier);
+	void RemoveCallback(const String& Identifier);
+
+	void RemoveAllCallbacks();
+
+	virtual ~Observer();
 
 private:
-	TDictionary<int, std::function<void()>> Callbacks;
+	TDictionary<String, std::function<void()>> Callbacks;
 };

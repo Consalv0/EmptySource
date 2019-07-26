@@ -8,8 +8,15 @@
 class OBJLoader {
 private:
 	struct ObjectData {
+		struct Subdivision {
+			String Name;
+			int VertexIndicesPos = 0;
+			int VertexIndicesCount = 0;
+		};
+
 		String Name;
 		Box3D Bounding;
+		TArray<Subdivision> Materials;
 		bool hasNormals;
 		bool hasTextureCoords;
 		int VertexIndicesPos = 0;
@@ -30,7 +37,7 @@ private:
 	};
 
 	enum Keyword {
-		Comment, Object, Group, Vertex, Normal, TextureCoord, Face, CSType, Undefined
+		Comment, Object, Group, Material, Vertex, Normal, TextureCoord, Face, CSType, Undefined
 	};
 
 	static Keyword GetKeyword(const Char* Line);

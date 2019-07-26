@@ -14,6 +14,8 @@ bool FBXLoader::InitializeSdkManager() {
 		return false;
 
 	FbxIOSettings * IOS = FbxIOSettings::Create(gSdkManager, IOSROOT);
+	IOS->SetBoolProp(IMP_FBX_MATERIAL, true); 
+	IOS->SetBoolProp(IMP_FBX_TEXTURE, false);
 	gSdkManager->SetIOSettings(IOS);
 
 	return true;
@@ -136,7 +138,9 @@ bool FBXLoader::LoadScene(FbxScene * pScene, const FileStream * File) {
 void FBXLoader::ExtractVertexData(FbxMesh * pMesh, MeshData & OutData) {
 	int PolygonCount = pMesh->GetPolygonCount();
 	FbxVector4 * ControlPoints = pMesh->GetControlPoints();
-	int PolygonIndex; int PolygonVertexIndex;
+	int PolygonIndex; int PolygonVertexIndex; 
+	int MaterialIndex;
+	bool bWarned = false;
 
 	if (pMesh->GetElementUVCount() != 0) OutData.TextureCoordsCount = Math::Clamp(pMesh->GetElementUVCount(), 0, 2);
 	if (pMesh->GetElementNormalCount() != 0) OutData.hasNormals = true;
@@ -166,7 +170,26 @@ void FBXLoader::ExtractVertexData(FbxMesh * pMesh, MeshData & OutData) {
 			VertexIndex++;
 			OutData.Vertices.push_back(Vertex);
 		}
-		OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+		MaterialIndex = ExtractMaterialIndex(pMesh, PolygonIndex);
+
+		if (PolygonVertexSize < 4) {
+			OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+			if (OutData.MaterialSubdivisions.find(MaterialIndex) != OutData.MaterialSubdivisions.end())
+				OutData.MaterialSubdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+		}
+		else {
+			OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+			OutData.Faces.push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
+			if (OutData.MaterialSubdivisions.find(MaterialIndex) != OutData.MaterialSubdivisions.end()) {
+				OutData.MaterialSubdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+				OutData.MaterialSubdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
+			}
+		}
+
+		if (PolygonVertexSize > 4 && !bWarned) {
+			bWarned = true;
+			Debug::Log(Debug::LogWarning, L"The model has n-gons, this may lead to unwanted geometry");
+		}
 	}
 
 	OutData.ComputeTangents();
@@ -368,6 +391,21 @@ void FBXLoader::ExtractVertexColor(
 	}
 }
 
+int FBXLoader::ExtractMaterialIndex(FbxMesh * pMesh, const int & PolygonIndex) {
+	int MaterialIndex = pMesh->GetElementMaterialCount();
+
+	if (MaterialIndex > 0) {
+		FbxGeometryElementMaterial* ElementMaterial = pMesh->GetElementMaterial();
+		if (ElementMaterial->GetMappingMode() == FbxGeometryElement::eAllSame) {
+			return ElementMaterial->GetIndexArray().GetAt(0);
+		} else {
+			return ElementMaterial->GetIndexArray().GetAt(PolygonIndex);
+		}
+	}
+
+	return -1;
+}
+
 bool FBXLoader::ExtractTangent(FbxMesh * pMesh, MeshVertex & Vertex, const int & ControlPointIndex, const int & VertexIndex) {
 	FbxVector4 Tangent;
 	int ElementTangentCount = pMesh->GetElementTangentCount();
@@ -439,8 +477,8 @@ bool FBXLoader::Load(MeshLoader::FileData & FileData) {
 	FbxAxisSystem::OpenGL.ConvertScene(Scene);
 	FbxSystemUnit::m.ConvertScene(Scene);
 
-	FbxGeometryConverter GeomConverter(gSdkManager);
-	GeomConverter.Triangulate(Scene, true);
+	// FbxGeometryConverter GeomConverter(gSdkManager);
+	// GeomConverter.Triangulate(Scene, true);
 	const int NodeCount = Scene->GetSrcObjectCount<FbxNode>();
 	size_t TotalAllocatedSize = 0;
 
@@ -453,10 +491,16 @@ bool FBXLoader::Load(MeshLoader::FileData & FileData) {
 	Timer.Start();
 	for (int NodeIndex = 0; NodeIndex < NodeCount; NodeIndex++) {
 		FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
-		FbxMesh* lMesh = Node->GetMesh();
+		FbxMesh * lMesh = Node->GetMesh();
 		if (lMesh) {
 			FileData.Meshes.push_back(MeshData());
+			const int MaterialCount = Node->GetMaterialCount();
+			for (int MaterialIndex = 0; MaterialIndex < MaterialCount; ++MaterialIndex) {
+				FileData.Meshes.back().Materials.insert({ Node->GetMaterial(MaterialIndex)->GetName(), MaterialIndex });
+				FileData.Meshes.back().MaterialSubdivisions.insert({ MaterialIndex, MeshFaces() });
+			}
 			ExtractVertexData(lMesh, FileData.Meshes.back());
+
 #ifdef _DEBUG
 			Debug::Log(
 				Debug::LogInfo,

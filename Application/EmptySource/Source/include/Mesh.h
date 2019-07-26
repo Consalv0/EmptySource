@@ -39,11 +39,14 @@ typedef TArray<Vector3>    MeshVector3D;
 typedef TArray<Vector2>    MeshUVs;
 typedef TArray<Vector4>    MeshColors;
 typedef TArray<MeshVertex> MeshVertices;
+typedef TDictionary<String, int> MeshMaterials;
 
 struct MeshData {
 	WString Name;
 	MeshFaces Faces;
+	TDictionary<int, MeshFaces> MaterialSubdivisions;
 	MeshVertices Vertices;
+	MeshMaterials Materials;
 	BoundingBox3D Bounding;
 
 	bool hasNormals;
@@ -62,10 +65,19 @@ struct MeshData {
 
 class Mesh {
 private:
+	struct ElementBuffer { 
+		unsigned int VertexArrayObject; unsigned int Buffer;
+		void Clear();
+		bool SetUpBuffers(const unsigned int & VertexBuffer, const MeshFaces & Indices);
+		void Bind() const;
+		bool IsValid() const;
+	};
+
 	//* Vertex Array Object 
-	unsigned int VertexArrayObject;
 	unsigned int VertexBuffer;
-	unsigned int ElementBuffer;
+
+	ElementBuffer ElementBufferObject;
+	TArray<ElementBuffer> ElementBufferSubdivisions;
 
 public:
 	MeshData Data;
@@ -79,8 +91,14 @@ public:
 	//* *Create or Bind Vertex Array Object
 	void BindVertexArray() const;
 
+	//* Bind Element Subdivision Array Object
+	void BindSubdivisionVertexArray(int MaterialIndex) const;
+
 	//* Draw mesh using instanciated Element Buffer
 	void DrawInstanciated(int Count) const;
+
+	//* Draw mesh using instanciated Element Buffer unsing material subdivision
+	void DrawSubdivisionInstanciated(int Count, int MaterialIndex) const;
 
 	//* Draw mesh using Element Buffer
 	void DrawElement() const;
@@ -91,6 +109,6 @@ public:
 	//* Clear the GL's objects
 	void ClearBuffers();
 
-	//* Give Vertices to OpenGL **This must be done once**
+	//* Give Vertices to OpenGL **This must be done once per render**
 	bool SetUpBuffers();
 };

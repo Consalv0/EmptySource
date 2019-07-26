@@ -91,7 +91,7 @@ void Material::SetFloat4Array(const Char * UniformName, const float * Data, cons
 
 void Material::SetTexture2D(const Char * UniformName, Texture2D * Tex, const unsigned int & Position) const {
     ShaderProgram * Program = GetShaderProgram();
-    if (Program == NULL) return;
+    if (Program == NULL || Tex == NULL) return;
     unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 	glUniform1i(UniformLocation, Position);
 	glActiveTexture(GL_TEXTURE0 + Position);

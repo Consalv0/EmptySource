@@ -150,25 +150,37 @@ void OBJLoader::ParseVertexUVs(ExtractedData & Data) {
 }
 
 void OBJLoader::ParseFaces(ExtractedData & Data) {
+	if (Data.Objects.empty()) return;
+
 	// 0 = Vertex, 1 = TextureCoords, 2 = Normal
 	IntVector3 VertexIndex = IntVector3(-1);
 	bool bWarned = false;
 	auto CurrentObject = Data.Objects.begin();
+	auto CurrentObjectMaterial = CurrentObject->Materials.begin();
 	int VertexCount = 0;
 	const Char * LineChar;
 	for (TArray<const Char *>::const_iterator Line = Data.LineVertexIndices.begin(); Line != Data.LineVertexIndices.end(); ++Line) {
-		if ((CurrentObject + 1) != Data.Objects.end() && Line - Data.LineVertexIndices.begin() == (CurrentObject + 1)->VertexIndicesPos)
+		if ((CurrentObject + 1) != Data.Objects.end() &&
+			Line - Data.LineVertexIndices.begin() == (CurrentObject + 1)->VertexIndicesPos) {
 			++CurrentObject;
+			CurrentObjectMaterial = CurrentObject->Materials.begin();
+		}
+
+		if ((CurrentObjectMaterial + 1) != CurrentObject->Materials.end() &&
+			Line - Data.LineVertexIndices.begin() == (CurrentObjectMaterial + 1)->VertexIndicesPos) {
+			CurrentObjectMaterial++;
+		}
+
 		VertexIndex[0] = VertexIndex[1] = VertexIndex[2] = -1;
 		VertexCount = 0;
 		LineChar = *Line;
 		while (*LineChar != '\0' && *LineChar != '\n') {
 			VertexIndex[0] = atoi(++LineChar);
-			while (*LineChar != '/' && *LineChar != ' ') ++LineChar;
-			if (*LineChar != ' ') {
+			while (*LineChar != '/' && !isspace(*LineChar)) ++LineChar;
+			if (*LineChar == '/') {
 				VertexIndex[1] = atoi(++LineChar);
-				while (*LineChar != '/' && *LineChar != ' ') ++LineChar;
-				if (*LineChar != ' ') {
+				while (*LineChar != '/' && !isspace(*LineChar)) ++LineChar;
+				if (*LineChar == '/') {
 					VertexIndex[2] = atoi(++LineChar);
 					while (!isspace(*++LineChar));
 				}
@@ -180,10 +192,12 @@ void OBJLoader::ParseFaces(ExtractedData & Data) {
 				Data.VertexIndices.push_back(Data.VertexIndices[Data.VertexIndices.size() - 2]);
 				Data.VertexIndices.push_back(VertexIndex);
 				CurrentObject->VertexIndicesCount += 3;
+				CurrentObjectMaterial->VertexIndicesCount += 3;
 			}
 			else {
 				Data.VertexIndices.push_back(VertexIndex);
 				CurrentObject->VertexIndicesCount++;
+				CurrentObjectMaterial->VertexIndicesCount++;
 			}
 
 			if (VertexCount > 4 && !bWarned) {
@@ -206,6 +220,7 @@ OBJLoader::Keyword OBJLoader::GetKeyword(const Char * Word) {
 	if (Word[0] == '#' && Word[1] == ' ') return Comment;
 	if (Word[0] == 'o' && Word[1] == ' ') return Object;
 	if (Word[0] == 'g' && Word[1] == ' ') return Group;
+	if (Word[0] == 'u' && Word[1] == 's' && Word[2] == 'e') return Material;
 	if (Word[0] == 'c') return CSType;
 
 	return Undefined;
@@ -256,6 +271,12 @@ void OBJLoader::PrepareData(const Char * InFile, ExtractedData& ModelData) {
 					ModelData.Objects.back().Name += ModelData.Groups.back();
 				}
 			}
+
+			if (ModelData.Objects.back().Materials.empty()) {
+				ModelData.Objects.back().Materials.push_back(ObjectData::Subdivision());
+				ModelData.Objects.back().Materials.back().Name = "default";
+			}
+
 			ModelData.LineVertexIndices.push_back(++Pointer);
 			while (*Pointer != '\n' && *Pointer != '\0') ++Pointer;
 			++Pointer;
@@ -265,9 +286,20 @@ void OBJLoader::PrepareData(const Char * InFile, ExtractedData& ModelData) {
 			ModelData.Groups.push_back(String());
 			++Pointer;
 			while (*(Pointer + 1) != '\n' && *(Pointer + 1) != '\0') {
-				++Pointer;
-				ModelData.Groups.back() += *Pointer;
+				ModelData.Groups.back() += *++Pointer;
 			}
+			continue;
+		}
+		if (Keyword == Material) {
+			if (ModelData.Objects.size() == 0) {
+				ModelData.Objects.push_back(ObjectData());
+			}
+			Pointer += 6;
+			String Name;
+			while (*(Pointer + 1) != '\n' && *(Pointer + 1) != '\0') { Name += *++Pointer; }
+			ModelData.Objects.back().Materials.push_back(ObjectData::Subdivision());
+			ModelData.Objects.back().Materials.back().Name = Name;
+			ModelData.Objects.back().Materials.back().VertexIndicesPos = (int)ModelData.LineVertexIndices.size();
 			continue;
 		}
 		if (Keyword == Object) {
@@ -278,8 +310,7 @@ void OBJLoader::PrepareData(const Char * InFile, ExtractedData& ModelData) {
 			}
 			++Pointer;
 			while (*(Pointer+1) != '\n' && *(Pointer+1) != '\0') {
-				++Pointer;
-				ModelData.Objects.back().Name += *Pointer;
+				ModelData.Objects.back().Name += *++Pointer;
 			}
 			continue;
 		}
@@ -346,48 +377,55 @@ bool OBJLoader::Load(MeshLoader::FileData & FileData) {
 		MeshData* OutMesh = &FileData.Meshes.back();
 		OutMesh->Name = StringToWString(Data.Name);
 
-		int InitialCount = Count;
-		for (; Count < InitialCount + Data.VertexIndicesCount; ++Count) {
-			MeshVertex NewVertex = {
-				ModelData.VertexIndices[Count][0] >= 0 ?
-					ModelData.ListPositions[ModelData.VertexIndices[Count][0] - 1] : 0,
-				ModelData.VertexIndices[Count][2] >= 0 ?
-					ModelData.ListNormals[ModelData.VertexIndices[Count][2] - 1] : Vector3(0.F, 1.F, 0.F),
-				0,
-				ModelData.VertexIndices[Count][1] >= 0 ?
-					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
-				ModelData.VertexIndices[Count][1] >= 0 ?
-					ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
-				Vector4(1.F)
-			};
-			Data.Bounding.Add(NewVertex.Position);
+		for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
+			ObjectData::Subdivision & MaterialIndex = Data.Materials[MaterialCount];
+			OutMesh->Materials.insert({ MaterialIndex.Name, (int)OutMesh->Materials.size() });
+			OutMesh->MaterialSubdivisions.insert({MaterialCount, MeshFaces()});
 
-			unsigned Index = Count;
-			bool bFoundIndex = false;
-			if (FileData.Optimize) {
-				bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
-			}
+			int InitialCount = Count;
+			for (; Count < InitialCount + MaterialIndex.VertexIndicesCount; ++Count) {
+				MeshVertex NewVertex = {
+					ModelData.VertexIndices[Count][0] >= 0 ?
+						ModelData.ListPositions[ModelData.VertexIndices[Count][0] - 1] : 0,
+					ModelData.VertexIndices[Count][2] >= 0 ?
+						ModelData.ListNormals[ModelData.VertexIndices[Count][2] - 1] : Vector3(0.F, 1.F, 0.F),
+					0,
+					ModelData.VertexIndices[Count][1] >= 0 ?
+						ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
+					ModelData.VertexIndices[Count][1] >= 0 ?
+						ModelData.ListUVs[ModelData.VertexIndices[Count][1] - 1] : 0,
+					Vector4(1.F)
+				};
+				Data.Bounding.Add(NewVertex.Position);
 
-			if (bFoundIndex) {
-				// --- A similar vertex is already in the VBO, use it instead !
-				Indices[Count] = Index;
-			}
-			else {
-				// --- If not, it needs to be added in the output data.
-				OutMesh->Vertices.push_back(NewVertex);
-				unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
-				Indices[Count] = NewIndex;
-				if (FileData.Optimize) VertexToIndex[NewVertex] = NewIndex;
-				TotalUniqueVertices++;
-			}
+				unsigned Index = Count;
+				bool bFoundIndex = false;
+				if (FileData.Optimize) {
+					bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
+				}
 
-			if ((Count + 1) % 3 == 0) {
-				OutMesh->Faces.push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+				if (bFoundIndex) {
+					// --- A similar vertex is already in the VBO, use it instead !
+					Indices[Count] = Index;
+				}
+				else {
+					// --- If not, it needs to be added in the output data.
+					OutMesh->Vertices.push_back(NewVertex);
+					unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
+					Indices[Count] = NewIndex;
+					if (FileData.Optimize) VertexToIndex[NewVertex] = NewIndex;
+					TotalUniqueVertices++;
+				}
+
+				if ((Count + 1) % 3 == 0) {
+					OutMesh->Faces.push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+					OutMesh->MaterialSubdivisions[MaterialCount].push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+				}
 			}
 		}
 
-		if (ModelData.VertexIndices[Count-1][1] >= 0) OutMesh->TextureCoordsCount = 1;
-		if (ModelData.VertexIndices[Count-1][2] >= 0) OutMesh->hasNormals = true;
+		if (ModelData.VertexIndices[Count - 1][1] >= 0) OutMesh->TextureCoordsCount = 1;
+		if (ModelData.VertexIndices[Count - 1][2] >= 0) OutMesh->hasNormals = true;
 		OutMesh->ComputeTangents();
 		OutMesh->Bounding = Data.Bounding;
 		OutMesh->hasBoundingBox = true;

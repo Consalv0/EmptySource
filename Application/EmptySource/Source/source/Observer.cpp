@@ -7,12 +7,22 @@ void Observer::Call() const
 	}
 }
 
-int Observer::AddCallback(std::function<void()> Functor) {
-	static int KeyGenerator = 0;
-	Callbacks.emplace(std::pair<int, std::function<void()>>(KeyGenerator++, Functor));
-	return KeyGenerator;
+bool Observer::AddCallback(const String & Identifier, std::function<void()> Functor) {
+	if (Callbacks.find(Identifier) == Callbacks.end()) {
+		Callbacks.emplace(std::pair<String, std::function<void()>>(Identifier, Functor));
+		return true;
+	}
+	return false;
 }
 
-void Observer::RemoveCallback(const int & Identifier) {
+void Observer::RemoveCallback(const String & Identifier) {
 	Callbacks.erase(Identifier);
+}
+
+void Observer::RemoveAllCallbacks() {
+	Callbacks.clear();
+}
+
+Observer::~Observer() {
+	Callbacks.clear();
 }

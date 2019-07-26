@@ -24,6 +24,9 @@ private:
 		class FbxMesh * pMesh, MeshVertex & Vertex,
 		const int & ControlPointIndex, const int & VertexIndex
 	);
+	static int ExtractMaterialIndex(
+		class FbxMesh * pMesh, const int & PolygonIndex
+	);
 	static bool ExtractTangent(
 		class FbxMesh * pMesh, MeshVertex & Vertex,
 		const int & ControlPointIndex, const int & VertexIndex
