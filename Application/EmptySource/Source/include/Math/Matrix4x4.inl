@@ -16,7 +16,6 @@ FORCEINLINE Matrix4x4::Matrix4x4() {
 
 FORCEINLINE Matrix4x4::Matrix4x4(const Matrix4x4 & Other)
 	: m0(Other.m0), m1(Other.m1), m2(Other.m2), m3(Other.m3) {
-	
 }
 
 FORCEINLINE Matrix4x4::Matrix4x4(const Vector4 & Row0, const Vector4 & Row1, const Vector4 & Row2, const Vector4 Row3) {
@@ -74,15 +73,15 @@ inline Matrix4x4 Matrix4x4::Orthographic(const float & Left, const float & Right
 }
 
 inline Matrix4x4 Matrix4x4::LookAt(const Vector3 & Eye, const Vector3 & Target, const Vector3 & Up) {
-	Vector3 const Forward((Target - Eye).Normalized());
+	Vector3 const Forward((Eye - Target).Normalized());
 	Vector3 const Side(Forward.Cross(Up).Normalized());
 	Vector3 const Upper(Side.Cross(Forward));
 
 	return Matrix4x4(
-		 Side.x,         Upper.x,        -Forward.x,        0,
-		 Side.y,         Upper.y,        -Forward.y,        0,
-		 Side.z,         Upper.z,        -Forward.z,        0,
-		-Side.Dot(Eye), -Upper.Dot(Eye),  Forward.Dot(Eye), 1
+		 Side.x,          Side.y,           Side.z,         0.F,
+		 Upper.x,         Upper.y,          Upper.z,        0.F,
+		-Forward.x,      -Forward.y,       -Forward.z,      0.F,
+		 Eye.x,			  Eye.y,			Eye.z,			1.F
 	);
 }
 
