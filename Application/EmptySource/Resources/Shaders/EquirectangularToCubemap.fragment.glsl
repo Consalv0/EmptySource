@@ -1,7 +1,6 @@
 #version 410 core
 
 const float PI = 3.14159265359;
-const float Gamma = 1.8;
 const vec2 InvAtan = vec2(0.1591, 0.3183);
 
 uniform sampler2D _EquirectangularMap;
@@ -23,13 +22,6 @@ float RadicalInverse_VdC(uint bits) {
 
 vec2 Hammersley(uint i, uint N) {
     return vec2(float(i)/float(N), RadicalInverse_VdC(i));
-}
-    
-vec3 HemisphereSampleCosinus(float U, float V) {
-    float phi = V * 2.0 * PI;
-    float cosTheta = sqrt(1.0 - U);
-    float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
-    return vec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float Roughness) {

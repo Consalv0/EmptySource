@@ -27,7 +27,7 @@ void main(){
   Color = Color / (Color + vec3(1.0));
   Color = pow(Color, vec3(1.0/1.8));
   vec3 Intensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
-  Color = mix(Intensity, Color, 1.3);
+  Color = mix(Intensity, Color, 1.45);
   FragColor = vec4(Color, 1.0);
   
   if (FragColor.x < 0) {

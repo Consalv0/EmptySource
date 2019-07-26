@@ -1,7 +1,7 @@
 #version 410
 
 const float PI = 3.1415926535;
-const float Gamma = 2.2;
+const float Gamma = 1.8;
 
 uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;
@@ -85,12 +85,12 @@ vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 Normal, float Roughness,
   F0 = mix(F0, DiffuseColor, Metalness);
   vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
   vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
-  vec3 Irradiance = vec3(textureLod(_EnviromentMap, WorldReflection, _EnviromentMapLods - 2));
-       Irradiance = dot(Irradiance, vec3(0.2126, 0.7152, 0.0722) / 2) * Irradiance;
+  vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2));
+       Irradiance = sqrt(pow(Irradiance, vec3(1.0/1.45)));
   vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3)));
 
   vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
-  vec3 Color = ((vec3(1.0) - Fresnel) * (1 - Metalness) * DiffuseColor + Specular);
+  vec3 Color = (vec3(1 - dot(Fresnel, vec3(0.2126, 0.7152, 0.0722))) * (1 - Metalness) * DiffuseColor * Irradiance + Specular);
 
   return Color;
 }
@@ -145,7 +145,7 @@ void main() {
   Sum = pow(Sum, vec3(1.0/Gamma));
   
   vec3 Intensity = vec3(dot(Sum, vec3(0.2125, 0.7154, 0.0721)));
-  Sum = mix(Intensity, Sum, 1.3);
+  Sum = mix(Intensity, Sum, 1.45);
 
   FragColor = vec4(Sum, 1);
 

@@ -61,5 +61,5 @@ void main() {
     }
     Irradiance = PI * Irradiance / SampleCount;
     
-    FragColor = vec4(clamp(texture(_EquirectangularMap, vVertex.UV0).rgb, 0, 5000), 1);
+    FragColor = vec4(clamp(texture(_EquirectangularMap, vVertex.UV0).rgb, 0, 10000), 1);
 }
