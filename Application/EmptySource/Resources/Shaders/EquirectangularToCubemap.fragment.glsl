@@ -1,6 +1,7 @@
 #version 410 core
 
 const float PI = 3.14159265359;
+const float Gamma = 1.8;
 const vec2 InvAtan = vec2(0.1591, 0.3183);
 
 uniform sampler2D _EquirectangularMap;
@@ -10,6 +11,7 @@ in vec3 LocalPosition;
 
 out vec4 FragColor;
 
+// Hammersley Points on the Hemisphere
 float RadicalInverse_VdC(uint bits) {
     bits = (bits << 16u) | (bits >> 16u);
     bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -21,6 +23,13 @@ float RadicalInverse_VdC(uint bits) {
 
 vec2 Hammersley(uint i, uint N) {
     return vec2(float(i)/float(N), RadicalInverse_VdC(i));
+}
+    
+vec3 HemisphereSampleCosinus(float U, float V) {
+    float phi = V * 2.0 * PI;
+    float cosTheta = sqrt(1.0 - U);
+    float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    return vec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float Roughness) {
@@ -69,7 +78,7 @@ void main() {
     vec3 R = N;
     vec3 V = R;
 
-    const uint SAMPLE_COUNT = 256u;
+    const uint SAMPLE_COUNT = 512u;
     float TotalWeight = 0.0;   
     vec3 PrefilteredColor = vec3(0.0);     
     vec3 ExccessColor = vec3(0.0);
