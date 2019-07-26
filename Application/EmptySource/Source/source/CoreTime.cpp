@@ -53,3 +53,7 @@ unsigned long long Time::GetEpochTimeMicro() {
 #endif
 }
 
+float Time::GetEpochTimeSeconds() {
+	return GetEpochTimeMicro() / 1000000.F;
+}
+

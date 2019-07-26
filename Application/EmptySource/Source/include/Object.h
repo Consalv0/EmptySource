@@ -15,7 +15,7 @@ protected:
 	OObject(const WString& Name);
 
 	// Space initializer
-	virtual void Initialize() {};
+	virtual bool Initialize() { return true; };
 
 public:
 

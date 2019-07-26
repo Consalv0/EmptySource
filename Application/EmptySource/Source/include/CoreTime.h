@@ -20,8 +20,11 @@ public:
 	// Get frame rate per second (FPS)
 	static float GetFrameRatePerSecond();
 
-	// Time since the app is running;
+	// Machine Time
 	static unsigned long long GetEpochTimeMicro();
+
+	// Machine Time
+	static float GetEpochTimeSeconds();
 
 private:
 	// Time since the last tick callback

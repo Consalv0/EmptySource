@@ -1,4 +1,4 @@
-#include "../include/Core.h"
+﻿#include "../include/Core.h"
 #include "../include/Math/CoreMath.h"
 #include "../include/Application.h"
 
@@ -10,6 +10,7 @@
 #include "../include/CoreCUDA.h"
 #endif
 
+#include "../include/RenderPipeline.h"
 #include "../include/CoreTime.h"
 #include "../include/Window.h"
 #include "../include/FileManager.h"
@@ -20,6 +21,7 @@
 #include "../include/ShaderProgram.h"
 #include "../include/Space.h"
 #include "../include/GameObject.h"
+#include "../include/Components/Renderer.h"
 #define RESOURCES_ADD_SHADERSTAGE
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "../include/Resources.h"
@@ -50,6 +52,7 @@ Mesh MeshPrimitives::Quad;
 
 bool CoreApplication::bInitialized = false;
 double CoreApplication::RenderTimeSum = 0;
+RenderPipeline * CoreApplication::MainRenderPipeline = NULL;
 
 bool CoreApplication::InitalizeGLAD() {
 	if (!gladLoadGL()) {
@@ -64,6 +67,8 @@ bool CoreApplication::InitalizeGLAD() {
 	// --- Enable all messages, all sources, all levels, and all IDs:
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 #endif
+
+	// glFrontFace(GL_CW);
 
 	Debug::PrintGraphicsInformation();
 
@@ -99,6 +104,17 @@ bool CoreApplication::InitializeWindow() {
 	return true;
 }
 
+RenderPipeline * CoreApplication::GetRenderPipeline() {
+	return MainRenderPipeline;
+}
+
+void CoreApplication::SetRenderPipeline(RenderPipeline * Pipeline) {
+	if (MainRenderPipeline)
+		delete MainRenderPipeline;
+
+	MainRenderPipeline = Pipeline;
+}
+
 ContextWindow & CoreApplication::GetMainWindow() {
 	static struct ContextWindow MainWindow;
 	return MainWindow;
@@ -121,6 +137,7 @@ void CoreApplication::Initalize() {
 	CUDA::FindCudaDevice();
 #endif
 
+	SetRenderPipeline(new RenderPipeline());
 	if (!MeshLoader::Initialize())
 		return;
 	
@@ -130,14 +147,17 @@ void CoreApplication::Initalize() {
 	bInitialized = true;
 }
 
-void CoreApplication::Terminate() {
-    Debug::CloseDeviceFunctions();
-	MeshLoader::Exit();
-	if (GetMainWindow().IsCreated()) {
-		GetMainWindow().Terminate();
-	}
-	SDL_Quit();
-};
+void CoreApplication::Awake() {
+	srand(SDL_GetTicks());
+
+	GetRenderPipeline()->AddStage(L"TestStage", new RenderStage());
+
+	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
+	GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
+	CComponent * Component = GameObject->CreateComponent<CRenderer>();
+
+	Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
+}
 
 void CoreApplication::MainLoop() {
 	if (!bInitialized) return;
@@ -145,21 +165,11 @@ void CoreApplication::MainLoop() {
 	Property<int> Value(0);
 
 	Observer IntObserver;
-	IntObserver.AddCallback([&Value]() { Debug::Log(Debug::LogDebug, L"PropertyInt Changed with value %d", (int)Value); });
+	IntObserver.AddCallback("Test", [&Value]() { Debug::Log(Debug::LogDebug, L"PropertyInt Changed with value %d", (int)Value); });
 	Value.AttachObserver(&IntObserver);
 
 	Value = 1;
 	Value = 3;
-
-	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
-	GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"Hola", Transform());
-	CComponent * Component = GameObject->CreateComponent<CComponent>();
-	Space::Destroy(OtherNewSpace);
-
-	SDL_GL_SetSwapInterval(0);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    
-    Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
     
 	Font FontFace;
 	FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/SourceSansPro.ttf"));
@@ -171,15 +181,19 @@ void CoreApplication::MainLoop() {
 	TextGenerator.PixelRange = 1.5F;
 	TextGenerator.Pivot = 0;
 
-	Bitmap<UCharRGBA> BaseAlbedo;
-	Bitmap<UCharRed> BaseMetallic, BaseRoughness;
-	Bitmap<UCharRGB> BaseNormal;
+	Bitmap<UCharRGBA> BaseAlbedo, FlamerAlbedo;
+	Bitmap<UCharRed> BaseMetallic, BaseRoughness, FlamerMetallic, FlamerRoughness;
+	Bitmap<UCharRGB> BaseNormal, FlamerNormal;
 	Bitmap<UCharRGB> White, Black;
 	Bitmap<FloatRGB> Equirectangular;
-	ImageLoader::Load(BaseAlbedo,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
-	ImageLoader::Load(BaseMetallic,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
-	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
-	ImageLoader::Load(BaseNormal,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
+	ImageLoader::Load(BaseAlbedo,		FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_diff.png"));
+	ImageLoader::Load(BaseMetallic,		FileManager::GetFile(L"Resources/Textures/Sponza/sponza_arch_spec.png"));
+	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_roug.png"));
+	ImageLoader::Load(BaseNormal,		FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_normal.png"));
+	ImageLoader::Load(FlamerAlbedo,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+	ImageLoader::Load(FlamerMetallic,	FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
+	ImageLoader::Load(FlamerRoughness,	FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
+	ImageLoader::Load(FlamerNormal,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 	ImageLoader::Load(White,			FileManager::GetFile(L"Resources/Textures/White.jpg"));
 	ImageLoader::Load(Black,			FileManager::GetFile(L"Resources/Textures/Black.jpg"));
 	ImageLoader::Load(Equirectangular,	FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
@@ -192,16 +206,17 @@ void CoreApplication::MainLoop() {
 		Graphics::CF_RGB16F,
 		Equirectangular.PointerToValue()
 	);
-	Texture2D BaseAlbedoTexture = Texture2D(
+	Texture2D * BaseAlbedoTexture = new Texture2D(
 		IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
 		Graphics::CF_RGBA,
 		Graphics::FM_MinMagLinear,
-		Graphics::AM_Border,
+		Graphics::AM_Repeat,
 		Graphics::CF_RGBA,
 		BaseAlbedo.PointerToValue()
 	);
-	BaseAlbedoTexture.GenerateMipMaps();
-	Texture2D BaseMetallicTexture = Texture2D(
+	BaseAlbedoTexture->GenerateMipMaps();
+	ResourceManager::Load(L"BaseAlbedoTexture", BaseAlbedoTexture);
+	Texture2D * BaseMetallicTexture = new Texture2D(
 		IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
 		Graphics::CF_Red,
 		Graphics::FM_MinMagLinear,
@@ -209,8 +224,9 @@ void CoreApplication::MainLoop() {
 		Graphics::CF_Red,
 		BaseMetallic.PointerToValue()
 	);
-	BaseMetallicTexture.GenerateMipMaps();
-	Texture2D BaseRoughnessTexture = Texture2D(
+	BaseMetallicTexture->GenerateMipMaps();
+	ResourceManager::Load(L"BaseMetallicTexture", BaseMetallicTexture);
+	Texture2D * BaseRoughnessTexture = new Texture2D(
 		IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
 		Graphics::CF_Red,
 		Graphics::FM_MinMagLinear,
@@ -218,17 +234,9 @@ void CoreApplication::MainLoop() {
 		Graphics::CF_Red,
 		BaseRoughness.PointerToValue()
 	);
-	BaseRoughnessTexture.GenerateMipMaps();
-	Texture2D WhiteTexture = Texture2D(
-		IntVector2(White.GetWidth(), White.GetHeight()),
-		Graphics::CF_RGB,
-		Graphics::FM_MinMagLinear,
-		Graphics::AM_Repeat,
-		Graphics::CF_RGB,
-		White.PointerToValue()
-	);
-	WhiteTexture.GenerateMipMaps();
-	Texture2D BaseNormalTexture = Texture2D(
+	BaseRoughnessTexture->GenerateMipMaps();
+	ResourceManager::Load(L"BaseRoughnessTexture", BaseRoughnessTexture);
+	Texture2D * BaseNormalTexture = new Texture2D(
 		IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
 		Graphics::CF_RGB,
 		Graphics::FM_MinMagLinear,
@@ -236,8 +244,63 @@ void CoreApplication::MainLoop() {
 		Graphics::CF_RGB,
 		BaseNormal.PointerToValue()
 	);
-	BaseNormalTexture.GenerateMipMaps();
-	Texture2D BlackTexture = Texture2D(
+	BaseNormalTexture->GenerateMipMaps();
+	ResourceManager::Load(L"BaseNormalTexture", BaseNormalTexture);
+
+	////
+	Texture2D * FlamerAlbedoTexture = new Texture2D(
+		IntVector2(FlamerAlbedo.GetWidth(), FlamerAlbedo.GetHeight()),
+		Graphics::CF_RGBA,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGBA,
+		FlamerAlbedo.PointerToValue()
+	);
+	FlamerAlbedoTexture->GenerateMipMaps();
+	ResourceManager::Load(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
+	Texture2D * FlamerMetallicTexture = new Texture2D(
+		IntVector2(FlamerMetallic.GetWidth(), FlamerMetallic.GetHeight()),
+		Graphics::CF_Red,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_Red,
+		FlamerMetallic.PointerToValue()
+	);
+	FlamerMetallicTexture->GenerateMipMaps();
+	ResourceManager::Load(L"FlamerMetallicTexture", FlamerMetallicTexture);
+	Texture2D * FlamerRoughnessTexture = new Texture2D(
+		IntVector2(FlamerRoughness.GetWidth(), FlamerRoughness.GetHeight()),
+		Graphics::CF_Red,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_Red,
+		FlamerRoughness.PointerToValue()
+	);
+	FlamerRoughnessTexture->GenerateMipMaps();
+	ResourceManager::Load(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
+	Texture2D * FlamerNormalTexture = new Texture2D(
+		IntVector2(FlamerNormal.GetWidth(), FlamerNormal.GetHeight()),
+		Graphics::CF_RGB,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		FlamerNormal.PointerToValue()
+	);
+	FlamerNormalTexture->GenerateMipMaps();
+	ResourceManager::Load(L"FlamerNormalTexture", FlamerNormalTexture);
+	////
+
+	Texture2D * WhiteTexture = new Texture2D(
+		IntVector2(White.GetWidth(), White.GetHeight()),
+		Graphics::CF_RGB,
+		Graphics::FM_MinMagLinear,
+		Graphics::AM_Repeat,
+		Graphics::CF_RGB,
+		White.PointerToValue()
+	);
+	WhiteTexture->GenerateMipMaps();
+	ResourceManager::Load(L"WhiteTexture", WhiteTexture);
+	Texture2D * BlackTexture = new Texture2D(
 		IntVector2(Black.GetWidth(), Black.GetHeight()),
 		Graphics::CF_RGB,
 		Graphics::FM_MinMagLinear,
@@ -245,7 +308,8 @@ void CoreApplication::MainLoop() {
 		Graphics::CF_RGB,
 		Black.PointerToValue()
 	);
-	BlackTexture.GenerateMipMaps();
+	BlackTexture->GenerateMipMaps();
+	ResourceManager::Load(L"BlackTexture", BlackTexture);
 
 	Bitmap<UCharRed> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -284,6 +348,8 @@ void CoreApplication::MainLoop() {
 
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(BRDFShader->GetData());
+
+	GetRenderPipeline()->GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
     
 	Material UnlitMaterial = Material();
 	UnlitMaterial.SetShaderProgram(UnlitShader->GetData());
@@ -317,7 +383,6 @@ void CoreApplication::MainLoop() {
 	HDRClampingMaterial.CullMode = Graphics::CM_None;
 	HDRClampingMaterial.SetShaderProgram(HDRClampingShader->GetData());
 
-	srand(SDL_GetTicks());
 	TArray<Mesh> SceneModels;
 	TArray<Mesh> LightModels;
 	Mesh SphereModel;
@@ -341,12 +406,12 @@ void CoreApplication::MainLoop() {
 			SceneModels.back().SetUpBuffers();
 		}
 	});
-	MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
-		for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
-			SceneModels.push_back(Mesh(&(*Data)));
-			SceneModels.back().SetUpBuffers();
-		}
-	});
+	// MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
+	// 	for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
+	// 		SceneModels.push_back(Mesh(&(*Data)));
+	// 		SceneModels.back().SetUpBuffers();
+	// 	}
+	// });
 
 	Texture2D RenderedTexture = Texture2D(
 	 	IntVector2(GetMainWindow().GetWidth(), GetMainWindow().GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
@@ -382,30 +447,32 @@ void CoreApplication::MainLoop() {
 		EquirectangularTextureHDR.GenerateMipMaps();
 	}
 
-	Texture2D BRDFLut(IntVector2(512), Graphics::CF_RG16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	Texture2D * BRDFLut = new Texture2D(IntVector2(512), Graphics::CF_RG16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
 	{
 		RenderTarget Renderer = RenderTarget();
 		Renderer.SetUpBuffers();
 		Renderer.Use();
 		IntegrateBRDFMaterial.Use();
 		IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-		Renderer.Resize(BRDFLut.GetWidth(), BRDFLut.GetHeight());
+		Renderer.Resize(BRDFLut->GetWidth(), BRDFLut->GetHeight());
 		MeshPrimitives::Quad.BindVertexArray();
 		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 		IntegrateBRDFMaterial.SetAttribMatrix4x4Array(
 			"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 		);
 
-		Renderer.PrepareTexture(&BRDFLut);
+		Renderer.PrepareTexture(BRDFLut);
 		Renderer.Clear();
 		MeshPrimitives::Quad.DrawInstanciated(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		Renderer.Delete();
 		// BRDFLut.GenerateMipMaps();
 	}
+	ResourceManager::Load(L"BRDFLut", BRDFLut);
 
-	Cubemap CubemapTexture(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
-	Cubemap::FromHDREquirectangular(CubemapTexture, &EquirectangularTextureHDR, EquiToCubemapShader->GetData());
+	Cubemap * CubemapTexture = new Cubemap(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+	Cubemap::FromHDREquirectangular(*CubemapTexture, &EquirectangularTextureHDR, EquiToCubemapShader->GetData());
+	ResourceManager::Load(L"CubemapTexture", CubemapTexture);
 
 	float MaterialMetalness = 1.F;
 	float MaterialRoughness = 1.F;
@@ -431,9 +498,8 @@ void CoreApplication::MainLoop() {
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
 
-	glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GetRenderPipeline()->Initialize();
+	GetRenderPipeline()->ContextInterval(0);
 
 	do {
 		MeshLoader::UpdateStatus();
@@ -448,8 +514,8 @@ void CoreApplication::MainLoop() {
 
 		// --- Camera rotation, position Matrix
 		Vector2 CursorPosition = GetMainWindow().GetMousePosition();
-		
-		Quaternion FrameRotation  = Quaternion::EulerAngles(Vector3(CursorPosition.y, -CursorPosition.x));
+
+		Quaternion FrameRotation = Quaternion::EulerAngles(Vector3(CursorPosition.y, -CursorPosition.x));
 
 		if (GetMainWindow().GetKeyDown(SDL_SCANCODE_W)) {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
@@ -482,7 +548,9 @@ void CoreApplication::MainLoop() {
 		CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
 		CameraRayDirection.Normalize();
 
-		ViewMatrix = Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1));
+		ViewMatrix = Transform(EyePosition, FrameRotation).GetGLViewMatrix();
+		// ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
+		// Debug::Log(Debug::LogDebug, L"%ls", Text::FormatMath(ViewMatrix).c_str());
 
 		if (GetMainWindow().GetKeyDown(SDL_SCANCODE_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime();
@@ -591,9 +659,7 @@ void CoreApplication::MainLoop() {
 			size_t TriangleCount = 0;
 			size_t VerticesCount = 0;
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, GetMainWindow().GetWidth(), GetMainWindow().GetHeight());
-			GetMainWindow().ClearWindow();
+			MainRenderPipeline->PrepareFrame();
 		
 			Debug::Timer Timer;
 
@@ -654,7 +720,6 @@ void CoreApplication::MainLoop() {
 					}
 				}
 
-
 			LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 4));
 			LightPosition1 = Vector3();
 
@@ -669,10 +734,10 @@ void CoreApplication::MainLoop() {
 
 			RenderCubemapMaterial.Use();
 
-			float MaterialRoughnessTemp = (1 - MaterialRoughness) * (CubemapTexture.GetMipmapCount() - 3);
+			float MaterialRoughnessTemp = (1 - MaterialRoughness) * (CubemapTexture->GetMipmapCount() - 3);
 			RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 			RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-			RenderCubemapMaterial.SetTextureCubemap("_Skybox", &CubemapTexture, 0);
+			RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
 			RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessTemp);
 
 			if (SphereModel.Data.Faces.size() >= 1) {
@@ -683,6 +748,16 @@ void CoreApplication::MainLoop() {
 				RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, MatrixScale.PointerToValue(), ModelMatrixBuffer);
 				SphereModel.DrawElement();
 			}
+
+			GetRenderPipeline()->GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
+			GetRenderPipeline()->GetStage(L"TestStage")->SetViewProjection(Matrix4x4::Perspective(
+				60.0F * MathConstants::DegreeToRad,					// Aperute angle
+				CoreApplication::GetMainWindow().AspectRatio(),		// Aspect ratio
+				0.03F,												// Near plane
+				1000.0F												// Far plane
+			));
+
+			GetRenderPipeline()->RunStage(L"TestStage");
 
 			BaseMaterial.Use();
 			
@@ -699,13 +774,13 @@ void CoreApplication::MainLoop() {
 
 			BaseMaterial.SetMatrix4x4Array( "_ProjectionMatrix",       ProjectionMatrix.PointerToValue() );
 			BaseMaterial.SetMatrix4x4Array( "_ViewMatrix",                   ViewMatrix.PointerToValue() );
-			BaseMaterial.SetTexture2D("_MainTexture", &BaseAlbedoTexture, 0);
-			BaseMaterial.SetTexture2D("_NormalTexture", &BaseNormalTexture, 1);
-			BaseMaterial.SetTexture2D("_RoughnessTexture", &BaseRoughnessTexture, 2);
-			BaseMaterial.SetTexture2D("_MetallicTexture", &BaseMetallicTexture, 3);
-			BaseMaterial.SetTexture2D("_BRDFLUT", &BRDFLut, 4);
-			BaseMaterial.SetTextureCubemap("_EnviromentMap", &CubemapTexture, 5);
-			float CubemapTextureMipmaps = CubemapTexture.GetMipmapCount();
+			BaseMaterial.SetTexture2D("_MainTexture", BaseAlbedoTexture, 0);
+			BaseMaterial.SetTexture2D("_NormalTexture", BaseNormalTexture, 1);
+			BaseMaterial.SetTexture2D("_RoughnessTexture", BaseRoughnessTexture, 2);
+			BaseMaterial.SetTexture2D("_MetallicTexture", BaseMetallicTexture, 3);
+			BaseMaterial.SetTexture2D("_BRDFLUT", BRDFLut, 4);
+			BaseMaterial.SetTextureCubemap("_EnviromentMap", CubemapTexture, 5);
+			float CubemapTextureMipmaps = CubemapTexture->GetMipmapCount();
 			BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
 			// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
@@ -894,7 +969,7 @@ void CoreApplication::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Triangles(%ls), Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Cursor(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
@@ -902,13 +977,12 @@ void CoreApplication::MainLoop() {
 				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
 				MaterialRoughness,
 				Text::FormatUnit(VerticesCount, 2).c_str(),
-				Text::FormatUnit(TriangleCount, 2).c_str(),
+				Text::FormatMath(CursorPosition).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);
 
-			GetMainWindow().EndOfFrame();
-			glBindVertexArray(0);
+			GetRenderPipeline()->EndOfFrame();
 		}
 
 		GetMainWindow().PollEvents();
@@ -919,3 +993,14 @@ void CoreApplication::MainLoop() {
 	);
 	// delete[] Positions;
 }
+
+void CoreApplication::Terminate() {
+	Debug::CloseDeviceFunctions();
+	MeshLoader::Exit();
+	if (GetMainWindow().IsCreated()) {
+		GetMainWindow().Terminate();
+	}
+	SDL_Quit();
+
+	Space::Destroy(Space::GetMainSpace());
+};

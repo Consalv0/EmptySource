@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../include/Core.h"
 #include "../include/Graphics.h"
 
 struct Texture {

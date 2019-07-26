@@ -47,9 +47,14 @@ public:
 	}
 
 	void LocaleToUTF8();
+
 	long GetLenght();
+	
 	bool Open();
-	void Clean();
-	void Reset();
+
 	void Close();
+	
+	void Clean();
+	
+	void Reset();
 };

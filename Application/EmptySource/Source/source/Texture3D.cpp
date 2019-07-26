@@ -1,7 +1,7 @@
 
+#include "../include/Core.h"
 #include "../include/Texture3D.h"
 #include "../include/GLFunctions.h"
-#include "../include/Utility/LogCore.h"
 
 Texture3D::Texture3D(
 	const IntVector3 & Size,

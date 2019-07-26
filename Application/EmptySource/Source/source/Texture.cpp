@@ -1,4 +1,5 @@
 
+#include "../include/Core.h"
 #include "../include/Texture.h"
 #include "../include/GLFunctions.h"
 

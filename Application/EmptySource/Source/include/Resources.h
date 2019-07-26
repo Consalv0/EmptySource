@@ -53,6 +53,30 @@ public:
 	template<typename T>
 	static inline Resource<T> * Load(const size_t & GUID);
 
+	template<typename T>
+	static inline Resource<T> * Load(const WString& Name, T * Data) {
+		size_t GUID = WStringToHash(Name);
+		auto ResourceFind = Resources.find(GUID);
+		if (ResourceFind != Resources.end()) {
+			return dynamic_cast<Resource<T>*>(ResourceFind->second);
+		}
+
+		Resource<T> * ResourceAdded = new Resource<T>(Name, GUID, Data);
+		Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
+		return ResourceAdded;
+	}
+
+	template<typename T>
+	static inline Resource<T> * Get(const WString& Name) {
+		size_t GUID = WStringToHash(Name);
+		auto ResourceFind = Resources.find(GUID);
+		if (ResourceFind != Resources.end()) {
+			return dynamic_cast<Resource<T>*>(ResourceFind->second);
+		}
+
+		return NULL;
+	}
+
 private:
 	template<typename T>
 	static bool GetResourceData(const WString & File, T & OutData);

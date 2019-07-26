@@ -23,7 +23,10 @@ public:
 
 	//* Get the inverse of the Model matrix
 	Matrix4x4 GetWorldToLocalMatrix() const;
-	
+
 	//* Get the Model matrix
 	Matrix4x4 GetLocalToWorldMatrix() const;
+
+	//* Get the Model matrix
+	Matrix4x4 GetGLViewMatrix() const;
 };

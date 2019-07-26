@@ -1,7 +1,7 @@
 
+#include "../include/Core.h"
 #include "../include/Texture2D.h"
 #include "../include/GLFunctions.h"
-#include "../include/Utility/LogCore.h"
 
 Texture2D::Texture2D(
 	const IntVector2 & Size,

@@ -2,6 +2,7 @@
 #include "../include/GLFunctions.h"
 #include "../include/FileManager.h"
 #include "../include/ShaderStage.h"
+#include "../include/Material.h"
 
 bool ShaderStage::Compile() {
 	String Code;

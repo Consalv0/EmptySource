@@ -32,11 +32,11 @@ public:
 	TArray<GGameObject> Children;
 
 	template<typename T, typename... Rest>
-	CComponent * CreateComponent(Rest... Args);
+	T * CreateComponent(Rest... Args);
 };
 
 template<typename T, typename ...Rest>
-CComponent * GGameObject::CreateComponent(Rest ...Args) {
+T * GGameObject::CreateComponent(Rest ...Args) {
 	T* NewObject = new T(*this, Args...);
 	AddComponent(NewObject);
 	return NewObject;

@@ -67,7 +67,9 @@ void Space::Destroy(Space * OtherSpace) {
 }
 
 void Space::AddObject(OObject * Object) {
-	ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetIdentifierHash(), Object));
 	Object->SpaceIn = this;
-	Object->Initialize();
+	ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetIdentifierHash(), Object));
+	if (!Object->Initialize()) {
+		Debug::Log(Debug::LogError, L"Object '%ls'[%d] could't be initialized correctly", Object->GetIdentifierName().c_str(), Object->GetIdentifierHash());
+	}
 }

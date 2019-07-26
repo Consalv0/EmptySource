@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
 #endif
     Debug::Log(Debug::LogInfo, L"Initalizing Application:\n");
     CoreApplication::Initalize();
+	CoreApplication::Awake();
     CoreApplication::MainLoop();
 	CoreApplication::Terminate();
     
