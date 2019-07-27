@@ -50,11 +50,12 @@ Mesh MeshPrimitives::Quad;
 // int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
 // const void * GetRandomArray(IntVector2 Dimension);
 
-bool CoreApplication::bInitialized = false;
-double CoreApplication::RenderTimeSum = 0;
-RenderPipeline * CoreApplication::MainRenderPipeline = NULL;
+Application::Application() {
+	bInitialized = false;
+	RenderTimeSum = 0;
+}
 
-bool CoreApplication::InitalizeGLAD() {
+bool Application::InitalizeGL() {
 	if (!gladLoadGL()) {
 		Debug::Log(Debug::LogCritical, L"Unable to load OpenGL functions!");
 		return false;
@@ -75,7 +76,7 @@ bool CoreApplication::InitalizeGLAD() {
 	return true;
 }
 
-bool CoreApplication::InitializeSDL(unsigned int VersionMajor, unsigned int VersionMinor) {
+bool Application::InitializeSDL(unsigned int VersionMajor, unsigned int VersionMinor) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
 		Debug::Log(Debug::LogCritical, L"Failed to initialize SDL 2.0.9: %s\n", SDL_GetError());
 		return false;
@@ -89,7 +90,7 @@ bool CoreApplication::InitializeSDL(unsigned int VersionMajor, unsigned int Vers
 	return true;
 }
 
-bool CoreApplication::InitializeWindow() {
+bool Application::InitializeWindow() {
 	if (!GetMainWindow().Create(
 #ifdef _DEBUG
 		"EmptySource - Debug",
@@ -104,23 +105,22 @@ bool CoreApplication::InitializeWindow() {
 	return true;
 }
 
-RenderPipeline * CoreApplication::GetRenderPipeline() {
-	return MainRenderPipeline;
+Application & Application::GetInstance() {
+	static Application Instance;
+	return Instance;
 }
 
-void CoreApplication::SetRenderPipeline(RenderPipeline * Pipeline) {
-	if (MainRenderPipeline)
-		delete MainRenderPipeline;
-
-	MainRenderPipeline = Pipeline;
+RenderPipeline & Application::GetRenderPipeline() {
+	static RenderPipeline Pipeline;
+	return Pipeline;
 }
 
-ContextWindow & CoreApplication::GetMainWindow() {
-	static struct ContextWindow MainWindow;
+ContextWindow & Application::GetMainWindow() {
+	static ContextWindow MainWindow;
 	return MainWindow;
 }
 
-void CoreApplication::Initalize() {
+void Application::Initalize() {
 	if (bInitialized) return;
 #ifdef __APPLE__
     if (InitializeSDL(4, 1) == false) return;
@@ -128,7 +128,7 @@ void CoreApplication::Initalize() {
     if (InitializeSDL(4, 6) == false) return;
 #endif
 	if (InitializeWindow() == false) return;
-	if (InitalizeGLAD() == false) return;
+	if (InitalizeGL() == false) return;
     if (Debug::InitializeDeviceFunctions() == false) {
         Debug::Log(Debug::LogWarning, L"Couldn't initialize device functions");
     };
@@ -137,7 +137,6 @@ void CoreApplication::Initalize() {
 	CUDA::FindCudaDevice();
 #endif
 
-	SetRenderPipeline(new RenderPipeline());
 	if (!MeshLoader::Initialize())
 		return;
 	
@@ -147,10 +146,10 @@ void CoreApplication::Initalize() {
 	bInitialized = true;
 }
 
-void CoreApplication::Awake() {
+void Application::Awake() {
 	srand(SDL_GetTicks());
 
-	GetRenderPipeline()->AddStage(L"TestStage", new RenderStage());
+	GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
 
 	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
 	GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
@@ -159,7 +158,7 @@ void CoreApplication::Awake() {
 	Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
 }
 
-void CoreApplication::MainLoop() {
+void Application::MainLoop() {
 	if (!bInitialized) return;
 
 	Property<int> Value(0);
@@ -188,7 +187,7 @@ void CoreApplication::MainLoop() {
 	Bitmap<FloatRGB> Equirectangular;
 	ImageLoader::Load(BaseAlbedo,		FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_diff.png"));
 	ImageLoader::Load(BaseMetallic,		FileManager::GetFile(L"Resources/Textures/Sponza/sponza_arch_spec.png"));
-	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_roug.png"));
+	ImageLoader::Load(BaseRoughness,	FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_roug.jpg"));
 	ImageLoader::Load(BaseNormal,		FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_normal.png"));
 	ImageLoader::Load(FlamerAlbedo,		FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
 	ImageLoader::Load(FlamerMetallic,	FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
@@ -349,7 +348,7 @@ void CoreApplication::MainLoop() {
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(BRDFShader->GetData());
 
-	GetRenderPipeline()->GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
+	GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
     
 	Material UnlitMaterial = Material();
 	UnlitMaterial.SetShaderProgram(UnlitShader->GetData());
@@ -498,8 +497,8 @@ void CoreApplication::MainLoop() {
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
 
-	GetRenderPipeline()->Initialize();
-	GetRenderPipeline()->ContextInterval(0);
+	GetRenderPipeline().Initialize();
+	GetRenderPipeline().ContextInterval(0);
 
 	do {
 		MeshLoader::UpdateStatus();
@@ -659,7 +658,7 @@ void CoreApplication::MainLoop() {
 			size_t TriangleCount = 0;
 			size_t VerticesCount = 0;
 
-			MainRenderPipeline->PrepareFrame();
+			GetRenderPipeline().PrepareFrame();
 		
 			Debug::Timer Timer;
 
@@ -749,15 +748,15 @@ void CoreApplication::MainLoop() {
 				SphereModel.DrawElement();
 			}
 
-			GetRenderPipeline()->GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
-			GetRenderPipeline()->GetStage(L"TestStage")->SetViewProjection(Matrix4x4::Perspective(
-				60.0F * MathConstants::DegreeToRad,					// Aperute angle
-				CoreApplication::GetMainWindow().AspectRatio(),		// Aspect ratio
-				0.03F,												// Near plane
-				1000.0F												// Far plane
+			GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
+			GetRenderPipeline().GetStage(L"TestStage")->SetViewProjection(Matrix4x4::Perspective(
+				60.0F * MathConstants::DegreeToRad,	 // Aperute angle
+				GetMainWindow().AspectRatio(),		 // Aspect ratio
+				0.03F,								 // Near plane
+				1000.0F								 // Far plane
 			));
 
-			GetRenderPipeline()->RunStage(L"TestStage");
+			GetRenderPipeline().RunStage(L"TestStage");
 
 			BaseMaterial.Use();
 			
@@ -982,7 +981,7 @@ void CoreApplication::MainLoop() {
 				Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
 			);
 
-			GetRenderPipeline()->EndOfFrame();
+			GetRenderPipeline().EndOfFrame();
 		}
 
 		GetMainWindow().PollEvents();
@@ -994,7 +993,7 @@ void CoreApplication::MainLoop() {
 	// delete[] Positions;
 }
 
-void CoreApplication::Terminate() {
+void Application::Terminate() {
 	Debug::CloseDeviceFunctions();
 	MeshLoader::Exit();
 	if (GetMainWindow().IsCreated()) {

@@ -62,11 +62,11 @@ RenderStage * RenderPipeline::GetStage(WString StageName) const {
 
 void RenderPipeline::PrepareFrame() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, CoreApplication::GetMainWindow().GetWidth(), CoreApplication::GetMainWindow().GetHeight());
-	CoreApplication::GetMainWindow().ClearWindow();
+	glViewport(0, 0, Application::GetInstance().GetMainWindow().GetWidth(), Application::GetInstance().GetMainWindow().GetHeight());
+	Application::GetInstance().GetMainWindow().ClearWindow();
 }
 
 void RenderPipeline::EndOfFrame() {
-	CoreApplication::GetMainWindow().EndOfFrame();
+	Application::GetInstance().GetMainWindow().EndOfFrame();
 	glBindVertexArray(0);
 }

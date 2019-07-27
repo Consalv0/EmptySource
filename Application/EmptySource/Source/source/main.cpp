@@ -23,10 +23,10 @@ int main(int argc, char **argv) {
     _setmode(_fileno(stdout), _O_U8TEXT);
 #endif
     Debug::Log(Debug::LogInfo, L"Initalizing Application:\n");
-    CoreApplication::Initalize();
-	CoreApplication::Awake();
-    CoreApplication::MainLoop();
-	CoreApplication::Terminate();
+    Application::GetInstance().Initalize();
+	Application::GetInstance().Awake();
+    Application::GetInstance().MainLoop();
+	Application::GetInstance().Terminate();
     
 #ifdef _DEBUG
     Debug::Log(Debug::LogInfo, L"Press any key to close...");

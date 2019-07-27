@@ -1,15 +1,29 @@
 #pragma once
 
 class Time {
-public:
+
+private:
 	friend class Application;
-	
+
 	// Don't use this unless you know what are you doing
 	static void Tick();
 
 	// Update the fixed update time
 	// Don't use this unless you know what are you doing
-	// static void FixedUpdate();
+	// static void FixedTick();
+
+	// Time since the last tick callback
+	static unsigned long long LastUpdateMicro;
+	static unsigned long long LastDeltaMicro;
+
+	static bool bHasInitialized;
+
+	static unsigned int TickCount;
+	static double TickAverage;
+	static const unsigned int MaxTickSamples = 25;
+	static unsigned long long TickBuffer[MaxTickSamples];
+
+public:
 
 	// Time in seconds since the last frame;
 	static float GetDeltaTime();
@@ -25,16 +39,4 @@ public:
 
 	// Machine Time
 	static float GetEpochTimeSeconds();
-
-private:
-	// Time since the last tick callback
-	static unsigned long long LastUpdateMicro;
-	static unsigned long long LastDeltaMicro;
-
-	static bool bHasInitialized;
-
-	static unsigned int TickCount;
-	static double TickAverage;
-	static const unsigned int MaxTickSamples = 25;
-	static unsigned long long TickBuffer[MaxTickSamples];
 };

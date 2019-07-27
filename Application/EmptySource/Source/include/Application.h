@@ -1,37 +1,37 @@
 #pragma once
 
-class CoreApplication {
+class Application {
 private:
-	static bool bInitialized;
-	static double RenderTimeSum;
+	bool bInitialized;
+	double RenderTimeSum;
 
-	static class RenderPipeline * MainRenderPipeline;
+	Application();
 	
 	//* Initialize SDL Functions using OpenGL Versions, returns true if initialized correctly
-	static bool InitializeSDL(unsigned int VersionMajor, unsigned int VersionMinor);
+	bool InitializeSDL(unsigned int VersionMajor, unsigned int VersionMinor);
 	
 	//* Initialize GLAD OpenGL Functions
-	static bool InitalizeGLAD();
+	bool InitalizeGL();
 
 	//* Creates the main window for rendering
-	static bool InitializeWindow();
+	bool InitializeWindow();
     
 public:
-	static RenderPipeline * GetRenderPipeline();
+	static Application & GetInstance();
 
-	static void SetRenderPipeline(RenderPipeline * Pipeline);
+	class RenderPipeline & GetRenderPipeline();
 
-	static struct ContextWindow & GetMainWindow();
+	struct ContextWindow & GetMainWindow();
 
 	//* Initialize the application, it creates a window, a context and loads the OpenGL functions.
-	static void Initalize();
+	void Initalize();
 
 	//* Application loading point
-	static void Awake();
+	void Awake();
 	
 	//* Application loop
-	static void MainLoop();
+	void MainLoop();
 
 	//* Terminates Application
-	static void Terminate();
+	void Terminate();
 };
