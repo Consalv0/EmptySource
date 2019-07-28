@@ -2,10 +2,6 @@
 
 #include "../include/Text.h"
 
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
 namespace Debug {
     constexpr unsigned char       NoLog = 0;
     constexpr unsigned char   LogNormal = 1 << 0;
@@ -24,6 +20,12 @@ namespace Debug {
 	};
 
 	void LogClearLine(unsigned char Filter);
+
+#ifdef WIN32
+	unsigned short GetWin32TextConsoleColor();
+
+	void SetWin32TextConsoleColor(const unsigned short & Att);
+#endif // WIN32
 
 	template<typename ... Arguments>
 	void LogUnadorned(unsigned char Filter, WString Text, Arguments ... Args) {
@@ -44,20 +46,18 @@ namespace Debug {
         WString LogText;
         
 #ifdef WIN32
-        HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        GetConsoleScreenBufferInfo(hstdout, &csbi);
+		unsigned short Att = GetWin32TextConsoleColor();
         
         if ((Filter & LogNormal & LogFilter::Value)   != NoLog) { LogText = L"[LOG] "; }
-		if ((Filter & LogInfo & LogFilter::Value)     != NoLog) { LogText = L"[INFO] ";     SetConsoleTextAttribute(hstdout, FOREGROUND_INTENSITY); }
-        if ((Filter & LogDebug & LogFilter::Value)    != NoLog) { LogText = L"[DEBUG] ";    SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY); }
-		if ((Filter & LogWarning & LogFilter::Value)  != NoLog) { LogText = L"[WARNING] ";  SetConsoleTextAttribute(hstdout, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY); }
-		if ((Filter & LogError & LogFilter::Value)    != NoLog) { LogText = L"[ERROR] ";    SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_INTENSITY); }
-		if ((Filter & LogCritical & LogFilter::Value) != NoLog) { LogText = L"[CRITICAL] "; SetConsoleTextAttribute(hstdout, FOREGROUND_RED); }
+		if ((Filter & LogInfo & LogFilter::Value)     != NoLog) { LogText = L"[INFO] ";     SetWin32TextConsoleColor(0x0008); }
+        if ((Filter & LogDebug & LogFilter::Value)    != NoLog) { LogText = L"[DEBUG] ";    SetWin32TextConsoleColor(0x0002 | 0x0008); }
+		if ((Filter & LogWarning & LogFilter::Value)  != NoLog) { LogText = L"[WARNING] ";  SetWin32TextConsoleColor(0x0002 | 0x0004 | 0x0008); }
+		if ((Filter & LogError & LogFilter::Value)    != NoLog) { LogText = L"[ERROR] ";    SetWin32TextConsoleColor(0x0004 | 0x0008); }
+		if ((Filter & LogCritical & LogFilter::Value) != NoLog) { LogText = L"[CRITICAL] "; SetWin32TextConsoleColor(0x0004); }
 
 		setlocale(LC_ALL, "en_US.UTF-8");
         std::wprintf((LogText + (Text + L"\n")).c_str(), Args ...);
-        SetConsoleTextAttribute(hstdout, csbi.wAttributes);
+		SetWin32TextConsoleColor(Att);
 #else
         
         if ((Filter & LogNormal & LogFilter::Value)   != NoLog) LogText = L"\033[40m[LOG]\033[0m ";
