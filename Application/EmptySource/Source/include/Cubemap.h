@@ -39,6 +39,9 @@ public:
 
 	//* Use the cubemap
 	void Use() const;
+	
+	//* Deuse the texture
+	void Deuse() const;
 
 	//* Check if cubemap is valid
 	bool IsValid() const;

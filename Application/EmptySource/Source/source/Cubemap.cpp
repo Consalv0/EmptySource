@@ -41,6 +41,10 @@ void Cubemap::Use() const {
 	}
 }
 
+void Cubemap::Deuse() const {
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
 bool Cubemap::IsValid() const {
 	return TextureObject != GL_FALSE && Width > 0;
 }

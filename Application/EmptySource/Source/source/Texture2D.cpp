@@ -83,6 +83,10 @@ void Texture2D::Use() const {
 	}
 }
 
+void Texture2D::Deuse() const {
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 bool Texture2D::IsValid() const {
 	return TextureObject != GL_FALSE && GetDimension().MagnitudeSquared() > 0;
 }

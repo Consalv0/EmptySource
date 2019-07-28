@@ -48,6 +48,10 @@ void Texture3D::Use() const {
 	}
 }
 
+void Texture3D::Deuse() const {
+	glBindTexture(GL_TEXTURE_3D, 0);
+}
+
 bool Texture3D::IsValid() const {
 	return TextureObject != GL_FALSE && GetDimension().MagnitudeSquared() > 0;
 }

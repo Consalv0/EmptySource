@@ -35,6 +35,9 @@ public:
 	//* Use the texture
 	void Use() const;
 
+	//* Deuse the texture
+	void Deuse() const;
+
 	//* Check if texture is valid
 	bool IsValid() const;
 

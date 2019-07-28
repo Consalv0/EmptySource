@@ -20,8 +20,8 @@ public:
 	//* Use the texture
 	virtual void Use() const = 0;
 
-	//* Use the texture
-	static void Deuse();
+	//* Deuse the texture
+	virtual void Deuse() const = 0;
 
 	//* Check if texture is valid
 	virtual bool IsValid() const = 0;
@@ -29,6 +29,7 @@ public:
 	//* Returns the GL Object of this texture
 	unsigned int GetTextureObject() const { return TextureObject; };
 	
+	//* Generate MipMaps using Hardware
 	virtual void GenerateMipMaps() = 0;
 
 	Graphics::FilterMode GetFilterMode() { return FilterMode; };

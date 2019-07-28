@@ -75,7 +75,3 @@ Texture::Texture() {
 	AddressMode = Graphics::AM_Border;
 	ColorFormat = Graphics::CF_RGB;
 }
-
-void Texture::Deuse() {
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
