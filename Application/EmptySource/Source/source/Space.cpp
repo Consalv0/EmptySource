@@ -6,7 +6,7 @@
 TDictionary<size_t, Space*> Space::AllSpaces = TDictionary<size_t, Space*>();
 
 Space::Space() : IIdentifier(L"Space") {
-	Name = GetIdentifierName();
+	Name = GetUniqueName();
 }
 
 Space::Space(const WString& InName) : IIdentifier(InName) {
@@ -14,7 +14,7 @@ Space::Space(const WString& InName) : IIdentifier(InName) {
 	ObjectsIn = TDictionary<size_t, OObject*>();
 }
 
-Space::Space(Space & OtherSpace) : IIdentifier(OtherSpace.GetIdentifierName()) {
+Space::Space(Space & OtherSpace) : IIdentifier(OtherSpace.GetUniqueName()) {
 	WString Number, Residue;
 	if (Text::GetLastNotOf(OtherSpace.Name, Residue, Number, L"0123456789"))
 		Name = Residue + std::to_wstring(std::stoi(Number) + 1);
@@ -23,7 +23,7 @@ Space::Space(Space & OtherSpace) : IIdentifier(OtherSpace.GetIdentifierName()) {
 	ObjectsIn = TDictionary<size_t, OObject*>();
 }
 
-WString Space::GetName() {
+WString Space::GetFriendlyName() const {
 	return Name;
 }
 
@@ -44,7 +44,7 @@ Space * Space::GetSpace(const size_t & Identifier) {
 
 Space * Space::CreateSpace(const WString & Name) {
 	Space * NewSpace = new Space(Name);
-	AllSpaces.insert(std::pair<const size_t, Space*>(NewSpace->GetIdentifierHash(), NewSpace));
+	AllSpaces.insert(std::pair<const size_t, Space*>(NewSpace->GetUniqueID(), NewSpace));
 	return NewSpace;
 }
 
@@ -56,20 +56,20 @@ void Space::DeleteAllObjects() {
 
 void Space::DeleteObject(OObject * Object) {
 	Object->OnDelete();
-	ObjectsIn.erase(Object->GetIdentifierHash());
+	ObjectsIn.erase(Object->GetUniqueID());
 	delete Object;
 }
 
 void Space::Destroy(Space * OtherSpace) {
 	OtherSpace->DeleteAllObjects();
-	AllSpaces.erase(OtherSpace->GetIdentifierHash());
+	AllSpaces.erase(OtherSpace->GetUniqueID());
 	delete OtherSpace;
 }
 
 void Space::AddObject(OObject * Object) {
 	Object->SpaceIn = this;
-	ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetIdentifierHash(), Object));
+	ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetUniqueID(), Object));
 	if (!Object->Initialize()) {
-		Debug::Log(Debug::LogError, L"Object '%ls'[%d] could't be initialized correctly", Object->GetIdentifierName().c_str(), Object->GetIdentifierHash());
+		Debug::Log(Debug::LogError, L"Object '%ls'[%d] could't be initialized correctly", Object->GetUniqueName().c_str(), Object->GetUniqueID());
 	}
 }

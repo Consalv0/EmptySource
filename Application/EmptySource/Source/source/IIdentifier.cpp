@@ -2,25 +2,31 @@
 #include <stddef.h>
 #include "../include/IIdentifier.h"
 
-size_t IIdentifier::CurrentIdentifier = 0;
-
-size_t IIdentifier::GetIdentifierHash() const {
+size_t IIdentifier::GetUniqueID() const {
 	return NameHash;
 }
 
-WString IIdentifier::GetIdentifierName() const {
-	return InternalName;
-}
+void IIdentifier::ProcessIdentifierName(const WString & Name) {
+	// Identifier Generator
+	static size_t CurrentIdentifier;
 
-IIdentifier::IIdentifier() {
-	InternalName = L"Identifier_" + std::to_wstring(++CurrentIdentifier);
-	NameHash = WStringToHash(InternalName);
-}
-
-IIdentifier::IIdentifier(const WString & Name) {
 	InternalName = Name;
 	if (!Text::ReplaceFromLast(InternalName, L"_", L"_" + std::to_wstring(++CurrentIdentifier))) {
 		InternalName += L"_" + std::to_wstring(CurrentIdentifier);
 	}
-	NameHash = WStringToHash(Name);
+	NameHash = WStringToHash(InternalName);
 }
+
+WString IIdentifier::GetUniqueName() const {
+	return InternalName;
+}
+
+IIdentifier::IIdentifier() {
+	ProcessIdentifierName(L"");
+}
+
+IIdentifier::IIdentifier(const WString & Name) {
+	ProcessIdentifierName(Name);
+}
+
+

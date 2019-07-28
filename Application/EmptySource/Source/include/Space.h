@@ -23,7 +23,7 @@ public:
 	//* Destroy specific object in this Space
 	void DeleteObject(OObject* object);
 
-	WString GetName();
+	WString GetFriendlyName() const;
 
 	//* Creates an object in this space
 	template<typename T>

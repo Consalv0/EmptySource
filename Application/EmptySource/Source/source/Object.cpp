@@ -3,7 +3,7 @@
 #include "../include/Object.h"
 
 OObject::OObject() : IIdentifier(L"Object") { 
-	Name = GetIdentifierName();
+	Name = GetUniqueName();
 }
 
 OObject::OObject(const WString & InName) : IIdentifier(InName) {

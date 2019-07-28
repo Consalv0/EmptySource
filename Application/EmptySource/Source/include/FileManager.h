@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/CoreTypes.h"
 #include "../include/FileStream.h"
 
 typedef TArray<FileStream*> FileList;

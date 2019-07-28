@@ -18,14 +18,14 @@ GGameObject::GGameObject(const WString & Name, const Transform & LocalTransform)
 }
 
 void GGameObject::AddComponent(CComponent * Component) {
-	ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->GetIdentifierHash(), Component));
+	ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->GetUniqueID(), Component));
 	Component->SpaceIn = SpaceIn;
 	Component->Initialize();
 }
 
 void GGameObject::DeleteComponent(CComponent * Component) {
 	Component->OnDelete();
-	ComponentsIn.erase(Component->GetIdentifierHash());
+	ComponentsIn.erase(Component->GetUniqueID());
 	delete Component;
 }
 

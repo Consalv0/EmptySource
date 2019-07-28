@@ -8,12 +8,13 @@ public:
 	IIdentifier();
 	IIdentifier(const WString & Name);
 
-	WString GetIdentifierName() const;
-	size_t GetIdentifierHash() const;
+	WString GetUniqueName() const;
+	size_t GetUniqueID() const;
 
 private:
-	// Identifier Generator
-	static size_t CurrentIdentifier;
+
+	void ProcessIdentifierName(const WString & Name);
+
 	WString InternalName;
 	size_t NameHash;
 };
