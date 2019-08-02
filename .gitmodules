@@ -1,15 +1,15 @@
-[submodule "Application/EmptySource/External/SDL"]
-	path = Application/EmptySource/External/SDL
+[submodule "EmptySource/External/SDL"]
+	path = EmptySource/External/SDL
 	url = https://github.com/spurious/SDL-mirror.git
-[submodule "Application/EmptySource/External/FreeType"]
-	path = Application/EmptySource/External/FreeType
+[submodule "EmptySource/External/FreeType"]
+	path = EmptySource/External/FreeType
 	url = https://github.com/ubawurinna/freetype-windows-binaries.git
-[submodule "Application/EmptySource/External/STB"]
-	path = Application/EmptySource/External/STB
+[submodule "EmptySource/External/STB"]
+	path = EmptySource/External/STB
 	url = https://github.com/nothings/stb.git
-[submodule "Application/EmptySource/External/RobinMap"]
-	path = Application/EmptySource/External/RobinMap
+[submodule "EmptySource/External/RobinMap"]
+	path = EmptySource/External/RobinMap
 	url = https://github.com/Tessil/robin-map.git
-[submodule "Application/EmptySource/External/YAML"]
-	path = Application/EmptySource/External/YAML
+[submodule "EmptySource/External/YAML"]
+	path = EmptySource/External/YAML
 	url = https://github.com/jbeder/yaml-cpp.git
