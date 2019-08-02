@@ -1,11 +1,11 @@
 #pragma once
 
 #include "../include/CoreTypes.h"
-#include "../include/RenderStage.h"
+#include "../include/Text.h"
 
 class RenderPipeline {
 protected:
-	TDictionary<WString, RenderStage *> RenderStages;
+	TDictionary<WString, class RenderStage *> RenderStages;
 
 public:
 	RenderPipeline();

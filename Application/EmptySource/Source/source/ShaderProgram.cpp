@@ -90,16 +90,16 @@ void ShaderProgram::AppendStage(ShaderStage * Shader) {
 
 	if (Shader == NULL || !Shader->IsValid()) return;
 
-	if (Shader->GetType() == ShaderType::Vertex) {
+	if (Shader->GetType() == ShaderType::ST_Vertex) {
 		VertexShader = Shader; return;
 	}
-	if (Shader->GetType() == ShaderType::Fragment) {
+	if (Shader->GetType() == ShaderType::ST_Fragment) {
 		FragmentShader = Shader; return;
 	}
-	if (Shader->GetType() == ShaderType::Geometry) {
+	if (Shader->GetType() == ShaderType::ST_Geometry) {
 		GeometryShader = Shader; return;
 	}
-	if (Shader->GetType() == ShaderType::Compute) {
+	if (Shader->GetType() == ShaderType::ST_Compute) {
 		ComputeShader = Shader; return;
 	}
 }

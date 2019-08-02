@@ -6,7 +6,7 @@
 
 #include "../External/YAML/include/yaml-cpp/yaml.h"
 
-TDictionary<size_t, BaseResource*> ResourceManager::Resources = TDictionary<size_t, BaseResource*>();
+TDictionary<size_t, BaseResource*> OldResourceManager::Resources = TDictionary<size_t, BaseResource*>();
 
 BaseResource::BaseResource(const WString & Name, const size_t & GUID) : GUID(GUID), Name(Name), isDone(false) {
 }
@@ -23,7 +23,7 @@ const FileStream * BaseResource::GetFile() const {
 	return FileManager::GetFile(Name);
 }
 
-FileStream * ResourceManager::GetResourcesFile() {
+FileStream * OldResourceManager::GetResourcesFile() {
 	static WString ResourceFilePath = L"Resources/Resouces.yaml";
 	FileStream * ResourceFile = FileManager::GetFile(ResourceFilePath);
 	YAML::Node BaseNode;

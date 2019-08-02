@@ -43,7 +43,7 @@ namespace YAML {
 }
 
 template<>
-bool ResourceManager::GetResourceData<ShaderProgramData>(const WString & Name, ShaderProgramData & ResourceData) {
+bool OldResourceManager::GetResourceData<ShaderProgramData>(const WString & Name, ShaderProgramData & ResourceData) {
 	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
 	bool bNeedsModification = false;
@@ -108,7 +108,7 @@ bool ResourceManager::GetResourceData<ShaderProgramData>(const WString & Name, S
 }
 
 template<>
-bool ResourceManager::GetResourceData<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData) {
+bool OldResourceManager::GetResourceData<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData) {
 	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
 	{

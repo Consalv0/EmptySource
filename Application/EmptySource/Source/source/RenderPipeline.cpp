@@ -1,6 +1,7 @@
 
 #include "../include/Application.h"
 #include "../include/Window.h"
+#include "../include/RenderStage.h"
 #include "../include/RenderPipeline.h"
 #include "../include/GLFunctions.h"
 

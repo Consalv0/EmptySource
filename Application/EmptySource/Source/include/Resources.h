@@ -7,13 +7,9 @@
 struct FileStream;
 class ResourceManager;
 
-enum ResourceType {
-	RT_Texture, RT_ShaderPass, RT_ShaderProgram, RT_Material, RT_Mesh
-};
-
 struct BaseResource {
 protected:
-	friend class ResourceManager;
+	friend class OldResourceManager;
 	
 	BaseResource(const WString & FilePath, const size_t & GUID);
 	virtual ~BaseResource() { }
@@ -30,7 +26,7 @@ public:
 template <typename T>
 struct Resource : public BaseResource {
 protected:
-	friend class ResourceManager;
+	friend class OldResourceManager;
 	Resource(const WString & FilePath, const size_t & GUID) : BaseResource(FilePath, GUID), Data(NULL) {}
 	Resource(const WString & FilePath, const size_t & GUID, T * Data) : BaseResource(FilePath, GUID), Data(Data) { isDone = true; }
 
@@ -43,7 +39,7 @@ public:
 	}
 };
 
-class ResourceManager {
+class OldResourceManager {
 public:
 	//* Get the resource with the given name, returns NULL if no resource
 	template<typename T>

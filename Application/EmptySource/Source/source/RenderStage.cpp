@@ -3,12 +3,12 @@
 #include "../include/RenderStage.h"
 #include "../include/Application.h"
 #include "../include/Window.h"
-#include "../include/GLFunctions.h"
 #include "../include/Material.h"
 #include "../include/Resources.h"
 #include "../include/Mesh.h"
 #include "../include/Cubemap.h"
 #include "../include/Utility/TextFormattingMath.h"
+#include "../include/GLFunctions.h"
 
 void RenderStage::SetEyeTransform(const Transform & EyeTransform) {
 	this->EyeTransform = EyeTransform;
@@ -48,13 +48,13 @@ void RenderStage::Prepare() {
 	 
 	CurrentMaterial->SetMatrix4x4Array("_ProjectionMatrix", ViewProjection.PointerToValue());
 	CurrentMaterial->SetMatrix4x4Array("_ViewMatrix", EyeTransform.GetGLViewMatrix().PointerToValue());
-	CurrentMaterial->SetTexture2D(     "_MainTexture", ResourceManager::Get<Texture2D>(L"FlamerAlbedoTexture")->GetData(), 0);
-	CurrentMaterial->SetTexture2D(   "_NormalTexture", ResourceManager::Get<Texture2D>(L"FlamerNormalTexture")->GetData(), 1);
-	CurrentMaterial->SetTexture2D("_RoughnessTexture", ResourceManager::Get<Texture2D>(L"FlamerRoughnessTexture")->GetData(), 2);
-	CurrentMaterial->SetTexture2D( "_MetallicTexture", ResourceManager::Get<Texture2D>(L"FlamerMetallicTexture")->GetData(), 3);
-	CurrentMaterial->SetTexture2D(         "_BRDFLUT", ResourceManager::Get<Texture2D>(L"BRDFLut")->GetData(), 4);
-	CurrentMaterial->SetTextureCubemap("_EnviromentMap", ResourceManager::Get<Cubemap>(L"CubemapTexture")->GetData(), 5);
-	float CubemapTextureMipmaps = ResourceManager::Get<Cubemap>(L"CubemapTexture")->GetData()->GetMipmapCount();
+	CurrentMaterial->SetTexture2D(     "_MainTexture", OldResourceManager::Get<Texture2D>(L"FlamerAlbedoTexture")->GetData(), 0);
+	CurrentMaterial->SetTexture2D(   "_NormalTexture", OldResourceManager::Get<Texture2D>(L"FlamerNormalTexture")->GetData(), 1);
+	CurrentMaterial->SetTexture2D("_RoughnessTexture", OldResourceManager::Get<Texture2D>(L"FlamerRoughnessTexture")->GetData(), 2);
+	CurrentMaterial->SetTexture2D( "_MetallicTexture", OldResourceManager::Get<Texture2D>(L"FlamerMetallicTexture")->GetData(), 3);
+	CurrentMaterial->SetTexture2D(         "_BRDFLUT", OldResourceManager::Get<Texture2D>(L"BRDFLut")->GetData(), 4);
+	CurrentMaterial->SetTextureCubemap("_EnviromentMap", OldResourceManager::Get<Cubemap>(L"CubemapTexture")->GetData(), 5);
+	float CubemapTextureMipmaps = OldResourceManager::Get<Cubemap>(L"CubemapTexture")->GetData()->GetMipmapCount();
 	CurrentMaterial->SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 }
 

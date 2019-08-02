@@ -15,10 +15,10 @@ struct ShaderProgramData {
 };
 
 template<>
-bool ResourceManager::GetResourceData<ShaderProgramData>(const WString & File, ShaderProgramData & ResourceData);
+bool OldResourceManager::GetResourceData<ShaderProgramData>(const WString & File, ShaderProgramData & ResourceData);
 
 template<>
-inline Resource<ShaderProgram> * ResourceManager::Load(const WString & Name) {
+inline Resource<ShaderProgram> * OldResourceManager::Load(const WString & Name) {
 	ShaderProgramData LoadData;
 	if (!GetResourceData<ShaderProgramData>(Name, LoadData))
 		return NULL;
@@ -30,25 +30,25 @@ inline Resource<ShaderProgram> * ResourceManager::Load(const WString & Name) {
 
 	ShaderProgram * Program = new ShaderProgram(LoadData.Name);
 	if (LoadData.VertexShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.VertexShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.VertexShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
 	if (LoadData.FragmentShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.FragmentShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.FragmentShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
 	if (LoadData.ComputeShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.ComputeShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.ComputeShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
 	if (LoadData.GeometryShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.GeometryShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.GeometryShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
@@ -61,10 +61,10 @@ inline Resource<ShaderProgram> * ResourceManager::Load(const WString & Name) {
 }
 
 template<>
-bool ResourceManager::GetResourceData<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData);
+bool OldResourceManager::GetResourceData<ShaderProgramData>(const size_t & GUID, ShaderProgramData & ResourceData);
 
 template<>
-inline Resource<ShaderProgram> * ResourceManager::Load(const size_t & GUID) {
+inline Resource<ShaderProgram> * OldResourceManager::Load(const size_t & GUID) {
 	ShaderProgramData LoadData;
 	if (!GetResourceData<ShaderProgramData>(GUID, LoadData))
 		return NULL;
@@ -76,25 +76,25 @@ inline Resource<ShaderProgram> * ResourceManager::Load(const size_t & GUID) {
 
 	ShaderProgram * Program = new ShaderProgram(LoadData.Name);
 	if (LoadData.VertexShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.VertexShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.VertexShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
 	if (LoadData.FragmentShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.FragmentShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.FragmentShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
 	if (LoadData.ComputeShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.ComputeShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.ComputeShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}
 	}
 	if (LoadData.GeometryShader > 0) {
-		Resource<ShaderStage> * Stage = ResourceManager::Load<ShaderStage>(LoadData.GeometryShader);
+		Resource<ShaderStage> * Stage = OldResourceManager::Load<ShaderStage>(LoadData.GeometryShader);
 		if (Stage && Stage->GetData()) {
 			Program->AppendStage(Stage->GetData());
 		}

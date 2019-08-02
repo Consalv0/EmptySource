@@ -1,8 +1,8 @@
 #include "../include/RenderTarget.h"
 #include "../include/Texture2D.h"
 #include "../include/Cubemap.h"
-#include "../include/GLFunctions.h"
 #include "../include/Utility/LogCore.h"
+#include "../include/GLFunctions.h"
 
 RenderTarget::RenderTarget() {
 	Resolution = 0;

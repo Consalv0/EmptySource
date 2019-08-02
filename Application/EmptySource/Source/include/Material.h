@@ -9,6 +9,7 @@ private:
 
 public:
 	bool bUseDepthTest;
+	unsigned int RenderPriority;
 	Graphics::DepthFunction DepthFunction;
 	Graphics::RenderMode RenderMode;
 	Graphics::CullMode CullMode;

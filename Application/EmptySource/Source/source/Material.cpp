@@ -10,6 +10,7 @@
 
 Material::Material() {
 	MaterialShader = NULL;
+	RenderPriority = 1000;
 	bUseDepthTest = true;
 	DepthFunction = Graphics::DF_LessEqual;
 	RenderMode = Graphics::RM_Fill;

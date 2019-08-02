@@ -31,6 +31,8 @@ public:
 	}
 	T virtual inline operator=(const T & Value) { return Set(Value); }
 
+	bool virtual inline operator==(const T & ValueOne) { return ValueOne == InternalValue; }
+
 	virtual inline void AttachObserver(const Observer* Value) {
 		Observers.push_back(Value);
 	}

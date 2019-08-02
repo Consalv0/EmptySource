@@ -13,13 +13,13 @@ namespace YAML {
 			Node["GUID"] = Element.GUID;
 			
 			YAML::Node ShaderStageNode;
-			if (Element.Type == Vertex)
+			if (Element.Type == ST_Vertex)
 				ShaderStageNode["Type"] = "Vertex";
-			else if (Element.Type == Fragment)
+			else if (Element.Type == ST_Fragment)
 				ShaderStageNode["Type"] = "Fragment";
-			else if (Element.Type == Geometry)
+			else if (Element.Type == ST_Geometry)
 				ShaderStageNode["Type"] = "Geometry";
-			else if (Element.Type == Compute)
+			else if (Element.Type == ST_Compute)
 				ShaderStageNode["Type"] = "Compute";
 
 			ShaderStageNode["FilePath"] = WStringToString(Element.FilePath);
@@ -37,13 +37,13 @@ namespace YAML {
 			String Type = Node["ShaderStage"]["Type"].IsDefined() ? Node["ShaderStage"]["Type"].as<String>() : "Vertex";
 
 			if (Type == "Vertex")
-				Element.Type = Vertex;
+				Element.Type = ST_Vertex;
 			else if (Type == "Fragment")
-				Element.Type = Fragment;
+				Element.Type = ST_Fragment;
 			else if (Type == "Geometry")
-				Element.Type = Geometry;
+				Element.Type = ST_Geometry;
 			else if (Type == "Compute")
-				Element.Type = Compute;
+				Element.Type = ST_Compute;
 
 			return true;
 		}
@@ -51,7 +51,7 @@ namespace YAML {
 }
 
 template<>
-bool ResourceManager::GetResourceData<ShaderStageData>(const WString & File, ShaderStageData & ResourceData) {
+bool OldResourceManager::GetResourceData<ShaderStageData>(const WString & File, ShaderStageData & ResourceData) {
 	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
 	bool bNeedsModification = false;
@@ -119,7 +119,7 @@ bool ResourceManager::GetResourceData<ShaderStageData>(const WString & File, Sha
 }
 
 template<>
-bool ResourceManager::GetResourceData<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData) {
+bool OldResourceManager::GetResourceData<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData) {
 	FileStream * ResourcesFile = GetResourcesFile();
 	YAML::Node BaseNode;
 	{

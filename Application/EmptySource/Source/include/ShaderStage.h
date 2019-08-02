@@ -3,35 +3,37 @@
 struct FileStream;
 
 enum ShaderType {
-	Vertex,
-	Geometry,
-	Fragment,
-	Compute
+	ST_Vertex,
+	ST_Geometry,
+	ST_Fragment,
+	ST_Compute
 };
 
 class ShaderStage {
 private:
 	ShaderType Type;
-	FileStream* ShaderCode;
 
 	//* Shader object for a single shader stage
 	unsigned int ShaderObject;
-
-	//* Create and compile our GLSL shader unit
-	bool Compile();
 
 public:
 
 	ShaderStage();
 
 	//* Create shader with name
-	ShaderStage(ShaderType Type, FileStream* ShaderPath);
+	ShaderStage(ShaderType Type);
 
 	//* Get the shader object identifier
 	unsigned int GetShaderObject() const;
 
 	//* Get the shader type
 	ShaderType GetType() const;
+
+	//* Create and compile our shader unit
+	bool CompileFromFile(const WString & FilePath);
+
+	//* Create and compile our shader unit
+	bool CompileFromText(const String & Code);
 
 	//* Unloads the shader unit
 	void Delete();

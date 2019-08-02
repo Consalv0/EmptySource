@@ -1,33 +1,53 @@
 #include "../include/Core.h"
-#include "../include/GLFunctions.h"
 #include "../include/FileManager.h"
 #include "../include/ShaderStage.h"
 #include "../include/Material.h"
+#include "../include/GLFunctions.h"
 
-bool ShaderStage::Compile() {
-	String Code;
-    
-    if (ShaderCode == NULL)
-        return false;
-    
+ShaderStage::ShaderStage() {
+	ShaderObject = 0;
+	Type = ST_Vertex;
+}
+
+ShaderStage::ShaderStage(ShaderType type) {
+	Type = type;
+}
+
+unsigned int ShaderStage::GetShaderObject() const {
+	return ShaderObject;
+}
+
+ShaderType ShaderStage::GetType() const {
+	return Type;
+}
+
+bool ShaderStage::CompileFromFile(const WString & FilePath) {
+	FileStream * ShaderCode = FileManager::GetFile(FilePath);
+
+	if (ShaderCode == NULL)
+		return false;
+
+	CompileFromText(WStringToString(FileManager::ReadStream(ShaderCode)));
+
+	ShaderCode->Close();
+}
+
+bool ShaderStage::CompileFromText(const String & Code) {
 	switch (Type) {
-	case Vertex:
+	case ST_Vertex:
 		ShaderObject = glCreateShader(GL_VERTEX_SHADER);
-		Debug::Log(Debug::LogInfo, L"Compiling VERTEX shader '%ls'", ShaderCode->GetShortPath().c_str());
-		Code = WStringToString(FileManager::ReadStream(ShaderCode));
+		Debug::Log(Debug::LogInfo, L"Compiling VERTEX shader '%i'", ShaderObject);
 		break;
-	case Fragment:
+	case ST_Fragment:
 		ShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-		Debug::Log(Debug::LogInfo, L"Compiling FRAGMENT shader '%ls'", ShaderCode->GetShortPath().c_str());
-		Code = WStringToString(FileManager::ReadStream(ShaderCode));
+		Debug::Log(Debug::LogInfo, L"Compiling FRAGMENT shader '%i'", ShaderObject);
 		break;
-	case Compute:
+	case ST_Compute:
 		// VertexStream = FileManager::Open(ShaderPath);
 		break;
-	case Geometry:
+	case ST_Geometry:
 		ShaderObject = glCreateShader(GL_GEOMETRY_SHADER);
-		Debug::Log(Debug::LogInfo, L"Compiling GEOMETRY shader '%ls'", ShaderCode->GetShortPath().c_str());
-		Code = WStringToString(FileManager::ReadStream(ShaderCode));
+		Debug::Log(Debug::LogInfo, L"Compiling GEOMETRY shader '%i'", ShaderObject);
 		break;
 	}
 
@@ -43,25 +63,6 @@ bool ShaderStage::Compile() {
 		return false;
 
 	return true;
-}
-
-ShaderStage::ShaderStage() {
-	ShaderCode = NULL;
-	ShaderObject = GL_FALSE;
-}
-
-ShaderStage::ShaderStage(ShaderType type, FileStream* ShaderPath) {
-	ShaderCode = ShaderPath;
-	Type = type;
-	Compile();
-}
-
-unsigned int ShaderStage::GetShaderObject() const {
-	return ShaderObject;
-}
-
-ShaderType ShaderStage::GetType() const {
-	return Type;
 }
 
 void ShaderStage::Delete() {

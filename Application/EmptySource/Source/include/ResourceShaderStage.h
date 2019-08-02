@@ -12,10 +12,10 @@ struct ShaderStageData {
 };
 
 template<>
-bool ResourceManager::GetResourceData<ShaderStageData>(const WString & File, ShaderStageData & ResourceData);
+bool OldResourceManager::GetResourceData<ShaderStageData>(const WString & File, ShaderStageData & ResourceData);
 
 template<>
-inline Resource<ShaderStage> * ResourceManager::Load(const WString & FilePath) {
+inline Resource<ShaderStage> * OldResourceManager::Load(const WString & FilePath) {
 	FileStream * File;
 	if ((File = FileManager::GetFile(FilePath)) == NULL)
 		return NULL;
@@ -29,16 +29,17 @@ inline Resource<ShaderStage> * ResourceManager::Load(const WString & FilePath) {
 		return dynamic_cast<Resource<ShaderStage>*>(ResourceFind->second);
 	}
 
-	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(LoadData.FilePath, LoadData.GUID, new ShaderStage(LoadData.Type, File));
+	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(LoadData.FilePath, LoadData.GUID, new ShaderStage(LoadData.Type));
+	ResourceAdded->GetData()->CompileFromFile(FilePath);
 	Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
 	return ResourceAdded;
 }
 
 template<>
-bool ResourceManager::GetResourceData<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData);
+bool OldResourceManager::GetResourceData<ShaderStageData>(const size_t & GUID, ShaderStageData & ResourceData);
 
 template<>
-inline Resource<ShaderStage> * ResourceManager::Load(const size_t & GUID) {
+inline Resource<ShaderStage> * OldResourceManager::Load(const size_t & GUID) {
 	ShaderStageData LoadData;
 	if (!GetResourceData<ShaderStageData>(GUID, LoadData))
 		return NULL;
@@ -52,7 +53,8 @@ inline Resource<ShaderStage> * ResourceManager::Load(const size_t & GUID) {
 		return dynamic_cast<Resource<ShaderStage>*>(ResourceFind->second);
 	}
 
-	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(LoadData.FilePath, LoadData.GUID, new ShaderStage(LoadData.Type, File));
+	Resource<ShaderStage> * ResourceAdded = new Resource<ShaderStage>(LoadData.FilePath, LoadData.GUID, new ShaderStage(LoadData.Type));
+	ResourceAdded->GetData()->CompileFromFile(LoadData.FilePath);
 	Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
 	return ResourceAdded;
 }

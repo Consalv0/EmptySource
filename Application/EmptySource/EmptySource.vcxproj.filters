@@ -70,8 +70,11 @@
     <Filter Include="External\YAML\Contrib">
       <UniqueIdentifier>{2c4676fd-7396-484d-9d5f-35136861de44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CUDA">
-      <UniqueIdentifier>{f7a409a1-077c-45cf-8e36-6918fc925195}</UniqueIdentifier>
+    <Filter Include="Header Files\Core\Resources">
+      <UniqueIdentifier>{73890201-3d6e-4d8b-9090-bc81882b52e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Resources">
+      <UniqueIdentifier>{8e30ec49-55e1-4f14-ae82-a4f816e00092}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -128,9 +131,6 @@
     </ClInclude>
     <ClInclude Include="Source\include\Utility\Timer.h">
       <Filter>Header Files\Core\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Application.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Bitmap.h">
       <Filter>Header Files\Core</Filter>
@@ -831,11 +831,32 @@
     <ClInclude Include="Source\include\Event.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Application.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceGroupManager.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceManager.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceHolder.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Resources\ShaderStageResource.h">
+      <Filter>Header Files\Core\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Resources\ShaderStageManager.h">
+      <Filter>Header Files\Core\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ApplicationRenderer.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Sound.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\source\Application.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\source\Bitmap.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
@@ -973,6 +994,21 @@
     </ClCompile>
     <ClCompile Include="Source\source\RenderStage.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Application.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceHolder.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Resources\ShaderStageResource.cpp">
+      <Filter>Source Files\Core\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Resources\ShaderStageManager.cpp">
+      <Filter>Source Files\Core\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

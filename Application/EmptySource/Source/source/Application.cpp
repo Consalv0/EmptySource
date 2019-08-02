@@ -3,13 +3,14 @@
 #include "../include/Application.h"
 
 #include "../include/Utility/LogGraphics.h"
-#include "../include/Utility/DeviceFunctions.h"
 #include "../include/Utility/TextFormattingMath.h"
 #include "../include/Utility/Timer.h"
 #ifdef _WIN32
 #include "../include/CoreCUDA.h"
 #endif
+#include "../include/Utility/DeviceFunctions.h"
 
+#include "../include/RenderStage.h"
 #include "../include/RenderPipeline.h"
 #include "../include/CoreTime.h"
 #include "../include/Window.h"
@@ -37,6 +38,8 @@
 #include "../include/ImageLoader.h"
 #include "../include/Math/Physics.h"
 #include "../include/Property.h"
+
+#include "../include/Resources/ShaderStageManager.h"
 
 // SDL 2.0.9
 #include "../External/SDL/include/SDL.h"
@@ -123,15 +126,15 @@ ContextWindow & Application::GetMainWindow() {
 void Application::Initalize() {
 	if (bInitialized) return;
 #ifdef __APPLE__
-    if (InitializeSDL(4, 1) == false) return;
+	if (InitializeSDL(4, 1) == false) return;
 #else
-    if (InitializeSDL(4, 6) == false) return;
+	if (InitializeSDL(4, 6) == false) return;
 #endif
 	if (InitializeWindow() == false) return;
 	if (InitalizeGL() == false) return;
-    if (Debug::InitializeDeviceFunctions() == false) {
-        Debug::Log(Debug::LogWarning, L"Couldn't initialize device functions");
-    };
+	if (Debug::InitializeDeviceFunctions() == false) {
+		Debug::Log(Debug::LogWarning, L"Couldn't initialize device functions");
+	};
 
 #ifdef WIN32
 	CUDA::FindCudaDevice();
@@ -139,7 +142,7 @@ void Application::Initalize() {
 
 	if (!MeshLoader::Initialize())
 		return;
-	
+
 	MeshPrimitives::Initialize();
 	Font::InitializeFreeType();
 
@@ -154,6 +157,69 @@ void Application::Awake() {
 	Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
 	GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
 	CComponent * Component = GameObject->CreateComponent<CRenderer>();
+
+	static Uint32 SampleLength; // length of our sample
+	static Uint8 * SampleBuffer; // buffer containing our audio file
+	static SDL_AudioSpec SampleSpecs; // the specs of our piece of music
+	static Uint8 * AudioPosition; // global pointer to the audio buffer to be played
+	static Uint32  AudioLength; // remaining length of the sample we have to play
+	FileStream * SampleFile = FileManager::GetFile(L"Resources/Sounds/6503.wav");
+	if (SampleFile != NULL) {
+		SampleFile->Close();
+	}
+
+	if (SampleFile == NULL || SDL_LoadWAV(WStringToString(SampleFile->GetPath()).c_str(), &SampleSpecs, &SampleBuffer, &SampleLength) == NULL) {
+		Debug::Log(Debug::LogError, L"Couldn't not open the sound file or is invalid");
+	} else {
+		static SDL_AudioCVT AudioConversion;
+		if (SDL_BuildAudioCVT(&AudioConversion, SampleSpecs.format, SampleSpecs.channels, SampleSpecs.freq, AUDIO_F32, SampleSpecs.channels, SampleSpecs.freq)) {
+			AudioConversion.len = SampleLength;  // 1024 stereo float32 sample frames.
+			AudioConversion.buf = (Uint8 *) SDL_malloc(SampleLength * AudioConversion.len_mult);
+			SDL_memcpy(AudioConversion.buf, SampleBuffer, SampleLength);
+			SDL_ConvertAudio(&AudioConversion);
+		}
+
+		// Set the callback function
+		SampleSpecs.callback = [](void *UserData, Uint8 *Stream, int Length) -> void {
+			/* Silence the main buffer */
+			SDL_memset(Stream, 0, Length);
+
+			if (AudioConversion.len <= 0) {
+				return;
+			}
+
+			Length = ((uint32_t)Length > AudioConversion.len) ? AudioConversion.len : (uint32_t)Length;
+			// SDL_memcpy(Stream, AudioPosition, Length); 		    // simply copy from one buffer into the other
+			SDL_MixAudioFormat(Stream, AudioPosition, SampleSpecs.format, Length, SDL_MIX_MAXVOLUME / 2);	// mix from one buffer into another
+
+			AudioPosition += Length;
+			AudioLength -= Length;
+
+			if (AudioLength <= 0) {
+				// SDL_PauseAudio(1);
+				AudioPosition = AudioConversion.buf; // copy sound buffer
+				AudioLength = AudioConversion.len; // copy file length
+			}
+		};
+
+		SampleSpecs.userdata = NULL;
+		SampleSpecs.format = AUDIO_F32LSB;
+		// Set the variables
+		AudioPosition = AudioConversion.buf; // copy sound buffer
+		AudioLength = AudioConversion.len; // copy file length
+
+		/* Open the audio device */
+		if (SDL_OpenAudio(&SampleSpecs, NULL) < 0) {
+			fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+			exit(-1);
+		}
+		/* Start playing */
+		SDL_PauseAudio(false);
+
+		int SampleSize = SDL_AUDIO_BITSIZE(SampleSpecs.format);
+		bool IsFloat = SDL_AUDIO_ISINT(SampleSpecs.format);
+		Debug::Log(Debug::LogDebug, L"Audio Time Length: %f", (AudioConversion.len * 8 / (SampleSize * SampleSpecs.channels)) / (float)SampleSpecs.freq);
+	}
 
 	Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
 }
@@ -214,7 +280,7 @@ void Application::MainLoop() {
 		BaseAlbedo.PointerToValue()
 	);
 	BaseAlbedoTexture->GenerateMipMaps();
-	ResourceManager::Load(L"BaseAlbedoTexture", BaseAlbedoTexture);
+	OldResourceManager::Load(L"BaseAlbedoTexture", BaseAlbedoTexture);
 	Texture2D * BaseMetallicTexture = new Texture2D(
 		IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
 		Graphics::CF_Red,
@@ -224,7 +290,7 @@ void Application::MainLoop() {
 		BaseMetallic.PointerToValue()
 	);
 	BaseMetallicTexture->GenerateMipMaps();
-	ResourceManager::Load(L"BaseMetallicTexture", BaseMetallicTexture);
+	OldResourceManager::Load(L"BaseMetallicTexture", BaseMetallicTexture);
 	Texture2D * BaseRoughnessTexture = new Texture2D(
 		IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
 		Graphics::CF_Red,
@@ -234,7 +300,7 @@ void Application::MainLoop() {
 		BaseRoughness.PointerToValue()
 	);
 	BaseRoughnessTexture->GenerateMipMaps();
-	ResourceManager::Load(L"BaseRoughnessTexture", BaseRoughnessTexture);
+	OldResourceManager::Load(L"BaseRoughnessTexture", BaseRoughnessTexture);
 	Texture2D * BaseNormalTexture = new Texture2D(
 		IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
 		Graphics::CF_RGB,
@@ -244,7 +310,7 @@ void Application::MainLoop() {
 		BaseNormal.PointerToValue()
 	);
 	BaseNormalTexture->GenerateMipMaps();
-	ResourceManager::Load(L"BaseNormalTexture", BaseNormalTexture);
+	OldResourceManager::Load(L"BaseNormalTexture", BaseNormalTexture);
 
 	////
 	Texture2D * FlamerAlbedoTexture = new Texture2D(
@@ -256,7 +322,7 @@ void Application::MainLoop() {
 		FlamerAlbedo.PointerToValue()
 	);
 	FlamerAlbedoTexture->GenerateMipMaps();
-	ResourceManager::Load(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
+	OldResourceManager::Load(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
 	Texture2D * FlamerMetallicTexture = new Texture2D(
 		IntVector2(FlamerMetallic.GetWidth(), FlamerMetallic.GetHeight()),
 		Graphics::CF_Red,
@@ -266,7 +332,7 @@ void Application::MainLoop() {
 		FlamerMetallic.PointerToValue()
 	);
 	FlamerMetallicTexture->GenerateMipMaps();
-	ResourceManager::Load(L"FlamerMetallicTexture", FlamerMetallicTexture);
+	OldResourceManager::Load(L"FlamerMetallicTexture", FlamerMetallicTexture);
 	Texture2D * FlamerRoughnessTexture = new Texture2D(
 		IntVector2(FlamerRoughness.GetWidth(), FlamerRoughness.GetHeight()),
 		Graphics::CF_Red,
@@ -276,7 +342,7 @@ void Application::MainLoop() {
 		FlamerRoughness.PointerToValue()
 	);
 	FlamerRoughnessTexture->GenerateMipMaps();
-	ResourceManager::Load(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
+	OldResourceManager::Load(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
 	Texture2D * FlamerNormalTexture = new Texture2D(
 		IntVector2(FlamerNormal.GetWidth(), FlamerNormal.GetHeight()),
 		Graphics::CF_RGB,
@@ -286,7 +352,7 @@ void Application::MainLoop() {
 		FlamerNormal.PointerToValue()
 	);
 	FlamerNormalTexture->GenerateMipMaps();
-	ResourceManager::Load(L"FlamerNormalTexture", FlamerNormalTexture);
+	OldResourceManager::Load(L"FlamerNormalTexture", FlamerNormalTexture);
 	////
 
 	Texture2D * WhiteTexture = new Texture2D(
@@ -298,7 +364,7 @@ void Application::MainLoop() {
 		White.PointerToValue()
 	);
 	WhiteTexture->GenerateMipMaps();
-	ResourceManager::Load(L"WhiteTexture", WhiteTexture);
+	OldResourceManager::Load(L"WhiteTexture", WhiteTexture);
 	Texture2D * BlackTexture = new Texture2D(
 		IntVector2(Black.GetWidth(), Black.GetHeight()),
 		Graphics::CF_RGB,
@@ -308,7 +374,7 @@ void Application::MainLoop() {
 		Black.PointerToValue()
 	);
 	BlackTexture->GenerateMipMaps();
-	ResourceManager::Load(L"BlackTexture", BlackTexture);
+	OldResourceManager::Load(L"BlackTexture", BlackTexture);
 
 	Bitmap<UCharRed> FontAtlas;
 	TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -336,14 +402,14 @@ void Application::MainLoop() {
 	Matrix4x4 ViewMatrix;
 
 	// --- Create and compile our GLSL shader programs from text files
-	Resource<ShaderProgram> * EquiToCubemapShader = ResourceManager::Load<ShaderProgram>(L"EquirectangularToCubemap");
-	Resource<ShaderProgram> * HDRClampingShader   = ResourceManager::Load<ShaderProgram>(L"HDRClampingShader");
-	Resource<ShaderProgram> * BRDFShader          = ResourceManager::Load<ShaderProgram>(L"BRDFShader");
-	Resource<ShaderProgram> * UnlitShader         = ResourceManager::Load<ShaderProgram>(L"UnLitShader");
-	Resource<ShaderProgram> * RenderTextureShader = ResourceManager::Load<ShaderProgram>(L"RenderTextureShader");
-	Resource<ShaderProgram> * IntegrateBRDFShader = ResourceManager::Load<ShaderProgram>(L"IntegrateBRDFShader");
-	Resource<ShaderProgram> * RenderTextShader    = ResourceManager::Load<ShaderProgram>(L"RenderTextShader");
-	Resource<ShaderProgram> * RenderCubemapShader = ResourceManager::Load<ShaderProgram>(L"RenderCubemapShader");
+	Resource<ShaderProgram> * EquiToCubemapShader = OldResourceManager::Load<ShaderProgram>(L"EquirectangularToCubemap");
+	Resource<ShaderProgram> * HDRClampingShader   = OldResourceManager::Load<ShaderProgram>(L"HDRClampingShader");
+	Resource<ShaderProgram> * BRDFShader          = OldResourceManager::Load<ShaderProgram>(L"BRDFShader");
+	Resource<ShaderProgram> * UnlitShader         = OldResourceManager::Load<ShaderProgram>(L"UnLitShader");
+	Resource<ShaderProgram> * RenderTextureShader = OldResourceManager::Load<ShaderProgram>(L"RenderTextureShader");
+	Resource<ShaderProgram> * IntegrateBRDFShader = OldResourceManager::Load<ShaderProgram>(L"IntegrateBRDFShader");
+	Resource<ShaderProgram> * RenderTextShader    = OldResourceManager::Load<ShaderProgram>(L"RenderTextShader");
+	Resource<ShaderProgram> * RenderCubemapShader = OldResourceManager::Load<ShaderProgram>(L"RenderCubemapShader");
 
 	Material BaseMaterial = Material();
 	BaseMaterial.SetShaderProgram(BRDFShader->GetData());
@@ -467,11 +533,11 @@ void Application::MainLoop() {
 		Renderer.Delete();
 		// BRDFLut.GenerateMipMaps();
 	}
-	ResourceManager::Load(L"BRDFLut", BRDFLut);
+	OldResourceManager::Load(L"BRDFLut", BRDFLut);
 
 	Cubemap * CubemapTexture = new Cubemap(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
 	Cubemap::FromHDREquirectangular(*CubemapTexture, &EquirectangularTextureHDR, EquiToCubemapShader->GetData());
-	ResourceManager::Load(L"CubemapTexture", CubemapTexture);
+	OldResourceManager::Load(L"CubemapTexture", CubemapTexture);
 
 	float MaterialMetalness = 1.F;
 	float MaterialRoughness = 1.F;
@@ -711,6 +777,7 @@ void Application::MainLoop() {
 									N2 * Hits[0].BaricenterCoordinates[2];
 
 								Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+								Hits[0].Normal.Normalize();
 								Vector3 ReflectedDirection = Vector3::Reflect(TestArrowDirection, Hits[0].Normal);
 								TestArrowDirection = ReflectedDirection.Normalized();
 								TestArrowTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
@@ -762,10 +829,10 @@ void Application::MainLoop() {
 			
 			BaseMaterial.SetFloat3Array( "_ViewPosition",            EyePosition.PointerToValue() );
 			BaseMaterial.SetFloat3Array( "_Lights[0].Position",   LightPosition0.PointerToValue() );
-			BaseMaterial.SetFloat3Array( "_Lights[0].Color",    Vector3(0, 0, 1).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Lights[0].Color",    Vector3(1.F, 1.F, .9F).PointerToValue() );
 			BaseMaterial.SetFloat1Array( "_Lights[0].Intencity",                  &LightIntencity );
 			BaseMaterial.SetFloat3Array( "_Lights[1].Position",   LightPosition1.PointerToValue() );
-			BaseMaterial.SetFloat3Array( "_Lights[1].Color",    Vector3(1, 0, 0).PointerToValue() );
+			BaseMaterial.SetFloat3Array( "_Lights[1].Color",    Vector3(1.F, 1.F, .9F).PointerToValue() );
 			BaseMaterial.SetFloat1Array( "_Lights[1].Intencity",                  &LightIntencity );
 			BaseMaterial.SetFloat1Array( "_Material.Metalness",                &MaterialMetalness );
 			BaseMaterial.SetFloat1Array( "_Material.Roughness",                &MaterialRoughness );
@@ -827,14 +894,19 @@ void Application::MainLoop() {
 								N2 * Hits[0].BaricenterCoordinates[2];
 
 							Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+							Hits[0].Normal.Normalize();
 							Vector3 ReflectedCameraDir = Vector3::Reflect(CameraRayDirection, Hits[0].Normal);
-							Matrix4x4 HitMatrix =
+							Matrix4x4 HitMatrix[2] = {
 								Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
 								Matrix4x4::Rotation(Quaternion::LookRotation(ReflectedCameraDir, Vector3(0, 1, 0))) *
-								Matrix4x4::Scaling(0.07F);
-							BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &HitMatrix, ModelMatrixBuffer);
+								Matrix4x4::Scaling(0.1F),
+								Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
+								Matrix4x4::Rotation(Quaternion::LookRotation(Hits[0].Normal, Vector3(0, 1, 0))) *
+								Matrix4x4::Scaling(0.07F)
+							};
+							BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &HitMatrix[0], ModelMatrixBuffer);
 
-							LightModels[0].DrawInstanciated((GLsizei)1);
+							LightModels[0].DrawInstanciated(2);
 							TriangleCount += LightModels[0].Data.Faces.size() * 1;
 							VerticesCount += LightModels[0].Data.Vertices.size() * 1;
 						}
@@ -968,13 +1040,13 @@ void Application::MainLoop() {
 			);
 
 			RenderingText[0] = Text::Formatted(
-				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), Roughness(%.3f), Vertices(%ls), Cursor(%ls), Camera(P%ls, R%ls)",
+				L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), Vertices(%ls), Cursor(%ls), Camera(P%ls, R%ls)",
 				TimeCount / double(TotalCharacterSize) * 1000.0,
 				TotalCharacterSize,
 				Debug::GetDeviceTemperature(0),
 				Time::GetFrameRatePerSecond(),
 				(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
-				MaterialRoughness,
+				LightIntencity / 10000.F + 1.F,
 				Text::FormatUnit(VerticesCount, 2).c_str(),
 				Text::FormatMath(CursorPosition).c_str(),
 				Text::FormatMath(EyePosition).c_str(),
