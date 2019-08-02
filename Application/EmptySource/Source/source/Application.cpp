@@ -171,42 +171,52 @@ void Application::Awake() {
 	if (SampleFile == NULL || SDL_LoadWAV(WStringToString(SampleFile->GetPath()).c_str(), &SampleSpecs, &SampleBuffer, &SampleLength) == NULL) {
 		Debug::Log(Debug::LogError, L"Couldn't not open the sound file or is invalid");
 	} else {
-		static SDL_AudioCVT AudioConversion;
-		if (SDL_BuildAudioCVT(&AudioConversion, SampleSpecs.format, SampleSpecs.channels, SampleSpecs.freq, AUDIO_F32, SampleSpecs.channels, SampleSpecs.freq)) {
-			AudioConversion.len = SampleLength;  // 1024 stereo float32 sample frames.
-			AudioConversion.buf = (Uint8 *) SDL_malloc(SampleLength * AudioConversion.len_mult);
-			SDL_memcpy(AudioConversion.buf, SampleBuffer, SampleLength);
-			SDL_ConvertAudio(&AudioConversion);
+		{
+			static SDL_AudioCVT AudioConvert;
+			if (SDL_BuildAudioCVT(&AudioConvert, SampleSpecs.format, SampleSpecs.channels, SampleSpecs.freq,
+													   AUDIO_F32LSB, SampleSpecs.channels, SampleSpecs.freq)) {
+				AudioConvert.len = SampleLength;
+				AudioConvert.buf = (Uint8 *)SDL_malloc(SampleLength * AudioConvert.len_mult);
+				SDL_memcpy(AudioConvert.buf, SampleBuffer, SampleLength);
+				SDL_ConvertAudio(&AudioConvert);
+				SDL_FreeWAV(SampleBuffer);
+				SampleSpecs.format = AUDIO_F32LSB;
+				SampleBuffer = AudioConvert.buf;
+				SampleLength = AudioConvert.len_cvt;
+			}
 		}
-
 		// Set the callback function
 		SampleSpecs.callback = [](void *UserData, Uint8 *Stream, int Length) -> void {
 			/* Silence the main buffer */
 			SDL_memset(Stream, 0, Length);
 
-			if (AudioConversion.len <= 0) {
+			if (SampleLength <= 0) {
 				return;
 			}
 
-			Length = ((uint32_t)Length > AudioConversion.len) ? AudioConversion.len : (uint32_t)Length;
+			Length = ((uint32_t)Length > AudioLength) ? AudioLength : (uint32_t)Length;
 			// SDL_memcpy(Stream, AudioPosition, Length); 		    // simply copy from one buffer into the other
-			SDL_MixAudioFormat(Stream, AudioPosition, SampleSpecs.format, Length, SDL_MIX_MAXVOLUME / 2);	// mix from one buffer into another
+			try {
+				SDL_MixAudioFormat(Stream, AudioPosition, SampleSpecs.format, Length, SDL_MIX_MAXVOLUME / 4);	// mix from one buffer into another
+			}
+			catch (...) {
+				Debug::Log(Debug::LogError, L"Error in Audio Data");
+			}
 
 			AudioPosition += Length;
 			AudioLength -= Length;
 
 			if (AudioLength <= 0) {
 				// SDL_PauseAudio(1);
-				AudioPosition = AudioConversion.buf; // copy sound buffer
-				AudioLength = AudioConversion.len; // copy file length
+				AudioPosition = SampleBuffer; // copy sound buffer
+				AudioLength = SampleLength; // copy file length
 			}
 		};
 
 		SampleSpecs.userdata = NULL;
-		SampleSpecs.format = AUDIO_F32LSB;
 		// Set the variables
-		AudioPosition = AudioConversion.buf; // copy sound buffer
-		AudioLength = AudioConversion.len; // copy file length
+		AudioPosition = SampleBuffer; // copy sound buffer
+		AudioLength = SampleLength; // copy file length
 
 		/* Open the audio device */
 		if (SDL_OpenAudio(&SampleSpecs, NULL) < 0) {
@@ -217,8 +227,8 @@ void Application::Awake() {
 		SDL_PauseAudio(false);
 
 		int SampleSize = SDL_AUDIO_BITSIZE(SampleSpecs.format);
-		bool IsFloat = SDL_AUDIO_ISINT(SampleSpecs.format);
-		Debug::Log(Debug::LogDebug, L"Audio Time Length: %f", (AudioConversion.len * 8 / (SampleSize * SampleSpecs.channels)) / (float)SampleSpecs.freq);
+		bool IsFloat = SDL_AUDIO_ISFLOAT(SampleSpecs.format);
+		Debug::Log(Debug::LogDebug, L"Audio Time Length: %f", (SampleLength * 8 / (SampleSize * SampleSpecs.channels)) / (float)SampleSpecs.freq);
 	}
 
 	Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
