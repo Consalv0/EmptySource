@@ -18,6 +18,10 @@
 *.a
 *.la
 
+# Compiled Binaries
+[Bb]uild/
+[Bb]in[Oo]bjs/
+
 # User-specific files
 *.rsuser
 *.suo
