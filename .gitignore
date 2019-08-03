@@ -177,6 +177,7 @@ Temporary Items
 *.exp
 *.app
 
+!External/*.exe
 !/**/Models/*.obj
 !/**/Libraries/*.dll
 !/**/Libraries/*.lib
