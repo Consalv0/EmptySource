@@ -1,0 +1,2793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="External">
+      <UniqueIdentifier>{089DB854-F469-1360-1D83-010809AF48EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\FreeType">
+      <UniqueIdentifier>{7B9C42F6-E7B2-408C-302A-CCAD9C7F1114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\FreeType\include">
+      <UniqueIdentifier>{EE0E76DF-5AD1-A969-A381-38F60F838247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\FreeType\include\freetype">
+      <UniqueIdentifier>{61B979B9-4DF5-7C23-B607-951AA262253E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\FreeType\include\freetype\config">
+      <UniqueIdentifier>{66D11760-D2EB-7A01-1B0E-8B958767A208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\GLAD">
+      <UniqueIdentifier>{8FBCC657-FB7C-428E-C4B7-8B0B3037876A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\GLAD\include">
+      <UniqueIdentifier>{0203D32C-6E6F-8E27-3763-2685A38EB08F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\GLAD\include\KHR">
+      <UniqueIdentifier>{76C2DB94-E284-0F1F-2B35-9EAB9736E8FC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\GLAD\include\glad">
+      <UniqueIdentifier>{49076430-3517-1001-9ED0-741F8AFFFE99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\RobinMap">
+      <UniqueIdentifier>{AF4DC01B-1B64-BEB1-64DB-49D3D0308F39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\RobinMap\include">
+      <UniqueIdentifier>{22B45BE5-8E76-8F6F-D726-1EFC4328684D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\RobinMap\include\tsl">
+      <UniqueIdentifier>{A4B798D6-10D0-7F00-D97C-0F9A4554149A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\RobinMap\tests">
+      <UniqueIdentifier>{D17F2445-3DB7-6CDC-46C1-D0FFB27793D5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2">
+      <UniqueIdentifier>{6C30CD57-D8F0-488E-A12B-920B0DAB8D6A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\Xcode-iOS">
+      <UniqueIdentifier>{86CF5458-F206-9DEF-FB10-011367C7C3E8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\Xcode-iOS\Demos">
+      <UniqueIdentifier>{8D141A5C-F92C-0186-C2D9-901F2EB1951F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\Xcode-iOS\Demos\src">
+      <UniqueIdentifier>{2451174D-90BF-6CCC-D9A8-27CC45566268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\include">
+      <UniqueIdentifier>{DF030A49-4B70-C543-1464-5DA1808FE7AB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src">
+      <UniqueIdentifier>{8344A3E2-EF5A-A178-38D2-2C9AA4277200}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio">
+      <UniqueIdentifier>{E4F8D261-5030-1BF9-593A-7F1CC5F041F2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\alsa">
+      <UniqueIdentifier>{74B2CFEB-606D-BF97-0925-38E2F5BE0928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\android">
+      <UniqueIdentifier>{3428F0F2-A00B-FF32-A90E-2D6F1571C583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\arts">
+      <UniqueIdentifier>{2DCCCFEB-1987-BF97-C23E-38E2AED80928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\coreaudio">
+      <UniqueIdentifier>{EE493B5B-5AB8-90DA-A3A1-4BDA0F4F8676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\directsound">
+      <UniqueIdentifier>{B7FE041D-23B8-6FC7-AC17-8AA118D02537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\disk">
+      <UniqueIdentifier>{DE4AD1EB-CA05-C197-73BD-39E25F570B28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\dsp">
+      <UniqueIdentifier>{5A49C892-C656-F678-4F3D-F263BB49C22F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\dummy">
+      <UniqueIdentifier>{5F220166-CB3A-E88F-94E7-772900BF7C29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\emscripten">
+      <UniqueIdentifier>{6D72E35A-59AE-E6C4-C2C0-FEBBAE1B8FDF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\esd">
+      <UniqueIdentifier>{8F4DC892-FB5A-F678-8441-F263F04DC22F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\fusionsound">
+      <UniqueIdentifier>{90E07C0B-FC99-E7B5-85F9-0190F1B19D25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\haiku">
+      <UniqueIdentifier>{857B3E66-F193-2590-BA40-B5292618BA29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\jack">
+      <UniqueIdentifier>{0C71D4EB-F82B-C497-A1E3-3CE28D7D0E28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\nacl">
+      <UniqueIdentifier>{91A2D6EB-7D5D-C697-2615-3FE212AF1028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\nas">
+      <UniqueIdentifier>{9571C892-017F-F678-8A65-F263F671C22F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\netbsd">
+      <UniqueIdentifier>{F3235B3C-DF49-25A3-C88F-AA6EB4544A6F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\openslES">
+      <UniqueIdentifier>{BC4D92D8-A89E-7D1A-D102-6CDCBDB21084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\paudio">
+      <UniqueIdentifier>{D5A6BD40-C1CC-87A7-AA12-0D7396D7AC73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\psp">
+      <UniqueIdentifier>{667CC892-D289-F678-5B70-F263C77CC22F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\pulseaudio">
+      <UniqueIdentifier>{EED63066-DA12-34D0-4325-4CC72F80DCEA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\qsa">
+      <UniqueIdentifier>{9880C892-048E-F678-8D74-F263F980C22F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\sndio">
+      <UniqueIdentifier>{70940C67-DCAC-F390-A559-832A1131882A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\sun">
+      <UniqueIdentifier>{6989C892-D596-F678-5E7D-F263CA89C22F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\wasapi">
+      <UniqueIdentifier>{989E1051-84C4-DAB7-6D0A-608359CFFF83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\audio\winmm">
+      <UniqueIdentifier>{9B635267-077C-3991-D028-C92A3C00CE2A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\core">
+      <UniqueIdentifier>{DB3E6CD4-C738-9526-B0A5-2B379C3EFB92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\core\android">
+      <UniqueIdentifier>{2B750FDD-179B-D943-00E1-5E0FECA5FE0F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\core\linux">
+      <UniqueIdentifier>{5AFAB45F-46B5-A40B-EF6C-1D56DB06EF9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\core\unix">
+      <UniqueIdentifier>{AE49311A-1A57-5F00-A33D-5BEB0F4A2BB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\core\windows">
+      <UniqueIdentifier>{352C946F-2152-5ED6-0A98-E3A1F65C83A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\core\winrt">
+      <UniqueIdentifier>{7E077C60-6AC2-6B0C-137A-E456FF13B69C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\dynapi">
+      <UniqueIdentifier>{974B7FA3-8370-CE23-ACBB-B3B3983FCD41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\events">
+      <UniqueIdentifier>{277399A5-1398-E825-3CE3-CDB52867E743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\file">
+      <UniqueIdentifier>{B2C96DD4-9EC3-9626-8730-2D3773C9FC92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\file\cocoa">
+      <UniqueIdentifier>{8648BF26-7203-AFD2-1BBB-271D0755F962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\haptic">
+      <UniqueIdentifier>{AB0A23AB-972F-722B-C07A-57BBACFE7049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\haptic\android">
+      <UniqueIdentifier>{FB107D5C-E761-689E-10C6-5660FC75FB07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\haptic\darwin">
+      <UniqueIdentifier>{DFD65DDA-4BBA-6C1A-54BD-9A56C01F336B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\haptic\windows">
+      <UniqueIdentifier>{05C801EF-F118-ED30-1A7D-DBF2062D809A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\hidapi">
+      <UniqueIdentifier>{41EAACAB-2D0F-FC2B-565A-E1BB42DEFA49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\hidapi\hidapi">
+      <UniqueIdentifier>{3FEEA697-ABD1-B5D7-B4D4-E31320377C28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\hidapi\testgui">
+      <UniqueIdentifier>{15A30420-01F4-EF61-2A58-DE23160883CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick">
+      <UniqueIdentifier>{C2E13523-AEF1-E1F3-17AB-461203DAD08C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\android">
+      <UniqueIdentifier>{120FA5C0-FE4A-A82A-675D-C02153B85045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\darwin">
+      <UniqueIdentifier>{16EEE2CD-825C-384D-CB45-F34C37F32DE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\emscripten">
+      <UniqueIdentifier>{8B54B03A-F718-AF2A-C07E-DFF42C024B60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\hidapi">
+      <UniqueIdentifier>{A04AC0D7-0CB9-1557-55A2-D056C14F0BF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\iphoneos">
+      <UniqueIdentifier>{56CF67DA-C288-D284-4BE8-EC5EB7A088F4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\linux">
+      <UniqueIdentifier>{81EE7CB1-6D3F-68F3-96A3-56B58253FB5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\steam">
+      <UniqueIdentifier>{4B7901B2-37CA-ECF3-602E-DBB54CDE7F5D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\joystick\windows">
+      <UniqueIdentifier>{1CC62953-0802-2DBD-7114-45B45D6FD5D7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\libm">
+      <UniqueIdentifier>{B61271D4-A20C-9A26-8B79-303777120093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\main">
+      <UniqueIdentifier>{F77D71D4-E377-9A26-CCE4-3037B87D0093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\main\haiku">
+      <UniqueIdentifier>{D8427F8F-C4FD-6E3B-6DB5-E785594FB9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\power">
+      <UniqueIdentifier>{7F6EDF62-EBA5-27FA-F4AF-8B1D60664EF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\power\uikit">
+      <UniqueIdentifier>{342381FA-A03B-6824-69E8-F7BDD5BFFCBD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render">
+      <UniqueIdentifier>{B2A5BDC2-9ECA-0C43-C715-F2D2B3990B61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\direct3d">
+      <UniqueIdentifier>{B300BB16-1F6F-1096-6858-CB95D4050632}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\direct3d11">
+      <UniqueIdentifier>{F5FF7DB1-61B9-E85B-EA18-033656D19ECB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\metal">
+      <UniqueIdentifier>{54E43361-400A-FEC7-2950-839315152394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\opengl">
+      <UniqueIdentifier>{06CB198D-72AE-28CD-7BB1-5609E713EF1D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\opengles">
+      <UniqueIdentifier>{FEB1B83A-6A20-0EBA-B309-C9B91FB70356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\opengles2">
+      <UniqueIdentifier>{F0F1CE91-DC2D-D2FB-4540-EAF2319B7A16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\render\software">
+      <UniqueIdentifier>{4C1D90A1-B88B-E520-0175-A0206D22DBBC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\sensor">
+      <UniqueIdentifier>{6C0F13C5-5834-6245-817F-47D56D036163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\sensor\android">
+      <UniqueIdentifier>{BC46022A-A897-ED6B-D1FB-DB2DBDAB80D5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\sensor\coremotion">
+      <UniqueIdentifier>{3A94CEA4-A64D-394F-2FAD-53299B65EFBE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\sensor\dummy">
+      <UniqueIdentifier>{E7FE699F-D324-3406-BC6A-B9D1A82F59D2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\thread">
+      <UniqueIdentifier>{AA75A0C7-969A-EF47-BFE5-D4D7AB69EE65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\thread\generic">
+      <UniqueIdentifier>{B6EA45EE-A23B-3130-CB9F-1FF2B74FC499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\thread\psp">
+      <UniqueIdentifier>{2CECF2E8-18A7-E294-C15E-5BDFADF82C25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\thread\pthread">
+      <UniqueIdentifier>{81C4A9C5-6D15-9507-9679-83C982292871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\thread\stdcpp">
+      <UniqueIdentifier>{873E4024-F321-4F64-FC24-7DA0688715B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\thread\windows">
+      <UniqueIdentifier>{04C23DC7-F012-2909-1977-17CB0527BC72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\timer">
+      <UniqueIdentifier>{B35B2463-1F93-6CFA-289D-D01D945393F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video">
+      <UniqueIdentifier>{69664863-D59D-90FA-DEA7-F41D4A5EB7F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\android">
+      <UniqueIdentifier>{B94A291A-252E-385A-2E31-66969A93FEAA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\cocoa">
+      <UniqueIdentifier>{7D520075-E96A-E79E-B217-77381EEF7B38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\directfb">
+      <UniqueIdentifier>{DB85EBC2-C7D6-D604-F03A-C5C6DCEA696E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\dummy">
+      <UniqueIdentifier>{A4DF1575-10F8-FC9E-D9A4-8C38457C9138}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\emscripten">
+      <UniqueIdentifier>{D2426A76-BE7E-6DE0-2791-85D713EC15FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\haiku">
+      <UniqueIdentifier>{CA385375-3651-3A9F-FFFD-C9386BD5CE38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\khronos">
+      <UniqueIdentifier>{FC64EC0E-6848-FB4E-714B-298BDDADC19F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\khronos\EGL">
+      <UniqueIdentifier>{C37769C8-2F31-D472-B890-EE4C24498AE2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\khronos\GLES2">
+      <UniqueIdentifier>{8850CD88-F414-CC78-BD7A-FC4229FE67AE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\khronos\KHR">
+      <UniqueIdentifier>{709169C8-DC4A-D472-65AA-EE4CD1628AE2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\khronos\vulkan">
+      <UniqueIdentifier>{1C931513-08E5-EC02-F103-2A13DDF405EC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\kmsdrm">
+      <UniqueIdentifier>{06509827-F275-628E-DBBB-E759C780875A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\nacl">
+      <UniqueIdentifier>{364BF696-2206-E642-CBBD-5E8DB75730D3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\pandora">
+      <UniqueIdentifier>{BD122D7F-29F6-3BBF-32F9-69FB9E5B0210}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\psp">
+      <UniqueIdentifier>{6B249304-D731-C1EA-6018-BDD5CC248DA1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\qnx">
+      <UniqueIdentifier>{0F289304-7B35-C1EA-041C-BDD570288DA1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\raspberry">
+      <UniqueIdentifier>{52A7A483-BE15-FA02-07FF-B40273ACEF9E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\uikit">
+      <UniqueIdentifier>{9EE24276-0AFB-29A0-D3A7-B9393F7FBE39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\vivante">
+      <UniqueIdentifier>{35DF4260-A1C2-51A0-AAC5-7FDC162818F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\wayland">
+      <UniqueIdentifier>{88F0CF9A-F4D3-DEDA-FDD6-0C176939A52B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\windows">
+      <UniqueIdentifier>{C301AEAC-2FE5-BCEC-38E8-EA28A44A833D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\winrt">
+      <UniqueIdentifier>{8C216776-F839-4EA0-C1E6-DD392DBEE239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\x11">
+      <UniqueIdentifier>{B23D9304-1E4B-C1EA-A731-BDD5133E8DA1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\src\video\yuv2rgb">
+      <UniqueIdentifier>{89C61563-F5A9-24A3-FEAC-52DF6A0FEBF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\test">
+      <UniqueIdentifier>{7B2C0C37-6710-CD8C-D070-C7DFBC73B70E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\visualtest">
+      <UniqueIdentifier>{0F94E15F-FBB8-30E0-2404-167010882FFE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SDL2\visualtest\include">
+      <UniqueIdentifier>{825A0D70-6EAB-F8B1-970F-E77383BF8B1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\STB">
+      <UniqueIdentifier>{00136B0A-EC75-FAAE-95FB-3265813DC631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\STB\deprecated">
+      <UniqueIdentifier>{A09DC37D-0CD5-0B15-15DF-6F388195320E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\STB\tests">
+      <UniqueIdentifier>{E23D3CF7-CE21-FD4C-3782-F79F2385E7CE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\STB\tests\caveview">
+      <UniqueIdentifier>{6BF96AF6-D706-99DC-60ED-94C7CCF96493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\STB\tests\oversample">
+      <UniqueIdentifier>{4F1B8D2C-BB33-7456-84E0-03F0F0B708F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\STB\tests\prerelease">
+      <UniqueIdentifier>{391BC03E-A533-A768-6EE0-3602DAB73B02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML">
+      <UniqueIdentifier>{2A6ED057-962E-4C8E-5F69-950BCBE8906A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\include">
+      <UniqueIdentifier>{9D1F56B7-098C-11B2-D27F-A90F3EAB331A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\include\yaml-cpp">
+      <UniqueIdentifier>{EF66EA58-DB8C-B4BF-C4D2-398BB097D98B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\include\yaml-cpp\contrib">
+      <UniqueIdentifier>{EF2DEE27-DB7F-C517-C49E-0228B08FDE00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\include\yaml-cpp\node">
+      <UniqueIdentifier>{24CB6B9A-9084-D644-19E4-F01E859C8CB4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\include\yaml-cpp\node\detail">
+      <UniqueIdentifier>{6652B5D3-52BA-7BA1-BB25-90B7A7AC928D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\src">
+      <UniqueIdentifier>{41316B89-AD47-691F-F6BE-F44062143AA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\src\contrib">
+      <UniqueIdentifier>{412A7559-ADEC-A8E3-F69C-3770629E81C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test">
+      <UniqueIdentifier>{F9B0D1B6-E594-920C-4EF5-8C5F3AF87C8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0">
+      <UniqueIdentifier>{1184A6E0-FDA9-7047-E6EF-F512D2B49513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googlemock">
+      <UniqueIdentifier>{C71AF833-3335-5BD5-7C57-6B69E8B082DC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googlemock\include">
+      <UniqueIdentifier>{3A19BBD6-A6DF-17F3-EF3A-A6555B408657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock">
+      <UniqueIdentifier>{DA98C30C-4680-AE02-4F6E-B07EBBD451C5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal">
+      <UniqueIdentifier>{66D0A742-52D1-3BBD-7B99-A84167F9B177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom">
+      <UniqueIdentifier>{10BE5E91-7CFD-22AA-85DD-E9C1F19B82EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googlemock\test">
+      <UniqueIdentifier>{B6C7DEE8-A245-2F82-8B3D-ED19775A71AA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest">
+      <UniqueIdentifier>{FDC8FB33-69E3-5ED5-B205-6F691E5F86DC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\include">
+      <UniqueIdentifier>{709DCC50-DC63-296D-25BF-B7CF91C497D1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest">
+      <UniqueIdentifier>{C69BB453-3283-9F49-3B71-A1C5A7D7420C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal">
+      <UniqueIdentifier>{D2DC98B7-BEDD-2C32-E7A5-99B6D305A3EC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom">
+      <UniqueIdentifier>{FC18F0AE-6858-B4C7-7138-7BDFDDF6130C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\samples">
+      <UniqueIdentifier>{41EDF634-ADB3-5351-F60E-E2B36214C2B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\src">
+      <UniqueIdentifier>{94BD9DEE-002E-A067-C94C-1AF0357CD868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\test">
+      <UniqueIdentifier>{ACC755C2-9845-A65B-813D-64F36D5AE883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\xcode">
+      <UniqueIdentifier>{BFF3550D-2B2F-B6D0-3424-3360A0DE3A01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\xcode\Samples">
+      <UniqueIdentifier>{E321E1D9-4F09-CCCF-58F7-CD4BC45D6F92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\YAML\test\gtest-1.8.0\googletest\xcode\Samples\FrameworkSample">
+      <UniqueIdentifier>{42D3CA24-AE12-8F3D-B7F2-555523B1EE81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{56EB95D1-428D-C0A7-2B48-D4FB178947F8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\include">
+      <UniqueIdentifier>{C908ACEE-B5D6-9FF4-9E6A-101B8AD77B59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\include\Components">
+      <UniqueIdentifier>{3E3E5852-AA00-8CDC-F3B0-1A695FB264BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\include\Math">
+      <UniqueIdentifier>{4253CC7B-AEB4-A989-3722-F03BA382E048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\include\Resources">
+      <UniqueIdentifier>{737DC1B4-5FA2-1035-88ED-F5C474710F53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\include\Utility">
+      <UniqueIdentifier>{0C805439-F879-7D8B-E1E6-139CCD7FE3F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\source">
+      <UniqueIdentifier>{B630CA9A-22F1-45D1-EB2B-8F4E57AB8AAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\source\Components">
+      <UniqueIdentifier>{0B783DD4-F79C-8C54-20E8-71E40C6C8B72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\source\Resources">
+      <UniqueIdentifier>{A031D034-0C69-18CC-1573-7CEF81293FC5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\source\Utility">
+      <UniqueIdentifier>{F944DEEF-65B1-99EA-2EA5-31489AD0BB52}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="External\FreeType\include\freetype\config\ftconfig.h">
+      <Filter>External\FreeType\include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\config\ftheader.h">
+      <Filter>External\FreeType\include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\config\ftmodule.h">
+      <Filter>External\FreeType\include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\config\ftoption.h">
+      <Filter>External\FreeType\include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\config\ftstdlib.h">
+      <Filter>External\FreeType\include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\freetype.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftadvanc.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftbbox.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftbdf.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftbitmap.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftbzip2.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftcache.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftchapters.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftcid.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftcolor.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftdriver.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\fterrdef.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\fterrors.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftfntfmt.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftgasp.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftglyph.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftgxval.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftgzip.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftimage.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftincrem.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftlcdfil.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftlist.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftlzw.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftmac.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftmm.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftmodapi.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftmoderr.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftotval.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftoutln.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftparams.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftpfr.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftrender.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftsizes.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftsnames.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftstroke.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftsynth.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftsystem.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\fttrigon.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\fttypes.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ftwinfnt.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\t1tables.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\ttnameid.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\tttables.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\freetype\tttags.h">
+      <Filter>External\FreeType\include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="External\FreeType\include\ft2build.h">
+      <Filter>External\FreeType\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\GLAD\include\KHR\khrplatform.h">
+      <Filter>External\GLAD\include\KHR</Filter>
+    </ClInclude>
+    <ClInclude Include="External\GLAD\include\glad\glad.h">
+      <Filter>External\GLAD\include\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_growth_policy.h">
+      <Filter>External\RobinMap\include\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_hash.h">
+      <Filter>External\RobinMap\include\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_map.h">
+      <Filter>External\RobinMap\include\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\include\tsl\robin_set.h">
+      <Filter>External\RobinMap\include\tsl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\RobinMap\tests\utils.h">
+      <Filter>External\RobinMap\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\Xcode-iOS\Demos\src\common.h">
+      <Filter>External\SDL2\Xcode-iOS\Demos\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_assert.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_atomic.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_audio.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_bits.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_blendmode.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_clipboard.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_android.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_iphoneos.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_macosx.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_minimal.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_os2.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_pandora.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_psp.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_windows.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_winrt.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_config_wiz.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_copying.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_cpuinfo.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_egl.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_endian.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_error.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_events.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_filesystem.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_gamecontroller.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_gesture.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_haptic.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_hints.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_joystick.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_keyboard.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_keycode.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_loadso.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_log.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_main.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_messagebox.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_mouse.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_mutex.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_name.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengl.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengl_glext.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengles.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengles2.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengles2_gl2.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengles2_gl2ext.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengles2_gl2platform.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_opengles2_khrplatform.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_pixels.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_platform.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_power.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_quit.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_rect.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_render.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_revision.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_rwops.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_scancode.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_sensor.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_shape.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_stdinc.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_surface.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_system.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_syswm.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_assert.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_common.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_compare.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_crc32.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_font.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_fuzzer.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_harness.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_images.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_log.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_md5.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_memory.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_test_random.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_thread.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_timer.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_touch.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_types.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_version.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_video.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\SDL_vulkan.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\begin_code.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\include\close_code.h">
+      <Filter>External\SDL2\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\SDL_assert_c.h">
+      <Filter>External\SDL2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\SDL_dataqueue.h">
+      <Filter>External\SDL2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\SDL_error_c.h">
+      <Filter>External\SDL2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\SDL_internal.h">
+      <Filter>External\SDL2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\SDL_audio_c.h">
+      <Filter>External\SDL2\src\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\SDL_audiodev_c.h">
+      <Filter>External\SDL2\src\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\SDL_sysaudio.h">
+      <Filter>External\SDL2\src\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\SDL_wave.h">
+      <Filter>External\SDL2\src\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\alsa\SDL_alsa_audio.h">
+      <Filter>External\SDL2\src\audio\alsa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\android\SDL_androidaudio.h">
+      <Filter>External\SDL2\src\audio\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\arts\SDL_artsaudio.h">
+      <Filter>External\SDL2\src\audio\arts</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\coreaudio\SDL_coreaudio.h">
+      <Filter>External\SDL2\src\audio\coreaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\directsound\SDL_directsound.h">
+      <Filter>External\SDL2\src\audio\directsound</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\disk\SDL_diskaudio.h">
+      <Filter>External\SDL2\src\audio\disk</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\dsp\SDL_dspaudio.h">
+      <Filter>External\SDL2\src\audio\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\dummy\SDL_dummyaudio.h">
+      <Filter>External\SDL2\src\audio\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\emscripten\SDL_emscriptenaudio.h">
+      <Filter>External\SDL2\src\audio\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\esd\SDL_esdaudio.h">
+      <Filter>External\SDL2\src\audio\esd</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\fusionsound\SDL_fsaudio.h">
+      <Filter>External\SDL2\src\audio\fusionsound</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\haiku\SDL_haikuaudio.h">
+      <Filter>External\SDL2\src\audio\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\jack\SDL_jackaudio.h">
+      <Filter>External\SDL2\src\audio\jack</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\nacl\SDL_naclaudio.h">
+      <Filter>External\SDL2\src\audio\nacl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\nas\SDL_nasaudio.h">
+      <Filter>External\SDL2\src\audio\nas</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\netbsd\SDL_netbsdaudio.h">
+      <Filter>External\SDL2\src\audio\netbsd</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\openslES\SDL_openslES.h">
+      <Filter>External\SDL2\src\audio\openslES</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\paudio\SDL_paudio.h">
+      <Filter>External\SDL2\src\audio\paudio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\psp\SDL_pspaudio.h">
+      <Filter>External\SDL2\src\audio\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\pulseaudio\SDL_pulseaudio.h">
+      <Filter>External\SDL2\src\audio\pulseaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\qsa\SDL_qsa_audio.h">
+      <Filter>External\SDL2\src\audio\qsa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\sndio\SDL_sndioaudio.h">
+      <Filter>External\SDL2\src\audio\sndio</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\sun\SDL_sunaudio.h">
+      <Filter>External\SDL2\src\audio\sun</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\wasapi\SDL_wasapi.h">
+      <Filter>External\SDL2\src\audio\wasapi</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\audio\winmm\SDL_winmm.h">
+      <Filter>External\SDL2\src\audio\winmm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\android\SDL_android.h">
+      <Filter>External\SDL2\src\core\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\android\keyinfotable.h">
+      <Filter>External\SDL2\src\core\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_dbus.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_evdev.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_evdev_kbd.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_evdev_kbd_default_accents.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_evdev_kbd_default_keymap.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_fcitx.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_ibus.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_ime.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\linux\SDL_udev.h">
+      <Filter>External\SDL2\src\core\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\unix\SDL_poll.h">
+      <Filter>External\SDL2\src\core\unix</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\windows\SDL_directx.h">
+      <Filter>External\SDL2\src\core\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\windows\SDL_windows.h">
+      <Filter>External\SDL2\src\core\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\windows\SDL_xinput.h">
+      <Filter>External\SDL2\src\core\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\winrt\SDL_winrtapp_common.h">
+      <Filter>External\SDL2\src\core\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\winrt\SDL_winrtapp_direct3d.h">
+      <Filter>External\SDL2\src\core\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\core\winrt\SDL_winrtapp_xaml.h">
+      <Filter>External\SDL2\src\core\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\dynapi\SDL_dynapi.h">
+      <Filter>External\SDL2\src\dynapi</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\dynapi\SDL_dynapi_overrides.h">
+      <Filter>External\SDL2\src\dynapi</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\dynapi\SDL_dynapi_procs.h">
+      <Filter>External\SDL2\src\dynapi</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_clipboardevents_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_displayevents_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_dropevents_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_events_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_gesture_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_keyboard_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_mouse_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_sysevents.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_touch_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\SDL_windowevents_c.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\blank_cursor.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\default_cursor.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\scancodes_darwin.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\scancodes_linux.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\scancodes_windows.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\events\scancodes_xfree86.h">
+      <Filter>External\SDL2\src\events</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\file\cocoa\SDL_rwopsbundlesupport.h">
+      <Filter>External\SDL2\src\file\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\SDL_haptic_c.h">
+      <Filter>External\SDL2\src\haptic</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\SDL_syshaptic.h">
+      <Filter>External\SDL2\src\haptic</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\android\SDL_syshaptic_c.h">
+      <Filter>External\SDL2\src\haptic\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\darwin\SDL_syshaptic_c.h">
+      <Filter>External\SDL2\src\haptic\darwin</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\windows\SDL_dinputhaptic_c.h">
+      <Filter>External\SDL2\src\haptic\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\windows\SDL_windowshaptic_c.h">
+      <Filter>External\SDL2\src\haptic\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\haptic\windows\SDL_xinputhaptic_c.h">
+      <Filter>External\SDL2\src\haptic\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\hidapi\hidapi\hidapi.h">
+      <Filter>External\SDL2\src\hidapi\hidapi</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\hidapi\testgui\mac_support.h">
+      <Filter>External\SDL2\src\hidapi\testgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\SDL_gamecontrollerdb.h">
+      <Filter>External\SDL2\src\joystick</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\SDL_joystick_c.h">
+      <Filter>External\SDL2\src\joystick</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\SDL_sysjoystick.h">
+      <Filter>External\SDL2\src\joystick</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\android\SDL_sysjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\controller_type.h">
+      <Filter>External\SDL2\src\joystick</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\darwin\SDL_sysjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\darwin</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\emscripten\SDL_sysjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\hidapi\SDL_hidapijoystick_c.h">
+      <Filter>External\SDL2\src\joystick\hidapi</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\iphoneos\SDL_sysjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\iphoneos</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\linux\SDL_sysjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\steam\SDL_steamcontroller.h">
+      <Filter>External\SDL2\src\joystick\steam</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\windows\SDL_dinputjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\windows\SDL_windowsjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\joystick\windows\SDL_xinputjoystick_c.h">
+      <Filter>External\SDL2\src\joystick\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\libm\math_libm.h">
+      <Filter>External\SDL2\src\libm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\libm\math_private.h">
+      <Filter>External\SDL2\src\libm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\main\haiku\SDL_BApp.h">
+      <Filter>External\SDL2\src\main\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\main\haiku\SDL_BeApp.h">
+      <Filter>External\SDL2\src\main\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\power\SDL_syspower.h">
+      <Filter>External\SDL2\src\power</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\power\uikit\SDL_syspower.h">
+      <Filter>External\SDL2\src\power\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\SDL_d3dmath.h">
+      <Filter>External\SDL2\src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\SDL_sysrender.h">
+      <Filter>External\SDL2\src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\SDL_yuv_sw_c.h">
+      <Filter>External\SDL2\src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\direct3d\SDL_shaders_d3d.h">
+      <Filter>External\SDL2\src\render\direct3d</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\direct3d11\SDL_render_winrt.h">
+      <Filter>External\SDL2\src\render\direct3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\direct3d11\SDL_shaders_d3d11.h">
+      <Filter>External\SDL2\src\render\direct3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\metal\SDL_shaders_metal_ios.h">
+      <Filter>External\SDL2\src\render\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\metal\SDL_shaders_metal_osx.h">
+      <Filter>External\SDL2\src\render\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\opengl\SDL_glfuncs.h">
+      <Filter>External\SDL2\src\render\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\opengl\SDL_shaders_gl.h">
+      <Filter>External\SDL2\src\render\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\opengles\SDL_glesfuncs.h">
+      <Filter>External\SDL2\src\render\opengles</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\opengles2\SDL_gles2funcs.h">
+      <Filter>External\SDL2\src\render\opengles2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\opengles2\SDL_shaders_gles2.h">
+      <Filter>External\SDL2\src\render\opengles2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_blendfillrect.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_blendline.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_blendpoint.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_draw.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_drawline.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_drawpoint.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_render_sw_c.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\render\software\SDL_rotate.h">
+      <Filter>External\SDL2\src\render\software</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\sensor\SDL_sensor_c.h">
+      <Filter>External\SDL2\src\sensor</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\sensor\SDL_syssensor.h">
+      <Filter>External\SDL2\src\sensor</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\sensor\android\SDL_androidsensor.h">
+      <Filter>External\SDL2\src\sensor\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\sensor\coremotion\SDL_coremotionsensor.h">
+      <Filter>External\SDL2\src\sensor\coremotion</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\sensor\dummy\SDL_dummysensor.h">
+      <Filter>External\SDL2\src\sensor\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\SDL_systhread.h">
+      <Filter>External\SDL2\src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\SDL_thread_c.h">
+      <Filter>External\SDL2\src\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\generic\SDL_sysmutex_c.h">
+      <Filter>External\SDL2\src\thread\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\generic\SDL_systhread_c.h">
+      <Filter>External\SDL2\src\thread\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\psp\SDL_sysmutex_c.h">
+      <Filter>External\SDL2\src\thread\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\psp\SDL_systhread_c.h">
+      <Filter>External\SDL2\src\thread\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\pthread\SDL_sysmutex_c.h">
+      <Filter>External\SDL2\src\thread\pthread</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\pthread\SDL_systhread_c.h">
+      <Filter>External\SDL2\src\thread\pthread</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\stdcpp\SDL_sysmutex_c.h">
+      <Filter>External\SDL2\src\thread\stdcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\stdcpp\SDL_systhread_c.h">
+      <Filter>External\SDL2\src\thread\stdcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\thread\windows\SDL_systhread_c.h">
+      <Filter>External\SDL2\src\thread\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\timer\SDL_timer_c.h">
+      <Filter>External\SDL2\src\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_RLEaccel_c.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_blit.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_blit_auto.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_blit_copy.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_blit_slow.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_egl_c.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_pixels_c.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_rect_c.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_shape_internals.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_sysvideo.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_vulkan_internal.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\SDL_yuv_c.h">
+      <Filter>External\SDL2\src\video</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidclipboard.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidevents.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidgl.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidkeyboard.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidmessagebox.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidmouse.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidtouch.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidvideo.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidvulkan.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\android\SDL_androidwindow.h">
+      <Filter>External\SDL2\src\video\android</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoaclipboard.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoaevents.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoakeyboard.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoamessagebox.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoametalview.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoamodes.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoamouse.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoamousetap.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoaopengl.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoaopengles.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoashape.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoavideo.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoavulkan.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\cocoa\SDL_cocoawindow.h">
+      <Filter>External\SDL2\src\video\cocoa</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_WM.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_dyn.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_events.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_modes.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_mouse.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_opengl.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_render.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_shape.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_video.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\directfb\SDL_DirectFB_window.h">
+      <Filter>External\SDL2\src\video\directfb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\dummy\SDL_nullevents_c.h">
+      <Filter>External\SDL2\src\video\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\dummy\SDL_nullframebuffer_c.h">
+      <Filter>External\SDL2\src\video\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\dummy\SDL_nullvideo.h">
+      <Filter>External\SDL2\src\video\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\emscripten\SDL_emscriptenevents.h">
+      <Filter>External\SDL2\src\video\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\emscripten\SDL_emscriptenframebuffer.h">
+      <Filter>External\SDL2\src\video\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\emscripten\SDL_emscriptenmouse.h">
+      <Filter>External\SDL2\src\video\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\emscripten\SDL_emscriptenopengles.h">
+      <Filter>External\SDL2\src\video\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\emscripten\SDL_emscriptenvideo.h">
+      <Filter>External\SDL2\src\video\emscripten</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_BWin.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bclipboard.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bevents.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bframebuffer.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bkeyboard.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bmodes.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bopengl.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bvideo.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\haiku\SDL_bwindow.h">
+      <Filter>External\SDL2\src\video\haiku</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\EGL\egl.h">
+      <Filter>External\SDL2\src\video\khronos\EGL</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\EGL\eglext.h">
+      <Filter>External\SDL2\src\video\khronos\EGL</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\EGL\eglplatform.h">
+      <Filter>External\SDL2\src\video\khronos\EGL</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\GLES2\gl2.h">
+      <Filter>External\SDL2\src\video\khronos\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\GLES2\gl2ext.h">
+      <Filter>External\SDL2\src\video\khronos\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\GLES2\gl2platform.h">
+      <Filter>External\SDL2\src\video\khronos\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\KHR\khrplatform.h">
+      <Filter>External\SDL2\src\video\khronos\KHR</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vk_icd.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vk_layer.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vk_platform.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vk_sdk_platform.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_android.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_core.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_fuchsia.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_ios.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_macos.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_mir.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_vi.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_wayland.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_win32.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_xcb.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_xlib.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\khronos\vulkan\vulkan_xlib_xrandr.h">
+      <Filter>External\SDL2\src\video\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\kmsdrm\SDL_kmsdrmdyn.h">
+      <Filter>External\SDL2\src\video\kmsdrm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\kmsdrm\SDL_kmsdrmevents.h">
+      <Filter>External\SDL2\src\video\kmsdrm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\kmsdrm\SDL_kmsdrmmouse.h">
+      <Filter>External\SDL2\src\video\kmsdrm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\kmsdrm\SDL_kmsdrmopengles.h">
+      <Filter>External\SDL2\src\video\kmsdrm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\kmsdrm\SDL_kmsdrmsym.h">
+      <Filter>External\SDL2\src\video\kmsdrm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\kmsdrm\SDL_kmsdrmvideo.h">
+      <Filter>External\SDL2\src\video\kmsdrm</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\nacl\SDL_naclevents_c.h">
+      <Filter>External\SDL2\src\video\nacl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\nacl\SDL_naclopengles.h">
+      <Filter>External\SDL2\src\video\nacl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\nacl\SDL_naclvideo.h">
+      <Filter>External\SDL2\src\video\nacl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\nacl\SDL_naclwindow.h">
+      <Filter>External\SDL2\src\video\nacl</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\pandora\SDL_pandora.h">
+      <Filter>External\SDL2\src\video\pandora</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\pandora\SDL_pandora_events.h">
+      <Filter>External\SDL2\src\video\pandora</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\psp\SDL_pspevents_c.h">
+      <Filter>External\SDL2\src\video\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\psp\SDL_pspgl_c.h">
+      <Filter>External\SDL2\src\video\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\psp\SDL_pspmouse_c.h">
+      <Filter>External\SDL2\src\video\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\psp\SDL_pspvideo.h">
+      <Filter>External\SDL2\src\video\psp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\qnx\sdl_qnx.h">
+      <Filter>External\SDL2\src\video\qnx</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\raspberry\SDL_rpievents_c.h">
+      <Filter>External\SDL2\src\video\raspberry</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\raspberry\SDL_rpimouse.h">
+      <Filter>External\SDL2\src\video\raspberry</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\raspberry\SDL_rpiopengles.h">
+      <Filter>External\SDL2\src\video\raspberry</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\raspberry\SDL_rpivideo.h">
+      <Filter>External\SDL2\src\video\raspberry</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitappdelegate.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitclipboard.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitevents.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitmessagebox.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitmetalview.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitmodes.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitopengles.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitopenglview.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitvideo.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitview.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitviewcontroller.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitvulkan.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\SDL_uikitwindow.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\uikit\keyinfotable.h">
+      <Filter>External\SDL2\src\video\uikit</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\vivante\SDL_vivanteopengles.h">
+      <Filter>External\SDL2\src\video\vivante</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\vivante\SDL_vivanteplatform.h">
+      <Filter>External\SDL2\src\video\vivante</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\vivante\SDL_vivantevideo.h">
+      <Filter>External\SDL2\src\video\vivante</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\vivante\SDL_vivantevulkan.h">
+      <Filter>External\SDL2\src\video\vivante</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandclipboard.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylanddatamanager.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylanddyn.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandevents_c.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandmouse.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandopengles.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandsym.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandtouch.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandvideo.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandvulkan.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\wayland\SDL_waylandwindow.h">
+      <Filter>External\SDL2\src\video\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_msctf.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_vkeys.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsclipboard.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsevents.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsframebuffer.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowskeyboard.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsmessagebox.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsmodes.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsmouse.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsopengl.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsopengles.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsshape.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowstaskdialog.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsvideo.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowsvulkan.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\SDL_windowswindow.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\windows\wmmsg.h">
+      <Filter>External\SDL2\src\video\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\winrt\SDL_winrtevents_c.h">
+      <Filter>External\SDL2\src\video\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\winrt\SDL_winrtgamebar_cpp.h">
+      <Filter>External\SDL2\src\video\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\winrt\SDL_winrtmessagebox.h">
+      <Filter>External\SDL2\src\video\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\winrt\SDL_winrtmouse_c.h">
+      <Filter>External\SDL2\src\video\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\winrt\SDL_winrtopengles.h">
+      <Filter>External\SDL2\src\video\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\winrt\SDL_winrtvideo_cpp.h">
+      <Filter>External\SDL2\src\video\winrt</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11clipboard.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11dyn.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11events.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11framebuffer.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11keyboard.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11messagebox.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11modes.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11mouse.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11opengl.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11opengles.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11shape.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11sym.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11touch.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11video.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11vulkan.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11window.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\SDL_x11xinput2.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\edid.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\x11\imKStoUCS.h">
+      <Filter>External\SDL2\src\video\x11</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\yuv2rgb\yuv_rgb.h">
+      <Filter>External\SDL2\src\video\yuv2rgb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\yuv2rgb\yuv_rgb_sse_func.h">
+      <Filter>External\SDL2\src\video\yuv2rgb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\src\video\yuv2rgb\yuv_rgb_std_func.h">
+      <Filter>External\SDL2\src\video\yuv2rgb</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\test\testautomation_suites.h">
+      <Filter>External\SDL2\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\test\testnative.h">
+      <Filter>External\SDL2\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\test\testyuv_cvt.h">
+      <Filter>External\SDL2\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\config.h">
+      <Filter>External\SDL2\visualtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_action_configparser.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_exhaustive_variator.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_harness_argparser.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_mischelper.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_parsehelper.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_process.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_random_variator.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_rwhelper.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_screenshot.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_sut_configparser.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_variator_common.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SDL2\visualtest\include\SDL_visualtest_variators.h">
+      <Filter>External\SDL2\visualtest\include</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\deprecated\rrsprintf.h">
+      <Filter>External\STB\deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_c_lexer.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_connected_components.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_divide.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_ds.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_dxt.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_easy_font.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_herringbone_wang_tile.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_image.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_image_resize.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_image_write.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_include.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_leakcheck.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_perlin.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_rect_pack.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_sprintf.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_textedit.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_tilemap_editor.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_truetype.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stb_voxel_render.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\stretchy_buffer.h">
+      <Filter>External\STB</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\caveview\cave_parse.h">
+      <Filter>External\STB\tests\caveview</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\caveview\caveview.h">
+      <Filter>External\STB\tests\caveview</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\caveview\glext.h">
+      <Filter>External\STB\tests\caveview</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\caveview\glext_list.h">
+      <Filter>External\STB\tests\caveview</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\caveview\stb_gl.h">
+      <Filter>External\STB\tests\caveview</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\caveview\stb_glprog.h">
+      <Filter>External\STB\tests\caveview</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\oversample\stb_wingraph.h">
+      <Filter>External\STB\tests\oversample</Filter>
+    </ClInclude>
+    <ClInclude Include="External\STB\tests\prerelease\stb_lib.h">
+      <Filter>External\STB\tests\prerelease</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\anchor.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\binary.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\contrib\anchordict.h">
+      <Filter>External\YAML\include\yaml-cpp\contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\contrib\graphbuilder.h">
+      <Filter>External\YAML\include\yaml-cpp\contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\dll.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitfromevents.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitter.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitterdef.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emittermanip.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\emitterstyle.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\eventhandler.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\exceptions.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\mark.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\convert.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\bool_type.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\impl.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\iterator.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\iterator_fwd.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\memory.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_data.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_iterator.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\detail\node_ref.h">
+      <Filter>External\YAML\include\yaml-cpp\node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\emit.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\impl.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\iterator.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\node.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\parse.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\ptr.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\node\type.h">
+      <Filter>External\YAML\include\yaml-cpp\node</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\null.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\ostream_wrapper.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\parser.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\stlemitter.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\traits.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\include\yaml-cpp\yaml.h">
+      <Filter>External\YAML\include\yaml-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\collectionstack.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\contrib\graphbuilderadapter.h">
+      <Filter>External\YAML\src\contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\directives.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\emitterstate.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\emitterutils.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\exp.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\indentation.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\nodebuilder.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\nodeevents.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\ptr_vector.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\regex_yaml.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\regeximpl.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\scanner.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\scanscalar.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\scantag.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\setting.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\singledocparser.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\stream.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\streamcharsource.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\stringsource.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\tag.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\src\token.h">
+      <Filter>External\YAML\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-actions.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-cardinalities.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-generated-actions.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-generated-function-mockers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-generated-matchers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-generated-nice-strict.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-matchers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-more-actions.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-more-matchers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock-spec-builders.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\gmock.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom\gmock-generated-actions.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom\gmock-matchers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom\gmock-port.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\custom</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\gmock-generated-internal-utils.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\gmock-internal-utils.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal\gmock-port.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\include\gmock\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googlemock\test\gmock_link_test.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googlemock\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-death-test.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-message.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-param-test.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-printers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-spi.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-test-part.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest-typed-test.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest_pred_impl.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\gtest_prod.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom\gtest-port.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom\gtest-printers.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom\gtest.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\custom</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-death-test-internal.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-filepath.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-internal.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-linked_ptr.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-param-util-generated.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-param-util.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-port-arch.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-port.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-string.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-tuple.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal\gtest-type-util.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\include\gtest\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\samples\prime_tables.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\samples</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\samples\sample1.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\samples</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\samples\sample2.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\samples</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\samples\sample3-inl.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\samples</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\samples\sample4.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\samples</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\src\gtest-internal-inl.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\src</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\test\gtest-param-test_test.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\test\gtest-typed-test_test.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\test\production.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\gtest-1.8.0\googletest\xcode\Samples\FrameworkSample\widget.h">
+      <Filter>External\YAML\test\gtest-1.8.0\googletest\xcode\Samples\FrameworkSample</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\handler_test.h">
+      <Filter>External\YAML\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\mock_event_handler.h">
+      <Filter>External\YAML\test</Filter>
+    </ClInclude>
+    <ClInclude Include="External\YAML\test\specexamples.h">
+      <Filter>External\YAML\test</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Application.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ApplicationRenderer.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\AudioSample.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Bitmap.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Component.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Components\Renderer.h">
+      <Filter>Source\include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Core.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreCUDA.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreTime.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\CoreTypes.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Cubemap.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\EdgeHolder.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\EdgeSegments.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\EntryPoint.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Event.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\FBXLoader.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\FileManager.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\FileStream.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Font.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GLFunctions.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GameObject.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Glyph.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Graphics.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\IIdentifier.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ImageLoader.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Material.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Box2D.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Box3D.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\CoreMath.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\IntVector2.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\IntVector2.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\IntVector3.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\IntVector3.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\MathUtility.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\MathUtility.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Matrix3x3.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Matrix3x3.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Matrix4x4.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Matrix4x4.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Physics.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Quaternion.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Quaternion.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Ray.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Ray.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector2.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector2.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector3.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector3.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector4.h">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Math\Vector4.inl">
+      <Filter>Source\include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Mesh.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\MeshLoader.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\OBJLoader.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Object.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Observer.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Property.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\RenderPipeline.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\RenderStage.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\RenderTarget.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceGroupManager.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceHolder.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceManager.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceShaderProgram.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ResourceShaderStage.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Resources.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Resources\ShaderStageManager.h">
+      <Filter>Source\include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Resources\ShaderStageResource.h">
+      <Filter>Source\include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\SDFGenerator.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ShaderProgram.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ShaderStage.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Shape2D.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Shape2DContour.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Space.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Task.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Text.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Text2DGenerator.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Texture.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Texture2D.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Texture3D.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Transform.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\DeviceFunctions.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\Hasher.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogCore.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogFreeType.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\LogGraphics.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\MeshPrimitives.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\TextFormatting.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\TextFormattingMath.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\TexturePacking.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Utility\Timer.h">
+      <Filter>Source\include\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Window.h">
+      <Filter>Source\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\source\Application.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\AudioSample.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Bitmap.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Component.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Components\Renderer.cpp">
+      <Filter>Source\source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\CoreTime.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Cubemap.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\EdgeHolder.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\EdgeSegments.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\FBXLoader.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\FileManager.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\FileStream.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Font.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\GameObject.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Glyph.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\IIdentifier.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ImageLoader.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Material.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Mesh.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\MeshLoader.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\OBJLoader.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Object.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Observer.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\RenderPipeline.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\RenderStage.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\RenderTarget.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceHolder.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceManager.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceShaderProgram.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ResourceShaderStage.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Resources.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Resources\ShaderStageManager.cpp">
+      <Filter>Source\source\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Resources\ShaderStageResource.cpp">
+      <Filter>Source\source\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ShaderProgram.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\ShaderStage.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Shape2D.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Shape2DContour.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Space.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Text.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Text2DGenerator.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Texture.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Texture2D.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Texture3D.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Transform.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\DeviceFunctions.cpp">
+      <Filter>Source\source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\LogCore.cpp">
+      <Filter>Source\source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\SDFGenerator.cpp">
+      <Filter>Source\source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\TexturePacking.cpp">
+      <Filter>Source\source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Utility\Timer.cpp">
+      <Filter>Source\source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\Window.cpp">
+      <Filter>Source\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -852,7 +852,7 @@
     <ClInclude Include="Source\include\ApplicationRenderer.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Sound.h">
+    <ClInclude Include="Source\include\AudioSample.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1009,6 +1009,9 @@
     </ClCompile>
     <ClCompile Include="Source\source\Resources\ShaderStageManager.cpp">
       <Filter>Source Files\Core\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\source\AudioSample.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
