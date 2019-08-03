@@ -177,6 +177,12 @@ Temporary Items
 *.exp
 *.app
 
+#Raw Resources
+**/[Rr]esources/[Ff]onts/
+**/[Rr]esources/[Mm]odels/
+**/[Rr]esources/[Ss]ounds/
+**/[Rr]esources/[Tt]extures/
+
 !External/*.exe
 !/**/Models/*.obj
 !/**/Libraries/*.dll
