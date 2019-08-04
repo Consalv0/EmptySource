@@ -4,40 +4,44 @@
 #include "../include/Transform.h"
 #include "../include/Component.h"
 
-//* Basic class for any object that contains components and a spacial representation
-class GGameObject : public OObject {
-private:
-	typedef OObject Supper;
-	friend class Space;
+namespace EmptySource {
 
-	GGameObject();
-	GGameObject(const WString & Name);
-	GGameObject(const Transform & LocalTransform);
-	GGameObject(const WString & Name, const Transform & LocalTransform);
+	//* Basic class for any object that contains components and a spacial representation
+	class GGameObject : public OObject {
+	private:
+		typedef OObject Supper;
+		friend class Space;
 
-	//* Dictionary that contains all the Components in this GameObject
-	TDictionary<size_t, CComponent*> ComponentsIn;
+		GGameObject();
+		GGameObject(const WString & Name);
+		GGameObject(const Transform & LocalTransform);
+		GGameObject(const WString & Name, const Transform & LocalTransform);
 
-	//* Add component
-	void AddComponent(CComponent * Component);
+		//* Dictionary that contains all the Components in this GameObject
+		TDictionary<size_t, CComponent*> ComponentsIn;
 
-	void DeleteComponent(CComponent * Component);
-	void DeleteAllComponents();
+		//* Add component
+		void AddComponent(CComponent * Component);
 
-	virtual void OnDelete();
+		void DeleteComponent(CComponent * Component);
+		void DeleteAllComponents();
 
-public:
-	Transform Transformation;
+		virtual void OnDelete();
 
-	TArray<GGameObject> Children;
+	public:
+		Transform Transformation;
 
-	template<typename T, typename... Rest>
-	T * CreateComponent(Rest... Args);
-};
+		TArray<GGameObject> Children;
 
-template<typename T, typename ...Rest>
-T * GGameObject::CreateComponent(Rest ...Args) {
-	T* NewObject = new T(*this, Args...);
-	AddComponent(NewObject);
-	return NewObject;
+		template<typename T, typename... Rest>
+		T * CreateComponent(Rest... Args);
+	};
+
+	template<typename T, typename ...Rest>
+	T * GGameObject::CreateComponent(Rest ...Args) {
+		T* NewObject = new T(*this, Args...);
+		AddComponent(NewObject);
+		return NewObject;
+	}
+
 }

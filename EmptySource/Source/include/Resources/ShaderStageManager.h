@@ -3,22 +3,26 @@
 #include "../include/Resources/ShaderStageResource.h"
 #include "../include/ResourceManager.h"
 
-class ShaderStageManager : public ResourceManager {
-private:
-	typedef ResourceManager Supper;
-	typedef TDictionary<size_t, ShaderStageResource *> ResourceDictionary;
+namespace EmptySource {
 
-	ShaderStageManager() : Supper(100u, RT_ShaderStage) {};
+	class ShaderStageManager : public ResourceManager {
+	private:
+		typedef ResourceManager Supper;
+		typedef TDictionary<size_t, ShaderStageResource *> ResourceDictionary;
 
-	ResourceDictionary Resources;
+		ShaderStageManager() : Supper(100u, RT_ShaderStage) {};
 
-public:
+		ResourceDictionary Resources;
 
-	void AddShaderStage(WString Name, ShaderType Type, WString FilePath);
+	public:
 
-	ShaderStageResource * GetResourceByUniqueName(const WString& Name) const { return GetResourceByUniqueID(WStringToHash(Name)); };
+		void AddShaderStage(WString Name, ShaderType Type, WString FilePath);
 
-	ShaderStageResource * GetResourceByUniqueID(const size_t & UID) const;
+		ShaderStageResource * GetResourceByUniqueName(const WString& Name) const { return GetResourceByUniqueID(WStringToHash(Name)); };
 
-	static ShaderStageManager & GetInstance();
-};
+		ShaderStageResource * GetResourceByUniqueID(const size_t & UID) const;
+
+		static ShaderStageManager & GetInstance();
+	};
+
+}

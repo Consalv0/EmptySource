@@ -27,169 +27,173 @@
 #define MSDFGEN_CUBIC_SEARCH_STARTS 4
 #define MSDFGEN_CUBIC_SEARCH_STEPS 4
 
-// Edge color specifies which color channels an edge belongs to.
-enum EdgeColor {
-	BLACK = 0,
-	RED = 1,
-	GREEN = 2,
-	YELLOW = 3,
-	BLUE = 4,
-	MAGENTA = 5,
-	CYAN = 6,
-	WHITE = 7
-};
+namespace EmptySource {
 
-// Represents a signed distance and alignment, which together can be compared to uniquely determine the closest edge segment.
-class SignedDistance {
+	// Edge color specifies which color channels an edge belongs to.
+	enum EdgeColor {
+		BLACK = 0,
+		RED = 1,
+		GREEN = 2,
+		YELLOW = 3,
+		BLUE = 4,
+		MAGENTA = 5,
+		CYAN = 6,
+		WHITE = 7
+	};
 
-public:
-	float Distance;
-	float Dot;
+	// Represents a signed distance and alignment, which together can be compared to uniquely determine the closest edge segment.
+	class SignedDistance {
 
-	SignedDistance();
-	SignedDistance(float Distance, float Dot);
+	public:
+		float Distance;
+		float Dot;
 
-	friend bool operator<(SignedDistance A, SignedDistance B);
-	friend bool operator>(SignedDistance A, SignedDistance B);
-	friend bool operator<=(SignedDistance A, SignedDistance B);
-	friend bool operator>=(SignedDistance A, SignedDistance B);
-};
+		SignedDistance();
+		SignedDistance(float Distance, float Dot);
 
-// An abstract edge segment.
-class EdgeSegment {
+		friend bool operator<(SignedDistance A, SignedDistance B);
+		friend bool operator>(SignedDistance A, SignedDistance B);
+		friend bool operator<=(SignedDistance A, SignedDistance B);
+		friend bool operator>=(SignedDistance A, SignedDistance B);
+	};
 
-public:
-	EdgeColor Color;
-	
-	EdgeSegment(EdgeColor Color = WHITE) : Color(Color) { }
+	// An abstract edge segment.
+	class EdgeSegment {
 
-	virtual ~EdgeSegment() { }
+	public:
+		EdgeColor Color;
 
-	//* Creates a copy of the edge segment.
-	virtual EdgeSegment * Clone() const = 0;
-	
-	//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
-	virtual Point2 PointAt(float Value) const = 0;
-	
-	//* Returns the direction the edge has at the point specified by the Valueeter.
-	virtual Vector2 DirectionAt(float Value) const = 0;
-	
-	//* Returns the minimum signed distance between Origin and the edge.
-	virtual SignedDistance GetSignedDistance(Point2 Origin, float &Param) const = 0;
-	
-	//* Converts a previously retrieved signed distance from Origin to pseudo-distance.
-	virtual void DistanceToPseudoDistance(SignedDistance &Distance, Point2 Origin, float Param) const;
-	
-	//* Adjusts the bounding box to fit the edge segment.
-	virtual void GetBounds(float &l, float &b, float &r, float &t) const = 0;
+		EdgeSegment(EdgeColor Color = WHITE) : Color(Color) { }
 
-	//* Moves the start point of the edge segment.
-	virtual void MoveStartPoint(Point2 To) = 0;
-	
-	//* Moves the end point of the edge segment.
-	virtual void MoveEndPoint(Point2 To) = 0;
-	
-	//* Splits the edge segments into thirds which together represent the Original edge.
-	virtual void SplitInThirds(EdgeSegment *& Part1, EdgeSegment *& Part2, EdgeSegment *& Part3) const = 0;
-};
+		virtual ~EdgeSegment() { }
 
-// A line segment.
-class LinearSegment : public EdgeSegment {
+		//* Creates a copy of the edge segment.
+		virtual EdgeSegment * Clone() const = 0;
 
-public:
-	Point2 p[2];
+		//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
+		virtual Point2 PointAt(float Value) const = 0;
 
-	LinearSegment(Point2 p0, Point2 p1, EdgeColor edgeColor = WHITE);
+		//* Returns the direction the edge has at the point specified by the Valueeter.
+		virtual Vector2 DirectionAt(float Value) const = 0;
 
-	//* Creates a copy of the edge segment.
-	LinearSegment * Clone() const;
+		//* Returns the minimum signed distance between Origin and the edge.
+		virtual SignedDistance GetSignedDistance(Point2 Origin, float &Param) const = 0;
 
-	//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
-	Point2 PointAt(float Param) const;
+		//* Converts a previously retrieved signed distance from Origin to pseudo-distance.
+		virtual void DistanceToPseudoDistance(SignedDistance &Distance, Point2 Origin, float Param) const;
 
-	//* Returns the direction the edge has at the point specified by the Valueeter.
-	Vector2 DirectionAt(float Param) const;
+		//* Adjusts the bounding box to fit the edge segment.
+		virtual void GetBounds(float &l, float &b, float &r, float &t) const = 0;
 
-	//* Returns the minimum signed distance between Origin and the edge.
-	SignedDistance GetSignedDistance(Point2 Origin, float &Param) const;
+		//* Moves the start point of the edge segment.
+		virtual void MoveStartPoint(Point2 To) = 0;
 
-	//* Adjusts the bounding box to fit the edge segment.
-	void GetBounds(float &l, float &b, float &r, float &t) const;
+		//* Moves the end point of the edge segment.
+		virtual void MoveEndPoint(Point2 To) = 0;
 
-	//* Moves the start point of the edge segment.
-	void MoveStartPoint(Point2 To);
+		//* Splits the edge segments into thirds which together represent the Original edge.
+		virtual void SplitInThirds(EdgeSegment *& Part1, EdgeSegment *& Part2, EdgeSegment *& Part3) const = 0;
+	};
 
-	//* Moves the end point of the edge segment.
-	void MoveEndPoint(Point2 To);
+	// A line segment.
+	class LinearSegment : public EdgeSegment {
 
-	//* Splits the edge segments into thirds which together represent the Original edge.
-	void SplitInThirds(EdgeSegment *&Part1, EdgeSegment *&Part2, EdgeSegment *&Part3) const;
+	public:
+		Point2 p[2];
 
-};
+		LinearSegment(Point2 p0, Point2 p1, EdgeColor edgeColor = WHITE);
 
-// A quadratic Bezier curve.
-class QuadraticSegment : public EdgeSegment {
+		//* Creates a copy of the edge segment.
+		LinearSegment * Clone() const;
 
-public:
-	Point2 p[3];
+		//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
+		Point2 PointAt(float Param) const;
 
-	QuadraticSegment(Point2 p0, Point2 p1, Point2 p2, EdgeColor Color = WHITE);
+		//* Returns the direction the edge has at the point specified by the Valueeter.
+		Vector2 DirectionAt(float Param) const;
 
-	//* Creates a copy of the edge segment.
-	QuadraticSegment * Clone() const;
+		//* Returns the minimum signed distance between Origin and the edge.
+		SignedDistance GetSignedDistance(Point2 Origin, float &Param) const;
 
-	//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
-	Point2 PointAt(float Value) const;
+		//* Adjusts the bounding box to fit the edge segment.
+		void GetBounds(float &l, float &b, float &r, float &t) const;
 
-	//* Returns the direction the edge has at the point specified by the Valueeter.
-	Vector2 DirectionAt(float Value) const;
+		//* Moves the start point of the edge segment.
+		void MoveStartPoint(Point2 To);
 
-	//* Returns the minimum signed distance between Origin and the edge.
-	SignedDistance GetSignedDistance(Point2 Origin, float &Value) const;
+		//* Moves the end point of the edge segment.
+		void MoveEndPoint(Point2 To);
 
-	//* Adjusts the bounding box to fit the edge segment.
-	void GetBounds(float &l, float &b, float &r, float &t) const;
+		//* Splits the edge segments into thirds which together represent the Original edge.
+		void SplitInThirds(EdgeSegment *&Part1, EdgeSegment *&Part2, EdgeSegment *&Part3) const;
 
-	//* Moves the start point of the edge segment.
-	void MoveStartPoint(Point2 To);
+	};
 
-	//* Moves the end point of the edge segment.
-	void MoveEndPoint(Point2 To);
+	// A quadratic Bezier curve.
+	class QuadraticSegment : public EdgeSegment {
 
-	//* Splits the edge segments into thirds which together represent the Original edge.
-	void SplitInThirds(EdgeSegment *&Part1, EdgeSegment *&Part2, EdgeSegment *&Part3) const;
+	public:
+		Point2 p[3];
 
-};
+		QuadraticSegment(Point2 p0, Point2 p1, Point2 p2, EdgeColor Color = WHITE);
 
-// A cubic Bezier curve.
-class CubicSegment : public EdgeSegment {
+		//* Creates a copy of the edge segment.
+		QuadraticSegment * Clone() const;
 
-public:
-	Point2 p[4];
+		//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
+		Point2 PointAt(float Value) const;
 
-	CubicSegment(Point2 p0, Point2 p1, Point2 p2, Point2 p3, EdgeColor edgeColor = WHITE);
+		//* Returns the direction the edge has at the point specified by the Valueeter.
+		Vector2 DirectionAt(float Value) const;
 
-	//* Creates a copy of the edge segment.
-	CubicSegment * Clone() const;
+		//* Returns the minimum signed distance between Origin and the edge.
+		SignedDistance GetSignedDistance(Point2 Origin, float &Value) const;
 
-	//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
-	Point2 PointAt(float Value) const;
+		//* Adjusts the bounding box to fit the edge segment.
+		void GetBounds(float &l, float &b, float &r, float &t) const;
 
-	//* Returns the direction the edge has at the point specified by the Valueeter.
-	Vector2 DirectionAt(float Value) const;
+		//* Moves the start point of the edge segment.
+		void MoveStartPoint(Point2 To);
 
-	//* Returns the minimum signed distance between Origin and the edge.
-	SignedDistance GetSignedDistance(Point2 Origin, float &Value) const;
+		//* Moves the end point of the edge segment.
+		void MoveEndPoint(Point2 To);
 
-	//* Adjusts the bounding box to fit the edge segment.
-	void GetBounds(float &l, float &b, float &r, float &t) const;
+		//* Splits the edge segments into thirds which together represent the Original edge.
+		void SplitInThirds(EdgeSegment *&Part1, EdgeSegment *&Part2, EdgeSegment *&Part3) const;
 
-	//* Moves the start point of the edge segment.
-	void MoveStartPoint(Point2 To);
+	};
 
-	//* Moves the end point of the edge segment.
-	void MoveEndPoint(Point2 to);
+	// A cubic Bezier curve.
+	class CubicSegment : public EdgeSegment {
 
-	//* Splits the edge segments into thirds which together represent the Original edge.
-	void SplitInThirds(EdgeSegment *&Part1, EdgeSegment *&Part2, EdgeSegment *&Part3) const;
-};
+	public:
+		Point2 p[4];
+
+		CubicSegment(Point2 p0, Point2 p1, Point2 p2, Point2 p3, EdgeColor edgeColor = WHITE);
+
+		//* Creates a copy of the edge segment.
+		CubicSegment * Clone() const;
+
+		//* Returns the point on the edge specified by the Valueeter (between 0 and 1).
+		Point2 PointAt(float Value) const;
+
+		//* Returns the direction the edge has at the point specified by the Valueeter.
+		Vector2 DirectionAt(float Value) const;
+
+		//* Returns the minimum signed distance between Origin and the edge.
+		SignedDistance GetSignedDistance(Point2 Origin, float &Value) const;
+
+		//* Adjusts the bounding box to fit the edge segment.
+		void GetBounds(float &l, float &b, float &r, float &t) const;
+
+		//* Moves the start point of the edge segment.
+		void MoveStartPoint(Point2 To);
+
+		//* Moves the end point of the edge segment.
+		void MoveEndPoint(Point2 to);
+
+		//* Splits the edge segments into thirds which together represent the Original edge.
+		void SplitInThirds(EdgeSegment *&Part1, EdgeSegment *&Part2, EdgeSegment *&Part3) const;
+	};
+
+}

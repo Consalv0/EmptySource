@@ -4,85 +4,89 @@
 #include "../include/IIdentifier.h"
 #include "../include/FileManager.h"
 
-struct FileStream;
-class ResourceManager;
+namespace EmptySource {
 
-struct BaseResource {
-protected:
-	friend class OldResourceManager;
-	
-	BaseResource(const WString & FilePath, const size_t & GUID);
-	virtual ~BaseResource() { }
-	const WString Name;
-	const size_t GUID;
-	bool isDone;
+	struct FileStream;
+	class ResourceManager;
 
-public:
-	bool IsDone() const;
-	size_t GetIdentifier() const;
-	const FileStream * GetFile() const;
-};
+	struct BaseResource {
+	protected:
+		friend class OldResourceManager;
 
-template <typename T>
-struct Resource : public BaseResource {
-protected:
-	friend class OldResourceManager;
-	Resource(const WString & FilePath, const size_t & GUID) : BaseResource(FilePath, GUID), Data(NULL) {}
-	Resource(const WString & FilePath, const size_t & GUID, T * Data) : BaseResource(FilePath, GUID), Data(Data) { isDone = true; }
+		BaseResource(const WString & FilePath, const size_t & GUID);
+		virtual ~BaseResource() { }
+		const WString Name;
+		const size_t GUID;
+		bool isDone;
 
-	T * Data;
-public:
+	public:
+		bool IsDone() const;
+		size_t GetIdentifier() const;
+		const FileStream * GetFile() const;
+	};
 
-	T * GetData() {
-		if (!isDone) return NULL;
-		return Data;
-	}
-};
+	template <typename T>
+	struct Resource : public BaseResource {
+	protected:
+		friend class OldResourceManager;
+		Resource(const WString & FilePath, const size_t & GUID) : BaseResource(FilePath, GUID), Data(NULL) {}
+		Resource(const WString & FilePath, const size_t & GUID, T * Data) : BaseResource(FilePath, GUID), Data(Data) { isDone = true; }
 
-class OldResourceManager {
-public:
-	//* Get the resource with the given name, returns NULL if no resource
-	template<typename T>
-	static inline Resource<T> * Load(const WString & File);
-	//* Get the resource with the given GUID. 
-	//  Use this if you are shure the file is in Resources.yaml, returns NULL if no resource
-	template<typename T>
-	static inline Resource<T> * Load(const size_t & GUID);
+		T * Data;
+	public:
 
-	template<typename T>
-	static inline Resource<T> * Load(const WString& Name, T * Data) {
-		size_t GUID = WStringToHash(Name);
-		auto ResourceFind = Resources.find(GUID);
-		if (ResourceFind != Resources.end()) {
-			return dynamic_cast<Resource<T>*>(ResourceFind->second);
+		T * GetData() {
+			if (!isDone) return NULL;
+			return Data;
+		}
+	};
+
+	class OldResourceManager {
+	public:
+		//* Get the resource with the given name, returns NULL if no resource
+		template<typename T>
+		static inline Resource<T> * Load(const WString & File);
+		//* Get the resource with the given GUID. 
+		//  Use this if you are shure the file is in Resources.yaml, returns NULL if no resource
+		template<typename T>
+		static inline Resource<T> * Load(const size_t & GUID);
+
+		template<typename T>
+		static inline Resource<T> * Load(const WString& Name, T * Data) {
+			size_t GUID = WStringToHash(Name);
+			auto ResourceFind = Resources.find(GUID);
+			if (ResourceFind != Resources.end()) {
+				return dynamic_cast<Resource<T>*>(ResourceFind->second);
+			}
+
+			Resource<T> * ResourceAdded = new Resource<T>(Name, GUID, Data);
+			Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
+			return ResourceAdded;
 		}
 
-		Resource<T> * ResourceAdded = new Resource<T>(Name, GUID, Data);
-		Resources.insert(std::pair<const size_t, BaseResource*>(ResourceAdded->GetIdentifier(), ResourceAdded));
-		return ResourceAdded;
-	}
+		template<typename T>
+		static inline Resource<T> * Get(const WString& Name) {
+			size_t GUID = WStringToHash(Name);
+			auto ResourceFind = Resources.find(GUID);
+			if (ResourceFind != Resources.end()) {
+				return dynamic_cast<Resource<T>*>(ResourceFind->second);
+			}
 
-	template<typename T>
-	static inline Resource<T> * Get(const WString& Name) {
-		size_t GUID = WStringToHash(Name);
-		auto ResourceFind = Resources.find(GUID);
-		if (ResourceFind != Resources.end()) {
-			return dynamic_cast<Resource<T>*>(ResourceFind->second);
+			return NULL;
 		}
 
-		return NULL;
-	}
+	private:
+		template<typename T>
+		static bool GetResourceData(const WString & File, T & OutData);
+		template<typename T>
+		static bool GetResourceData(const size_t & GUID, T & OutData);
 
-private:
-	template<typename T>
-	static bool GetResourceData(const WString & File, T & OutData);
-	template<typename T>
-	static bool GetResourceData(const size_t & GUID, T & OutData);
+		static FileStream * GetResourcesFile();
 
-	static FileStream * GetResourcesFile();
+		static TDictionary<size_t, BaseResource*> Resources;
+	};
 
-	static TDictionary<size_t, BaseResource*> Resources;
-};
+}
 
 #include "../include/ResourceShaderStage.h"
 #include "../include/ResourceShaderProgram.h"

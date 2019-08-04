@@ -3,44 +3,48 @@
 #include "MathUtility.h"
 #include "Vector3.h"
 
-struct RayHit {
-public:
-	bool bHit;
-	float Stamp;
-	Vector3 Normal;
-	Vector3 BaricenterCoordinates;
-	int TriangleIndex;
+namespace EmptySource {
 
-	HOST_DEVICE FORCEINLINE RayHit() {
-		bHit = false;
+	struct RayHit {
+	public:
+		bool bHit;
+		float Stamp;
+		Vector3 Normal;
+		Vector3 BaricenterCoordinates;
+		int TriangleIndex;
+
+		HOST_DEVICE FORCEINLINE RayHit() {
+			bHit = false;
 #ifndef __CUDACC__
-		Stamp = MathConstants::BigNumber;
+			Stamp = MathConstants::BigNumber;
 #else
-		Stamp = 3.4e+38f;
+			Stamp = 3.4e+38f;
 #endif
-		Normal = 0;
-		BaricenterCoordinates = 0;
-		TriangleIndex = -1;
-	}
+			Normal = 0;
+			BaricenterCoordinates = 0;
+			TriangleIndex = -1;
+		}
 
-	HOST_DEVICE inline bool operator < (const RayHit& Other) const {
-		return (Stamp < Other.Stamp);
-	}
-};
+		HOST_DEVICE inline bool operator < (const RayHit& Other) const {
+			return (Stamp < Other.Stamp);
+		}
+	};
 
-class Ray {
-public:
-	Vector3 Origin;
-	Vector3 Direction;
-	
-	HOST_DEVICE FORCEINLINE Ray();
-	HOST_DEVICE FORCEINLINE Ray(const Vector3& Origin, const Vector3& Direction);
-	
-	HOST_DEVICE inline Vector3 GetOrigin() const { return Origin; }	
-	HOST_DEVICE inline Vector3 GetDirection() const { return Direction; }
+	class Ray {
+	public:
+		Vector3 Origin;
+		Vector3 Direction;
 
-	//* Get the position in given time
-	HOST_DEVICE inline Vector3 PointAt(float t) const;
-};
+		HOST_DEVICE FORCEINLINE Ray();
+		HOST_DEVICE FORCEINLINE Ray(const Vector3& Origin, const Vector3& Direction);
+
+		HOST_DEVICE inline Vector3 GetOrigin() const { return Origin; }
+		HOST_DEVICE inline Vector3 GetDirection() const { return Direction; }
+
+		//* Get the position in given time
+		HOST_DEVICE inline Vector3 PointAt(float t) const;
+	};
+
+}
 
 #include "Ray.inl"

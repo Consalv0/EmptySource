@@ -3,6 +3,7 @@
 #include "../include/Math/CoreMath.h"
 
 namespace EmptySource {
+
 	class ApplicationRenderer {
 	public:
 		enum class GLAPI {
@@ -21,4 +22,5 @@ namespace EmptySource {
 
 	private:
 	};
+
 }

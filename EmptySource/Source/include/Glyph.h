@@ -7,24 +7,28 @@
 #include "../include/Shape2D.h"
 #include "../include/Bitmap.h"
 
-struct FontGlyph {
-public:
-	unsigned long UnicodeValue;
-	float Width;
-	float Height;
-	IntVector2 Bearing;
-	float Advance;
-	Box2D UV;
-	Shape2D VectorShape;
-	Bitmap<FloatRed> SDFResterized;
+namespace EmptySource {
 
-	FontGlyph();
+	struct FontGlyph {
+	public:
+		unsigned long UnicodeValue;
+		float Width;
+		float Height;
+		IntVector2 Bearing;
+		float Advance;
+		Box2D UV;
+		Shape2D VectorShape;
+		Bitmap<FloatRed> SDFResterized;
 
-	FontGlyph(const FontGlyph & Other);
+		FontGlyph();
 
-	void GenerateSDF(float PixelRange);
+		FontGlyph(const FontGlyph & Other);
 
-	void GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, struct MeshVertex * Quad);
+		void GenerateSDF(float PixelRange);
 
-	FontGlyph & operator=(const FontGlyph & Other);
-};
+		void GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, struct MeshVertex * Quad);
+
+		FontGlyph & operator=(const FontGlyph & Other);
+	};
+
+}

@@ -1,43 +1,47 @@
 #pragma once
 
-struct FileStream;
+namespace EmptySource {
 
-enum ShaderType {
-	ST_Vertex,
-	ST_Geometry,
-	ST_Fragment,
-	ST_Compute
-};
+	struct FileStream;
 
-class ShaderStage {
-private:
-	ShaderType Type;
+	enum ShaderType {
+		ST_Vertex,
+		ST_Geometry,
+		ST_Fragment,
+		ST_Compute
+	};
 
-	//* Shader object for a single shader stage
-	unsigned int ShaderObject;
+	class ShaderStage {
+	private:
+		ShaderType Type;
 
-public:
+		//* Shader object for a single shader stage
+		unsigned int ShaderObject;
 
-	ShaderStage();
+	public:
 
-	//* Create shader with name
-	ShaderStage(ShaderType Type);
+		ShaderStage();
 
-	//* Get the shader object identifier
-	unsigned int GetShaderObject() const;
+		//* Create shader with name
+		ShaderStage(ShaderType Type);
 
-	//* Get the shader type
-	ShaderType GetType() const;
+		//* Get the shader object identifier
+		unsigned int GetShaderObject() const;
 
-	//* Create and compile our shader unit
-	bool CompileFromFile(const WString & FilePath);
+		//* Get the shader type
+		ShaderType GetType() const;
 
-	//* Create and compile our shader unit
-	bool CompileFromText(const String & Code);
+		//* Create and compile our shader unit
+		bool CompileFromFile(const WString & FilePath);
 
-	//* Unloads the shader unit
-	void Delete();
+		//* Create and compile our shader unit
+		bool CompileFromText(const String & Code);
 
-	//* The shader is valid for use?
-	bool IsValid() const;
-};
+		//* Unloads the shader unit
+		void Delete();
+
+		//* The shader is valid for use?
+		bool IsValid() const;
+	};
+
+}

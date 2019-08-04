@@ -1,42 +1,46 @@
 #pragma once
 
-class Time {
+namespace EmptySource {
 
-private:
-	friend class Application;
+	class Time {
 
-	// Don't use this unless you know what are you doing
-	static void Tick();
+	private:
+		friend class Application;
 
-	// Update the fixed update time
-	// Don't use this unless you know what are you doing
-	// static void FixedTick();
+		// Don't use this unless you know what are you doing
+		static void Tick();
 
-	// Time since the last tick callback
-	static unsigned long long LastUpdateMicro;
-	static unsigned long long LastDeltaMicro;
+		// Update the fixed update time
+		// Don't use this unless you know what are you doing
+		// static void FixedTick();
 
-	static bool bHasInitialized;
+		// Time since the last tick callback
+		static unsigned long long LastUpdateMicro;
+		static unsigned long long LastDeltaMicro;
 
-	static unsigned int TickCount;
-	static double TickAverage;
-	static const unsigned int MaxTickSamples = 25;
-	static unsigned long long TickBuffer[MaxTickSamples];
+		static bool bHasInitialized;
 
-public:
+		static unsigned int TickCount;
+		static double TickAverage;
+		static const unsigned int MaxTickSamples = 25;
+		static unsigned long long TickBuffer[MaxTickSamples];
 
-	// Time in seconds since the last frame;
-	static float GetDeltaTime();
+	public:
 
-	// Time in milliseconds since the last frame;
-	static double GetDeltaTimeMilis();
+		// Time in seconds since the last frame;
+		static float GetDeltaTime();
 
-	// Get frame rate per second (FPS)
-	static float GetFrameRatePerSecond();
+		// Time in milliseconds since the last frame;
+		static double GetDeltaTimeMilis();
 
-	// Machine Time
-	static unsigned long long GetEpochTimeMicro();
+		// Get frame rate per second (FPS)
+		static float GetFrameRatePerSecond();
 
-	// Machine Time
-	static float GetEpochTimeSeconds();
-};
+		// Machine Time
+		static unsigned long long GetEpochTimeMicro();
+
+		// Machine Time
+		static float GetEpochTimeSeconds();
+	};
+
+}

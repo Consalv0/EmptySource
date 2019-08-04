@@ -3,8 +3,10 @@
 #include "../include/Texture.h"
 #include "../include/GLFunctions.h"
 
-unsigned int Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
-	switch (CF) {
+namespace EmptySource {
+
+	unsigned int Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
+		switch (CF) {
 		case Graphics::CF_Red:
 			return GL_RED;
 		case Graphics::CF_RG:
@@ -26,11 +28,11 @@ unsigned int Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
 		default:
 			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
 			return GL_RGBA;
+		}
 	}
-}
 
-unsigned int Texture::GetColorFormatInput(const Graphics::ColorFormat & CF) {
-	switch (CF) {
+	unsigned int Texture::GetColorFormatInput(const Graphics::ColorFormat & CF) {
+		switch (CF) {
 		case Graphics::CF_Red:
 			return GL_RED;
 		case Graphics::CF_RG16F:
@@ -47,11 +49,11 @@ unsigned int Texture::GetColorFormatInput(const Graphics::ColorFormat & CF) {
 		default:
 			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
 			return GL_RGBA;
+		}
 	}
-}
 
-unsigned int Texture::GetInputType(const Graphics::ColorFormat & CF) {
-	switch (CF) {
+	unsigned int Texture::GetInputType(const Graphics::ColorFormat & CF) {
+		switch (CF) {
 		case Graphics::CF_Red:
 		case Graphics::CF_RG:
 		case Graphics::CF_RGB:
@@ -66,12 +68,14 @@ unsigned int Texture::GetInputType(const Graphics::ColorFormat & CF) {
 		default:
 			Debug::Log(Debug::LogWarning, L"Color not implemented, using unsigned byte");
 			return GL_UNSIGNED_BYTE;
+		}
 	}
-}
 
-Texture::Texture() {
-	TextureObject = 0;
-	FilterMode = Graphics::FM_MinMagLinear;
-	AddressMode = Graphics::AM_Border;
-	ColorFormat = Graphics::CF_RGB;
+	Texture::Texture() {
+		TextureObject = 0;
+		FilterMode = Graphics::FM_MinMagLinear;
+		AddressMode = Graphics::AM_Border;
+		ColorFormat = Graphics::CF_RGB;
+	}
+
 }

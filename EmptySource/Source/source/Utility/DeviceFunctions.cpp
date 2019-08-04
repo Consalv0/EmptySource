@@ -112,113 +112,117 @@ inline kern_return_t SMCReadKey(UInt32Char_t Key, SMCVal_t *Value) {
 }
 #endif
 
-bool Debug::InitializeDeviceFunctions() {
+namespace EmptySource {
+
+	bool Debug::InitializeDeviceFunctions() {
 #if defined(WIN32) & defined(USE_CUDA)
-    nvmlReturn_t DeviceResult = nvmlInit();
-    
-    if (NVML_SUCCESS != DeviceResult) {
-        Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWString(nvmlErrorString(DeviceResult)).c_str());
-        return false;
-    }
+		nvmlReturn_t DeviceResult = nvmlInit();
 
-	return true;
+		if (NVML_SUCCESS != DeviceResult) {
+			Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWString(nvmlErrorString(DeviceResult)).c_str());
+			return false;
+		}
+
+		return true;
 #elif __APPLE__
-    kern_return_t Result;
-    io_iterator_t Iterator;
-    io_object_t   Device;
-    
-    CFMutableDictionaryRef matchingDictionary = IOServiceMatching("AppleSMC");
-    Result = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary, &Iterator);
-    if (Result != kIOReturnSuccess) {
-        Debug::Log(Debug::LogError, L"ASMC :: IOServiceGetMatchingServices() = %08x", Result);
-        return false;
-    }
-    
-    Device = IOIteratorNext(Iterator);
-    IOObjectRelease(Iterator);
-    if (Device == 0) {
-        Debug::Log(Debug::LogError, L"ASMC :: No SMC Found");
-        return false;
-    }
-    
-    Result = IOServiceOpen(Device, mach_task_self(), 0, &IOConnection);
-    IOObjectRelease(Device);
-    if (Result != kIOReturnSuccess) {
-        Debug::Log(Debug::LogError, L"ASMC :: IOServiceOpen() = %08x", Result);
-        return false;
-    }
-    
-    return true;
-#else
-	return true;
-#endif
-}
+		kern_return_t Result;
+		io_iterator_t Iterator;
+		io_object_t   Device;
 
-bool Debug::CloseDeviceFunctions() {
+		CFMutableDictionaryRef matchingDictionary = IOServiceMatching("AppleSMC");
+		Result = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary, &Iterator);
+		if (Result != kIOReturnSuccess) {
+			Debug::Log(Debug::LogError, L"ASMC :: IOServiceGetMatchingServices() = %08x", Result);
+			return false;
+		}
+
+		Device = IOIteratorNext(Iterator);
+		IOObjectRelease(Iterator);
+		if (Device == 0) {
+			Debug::Log(Debug::LogError, L"ASMC :: No SMC Found");
+			return false;
+		}
+
+		Result = IOServiceOpen(Device, mach_task_self(), 0, &IOConnection);
+		IOObjectRelease(Device);
+		if (Result != kIOReturnSuccess) {
+			Debug::Log(Debug::LogError, L"ASMC :: IOServiceOpen() = %08x", Result);
+			return false;
+		}
+
+		return true;
+#else
+		return true;
+#endif
+	}
+
+	bool Debug::CloseDeviceFunctions() {
 #if defined(_WIN32) & defined(USE_CUDA)
-    nvmlReturn_t DeviceResult = nvmlShutdown();
-    
-    if (NVML_SUCCESS != DeviceResult) {
-        Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWString(nvmlErrorString(DeviceResult)).c_str());
-        return false;
-    }
+		nvmlReturn_t DeviceResult = nvmlShutdown();
 
-	return true;
+		if (NVML_SUCCESS != DeviceResult) {
+			Debug::Log(Debug::LogError, L"NVML :: Failed to initialize: %ls", CharToWString(nvmlErrorString(DeviceResult)).c_str());
+			return false;
+		}
+
+		return true;
 #elif __APPLE__
-    kern_return_t Result;
-    
-    Result = IOServiceClose(IOConnection);
-    
-    if (Result != kIOReturnSuccess) {
-        Debug::Log(Debug::LogError, L"ASMC :: IOServiceClose() = %08x", Result);
-        return false;
-    }
-    
-    return true;
-#else
-	return true;
-#endif
-}
+		kern_return_t Result;
 
-float Debug::GetDeviceTemperature(const int & DeviceIndex) {
+		Result = IOServiceClose(IOConnection);
+
+		if (Result != kIOReturnSuccess) {
+			Debug::Log(Debug::LogError, L"ASMC :: IOServiceClose() = %08x", Result);
+			return false;
+		}
+
+		return true;
+#else
+		return true;
+#endif
+	}
+
+	float Debug::GetDeviceTemperature(const int & DeviceIndex) {
 #if defined(_WIN32) & defined(USE_CUDA)
-    nvmlDevice_t Device;
-    nvmlReturn_t DeviceResult;
-    unsigned int DeviceTemperature = 0;
-    
-    DeviceResult = nvmlDeviceGetHandleByIndex(DeviceIndex, &Device);
-    if (NVML_SUCCESS != DeviceResult) {
-        // Debug::Log(Debug::LogError, L"NVML :: Failed to get handle for device %i: %ls", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
-        return (float)DeviceTemperature;
-    }
-    
-    DeviceResult = nvmlDeviceGetTemperature(Device, NVML_TEMPERATURE_GPU, &DeviceTemperature);
-    // if (NVML_SUCCESS != DeviceResult) {
-    //     Debug::Log(Debug::LogError, L"NVML :: Failed to get temperature of device %i: %ls", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
-    // }
-    
-    return (float)DeviceTemperature;
-    
+		nvmlDevice_t Device;
+		nvmlReturn_t DeviceResult;
+		unsigned int DeviceTemperature = 0;
+
+		DeviceResult = nvmlDeviceGetHandleByIndex(DeviceIndex, &Device);
+		if (NVML_SUCCESS != DeviceResult) {
+			// Debug::Log(Debug::LogError, L"NVML :: Failed to get handle for device %i: %ls", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
+			return (float)DeviceTemperature;
+		}
+
+		DeviceResult = nvmlDeviceGetTemperature(Device, NVML_TEMPERATURE_GPU, &DeviceTemperature);
+		// if (NVML_SUCCESS != DeviceResult) {
+		//     Debug::Log(Debug::LogError, L"NVML :: Failed to get temperature of device %i: %ls", DeviceIndex, CharToWChar(nvmlErrorString(DeviceResult)));
+		// }
+
+		return (float)DeviceTemperature;
+
 #elif __APPLE__
-    SMCVal_t Value;
-    kern_return_t Result;
-    std::string DeviceTempKey = "TG" + std::to_string(DeviceIndex) + "P";
-    char * DeviceTempKeyChars = (char *)DeviceTempKey.c_str();
-    
-    Result = SMCReadKey(DeviceTempKeyChars, &Value);
-    if (Result == kIOReturnSuccess) {
-        // --- Read succeeded - check returned value
-        if (Value.DataSize > 0) {
-            if (strcmp(Value.DataType, "sp78") == 0) {
-                // --- Convert sp78 value to temperature
-                int intValue = Value.Bytes[0] * 256 + (unsigned char)Value.Bytes[1];
-                return intValue / 256.F;
-            }
-        }
-    }
-    
-    return 0.F;
+		SMCVal_t Value;
+		kern_return_t Result;
+		std::string DeviceTempKey = "TG" + std::to_string(DeviceIndex) + "P";
+		char * DeviceTempKeyChars = (char *)DeviceTempKey.c_str();
+
+		Result = SMCReadKey(DeviceTempKeyChars, &Value);
+		if (Result == kIOReturnSuccess) {
+			// --- Read succeeded - check returned value
+			if (Value.DataSize > 0) {
+				if (strcmp(Value.DataType, "sp78") == 0) {
+					// --- Convert sp78 value to temperature
+					int intValue = Value.Bytes[0] * 256 + (unsigned char)Value.Bytes[1];
+					return intValue / 256.F;
+				}
+			}
+		}
+
+		return 0.F;
 #else
-	return 0.F;
+		return 0.F;
 #endif
+	}
+
 }

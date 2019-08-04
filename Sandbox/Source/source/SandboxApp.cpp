@@ -1,6 +1,8 @@
 
 #include "../Source/include/Application.h"
 
+using namespace EmptySource;
+
 class SandboxApplication : public Application {
 public:
 

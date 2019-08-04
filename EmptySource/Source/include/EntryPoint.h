@@ -18,14 +18,14 @@ extern "C" {
 }
 #endif
 
-extern Application * CreateInstance();
+extern EmptySource::Application * CreateInstance();
 
 int main(int argc, char **argv) {
 #ifdef ES_PLATFORM_WINDOWS
 	_setmode(_fileno(stdout), _O_U8TEXT);
 #endif
 
-	Application::GetInstance().Run();
+	EmptySource::Application::GetInstance().Run();
 
 #ifdef ES_DEBUG
 	Debug::Log(Debug::LogInfo, L"Press any key to close...");

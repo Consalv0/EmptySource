@@ -3,18 +3,22 @@
 #include "Text.h"
 #include "Utility/Hasher.h"
 
-class IIdentifier {
-public: 
-	IIdentifier();
-	IIdentifier(const WString & Name);
+namespace EmptySource {
 
-	WString GetUniqueName() const;
-	size_t GetUniqueID() const;
+	class IIdentifier {
+	public:
+		IIdentifier();
+		IIdentifier(const WString & Name);
 
-private:
+		WString GetUniqueName() const;
+		size_t GetUniqueID() const;
 
-	void ProcessIdentifierName(const WString & Name);
+	private:
 
-	WString InternalName;
-	size_t NameHash;
-};
+		void ProcessIdentifierName(const WString & Name);
+
+		WString InternalName;
+		size_t NameHash;
+	};
+
+}

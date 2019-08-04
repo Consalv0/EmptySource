@@ -5,36 +5,40 @@
 #include "../include/Text.h"
 #include "../include/Bitmap.h"
 
-struct Text2DGenerator {
-private:
-	TDictionary<unsigned long, FontGlyph *> LoadedCharacters;
+namespace EmptySource {
 
-public:
-	Font * TextFont = NULL;
-	int GlyphHeight = 24;
-	int AtlasSize = 512;
-	float PixelRange = 2.F;
-	Vector2 Pivot = 0;
+	struct Text2DGenerator {
+	private:
+		TDictionary<unsigned long, FontGlyph *> LoadedCharacters;
 
-	//* Prepare Character Info
-	void PrepareCharacters(const WChar* Characters, const size_t & Count);
+	public:
+		Font * TextFont = NULL;
+		int GlyphHeight = 24;
+		int AtlasSize = 512;
+		float PixelRange = 2.F;
+		Vector2 Pivot = 0;
 
-	//* Prepare Character Info
-	void PrepareCharacters(const unsigned long & From, const unsigned long & To);
+		//* Prepare Character Info
+		void PrepareCharacters(const WChar* Characters, const size_t & Count);
 
-	//* Generate mesh geometry for rasterization. 
-	void GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
+		//* Prepare Character Info
+		void PrepareCharacters(const unsigned long & From, const unsigned long & To);
 
-	//* Precalculate the leght of the text rendered.
-	Vector2 GetLenght(float HeightSize, const WString & InText);
+		//* Generate mesh geometry for rasterization. 
+		void GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
 
-	//* Update needed characters (returns the number of characters added)
-	int FindCharacters(const WString & InText);
+		//* Precalculate the leght of the text rendered.
+		Vector2 GetLenght(float HeightSize, const WString & InText);
 
-	//* Clear generator memory
-	void Clear();
+		//* Update needed characters (returns the number of characters added)
+		int FindCharacters(const WString & InText);
 
-	//* Prepare Texture Data
-	//* The UV of the glyph quads are calculated here
-	bool GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas);
-};
+		//* Clear generator memory
+		void Clear();
+
+		//* Prepare Texture Data
+		//* The UV of the glyph quads are calculated here
+		bool GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas);
+	};
+
+}

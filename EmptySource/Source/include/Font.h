@@ -2,38 +2,42 @@
 
 #include "../include/Glyph.h"
 
-struct FT_Context {
-	Point2 position;
-	Shape2D *shape;
-	Shape2DContour *contour;
-};
+namespace EmptySource {
 
-class Font {
-private:
-	static struct FT_LibraryRec_ * FreeTypeLibrary;
+	struct FT_Context {
+		Point2 position;
+		Shape2D *shape;
+		Shape2DContour *contour;
+	};
 
-	struct FT_FaceRec_ * Face;
+	class Font {
+	private:
+		static struct FT_LibraryRec_ * FreeTypeLibrary;
 
-public:
+		struct FT_FaceRec_ * Face;
 
-	//* Default Constructor
-	Font();
+	public:
 
-	//* Initialize FreeType Library
-	static bool InitializeFreeType();
+		//* Default Constructor
+		Font();
 
-	//* Initialize Front
-	void Initialize(struct FileStream * File);
+		//* Initialize FreeType Library
+		static bool InitializeFreeType();
 
-	//* Get the index in font of given character
-	unsigned int GetGlyphIndex(const unsigned long & Character) const;
+		//* Initialize Front
+		void Initialize(struct FileStream * File);
 
-	//* Get a copy of a Glyph
-	bool GetGlyph(FontGlyph & Glyph, const unsigned int& GlyphIndex);
+		//* Get the index in font of given character
+		unsigned int GetGlyphIndex(const unsigned long & Character) const;
 
-	//* Set the glyph height for rasterization
-	void SetGlyphHeight(const unsigned int& Size) const;
+		//* Get a copy of a Glyph
+		bool GetGlyph(FontGlyph & Glyph, const unsigned int& GlyphIndex);
 
-	//* Clear all the FreeType info
-	void Clear();
-};
+		//* Set the glyph height for rasterization
+		void SetGlyphHeight(const unsigned int& Size) const;
+
+		//* Clear all the FreeType info
+		void Clear();
+	};
+
+}

@@ -5,27 +5,31 @@
 #include "../include/ResourceManager.h"
 #include "../include/Property.h"
 
-class ResourceHolder : public IIdentifier {
-protected:
-	friend class ResourceManager;
+namespace EmptySource {
 
-	Property<ResourceLoadState> LoadState;
-	ResourceManager * Manager;
-	const WString Name;
+	class ResourceHolder : public IIdentifier {
+	protected:
+		friend class ResourceManager;
 
-	ResourceHolder(ResourceManager * Manager, const WString & Name);
+		Property<ResourceLoadState> LoadState;
+		ResourceManager * Manager;
+		const WString Name;
 
-public:
+		ResourceHolder(ResourceManager * Manager, const WString & Name);
 
-	virtual void Load() = 0;
+	public:
 
-	virtual void Unload() = 0;
+		virtual void Load() = 0;
 
-	virtual void Reload() = 0;
+		virtual void Unload() = 0;
 
-	const ResourceLoadState & GetLoadState() const { return LoadState.Get(); };
+		virtual void Reload() = 0;
 
-	WString GetFriendlyName() const { return Name; };
+		const ResourceLoadState & GetLoadState() const { return LoadState.Get(); };
 
-	ResourceManager * GetResourceManager() const { return Manager; };
-};
+		WString GetFriendlyName() const { return Name; };
+
+		ResourceManager * GetResourceManager() const { return Manager; };
+	};
+
+}

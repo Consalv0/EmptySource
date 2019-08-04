@@ -9,65 +9,69 @@
 #include "../External/SDL2/include/SDL.h"
 #include "../External/SDL2/include/SDL_opengl.h"
 
-RenderPipeline::RenderPipeline() :
-	RenderSacale(1.F), RenderStages() {
-}
+namespace EmptySource {
 
-RenderPipeline::~RenderPipeline() {
-
-}
-
-void RenderPipeline::Initialize() {
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	for (auto & Stage : RenderStages) {
-		Stage.second->Initialize();
+	RenderPipeline::RenderPipeline() :
+		RenderSacale(1.F), RenderStages() {
 	}
-}
 
-void RenderPipeline::ContextInterval(int Interval) {
-	SDL_GL_SetSwapInterval(Interval);
-}
+	RenderPipeline::~RenderPipeline() {
 
-void RenderPipeline::RunStage(WString StageName) {
-	TDictionary<WString, RenderStage *>::iterator Stage;
-	if ((Stage = RenderStages.find(StageName)) != RenderStages.end()) {
-		Stage->second->RunStage();
 	}
-}
 
-bool RenderPipeline::AddStage(WString StageName, RenderStage * Stage) {
-	if (RenderStages.find(StageName) == RenderStages.end()) {
-		RenderStages.insert(std::pair<WString, RenderStage *>(StageName, Stage));
-		Stage->Pipeline = this;
-		return true;
+	void RenderPipeline::Initialize() {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glEnable(GL_BLEND);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		for (auto & Stage : RenderStages) {
+			Stage.second->Initialize();
+		}
 	}
-	return false;
-}
 
-void RenderPipeline::RemoveStage(WString StageName) {
-	if (RenderStages.find(StageName) != RenderStages.end()) {
-		RenderStages.erase(StageName);
+	void RenderPipeline::ContextInterval(int Interval) {
+		SDL_GL_SetSwapInterval(Interval);
 	}
-}
 
-RenderStage * RenderPipeline::GetStage(WString StageName) const {
-	if (RenderStages.find(StageName) != RenderStages.end()) {
-		return RenderStages.find(StageName)->second;
+	void RenderPipeline::RunStage(WString StageName) {
+		TDictionary<WString, RenderStage *>::iterator Stage;
+		if ((Stage = RenderStages.find(StageName)) != RenderStages.end()) {
+			Stage->second->RunStage();
+		}
 	}
-	return NULL;
-}
 
-void RenderPipeline::PrepareFrame() {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, Application::GetInstance().GetMainWindow().GetWidth(), Application::GetInstance().GetMainWindow().GetHeight());
-	Application::GetInstance().GetMainWindow().ClearWindow();
-}
+	bool RenderPipeline::AddStage(WString StageName, RenderStage * Stage) {
+		if (RenderStages.find(StageName) == RenderStages.end()) {
+			RenderStages.insert(std::pair<WString, RenderStage *>(StageName, Stage));
+			Stage->Pipeline = this;
+			return true;
+		}
+		return false;
+	}
 
-void RenderPipeline::EndOfFrame() {
-	Application::GetInstance().GetMainWindow().EndOfFrame();
-	glBindVertexArray(0);
+	void RenderPipeline::RemoveStage(WString StageName) {
+		if (RenderStages.find(StageName) != RenderStages.end()) {
+			RenderStages.erase(StageName);
+		}
+	}
+
+	RenderStage * RenderPipeline::GetStage(WString StageName) const {
+		if (RenderStages.find(StageName) != RenderStages.end()) {
+			return RenderStages.find(StageName)->second;
+		}
+		return NULL;
+	}
+
+	void RenderPipeline::PrepareFrame() {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, Application::GetInstance().GetMainWindow().GetWidth(), Application::GetInstance().GetMainWindow().GetHeight());
+		Application::GetInstance().GetMainWindow().ClearWindow();
+	}
+
+	void RenderPipeline::EndOfFrame() {
+		Application::GetInstance().GetMainWindow().EndOfFrame();
+		glBindVertexArray(0);
+	}
+
 }

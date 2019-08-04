@@ -1,26 +1,30 @@
 #pragma once
 
-namespace Debug {
+namespace EmptySource {
 
-	// Util class to mesaure time between code
-	class Timer {
-	private:
-		unsigned long long StartTime;
-		unsigned long long EndTime;
+	namespace Debug {
 
-	public:
-		// Default Constructor
-		Timer();
+		// Util class to mesaure time between code
+		class Timer {
+		private:
+			unsigned long long StartTime;
+			unsigned long long EndTime;
 
-		// Save time stamp
-		void Start();
-		// Save end time stamp
-		void Stop();
+		public:
+			// Default Constructor
+			Timer();
 
-		// Get enlapsed time in miliseconds
-		double GetEnlapsedMili() const;
-		// Get enlapsed time in seconds
-		double GetEnlapsedSeconds() const;
-	};
+			// Save time stamp
+			void Start();
+			// Save end time stamp
+			void Stop();
+
+			// Get enlapsed time in miliseconds
+			double GetEnlapsedMili() const;
+			// Get enlapsed time in seconds
+			double GetEnlapsedSeconds() const;
+		};
+
+	}
 
 }

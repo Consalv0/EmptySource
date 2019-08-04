@@ -7,54 +7,58 @@
 #include <fstream>
 #include <iostream>
 
-struct FileStream {
-private:
-	std::wfstream* Stream;
-	long Lenght;
-	WString Path;
+namespace EmptySource {
 
-public:
+	struct FileStream {
+	private:
+		std::wfstream* Stream;
+		long Lenght;
+		WString Path;
 
-	FileStream();
-	FileStream(WString Path);
+	public:
 
-	WString GetExtension() const;
-	WString GetFileName() const;
-	WString GetPath() const;
-	WString GetShortPath() const;
-	std::wstringstream ReadStream() const;
-	bool ReadNarrowStream(String* Output) const;
-	WString GetLine();
-	bool IsValid() const;
+		FileStream();
+		FileStream(WString Path);
 
-	template <typename T>
-	inline const std::wistream& operator>>(T Value) {
-        return (std::move(*Stream) >> Value);
-	}
+		WString GetExtension() const;
+		WString GetFileName() const;
+		WString GetPath() const;
+		WString GetShortPath() const;
+		std::wstringstream ReadStream() const;
+		bool ReadNarrowStream(String* Output) const;
+		WString GetLine();
+		bool IsValid() const;
 
-	template <typename T>
-	inline const std::wostream& operator<<(T Value) {
-		return (std::move(*Stream) << Value);
-	}
+		template <typename T>
+		inline const std::wistream& operator>>(T Value) {
+			return (std::move(*Stream) >> Value);
+		}
 
-	inline float GetProgress() const {
-		long Progress = long(Stream->tellg());
-		return Progress / float(Lenght);
-	}
+		template <typename T>
+		inline const std::wostream& operator<<(T Value) {
+			return (std::move(*Stream) << Value);
+		}
 
-	inline long GetPosition() const {
-		return (long)Stream->tellg();
-	}
+		inline float GetProgress() const {
+			long Progress = long(Stream->tellg());
+			return Progress / float(Lenght);
+		}
 
-	void LocaleToUTF8();
+		inline long GetPosition() const {
+			return (long)Stream->tellg();
+		}
 
-	long GetLenght();
-	
-	bool Open();
+		void LocaleToUTF8();
 
-	void Close();
-	
-	void Clean();
-	
-	void Reset();
-};
+		long GetLenght();
+
+		bool Open();
+
+		void Close();
+
+		void Clean();
+
+		void Reset();
+	};
+
+}

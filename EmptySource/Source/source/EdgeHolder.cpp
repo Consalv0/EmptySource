@@ -20,54 +20,58 @@
 
 #include "../include/EdgeHolder.h"
 
-EdgeHolder::EdgeHolder() 
-	: edgeSegment(NULL) { }
+namespace EmptySource {
 
-EdgeHolder::EdgeHolder(EdgeSegment *Segment) 
-	: edgeSegment(Segment) { }
+	EdgeHolder::EdgeHolder()
+		: edgeSegment(NULL) { }
 
-EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, EdgeColor edgeColor) 
-	: edgeSegment(new LinearSegment(P0, P1, edgeColor)) { }
+	EdgeHolder::EdgeHolder(EdgeSegment *Segment)
+		: edgeSegment(Segment) { }
 
-EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, Point2 P2, EdgeColor edgeColor) 
-	: edgeSegment(new QuadraticSegment(P0, P1, P2, edgeColor)) { }
+	EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, EdgeColor edgeColor)
+		: edgeSegment(new LinearSegment(P0, P1, edgeColor)) { }
 
-EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, Point2 P2, Point2 P3, EdgeColor edgeColor) 
-	: edgeSegment(new CubicSegment(P0, P1, P2, P3, edgeColor)) { }
+	EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, Point2 P2, EdgeColor edgeColor)
+		: edgeSegment(new QuadraticSegment(P0, P1, P2, edgeColor)) { }
 
-EdgeHolder::EdgeHolder(const EdgeHolder &Origin) 
-	: edgeSegment(Origin.edgeSegment ? Origin.edgeSegment->Clone() : NULL) { }
+	EdgeHolder::EdgeHolder(Point2 P0, Point2 P1, Point2 P2, Point2 P3, EdgeColor edgeColor)
+		: edgeSegment(new CubicSegment(P0, P1, P2, P3, edgeColor)) { }
 
-EdgeHolder::~EdgeHolder() {
-    delete edgeSegment;
-}
+	EdgeHolder::EdgeHolder(const EdgeHolder &Origin)
+		: edgeSegment(Origin.edgeSegment ? Origin.edgeSegment->Clone() : NULL) { }
 
-EdgeHolder & EdgeHolder::operator=(const EdgeHolder &Origin) {
-    delete edgeSegment;
-    edgeSegment = Origin.edgeSegment ? Origin.edgeSegment->Clone() : NULL;
-    return *this;
-}
+	EdgeHolder::~EdgeHolder() {
+		delete edgeSegment;
+	}
 
-EdgeSegment & EdgeHolder::operator*() {
-    return *edgeSegment;
-}
+	EdgeHolder & EdgeHolder::operator=(const EdgeHolder &Origin) {
+		delete edgeSegment;
+		edgeSegment = Origin.edgeSegment ? Origin.edgeSegment->Clone() : NULL;
+		return *this;
+	}
 
-const EdgeSegment & EdgeHolder::operator*() const {
-    return *edgeSegment;
-}
+	EdgeSegment & EdgeHolder::operator*() {
+		return *edgeSegment;
+	}
 
-EdgeSegment * EdgeHolder::operator->() {
-    return edgeSegment;
-}
+	const EdgeSegment & EdgeHolder::operator*() const {
+		return *edgeSegment;
+	}
 
-const EdgeSegment * EdgeHolder::operator->() const {
-    return edgeSegment;
-}
+	EdgeSegment * EdgeHolder::operator->() {
+		return edgeSegment;
+	}
 
-EdgeHolder::operator EdgeSegment *() {
-    return edgeSegment;
-}
+	const EdgeSegment * EdgeHolder::operator->() const {
+		return edgeSegment;
+	}
 
-EdgeHolder::operator const EdgeSegment *() const {
-    return edgeSegment;
+	EdgeHolder::operator EdgeSegment *() {
+		return edgeSegment;
+	}
+
+	EdgeHolder::operator const EdgeSegment *() const {
+		return edgeSegment;
+	}
+
 }

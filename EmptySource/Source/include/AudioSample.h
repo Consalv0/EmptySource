@@ -1,6 +1,7 @@
 #pragma once
 
 namespace EmptySource {
+
 	class AudioSample {
 	private:
 		float Duration;
@@ -27,4 +28,5 @@ namespace EmptySource {
 
 		bool SetData(unsigned char * InData, unsigned int Offset);
 	};
+
 }

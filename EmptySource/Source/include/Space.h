@@ -3,67 +3,71 @@
 #include "CoreTypes.h"
 #include "IIdentifier.h"
 
-class OObject;
+namespace EmptySource {
 
-class Space : public IIdentifier {
-public:
-	//* Get active main Space
-	static Space* GetMainSpace();
+	class OObject;
 
-	//* Get Space by IIdentifier
-	static Space* GetSpace(const size_t& Identifier);
+	class Space : public IIdentifier {
+	public:
+		//* Get active main Space
+		static Space* GetMainSpace();
 
-	static Space* CreateSpace(const WString& Name);
+		//* Get Space by IIdentifier
+		static Space* GetSpace(const size_t& Identifier);
 
-	static void Destroy(Space * OtherSpace);
+		static Space* CreateSpace(const WString& Name);
 
-	//* Destroys all objects in this Space
-	void DeleteAllObjects();
+		static void Destroy(Space * OtherSpace);
 
-	//* Destroy specific object in this Space
-	void DeleteObject(OObject* object);
+		//* Destroys all objects in this Space
+		void DeleteAllObjects();
 
-	WString GetFriendlyName() const;
+		//* Destroy specific object in this Space
+		void DeleteObject(OObject* object);
 
-	//* Creates an object in this space
+		WString GetFriendlyName() const;
+
+		//* Creates an object in this space
+		template<typename T>
+		T * CreateObject();
+
+		//* Creates an object with name in this space
+		template<typename T, typename... Rest>
+		T * CreateObject(Rest... Args);
+
+	private:
+		Space();
+
+		Space(const WString & Name);
+
+		Space(Space& OtherSpace);
+
+		WString Name;
+
+		//* Dictionary that contains all the Objects in this Space
+		TDictionary<size_t, OObject*> ObjectsIn;
+
+		//* Add object in this space
+		void AddObject(OObject* Object);
+
+	protected:
+
+		// Dictionary of all Spaces created
+		static TDictionary<size_t, Space*> AllSpaces;
+	};
+
 	template<typename T>
-	T * CreateObject();
+	T * Space::CreateObject() {
+		T* NewObject = new T();
+		AddObject(NewObject);
+		return NewObject;
+	}
 
-	//* Creates an object with name in this space
-	template<typename T, typename... Rest>
-	T * CreateObject(Rest... Args);
+	template<typename T, typename ...Rest>
+	T * Space::CreateObject(Rest ...Args) {
+		T* NewObject = new T(Args...);
+		AddObject(NewObject);
+		return NewObject;
+	}
 
-private:
-	Space();
-
-	Space(const WString & Name);
-
-	Space(Space& OtherSpace);
-	
-	WString Name;
-
-	//* Dictionary that contains all the Objects in this Space
-	TDictionary<size_t, OObject*> ObjectsIn;
-
-	//* Add object in this space
-	void AddObject(OObject* Object);
-
-protected:
-
-	// Dictionary of all Spaces created
-	static TDictionary<size_t, Space*> AllSpaces;
-};
-
-template<typename T>
-T * Space::CreateObject() {
-	T* NewObject = new T();
-	AddObject(NewObject);
-	return NewObject;
-}
-
-template<typename T, typename ...Rest>
-T * Space::CreateObject(Rest ...Args) {
-	T* NewObject = new T(Args...);
-	AddObject(NewObject);
-	return NewObject;
 }

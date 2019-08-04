@@ -22,27 +22,31 @@
 
 #include "../include/EdgeSegments.h"
 
+namespace EmptySource {
+
 	/// Container for a single edge of dynamic type.
-class EdgeHolder {
+	class EdgeHolder {
 
-public:
-	EdgeHolder();
-	EdgeHolder(EdgeSegment *Segment);
-	EdgeHolder(Point2 P0, Point2 P1, EdgeColor edgeColor = WHITE);
-	EdgeHolder(Point2 P0, Point2 P1, Point2 P2, EdgeColor edgeColor = WHITE);
-	EdgeHolder(Point2 P0, Point2 P1, Point2 P2, Point2 P3, EdgeColor edgeColor = WHITE);
-	EdgeHolder(const EdgeHolder &Origin);
-	~EdgeHolder();
+	public:
+		EdgeHolder();
+		EdgeHolder(EdgeSegment *Segment);
+		EdgeHolder(Point2 P0, Point2 P1, EdgeColor edgeColor = WHITE);
+		EdgeHolder(Point2 P0, Point2 P1, Point2 P2, EdgeColor edgeColor = WHITE);
+		EdgeHolder(Point2 P0, Point2 P1, Point2 P2, Point2 P3, EdgeColor edgeColor = WHITE);
+		EdgeHolder(const EdgeHolder &Origin);
+		~EdgeHolder();
 
-	EdgeHolder & operator=(const EdgeHolder &Origin);
-	EdgeSegment & operator*();
-	const EdgeSegment & operator*() const;
-	EdgeSegment * operator->();
-	const EdgeSegment * operator->() const;
-	operator EdgeSegment *();
-	operator const EdgeSegment *() const;
+		EdgeHolder & operator=(const EdgeHolder &Origin);
+		EdgeSegment & operator*();
+		const EdgeSegment & operator*() const;
+		EdgeSegment * operator->();
+		const EdgeSegment * operator->() const;
+		operator EdgeSegment *();
+		operator const EdgeSegment *() const;
 
-private:
-	EdgeSegment *edgeSegment;
+	private:
+		EdgeSegment *edgeSegment;
 
-};
+	};
+
+}

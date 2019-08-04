@@ -3,31 +3,35 @@
 #include "../include/CoreTypes.h"
 #include "../include/Text.h"
 
-class RenderPipeline {
-protected:
-	TDictionary<WString, class RenderStage *> RenderStages;
+namespace EmptySource {
 
-public:
-	RenderPipeline();
-	~RenderPipeline();
+	class RenderPipeline {
+	protected:
+		TDictionary<WString, class RenderStage *> RenderStages;
 
-	/* Global variables */
-	// Render Scale Target
-	float RenderSacale;
+	public:
+		RenderPipeline();
+		~RenderPipeline();
 
-	virtual void Initialize();
-	
-	virtual void ContextInterval(int Interval);
-	
-	virtual void RunStage(WString StageName);
-	
-	virtual bool AddStage(WString StageName, RenderStage *);
+		/* Global variables */
+		// Render Scale Target
+		float RenderSacale;
 
-	virtual void RemoveStage(WString StageName);
+		virtual void Initialize();
 
-	virtual RenderStage * GetStage(WString StageName) const;
-	
-	virtual void PrepareFrame();
-	
-	virtual void EndOfFrame();
-};
+		virtual void ContextInterval(int Interval);
+
+		virtual void RunStage(WString StageName);
+
+		virtual bool AddStage(WString StageName, RenderStage *);
+
+		virtual void RemoveStage(WString StageName);
+
+		virtual RenderStage * GetStage(WString StageName) const;
+
+		virtual void PrepareFrame();
+
+		virtual void EndOfFrame();
+	};
+
+}

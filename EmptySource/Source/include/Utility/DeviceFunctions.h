@@ -2,11 +2,15 @@
 
 #include "../../include/Core.h"
 
-namespace Debug {
-	//* Initialize Nvidia Managment Library or IOKitLib
-    bool InitializeDeviceFunctions();
+namespace EmptySource {
 
-    bool CloseDeviceFunctions();
-    
-	float GetDeviceTemperature(const int& DeviceIndex);
+	namespace Debug {
+		//* Initialize Nvidia Managment Library or IOKitLib
+		bool InitializeDeviceFunctions();
+
+		bool CloseDeviceFunctions();
+
+		float GetDeviceTemperature(const int& DeviceIndex);
+	}
+
 }

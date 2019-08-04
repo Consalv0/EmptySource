@@ -3,11 +3,11 @@
 #define NOMINMAX
 
 // Include windows headers
-#if defined(_WIN32) && defined(_MSC_VER)
+#ifdef ES_PLATFORM_WINDOWS
 #include <windows.h>
 #include <io.h>
 #include <conio.h>
-#endif // _WIN32
+#endif // ES_PLATFORM_WINDOWS
 
 // Include main standard headers
 #include <stdexcept>

@@ -6,27 +6,31 @@
 #include "../include/Math/Quaternion.h"
 #include "../include/Math/Matrix4x4.h"
 
-class Transform {
-public:
-	Point3 Position;
-	Quaternion Rotation;
-	Vector3 Scale;
+namespace EmptySource {
 
-	Transform();
-	Transform(const Point3 & Position, const Quaternion & Rotation, const Vector3 & Scale);
-	Transform(const Point3 & Position, const Quaternion & Rotation);
-	Transform(const Point3 & Position);
+	class Transform {
+	public:
+		Point3 Position;
+		Quaternion Rotation;
+		Vector3 Scale;
 
-	Vector3 Forward() const;
-	Vector3 Up() const;
-	Vector3 Right() const;
+		Transform();
+		Transform(const Point3 & Position, const Quaternion & Rotation, const Vector3 & Scale);
+		Transform(const Point3 & Position, const Quaternion & Rotation);
+		Transform(const Point3 & Position);
 
-	//* Get the inverse of the Model matrix
-	Matrix4x4 GetWorldToLocalMatrix() const;
+		Vector3 Forward() const;
+		Vector3 Up() const;
+		Vector3 Right() const;
 
-	//* Get the Model matrix
-	Matrix4x4 GetLocalToWorldMatrix() const;
+		//* Get the inverse of the Model matrix
+		Matrix4x4 GetWorldToLocalMatrix() const;
 
-	//* Get the Model matrix
-	Matrix4x4 GetGLViewMatrix() const;
-};
+		//* Get the Model matrix
+		Matrix4x4 GetLocalToWorldMatrix() const;
+
+		//* Get the Model matrix
+		Matrix4x4 GetGLViewMatrix() const;
+	};
+
+}

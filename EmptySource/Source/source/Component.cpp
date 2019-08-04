@@ -2,20 +2,24 @@
 #include "../include/GameObject.h"
 #include "../include/Component.h"
 
-CComponent::CComponent(GGameObject & GameObject) : OObject(L"Component"), Holder(GameObject) {
-}
+namespace EmptySource {
 
-CComponent::CComponent(WString Name, GGameObject & GameObject) : OObject(Name), Holder(GameObject) {
-}
+	CComponent::CComponent(GGameObject & GameObject) : OObject(L"Component"), Holder(GameObject) {
+	}
 
-void CComponent::OnDelete() {
-	Supper::OnDelete();
-}
+	CComponent::CComponent(WString Name, GGameObject & GameObject) : OObject(Name), Holder(GameObject) {
+	}
 
-bool CComponent::Initialize() {
-	return true;
-}
+	void CComponent::OnDelete() {
+		Supper::OnDelete();
+	}
 
-GGameObject & CComponent::GetGameObject() const {
-	return Holder;
+	bool CComponent::Initialize() {
+		return true;
+	}
+
+	GGameObject & CComponent::GetGameObject() const {
+		return Holder;
+	}
+
 }

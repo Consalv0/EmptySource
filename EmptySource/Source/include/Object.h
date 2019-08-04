@@ -3,25 +3,29 @@
 #include "../include/Space.h"
 #include "../include/IIdentifier.h"
 
-class OObject : public IIdentifier {
-protected:
-	friend class Space;
+namespace EmptySource {
 
-	Space* SpaceIn;
+	class OObject : public IIdentifier {
+	protected:
+		friend class Space;
 
-	WString Name;
+		Space* SpaceIn;
 
-	OObject();
-	OObject(const WString& Name);
+		WString Name;
 
-	// Space initializer
-	virtual bool Initialize() { return true; };
+		OObject();
+		OObject(const WString& Name);
 
-public:
+		// Space initializer
+		virtual bool Initialize() { return true; };
 
-	// Safe methos to delete this object removing it from the Space
-	virtual void OnDelete() {};
+	public:
 
-	// Name of this object
-	WString GetName();
-};
+		// Safe methos to delete this object removing it from the Space
+		virtual void OnDelete() {};
+
+		// Name of this object
+		WString GetName();
+	};
+
+}

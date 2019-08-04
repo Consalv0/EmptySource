@@ -5,37 +5,41 @@
 
 #include <functional>
 
-template<typename ...Args>
-struct Task {
-private:
-	TArray<const Observer*> Observers;
+namespace EmptySource {
 
-	void NotifyFinished() {
-		for (auto& ItObserver : Observers) {
-			ItObserver->Call();
+	template<typename ...Args>
+	struct Task {
+	private:
+		TArray<const Observer*> Observers;
+
+		void NotifyFinished() {
+			for (auto& ItObserver : Observers) {
+				ItObserver->Call();
+			}
 		}
-	}
 
-public:
-	typedef std::function<void(Args...)> TaskFunction;
+	public:
+		typedef std::function<void(Args...)> TaskFunction;
 
-	TaskFunction Function;
+		TaskFunction Function;
 
-	Task(const Task& Other) = delete;
-	Task() : Function() { }
-	Task(TaskFunction Function) :
-		Function(Function) {}
+		Task(const Task& Other) = delete;
+		Task() : Function() { }
+		Task(TaskFunction Function) :
+			Function(Function) {}
 
-	void Run(Args... Arguments) {
-		Function(Arguments);
-		NotifyFinished();
-	}
+		void Run(Args... Arguments) {
+			Function(Arguments);
+			NotifyFinished();
+		}
 
-	void AttachObserver(const Observer* Value) {
-		Observers.push_back(Value);
-	}
+		void AttachObserver(const Observer* Value) {
+			Observers.push_back(Value);
+		}
 
-	void DetachObserver(const Observer* Value) {
-		Observers.erase(std::remove(Observers.begin(), Observers.end(), Value), Observers.end());
-	}
-};
+		void DetachObserver(const Observer* Value) {
+			Observers.erase(std::remove(Observers.begin(), Observers.end(), Value), Observers.end());
+		}
+	};
+
+}

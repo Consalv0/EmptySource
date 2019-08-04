@@ -1,21 +1,25 @@
 #include "../../include/CoreTime.h"
 #include "../../include/Utility/Timer.h"
 
-Debug::Timer::Timer() {
-}
+namespace EmptySource {
 
-void Debug::Timer::Start() {
-	StartTime = Time::GetEpochTimeMicro();
-}
+	Debug::Timer::Timer() {
+	}
 
-void Debug::Timer::Stop() {
-	EndTime = Time::GetEpochTimeMicro();
-}
+	void Debug::Timer::Start() {
+		StartTime = Time::GetEpochTimeMicro();
+	}
 
-double Debug::Timer::GetEnlapsedMili() const {
-	return double(EndTime - StartTime) / 1000.F;
-}
+	void Debug::Timer::Stop() {
+		EndTime = Time::GetEpochTimeMicro();
+	}
 
-double Debug::Timer::GetEnlapsedSeconds() const {
-	return GetEnlapsedMili() / 1000.F;
+	double Debug::Timer::GetEnlapsedMili() const {
+		return double(EndTime - StartTime) / 1000.F;
+	}
+
+	double Debug::Timer::GetEnlapsedSeconds() const {
+		return GetEnlapsedMili() / 1000.F;
+	}
+
 }

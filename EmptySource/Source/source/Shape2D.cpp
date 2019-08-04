@@ -20,46 +20,50 @@
 
 #include "../include/Shape2D.h"
 
-Shape2D::Shape2D() : bInverseYAxis(false) { }
+namespace EmptySource {
 
-void Shape2D::AddContour(const Shape2DContour &Contour) {
-	Contours.push_back(Contour);
-}
+	Shape2D::Shape2D() : bInverseYAxis(false) { }
 
-Shape2DContour & Shape2D::AddContour() {
-	Contours.resize(Contours.size() + 1);
-	return Contours[Contours.size() - 1];
-}
+	void Shape2D::AddContour(const Shape2DContour &Contour) {
+		Contours.push_back(Contour);
+	}
 
-bool Shape2D::Validate() const {
-	for (TArray<Shape2DContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour) {
-		if (!Contour->Edges.empty()) {
-			Point2 Corner = (*(Contour->Edges.end() - 1))->PointAt(1);
-			for (TArray<EdgeHolder>::const_iterator Edge = Contour->Edges.begin(); Edge != Contour->Edges.end(); ++Edge) {
-				if (!*Edge)
-					return false;
-				if ((*Edge)->PointAt(0) != Corner)
-					return false;
-				Corner = (*Edge)->PointAt(1);
+	Shape2DContour & Shape2D::AddContour() {
+		Contours.resize(Contours.size() + 1);
+		return Contours[Contours.size() - 1];
+	}
+
+	bool Shape2D::Validate() const {
+		for (TArray<Shape2DContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour) {
+			if (!Contour->Edges.empty()) {
+				Point2 Corner = (*(Contour->Edges.end() - 1))->PointAt(1);
+				for (TArray<EdgeHolder>::const_iterator Edge = Contour->Edges.begin(); Edge != Contour->Edges.end(); ++Edge) {
+					if (!*Edge)
+						return false;
+					if ((*Edge)->PointAt(0) != Corner)
+						return false;
+					Corner = (*Edge)->PointAt(1);
+				}
 			}
 		}
+		return true;
 	}
-	return true;
-}
 
-void Shape2D::Normalize() {
-	for (TArray<Shape2DContour>::iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
-		if (Contour->Edges.size() == 1) {
-			EdgeSegment *parts[3] = { };
-			Contour->Edges[0]->SplitInThirds(parts[0], parts[1], parts[2]);
-			Contour->Edges.clear();
-			Contour->Edges.push_back(EdgeHolder(parts[0]));
-			Contour->Edges.push_back(EdgeHolder(parts[1]));
-			Contour->Edges.push_back(EdgeHolder(parts[2]));
-		}
-}
+	void Shape2D::Normalize() {
+		for (TArray<Shape2DContour>::iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
+			if (Contour->Edges.size() == 1) {
+				EdgeSegment *parts[3] = { };
+				Contour->Edges[0]->SplitInThirds(parts[0], parts[1], parts[2]);
+				Contour->Edges.clear();
+				Contour->Edges.push_back(EdgeHolder(parts[0]));
+				Contour->Edges.push_back(EdgeHolder(parts[1]));
+				Contour->Edges.push_back(EdgeHolder(parts[2]));
+			}
+	}
 
-void Shape2D::Bounds(Box2D & Bounds) const {
-	for (TArray<Shape2DContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
-		Contour->GetBounds(Bounds.Left, Bounds.Bottom, Bounds.Right, Bounds.Top);
+	void Shape2D::Bounds(Box2D & Bounds) const {
+		for (TArray<Shape2DContour>::const_iterator Contour = Contours.begin(); Contour != Contours.end(); ++Contour)
+			Contour->GetBounds(Bounds.Left, Bounds.Bottom, Bounds.Right, Bounds.Top);
+	}
+
 }

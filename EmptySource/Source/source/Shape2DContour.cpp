@@ -21,49 +21,53 @@
 #include "../include/Math/MathUtility.h"
 #include "../include/Shape2DContour.h"
 
-void Shape2DContour::AddEdge(const EdgeHolder &Edge) {
-	Edges.push_back(Edge);
-}
+namespace EmptySource {
 
-EdgeHolder & Shape2DContour::AddEdge() {
-	Edges.resize(Edges.size() + 1);
-	return Edges[Edges.size() - 1];
-}
-
-void Shape2DContour::GetBounds(float &Left, float &Bottom, float &Right, float &Top) const {
-	for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge)
-		(*Edge)->GetBounds(Left, Bottom, Right, Top);
-}
-
-void Shape2DContour::GetBounds(BoundingBox2D & BBox) const {
-	for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge)
-		(*Edge)->GetBounds(BBox.Left, BBox.Bottom, BBox.Right, BBox.Top);
-}
-
-int Shape2DContour::Winding() const {
-	if (Edges.empty())
-		return 0;
-	float Total = 0;
-	if (Edges.size() == 1) {
-		Point2 a = Edges[0]->PointAt(0), b = Edges[0]->PointAt(1 / 3.F), c = Edges[0]->PointAt(2 / 3.F);
-		Total += MathEquations::Shoelace2(a, b);
-		Total += MathEquations::Shoelace2(b, c);
-		Total += MathEquations::Shoelace2(c, a);
+	void Shape2DContour::AddEdge(const EdgeHolder &Edge) {
+		Edges.push_back(Edge);
 	}
-	else if (Edges.size() == 2) {
-		Point2 a = Edges[0]->PointAt(0), b = Edges[0]->PointAt(.5F), c = Edges[1]->PointAt(0), d = Edges[1]->PointAt(.5F);
-		Total += MathEquations::Shoelace2(a, b);
-		Total += MathEquations::Shoelace2(b, c);
-		Total += MathEquations::Shoelace2(c, d);
-		Total += MathEquations::Shoelace2(d, a);
+
+	EdgeHolder & Shape2DContour::AddEdge() {
+		Edges.resize(Edges.size() + 1);
+		return Edges[Edges.size() - 1];
 	}
-	else {
-		Point2 Previous = Edges[Edges.size() - 1]->PointAt(0);
-		for (TArray<EdgeHolder>::const_iterator edge = Edges.begin(); edge != Edges.end(); ++edge) {
-			Point2 Current = (*edge)->PointAt(0);
-			Total += MathEquations::Shoelace2(Previous, Current);
-			Previous = Current;
+
+	void Shape2DContour::GetBounds(float &Left, float &Bottom, float &Right, float &Top) const {
+		for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge)
+			(*Edge)->GetBounds(Left, Bottom, Right, Top);
+	}
+
+	void Shape2DContour::GetBounds(BoundingBox2D & BBox) const {
+		for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge)
+			(*Edge)->GetBounds(BBox.Left, BBox.Bottom, BBox.Right, BBox.Top);
+	}
+
+	int Shape2DContour::Winding() const {
+		if (Edges.empty())
+			return 0;
+		float Total = 0;
+		if (Edges.size() == 1) {
+			Point2 a = Edges[0]->PointAt(0), b = Edges[0]->PointAt(1 / 3.F), c = Edges[0]->PointAt(2 / 3.F);
+			Total += MathEquations::Shoelace2(a, b);
+			Total += MathEquations::Shoelace2(b, c);
+			Total += MathEquations::Shoelace2(c, a);
 		}
+		else if (Edges.size() == 2) {
+			Point2 a = Edges[0]->PointAt(0), b = Edges[0]->PointAt(.5F), c = Edges[1]->PointAt(0), d = Edges[1]->PointAt(.5F);
+			Total += MathEquations::Shoelace2(a, b);
+			Total += MathEquations::Shoelace2(b, c);
+			Total += MathEquations::Shoelace2(c, d);
+			Total += MathEquations::Shoelace2(d, a);
+		}
+		else {
+			Point2 Previous = Edges[Edges.size() - 1]->PointAt(0);
+			for (TArray<EdgeHolder>::const_iterator edge = Edges.begin(); edge != Edges.end(); ++edge) {
+				Point2 Current = (*edge)->PointAt(0);
+				Total += MathEquations::Shoelace2(Previous, Current);
+				Previous = Current;
+			}
+		}
+		return Math::Sign(Total);
 	}
-	return Math::Sign(Total);
+
 }

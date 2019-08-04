@@ -2,14 +2,18 @@
 #include "../include/Core.h"
 #include "../include/Object.h"
 
-OObject::OObject() : IIdentifier(L"Object") { 
-	Name = GetUniqueName();
-}
+namespace EmptySource {
 
-OObject::OObject(const WString & InName) : IIdentifier(InName) {
-	Name = InName;
-}
+	OObject::OObject() : IIdentifier(L"Object") {
+		Name = GetUniqueName();
+	}
 
-WString OObject::GetName() {
-	return Name;
+	OObject::OObject(const WString & InName) : IIdentifier(InName) {
+		Name = InName;
+	}
+
+	WString OObject::GetName() {
+		return Name;
+	}
+
 }

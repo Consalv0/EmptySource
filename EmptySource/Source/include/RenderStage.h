@@ -5,35 +5,39 @@
 #include "../include/Mesh.h"
 #include "../include/RenderPipeline.h"
 
-class RenderStage {
-protected:
-	friend class RenderPipeline;
+namespace EmptySource {
 
-	RenderPipeline * Pipeline;
+	class RenderStage {
+	protected:
+		friend class RenderPipeline;
 
-	unsigned int ModelMatrixBuffer;
+		RenderPipeline * Pipeline;
 
-	Transform EyeTransform;
-	
-	Matrix4x4 ViewProjection;
+		unsigned int ModelMatrixBuffer;
 
-	virtual void Initialize();
+		Transform EyeTransform;
 
-	virtual void Prepare();
-	
-	virtual void Finish() {};
+		Matrix4x4 ViewProjection;
 
-	virtual void RunStage();
+		virtual void Initialize();
 
-public:
-	// TArray<Task<>> RenderTasks;
-	Event OnRenderEvent;
+		virtual void Prepare();
 
-	class Material * CurrentMaterial;
+		virtual void Finish() {};
 
-	virtual void SetEyeTransform(const Transform & EyeTransform);
+		virtual void RunStage();
 
-	virtual void SetViewProjection(const Matrix4x4 & Projection);
+	public:
+		// TArray<Task<>> RenderTasks;
+		Event OnRenderEvent;
 
-	unsigned int GetMatrixBuffer() const;
-};
+		class Material * CurrentMaterial;
+
+		virtual void SetEyeTransform(const Transform & EyeTransform);
+
+		virtual void SetViewProjection(const Matrix4x4 & Projection);
+
+		unsigned int GetMatrixBuffer() const;
+	};
+
+}

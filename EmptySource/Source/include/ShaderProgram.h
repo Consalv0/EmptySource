@@ -4,54 +4,58 @@
 #include <functional>
 #include <cstring>
 
-typedef TDictionary<const Char *, unsigned int> LocationMap;
+namespace EmptySource {
 
-class ShaderProgram {
-private:
-	ShaderStage* VertexShader;
-	ShaderStage* FragmentShader;
-	ShaderStage* ComputeShader;
-	ShaderStage* GeometryShader;
-	WString Name;
+	typedef TDictionary<const Char *, unsigned int> LocationMap;
 
-	bool bIsLinked;
+	class ShaderProgram {
+	private:
+		ShaderStage* VertexShader;
+		ShaderStage* FragmentShader;
+		ShaderStage* ComputeShader;
+		ShaderStage* GeometryShader;
+		WString Name;
 
-	//* Link the shader to OpenGL
-	bool LinkProgram();
+		bool bIsLinked;
 
-	//* Shader Program Object
-	unsigned int ProgramObject;
+		//* Link the shader to OpenGL
+		bool LinkProgram();
 
-	LocationMap Locations;
+		//* Shader Program Object
+		unsigned int ProgramObject;
 
-public:
-	//* Default Constructor
-	ShaderProgram();
+		LocationMap Locations;
 
-	//* Constructor with name
-	ShaderProgram(WString Name);
+	public:
+		//* Default Constructor
+		ShaderProgram();
 
-	//* Get the location id of a uniform variable in this shader
-	unsigned int GetUniformLocation(const Char* LocationName);
+		//* Constructor with name
+		ShaderProgram(WString Name);
 
-	//* Get the location of the attrib in this shader
-	unsigned int GetAttribLocation(const Char* LocationName);
+		//* Get the location id of a uniform variable in this shader
+		unsigned int GetUniformLocation(const Char* LocationName);
 
-	//* Appends shader unit to shader program
-	void AppendStage(ShaderStage* ShaderProgram);
+		//* Get the location of the attrib in this shader
+		unsigned int GetAttribLocation(const Char* LocationName);
 
-	//* Get the string name of this program
-	WString GetName() const;
+		//* Appends shader unit to shader program
+		void AppendStage(ShaderStage* ShaderProgram);
 
-	//* Prepare OpenGL to use this shader
-	void Use() const;
+		//* Get the string name of this program
+		WString GetName() const;
 
-	//* Compile shader program
-	void Compile();
+		//* Prepare OpenGL to use this shader
+		void Use() const;
 
-	//* Unloads the shader program
-	void Delete();
+		//* Compile shader program
+		void Compile();
 
-	//* The shader is valid for use?
-	bool IsValid() const;
-};
+		//* Unloads the shader program
+		void Delete();
+
+		//* The shader is valid for use?
+		bool IsValid() const;
+	};
+
+}

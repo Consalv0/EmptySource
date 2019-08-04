@@ -3,33 +3,37 @@
 #include "../include/ResourceHolder.h"
 #include "../include/ShaderStage.h"
 
-struct ShaderStageResource : public ResourceHolder {
-protected:
-	typedef ResourceHolder Supper;
+namespace EmptySource {
 
-	friend class ShaderStageManager;
+	struct ShaderStageResource : public ResourceHolder {
+	protected:
+		typedef ResourceHolder Supper;
 
-	ShaderStage * Resource;
+		friend class ShaderStageManager;
 
-	ShaderType Type;
+		ShaderStage * Resource;
 
-	WString ShaderPath;
+		ShaderType Type;
 
-	String ShaderCode;
+		WString ShaderPath;
 
-	ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, WString ShaderPath);
+		String ShaderCode;
 
-	ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, const String & Code);
+		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, WString ShaderPath);
 
-public:
+		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, const String & Code);
 
-	void Load();
+	public:
 
-	void Unload();
-	
-	void Reload();
+		void Load();
 
-	const ShaderType & GetShaderType() const { return Type; };
+		void Unload();
 
-	WString GetShaderPath() const { return ShaderPath; };
-};
+		void Reload();
+
+		const ShaderType & GetShaderType() const { return Type; };
+
+		WString GetShaderPath() const { return ShaderPath; };
+	};
+
+}

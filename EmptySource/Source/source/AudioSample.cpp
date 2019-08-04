@@ -1,6 +1,7 @@
 #include "..\include\AudioSample.h"
 
 namespace EmptySource {
+
 	bool AudioSample::GetData(unsigned char * OutData, unsigned int Offset)
 	{
 		return false;
@@ -10,4 +11,6 @@ namespace EmptySource {
 	{
 		return false;
 	}
+
 }
+

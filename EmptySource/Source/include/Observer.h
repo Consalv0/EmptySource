@@ -4,20 +4,24 @@
 #include "../include/Text.h"
 #include <functional>
 
-struct Observer {
-public:
-	typedef Observer Supper;
+namespace EmptySource {
 
-	virtual void Call() const;
+	struct Observer {
+	public:
+		typedef Observer Supper;
 
-	bool AddCallback(const String& Identifier, std::function<void()>);
+		virtual void Call() const;
 
-	void RemoveCallback(const String& Identifier);
+		bool AddCallback(const String& Identifier, std::function<void()>);
 
-	void RemoveAllCallbacks();
+		void RemoveCallback(const String& Identifier);
 
-	virtual ~Observer();
+		void RemoveAllCallbacks();
 
-private:
-	TDictionary<String, std::function<void()>> Callbacks;
-};
+		virtual ~Observer();
+
+	private:
+		TDictionary<String, std::function<void()>> Callbacks;
+	};
+
+}

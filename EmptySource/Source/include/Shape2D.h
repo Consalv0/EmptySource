@@ -25,31 +25,35 @@
 #include "../include/Math/Vector3.h"
 #include "../include/Math/Box2D.h"
 
-// Vector shape representation.
-class Shape2D {
-public:
-	//* The list of contours the shape consists of.
-	TArray<Shape2DContour> Contours;
+namespace EmptySource {
 
-	//* Specifies whether the shape uses bottom-to-top (false) or top-to-bottom (true) Y coordinates.
-	bool bInverseYAxis;
+	// Vector shape representation.
+	class Shape2D {
+	public:
+		//* The list of contours the shape consists of.
+		TArray<Shape2DContour> Contours;
 
-	//* Default constructor
-	Shape2D();
-	
-	//* Adds a contour.
-	void AddContour(const Shape2DContour & Contour);
+		//* Specifies whether the shape uses bottom-to-top (false) or top-to-bottom (true) Y coordinates.
+		bool bInverseYAxis;
 
-	//* Adds a blank contour and returns its reference.
-	Shape2DContour & AddContour();
-	
-	//* Normalizes the shape geometry for distance field generation.
-	void Normalize();
-	
-	//* Performs basic checks to determine if the object represents a valid shape.
-	bool Validate() const;
-	
-	//* Computes the shape's bounding box.
-	void Bounds(Box2D & Bounds) const;
+		//* Default constructor
+		Shape2D();
 
-};
+		//* Adds a contour.
+		void AddContour(const Shape2DContour & Contour);
+
+		//* Adds a blank contour and returns its reference.
+		Shape2DContour & AddContour();
+
+		//* Normalizes the shape geometry for distance field generation.
+		void Normalize();
+
+		//* Performs basic checks to determine if the object represents a valid shape.
+		bool Validate() const;
+
+		//* Computes the shape's bounding box.
+		void Bounds(Box2D & Bounds) const;
+
+	};
+
+}

@@ -5,36 +5,40 @@
 #include "../include/Math/IntVector2.h"
 #include "../include/Math/Box2D.h"
 
-struct Texture3D : public Texture {
-private:
-	//* Texture dimesions
-	IntVector3 Dimension;
+namespace EmptySource {
 
-public:
-	//* Constructor
-	Texture3D(
-		const IntVector3& Size, const Graphics::ColorFormat ColorFormat,
-		const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
-	);
+	struct Texture3D : public Texture {
+	private:
+		//* Texture dimesions
+		IntVector3 Dimension;
 
-	//* Get Dimension of the texture
-	IntVector3 GetDimension() const;
+	public:
+		//* Constructor
+		Texture3D(
+			const IntVector3& Size, const Graphics::ColorFormat ColorFormat,
+			const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
+		);
 
-	void GenerateMipMaps();
-	
-	//* Use the texture
-	void Use() const;
+		//* Get Dimension of the texture
+		IntVector3 GetDimension() const;
 
-	//* Deuse the texture
-	void Deuse() const;
+		void GenerateMipMaps();
 
-	//* Check if texture is valid
-	bool IsValid() const;
+		//* Use the texture
+		void Use() const;
 
-	void SetFilterMode(const Graphics::FilterMode& Mode);
+		//* Deuse the texture
+		void Deuse() const;
 
-	void SetAddressMode(const Graphics::AddressMode& Mode);
+		//* Check if texture is valid
+		bool IsValid() const;
 
-	//* 
-	void Delete();
-};
+		void SetFilterMode(const Graphics::FilterMode& Mode);
+
+		void SetAddressMode(const Graphics::AddressMode& Mode);
+
+		//* 
+		void Delete();
+	};
+
+}

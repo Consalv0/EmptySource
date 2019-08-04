@@ -23,24 +23,28 @@
 #include "../include/EdgeHolder.h"
 #include "../include/Math/Box2D.h"
 
-// A single closed contour of a shape.
-class Shape2DContour {
-public:
-	// The sequence of edges that make up the contour.
-	TArray<EdgeHolder> Edges;
+namespace EmptySource {
 
-	// Adds an edge to the contour.
-	void AddEdge(const EdgeHolder & Edge);
+	// A single closed contour of a shape.
+	class Shape2DContour {
+	public:
+		// The sequence of edges that make up the contour.
+		TArray<EdgeHolder> Edges;
 
-	// Creates a new edge in the contour and returns its reference.
-	EdgeHolder & AddEdge();
+		// Adds an edge to the contour.
+		void AddEdge(const EdgeHolder & Edge);
 
-	// Computes the bounding box of the contour.
-	void GetBounds(float &Left, float &Bottom, float &Right, float &Top) const;
+		// Creates a new edge in the contour and returns its reference.
+		EdgeHolder & AddEdge();
 
-	// Computes the bounding box of the contour.
-	void GetBounds(BoundingBox2D & BBox) const;
-	
-	// Computes the winding of the contour. Returns 1 if positive, -1 if negative.
-	int Winding() const;
-};
+		// Computes the bounding box of the contour.
+		void GetBounds(float &Left, float &Bottom, float &Right, float &Top) const;
+
+		// Computes the bounding box of the contour.
+		void GetBounds(BoundingBox2D & BBox) const;
+
+		// Computes the winding of the contour. Returns 1 if positive, -1 if negative.
+		int Winding() const;
+	};
+
+}

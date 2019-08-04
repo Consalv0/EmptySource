@@ -5,46 +5,50 @@
 #include "../include/Math/IntVector2.h"
 #include "../include/Math/Box2D.h"
 
-struct RenderTarget {
-private:
-	unsigned int FramebufferObject;
+namespace EmptySource {
 
-	const Texture* TextureColor0Target; 
-	unsigned int RenderbufferObject;
+	struct RenderTarget {
+	private:
+		unsigned int FramebufferObject;
 
-	//* Render dimesions
-	IntVector2 Resolution;
+		const Texture* TextureColor0Target;
+		unsigned int RenderbufferObject;
 
-public:
-	//* Constructor
-	RenderTarget();
+		//* Render dimesions
+		IntVector2 Resolution;
 
-	//* Get Dimension of the texture
-	IntVector2 GetDimension() const;
+	public:
+		//* Constructor
+		RenderTarget();
 
-	//* All future texture functions will modify this texture
-	void PrepareTexture(const struct Texture2D * Texture, const int& Lod = 0, const int& TextureAttachment = 0);
-	//* All future texture functions will modify this texture
-	void PrepareTexture(const struct Cubemap * Texture, const int& TexturePos, const int& Lod = 0, const int& TextureAttachment = 0);
+		//* Get Dimension of the texture
+		IntVector2 GetDimension() const;
 
-	//* Set resolution of render
-	void Resize(const int & x, const int & y);
+		//* All future texture functions will modify this texture
+		void PrepareTexture(const struct Texture2D * Texture, const int& Lod = 0, const int& TextureAttachment = 0);
+		//* All future texture functions will modify this texture
+		void PrepareTexture(const struct Cubemap * Texture, const int& TexturePos, const int& Lod = 0, const int& TextureAttachment = 0);
 
-	//* Set up framebuffer and renderbuffer
-	void SetUpBuffers();
+		//* Set resolution of render
+		void Resize(const int & x, const int & y);
 
-	//* Checks the framebuffer status
-	bool CheckStatus() const;
+		//* Set up framebuffer and renderbuffer
+		void SetUpBuffers();
 
-	//* Use the texture
-	void Use() const;
+		//* Checks the framebuffer status
+		bool CheckStatus() const;
 
-	//* Clears the renderbuffer
-	void Clear() const;
+		//* Use the texture
+		void Use() const;
 
-	//* Check if texture is valid
-	bool IsValid() const;
+		//* Clears the renderbuffer
+		void Clear() const;
 
-	//* 
-	void Delete();
-};
+		//* Check if texture is valid
+		bool IsValid() const;
+
+		//* 
+		void Delete();
+	};
+
+}

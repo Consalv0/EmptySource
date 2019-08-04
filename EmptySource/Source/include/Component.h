@@ -1,25 +1,30 @@
 #pragma once
 
 #include "../include/Object.h"
-class GGameObject;
 
-class CComponent : public OObject {
-protected:
-	typedef OObject Supper;
-	friend class GGameObject;
-	friend class Space;
+namespace EmptySource {
 
-	CComponent(GGameObject & GameObject);
-	CComponent(WString Name, GGameObject & GameObject);
-	
-	virtual void OnDelete();
+	class GGameObject;
 
-	virtual bool Initialize();
+	class CComponent : public OObject {
+	protected:
+		typedef OObject Supper;
+		friend class GGameObject;
+		friend class Space;
 
-	GGameObject & Holder;
+		CComponent(GGameObject & GameObject);
+		CComponent(WString Name, GGameObject & GameObject);
 
-public:
+		virtual void OnDelete();
 
-	GGameObject & GetGameObject() const;
+		virtual bool Initialize();
 
-};
+		GGameObject & Holder;
+
+	public:
+
+		GGameObject & GetGameObject() const;
+
+	};
+
+}

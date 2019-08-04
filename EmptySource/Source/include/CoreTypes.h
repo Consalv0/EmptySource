@@ -1,12 +1,17 @@
 #pragma once
 
 #include <vector>
-template<class T>
-using TArray = std::vector<T>;
-
 #include "../External/RobinMap/include/tsl/robin_map.h"
-template<class K, class T>
-using TDictionary = tsl::robin_map<K, T>;
+
+namespace EmptySource {
+
+	template<class T>
+	using TArray = std::vector<T>;
+
+	template<class K, class T>
+	using TDictionary = tsl::robin_map<K, T>;
+
+}
 
 #ifdef __CUDACC__
 #include <cuda_runtime.h>

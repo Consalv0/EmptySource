@@ -5,46 +5,50 @@
 #include "../include/Math/IntVector2.h"
 #include "../include/Math/Box2D.h"
 
-struct Texture2D : public Texture {
-private:
-	//* Texture dimesions
-	IntVector2 Dimension;
+namespace EmptySource {
 
-public:
-	//* Constructor
-	Texture2D(
-		const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
-		const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
-	);
+	struct Texture2D : public Texture {
+	private:
+		//* Texture dimesions
+		IntVector2 Dimension;
 
-	Texture2D(
-		const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
-		const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode,
-		const Graphics::ColorFormat InputFormat, const void* BufferData
-	);
+	public:
+		//* Constructor
+		Texture2D(
+			const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
+			const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
+		);
 
-	//* Get Dimension of the texture
-	IntVector2 GetDimension() const;
+		Texture2D(
+			const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
+			const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode,
+			const Graphics::ColorFormat InputFormat, const void* BufferData
+		);
 
-	int GetWidth() const;
+		//* Get Dimension of the texture
+		IntVector2 GetDimension() const;
 
-	int GetHeight() const;
+		int GetWidth() const;
 
-	void GenerateMipMaps();
+		int GetHeight() const;
 
-	//* Use the texture
-	void Use() const;
+		void GenerateMipMaps();
 
-	//* Deuse the texture
-	void Deuse() const;
+		//* Use the texture
+		void Use() const;
 
-	//* Check if texture is valid
-	bool IsValid() const;
+		//* Deuse the texture
+		void Deuse() const;
 
-	void SetFilterMode(const Graphics::FilterMode& Mode);
+		//* Check if texture is valid
+		bool IsValid() const;
 
-	void SetAddressMode(const Graphics::AddressMode& Mode);
+		void SetFilterMode(const Graphics::FilterMode& Mode);
 
-	//* 
-	void Delete();
-};
+		void SetAddressMode(const Graphics::AddressMode& Mode);
+
+		//* 
+		void Delete();
+	};
+
+}

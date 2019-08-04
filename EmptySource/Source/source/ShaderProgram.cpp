@@ -3,133 +3,137 @@
 #include "../include/FileManager.h"
 #include "../include/ShaderProgram.h"
 
-bool ShaderProgram::LinkProgram() {
-	int InfoLogLength;
+namespace EmptySource {
 
-	// Link the shader program
-	Debug::Log(Debug::LogInfo, L"Linking shader program '%ls'...", Name.c_str());
-	ProgramObject = glCreateProgram();
+	bool ShaderProgram::LinkProgram() {
+		int InfoLogLength;
 
-	if (VertexShader != NULL && VertexShader->IsValid()) {
-		glAttachShader(ProgramObject, VertexShader->GetShaderObject());
-	}
-	if (GeometryShader != NULL && GeometryShader->IsValid()) {
-		glAttachShader(ProgramObject, GeometryShader->GetShaderObject());
-	}
-	if (FragmentShader != NULL && FragmentShader->IsValid()) {
-		glAttachShader(ProgramObject, FragmentShader->GetShaderObject());
-	}
+		// Link the shader program
+		Debug::Log(Debug::LogInfo, L"Linking shader program '%ls'...", Name.c_str());
+		ProgramObject = glCreateProgram();
 
-	glLinkProgram(ProgramObject);
+		if (VertexShader != NULL && VertexShader->IsValid()) {
+			glAttachShader(ProgramObject, VertexShader->GetShaderObject());
+		}
+		if (GeometryShader != NULL && GeometryShader->IsValid()) {
+			glAttachShader(ProgramObject, GeometryShader->GetShaderObject());
+		}
+		if (FragmentShader != NULL && FragmentShader->IsValid()) {
+			glAttachShader(ProgramObject, FragmentShader->GetShaderObject());
+		}
 
-	// --- Check the program
-	glGetProgramiv(ProgramObject, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		TArray<char> ProgramErrorMessage(InfoLogLength + 1);
-		glGetProgramInfoLog(ProgramObject, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		Debug::Log(Debug::LogInfo, L"'%ls'", CharToWString((const Char*)&ProgramErrorMessage[0]).c_str());
-		return false;
-	}
+		glLinkProgram(ProgramObject);
 
-	return true;
-}
+		// --- Check the program
+		glGetProgramiv(ProgramObject, GL_INFO_LOG_LENGTH, &InfoLogLength);
+		if (InfoLogLength > 0) {
+			TArray<char> ProgramErrorMessage(InfoLogLength + 1);
+			glGetProgramInfoLog(ProgramObject, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+			Debug::Log(Debug::LogInfo, L"'%ls'", CharToWString((const Char*)&ProgramErrorMessage[0]).c_str());
+			return false;
+		}
 
-ShaderProgram::ShaderProgram() {
-	VertexShader = NULL;
-	FragmentShader = NULL;
-	ComputeShader = NULL;
-	GeometryShader = NULL;
-    bIsLinked = false;
-	WString Name = L"";
-
-	ProgramObject = GL_FALSE;
-}
-
-ShaderProgram::ShaderProgram(WString Name) : ShaderProgram() {
-    VertexShader = NULL;
-    FragmentShader = NULL;
-    ComputeShader = NULL;
-    GeometryShader = NULL;
-    bIsLinked = false;
-    this->Name = Name;
-    
-    ProgramObject = GL_FALSE;
-}
-
-unsigned int ShaderProgram::GetUniformLocation(const Char * LocationName) {
-	if (bIsLinked == false) return 0;
-
-	auto Finds = Locations.find(LocationName);
-	if (Finds != Locations.end()) {
-		return Finds->second;
+		return true;
 	}
 
-	unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
-	Locations.insert_or_assign(LocationName, Location);
-	return Location;
-}
+	ShaderProgram::ShaderProgram() {
+		VertexShader = NULL;
+		FragmentShader = NULL;
+		ComputeShader = NULL;
+		GeometryShader = NULL;
+		bIsLinked = false;
+		WString Name = L"";
 
-unsigned int ShaderProgram::GetAttribLocation(const Char * LocationName) {
-	if (bIsLinked == false) return 0;
-
-	auto Finds = Locations.find(LocationName);
-	if (Finds != Locations.end()) {
-		return Finds->second;
+		ProgramObject = GL_FALSE;
 	}
 
-	unsigned int Location = glGetAttribLocation(ProgramObject, LocationName);
-	Locations.insert_or_assign(LocationName, Location);
-	return Location;
-}
+	ShaderProgram::ShaderProgram(WString Name) : ShaderProgram() {
+		VertexShader = NULL;
+		FragmentShader = NULL;
+		ComputeShader = NULL;
+		GeometryShader = NULL;
+		bIsLinked = false;
+		this->Name = Name;
 
-void ShaderProgram::AppendStage(ShaderStage * Shader) {
-	if (IsValid()) {
-		Debug::Log(Debug::LogError, L"Program '%ls' is already linked and compiled, can't modify shader stages", Name.c_str());
-		return;
+		ProgramObject = GL_FALSE;
 	}
 
-	if (Shader == NULL || !Shader->IsValid()) return;
+	unsigned int ShaderProgram::GetUniformLocation(const Char * LocationName) {
+		if (bIsLinked == false) return 0;
 
-	if (Shader->GetType() == ShaderType::ST_Vertex) {
-		VertexShader = Shader; return;
-	}
-	if (Shader->GetType() == ShaderType::ST_Fragment) {
-		FragmentShader = Shader; return;
-	}
-	if (Shader->GetType() == ShaderType::ST_Geometry) {
-		GeometryShader = Shader; return;
-	}
-	if (Shader->GetType() == ShaderType::ST_Compute) {
-		ComputeShader = Shader; return;
-	}
-}
+		auto Finds = Locations.find(LocationName);
+		if (Finds != Locations.end()) {
+			return Finds->second;
+		}
 
-WString ShaderProgram::GetName() const {
-	return Name;
-}
-
-void ShaderProgram::Use() const {
-	if (!IsValid()) {
-		Debug::Log(Debug::LogError, L"Can't use shader program '%ls' because is not valid", Name.c_str());
-		return;
+		unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
+		Locations.insert_or_assign(LocationName, Location);
+		return Location;
 	}
 
-	glUseProgram(ProgramObject);
-}
+	unsigned int ShaderProgram::GetAttribLocation(const Char * LocationName) {
+		if (bIsLinked == false) return 0;
 
-void ShaderProgram::Compile() {
-	bIsLinked = LinkProgram();
+		auto Finds = Locations.find(LocationName);
+		if (Finds != Locations.end()) {
+			return Finds->second;
+		}
 
-	if (bIsLinked == false) {
+		unsigned int Location = glGetAttribLocation(ProgramObject, LocationName);
+		Locations.insert_or_assign(LocationName, Location);
+		return Location;
+	}
+
+	void ShaderProgram::AppendStage(ShaderStage * Shader) {
+		if (IsValid()) {
+			Debug::Log(Debug::LogError, L"Program '%ls' is already linked and compiled, can't modify shader stages", Name.c_str());
+			return;
+		}
+
+		if (Shader == NULL || !Shader->IsValid()) return;
+
+		if (Shader->GetType() == ShaderType::ST_Vertex) {
+			VertexShader = Shader; return;
+		}
+		if (Shader->GetType() == ShaderType::ST_Fragment) {
+			FragmentShader = Shader; return;
+		}
+		if (Shader->GetType() == ShaderType::ST_Geometry) {
+			GeometryShader = Shader; return;
+		}
+		if (Shader->GetType() == ShaderType::ST_Compute) {
+			ComputeShader = Shader; return;
+		}
+	}
+
+	WString ShaderProgram::GetName() const {
+		return Name;
+	}
+
+	void ShaderProgram::Use() const {
+		if (!IsValid()) {
+			Debug::Log(Debug::LogError, L"Can't use shader program '%ls' because is not valid", Name.c_str());
+			return;
+		}
+
+		glUseProgram(ProgramObject);
+	}
+
+	void ShaderProgram::Compile() {
+		bIsLinked = LinkProgram();
+
+		if (bIsLinked == false) {
+			glDeleteProgram(ProgramObject);
+		}
+	}
+
+	void ShaderProgram::Delete() {
+		bIsLinked = false;
 		glDeleteProgram(ProgramObject);
 	}
-}
 
-void ShaderProgram::Delete() {
-	bIsLinked = false;
-	glDeleteProgram(ProgramObject);
-}
+	bool ShaderProgram::IsValid() const {
+		return bIsLinked && ProgramObject != GL_FALSE;
+	}
 
-bool ShaderProgram::IsValid() const {
-	return bIsLinked && ProgramObject != GL_FALSE;
 }

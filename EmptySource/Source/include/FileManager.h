@@ -3,25 +3,29 @@
 #include "../include/CoreTypes.h"
 #include "../include/FileStream.h"
 
-typedef TArray<FileStream*> FileList;
+namespace EmptySource {
 
-class FileManager {
-private:
-	static FileList Files;
+	typedef TArray<FileStream*> FileList;
 
-	static FileList::iterator FindInFiles(const WString& FilePath);
+	class FileManager {
+	private:
+		static FileList Files;
 
-public:
-	static FileStream* GetFile(const WString& FilePath);
+		static FileList::iterator FindInFiles(const WString& FilePath);
 
-	static FileStream* MakeFile(const WString& FilePath);
+	public:
+		static FileStream* GetFile(const WString& FilePath);
 
-	static WString GetFileExtension(const WString& Path);
+		static FileStream* MakeFile(const WString& FilePath);
 
-	static WString GetFullPath(const WString& Path);
-    
-    static WString GetAppDirectory();
+		static WString GetFileExtension(const WString& Path);
 
-	//* ReadStreams the file streams of the shader code
-	static WString ReadStream(FileStream* Stream);
-};
+		static WString GetFullPath(const WString& Path);
+
+		static WString GetAppDirectory();
+
+		//* ReadStreams the file streams of the shader code
+		static WString ReadStream(FileStream* Stream);
+	};
+
+}

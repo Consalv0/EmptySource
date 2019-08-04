@@ -1,5 +1,6 @@
 #pragma once
 
+namespace EmptySource {
 
 	class Application {
 	private:
@@ -44,3 +45,5 @@
 		//* Terminates Application
 		void Terminate();
 	};
+
+}

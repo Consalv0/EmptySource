@@ -4,73 +4,77 @@
 #include "../include/Utility/LogCore.h"
 #include "../include/GLFunctions.h"
 
-RenderTarget::RenderTarget() {
-	Resolution = 0;
-	TextureColor0Target = NULL;
-	RenderbufferObject = 0;
-	FramebufferObject = 0;
-}
+namespace EmptySource {
 
-IntVector2 RenderTarget::GetDimension() const {
-	return Resolution;
-}
+	RenderTarget::RenderTarget() {
+		Resolution = 0;
+		TextureColor0Target = NULL;
+		RenderbufferObject = 0;
+		FramebufferObject = 0;
+	}
 
-void RenderTarget::PrepareTexture(const Texture2D * Texture, const int& Lod, const int& TextureAttachment) {
-	TextureColor0Target = Texture;
-	if (!IsValid()) return;
-	Use();
+	IntVector2 RenderTarget::GetDimension() const {
+		return Resolution;
+	}
 
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, TextureColor0Target->GetTextureObject(), Lod);
-	// Set the list of draw buffers.
-	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
-	glDrawBuffers(1, DrawBuffers);
-}
+	void RenderTarget::PrepareTexture(const Texture2D * Texture, const int& Lod, const int& TextureAttachment) {
+		TextureColor0Target = Texture;
+		if (!IsValid()) return;
+		Use();
 
-void RenderTarget::PrepareTexture(const Cubemap * Texture, const int& TexturePos, const int& Lod, const int& TextureAttachment) {
-	TextureColor0Target = Texture;
-	if (!IsValid()) return;
-	Use();
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, TextureColor0Target->GetTextureObject(), Lod);
+		// Set the list of draw buffers.
+		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
+		glDrawBuffers(1, DrawBuffers);
+	}
 
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
-		GL_TEXTURE_CUBE_MAP_POSITIVE_X + TexturePos, TextureColor0Target->GetTextureObject(), Lod);
-}
+	void RenderTarget::PrepareTexture(const Cubemap * Texture, const int& TexturePos, const int& Lod, const int& TextureAttachment) {
+		TextureColor0Target = Texture;
+		if (!IsValid()) return;
+		Use();
 
-void RenderTarget::Resize(const int & x, const int & y) {
-	Use();
-	Resolution = { x, y };
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, x, y);
-	glViewport(0, 0, Resolution.x, Resolution.y);
-}
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + TexturePos, TextureColor0Target->GetTextureObject(), Lod);
+	}
 
-void RenderTarget::SetUpBuffers() {
-    if (FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE) return;
+	void RenderTarget::Resize(const int & x, const int & y) {
+		Use();
+		Resolution = { x, y };
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, x, y);
+		glViewport(0, 0, Resolution.x, Resolution.y);
+	}
 
-	glGenFramebuffers(1, &FramebufferObject);
-	glGenRenderbuffers(1, &RenderbufferObject);
-}
+	void RenderTarget::SetUpBuffers() {
+		if (FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE) return;
 
-bool RenderTarget::CheckStatus() const {
-	const GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	return Status == GL_FRAMEBUFFER_COMPLETE;
-}
+		glGenFramebuffers(1, &FramebufferObject);
+		glGenRenderbuffers(1, &RenderbufferObject);
+	}
 
-void RenderTarget::Use() const {
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferObject);
-	glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
-}
+	bool RenderTarget::CheckStatus() const {
+		const GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		return Status == GL_FRAMEBUFFER_COMPLETE;
+	}
 
-void RenderTarget::Clear() const {
-	Use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
+	void RenderTarget::Use() const {
+		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferObject);
+		glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
+	}
 
-bool RenderTarget::IsValid() const {
-	return TextureColor0Target != NULL && TextureColor0Target->IsValid() && FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE;
-}
+	void RenderTarget::Clear() const {
+		Use();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
-void RenderTarget::Delete() {
-	glDeleteFramebuffers(1, &FramebufferObject);
-	glDeleteRenderbuffers(1, &RenderbufferObject);
+	bool RenderTarget::IsValid() const {
+		return TextureColor0Target != NULL && TextureColor0Target->IsValid() && FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE;
+	}
+
+	void RenderTarget::Delete() {
+		glDeleteFramebuffers(1, &FramebufferObject);
+		glDeleteRenderbuffers(1, &RenderbufferObject);
+	}
+
 }

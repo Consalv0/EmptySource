@@ -3,33 +3,37 @@
 #include "../include/IIdentifier.h"
 #include "../include/FileManager.h"
 
-enum ResourceLoadState {
-	LS_Loaded, LS_Loading, LS_Unloaded, LS_Unloading
-};
+namespace EmptySource {
 
-enum ResourceType {
-	RT_Texture, RT_ShaderStage, RT_ShaderProgram, RT_Material, RT_Mesh
-};
+	enum ResourceLoadState {
+		LS_Loaded, LS_Loading, LS_Unloaded, LS_Unloading
+	};
 
-class ResourceManager {
-protected:
-	const unsigned int LoadOrder;
+	enum ResourceType {
+		RT_Texture, RT_ShaderStage, RT_ShaderProgram, RT_Material, RT_Mesh
+	};
 
-	const ResourceType Type;
+	class ResourceManager {
+	protected:
+		const unsigned int LoadOrder;
 
-	ResourceManager(unsigned int LoadOrder, ResourceType Type) : LoadOrder(LoadOrder), Type(Type) {};
+		const ResourceType Type;
 
-public:
-	//* Lower value indicate it will be loaded firts
-	const unsigned int & GetLoadOrder() const { return LoadOrder; };
+		ResourceManager(unsigned int LoadOrder, ResourceType Type) : LoadOrder(LoadOrder), Type(Type) {};
 
-	const ResourceType & GetResourceType() const { return Type; };
+	public:
+		//* Lower value indicate it will be loaded firts
+		const unsigned int & GetLoadOrder() const { return LoadOrder; };
 
-	virtual class ResourceHolder * GetResourceByUniqueName(const WString& Name) const { return NULL; };
+		const ResourceType & GetResourceType() const { return Type; };
 
-	virtual class ResourceHolder * GetResourceByUniqueID(const size_t & UID) const { return NULL; };
+		virtual class ResourceHolder * GetResourceByUniqueName(const WString& Name) const { return NULL; };
 
-	static FileStream * GetResourcesFile(const WString & FilePath);
+		virtual class ResourceHolder * GetResourceByUniqueID(const size_t & UID) const { return NULL; };
 
-	static FileStream * CreateResourceFile(const WString & FilePath);
-};
+		static FileStream * GetResourcesFile(const WString & FilePath);
+
+		static FileStream * CreateResourceFile(const WString & FilePath);
+	};
+
+}
