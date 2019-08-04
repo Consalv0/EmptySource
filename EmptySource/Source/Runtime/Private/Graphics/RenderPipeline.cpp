@@ -65,12 +65,12 @@ namespace EmptySource {
 
 	void RenderPipeline::PrepareFrame() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, Application::GetInstance().GetMainWindow().GetWidth(), Application::GetInstance().GetMainWindow().GetHeight());
-		Application::GetInstance().GetMainWindow().ClearWindow();
+		glViewport(0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight());
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void RenderPipeline::EndOfFrame() {
-		Application::GetInstance().GetMainWindow().EndOfFrame();
+		// Application::GetInstance().GetWindow().EndOfFrame();
 		glBindVertexArray(0);
 	}
 

@@ -2,7 +2,7 @@
 
 // --- Include GLAD library to make function loaders for OpenGL
 #ifndef __gl_h_
-#include "../GLAD/include/glad/glad.h"
+#include "../External/GLAD/include/glad/glad.h"
 #endif // !__gl_h_
 
 namespace EmptySource {

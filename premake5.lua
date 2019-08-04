@@ -132,7 +132,8 @@ project "Sandbox"
 		"EmptySource/Source",
 		"EmptySource/Source/Runtime",
 		"EmptySource/Source/Runtime/Public",
-		"EmptySource/External"
+		"EmptySource/External",
+		"%{IncludeDir.GLAD}"
 	}
 
 	links {

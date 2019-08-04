@@ -1,113 +1,64 @@
 #pragma once
 
 #include "Graphics/Graphics.h"
+
 #include "Engine/Text.h"
+#include "Graphics/GraphicContext.h"
 
 namespace EmptySource {
 
 	enum WindowMode {
-		Windowed = 0,
-		FullScreen = 1
+		WM_Windowed = 0,
+		WM_FullScreen = 1
 	};
 
 	template <typename T>
 	class Bitmap;
 
-	/*
- ** Cointaina the properties and functions of a GLFW window
- */
-	struct ContextWindow {
-	private:
-		//* Window Handle
-		struct SDL_Window * Window;
-		void * GLContext;
-
-		//* External on resized function
-		void(*OnWindowResizedFunc)(int Width, int Height);
-
+	struct WindowProperties {
 		//* Name displayed in header window
-		String Name;
-		unsigned int Width = 1080;
-		unsigned int Height = 720;
-		WindowMode Mode = WindowMode::Windowed;
+		String Title;
+		unsigned int Width;
+		unsigned int Height;
 
-		//* Frame Count
-		unsigned long long FrameCount;
+		WindowProperties(
+			const String& Title = "EmptySource",
+			unsigned int Width = 1280,
+			unsigned int Height = 720)
+			: Title(Title), Width(Width), Height(Height) {
+		}
 
-		//* The window should close
-		bool bShouldClose;
+	};
 
-		//* Event callback that resizes this window
-		void OnWindowResized(int Width, int Height);
-
-		void CreateWindowEvents();
-
-		//* Initialize inputs in this window
-		void InitializeInputs();
-
-		//* Make context for this window
-		void MakeContext();
-
-		//* Creates the main Rendering Window
-		bool Create();
-
+	//* Cointains the properties and functions of a GLFW window
+	class Window {
 	public:
 
-		ContextWindow();
-
-		//* Get the width in pixels of the window
-		int GetWidth();
-
-		//* Get the height in pixels of the window
-		int GetHeight();
-
-		//* Resize the size of the window
-		void Resize(const unsigned int& Width, const unsigned int& Height);
-
-		//* Rename the window title
-		void SetWindowName(const WString & NewName);
-
-		//* Get the window title name
-		WString GetName();
-
-		//* Get the aspect of width divided by height in pixels of the window
-		float AspectRatio();
-
-		//* Creates a Window with a Name, Width and Height
-		bool Create(const char * Name, const WindowMode& Mode, const unsigned int& Width, const unsigned int& Height);
-
-		//* Asks if window should be closed
-		bool ShouldClose();
+		virtual ~Window() = default;
 
 		//* Returns true if window has been created
-		bool IsCreated();
+		virtual bool IsRunning() = 0;
 
-		//* Total frames drawed since the creation of this window
-		unsigned long long GetFrameCount();
+		//* End of frame functions
+		virtual void EndFrame() = 0;
 
-		//* Get mouse position in screen coordinates relative to the upper left position of this window
-		struct Vector2 GetMousePosition(bool Clamp = false);
+		//* Get the window title name
+		virtual WString GetName() const = 0;
 
-		//* Get key pressed
-		bool GetKeyDown(unsigned int Key);
+		//* Get the width in pixels of the window
+		virtual unsigned int GetWidth() const = 0;
 
-		//* Window clear events
-		void ClearWindow();
+		//* Get the height in pixels of the window
+		virtual unsigned int GetHeight() const = 0;
 
-		//* Window update frame
-		void EndOfFrame();
+		//* Get the aspect of width divided by height in pixels of the window
+		virtual float GetAspectRatio() const = 0;
 
-		//* Sets the window icon
-		void SetIcon(class Bitmap<UCharRGBA> * Icon);
+		//* Get Window Pointer
+		virtual void* GetHandle() const = 0;
 
-		//* Window update events
-		void PollEvents();
-
-		//* Terminates this window
-		void Terminate();
-
-		//* Set on resized event
-		void SetOnResizedEvent(void(*OnWindowResizedFunc)(int Width, int Height));
+		//* Creates a Window with a Name, Width and Height
+		static Window * Create(const WindowProperties& Properties = WindowProperties());
 	};
 
 }

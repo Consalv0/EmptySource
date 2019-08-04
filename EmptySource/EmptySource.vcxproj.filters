@@ -478,6 +478,9 @@
     <Filter Include="Source\Platform\OpenGL">
       <UniqueIdentifier>{5E160775-4A10-30C7-337D-C6D71F169633}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Platform\Windows">
+      <UniqueIdentifier>{A4BC056E-10F4-4D05-19FE-B12885B474FE}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Runtime">
       <UniqueIdentifier>{89EE4F15-75BC-431B-5E50-B4414ABD1F80}</UniqueIdentifier>
     </Filter>
@@ -2421,6 +2424,12 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsWindow.h">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h">
       <Filter>Source\Runtime\Private\CUDA</Filter>
     </ClInclude>
@@ -2448,13 +2457,13 @@
     <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h">
       <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\EntryPoint.h">
-      <Filter>Source\Runtime\Public\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h">
       <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Engine\Input.h">
       <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\Object.h">
@@ -2705,6 +2714,12 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp">
       <Filter>Source\Runtime\Private\Audio</Filter>
     </ClCompile>
@@ -2718,6 +2733,9 @@
       <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\CoreTime.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Engine\EntryPoint.cpp">
       <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\GameObject.cpp">
@@ -2769,9 +2787,6 @@
       <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp">
-      <Filter>Source\Runtime\Private\Fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Fonts\Texture3D.cpp">
       <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Graphics\Bitmap.cpp">

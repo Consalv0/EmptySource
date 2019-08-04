@@ -3,6 +3,8 @@
 #include "Utility/LogCore.h"
 #include "Engine/Application.h"
 
+#include "../External/SDL2/include/SDL_main.h"
+
 #ifdef ES_PLATFORM_WINDOWS
 
 #ifdef ES_DLLEXPORT
@@ -29,7 +31,7 @@ int main(int argc, char **argv) {
 	_setmode(_fileno(stdout), _O_U8TEXT);
 #endif
 
-	EmptySource::Application::GetInstance().Run();
+	EmptySource::Application::GetInstance()->Run();
 
 #ifdef ES_DEBUG
 	EmptySource::Debug::Log(EmptySource::Debug::LogInfo, L"Press any key to close...");

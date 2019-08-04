@@ -762,6 +762,8 @@
     <ClInclude Include="External\YAML\test\mock_event_handler.h" />
     <ClInclude Include="External\YAML\test\specexamples.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsInput.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h" />
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
@@ -771,9 +773,9 @@
     <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\CoreTypes.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h" />
-    <ClInclude Include="Source\Runtime\Public\Engine\EntryPoint.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Input.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Object.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Space.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Text.h" />
@@ -858,11 +860,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\Renderer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Component.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\CoreTime.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\EntryPoint.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\GameObject.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\IIdentifier.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Object.cpp" />
@@ -880,7 +885,6 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Shape2D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Fonts\Shape2DContour.cpp" />
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Fonts\Texture3D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Graphics\Bitmap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Graphics\Cubemap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Graphics\Material.cpp" />
@@ -891,9 +895,7 @@
     <ClCompile Include="Source\Runtime\Private\Graphics\ShaderStage.cpp" />
     <ClCompile Include="Source\Runtime\Private\Graphics\Texture.cpp" />
     <ClCompile Include="Source\Runtime\Private\Graphics\Texture2D.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture3D.cpp">
-      <ObjectFileName>$(IntDir)\Texture3D1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture3D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp" />

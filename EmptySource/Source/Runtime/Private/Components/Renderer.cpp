@@ -17,7 +17,7 @@ namespace EmptySource {
 	}
 
 	bool CRenderer::Initialize() {
-		RenderStage * TestStage = Application::GetInstance().GetRenderPipeline().GetStage(L"TestStage");
+		RenderStage * TestStage = Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage");
 		if (TestStage != NULL) {
 			TestStage->OnRenderEvent.AttachObserver(&TestStageObserver);
 			TestStageObserver.AddCallback("Render", std::bind(&CRenderer::Render, this));
@@ -43,7 +43,7 @@ namespace EmptySource {
 	void CRenderer::Render() {
 		if (Model == NULL) return;
 
-		RenderStage * Stage = Application::GetInstance().GetRenderPipeline().GetStage(L"TestStage");
+		RenderStage * Stage = Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage");
 		if (Stage == NULL) return;
 
 		if (Model->SetUpBuffers()) {
