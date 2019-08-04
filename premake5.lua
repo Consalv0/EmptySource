@@ -40,15 +40,17 @@ project "EmptySource"
 	objdir ("%{prj.name}/BinObjs/" .. outputdir)
 
 	files {
-		"%{prj.name}/Source/**/**.h",
-		"%{prj.name}/Source/**/**.inl",
-		"%{prj.name}/Source/**/**.cpp",
+		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Source/**.inl",
+		"%{prj.name}/Source/**.cpp",
 		"%{prj.name}/External/**/**.h"
 	}
 
 	includedirs {
         "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\include",
-        "%{prj.name}/Source/include",
+		"%{prj.name}/Source",
+		"%{prj.name}/Source/Runtime",
+		"%{prj.name}/Source/Runtime/Public",
         "%{prj.name}/External",
 		"%{IncludeDir.SDL2}",
 		"%{IncludeDir.GLAD}",
@@ -91,7 +93,8 @@ project "EmptySource"
 
 		defines
 		{
-			"ES_PLATFORM_WINDOWS"
+            "ES_PLATFORM_WINDOWS",
+            "ES_DLLEXPORT"
 		}
 
 	filter "configurations:Debug"
@@ -121,12 +124,14 @@ project "Sandbox"
 	objdir ("%{prj.name}/BinObjs/" .. outputdir)
 
 	files {
-		"%{prj.name}/Source/**/**.h",
-		"%{prj.name}/Source/**/**.cpp"
+		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Source/**.cpp"
 	}
 
 	includedirs {
 		"EmptySource/Source",
+		"EmptySource/Source/Runtime",
+		"EmptySource/Source/Runtime/Public",
 		"EmptySource/External"
 	}
 

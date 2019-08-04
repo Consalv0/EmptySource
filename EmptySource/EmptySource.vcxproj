@@ -75,8 +75,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source\include;External;External\SDL2\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include\tsl;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External;External\SDL2\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include\tsl;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -95,8 +95,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source\include;External;External\SDL2\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include\tsl;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External;External\SDL2\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include\tsl;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -119,8 +119,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DISTRIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source\include;External;External\SDL2\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include\tsl;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_DISTRIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External;External\SDL2\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include\tsl;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -761,149 +761,156 @@
     <ClInclude Include="External\YAML\test\handler_test.h" />
     <ClInclude Include="External\YAML\test\mock_event_handler.h" />
     <ClInclude Include="External\YAML\test\specexamples.h" />
-    <ClInclude Include="Source\include\Application.h" />
-    <ClInclude Include="Source\include\ApplicationRenderer.h" />
-    <ClInclude Include="Source\include\AudioSample.h" />
-    <ClInclude Include="Source\include\Bitmap.h" />
-    <ClInclude Include="Source\include\Component.h" />
-    <ClInclude Include="Source\include\Components\Renderer.h" />
-    <ClInclude Include="Source\include\Core.h" />
-    <ClInclude Include="Source\include\CoreCUDA.h" />
-    <ClInclude Include="Source\include\CoreTime.h" />
-    <ClInclude Include="Source\include\CoreTypes.h" />
-    <ClInclude Include="Source\include\Cubemap.h" />
-    <ClInclude Include="Source\include\EdgeHolder.h" />
-    <ClInclude Include="Source\include\EdgeSegments.h" />
-    <ClInclude Include="Source\include\EntryPoint.h" />
-    <ClInclude Include="Source\include\Event.h" />
-    <ClInclude Include="Source\include\FBXLoader.h" />
-    <ClInclude Include="Source\include\FileManager.h" />
-    <ClInclude Include="Source\include\FileStream.h" />
-    <ClInclude Include="Source\include\Font.h" />
-    <ClInclude Include="Source\include\GLFunctions.h" />
-    <ClInclude Include="Source\include\GameObject.h" />
-    <ClInclude Include="Source\include\Glyph.h" />
-    <ClInclude Include="Source\include\Graphics.h" />
-    <ClInclude Include="Source\include\IIdentifier.h" />
-    <ClInclude Include="Source\include\ImageLoader.h" />
-    <ClInclude Include="Source\include\Material.h" />
-    <ClInclude Include="Source\include\Math\Box2D.h" />
-    <ClInclude Include="Source\include\Math\Box3D.h" />
-    <ClInclude Include="Source\include\Math\CoreMath.h" />
-    <ClInclude Include="Source\include\Math\IntVector2.h" />
-    <ClInclude Include="Source\include\Math\IntVector2.inl" />
-    <ClInclude Include="Source\include\Math\IntVector3.h" />
-    <ClInclude Include="Source\include\Math\IntVector3.inl" />
-    <ClInclude Include="Source\include\Math\MathUtility.h" />
-    <ClInclude Include="Source\include\Math\MathUtility.inl" />
-    <ClInclude Include="Source\include\Math\Matrix3x3.h" />
-    <ClInclude Include="Source\include\Math\Matrix3x3.inl" />
-    <ClInclude Include="Source\include\Math\Matrix4x4.h" />
-    <ClInclude Include="Source\include\Math\Matrix4x4.inl" />
-    <ClInclude Include="Source\include\Math\Physics.h" />
-    <ClInclude Include="Source\include\Math\Quaternion.h" />
-    <ClInclude Include="Source\include\Math\Quaternion.inl" />
-    <ClInclude Include="Source\include\Math\Ray.h" />
-    <ClInclude Include="Source\include\Math\Ray.inl" />
-    <ClInclude Include="Source\include\Math\Vector2.h" />
-    <ClInclude Include="Source\include\Math\Vector2.inl" />
-    <ClInclude Include="Source\include\Math\Vector3.h" />
-    <ClInclude Include="Source\include\Math\Vector3.inl" />
-    <ClInclude Include="Source\include\Math\Vector4.h" />
-    <ClInclude Include="Source\include\Math\Vector4.inl" />
-    <ClInclude Include="Source\include\Mesh.h" />
-    <ClInclude Include="Source\include\MeshLoader.h" />
-    <ClInclude Include="Source\include\OBJLoader.h" />
-    <ClInclude Include="Source\include\Object.h" />
-    <ClInclude Include="Source\include\Observer.h" />
-    <ClInclude Include="Source\include\Property.h" />
-    <ClInclude Include="Source\include\RenderPipeline.h" />
-    <ClInclude Include="Source\include\RenderStage.h" />
-    <ClInclude Include="Source\include\RenderTarget.h" />
-    <ClInclude Include="Source\include\ResourceGroupManager.h" />
-    <ClInclude Include="Source\include\ResourceHolder.h" />
-    <ClInclude Include="Source\include\ResourceManager.h" />
-    <ClInclude Include="Source\include\ResourceShaderProgram.h" />
-    <ClInclude Include="Source\include\ResourceShaderStage.h" />
-    <ClInclude Include="Source\include\Resources.h" />
-    <ClInclude Include="Source\include\Resources\ShaderStageManager.h" />
-    <ClInclude Include="Source\include\Resources\ShaderStageResource.h" />
-    <ClInclude Include="Source\include\SDFGenerator.h" />
-    <ClInclude Include="Source\include\ShaderProgram.h" />
-    <ClInclude Include="Source\include\ShaderStage.h" />
-    <ClInclude Include="Source\include\Shape2D.h" />
-    <ClInclude Include="Source\include\Shape2DContour.h" />
-    <ClInclude Include="Source\include\Space.h" />
-    <ClInclude Include="Source\include\Task.h" />
-    <ClInclude Include="Source\include\Text.h" />
-    <ClInclude Include="Source\include\Text2DGenerator.h" />
-    <ClInclude Include="Source\include\Texture.h" />
-    <ClInclude Include="Source\include\Texture2D.h" />
-    <ClInclude Include="Source\include\Texture3D.h" />
-    <ClInclude Include="Source\include\Transform.h" />
-    <ClInclude Include="Source\include\Utility\DeviceFunctions.h" />
-    <ClInclude Include="Source\include\Utility\Hasher.h" />
-    <ClInclude Include="Source\include\Utility\LogCore.h" />
-    <ClInclude Include="Source\include\Utility\LogFreeType.h" />
-    <ClInclude Include="Source\include\Utility\LogGraphics.h" />
-    <ClInclude Include="Source\include\Utility\MeshPrimitives.h" />
-    <ClInclude Include="Source\include\Utility\TextFormatting.h" />
-    <ClInclude Include="Source\include\Utility\TextFormattingMath.h" />
-    <ClInclude Include="Source\include\Utility\TexturePacking.h" />
-    <ClInclude Include="Source\include\Utility\Timer.h" />
-    <ClInclude Include="Source\include\Window.h" />
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h" />
+    <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\Renderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Application.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Core.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\CoreTypes.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\EntryPoint.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Object.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Space.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Text.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Transform.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Window.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\Event.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\Observer.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\Property.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\Task.h" />
+    <ClInclude Include="Source\Runtime\Public\Files\FileManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Files\FileStream.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\EdgeHolder.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\EdgeSegments.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\Font.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\Glyph.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\SDFGenerator.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\Shape2D.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\Shape2DContour.h" />
+    <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\ApplicationRenderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Bitmap.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Cubemap.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\GLFunctions.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\GraphicContext.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Graphics.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Material.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\RenderPipeline.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\RenderStage.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\RenderTarget.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderProgram.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderStage.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Texture.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Texture2D.h" />
+    <ClInclude Include="Source\Runtime\Public\Graphics\Texture3D.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Box2D.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Box3D.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\CoreMath.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector2.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector2.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector3.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector3.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\MathUtility.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\MathUtility.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix3x3.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix3x3.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Physics.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Quaternion.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Ray.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Ray.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Vector2.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Vector2.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Vector3.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Vector4.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
+    <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h" />
+    <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceGroupManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShaderProgram.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShaderStage.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\Resources.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageResource.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\DeviceFunctions.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\LogCore.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\LogGraphics.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\TextFormatting.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\TextFormattingMath.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h" />
+    <ClInclude Include="Source\Runtime\Public\Utility\Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\source\Application.cpp" />
-    <ClCompile Include="Source\source\AudioSample.cpp" />
-    <ClCompile Include="Source\source\Bitmap.cpp" />
-    <ClCompile Include="Source\source\Component.cpp" />
-    <ClCompile Include="Source\source\Components\Renderer.cpp" />
-    <ClCompile Include="Source\source\CoreTime.cpp" />
-    <ClCompile Include="Source\source\Cubemap.cpp" />
-    <ClCompile Include="Source\source\EdgeHolder.cpp" />
-    <ClCompile Include="Source\source\EdgeSegments.cpp" />
-    <ClCompile Include="Source\source\FBXLoader.cpp" />
-    <ClCompile Include="Source\source\FileManager.cpp" />
-    <ClCompile Include="Source\source\FileStream.cpp" />
-    <ClCompile Include="Source\source\Font.cpp" />
-    <ClCompile Include="Source\source\GameObject.cpp" />
-    <ClCompile Include="Source\source\Glyph.cpp" />
-    <ClCompile Include="Source\source\IIdentifier.cpp" />
-    <ClCompile Include="Source\source\ImageLoader.cpp" />
-    <ClCompile Include="Source\source\Material.cpp" />
-    <ClCompile Include="Source\source\Mesh.cpp" />
-    <ClCompile Include="Source\source\MeshLoader.cpp" />
-    <ClCompile Include="Source\source\OBJLoader.cpp" />
-    <ClCompile Include="Source\source\Object.cpp" />
-    <ClCompile Include="Source\source\Observer.cpp" />
-    <ClCompile Include="Source\source\RenderPipeline.cpp" />
-    <ClCompile Include="Source\source\RenderStage.cpp" />
-    <ClCompile Include="Source\source\RenderTarget.cpp" />
-    <ClCompile Include="Source\source\ResourceHolder.cpp" />
-    <ClCompile Include="Source\source\ResourceManager.cpp" />
-    <ClCompile Include="Source\source\ResourceShaderProgram.cpp" />
-    <ClCompile Include="Source\source\ResourceShaderStage.cpp" />
-    <ClCompile Include="Source\source\Resources.cpp" />
-    <ClCompile Include="Source\source\Resources\ShaderStageManager.cpp" />
-    <ClCompile Include="Source\source\Resources\ShaderStageResource.cpp" />
-    <ClCompile Include="Source\source\ShaderProgram.cpp" />
-    <ClCompile Include="Source\source\ShaderStage.cpp" />
-    <ClCompile Include="Source\source\Shape2D.cpp" />
-    <ClCompile Include="Source\source\Shape2DContour.cpp" />
-    <ClCompile Include="Source\source\Space.cpp" />
-    <ClCompile Include="Source\source\Text.cpp" />
-    <ClCompile Include="Source\source\Text2DGenerator.cpp" />
-    <ClCompile Include="Source\source\Texture.cpp" />
-    <ClCompile Include="Source\source\Texture2D.cpp" />
-    <ClCompile Include="Source\source\Texture3D.cpp" />
-    <ClCompile Include="Source\source\Transform.cpp" />
-    <ClCompile Include="Source\source\Utility\DeviceFunctions.cpp" />
-    <ClCompile Include="Source\source\Utility\LogCore.cpp" />
-    <ClCompile Include="Source\source\Utility\SDFGenerator.cpp" />
-    <ClCompile Include="Source\source\Utility\TexturePacking.cpp" />
-    <ClCompile Include="Source\source\Utility\Timer.cpp" />
-    <ClCompile Include="Source\source\Window.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Components\Renderer.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Component.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\CoreTime.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\GameObject.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\IIdentifier.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Object.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Space.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Text.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Transform.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Engine\Window.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Events\Observer.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Files\FileManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Files\FileStream.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\EdgeHolder.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\EdgeSegments.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\Font.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\Glyph.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\Shape2D.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\Shape2DContour.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Fonts\Texture3D.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\Bitmap.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\Cubemap.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\Material.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\RenderPipeline.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\RenderStage.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\RenderTarget.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderStage.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture2D.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture3D.cpp">
+      <ObjectFileName>$(IntDir)\Texture3D1.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceHolder.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShaderProgram.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShaderStage.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\Resources.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageResource.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Utility\DeviceFunctions.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Utility\LogCore.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Utility\SDFGenerator.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="External\YAML\YAML-CPP.vcxproj">

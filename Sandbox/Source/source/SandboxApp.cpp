@@ -1,16 +1,14 @@
 
-#include "../Source/include/Application.h"
+#include "Engine/EmptySource.h"
 
-using namespace EmptySource;
-
-class SandboxApplication : public Application {
+class SandboxApplication : public EmptySource::Application {
 public:
-
 	typedef Application Supper;
+	
 	SandboxApplication() : Supper() {}
 
 };
 
-Application * CreateInstance() {
+EmptySource::Application * EmptySource::CreateApplication() {
 	return new SandboxApplication();
 }

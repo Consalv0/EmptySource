@@ -472,32 +472,86 @@
     <Filter Include="Source">
       <UniqueIdentifier>{56EB95D1-428D-C0A7-2B48-D4FB178947F8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\include">
-      <UniqueIdentifier>{C908ACEE-B5D6-9FF4-9E6A-101B8AD77B59}</UniqueIdentifier>
+    <Filter Include="Source\Platform">
+      <UniqueIdentifier>{6A48A913-D6D3-16D8-DFE4-99CC4BEF72D8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\include\Components">
-      <UniqueIdentifier>{3E3E5852-AA00-8CDC-F3B0-1A695FB264BA}</UniqueIdentifier>
+    <Filter Include="Source\Platform\OpenGL">
+      <UniqueIdentifier>{5E160775-4A10-30C7-337D-C6D71F169633}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\include\Math">
-      <UniqueIdentifier>{4253CC7B-AEB4-A989-3722-F03BA382E048}</UniqueIdentifier>
+    <Filter Include="Source\Runtime">
+      <UniqueIdentifier>{89EE4F15-75BC-431B-5E50-B4414ABD1F80}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\include\Resources">
-      <UniqueIdentifier>{737DC1B4-5FA2-1035-88ED-F5C474710F53}</UniqueIdentifier>
+    <Filter Include="Source\Runtime\Private">
+      <UniqueIdentifier>{73FED97B-5FF8-02CE-4865-99DE34FE683A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\include\Utility">
-      <UniqueIdentifier>{0C805439-F879-7D8B-E1E6-139CCD7FE3F7}</UniqueIdentifier>
+    <Filter Include="Source\Runtime\Private\Audio">
+      <UniqueIdentifier>{B456C689-A011-B635-49C9-2E80356300C6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\source">
-      <UniqueIdentifier>{B630CA9A-22F1-45D1-EB2B-8F4E57AB8AAD}</UniqueIdentifier>
+    <Filter Include="Source\Runtime\Private\CUDA">
+      <UniqueIdentifier>{FFAD8259-6BBB-B03F-F4A1-AC2A60AE7CF6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\source\Components">
-      <UniqueIdentifier>{0B783DD4-F79C-8C54-20E8-71E40C6C8B72}</UniqueIdentifier>
+    <Filter Include="Source\Runtime\Private\Components">
+      <UniqueIdentifier>{A8155F93-1484-B412-5D6D-6F12C91AAAAE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\source\Resources">
-      <UniqueIdentifier>{A031D034-0C69-18CC-1573-7CEF81293FC5}</UniqueIdentifier>
+    <Filter Include="Source\Runtime\Private\Engine">
+      <UniqueIdentifier>{98C968CB-04E2-4FF5-CD8E-DF8E3966E48E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\source\Utility">
-      <UniqueIdentifier>{F944DEEF-65B1-99EA-2EA5-31489AD0BB52}</UniqueIdentifier>
+    <Filter Include="Source\Runtime\Private\Events">
+      <UniqueIdentifier>{F78AF8CB-63A3-DFF5-2C50-6F8F9827748F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Private\Files">
+      <UniqueIdentifier>{355E1A8A-2119-0A36-CAD0-8280B66A54C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Private\Fonts">
+      <UniqueIdentifier>{ECB21D8A-D86D-0D36-8125-86806DBF57C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Private\Graphics">
+      <UniqueIdentifier>{13B8AA47-7F9B-B987-889E-E7C3F40080D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Private\Mesh">
+      <UniqueIdentifier>{0F748859-7B81-B63F-0468-B22A707482F6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Private\Resources">
+      <UniqueIdentifier>{9D0F36A7-8960-21E9-B2C4-0FAB9E74B452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Private\Utility">
+      <UniqueIdentifier>{B67F4A16-A2A5-147D-8BEB-994877B03949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public">
+      <UniqueIdentifier>{97BD9DAE-032A-59A9-CC1D-F10638497B11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Audio">
+      <UniqueIdentifier>{D8E04D09-44EE-7BEF-CDD4-77DA39E147A6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Components">
+      <UniqueIdentifier>{4C96261B-38E7-115D-614B-001F4DFBA4C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Engine">
+      <UniqueIdentifier>{3C98E13B-2853-D1E7-D10A-4A32BDA41B78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Events">
+      <UniqueIdentifier>{9B59713C-8714-61E8-30CC-D9321C66AB78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Files">
+      <UniqueIdentifier>{59E8A109-C5F5-CFEF-4EDC-CBDABAE89BA6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Fonts">
+      <UniqueIdentifier>{103DA509-7C4A-D3EF-0531-CFDA713D9FA6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Graphics">
+      <UniqueIdentifier>{B7BF91B9-A3E5-5B20-8C2B-E1EB78F080EC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Math">
+      <UniqueIdentifier>{D038759B-BC48-216C-2502-868A11311005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Mesh">
+      <UniqueIdentifier>{B349759B-9F59-216C-0813-868AF4411005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Resources">
+      <UniqueIdentifier>{C10BFE55-2DEF-0C96-36F2-3AD2A254D3E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Public\Utility">
+      <UniqueIdentifier>{DA22DD95-463B-C4BF-0FE8-53597BBF5859}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2364,430 +2418,445 @@
     <ClInclude Include="External\YAML\test\specexamples.h">
       <Filter>External\YAML\test</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Application.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
+      <Filter>Source\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ApplicationRenderer.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h">
+      <Filter>Source\Runtime\Private\CUDA</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\AudioSample.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h">
+      <Filter>Source\Runtime\Public\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Bitmap.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Components\Component.h">
+      <Filter>Source\Runtime\Public\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Component.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Components\Renderer.h">
+      <Filter>Source\Runtime\Public\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Components\Renderer.h">
-      <Filter>Source\include\Components</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Application.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Core.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Core.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\CoreCUDA.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\CoreTime.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\CoreTypes.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\CoreTypes.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Cubemap.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\EntryPoint.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\EdgeHolder.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\EdgeSegments.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\EntryPoint.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Object.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Event.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Space.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\FBXLoader.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Text.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\FileManager.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Transform.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\FileStream.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Engine\Window.h">
+      <Filter>Source\Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Font.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Events\Event.h">
+      <Filter>Source\Runtime\Public\Events</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\GLFunctions.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Events\Observer.h">
+      <Filter>Source\Runtime\Public\Events</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\GameObject.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Events\Property.h">
+      <Filter>Source\Runtime\Public\Events</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Glyph.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Events\Task.h">
+      <Filter>Source\Runtime\Public\Events</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Graphics.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Files\FileManager.h">
+      <Filter>Source\Runtime\Public\Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\IIdentifier.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Files\FileStream.h">
+      <Filter>Source\Runtime\Public\Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ImageLoader.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\EdgeHolder.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Material.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\EdgeSegments.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Box2D.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\Font.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Box3D.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\Glyph.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\CoreMath.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\SDFGenerator.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\IntVector2.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\Shape2D.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\IntVector2.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\Shape2DContour.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\IntVector3.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h">
+      <Filter>Source\Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\IntVector3.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\ApplicationRenderer.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\MathUtility.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Bitmap.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\MathUtility.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Cubemap.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Matrix3x3.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\GLFunctions.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Matrix3x3.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\GraphicContext.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Matrix4x4.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Graphics.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Matrix4x4.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Material.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Physics.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\RenderPipeline.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Quaternion.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\RenderStage.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Quaternion.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\RenderTarget.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Ray.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderProgram.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Ray.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderStage.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Vector2.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Texture.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Vector2.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Texture2D.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Vector3.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Graphics\Texture3D.h">
+      <Filter>Source\Runtime\Public\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Vector3.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Box2D.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Vector4.h">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Box3D.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Math\Vector4.inl">
-      <Filter>Source\include\Math</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\CoreMath.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Mesh.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector2.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\MeshLoader.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector2.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\OBJLoader.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector3.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Object.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\IntVector3.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Observer.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\MathUtility.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Property.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\MathUtility.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\RenderPipeline.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix3x3.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\RenderStage.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix3x3.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\RenderTarget.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ResourceGroupManager.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ResourceHolder.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Physics.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ResourceManager.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ResourceShaderProgram.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Quaternion.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ResourceShaderStage.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Ray.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Resources.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Ray.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Resources\ShaderStageManager.h">
-      <Filter>Source\include\Resources</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Vector2.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Resources\ShaderStageResource.h">
-      <Filter>Source\include\Resources</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Vector2.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\SDFGenerator.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Vector3.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ShaderProgram.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\ShaderStage.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Vector4.h">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Shape2D.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl">
+      <Filter>Source\Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Shape2DContour.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h">
+      <Filter>Source\Runtime\Public\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Space.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h">
+      <Filter>Source\Runtime\Public\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Task.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Text.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Text2DGenerator.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Texture.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Texture2D.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceGroupManager.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Texture3D.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Transform.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\DeviceFunctions.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShaderProgram.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\Hasher.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShaderStage.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\LogCore.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\Resources.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\LogFreeType.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageManager.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\LogGraphics.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageResource.h">
+      <Filter>Source\Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\MeshPrimitives.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Utility\DeviceFunctions.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\TextFormatting.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\TextFormattingMath.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Utility\LogCore.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\TexturePacking.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Utility\Timer.h">
-      <Filter>Source\include\Utility</Filter>
+    <ClInclude Include="Source\Runtime\Public\Utility\LogGraphics.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Window.h">
-      <Filter>Source\include</Filter>
+    <ClInclude Include="Source\Runtime\Public\Utility\TextFormatting.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Utility\TextFormattingMath.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Utility\Timer.h">
+      <Filter>Source\Runtime\Public\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\source\Application.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Source\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\AudioSample.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp">
+      <Filter>Source\Runtime\Private\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Bitmap.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Components\Renderer.cpp">
+      <Filter>Source\Runtime\Private\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Component.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Components\Renderer.cpp">
-      <Filter>Source\source\Components</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Component.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\CoreTime.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\CoreTime.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Cubemap.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\GameObject.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\EdgeHolder.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\IIdentifier.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\EdgeSegments.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Object.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\FBXLoader.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Space.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\FileManager.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Text.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\FileStream.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Transform.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Font.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Engine\Window.cpp">
+      <Filter>Source\Runtime\Private\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\GameObject.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Events\Observer.cpp">
+      <Filter>Source\Runtime\Private\Events</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Glyph.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Files\FileManager.cpp">
+      <Filter>Source\Runtime\Private\Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\IIdentifier.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Files\FileStream.cpp">
+      <Filter>Source\Runtime\Private\Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ImageLoader.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\EdgeHolder.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Material.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\EdgeSegments.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Mesh.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\Font.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\MeshLoader.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\Glyph.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\OBJLoader.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\Shape2D.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Object.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\Shape2DContour.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Observer.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\RenderPipeline.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Fonts\Texture3D.cpp">
+      <Filter>Source\Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\RenderStage.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Bitmap.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\RenderTarget.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Cubemap.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ResourceHolder.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Material.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ResourceManager.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\RenderPipeline.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ResourceShaderProgram.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\RenderStage.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ResourceShaderStage.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\RenderTarget.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Resources.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderProgram.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Resources\ShaderStageManager.cpp">
-      <Filter>Source\source\Resources</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderStage.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Resources\ShaderStageResource.cpp">
-      <Filter>Source\source\Resources</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ShaderProgram.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture2D.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\ShaderStage.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Graphics\Texture3D.cpp">
+      <Filter>Source\Runtime\Private\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Shape2D.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
+      <Filter>Source\Runtime\Private\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Shape2DContour.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Space.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Text.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Text2DGenerator.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Texture.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceHolder.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Texture2D.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Texture3D.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShaderProgram.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Transform.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShaderStage.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Utility\DeviceFunctions.cpp">
-      <Filter>Source\source\Utility</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\Resources.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Utility\LogCore.cpp">
-      <Filter>Source\source\Utility</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageManager.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Utility\SDFGenerator.cpp">
-      <Filter>Source\source\Utility</Filter>
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageResource.cpp">
+      <Filter>Source\Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Utility\TexturePacking.cpp">
-      <Filter>Source\source\Utility</Filter>
+    <ClCompile Include="Source\Runtime\Private\Utility\DeviceFunctions.cpp">
+      <Filter>Source\Runtime\Private\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Utility\Timer.cpp">
-      <Filter>Source\source\Utility</Filter>
+    <ClCompile Include="Source\Runtime\Private\Utility\LogCore.cpp">
+      <Filter>Source\Runtime\Private\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\source\Window.cpp">
-      <Filter>Source\source</Filter>
+    <ClCompile Include="Source\Runtime\Private\Utility\SDFGenerator.cpp">
+      <Filter>Source\Runtime\Private\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp">
+      <Filter>Source\Runtime\Private\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp">
+      <Filter>Source\Runtime\Private\Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
