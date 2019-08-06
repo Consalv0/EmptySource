@@ -25,28 +25,28 @@ namespace EmptySource {
 		ShaderProgram* GetShaderProgram() const;
 
 		//* Pass Matrix4x4 Buffer Array
-		void SetAttribMatrix4x4Array(const Char * AttributeName, int Count, const void* Data, const unsigned int& Buffer) const;
+		void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const unsigned int& Buffer) const;
 
 		//* Pass Matrix4x4 Array
-		void SetMatrix4x4Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+		void SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass one float vector value array
-		void SetFloat1Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+		void SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass two float vector value array
-		void SetFloat2Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+		void SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass three float vector value array
-		void SetFloat3Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+		void SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass four float vector value array
-		void SetFloat4Array(const Char * UniformName, const float * Data, const int & Count = 1) const;
+		void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass Texture 2D array
-		void SetTexture2D(const Char * UniformName, struct Texture2D* Tex, const unsigned int& Position) const;
+		void SetTexture2D(const NChar * UniformName, struct Texture2D* Tex, const unsigned int& Position) const;
 
 		//* Pass Cubemap array
-		void SetTextureCubemap(const Char * UniformName, struct Cubemap* Tex, const unsigned int& Position) const;
+		void SetTextureCubemap(const NChar * UniformName, struct Cubemap* Tex, const unsigned int& Position) const;
 
 		//* Use shader program and render mode
 		void Use();

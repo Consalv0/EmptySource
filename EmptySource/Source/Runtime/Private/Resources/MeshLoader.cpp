@@ -1,4 +1,5 @@
 ﻿
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Resources/OBJLoader.h"
 #include "Resources/FBXLoader.h"
@@ -28,7 +29,7 @@ namespace EmptySource {
 
 	bool MeshLoader::Initialize() {
 		if (std::thread::hardware_concurrency() <= 1) {
-			Debug::Log(Debug::LogWarning, L"The aviable cores (%d) are insuficient for asyncronus loaders", std::thread::hardware_concurrency());
+			LOG_CORE_WARN(L"The aviable cores ({:d}) are insuficient for asyncronus loaders", std::thread::hardware_concurrency());
 			return false;
 		}
 		if (!FBXLoader::InitializeSdkManager()) {
@@ -86,7 +87,7 @@ namespace EmptySource {
 		}
 
 		_TaskRunning = true;
-		Debug::Log(Debug::LogInfo, L"Reading File Model '%ls'", Data.File->GetShortPath().c_str());
+		LOG_CORE_DEBUG(L"Reading File Model '{}'", Data.File->GetShortPath());
 		Data.bLoaded = RecognizeFileExtensionAndLoad(Data);
 		_TaskRunning = false;
 		return Data.bLoaded;

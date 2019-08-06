@@ -1,4 +1,5 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Graphics/GLFunctions.h"
 #include "Mesh/Mesh.h"
@@ -54,7 +55,7 @@ namespace EmptySource {
 	void Mesh::BindVertexArray() const {
 		// Generate 1 VAO, put the resulting identifier in VAO identifier
 		if (!ElementBufferObject.IsValid()) {
-			Debug::Log(Debug::LogWarning, L"Model buffers are empty, use SetUpBuffers first");
+			LOG_CORE_WARN(L"Model buffers are empty, use SetUpBuffers first");
 			return;
 		}
 

@@ -1,8 +1,8 @@
 
+#include "Engine/Log.h"
 #include "Resources/ResourceManager.h"
-#include "Utility/LogCore.h"
 
-#include "../External/YAML/include/yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 namespace EmptySource {
 
@@ -14,7 +14,7 @@ namespace EmptySource {
 			ResourceFile = FileManager::MakeFile(ResourceFilePath);
 		}
 		else {
-			String FileInfo;
+			NString FileInfo;
 			if (!ResourceFile->ReadNarrowStream(&FileInfo))
 				return NULL;
 			try {
@@ -24,7 +24,7 @@ namespace EmptySource {
 				}
 			}
 			catch (...) {
-				Debug::Log(Debug::LogWarning, L"The %ls file could not be parsed", ResourceFilePath.c_str());
+				LOG_CORE_WARN(L"The {} file could not be parsed", ResourceFilePath);
 				return NULL;
 			}
 		}

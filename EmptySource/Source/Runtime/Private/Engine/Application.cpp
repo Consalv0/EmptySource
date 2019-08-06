@@ -1,4 +1,5 @@
 ﻿#include "Engine/Core.h"
+#include "Engine/Log.h"
 #include "Engine/Application.h"
 #include "Engine/CoreTime.h"
 #include "Engine/Window.h"
@@ -10,7 +11,6 @@
 #include "Math/CoreMath.h"
 #include "Math/Physics.h"
 
-#include "Utility/LogGraphics.h"
 #include "Utility/TextFormattingMath.h"
 #include "Utility/Timer.h"
 #if defined(_WIN32) & defined(USE_CUDA)
@@ -40,14 +40,9 @@
 #include "Resources/ImageLoader.h"
 #include "Resources/ShaderStageManager.h"
 
-#include "Components/Renderer.h"
-
 #include "Fonts/Font.h"
-#include "Fonts/Text2DGenerator.h"
 
-#include "Events/Property.h"
-
-#include "../External/SDL2/include/SDL.h"
+#include <SDL.h>
 
 namespace EmptySource {
 
@@ -69,7 +64,7 @@ namespace EmptySource {
 		if (isRunning) return;
 
 		isRunning = true;
-		Debug::Log(Debug::LogInfo, L"Initalizing Application:\n");
+		LOG_CORE_INFO(L"Initalizing Application:\n");
 		Initalize();
 		Awake();
 		UpdateLoop();
@@ -93,7 +88,7 @@ namespace EmptySource {
 		
 		if (!GetWindow().IsRunning()) return;
 		if (Debug::InitializeDeviceFunctions() == false) {
-			Debug::Log(Debug::LogWarning, L"Couldn't initialize device functions");
+			LOG_CORE_WARN(L"Couldn't initialize device functions");
 		};
 
 #ifdef USE_CUDA
@@ -139,8 +134,6 @@ namespace EmptySource {
 		} while (
 			isRunning == true
 		);
-
-		// delete[] Positions;
 	}
 
 	void Application::Terminate() {
@@ -151,6 +144,8 @@ namespace EmptySource {
 		MeshLoader::Exit();
 
 		OnTerminate();
+
+		WindowInstance.reset(NULL);
 
 	};
 

@@ -13,3 +13,6 @@
 [submodule "EmptySource/External/SDL2"]
 	path = EmptySource/External/SDL2
 	url = https://github.com/spurious/SDL-mirror.git
+[submodule "EmptySource/External/SPDLOG"]
+	path = EmptySource/External/SPDLOG
+	url = https://github.com/gabime/spdlog.git

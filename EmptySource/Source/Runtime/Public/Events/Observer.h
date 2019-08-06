@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Engine/CoreTypes.h"
-#include "Engine/Text.h"
-
 #include <functional>
 
 namespace EmptySource {
@@ -13,16 +11,16 @@ namespace EmptySource {
 
 		virtual void Call() const;
 
-		bool AddCallback(const String& Identifier, std::function<void()>);
+		bool AddCallback(const NString& Identifier, std::function<void()>);
 
-		void RemoveCallback(const String& Identifier);
+		void RemoveCallback(const NString& Identifier);
 
 		void RemoveAllCallbacks();
 
 		virtual ~Observer();
 
 	private:
-		TDictionary<String, std::function<void()>> Callbacks;
+		TDictionary<NString, std::function<void()>> Callbacks;
 	};
 
 }

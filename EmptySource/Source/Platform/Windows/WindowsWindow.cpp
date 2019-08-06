@@ -1,15 +1,18 @@
 
-#include "Platform/Windows/WindowsWindow.h"
+#include "Engine/Log.h"
 #include "Engine/Application.h"
-
-#include "Utility/LogCore.h"
-
 #include "Graphics/Graphics.h"
 #include "Graphics/Bitmap.h"
 
-#include "../External/SDL2/include/SDL.h"
+#include "Utility/TextFormatting.h"
 
+#include "Platform/Windows/WindowsWindow.h"
+
+/// Remove this in the furture
 #include "Platform/OpenGL/OpenGLContext.h"
+
+#include <SDL.h>
+
 
 namespace EmptySource {
 
@@ -25,17 +28,15 @@ namespace EmptySource {
 		if (Context != NULL || WindowHandle != NULL) return;
 
 		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-			Debug::Log(Debug::LogCritical, L"Failed to initialize SDL 2.0.9: %ls\n", StringToWString(SDL_GetError()).c_str());
+			LOG_CORE_CRITICAL(L"Failed to initialize SDL 2.0.9: {0}\n", Text::NarrowToWide(SDL_GetError()));
 			return;
 		}
 
 		if ((WindowHandle = SDL_CreateWindow(
-			Name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Width, Height,
+			Text::WideToNarrow(Name).c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Width, Height,
 			SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | Mode
 		)) == NULL) {
-			Debug::Log(Debug::LogCritical, L"Window: \"%ls\" could not be initialized: %ls",
-				CharToWString(Name.c_str()).c_str(), StringToWString(SDL_GetError()).c_str()
-			);
+			LOG_CORE_CRITICAL(L"Window: \"{0}\" could not be initialized: {1}", Name, Text::NarrowToWide(SDL_GetError()));
 			return;
 		}
 
@@ -51,7 +52,7 @@ namespace EmptySource {
 		WindowHandle = NULL;
 		Width = Properties.Width;
 		Height = Properties.Height;
-		Name = Properties.Title;
+		Name = Properties.Name;
 		Mode = WindowMode::WM_Windowed;
 		Initialize();
 	}
@@ -69,8 +70,8 @@ namespace EmptySource {
 	}
 
 	void WindowsWindow::SetName(const WString & NewName) {
-		Name = WStringToString(NewName);
-		SDL_SetWindowTitle((SDL_Window *)(WindowHandle), Name.c_str());
+		Name = NewName;
+		SDL_SetWindowTitle((SDL_Window *)(WindowHandle), Text::WideToNarrow(Name).c_str());
 	}
 
 	Vector2 WindowsWindow::GetMousePosition(bool Clamp) {
@@ -114,11 +115,12 @@ namespace EmptySource {
 	void WindowsWindow::Terminate() {
 		if (IsRunning()) {
 #ifdef ES_DEBUG
-			Debug::Log(Debug::LogInfo, L"Window: \"%ls\" closed!", GetName().c_str());
+			LOG_CORE_DEBUG(L"Window: \"{}\" closed!", GetName());
 #endif // ES_DEBUG
 			SDL_DestroyWindow((SDL_Window *)(WindowHandle));
 			WindowHandle = NULL;
 			SDL_DelEventWatch(OnCloseWindow, (void *)this);
+			Context.reset(NULL);
 			// SDL_DelEventWatch(OnResizeWindow, this);
 		}
 	}
@@ -128,7 +130,7 @@ namespace EmptySource {
 	}
 
 	WString WindowsWindow::GetName() const {
-		return StringToWString(Name);
+		return Name;
 	}
 
 	float WindowsWindow::GetAspectRatio() const {

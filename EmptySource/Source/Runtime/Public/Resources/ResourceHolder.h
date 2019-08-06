@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Text.h"
+#include "Utility/TextFormatting.h"
 #include "Engine/IIdentifier.h"
 #include "Resources/ResourceManager.h"
 #include "Events/Property.h"

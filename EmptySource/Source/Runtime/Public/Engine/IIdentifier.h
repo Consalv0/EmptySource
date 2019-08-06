@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Text.h"
+#include "Engine/CoreTypes.h"
 #include "Utility/Hasher.h"
 
 namespace EmptySource {

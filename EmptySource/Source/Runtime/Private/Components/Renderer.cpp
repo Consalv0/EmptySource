@@ -1,7 +1,6 @@
 
 #include "Engine/Core.h"
 #include "Utility/LogCore.h"
-#include "Components/Renderer.h"
 #include "Graphics/Material.h"
 #include "Graphics/RenderStage.h"
 #include "Graphics/RenderPipeline.h"
@@ -10,6 +9,8 @@
 #include "Engine/GameObject.h"
 #include "Engine/CoreTime.h"
 #include "Engine/Application.h"
+
+#include "Components/Renderer.h"
 
 namespace EmptySource {
 

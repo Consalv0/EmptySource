@@ -2,6 +2,7 @@
 #include <cctype>
 #include <cstdio>
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Utility/Timer.h"
 #include "Files/FileStream.h"
@@ -110,42 +111,42 @@ namespace EmptySource {
 		}
 	}
 
-	void OBJLoader::ExtractVector3(const Char * Text, Vector3* Vector) {
-		Char* LineState;
+	void OBJLoader::ExtractVector3(const NChar * Text, Vector3* Vector) {
+		NChar* LineState;
 		Vector->x = fast_strtof(Text, &LineState);
 		Vector->y = fast_strtof(LineState, &LineState);
 		Vector->z = fast_strtof(LineState, &LineState);
 	}
 
-	void OBJLoader::ExtractVector2(const Char * Text, Vector2* Vector) {
-		Char* LineState;
+	void OBJLoader::ExtractVector2(const NChar * Text, Vector2* Vector) {
+		NChar* LineState;
 		Vector->x = fast_strtof(Text, &LineState);
 		Vector->y = fast_strtof(LineState, &LineState);
 	}
 
-	void OBJLoader::ExtractIntVector3(const Char * Text, IntVector3 * Vector) {
-		Char* LineState;
+	void OBJLoader::ExtractIntVector3(const NChar * Text, IntVector3 * Vector) {
+		NChar* LineState;
 		Vector->x = (int)fast_strtof(Text, &LineState);
 		Vector->y = (int)fast_strtof(LineState, &LineState);
 		Vector->z = (int)fast_strtof(LineState, NULL);
 	}
 
 	void OBJLoader::ParseVertexPositions(ExtractedData & Data) {
-		for (TArray<const Char *>::const_iterator Line = Data.LinePositions.begin(); Line != Data.LinePositions.end(); ++Line) {
+		for (TArray<const NChar *>::const_iterator Line = Data.LinePositions.begin(); Line != Data.LinePositions.end(); ++Line) {
 			const size_t Pos = Line - Data.LinePositions.begin();
 			ExtractVector3((*Line) + 1, &Data.ListPositions[Pos]);
 		}
 	}
 
 	void OBJLoader::ParseVertexNormals(ExtractedData & Data) {
-		for (TArray<const Char *>::const_iterator Line = Data.LineNormals.begin(); Line != Data.LineNormals.end(); ++Line) {
+		for (TArray<const NChar *>::const_iterator Line = Data.LineNormals.begin(); Line != Data.LineNormals.end(); ++Line) {
 			const size_t Pos = Line - Data.LineNormals.begin();
 			ExtractVector3((*Line) + 1, &Data.ListNormals[Pos]);
 		}
 	}
 
 	void OBJLoader::ParseVertexUVs(ExtractedData & Data) {
-		for (TArray<const Char *>::const_iterator Line = Data.LineUVs.begin(); Line != Data.LineUVs.end(); ++Line) {
+		for (TArray<const NChar *>::const_iterator Line = Data.LineUVs.begin(); Line != Data.LineUVs.end(); ++Line) {
 			const size_t Pos = Line - Data.LineUVs.begin();
 			ExtractVector2((*Line) + 1, &Data.ListUVs[Pos]);
 		}
@@ -160,8 +161,8 @@ namespace EmptySource {
 		auto CurrentObject = Data.Objects.begin();
 		auto CurrentObjectMaterial = CurrentObject->Materials.begin();
 		int VertexCount = 0;
-		const Char * LineChar;
-		for (TArray<const Char *>::const_iterator Line = Data.LineVertexIndices.begin(); Line != Data.LineVertexIndices.end(); ++Line) {
+		const NChar * LineChar;
+		for (TArray<const NChar *>::const_iterator Line = Data.LineVertexIndices.begin(); Line != Data.LineVertexIndices.end(); ++Line) {
 			if ((CurrentObject + 1) != Data.Objects.end() &&
 				Line - Data.LineVertexIndices.begin() == (CurrentObject + 1)->VertexIndicesPos) {
 				++CurrentObject;
@@ -204,13 +205,13 @@ namespace EmptySource {
 
 				if (VertexCount > 4 && !bWarned) {
 					bWarned = true;
-					Debug::Log(Debug::LogWarning, L"The model has n-gons, this may lead to unwanted geometry");
+					LOG_CORE_WARN(L"The model has n-gons, this may lead to unwanted geometry");
 				}
 			}
 		}
 	}
 
-	OBJLoader::Keyword OBJLoader::GetKeyword(const Char * Word) {
+	OBJLoader::Keyword OBJLoader::GetKeyword(const NChar * Word) {
 		if (Word + 1 == NULL || Word + 2 == NULL) return Undefined;
 
 		if (Word[0] == 'f') return Face;
@@ -228,8 +229,8 @@ namespace EmptySource {
 		return Undefined;
 	}
 
-	void OBJLoader::PrepareData(const Char * InFile, ExtractedData& ModelData) {
-		const Char* Pointer = InFile;
+	void OBJLoader::PrepareData(const NChar * InFile, ExtractedData& ModelData) {
+		const NChar* Pointer = InFile;
 		int VertexCount = 0;
 		int NormalCount = 0;
 		int UVCount = 0;
@@ -285,7 +286,7 @@ namespace EmptySource {
 				FaceCount++;   continue;
 			};
 			if (Keyword == Group) {
-				ModelData.Groups.push_back(String());
+				ModelData.Groups.push_back(NString());
 				++Pointer;
 				while (*(Pointer + 1) != '\n' && *(Pointer + 1) != '\0') {
 					ModelData.Groups.back() += *++Pointer;
@@ -297,7 +298,7 @@ namespace EmptySource {
 					ModelData.Objects.push_back(ObjectData());
 				}
 				Pointer += 6;
-				String Name;
+				NString Name;
 				while (*(Pointer + 1) != '\n' && *(Pointer + 1) != '\0') { Name += *++Pointer; }
 				ModelData.Objects.back().Materials.push_back(ObjectData::Subdivision());
 				ModelData.Objects.back().Materials.back().Name = Name;
@@ -336,7 +337,7 @@ namespace EmptySource {
 			Debug::Timer Timer;
 
 			Timer.Start();
-			String* MemoryText = new String();
+			NString* MemoryText = new NString();
 			FileData.File->ReadNarrowStream(MemoryText);
 
 			PrepareData(MemoryText->c_str(), ModelData);
@@ -353,10 +354,10 @@ namespace EmptySource {
 			delete MemoryText;
 
 			Timer.Stop();
-			Debug::Log(Debug::LogInfo,
-				L"├> Parsed %ls vertices and %ls triangles in %.3fs",
-				Text::FormatUnit(ModelData.VertexIndices.size(), 2).c_str(),
-				Text::FormatUnit(ModelData.VertexIndices.size() / 3, 2).c_str(),
+			LOG_CORE_INFO(
+				L"├> Parsed {0} vertices and {1} triangles in {2:.3f}s",
+				Text::FormatUnit(ModelData.VertexIndices.size(), 2),
+				Text::FormatUnit(ModelData.VertexIndices.size() / 3, 2),
 				Timer.GetEnlapsedSeconds()
 			);
 		}
@@ -377,7 +378,7 @@ namespace EmptySource {
 
 			FileData.Meshes.push_back(MeshData());
 			MeshData* OutMesh = &FileData.Meshes.back();
-			OutMesh->Name = StringToWString(Data.Name);
+			OutMesh->Name = Text::NarrowToWide(Data.Name);
 
 			for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
 				ObjectData::Subdivision & MaterialIndex = Data.Materials[MaterialCount];
@@ -432,17 +433,15 @@ namespace EmptySource {
 			OutMesh->Bounding = Data.Bounding;
 			OutMesh->hasBoundingBox = true;
 
-#ifdef _DEBUG
-			// Debug::LogClearLine(Debug::LogInfo);
-			Debug::Log(
-				Debug::LogInfo,
-				L"├> Parsed %ls	vertices in %ls	at [%d]'%ls'",
-				Text::FormatUnit(Data.VertexIndicesCount, 2).c_str(),
-				Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2).c_str(),
+#ifdef ES_DEBUG
+			LOG_CORE_DEBUG(
+				L"├> Parsed {0} vertices in {1}	at [{2:d}]'{3}'",
+				Text::FormatUnit(Data.VertexIndicesCount, 2),
+				Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2),
 				FileData.Meshes.size(),
-				OutMesh->Name.c_str()
+				OutMesh->Name
 			);
-#endif // _DEBUG
+#endif // ES_DEBUG
 
 			TotalAllocatedSize += sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size();
 		}
@@ -455,7 +454,7 @@ namespace EmptySource {
 		delete[] Indices;
 
 		Timer.Stop();
-		Debug::Log(Debug::LogInfo, L"└> Allocated %ls in %.2fs", Text::FormatData(TotalAllocatedSize, 2).c_str(), Timer.GetEnlapsedSeconds());
+		LOG_CORE_INFO(L"└> Allocated {0} in {1:.2f}s", Text::FormatData(TotalAllocatedSize, 2), Timer.GetEnlapsedSeconds());
 
 		return true;
 	}

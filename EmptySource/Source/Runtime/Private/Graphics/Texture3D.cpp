@@ -1,4 +1,5 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Graphics/Texture3D.h"
 #include "Graphics/GLFunctions.h"
@@ -46,7 +47,7 @@ namespace EmptySource {
 			glBindTexture(GL_TEXTURE_3D, TextureObject);
 		}
 		else {
-			Debug::Log(Debug::LogWarning, L"Texture 3D is not valid");
+			LOG_CORE_WARN(L"Texture 3D is not valid");
 		}
 	}
 

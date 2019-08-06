@@ -17,11 +17,11 @@ namespace EmptySource {
 
 		WString ShaderPath;
 
-		String ShaderCode;
+		NString ShaderCode;
 
 		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, WString ShaderPath);
 
-		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, const String & Code);
+		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, const NString & Code);
 
 	public:
 

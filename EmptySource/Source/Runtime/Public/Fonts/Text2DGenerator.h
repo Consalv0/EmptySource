@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Engine/CoreTypes.h"
 #include "Fonts/Font.h"
 #include "Mesh/Mesh.h"
-#include "Engine/Text.h"
 #include "Graphics/Bitmap.h"
 
 namespace EmptySource {

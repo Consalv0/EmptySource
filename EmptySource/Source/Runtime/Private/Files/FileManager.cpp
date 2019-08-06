@@ -5,7 +5,7 @@
 #endif
 
 #include "Engine/Core.h"
-#include "Engine/Text.h"
+#include "Utility/TextFormatting.h"
 #include "Files/FileManager.h"
 
 #include <algorithm>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Text.h"
+#include "Utility/TextFormatting.h"
 #include "Utility/Hasher.h"
 
 #include <sstream>
@@ -25,7 +25,7 @@ namespace EmptySource {
 		WString GetPath() const;
 		WString GetShortPath() const;
 		std::wstringstream ReadStream() const;
-		bool ReadNarrowStream(String* Output) const;
+		bool ReadNarrowStream(NString* Output) const;
 		WString GetLine();
 		bool IsValid() const;
 

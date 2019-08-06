@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Text.h"
 #include "Math/MathUtility.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
@@ -41,7 +40,7 @@ namespace EmptySource {
 	typedef TArray<Vector2>    MeshUVs;
 	typedef TArray<Vector4>    MeshColors;
 	typedef TArray<MeshVertex> MeshVertices;
-	typedef TDictionary<String, int> MeshMaterials;
+	typedef TDictionary<NString, int> MeshMaterials;
 
 	struct MeshData {
 		WString Name;

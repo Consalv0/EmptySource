@@ -3,6 +3,7 @@
 #include <unistd.h>
 #endif
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Files/FileStream.h"
 #include "Files/FileManager.h"
@@ -20,17 +21,17 @@ namespace EmptySource {
 	}
 
 	FileStream::FileStream(WString FilePath) {
-#ifdef WIN32
+#ifdef ES_PLATFORM_WINDOWS
 		Stream = new std::wfstream(FilePath);
 #else
-		Stream = new std::wfstream(WStringToString(FilePath));
+		Stream = new std::wfstream(Text::WideToNarrow(FilePath));
 #endif
 
 		Path = FilePath;
 		Open();
 
 		if (!IsValid())
-			Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", FilePath.c_str());
+			LOG_CORE_ERROR(L"File '{}' is not valid or do not exist", FilePath);
 		else
 			LocaleToUTF8();
 	}
@@ -51,7 +52,7 @@ namespace EmptySource {
 	WString FileStream::GetFileName() const {
 		WChar Separator = L'/';
 
-#ifdef _WIN32
+#ifdef ES_PLATFORM_WINDOWS
 		Separator = L'\\';
 #endif
 
@@ -84,20 +85,20 @@ namespace EmptySource {
 			catch (...) {}
 		}
 		else {
-			Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", Path.c_str());
+			LOG_CORE_ERROR(L"File '{}' is not valid or do not exist", Path);
 		}
 
 		return stringStream;
 	}
 
-	bool FileStream::ReadNarrowStream(String* Output) const {
+	bool FileStream::ReadNarrowStream(NString* Output) const {
 		if (IsValid()) {
 			try {
 				std::fstream NarrowStream;
-#ifdef WIN32
+#ifdef ES_PLATFORM_WINDOWS
 				NarrowStream.open(Path, std::ios::in);
 #else
-				NarrowStream.open(WStringToString(Path), std::ios::in | std::ios::binary);
+				NarrowStream.open(Text::WideToNarrow(Path), std::ios::in | std::ios::binary);
 #endif
 				NarrowStream.seekg(0, std::ios::end);
 				Output->resize(NarrowStream.tellg());
@@ -110,7 +111,7 @@ namespace EmptySource {
 			}
 		}
 		else {
-			Debug::Log(Debug::LogError, L"File '%ls' is not valid or do not exist", Path.c_str());
+			LOG_CORE_ERROR(L"File '{}' is not valid or do not exist", Path);
 			return false;
 		}
 
@@ -137,10 +138,10 @@ namespace EmptySource {
 	}
 
 	bool FileStream::Open() {
-#ifdef WIN32
+#ifdef ES_PLATFORM_WINDOWS
 		Stream->open(Path, std::ios::in | std::ios::out);
 #else
-		Stream->open(WStringToString(Path), std::ios::in);
+		Stream->open(Text::WideToNarrow(Path), std::ios::in);
 #endif
 		if (Stream->is_open())
 			Reset();
@@ -151,10 +152,10 @@ namespace EmptySource {
 	void FileStream::Clean() {
 		if (Stream->is_open())
 			Stream->close();
-#ifdef WIN32
+#ifdef ES_PLATFORM_WINDOWS
 		Stream->open(Path, std::ios::in | std::ios::out | std::ios::trunc);
 #else
-		Stream->open(WStringToString(Path), std::ios::in | std::ios::out | std::ios::trunc);
+		Stream->open(Text::WideToNarrow(Path), std::ios::in | std::ios::out | std::ios::trunc);
 #endif
 	}
 

@@ -9,15 +9,15 @@ namespace EmptySource {
 		}
 	}
 
-	bool Observer::AddCallback(const String & Identifier, std::function<void()> Functor) {
+	bool Observer::AddCallback(const NString & Identifier, std::function<void()> Functor) {
 		if (Callbacks.find(Identifier) == Callbacks.end()) {
-			Callbacks.emplace(std::pair<String, std::function<void()>>(Identifier, Functor));
+			Callbacks.emplace(std::pair<NString, std::function<void()>>(Identifier, Functor));
 			return true;
 		}
 		return false;
 	}
 
-	void Observer::RemoveCallback(const String & Identifier) {
+	void Observer::RemoveCallback(const NString & Identifier) {
 		Callbacks.erase(Identifier);
 	}
 

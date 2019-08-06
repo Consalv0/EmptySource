@@ -1,10 +1,8 @@
 #pragma once
 
-#define NOMINMAX
-
 // Include windows headers
 #ifdef ES_PLATFORM_WINDOWS
-#include <windows.h>
+#include "Platform/Windows/MinWindows.h"
 #include <io.h>
 #include <conio.h>
 #endif // ES_PLATFORM_WINDOWS
@@ -17,4 +15,3 @@
 #include <stdlib.h>
 
 #include "Engine/CoreTypes.h"
-#include "Utility/LogCore.h"

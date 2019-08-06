@@ -14,7 +14,7 @@ namespace YAML {
 			Node Node;
 			Node["GUID"] = Element.GUID;
 			YAML::Node ShaderProgramNode;
-			ShaderProgramNode["Name"] = WStringToString(Element.Name);
+			ShaderProgramNode["Name"] = Text::WideToNarrow(Element.Name);
 			ShaderProgramNode["VertexShader"]   = Element.VertexShader;
 			ShaderProgramNode["FragmentShader"] = Element.FragmentShader;
 			ShaderProgramNode["ComputeShader"]  = Element.ComputeShader;
@@ -29,7 +29,7 @@ namespace YAML {
 			}
 
 			Element.GUID = Node["GUID"].as<size_t>();
-			Element.Name = Node["ShaderProgram"]["Name"].IsDefined() ? StringToWString(Node["ShaderProgram"]["Name"].as<String>()) : L"";
+			Element.Name = Node["ShaderProgram"]["Name"].IsDefined() ? Text::NarrowToWide(Node["ShaderProgram"]["Name"].as<NString>()) : L"";
 			Element.VertexShader = Node["ShaderProgram"]["VertexShader"].IsDefined() ?
 				Node["ShaderProgram"]["VertexShader"].as<size_t>() : 0;
 			Element.FragmentShader = Node["ShaderProgram"]["FragmentShader"].IsDefined() ?
@@ -52,7 +52,7 @@ namespace EmptySource {
 		YAML::Node BaseNode;
 		bool bNeedsModification = false;
 		{
-			String FileInfo;
+			NString FileInfo;
 			if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
 				return false;
 			BaseNode = YAML::Load(FileInfo.c_str());
@@ -62,10 +62,10 @@ namespace EmptySource {
 		int FileNodePos = -1;
 
 		if (ResourcesNode.IsDefined()) {
-			String FileString = WStringToString(Name);
+			NString FileString = Text::WideToNarrow(Name);
 			for (size_t i = 0; i < ResourcesNode.size(); i++) {
 				if (ResourcesNode[i]["ShaderProgram"].IsDefined() && ResourcesNode[i]["ShaderProgram"]["Name"].IsDefined()
-					&& Text::CompareIgnoreCase(ResourcesNode[i]["ShaderProgram"]["Name"].as<String>(), FileString)) {
+					&& Text::CompareIgnoreCase(ResourcesNode[i]["ShaderProgram"]["Name"].as<NString>(), FileString)) {
 					FileNodePos = (int)i;
 					break;
 				}
@@ -116,7 +116,7 @@ namespace EmptySource {
 		FileStream * ResourcesFile = GetResourcesFile();
 		YAML::Node BaseNode;
 		{
-			String FileInfo;
+			NString FileInfo;
 			if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
 				return false;
 			BaseNode = YAML::Load(FileInfo.c_str());

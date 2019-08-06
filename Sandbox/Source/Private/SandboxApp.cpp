@@ -11,7 +11,6 @@
 #include "Math/CoreMath.h"
 #include "Math/Physics.h"
 
-#include "Utility/LogGraphics.h"
 #include "Utility/TextFormattingMath.h"
 #include "Utility/Timer.h"
 #if defined(_WIN32) & defined(USE_CUDA)
@@ -148,8 +147,8 @@ protected:
 			SampleFile->Close();
 		}
 
-		if (SampleFile == NULL || SDL_LoadWAV(WStringToString(SampleFile->GetPath()).c_str(), &SampleSpecs, &SampleBuffer, &SampleLength) == NULL) {
-			Debug::Log(Debug::LogError, L"Couldn't not open the sound file or is invalid");
+		if (SampleFile == NULL || SDL_LoadWAV(Text::WideToNarrow(SampleFile->GetPath()).c_str(), &SampleSpecs, &SampleBuffer, &SampleLength) == NULL) {
+			LOG_ERROR("Couldn't not open the sound file or is invalid");
 		}
 		else {
 			{
@@ -181,7 +180,7 @@ protected:
 					SDL_MixAudioFormat(Stream, AudioPosition, SampleSpecs.format, Length, SDL_MIX_MAXVOLUME / 4);	// mix from one buffer into another
 				}
 				catch (...) {
-					Debug::Log(Debug::LogError, L"Error in Audio Data");
+					LOG_DEBUG("Error in Audio Data");
 				}
 
 				AudioPosition += Length;
@@ -201,7 +200,7 @@ protected:
 
 			/* Open the audio device */
 			if (SDL_OpenAudio(&SampleSpecs, NULL) < 0) {
-				fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+				LOG_ERROR("Couldn't open audio: {0}\n", SDL_GetError());
 				exit(-1);
 			}
 			/* Start playing */
@@ -209,16 +208,16 @@ protected:
 
 			int SampleSize = SDL_AUDIO_BITSIZE(SampleSpecs.format);
 			bool IsFloat = SDL_AUDIO_ISFLOAT(SampleSpecs.format);
-			Debug::Log(Debug::LogDebug, L"Audio Time Length: %f", (SampleLength * 8 / (SampleSize * SampleSpecs.channels)) / (float)SampleSpecs.freq);
+			LOG_DEBUG("Audio Time Length: {:0.3f}", (SampleLength * 8 / (SampleSize * SampleSpecs.channels)) / (float)SampleSpecs.freq);
 		}
 
-		Debug::Log(Debug::LogDebug, L"%ls", FileManager::GetAppDirectory().c_str());
+		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
 
 		{
 			Property<int> Value(0);
 
 			Observer IntObserver;
-			IntObserver.AddCallback("Test", [&Value]() { Debug::Log(Debug::LogDebug, L"PropertyInt Changed with value %d", (int)Value); });
+			IntObserver.AddCallback("Test", [&Value]() { LOG_DEBUG("PropertyInt Changed with value {0:d}", (int)Value); });
 			Value.AttachObserver(&IntObserver);
 
 			Value = 1;

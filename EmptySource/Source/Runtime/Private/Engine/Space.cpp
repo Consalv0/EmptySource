@@ -1,7 +1,10 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Engine/Space.h"
 #include "Engine/Object.h"
+#include "Engine/Space.h"
+
+#include "Utility/TextFormatting.h"
 
 namespace EmptySource {
 
@@ -72,7 +75,7 @@ namespace EmptySource {
 		Object->SpaceIn = this;
 		ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetUniqueID(), Object));
 		if (!Object->Initialize()) {
-			Debug::Log(Debug::LogError, L"Object '%ls'[%d] could't be initialized correctly", Object->GetUniqueName().c_str(), Object->GetUniqueID());
+			LOG_CORE_ERROR(L"Object '{}'[{:d}] could't be initialized correctly", Object->GetUniqueName(), Object->GetUniqueID());
 		}
 	}
 

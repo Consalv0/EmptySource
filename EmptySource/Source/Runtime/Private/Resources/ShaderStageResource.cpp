@@ -7,7 +7,7 @@ namespace EmptySource {
 		Supper((ResourceManager *)Manager, Name), Type(Type), ShaderPath(ShaderPath), ShaderCode("") {
 	}
 
-	ShaderStageResource::ShaderStageResource(ShaderStageManager * Manager, const WString & Name, ShaderType Type, const String & Code) :
+	ShaderStageResource::ShaderStageResource(ShaderStageManager * Manager, const WString & Name, ShaderType Type, const NString & Code) :
 		Supper((ResourceManager *)Manager, Name), Type(Type), ShaderPath(L""), ShaderCode(Code) {
 	}
 

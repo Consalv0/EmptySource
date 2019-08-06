@@ -17,7 +17,8 @@ IncludeDir = {}
 IncludeDir["SDL2"] = "EmptySource/External/SDL2/include"
 IncludeDir["GLAD"] = "EmptySource/External/GLAD/include"
 IncludeDir["FreeType"] = "EmptySource/External/FreeType/include"
-IncludeDir["RobinMap"] = "EmptySource/External/RobinMap/include/tsl"
+IncludeDir["RobinMap"] = "EmptySource/External/RobinMap/include"
+IncludeDir["SPDLOG"] = "EmptySource/External/SPDLOG/include"
 IncludeDir["STB"] = "EmptySource/External/STB"
 IncludeDir["YAML"] = "EmptySource/External/YAML/include"
 
@@ -43,7 +44,6 @@ project "EmptySource"
 		"%{prj.name}/Source/**.h",
 		"%{prj.name}/Source/**.inl",
 		"%{prj.name}/Source/**.cpp",
-		"%{prj.name}/External/**/**.h"
 	}
 
 	includedirs {
@@ -51,8 +51,8 @@ project "EmptySource"
 		"%{prj.name}/Source",
 		"%{prj.name}/Source/Runtime",
 		"%{prj.name}/Source/Runtime/Public",
-        "%{prj.name}/External",
 		"%{IncludeDir.SDL2}",
+		"%{IncludeDir.SPDLOG}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.FreeType}",
         "%{IncludeDir.RobinMap}",
@@ -91,8 +91,7 @@ project "EmptySource"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines
-		{
+		defines {
             "ES_PLATFORM_WINDOWS",
             "ES_DLLEXPORT"
 		}
@@ -118,7 +117,6 @@ project "Sandbox"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "on"
-    icon ("%{prj.name}/{prj.name}.ico")
 
 	targetdir ("%{prj.name}/Build/" .. outputdir)
 	objdir ("%{prj.name}/BinObjs/" .. outputdir)
@@ -132,7 +130,8 @@ project "Sandbox"
 		"EmptySource/Source",
 		"EmptySource/Source/Runtime",
 		"EmptySource/Source/Runtime/Public",
-		"EmptySource/External",
+        "%{IncludeDir.RobinMap}",
+		"%{IncludeDir.SPDLOG}",
 		"%{IncludeDir.GLAD}"
 	}
 
@@ -143,8 +142,7 @@ project "Sandbox"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines
-		{
+		defines {
             "ES_PLATFORM_WINDOWS"
 		}
 

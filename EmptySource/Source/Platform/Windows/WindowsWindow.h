@@ -14,7 +14,7 @@ namespace EmptySource {
 		typedef Window Supper;
 
 		struct {
-			String Name;
+			WString Name;
 			unsigned int Width;
 			unsigned int Height;
 			bool VSync;

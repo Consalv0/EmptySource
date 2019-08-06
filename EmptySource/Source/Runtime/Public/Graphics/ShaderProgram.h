@@ -7,7 +7,7 @@
 
 namespace EmptySource {
 
-	typedef TDictionary<const Char *, unsigned int> LocationMap;
+	typedef TDictionary<const NChar *, unsigned int> LocationMap;
 
 	class ShaderProgram {
 	private:
@@ -35,10 +35,10 @@ namespace EmptySource {
 		ShaderProgram(WString Name);
 
 		//* Get the location id of a uniform variable in this shader
-		unsigned int GetUniformLocation(const Char* LocationName);
+		unsigned int GetUniformLocation(const NChar* LocationName);
 
 		//* Get the location of the attrib in this shader
-		unsigned int GetAttribLocation(const Char* LocationName);
+		unsigned int GetAttribLocation(const NChar* LocationName);
 
 		//* Appends shader unit to shader program
 		void AppendStage(ShaderStage* ShaderProgram);

@@ -1,22 +1,63 @@
 #pragma once
 
-#include "Engine/Application.h"
-
-#include "Graphics/GraphicContext.h"
+#include "Engine/Log.h"
+#include "Engine/Core.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
-#include "Utility/LogCore.h"
-#include "Utility/LogGraphics.h"
+#include "Utility/TextFormatting.h"
+
+#include <glad/glad.h>
 
 // SDL 2.0.9
-#include "../External/GLAD/include/glad/glad.h"
+#include <SDL.h>
+#include <SDL_opengl.h>
 
-#include "../External/SDL2/include/SDL.h"
-#include "../External/SDL2/include/SDL_opengl.h"
-
-struct SDL_Window;
 
 namespace EmptySource {
+
+	namespace Debug {
+
+#ifndef __APPLE__
+		//* Error Callback related to OpenGL > 4.3
+		inline void APIENTRY OGLError(
+			GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength,
+			const GLchar * ErrorMessage, const void * UserParam)
+		{
+			// --- Ignore non-significant error/warning codes
+			if (ErrorID == 131169 || ErrorID == 131185 || ErrorID == 131218 || ErrorID == 131204) return;
+
+			const WChar* ErrorPrefix = L"";
+
+			switch (ErrorType) {
+			case GL_DEBUG_TYPE_ERROR:               ErrorPrefix = L"error";       break;
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ErrorPrefix = L"deprecated";  break;
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ErrorPrefix = L"undefined";   break;
+			case GL_DEBUG_TYPE_PORTABILITY:         ErrorPrefix = L"portability"; break;
+			case GL_DEBUG_TYPE_PERFORMANCE:         ErrorPrefix = L"performance"; break;
+			case GL_DEBUG_TYPE_MARKER:              ErrorPrefix = L"marker";      break;
+			case GL_DEBUG_TYPE_PUSH_GROUP:          ErrorPrefix = L"pushgroup";  break;
+			case GL_DEBUG_TYPE_POP_GROUP:           ErrorPrefix = L"popgroup";   break;
+			case GL_DEBUG_TYPE_OTHER:               ErrorPrefix = L"other";       break;
+			}
+
+			LOG_CORE_ERROR(L"<{0}>({1:d}) {2}", ErrorPrefix, ErrorID, Text::NarrowToWide(ErrorMessage));
+		}
+#endif
+
+		//* Prints the GPU version info used by GL
+		void PrintGraphicsInformation() {
+			const GLubyte    *Renderer = glGetString(GL_RENDERER);
+			const GLubyte      *Vendor = glGetString(GL_VENDOR);
+			const GLubyte     *Version = glGetString(GL_VERSION);
+			const GLubyte *GLSLVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+			LOG_CORE_INFO("GPU Render Device Info");
+			LOG_CORE_INFO("|-> GC Vendor	: {0}", (const NChar*)Vendor);
+			LOG_CORE_INFO("|-> GC Renderer	: {0}", (const NChar*)Renderer);
+			LOG_CORE_INFO("|-> GL Version	: {0}", (const NChar*)Version);
+			LOG_CORE_INFO("|-> GLSL Version	: {0}", (const NChar*)GLSLVersion);
+		}
+	}
 
 	OpenGLContext::~OpenGLContext() {
 		SDL_GL_DeleteContext(GLContext);
@@ -42,7 +83,7 @@ namespace EmptySource {
 		GLContext = SDL_GL_CreateContext(WindowHandle);
 
 		if (GLContext == NULL) {
-			Debug::Log(Debug::LogWarning, L"SDL_CreateContext failed: %ls\n", StringToWString(SDL_GetError()).c_str());
+			LOG_CORE_CRITICAL("SDL_CreateContext failed: {0}", SDL_GetError());
 			return false;
 		}
 
@@ -56,11 +97,9 @@ namespace EmptySource {
 	bool OpenGLContext::Initialize() {
 
 		if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
-			Debug::Log(Debug::LogCritical, L"GL Functions could not be initialized: %ls",
-				StringToWString(SDL_GetError()).c_str()
-			);
+			LOG_CORE_CRITICAL("GL Functions could not be initialized: {0}", SDL_GetError());
 			if (!gladLoadGL()) {
-				Debug::Log(Debug::LogCritical, L"Unable to load OpenGL functions!");
+				LOG_CORE_CRITICAL("Unable to load OpenGL functions!");
 				return false;
 			}
 		}

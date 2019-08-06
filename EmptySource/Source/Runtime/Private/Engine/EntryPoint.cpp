@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utility/LogCore.h"
+#include "Engine/Log.h"
 #include "Engine/Application.h"
 
 #include "../External/SDL2/include/SDL_main.h"
@@ -30,13 +30,9 @@ int main(int argc, char **argv) {
 #ifdef ES_PLATFORM_WINDOWS
 	_setmode(_fileno(stdout), _O_U8TEXT);
 #endif
-
+	
+	EmptySource::Log::Initialize();
 	EmptySource::Application::GetInstance()->Run();
-
-#ifdef ES_DEBUG
-	EmptySource::Debug::Log(EmptySource::Debug::LogInfo, L"Press any key to close...");
-	_getch();
-#endif
 
 	return 0;
 }

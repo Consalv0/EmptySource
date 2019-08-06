@@ -6,8 +6,8 @@
 #include "Graphics/GLFunctions.h"
 
 // SDL 2.0.9
-#include "../External/SDL2/include/SDL.h"
-#include "../External/SDL2/include/SDL_opengl.h"
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 namespace EmptySource {
 

@@ -85,7 +85,7 @@ namespace EmptySource {
 
 	void Font::Initialize(FileStream * File) {
 		FT_Error Error = 0;
-		if (File == NULL || (Error = FT_New_Face(FreeTypeLibrary, WStringToString(File->GetPath()).c_str(), 0, &Face)))
+		if (File == NULL || (Error = FT_New_Face(FreeTypeLibrary, Text::WideToNarrow(File->GetPath()).c_str(), 0, &Face)))
 			Debug::Log(Debug::LogError, L"Failed to load font, %ls", FT_ErrorMessage(Error));
 	}
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/CoreTypes.h"
-#include "Engine/Text.h"
 
 namespace EmptySource {
 

@@ -1,4 +1,5 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Graphics/Cubemap.h"
 #include "Graphics/GLFunctions.h"
@@ -23,7 +24,7 @@ namespace EmptySource {
 		TextureObject = 0;
 
 		if (WidthSize <= 0) {
-			Debug::Log(Debug::LogError, L"One or more texture with incorrect size in cubemap with size %d", Width);
+			LOG_CORE_ERROR(L"One or more texture with incorrect size in cubemap with size {:d}", Width);
 			return;
 		}
 
@@ -39,7 +40,7 @@ namespace EmptySource {
 			glBindTexture(GL_TEXTURE_CUBE_MAP, TextureObject);
 		}
 		else {
-			Debug::Log(Debug::LogWarning, L"Texture Cubemap is not valid");
+			LOG_CORE_ERROR(L"Texture Cubemap is not valid");
 		}
 	}
 

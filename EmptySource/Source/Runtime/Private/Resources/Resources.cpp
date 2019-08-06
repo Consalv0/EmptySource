@@ -1,10 +1,11 @@
 
+#include "Engine/Log.h"
 #include "Files/FileStream.h"
 #include "Files/FileManager.h"
 #include "Resources/Resources.h"
 #include "Graphics/ShaderStage.h"
 
-#include "../External/YAML/include/yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 namespace EmptySource {
 
@@ -35,7 +36,7 @@ namespace EmptySource {
 			bNeedsModification = true;
 		}
 		else {
-			String FileInfo;
+			NString FileInfo;
 			if (!ResourceFile->ReadNarrowStream(&FileInfo))
 				return NULL;
 			try {
@@ -45,7 +46,7 @@ namespace EmptySource {
 				}
 			}
 			catch (...) {
-				Debug::Log(Debug::LogWarning, L"The Resource.yaml file could not be parsed");
+				LOG_CORE_WARN(L"The Resource.yaml file could not be parsed");
 				FileStream * ResourceFileSave = FileManager::MakeFile(ResourceFilePath + L".save");
 				ResourceFileSave->Clean();
 				(*ResourceFileSave) << FileInfo.c_str();

@@ -1,9 +1,15 @@
 #pragma once
 
+#include <string>
+#include <tsl/robin_map.h>
 #include <vector>
-#include "../External/RobinMap/include/tsl/robin_map.h"
 
 namespace EmptySource {
+
+	typedef char			NChar;
+	typedef wchar_t			WChar;
+	typedef std::string		NString;
+	typedef std::wstring	WString;
 
 	template<class T>
 	using TArray = std::vector<T>;

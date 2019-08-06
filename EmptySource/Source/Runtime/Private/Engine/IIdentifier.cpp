@@ -1,6 +1,7 @@
 
-#include <stddef.h>
+#include "Utility/TextFormatting.h"
 #include "Engine/IIdentifier.h"
+#include <stddef.h>
 
 namespace EmptySource {
 

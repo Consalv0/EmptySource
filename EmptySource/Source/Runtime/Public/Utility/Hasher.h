@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include "Engine/CoreTypes.h"
 
 namespace EmptySource {
 

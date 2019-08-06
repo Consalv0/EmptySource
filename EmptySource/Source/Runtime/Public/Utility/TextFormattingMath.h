@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Math/CoreMath.h"
-#include "Engine/Text.h"
+#include "Utility/TextFormatting.h"
 
 namespace EmptySource {
 

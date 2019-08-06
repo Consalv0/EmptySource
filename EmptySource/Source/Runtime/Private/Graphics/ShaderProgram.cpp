@@ -1,4 +1,5 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Graphics/GLFunctions.h"
 #include "Graphics/ShaderProgram.h"
@@ -10,7 +11,7 @@ namespace EmptySource {
 		int InfoLogLength;
 
 		// Link the shader program
-		Debug::Log(Debug::LogInfo, L"Linking shader program '%ls'...", Name.c_str());
+		LOG_CORE_DEBUG(L"Linking shader program '{}'...", Name);
 		ProgramObject = glCreateProgram();
 
 		if (VertexShader != NULL && VertexShader->IsValid()) {
@@ -30,7 +31,7 @@ namespace EmptySource {
 		if (InfoLogLength > 0) {
 			TArray<char> ProgramErrorMessage(InfoLogLength + 1);
 			glGetProgramInfoLog(ProgramObject, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-			Debug::Log(Debug::LogInfo, L"'%ls'", CharToWString((const Char*)&ProgramErrorMessage[0]).c_str());
+			LOG_CORE_ERROR(L"'{}'", Text::NarrowToWide((const NChar*)&ProgramErrorMessage[0]).c_str());
 			return false;
 		}
 
@@ -59,7 +60,7 @@ namespace EmptySource {
 		ProgramObject = GL_FALSE;
 	}
 
-	unsigned int ShaderProgram::GetUniformLocation(const Char * LocationName) {
+	unsigned int ShaderProgram::GetUniformLocation(const NChar * LocationName) {
 		if (bIsLinked == false) return 0;
 
 		auto Finds = Locations.find(LocationName);
@@ -72,7 +73,7 @@ namespace EmptySource {
 		return Location;
 	}
 
-	unsigned int ShaderProgram::GetAttribLocation(const Char * LocationName) {
+	unsigned int ShaderProgram::GetAttribLocation(const NChar * LocationName) {
 		if (bIsLinked == false) return 0;
 
 		auto Finds = Locations.find(LocationName);
@@ -87,7 +88,7 @@ namespace EmptySource {
 
 	void ShaderProgram::AppendStage(ShaderStage * Shader) {
 		if (IsValid()) {
-			Debug::Log(Debug::LogError, L"Program '%ls' is already linked and compiled, can't modify shader stages", Name.c_str());
+			LOG_CORE_WARN(L"Program '{}' is already linked and compiled, can't modify shader stages", Name);
 			return;
 		}
 
@@ -113,7 +114,7 @@ namespace EmptySource {
 
 	void ShaderProgram::Use() const {
 		if (!IsValid()) {
-			Debug::Log(Debug::LogError, L"Can't use shader program '%ls' because is not valid", Name.c_str());
+			LOG_CORE_WARN(L"Can't use shader program '{}' because is not valid", Name);
 			return;
 		}
 

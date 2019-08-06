@@ -1,8 +1,7 @@
 #pragma once
 
+#include "Engine/Core.h"
 #include "Graphics/Graphics.h"
-
-#include "Engine/Text.h"
 #include "Graphics/GraphicContext.h"
 
 namespace EmptySource {
@@ -17,15 +16,15 @@ namespace EmptySource {
 
 	struct WindowProperties {
 		//* Name displayed in header window
-		String Title;
+		WString Name;
 		unsigned int Width;
 		unsigned int Height;
 
 		WindowProperties(
-			const String& Title = "EmptySource",
+			const WString& Title = L"EmptySource",
 			unsigned int Width = 1280,
 			unsigned int Height = 720)
-			: Title(Title), Width(Width), Height(Height) {
+			: Name(Title), Width(Width), Height(Height) {
 		}
 
 	};

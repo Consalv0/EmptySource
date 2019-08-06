@@ -37,7 +37,7 @@ namespace EmptySource {
 		if (File == NULL) return false;
 		int Width, Height, Comp;
 		stbi_set_flip_vertically_on_load(FlipVertically);
-		FILE * FILEFile = fopen(WStringToString(File->GetPath()).c_str(), "rb");
+		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
 		auto * Image = LoadFromFile<typename T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
 		if (Image == NULL) return false;
 		RefBitmap = Bitmap<T>(Width, Height);

@@ -27,6 +27,7 @@
         "yml"
     ],
     "files.associations": {
-        "cstdio": "cpp"
+        "cstdio": "cpp",
+        "random": "cpp"
     }
 }

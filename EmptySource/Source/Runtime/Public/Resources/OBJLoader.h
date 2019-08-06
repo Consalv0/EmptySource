@@ -11,12 +11,12 @@ namespace EmptySource {
 	private:
 		struct ObjectData {
 			struct Subdivision {
-				String Name;
+				NString Name;
 				int VertexIndicesPos = 0;
 				int VertexIndicesCount = 0;
 			};
 
-			String Name;
+			NString Name;
 			Box3D Bounding;
 			TArray<Subdivision> Materials;
 			bool hasNormals;
@@ -26,23 +26,23 @@ namespace EmptySource {
 		};
 
 		struct ExtractedData {
-			TArray<String> Groups;
+			TArray<NString> Groups;
 			TArray<ObjectData> Objects;
 			TArray<IntVector3> VertexIndices;
 			MeshVector3D ListPositions;
 			MeshVector3D ListNormals;
 			MeshUVs ListUVs;
-			TArray<const Char *> LineVertexIndices;
-			TArray<const Char *> LinePositions;
-			TArray<const Char *> LineNormals;
-			TArray<const Char *> LineUVs;
+			TArray<const NChar *> LineVertexIndices;
+			TArray<const NChar *> LinePositions;
+			TArray<const NChar *> LineNormals;
+			TArray<const NChar *> LineUVs;
 		};
 
 		enum Keyword {
 			Comment, Object, Group, Material, Vertex, Normal, TextureCoord, Face, CSType, Undefined
 		};
 
-		static Keyword GetKeyword(const Char* Line);
+		static Keyword GetKeyword(const NChar* Line);
 
 		static bool GetSimilarVertexIndex(
 			const MeshVertex & Vertex,
@@ -50,11 +50,11 @@ namespace EmptySource {
 			unsigned & Result
 		);
 
-		static void ExtractVector3(const Char * Text, Vector3* Vertex);
-		static void ExtractVector2(const Char * Text, Vector2* Vertex);
-		static void ExtractIntVector3(const Char * Text, IntVector3* Vertex);
+		static void ExtractVector3(const NChar * Text, Vector3* Vertex);
+		static void ExtractVector2(const NChar * Text, Vector2* Vertex);
+		static void ExtractIntVector3(const NChar * Text, IntVector3* Vertex);
 
-		static void PrepareData(const Char * InFile, ExtractedData& Data);
+		static void PrepareData(const NChar * InFile, ExtractedData& Data);
 
 		static void ParseVertexPositions(ExtractedData& Data);
 		static void ParseVertexNormals(ExtractedData& Data);

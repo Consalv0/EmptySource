@@ -35,7 +35,7 @@ namespace EmptySource {
 		bool CompileFromFile(const WString & FilePath);
 
 		//* Create and compile our shader unit
-		bool CompileFromText(const String & Code);
+		bool CompileFromText(const NString & Code);
 
 		//* Unloads the shader unit
 		void Delete();

@@ -1,8 +1,12 @@
+
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Graphics/GLFunctions.h"
 #include "Graphics/ShaderStage.h"
 #include "Graphics/Material.h"
 #include "Files/FileManager.h"
+
+#include "Utility/TextFormatting.h"
 
 namespace EmptySource {
 
@@ -29,32 +33,36 @@ namespace EmptySource {
 		if (ShaderCode == NULL)
 			return false;
 
-		CompileFromText(WStringToString(FileManager::ReadStream(ShaderCode)));
+		NString Code;
+		if (!ShaderCode->ReadNarrowStream(&Code)) {
+			return false;
+		}
+		CompileFromText(Code);
 
 		ShaderCode->Close();
 		return true;
 	}
 
-	bool ShaderStage::CompileFromText(const String & Code) {
+	bool ShaderStage::CompileFromText(const NString & Code) {
 		switch (Type) {
 		case ST_Vertex:
 			ShaderObject = glCreateShader(GL_VERTEX_SHADER);
-			Debug::Log(Debug::LogInfo, L"Compiling VERTEX shader '%i'", ShaderObject);
+			LOG_CORE_INFO(L"Compiling VERTEX shader '{:d}'", ShaderObject);
 			break;
 		case ST_Fragment:
 			ShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-			Debug::Log(Debug::LogInfo, L"Compiling FRAGMENT shader '%i'", ShaderObject);
+			LOG_CORE_INFO(L"Compiling FRAGMENT shader '{:d}'", ShaderObject);
 			break;
 		case ST_Compute:
 			// VertexStream = FileManager::Open(ShaderPath);
 			break;
 		case ST_Geometry:
 			ShaderObject = glCreateShader(GL_GEOMETRY_SHADER);
-			Debug::Log(Debug::LogInfo, L"Compiling GEOMETRY shader '%i'", ShaderObject);
+			LOG_CORE_INFO(L"Compiling GEOMETRY shader '{:d}'", ShaderObject);
 			break;
 		}
 
-		const Char * SourcePointer = Code.c_str();
+		const NChar * SourcePointer = Code.c_str();
 		glShaderSource(ShaderObject, 1, &SourcePointer, NULL);
 		glCompileShader(ShaderObject);
 

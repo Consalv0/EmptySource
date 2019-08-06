@@ -1,4 +1,5 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Graphics/Texture2D.h"
 #include "Graphics/GLFunctions.h"
@@ -81,7 +82,7 @@ namespace EmptySource {
 			glBindTexture(GL_TEXTURE_2D, TextureObject);
 		}
 		else {
-			Debug::Log(Debug::LogWarning, L"Texture 2D is not valid");
+			LOG_CORE_WARN(L"Texture 2D is not valid");
 		}
 	}
 

@@ -1,5 +1,6 @@
 
 #include "Engine/Core.h"
+#include "Utility/LogCore.h"
 #include "Graphics/Texture.h"
 #include "Graphics/GLFunctions.h"
 

@@ -1,11 +1,20 @@
 #pragma once
 
-#include "Engine/Text.h"
+#include "Engine/CoreTypes.h"
 #include <algorithm>
 
 namespace EmptySource {
 
 	namespace Text {
+
+		NString WideToNarrow(const WChar *From);
+
+		WString NarrowToWide(const NChar *From);
+
+		NString WideToNarrow(const WString &From);
+
+		WString NarrowToWide(const NString &From);
+
 		template<class T>
 		inline bool CompareIgnoreCase(T A, T B) {
 			transform(A.begin(), A.end(), A.begin(), toupper);
