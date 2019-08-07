@@ -289,7 +289,6 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageResource.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\DeviceFunctions.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Utility\LogCore.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp" />

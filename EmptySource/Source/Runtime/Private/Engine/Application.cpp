@@ -1,5 +1,6 @@
-﻿#include "Engine/Core.h"
+﻿
 #include "Engine/Log.h"
+#include "Engine/Core.h"
 #include "Engine/Application.h"
 #include "Engine/CoreTime.h"
 #include "Engine/Window.h"
@@ -13,7 +14,7 @@
 
 #include "Utility/TextFormattingMath.h"
 #include "Utility/Timer.h"
-#if defined(_WIN32) & defined(USE_CUDA)
+#if defined(ES_PLATFORM_WINDOWS) & defined(ES_USE_CUDA)
 #include "CUDA/CoreCUDA.h"
 #endif
 #include "Utility/DeviceFunctions.h"
@@ -91,7 +92,7 @@ namespace EmptySource {
 			LOG_CORE_WARN(L"Couldn't initialize device functions");
 		};
 
-#ifdef USE_CUDA
+#ifdef ES_USE_CUDA
 		CUDA::FindCudaDevice();
 #endif
 

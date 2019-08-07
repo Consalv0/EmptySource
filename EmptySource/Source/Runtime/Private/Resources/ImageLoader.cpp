@@ -1,4 +1,5 @@
 
+#include "Rendering/Graphics.h"
 #include "Resources/ImageLoader.h"
 
 // --- Visual Studio

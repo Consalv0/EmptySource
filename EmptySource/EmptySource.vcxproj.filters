@@ -530,9 +530,6 @@
     <ClCompile Include="Source\Runtime\Private\Utility\DeviceFunctions.cpp">
       <Filter>Runtime\Private\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Utility\LogCore.cpp">
-      <Filter>Runtime\Private\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp">
       <Filter>Runtime\Private\Utility</Filter>
     </ClCompile>

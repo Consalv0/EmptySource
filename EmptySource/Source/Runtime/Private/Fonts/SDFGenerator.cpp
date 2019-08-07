@@ -1,4 +1,5 @@
 
+#include "Rendering/Graphics.h"
 #include "Fonts/SDFGenerator.h"
 
 namespace EmptySource {

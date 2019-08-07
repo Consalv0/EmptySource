@@ -49,11 +49,11 @@
 #define NOPROFILER				// Profiler interface.
 #define NODEFERWINDOWPOS		// DeferWindowPos routines
 #define NOMCX					// Modem Configuration Extensions
-#define NOCRYPT
-#define NOTAPE
-#define NOIMAGE
-#define NOPROXYSTUB
-#define NORPC
+#define NOCRYPT					
+#define NOTAPE					
+#define NOIMAGE					
+#define NOPROXYSTUB				
+#define NORPC					
 
-// Finally now we can include windows.h
+// Now we can include windows.h
 #include <Windows.h>

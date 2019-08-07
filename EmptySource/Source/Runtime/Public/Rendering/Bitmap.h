@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Rendering/Graphics.h"
-
 #include <functional>
 
 namespace EmptySource {
@@ -11,23 +9,27 @@ namespace EmptySource {
 
 	public:
 		Bitmap();
-		Bitmap(int width, int height);
-		Bitmap(const Bitmap<T> &orig);
+		Bitmap(int Width, int Height);
+		Bitmap(const Bitmap<T> &Other);
 
-		// --- Width in pixels. 
+		//* Width in pixels. 
 		int GetWidth() const;
 
-		// --- Height in pixels.
+		//* Height in pixels.
 		int GetHeight() const;
 
+		//* Flips the pixels vertically
 		void FlipVertically();
 
 		Bitmap<T> & operator=(const Bitmap<T> & Other);
-		T & operator[](int i);
+		
 		T const& operator[](int i) const;
-		const T* PointerToValue() const;
-		T & operator()(int x, int y);
+		     T & operator[](int i);
+		
 		const T & operator()(int x, int y) const;
+		      T & operator()(int x, int y);
+		
+		const T* PointerToValue() const;
 
 		template<typename U>
 		void ChangeType(Bitmap<U> & Result, std::function<U(T)> const& Function) const {
@@ -38,6 +40,8 @@ namespace EmptySource {
 				}
 			}
 		}
+
+		void PerPixelOperator(std::function<void(T)> const& Function);
 
 		~Bitmap();
 

@@ -1,4 +1,5 @@
 
+#include "Rendering/Graphics.h"
 #include "Rendering/Bitmap.h"
 #include <memory>
 
@@ -8,7 +9,7 @@ namespace EmptySource {
 	Bitmap<T>::Bitmap() : Data(NULL), Width(0), Height(0) { }
 
 	template <typename T>
-	Bitmap<T>::Bitmap(int width, int height) : Width(width), Height(height) {
+	Bitmap<T>::Bitmap(int Width, int Height) : Width(Width), Height(Height) {
 		Data = new T[Width * Height];
 	}
 
@@ -16,6 +17,15 @@ namespace EmptySource {
 	Bitmap<T>::Bitmap(const Bitmap<T> &Other) : Width(Other.Width), Height(Other.Height) {
 		Data = new T[Width * Height];
 		memcpy(Data, Other.Data, Width * Height * sizeof(T));
+	}
+
+	template<typename T>
+	void Bitmap<T>::PerPixelOperator(std::function<void(T)> const & Function) {
+		for (int y = 0; y < Height; ++y) {
+			for (int x = 0; x < Width; ++x) {
+				Function((*this)(x, y));
+			}
+		}
 	}
 
 	template <typename T>
