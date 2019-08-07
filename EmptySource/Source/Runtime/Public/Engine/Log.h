@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef EMPTYSOURCE_CORE
+#pragma message ( "You have placed Log.h before Core.h. This will cause errors" )
+#endif // EMPTYSOURCE_CORE
+
 #include "Engine/Core.h"
 
 #define SPDLOG_WCHAR_TO_UTF8_SUPPORT
