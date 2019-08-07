@@ -3,7 +3,7 @@
 #include "Engine/CoreTypes.h"
 #include "Fonts/Font.h"
 #include "Mesh/Mesh.h"
-#include "Graphics/Bitmap.h"
+#include "Rendering/Bitmap.h"
 
 namespace EmptySource {
 

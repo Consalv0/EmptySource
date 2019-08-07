@@ -9,8 +9,8 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Distrib|x64">
-      <Configuration>Distrib</Configuration>
+    <ProjectConfiguration Include="Shipping|x64">
+      <Configuration>Shipping</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -34,7 +34,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Distrib|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -49,7 +49,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Distrib|x64'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -65,9 +65,9 @@
     <TargetName>EmptySource</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Distrib|x64'">
-    <OutDir>Build\Distrib_x86_64\</OutDir>
-    <IntDir>BinObjs\Distrib_x86_64\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
+    <OutDir>Build\Shipping_x86_64\</OutDir>
+    <IntDir>BinObjs\Shipping_x86_64\</IntDir>
     <TargetName>EmptySource</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -115,11 +115,11 @@
       <AdditionalLibraryDirectories>Libraries;C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distrib|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_DISTRIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_SHIPPING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External\SDL2\include;External\SPDLOG\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Source\Platform\Platform.h" />
     <ClInclude Include="Source\Platform\Windows\MinWindows.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
@@ -175,21 +176,6 @@
     <ClInclude Include="Source\Runtime\Public\Fonts\Shape2D.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\Shape2DContour.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\ApplicationRenderer.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Bitmap.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Cubemap.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\GLFunctions.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\GraphicContext.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Graphics.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Material.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\RenderPipeline.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\RenderStage.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\RenderTarget.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderProgram.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderStage.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Texture.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Texture2D.h" />
-    <ClInclude Include="Source\Runtime\Public\Graphics\Texture3D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Box3D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\CoreMath.h" />
@@ -216,6 +202,21 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
     <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h" />
     <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\ApplicationRenderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Cubemap.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Graphics.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\ShaderProgram.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\ShaderStage.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Texture2D.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Texture3D.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
@@ -230,7 +231,6 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageResource.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\DeviceFunctions.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h" />
-    <ClInclude Include="Source\Runtime\Public\Utility\LogCore.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\TextFormatting.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\TextFormattingMath.h" />
@@ -265,18 +265,18 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Shape2D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Fonts\Shape2DContour.cpp" />
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Bitmap.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Cubemap.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Material.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\RenderPipeline.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\RenderStage.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\RenderTarget.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderProgram.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderStage.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture2D.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture3D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\ShaderStage.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Texture2D.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Texture3D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp" />

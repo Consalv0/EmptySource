@@ -2,7 +2,7 @@
 
 #include "Engine/Core.h"
 #include "Files/FileManager.h"
-#include "Graphics/Bitmap.h"
+#include "Rendering/Bitmap.h"
 
 namespace EmptySource {
 

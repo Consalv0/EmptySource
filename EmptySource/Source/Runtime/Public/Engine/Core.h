@@ -1,11 +1,11 @@
 #pragma once
 
-// Include windows headers
-#ifdef ES_PLATFORM_WINDOWS
-#include "Platform/Windows/MinWindows.h"
-#include <io.h>
-#include <conio.h>
-#endif // ES_PLATFORM_WINDOWS
+
+#if !defined(EMPTYSOURCE_CORE)
+#define EMPTYSOURCE_CORE
+#endif
+
+#include "Platform/Platform.h"
 
 // Include main standard headers
 #include <stdexcept>
@@ -15,3 +15,4 @@
 #include <stdlib.h>
 
 #include "Engine/CoreTypes.h"
+

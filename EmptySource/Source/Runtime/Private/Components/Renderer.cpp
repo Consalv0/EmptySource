@@ -1,9 +1,9 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Utility/LogCore.h"
-#include "Graphics/Material.h"
-#include "Graphics/RenderStage.h"
-#include "Graphics/RenderPipeline.h"
+#include "Rendering/Material.h"
+#include "Rendering/RenderStage.h"
+#include "Rendering/RenderPipeline.h"
 #include "Mesh/Mesh.h"
 #include "Resources/MeshLoader.h"
 #include "Engine/GameObject.h"
@@ -24,7 +24,7 @@ namespace EmptySource {
 			TestStageObserver.AddCallback("Render", std::bind(&CRenderer::Render, this));
 		}
 
-		Debug::Log(Debug::LogDebug, L"Renderer '%ls'[%d] Initalized", GetUniqueName().c_str(), GetUniqueID());
+		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Initalized", GetUniqueName(), GetUniqueID());
 
 		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [this](MeshLoader::FileData & ModelData) {
 			for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
@@ -38,7 +38,7 @@ namespace EmptySource {
 
 	void CRenderer::OnDelete() {
 		TestStageObserver.RemoveAllCallbacks();
-		Debug::Log(Debug::LogDebug, L"Renderer '%ls'[%d] Destroyed", GetUniqueName().c_str(), GetUniqueID());
+		LOG_CORE_DEBUG(L"Renderer '%ls'[%d] Destroyed", GetUniqueName(), GetUniqueID());
 	}
 
 	void CRenderer::Render() {

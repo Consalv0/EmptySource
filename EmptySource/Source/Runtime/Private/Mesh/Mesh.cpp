@@ -1,7 +1,7 @@
 
 #include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Graphics/GLFunctions.h"
+#include "Rendering/GLFunctions.h"
 #include "Mesh/Mesh.h"
 
 namespace EmptySource {

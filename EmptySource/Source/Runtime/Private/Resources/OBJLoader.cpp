@@ -435,7 +435,7 @@ namespace EmptySource {
 
 #ifdef ES_DEBUG
 			LOG_CORE_DEBUG(
-				L"├> Parsed {0} vertices in {1}	at [{2:d}]'{3}'",
+				L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
 				Text::FormatUnit(Data.VertexIndicesCount, 2),
 				Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2),
 				FileData.Meshes.size(),

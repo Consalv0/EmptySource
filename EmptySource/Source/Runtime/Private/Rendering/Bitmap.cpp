@@ -1,5 +1,5 @@
 
-#include "Graphics/Bitmap.h"
+#include "Rendering/Bitmap.h"
 #include <memory>
 
 namespace EmptySource {

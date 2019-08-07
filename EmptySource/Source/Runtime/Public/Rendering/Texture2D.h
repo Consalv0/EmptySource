@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Texture.h"
+#include "Rendering/Texture.h"
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"
 #include "Math/Box2D.h"

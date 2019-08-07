@@ -1,6 +1,6 @@
 
 #include "Engine/Core.h"
-#include "Graphics/Graphics.h"
+#include "Rendering/Graphics.h"
 #include "Engine/Application.h"
 #include "Engine/CoreTime.h"
 #ifndef __ANDROID__

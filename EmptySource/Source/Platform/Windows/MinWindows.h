@@ -1,8 +1,7 @@
 #pragma once
 
 #if defined(_WINDOWS_) && !defined(EMPTYSOURCE_WINDOWS_INCLUDE)
-#pragma message ( "You have included windows.h before MinWindows.h" )
-#pragma message ( "All useless stuff from the windows headers won't be excluded !!!" )
+#pragma message ( "You have included Windows.h before MinWindows.h. All useless stuff from the windows headers won't be excluded" )
 #endif // _WINDOWS_
 
 #define EMPTYSOURCE_WINDOWS_INCLUDE
@@ -16,7 +15,7 @@
 //#define NOWINMESSAGES			// WM_*, EM_*, LB_*, CB_*
 //#define NOWINSTYLES			// WS_*, CS_*, ES_*, LBS_*, SBS_*, CBS_*
 //#define NOSYSMETRICS			// SM_*
-// #define NOMENUS				// MF_*
+//#define NOMENUS				// MF_*
 //#define NOICONS				// IDI_*
 //#define NOKEYSTATES			// MK_*
 //#define NOSYSCOMMANDS			// SC_*
@@ -55,8 +54,6 @@
 #define NOIMAGE
 #define NOPROXYSTUB
 #define NORPC
-
-struct IUnknown;
 
 // Finally now we can include windows.h
 #include <Windows.h>

@@ -1,7 +1,7 @@
 ﻿
+#include "Engine\Log.h"
 #include "Engine\Core.h"
-#include "Graphics\Graphics.h"
-#include "Utility\LogCore.h"
+#include "Rendering\Graphics.h"
 
 // CUDA HEADERS
 #include <cuda.h>

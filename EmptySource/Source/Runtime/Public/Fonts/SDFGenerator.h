@@ -3,7 +3,7 @@
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"
 #include "Fonts/Shape2D.h"
-#include "Graphics/Bitmap.h"
+#include "Rendering/Bitmap.h"
 
 namespace EmptySource {
 

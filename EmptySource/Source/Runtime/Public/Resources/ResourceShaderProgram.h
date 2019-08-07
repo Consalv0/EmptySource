@@ -3,7 +3,7 @@
 #ifdef RESOURCES_ADD_SHADERPROGRAM
 #define RESOURCES_ADD_SHADERSTAGE
 #include "Resources/Resources.h"
-#include "Graphics/ShaderProgram.h"
+#include "Rendering/ShaderProgram.h"
 
 namespace EmptySource {
 

@@ -1,8 +1,8 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Utility/TexturePacking.h"
 #include "Utility/LogFreeType.h"
-#include "Utility/LogCore.h"
 #include "Utility/Timer.h"
 #include "Fonts/Text2DGenerator.h"
 #include "Fonts/SDFGenerator.h"
@@ -15,7 +15,7 @@ namespace EmptySource {
 			FontGlyph Glyph;
 			if (TextFont->GetGlyph(Glyph, Characters[Character])) {
 				if (!Glyph.VectorShape.Validate())
-					Debug::Log(Debug::LogWarning, L"The geometry of the loaded shape is invalid.");
+					LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
 				Glyph.VectorShape.Normalize();
 
 				Glyph.GenerateSDF(PixelRange);
@@ -25,7 +25,7 @@ namespace EmptySource {
 	}
 
 	void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
-		Debug::Log(Debug::LogInfo, L"Loading %d font glyphs from %lc(%d) to %lc(%d)", To - From, From, From, To, To);
+		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From, From, From, To, To);
 		Debug::Timer Timer;
 		Timer.Start();
 		TextFont->SetGlyphHeight(GlyphHeight);
@@ -33,7 +33,7 @@ namespace EmptySource {
 			FontGlyph Glyph;
 			if (TextFont->GetGlyph(Glyph, (unsigned int)Character)) {
 				if (!Glyph.VectorShape.Validate())
-					Debug::Log(Debug::LogInfo | Debug::LogWarning, L"├> The geometry of the loaded shape is invalid.");
+					LOG_CORE_ERROR(L"├> The geometry of the loaded shape is invalid.");
 				Glyph.VectorShape.Normalize();
 
 				Glyph.GenerateSDF(PixelRange);
@@ -41,7 +41,7 @@ namespace EmptySource {
 			}
 		}
 		Timer.Stop();
-		Debug::Log(Debug::LogInfo, L"└> Glyphs loaded in %.3fs", Timer.GetEnlapsedSeconds());
+		LOG_CORE_INFO(L"└> Glyphs loaded in {:.3f}s", Timer.GetEnlapsedSeconds());
 	}
 
 	void Text2DGenerator::GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
@@ -136,7 +136,7 @@ namespace EmptySource {
 				Count++; FontGlyph Glyph;
 				if (TextFont->GetGlyph(Glyph, (unsigned int)*Character)) {
 					if (!Glyph.VectorShape.Validate())
-						Debug::Log(Debug::LogInfo | Debug::LogWarning, L" The geometry of the loaded shape is invalid.");
+						LOG_CORE_ERROR(L" The geometry of the loaded shape is invalid.");
 					Glyph.VectorShape.Normalize();
 
 					Glyph.GenerateSDF(PixelRange);
@@ -181,7 +181,7 @@ namespace EmptySource {
 			FontGlyph * Character = *Begin;
 			TexturePacking<Bitmap<FloatRed>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
 			if (!ResultNode.bValid || ResultNode.Element == NULL) {
-				Debug::Log(Debug::LogError, L"Error writting texture of %lc(%d)", Character->UnicodeValue, Character->UnicodeValue);
+				LOG_CORE_ERROR(L"Error writting texture of {0:c}({1:d})", Character->UnicodeValue, Character->UnicodeValue);
 				continue;
 			}
 

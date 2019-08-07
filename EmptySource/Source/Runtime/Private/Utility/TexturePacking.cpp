@@ -1,7 +1,7 @@
 
 #include "Utility/TexturePacking.h"
-#include "Graphics/Bitmap.h"
-#include "Graphics/Texture2D.h"
+#include "Rendering/Bitmap.h"
+#include "Rendering/Texture2D.h"
 
 namespace EmptySource {
 

@@ -3,7 +3,7 @@
 #include "Events/Event.h"
 #include "Engine/Transform.h"
 #include "Mesh/Mesh.h"
-#include "Graphics/RenderPipeline.h"
+#include "Rendering/RenderPipeline.h"
 
 namespace EmptySource {
 

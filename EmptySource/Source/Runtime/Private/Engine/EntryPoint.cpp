@@ -3,12 +3,11 @@
 #include "Engine/Log.h"
 #include "Engine/Application.h"
 
-#include "../External/SDL2/include/SDL_main.h"
+#include <SDL_main.h>
 
 #ifdef ES_PLATFORM_WINDOWS
 
 #ifdef ES_DLLEXPORT
-
 // --- Make discrete GPU by default.
 extern "C" {
 	// --- developer.download.nvidia.com/devzone/devcenter/gamegraphics/files/OptimusRenderingPolicies.pdf
@@ -33,6 +32,10 @@ int main(int argc, char **argv) {
 	
 	EmptySource::Log::Initialize();
 	EmptySource::Application::GetInstance()->Run();
+
+#ifdef ES_DEBUG
+	_getch();
+#endif // ES_DEBUG
 
 	return 0;
 }

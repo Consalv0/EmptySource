@@ -1,8 +1,8 @@
 
+#include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Utility/LogCore.h"
-#include "Graphics/Texture.h"
-#include "Graphics/GLFunctions.h"
+#include "Rendering/Texture.h"
+#include "Rendering/GLFunctions.h"
 
 namespace EmptySource {
 
@@ -27,7 +27,7 @@ namespace EmptySource {
 		case Graphics::CF_RGB32F:
 			return GL_RGB32F;
 		default:
-			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
+			LOG_CORE_WARN(L"Color not implemented, using RGBA");
 			return GL_RGBA;
 		}
 	}
@@ -48,7 +48,7 @@ namespace EmptySource {
 		case Graphics::CF_RGBA:
 			return GL_RGBA;
 		default:
-			Debug::Log(Debug::LogWarning, L"Color not implemented, using RGBA");
+			LOG_CORE_WARN(L"Color not implemented, using RGBA");
 			return GL_RGBA;
 		}
 	}
@@ -67,7 +67,7 @@ namespace EmptySource {
 		case Graphics::CF_RGB32F:
 			return GL_FLOAT;
 		default:
-			Debug::Log(Debug::LogWarning, L"Color not implemented, using unsigned byte");
+			LOG_CORE_WARN(L"Color not implemented, using unsigned byte");
 			return GL_UNSIGNED_BYTE;
 		}
 	}

@@ -1,6 +1,6 @@
 
 #include "Engine/Window.h"
-#include "Graphics/GraphicContext.h"
+#include "Rendering/GraphicContext.h"
 #include "Events/Property.h"
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/Core.h"
-#include "Graphics/Graphics.h"
-#include "Graphics/GraphicContext.h"
+#include "Rendering/Graphics.h"
+#include "Rendering/GraphicContext.h"
 
 namespace EmptySource {
 

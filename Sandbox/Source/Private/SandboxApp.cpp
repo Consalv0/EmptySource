@@ -21,15 +21,15 @@
 #include "Mesh/Mesh.h"
 #include "Mesh/MeshPrimitives.h"
 
-#include "Graphics/Graphics.h"
-#include "Graphics/RenderTarget.h"
-#include "Graphics/RenderStage.h"
-#include "Graphics/RenderPipeline.h"
-#include "Graphics/ShaderProgram.h"
-#include "Graphics/Material.h"
-#include "Graphics/Texture2D.h"
-#include "Graphics/Texture3D.h"
-#include "Graphics/Cubemap.h"
+#include "Rendering/Graphics.h"
+#include "Rendering/RenderTarget.h"
+#include "Rendering/RenderStage.h"
+#include "Rendering/RenderPipeline.h"
+#include "Rendering/ShaderProgram.h"
+#include "Rendering/Material.h"
+#include "Rendering/Texture2D.h"
+#include "Rendering/Texture3D.h"
+#include "Rendering/Cubemap.h"
 
 #include "Files/FileManager.h"
 
@@ -242,7 +242,7 @@ protected:
 		ImageLoader::Load(FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 		ImageLoader::Load(White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
 		ImageLoader::Load(Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
-		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/glacier.hdr"));
 
 		Texture2D EquirectangularTexture = Texture2D(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),

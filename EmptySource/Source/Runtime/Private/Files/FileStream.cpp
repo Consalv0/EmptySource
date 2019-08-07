@@ -1,13 +1,12 @@
 
-#ifdef __APPLE__
-#include <unistd.h>
-#endif
-
 #include "Engine/Log.h"
 #include "Engine/Core.h"
 #include "Files/FileStream.h"
 #include "Files/FileManager.h"
 
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
 #include <sstream>
 #include <fstream>
 #include <iostream>

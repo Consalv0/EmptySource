@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resources/ResourceHolder.h"
-#include "Graphics/ShaderStage.h"
+#include "Rendering/ShaderStage.h"
 
 namespace EmptySource {
 

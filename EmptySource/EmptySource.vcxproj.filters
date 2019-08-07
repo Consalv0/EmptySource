@@ -37,11 +37,11 @@
     <Filter Include="Runtime\Private\Fonts">
       <UniqueIdentifier>{AC29E569-1896-A064-E189-38C24DB5C2CC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Private\Graphics">
-      <UniqueIdentifier>{D3B62F27-BFDB-7EA7-E826-6437D4AA7DC5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Runtime\Private\Mesh">
       <UniqueIdentifier>{CF12DC8E-BBA1-6558-64C0-7953502E76FE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime\Private\Rendering">
+      <UniqueIdentifier>{408AADDB-AC4C-E165-F5FC-6FF261FEB943}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Private\Resources">
       <UniqueIdentifier>{5DE65A77-C9A8-8E01-1259-1D8E7E5A67DF}</UniqueIdentifier>
@@ -70,14 +70,14 @@
     <Filter Include="Runtime\Public\Fonts">
       <UniqueIdentifier>{D0DBF83E-BC6A-8208-6589-960351F792AE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Public\Graphics">
-      <UniqueIdentifier>{77E611A9-E31D-5A40-EC27-BE6358DE8039}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Runtime\Public\Math">
       <UniqueIdentifier>{90FF6F11-FC60-4D1F-85CE-93D1F12E84DE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Public\Mesh">
       <UniqueIdentifier>{73107011-DF71-4D1F-68DF-93D1D43F84DE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime\Public\Rendering">
+      <UniqueIdentifier>{64AED599-50D3-241A-791E-0AAA65A22338}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Public\Resources">
       <UniqueIdentifier>{810A8335-6D2F-D2B5-967A-B74582FED0D3}</UniqueIdentifier>
@@ -89,6 +89,12 @@
   <ItemGroup>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Platform.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\MinWindows.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
       <Filter>Platform\Windows</Filter>
@@ -189,51 +195,6 @@
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h">
       <Filter>Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\ApplicationRenderer.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Bitmap.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Cubemap.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\GLFunctions.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\GraphicContext.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Graphics.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Material.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\RenderPipeline.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\RenderStage.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\RenderTarget.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderProgram.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\ShaderStage.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Texture.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Texture2D.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Graphics\Texture3D.h">
-      <Filter>Runtime\Public\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
@@ -312,6 +273,51 @@
     <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h">
       <Filter>Runtime\Public\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\ApplicationRenderer.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Cubemap.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Graphics.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Material.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\ShaderProgram.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\ShaderStage.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Texture2D.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Texture3D.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
@@ -354,9 +360,6 @@
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Utility\LogCore.h">
-      <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
@@ -371,9 +374,6 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\Timer.h">
       <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Platform\Windows\MinWindows.h">
-      <Filter>Platform\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -458,41 +458,41 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp">
       <Filter>Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\Bitmap.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\Cubemap.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\Material.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\RenderPipeline.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\RenderStage.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\RenderTarget.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderProgram.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\ShaderStage.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture2D.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Graphics\Texture3D.cpp">
-      <Filter>Runtime\Private\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
       <Filter>Runtime\Private\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\ShaderProgram.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\ShaderStage.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Texture2D.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Texture3D.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp">
       <Filter>Runtime\Private\Resources</Filter>

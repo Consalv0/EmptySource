@@ -3,7 +3,7 @@
 #include "Engine/Application.h"
 #include "Engine/Window.h"
 
-#include "../External/SDL2/include/SDL.h"
+#include <SDL.h>
 
 namespace EmptySource {
 

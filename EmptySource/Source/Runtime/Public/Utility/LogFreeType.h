@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../External/FreeType/include/ft2build.h"
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include "Utility/TextFormatting.h"

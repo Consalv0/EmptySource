@@ -1,9 +1,9 @@
 
 #include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Graphics/GLFunctions.h"
-#include "Graphics/ShaderStage.h"
-#include "Graphics/Material.h"
+#include "Rendering/GLFunctions.h"
+#include "Rendering/ShaderStage.h"
+#include "Rendering/Material.h"
 #include "Files/FileManager.h"
 
 #include "Utility/TextFormatting.h"

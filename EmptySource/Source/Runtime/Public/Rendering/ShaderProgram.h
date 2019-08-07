@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/ShaderStage.h"
+#include "Rendering/ShaderStage.h"
 
 #include <functional>
 #include <cstring>

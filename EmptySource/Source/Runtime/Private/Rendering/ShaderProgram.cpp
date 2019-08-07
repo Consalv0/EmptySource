@@ -1,8 +1,8 @@
 
 #include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Graphics/GLFunctions.h"
-#include "Graphics/ShaderProgram.h"
+#include "Rendering/GLFunctions.h"
+#include "Rendering/ShaderProgram.h"
 #include "Files/FileManager.h"
 
 namespace EmptySource {

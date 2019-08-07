@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/Graphics.h"
-#include "Graphics/ShaderProgram.h"
+#include "Rendering/Graphics.h"
+#include "Rendering/ShaderProgram.h"
 
 namespace EmptySource {
 

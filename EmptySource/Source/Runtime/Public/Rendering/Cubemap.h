@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/Texture.h"
-#include "Graphics/Bitmap.h"
+#include "Rendering/Texture.h"
+#include "Rendering/Bitmap.h"
 
 namespace EmptySource {
 

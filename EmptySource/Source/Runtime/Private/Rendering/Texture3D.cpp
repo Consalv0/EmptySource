@@ -1,8 +1,8 @@
 
 #include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Graphics/Texture3D.h"
-#include "Graphics/GLFunctions.h"
+#include "Rendering/Texture3D.h"
+#include "Rendering/GLFunctions.h"
 
 namespace EmptySource {
 

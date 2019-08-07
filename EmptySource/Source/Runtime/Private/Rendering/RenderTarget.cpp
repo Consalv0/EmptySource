@@ -1,9 +1,8 @@
 
-#include "Graphics/RenderTarget.h"
-#include "Graphics/Texture2D.h"
-#include "Graphics/Cubemap.h"
-#include "Graphics/GLFunctions.h"
-#include "Utility/LogCore.h"
+#include "Rendering/RenderTarget.h"
+#include "Rendering/Texture2D.h"
+#include "Rendering/Cubemap.h"
+#include "Rendering/GLFunctions.h"
 
 namespace EmptySource {
 

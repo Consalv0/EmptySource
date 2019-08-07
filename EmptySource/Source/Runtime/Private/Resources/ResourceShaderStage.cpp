@@ -1,9 +1,9 @@
 
 #define RESOURCES_ADD_SHADERSTAGE
 #include "Resources/ResourceShaderStage.h"
-#include "Graphics/ShaderStage.h"
+#include "Rendering/ShaderStage.h"
 
-#include "../External/YAML/include/yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 namespace YAML {
 

@@ -6,7 +6,7 @@ workspace "EmptySource"
 	{
 		"Debug",
 		"Release",
-		"Distrib"
+		"Shipping"
 	}
 
 ---%{cfg.system}
@@ -83,7 +83,7 @@ project "EmptySource"
             "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
         }
 
-    configuration "Distrib"
+    configuration "Shipping"
         libdirs {
             "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
         }
@@ -106,8 +106,8 @@ project "EmptySource"
 		runtime "Release"
 		optimize "on"
 
-	filter "configurations:Distrib"
-		defines "ES_DISTRIB"
+	filter "configurations:Shipping"
+		defines "ES_SHIPPING"
 		runtime "Release"
 		optimize "on"
 
@@ -156,7 +156,7 @@ project "Sandbox"
 		runtime "Release"
 		optimize "on"
 
-	filter "configurations:Distrib"
-		defines "ES_DISTRIB"
+	filter "configurations:Shipping"
+		defines "ES_SHIPPING"
 		runtime "Release"
 		optimize "on"

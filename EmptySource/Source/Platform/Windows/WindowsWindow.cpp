@@ -1,8 +1,8 @@
 
 #include "Engine/Log.h"
 #include "Engine/Application.h"
-#include "Graphics/Graphics.h"
-#include "Graphics/Bitmap.h"
+#include "Rendering/Graphics.h"
+#include "Rendering/Bitmap.h"
 
 #include "Utility/TextFormatting.h"
 

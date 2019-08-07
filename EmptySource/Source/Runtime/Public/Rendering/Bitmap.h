@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Graphics.h"
+#include "Rendering/Graphics.h"
 
 #include <functional>
 

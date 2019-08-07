@@ -1,9 +1,9 @@
 
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "Resources/ResourceShaderProgram.h"
-#include "Graphics/ShaderProgram.h"
+#include "Rendering/ShaderProgram.h"
 
-#include "../External/YAML/include/yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 
 namespace YAML {
 	using namespace EmptySource;

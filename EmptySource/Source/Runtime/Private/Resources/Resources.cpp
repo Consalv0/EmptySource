@@ -3,7 +3,7 @@
 #include "Files/FileStream.h"
 #include "Files/FileManager.h"
 #include "Resources/Resources.h"
-#include "Graphics/ShaderStage.h"
+#include "Rendering/ShaderStage.h"
 
 #include <yaml-cpp/yaml.h>
 

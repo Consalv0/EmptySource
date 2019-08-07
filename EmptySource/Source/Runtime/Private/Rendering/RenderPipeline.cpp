@@ -1,9 +1,9 @@
 
 #include "Engine/Application.h"
 #include "Engine/Window.h"
-#include "Graphics/RenderStage.h"
-#include "Graphics/RenderPipeline.h"
-#include "Graphics/GLFunctions.h"
+#include "Rendering/RenderStage.h"
+#include "Rendering/RenderPipeline.h"
+#include "Rendering/GLFunctions.h"
 
 // SDL 2.0.9
 #include <SDL.h>
