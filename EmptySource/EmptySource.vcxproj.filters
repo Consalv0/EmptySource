@@ -111,9 +111,6 @@
     <ClInclude Include="Source\Runtime\Public\Components\Component.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Components\Renderer.h">
-      <Filter>Runtime\Public\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\Application.h">
       <Filter>Runtime\Public\Engine</Filter>
     </ClInclude>
@@ -273,9 +270,6 @@
     <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h">
       <Filter>Runtime\Public\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\ApplicationRenderer.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -286,9 +280,6 @@
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\Graphics.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h">
@@ -375,6 +366,24 @@
     <ClInclude Include="Source\Runtime\Public\Utility\Timer.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
@@ -388,9 +397,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp">
       <Filter>Runtime\Private\Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Components\Renderer.cpp">
-      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp">
       <Filter>Runtime\Private\Engine</Filter>
@@ -538,6 +544,21 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp">
       <Filter>Runtime\Private\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffers.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp">
+      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

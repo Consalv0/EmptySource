@@ -5,4 +5,4 @@
 #include <glad/glad.h>
 #endif // !__gl_h_
 
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"

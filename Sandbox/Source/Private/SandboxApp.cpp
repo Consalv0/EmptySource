@@ -21,7 +21,7 @@
 #include "Mesh/Mesh.h"
 #include "Mesh/MeshPrimitives.h"
 
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
@@ -40,7 +40,7 @@
 #include "Resources/ImageLoader.h"
 #include "Resources/ShaderStageManager.h"
 
-#include "Components/Renderer.h"
+#include "Components/ComponentRenderer.h"
 
 #include "Fonts/Font.h"
 #include "Fonts/Text2DGenerator.h"
@@ -246,48 +246,48 @@ protected:
 
 		Texture2D EquirectangularTexture = Texture2D(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-			Graphics::CF_RGB16F,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGB16F,
+			CF_RGB16F,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGB16F,
 			Equirectangular.PointerToValue()
 		);
 		Texture2D * BaseAlbedoTexture = new Texture2D(
 			IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
-			Graphics::CF_RGBA,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGBA,
+			CF_RGBA,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGBA,
 			BaseAlbedo.PointerToValue()
 		);
 		BaseAlbedoTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"BaseAlbedoTexture", BaseAlbedoTexture);
 		Texture2D * BaseMetallicTexture = new Texture2D(
 			IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
-			Graphics::CF_Red,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_Red,
+			CF_Red,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_Red,
 			BaseMetallic.PointerToValue()
 		);
 		BaseMetallicTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"BaseMetallicTexture", BaseMetallicTexture);
 		Texture2D * BaseRoughnessTexture = new Texture2D(
 			IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
-			Graphics::CF_Red,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_Red,
+			CF_Red,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_Red,
 			BaseRoughness.PointerToValue()
 		);
 		BaseRoughnessTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"BaseRoughnessTexture", BaseRoughnessTexture);
 		Texture2D * BaseNormalTexture = new Texture2D(
 			IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
-			Graphics::CF_RGB,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGB,
+			CF_RGB,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGB,
 			BaseNormal.PointerToValue()
 		);
 		BaseNormalTexture->GenerateMipMaps();
@@ -296,40 +296,40 @@ protected:
 		////
 		Texture2D * FlamerAlbedoTexture = new Texture2D(
 			IntVector2(FlamerAlbedo.GetWidth(), FlamerAlbedo.GetHeight()),
-			Graphics::CF_RGBA,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGBA,
+			CF_RGBA,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGBA,
 			FlamerAlbedo.PointerToValue()
 		);
 		FlamerAlbedoTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
 		Texture2D * FlamerMetallicTexture = new Texture2D(
 			IntVector2(FlamerMetallic.GetWidth(), FlamerMetallic.GetHeight()),
-			Graphics::CF_Red,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_Red,
+			CF_Red,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_Red,
 			FlamerMetallic.PointerToValue()
 		);
 		FlamerMetallicTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"FlamerMetallicTexture", FlamerMetallicTexture);
 		Texture2D * FlamerRoughnessTexture = new Texture2D(
 			IntVector2(FlamerRoughness.GetWidth(), FlamerRoughness.GetHeight()),
-			Graphics::CF_Red,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_Red,
+			CF_Red,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_Red,
 			FlamerRoughness.PointerToValue()
 		);
 		FlamerRoughnessTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
 		Texture2D * FlamerNormalTexture = new Texture2D(
 			IntVector2(FlamerNormal.GetWidth(), FlamerNormal.GetHeight()),
-			Graphics::CF_RGB,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGB,
+			CF_RGB,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGB,
 			FlamerNormal.PointerToValue()
 		);
 		FlamerNormalTexture->GenerateMipMaps();
@@ -338,20 +338,20 @@ protected:
 
 		Texture2D * WhiteTexture = new Texture2D(
 			IntVector2(White.GetWidth(), White.GetHeight()),
-			Graphics::CF_RGB,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGB,
+			CF_RGB,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGB,
 			White.PointerToValue()
 		);
 		WhiteTexture->GenerateMipMaps();
 		OldResourceManager::Load(L"WhiteTexture", WhiteTexture);
 		Texture2D * BlackTexture = new Texture2D(
 			IntVector2(Black.GetWidth(), Black.GetHeight()),
-			Graphics::CF_RGB,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Repeat,
-			Graphics::CF_RGB,
+			CF_RGB,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGB,
 			Black.PointerToValue()
 		);
 		BlackTexture->GenerateMipMaps();
@@ -361,10 +361,10 @@ protected:
 
 		FontMap = new Texture2D(
 			IntVector2(TextGenerator.AtlasSize),
-			Graphics::CF_Red,
-			Graphics::FM_MinMagLinear,
-			Graphics::AM_Border,
-			Graphics::CF_Red,
+			CF_Red,
+			FM_MinMagLinear,
+			SAM_Border,
+			CF_Red,
 			FontAtlas.PointerToValue()
 		);
 		FontMap->GenerateMipMaps();
@@ -386,26 +386,26 @@ protected:
 		UnlitMaterial.SetShaderProgram(UnlitShader->GetData());
 
 		UnlitMaterialWire.SetShaderProgram(UnlitShader->GetData());
-		UnlitMaterialWire.RenderMode = Graphics::RM_Wire;
-		UnlitMaterialWire.CullMode = Graphics::CM_None;
+		UnlitMaterialWire.FillMode = FM_Wireframe;
+		UnlitMaterialWire.CullMode = CM_None;
 
-		RenderTextureMaterial.DepthFunction = Graphics::DF_Always;
-		RenderTextureMaterial.CullMode = Graphics::CM_None;
+		RenderTextureMaterial.DepthFunction = DF_Always;
+		RenderTextureMaterial.CullMode = CM_None;
 		RenderTextureMaterial.SetShaderProgram(RenderTextureShader->GetData());
 
-		RenderTextMaterial.DepthFunction = Graphics::DF_Always;
-		RenderTextMaterial.CullMode = Graphics::CM_None;
+		RenderTextMaterial.DepthFunction = DF_Always;
+		RenderTextMaterial.CullMode = CM_None;
 		RenderTextMaterial.SetShaderProgram(RenderTextShader->GetData());
 
-		RenderCubemapMaterial.CullMode = Graphics::CM_None;
+		RenderCubemapMaterial.CullMode = CM_None;
 		RenderCubemapMaterial.SetShaderProgram(RenderCubemapShader->GetData());
 
-		IntegrateBRDFMaterial.DepthFunction = Graphics::DF_Always;
-		IntegrateBRDFMaterial.CullMode = Graphics::CM_None;
+		IntegrateBRDFMaterial.DepthFunction = DF_Always;
+		IntegrateBRDFMaterial.CullMode = CM_None;
 		IntegrateBRDFMaterial.SetShaderProgram(IntegrateBRDFShader->GetData());
 
-		HDRClampingMaterial.DepthFunction = Graphics::DF_Always;
-		HDRClampingMaterial.CullMode = Graphics::CM_None;
+		HDRClampingMaterial.DepthFunction = DF_Always;
+		HDRClampingMaterial.CullMode = CM_None;
 		HDRClampingMaterial.SetShaderProgram(HDRClampingShader->GetData());
 
 		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [this](MeshLoader::FileData & ModelData) {
@@ -434,7 +434,7 @@ protected:
 		// });
 
 		Texture2D RenderedTexture = Texture2D(
-			IntVector2(GetWindow().GetWidth(), GetWindow().GetHeight()) / 2, Graphics::CF_RGBA32F, Graphics::FM_MinLinearMagNearest, Graphics::AM_Repeat
+			IntVector2(GetWindow().GetWidth(), GetWindow().GetHeight()) / 2, CF_RGBA32F, FM_MinLinearMagNearest, SAM_Repeat
 		);
 
 		///////// Create Matrices Buffer //////////////
@@ -442,7 +442,7 @@ protected:
 		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
 
 		EquirectangularTextureHDR = new Texture2D(
-			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Repeat
+			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
 		);
 		{
 			RenderTarget Renderer = RenderTarget();
@@ -466,7 +466,7 @@ protected:
 			EquirectangularTextureHDR->GenerateMipMaps();
 		}
 
-		Texture2D * BRDFLut = new Texture2D(IntVector2(512), Graphics::CF_RG16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+		Texture2D * BRDFLut = new Texture2D(IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
 		{
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
@@ -489,7 +489,7 @@ protected:
 		}
 		OldResourceManager::Load(L"BRDFLut", BRDFLut);
 
-		CubemapTexture = new Cubemap(Equirectangular.GetHeight() / 2, Graphics::CF_RGB16F, Graphics::FM_MinMagLinear, Graphics::AM_Clamp);
+		CubemapTexture = new Cubemap(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
 		Cubemap::FromHDREquirectangular(*CubemapTexture, EquirectangularTextureHDR, EquiToCubemapShader->GetData());
 		OldResourceManager::Load(L"CubemapTexture", CubemapTexture);
 
@@ -573,11 +573,11 @@ protected:
 
 		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
 			if (Input::IsKeyDown(SDL_SCANCODE_W)) {
-				if (BaseMaterial.RenderMode == Graphics::RM_Fill) {
-					BaseMaterial.RenderMode = Graphics::RM_Wire;
+				if (BaseMaterial.FillMode == FM_Solid) {
+					BaseMaterial.FillMode = FM_Wireframe;
 				}
 				else {
-					BaseMaterial.RenderMode = Graphics::RM_Fill;
+					BaseMaterial.FillMode = FM_Solid;
 				}
 			}
 		}
@@ -635,10 +635,10 @@ protected:
 				delete FontMap;
 				FontMap = new Texture2D(
 					IntVector2(TextGenerator.AtlasSize),
-					Graphics::CF_Red,
-					Graphics::FM_MinMagLinear,
-					Graphics::AM_Border,
-					Graphics::CF_Red,
+					CF_Red,
+					FM_MinMagLinear,
+					SAM_Border,
+					CF_Red,
 					FontAtlas.PointerToValue()
 				);
 				FontMap->GenerateMipMaps();
@@ -682,7 +682,7 @@ protected:
 							Hit, ModelSpaceCameraRay,
 							SceneModels[MeshCount].Data.Vertices[(*Face)[0]].Position,
 							SceneModels[MeshCount].Data.Vertices[(*Face)[1]].Position,
-							SceneModels[MeshCount].Data.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
+							SceneModels[MeshCount].Data.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
 						)) {
 							Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Data.Faces.begin());
 							Hits.push_back(Hit);
@@ -799,7 +799,7 @@ protected:
 						Hit, ModelSpaceCameraRay,
 						ModelData.Vertices[(*Face)[0]].Position,
 						ModelData.Vertices[(*Face)[1]].Position,
-						ModelData.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != Graphics::CM_Back
+						ModelData.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
 					)) {
 						Hit.TriangleIndex = int(Face - ModelData.Faces.begin());
 						Hits.push_back(Hit);

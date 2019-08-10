@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Rendering/ShaderProgram.h"
 
 namespace EmptySource {
@@ -12,9 +12,9 @@ namespace EmptySource {
 	public:
 		bool bUseDepthTest;
 		unsigned int RenderPriority;
-		Graphics::DepthFunction DepthFunction;
-		Graphics::RenderMode RenderMode;
-		Graphics::CullMode CullMode;
+		EDepthFunction DepthFunction;
+		ERasterizerFillMode FillMode;
+		ECullMode CullMode;
 
 		Material();
 

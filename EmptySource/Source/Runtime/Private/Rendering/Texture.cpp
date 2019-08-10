@@ -6,25 +6,25 @@
 
 namespace EmptySource {
 
-	unsigned int Texture::GetColorFormat(const Graphics::ColorFormat & CF) {
+	unsigned int Texture::GetColorFormat(const EColorFormat & CF) {
 		switch (CF) {
-		case Graphics::CF_Red:
+		case CF_Red:
 			return GL_RED;
-		case Graphics::CF_RG:
+		case CF_RG:
 			return GL_RG;
-		case Graphics::CF_RGB:
+		case CF_RGB:
 			return GL_RGB;
-		case Graphics::CF_RGBA:
+		case CF_RGBA:
 			return GL_RGBA;
-		case Graphics::CF_RG16F:
+		case CF_RG16F:
 			return GL_RG16F;
-		case Graphics::CF_RGB16F:
+		case CF_RGB16F:
 			return GL_RGB16F;
-		case Graphics::CF_RGBA16F:
+		case CF_RGBA16F:
 			return GL_RGBA16F;
-		case Graphics::CF_RGBA32F:
+		case CF_RGBA32F:
 			return GL_RGBA32F;
-		case Graphics::CF_RGB32F:
+		case CF_RGB32F:
 			return GL_RGB32F;
 		default:
 			LOG_CORE_WARN(L"Color not implemented, using RGBA");
@@ -32,20 +32,20 @@ namespace EmptySource {
 		}
 	}
 
-	unsigned int Texture::GetColorFormatInput(const Graphics::ColorFormat & CF) {
+	unsigned int Texture::GetColorFormatInput(const EColorFormat & CF) {
 		switch (CF) {
-		case Graphics::CF_Red:
+		case CF_Red:
 			return GL_RED;
-		case Graphics::CF_RG16F:
-		case Graphics::CF_RG:
+		case CF_RG16F:
+		case CF_RG:
 			return GL_RG;
-		case Graphics::CF_RGB32F:
-		case Graphics::CF_RGB16F:
-		case Graphics::CF_RGB:
+		case CF_RGB32F:
+		case CF_RGB16F:
+		case CF_RGB:
 			return GL_RGB;
-		case Graphics::CF_RGBA32F:
-		case Graphics::CF_RGBA16F:
-		case Graphics::CF_RGBA:
+		case CF_RGBA32F:
+		case CF_RGBA16F:
+		case CF_RGBA:
 			return GL_RGBA;
 		default:
 			LOG_CORE_WARN(L"Color not implemented, using RGBA");
@@ -53,18 +53,18 @@ namespace EmptySource {
 		}
 	}
 
-	unsigned int Texture::GetInputType(const Graphics::ColorFormat & CF) {
+	unsigned int Texture::GetInputType(const EColorFormat & CF) {
 		switch (CF) {
-		case Graphics::CF_Red:
-		case Graphics::CF_RG:
-		case Graphics::CF_RGB:
-		case Graphics::CF_RGBA:
+		case CF_Red:
+		case CF_RG:
+		case CF_RGB:
+		case CF_RGBA:
 			return GL_UNSIGNED_BYTE;
-		case Graphics::CF_RG16F:
-		case Graphics::CF_RGB16F:
-		case Graphics::CF_RGBA16F:
-		case Graphics::CF_RGBA32F:
-		case Graphics::CF_RGB32F:
+		case CF_RG16F:
+		case CF_RGB16F:
+		case CF_RGBA16F:
+		case CF_RGBA32F:
+		case CF_RGB32F:
 			return GL_FLOAT;
 		default:
 			LOG_CORE_WARN(L"Color not implemented, using unsigned byte");
@@ -74,9 +74,9 @@ namespace EmptySource {
 
 	Texture::Texture() {
 		TextureObject = 0;
-		FilterMode = Graphics::FM_MinMagLinear;
-		AddressMode = Graphics::AM_Border;
-		ColorFormat = Graphics::CF_RGB;
+		FilterMode = FM_MinMagLinear;
+		AddressMode = SAM_Border;
+		ColorFormat = CF_RGB;
 	}
 
 }

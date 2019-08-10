@@ -15,7 +15,7 @@ namespace EmptySource {
 		Type = ST_Vertex;
 	}
 
-	ShaderStage::ShaderStage(ShaderType type) {
+	ShaderStage::ShaderStage(EShaderType type) {
 		Type = type;
 	}
 
@@ -23,7 +23,7 @@ namespace EmptySource {
 		return ShaderObject;
 	}
 
-	ShaderType ShaderStage::GetType() const {
+	EShaderType ShaderStage::GetType() const {
 		return Type;
 	}
 

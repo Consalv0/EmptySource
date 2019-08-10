@@ -11,7 +11,7 @@ namespace EmptySource {
 	protected:
 		friend class ResourceManager;
 
-		Property<ResourceLoadState> LoadState;
+		Property<EResourceLoadState> LoadState;
 		ResourceManager * Manager;
 		const WString Name;
 
@@ -25,7 +25,7 @@ namespace EmptySource {
 
 		virtual void Reload() = 0;
 
-		const ResourceLoadState & GetLoadState() const { return LoadState.Get(); };
+		const EResourceLoadState & GetLoadState() const { return LoadState.Get(); };
 
 		WString GetFriendlyName() const { return Name; };
 

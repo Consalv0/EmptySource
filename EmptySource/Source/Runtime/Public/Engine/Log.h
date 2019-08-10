@@ -2,10 +2,11 @@
 
 #ifdef EMPTYSOURCE_CORE
 #pragma message ( "You have placed Log.h before Core.h. This may cause errors in ftm headers" )
+#else 
+#define EMPTYSOURCE_CORE_LOG
 #endif // EMPTYSOURCE_CORE
 
 #include "Engine/Core.h"
-
 #define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #define SPDLOG_NO_DATETIME
 #include <spdlog/spdlog.h>

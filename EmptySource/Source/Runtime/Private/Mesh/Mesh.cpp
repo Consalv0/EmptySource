@@ -1,7 +1,7 @@
 
 #include "Engine/Log.h"
 #include "Engine/Core.h"
-#include "Rendering/GLFunctions.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Mesh/Mesh.h"
 
 namespace EmptySource {
@@ -30,139 +30,104 @@ namespace EmptySource {
 	};
 
 	Mesh::Mesh() {
-		ElementBufferObject = ElementBuffer();
-		VertexBuffer = 0;
-		ElementBufferSubdivisions = TArray<ElementBuffer>();
+		VertexArrayObject = NULL;
+		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data = MeshData();
 	}
 
 	Mesh::Mesh(const MeshData & OtherData) {
+		VertexArrayObject = NULL;
+		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data = OtherData;
-
-		ElementBufferObject = ElementBuffer();
-		VertexBuffer = 0;
-		ElementBufferSubdivisions = TArray<ElementBuffer>();
 	}
 
 	Mesh::Mesh(MeshData * OtherData) {
+		VertexArrayObject = NULL;
+		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data.Swap(*OtherData);
-
-		ElementBufferObject = ElementBuffer();
-		VertexBuffer = 0;
-		ElementBufferSubdivisions = TArray<ElementBuffer>();
 	}
 
 	void Mesh::BindVertexArray() const {
-		// Generate 1 VAO, put the resulting identifier in VAO identifier
-		if (!ElementBufferObject.IsValid()) {
-			LOG_CORE_WARN(L"Model buffers are empty, use SetUpBuffers first");
-			return;
-		}
-
-		ElementBufferObject.Bind();
+		ES_CORE_ASSERT(VertexArrayObject == NULL, L"Model buffers are empty, use SetUpBuffers first");
+		VertexArrayObject->Bind();
 	}
 
 	void Mesh::BindSubdivisionVertexArray(int MaterialIndex) const {
 		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
 		if (Subdivision == Data.MaterialSubdivisions.end()) return;
-		if (MaterialIndex >= ElementBufferSubdivisions.size() ||
-			!ElementBufferSubdivisions[MaterialIndex].IsValid()) return;
+		if (MaterialIndex >= MeshSubdivisions.size() || MeshSubdivisions[MaterialIndex] == NULL) return;
 
-		ElementBufferSubdivisions[MaterialIndex].Bind();
+		MeshSubdivisions[MaterialIndex]->Bind();
 
 		return;
 	}
 
 	void Mesh::DrawInstanciated(int Count) const {
-		if (!ElementBufferObject.IsValid()) return;
-
-		glDrawElementsInstanced(
-			GL_TRIANGLES,	             // mode
-			(int)Data.Faces.size() * 3,	 // mode count
-			GL_UNSIGNED_INT,             // type
-			(void*)0,		             // element array buffer offset
-			Count                        // element count
-		);
+		Rendering::DrawIndexed(VertexArrayObject, Count);
 	}
 
 	void Mesh::DrawSubdivisionInstanciated(int Count, int MaterialIndex) const {
 		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
 		if (Subdivision == Data.MaterialSubdivisions.end()) return;
-		if (MaterialIndex >= ElementBufferSubdivisions.size() ||
-			!ElementBufferSubdivisions[MaterialIndex].IsValid()) return;
+		if (MaterialIndex >= MeshSubdivisions.size() || MeshSubdivisions[MaterialIndex] == NULL) return;
 
-		glDrawElementsInstanced(
-			GL_TRIANGLES,	             // mode
-			(int)Subdivision->second.size() * 3,	// mode count
-			GL_UNSIGNED_INT,             // type
-			(void*)0,		             // element array buffer offset
-			Count                        // element count
-		);
+		Rendering::DrawIndexed(MeshSubdivisions[MaterialIndex], Count);
 	}
 
 	void Mesh::DrawElement() const {
-		if (!ElementBufferObject.IsValid()) return;
-
-		glDrawElements(
-			GL_TRIANGLES,	             // mode
-			(int)Data.Faces.size() * 3,	 // mode count
-			GL_UNSIGNED_INT,             // type
-			(void*)0		             // element array buffer offset
-		); // Starting from vertex 0; to vertices total
+		Rendering::DrawIndexed(VertexArrayObject);
 	}
 
 	bool Mesh::SetUpBuffers() {
 
 		if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
-		if (VertexBuffer != 0 && ElementBufferObject.IsValid()) return true;
+		if (VertexArrayObject != NULL && VertexArrayObject->GetIndexBuffer()->GetSize() > 0) return true;
 
-		// This will identify our vertex buffer
-		glGenBuffers(1, &VertexBuffer);
-		// Give our vertices to OpenGL.
-		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, Data.Vertices.size() * sizeof(MeshVertex), &Data.Vertices[0], GL_STATIC_DRAW);
+		VertexArrayObject.reset(VertexArray::Create());
+
+		static BufferLayout DafultLayout = {
+			{ EShaderDataType::Float3, "_iVertexPosition" },
+			{ EShaderDataType::Float3, "_iVertexNormal", true },
+			{ EShaderDataType::Float3, "_iVertexTangent", true },
+			{ EShaderDataType::Float2, "_iVertexUV0" },
+			{ EShaderDataType::Float2, "_iVertexUV1" },
+			{ EShaderDataType::Float4, "_iVertexColor" }
+		};
+
+		// Give our vertices to VAO
+		VertexBufferPtr VertexBufferPointer = NULL;
+		VertexBufferPointer.reset(VertexBuffer::Create((float *)&Data.Vertices[0], (unsigned int)(Data.Vertices.size() * sizeof(MeshVertex)), UM_Static));
+		VertexBufferPointer->SetLayout(DafultLayout);
 
 		for (int ElementBufferCount = 0; ElementBufferCount <= Data.MaterialSubdivisions.size(); ElementBufferCount++) {
-			// Generate a Element Buffer from indices
-			if (ElementBufferCount == 0)
-				ElementBufferObject.SetUpBuffers(VertexBuffer, Data.Faces);
-			else {
-				ElementBufferSubdivisions.push_back(ElementBuffer());
-				ElementBufferSubdivisions.back().SetUpBuffers(VertexBuffer, Data.MaterialSubdivisions[ElementBufferCount - 1]);
+			if (ElementBufferCount == 0) {
+				IndexBufferPtr IndexBufferObjectPointer = NULL;
+				IndexBufferObjectPointer.reset(IndexBuffer::Create((unsigned int *)&Data.Faces[0], (unsigned int)Data.Faces.size() * 3, UM_Static));
+				VertexArrayObject->AddVertexBuffer(VertexBufferPointer);
+				VertexArrayObject->AddIndexBuffer(IndexBufferObjectPointer);
+				VertexArrayObject->Unbind();
+			} else {
+				VertexArrayPtr VertexArrayPointer = NULL;
+				VertexArrayPointer.reset(VertexArray::Create());
+				IndexBufferPtr IndexBufferPointer = NULL;
+				IndexBufferPointer.reset(IndexBuffer::Create(
+					(unsigned int *)&Data.MaterialSubdivisions[ElementBufferCount - 1][0],
+					(unsigned int)Data.MaterialSubdivisions[ElementBufferCount - 1].size() * 3, UM_Static)
+				);
+				VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
+				VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
+				VertexArrayPointer->Unbind();
+				
+				MeshSubdivisions.push_back(VertexArrayPointer);
 			}
-
-			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-
-			// Set the vertex attribute pointers layouts
-			glEnableVertexAttribArray(PositionLocation);
-			glVertexAttribPointer(PositionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)0);
-			glEnableVertexAttribArray(NormalLocation);
-			glVertexAttribPointer(NormalLocation, 3, GL_FLOAT, GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Normal));
-			glEnableVertexAttribArray(TangentLocation);
-			glVertexAttribPointer(TangentLocation, 3, GL_FLOAT, GL_TRUE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Tangent));
-			glEnableVertexAttribArray(UV0Location);
-			glVertexAttribPointer(UV0Location, 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV0));
-			glEnableVertexAttribArray(UV1Location);
-			glVertexAttribPointer(UV1Location, 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, UV1));
-			glEnableVertexAttribArray(ColorLocation);
-			glVertexAttribPointer(ColorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void*)offsetof(MeshVertex, Color));
 		}
-
-		glEnableVertexAttribArray(0);
-		glBindVertexArray(0);
 
 		return true;
 	}
 
 	void Mesh::ClearBuffers() {
-		glDeleteBuffers(1, &VertexBuffer);
-
-		ElementBufferObject.Clear();
-		for (ElementBuffer& EBO : ElementBufferSubdivisions) {
-			EBO.Clear();
-		}
-		ElementBufferSubdivisions.clear();
-		VertexBuffer = 0;
+		VertexArrayObject.reset();
+		MeshSubdivisions.clear();
 	}
 
 	void Mesh::Clear() {
@@ -268,38 +233,6 @@ namespace EmptySource {
 		TextureCoordsCount = 0;
 		hasBoundingBox = true;
 		hasWeights = false;
-	}
-
-	void Mesh::ElementBuffer::Clear() {
-		glDeleteVertexArrays(1, &VertexArrayObject);
-		glDeleteBuffers(1, &Buffer);
-
-		VertexArrayObject = 0;
-		Buffer = 0;
-	}
-
-	bool Mesh::ElementBuffer::SetUpBuffers(const unsigned int & VertexBuffer, const MeshFaces & Indices) {
-		if (Indices.empty()) return false;
-		if (VertexArrayObject != 0 && Buffer != 0) return true;
-
-		glGenVertexArrays(1, &VertexArrayObject);
-		glBindVertexArray(VertexArrayObject);
-
-		// Generate a Element Buffer for the indices
-		glGenBuffers(1, &Buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(IntVector3), &Indices[0], GL_STATIC_DRAW);
-
-		return true;
-	}
-
-	void Mesh::ElementBuffer::Bind() const {
-		// The following commands will put in context our VAO for the next commands
-		glBindVertexArray(VertexArrayObject);
-	}
-
-	bool Mesh::ElementBuffer::IsValid() const {
-		return VertexArrayObject != 0 && Buffer != 0;
 	}
 
 }

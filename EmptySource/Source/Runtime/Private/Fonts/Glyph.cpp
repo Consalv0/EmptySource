@@ -1,5 +1,5 @@
 
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Fonts/SDFGenerator.h"
 #include "Fonts/Glyph.h"
 #include "Mesh/Mesh.h"

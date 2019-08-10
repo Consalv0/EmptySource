@@ -1,19 +1,14 @@
 #pragma once
 
+#include "RenderingDefinitions.h"
+
 namespace EmptySource {
 
 	struct FileStream;
 
-	enum ShaderType {
-		ST_Vertex,
-		ST_Geometry,
-		ST_Fragment,
-		ST_Compute
-	};
-
 	class ShaderStage {
 	private:
-		ShaderType Type;
+		EShaderType Type;
 
 		//* Shader object for a single shader stage
 		unsigned int ShaderObject;
@@ -23,13 +18,13 @@ namespace EmptySource {
 		ShaderStage();
 
 		//* Create shader with name
-		ShaderStage(ShaderType Type);
+		ShaderStage(EShaderType Type);
 
 		//* Get the shader object identifier
 		unsigned int GetShaderObject() const;
 
 		//* Get the shader type
-		ShaderType GetType() const;
+		EShaderType GetType() const;
 
 		//* Create and compile our shader unit
 		bool CompileFromFile(const WString & FilePath);

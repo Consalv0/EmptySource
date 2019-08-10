@@ -94,16 +94,16 @@ namespace EmptySource {
 
 		if (Shader == NULL || !Shader->IsValid()) return;
 
-		if (Shader->GetType() == ShaderType::ST_Vertex) {
+		if (Shader->GetType() == ST_Vertex) {
 			VertexShader = Shader; return;
 		}
-		if (Shader->GetType() == ShaderType::ST_Fragment) {
+		if (Shader->GetType() == ST_Fragment) {
 			FragmentShader = Shader; return;
 		}
-		if (Shader->GetType() == ShaderType::ST_Geometry) {
+		if (Shader->GetType() == ST_Geometry) {
 			GeometryShader = Shader; return;
 		}
-		if (Shader->GetType() == ShaderType::ST_Compute) {
+		if (Shader->GetType() == ST_Compute) {
 			ComputeShader = Shader; return;
 		}
 	}

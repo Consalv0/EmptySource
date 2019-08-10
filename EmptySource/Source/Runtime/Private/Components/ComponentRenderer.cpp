@@ -10,7 +10,7 @@
 #include "Engine/CoreTime.h"
 #include "Engine/Application.h"
 
-#include "Components/Renderer.h"
+#include "Components/ComponentRenderer.h"
 
 namespace EmptySource {
 

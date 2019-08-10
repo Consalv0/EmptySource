@@ -2,7 +2,7 @@
 
 namespace EmptySource {
 
-	void ShaderStageManager::AddShaderStage(WString Name, ShaderType Type, WString FilePath) {
+	void ShaderStageManager::AddShaderStage(WString Name, EShaderType Type, WString FilePath) {
 		Resources.insert({ WStringToHash(Name), new ShaderStageResource(this, Name, Type, FilePath) });
 	}
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 
 namespace EmptySource {
 
@@ -9,9 +9,9 @@ namespace EmptySource {
 		//* Pixel Buffer GL Object
 		unsigned int TextureObject;
 
-		Graphics::FilterMode FilterMode;
-		Graphics::AddressMode AddressMode;
-		Graphics::ColorFormat ColorFormat;
+		EFilterMode FilterMode;
+		ESamplerAddressMode AddressMode;
+		EColorFormat ColorFormat;
 
 		bool bLods;
 
@@ -34,17 +34,17 @@ namespace EmptySource {
 		//* Generate MipMaps using Hardware
 		virtual void GenerateMipMaps() = 0;
 
-		Graphics::FilterMode GetFilterMode() { return FilterMode; };
-		Graphics::AddressMode GetAddressMode() { return AddressMode; };
+		EFilterMode GetFilterMode() { return FilterMode; };
+		ESamplerAddressMode GetSamplerAddressMode() { return AddressMode; };
 
-		virtual void SetFilterMode(const Graphics::FilterMode& Mode) = 0;
-		virtual void SetAddressMode(const Graphics::AddressMode& Mode) = 0;
+		virtual void SetFilterMode(const EFilterMode& Mode) = 0;
+		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) = 0;
 
 		virtual void Delete() = 0;
 
-		static unsigned int GetColorFormat(const Graphics::ColorFormat & CF);
-		static unsigned int GetColorFormatInput(const Graphics::ColorFormat & CF);
-		static unsigned int GetInputType(const Graphics::ColorFormat & CF);
+		static unsigned int GetColorFormat(const EColorFormat & CF);
+		static unsigned int GetColorFormatInput(const EColorFormat & CF);
+		static unsigned int GetInputType(const EColorFormat & CF);
 	};
 
 }

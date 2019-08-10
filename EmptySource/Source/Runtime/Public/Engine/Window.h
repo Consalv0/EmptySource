@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Engine/Core.h"
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Rendering/GraphicContext.h"
 
 namespace EmptySource {
 
-	enum WindowMode {
+	enum EWindowMode {
 		WM_Windowed = 0,
 		WM_FullScreen = 1
 	};

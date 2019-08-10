@@ -15,9 +15,9 @@ namespace EmptySource {
 
 	Cubemap::Cubemap(
 		const int & WidthSize,
-		const Graphics::ColorFormat & Format,
-		const Graphics::FilterMode & Filter,
-		const Graphics::AddressMode & Address)
+		const EColorFormat & Format,
+		const EFilterMode & Filter,
+		const ESamplerAddressMode & SamplerAddress)
 	{
 		Width = WidthSize;
 		ColorFormat = Format;
@@ -31,7 +31,7 @@ namespace EmptySource {
 		glGenTextures(1, &TextureObject);
 		Use();
 		SetFilterMode(Filter);
-		SetAddressMode(Address);
+		SetSamplerAddressMode(SamplerAddress);
 		Deuse();
 	}
 
@@ -73,49 +73,49 @@ namespace EmptySource {
 		return true;
 	}
 
-	void Cubemap::SetFilterMode(const Graphics::FilterMode & Mode) {
+	void Cubemap::SetFilterMode(const EFilterMode & Mode) {
 		FilterMode = Mode;
 
 		switch (Mode) {
-		case Graphics::FM_MinMagLinear:
+		case FM_MinMagLinear:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 			break;
-		case Graphics::FM_MinMagNearest:
+		case FM_MinMagNearest:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
 			break;
-		case Graphics::FM_MinLinearMagNearest:
+		case FM_MinLinearMagNearest:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 			break;
-		case Graphics::FM_MinNearestMagLinear:
+		case FM_MinNearestMagLinear:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
 			break;
 		}
 	}
 
-	void Cubemap::SetAddressMode(const Graphics::AddressMode & Mode) {
+	void Cubemap::SetSamplerAddressMode(const ESamplerAddressMode & Mode) {
 		AddressMode = Mode;
 
 		switch (Mode) {
-		case Graphics::AM_Repeat:
+		case SAM_Repeat:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
 			break;
-		case Graphics::AM_Mirror:
+		case SAM_Mirror:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
 			break;
-		case Graphics::AM_Clamp:
+		case SAM_Clamp:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 			break;
-		case Graphics::AM_Border:
+		case SAM_Border:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
@@ -181,7 +181,7 @@ namespace EmptySource {
 
 		Material EquirectangularToCubemapMaterial = Material();
 		EquirectangularToCubemapMaterial.SetShaderProgram(ShaderConverter);
-		EquirectangularToCubemapMaterial.CullMode = Graphics::CM_None;
+		EquirectangularToCubemapMaterial.CullMode = CM_None;
 
 		Map.Use();
 		{
@@ -214,7 +214,7 @@ namespace EmptySource {
 		EquirectangularToCubemapMaterial.Use();
 		EquirectangularToCubemapMaterial.SetTexture2D("_EquirectangularMap", Equirectangular, 0);
 		EquirectangularToCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", CaptureProjection.PointerToValue());
-		EquirectangularToCubemapMaterial.CullMode = Graphics::CM_Front;
+		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
 
 		Renderer.Resize(Map.Width, Map.Width);
 		for (unsigned int i = 0; i < 6; ++i) {
@@ -242,7 +242,7 @@ namespace EmptySource {
 
 		Material EquirectangularToCubemapMaterial = Material();
 		EquirectangularToCubemapMaterial.SetShaderProgram(ShaderConverter);
-		EquirectangularToCubemapMaterial.CullMode = Graphics::CM_None;
+		EquirectangularToCubemapMaterial.CullMode = CM_None;
 
 		Map.Use();
 		{
@@ -277,7 +277,7 @@ namespace EmptySource {
 		EquirectangularToCubemapMaterial.Use();
 		EquirectangularToCubemapMaterial.SetTexture2D("_EquirectangularMap", Equirectangular, 0);
 		EquirectangularToCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", CaptureProjection.PointerToValue());
-		EquirectangularToCubemapMaterial.CullMode = Graphics::CM_Front;
+		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
 
 		const unsigned int MaxMipLevels = (unsigned int)Map.GetMipmapCount() + 1;
 		for (unsigned int Lod = 0; Lod < MaxMipLevels; ++Lod) {

@@ -13,15 +13,15 @@ namespace EmptySource {
 
 		ShaderStage * Resource;
 
-		ShaderType Type;
+		EShaderType Type;
 
 		WString ShaderPath;
 
 		NString ShaderCode;
 
-		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, WString ShaderPath);
+		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, EShaderType Type, WString ShaderPath);
 
-		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, ShaderType Type, const NString & Code);
+		ShaderStageResource(class ShaderStageManager * Manager, const WString & Name, EShaderType Type, const NString & Code);
 
 	public:
 
@@ -31,7 +31,7 @@ namespace EmptySource {
 
 		void Reload();
 
-		const ShaderType & GetShaderType() const { return Type; };
+		const EShaderType & GetShaderType() const { return Type; };
 
 		WString GetShaderPath() const { return ShaderPath; };
 	};

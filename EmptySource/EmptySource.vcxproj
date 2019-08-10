@@ -140,6 +140,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h" />
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Source\Platform\Platform.h" />
     <ClInclude Include="Source\Platform\Windows\MinWindows.h" />
@@ -148,7 +150,7 @@
     <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h" />
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
-    <ClInclude Include="Source\Runtime\Public\Components\Renderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Application.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Core.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h" />
@@ -202,13 +204,14 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
     <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h" />
     <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\ApplicationRenderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Cubemap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\Graphics.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h" />
@@ -238,11 +241,13 @@
     <ClInclude Include="Source\Runtime\Public\Utility\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffers.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Components\Renderer.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Component.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\CoreTime.cpp" />
@@ -269,6 +274,8 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp" />

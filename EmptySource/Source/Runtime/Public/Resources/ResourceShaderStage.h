@@ -10,7 +10,7 @@ namespace EmptySource {
 	struct ShaderStageData {
 		size_t GUID;
 		WString FilePath;
-		ShaderType Type;
+		EShaderType Type;
 	};
 
 	template<>

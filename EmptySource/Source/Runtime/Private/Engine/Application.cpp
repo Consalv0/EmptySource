@@ -22,7 +22,7 @@
 #include "Mesh/Mesh.h"
 #include "Mesh/MeshPrimitives.h"
 
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
@@ -57,14 +57,14 @@ namespace EmptySource {
 
 	Application::Application() {
 		bInitialized = false;
-		isRunning = false;
+		bRunning = false;
 		RenderTimeSum = 0;
 	}
 
 	void Application::Run() {
-		if (isRunning) return;
+		if (bRunning) return;
 
-		isRunning = true;
+		bRunning = true;
 		LOG_CORE_INFO(L"Initalizing Application:\n");
 		Initalize();
 		Awake();
@@ -133,7 +133,7 @@ namespace EmptySource {
 			}
 
 		} while (
-			isRunning == true
+			bRunning == true
 		);
 	}
 

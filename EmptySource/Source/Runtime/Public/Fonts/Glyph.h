@@ -5,7 +5,7 @@
 #include "Math/Vector2.h"
 #include "Math/Box2D.h"
 #include "Fonts/Shape2D.h"
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Rendering/Bitmap.h"
 
 namespace EmptySource {

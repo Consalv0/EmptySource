@@ -22,7 +22,7 @@ namespace EmptySource {
 
 	private:
 
-		WindowMode Mode;
+		EWindowMode Mode;
 
 		void * WindowHandle;
 

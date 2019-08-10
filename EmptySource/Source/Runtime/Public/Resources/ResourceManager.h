@@ -5,11 +5,11 @@
 
 namespace EmptySource {
 
-	enum ResourceLoadState {
+	enum EResourceLoadState {
 		LS_Loaded, LS_Loading, LS_Unloaded, LS_Unloading
 	};
 
-	enum ResourceType {
+	enum EResourceType {
 		RT_Texture, RT_ShaderStage, RT_ShaderProgram, RT_Material, RT_Mesh
 	};
 
@@ -17,15 +17,15 @@ namespace EmptySource {
 	protected:
 		const unsigned int LoadOrder;
 
-		const ResourceType Type;
+		const EResourceType Type;
 
-		ResourceManager(unsigned int LoadOrder, ResourceType Type) : LoadOrder(LoadOrder), Type(Type) {};
+		ResourceManager(unsigned int LoadOrder, EResourceType Type) : LoadOrder(LoadOrder), Type(Type) {};
 
 	public:
 		//* Lower value indicate it will be loaded firts
 		const unsigned int & GetLoadOrder() const { return LoadOrder; };
 
-		const ResourceType & GetResourceType() const { return Type; };
+		const EResourceType & GetResourceType() const { return Type; };
 
 		virtual class ResourceHolder * GetResourceByUniqueName(const WString& Name) const { return NULL; };
 

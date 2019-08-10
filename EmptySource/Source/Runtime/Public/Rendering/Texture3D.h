@@ -15,8 +15,8 @@ namespace EmptySource {
 	public:
 		//* Constructor
 		Texture3D(
-			const IntVector3& Size, const Graphics::ColorFormat ColorFormat,
-			const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
+			const IntVector3& Size, const EColorFormat ColorFormat,
+			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode
 		);
 
 		//* Get Dimension of the texture
@@ -33,9 +33,9 @@ namespace EmptySource {
 		//* Check if texture is valid
 		bool IsValid() const;
 
-		void SetFilterMode(const Graphics::FilterMode& Mode);
+		void SetFilterMode(const EFilterMode& Mode);
 
-		void SetAddressMode(const Graphics::AddressMode& Mode);
+		void SetSamplerAddressMode(const ESamplerAddressMode& Mode);
 
 		//* 
 		void Delete();

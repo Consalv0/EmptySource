@@ -3,11 +3,11 @@
 
 namespace EmptySource {
 
-	ShaderStageResource::ShaderStageResource(ShaderStageManager * Manager, const WString & Name, ShaderType Type, WString ShaderPath) :
+	ShaderStageResource::ShaderStageResource(ShaderStageManager * Manager, const WString & Name, EShaderType Type, WString ShaderPath) :
 		Supper((ResourceManager *)Manager, Name), Type(Type), ShaderPath(ShaderPath), ShaderCode("") {
 	}
 
-	ShaderStageResource::ShaderStageResource(ShaderStageManager * Manager, const WString & Name, ShaderType Type, const NString & Code) :
+	ShaderStageResource::ShaderStageResource(ShaderStageManager * Manager, const WString & Name, EShaderType Type, const NString & Code) :
 		Supper((ResourceManager *)Manager, Name), Type(Type), ShaderPath(L""), ShaderCode(Code) {
 	}
 

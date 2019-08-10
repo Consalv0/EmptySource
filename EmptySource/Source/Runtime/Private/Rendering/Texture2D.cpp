@@ -8,9 +8,9 @@ namespace EmptySource {
 
 	Texture2D::Texture2D(
 		const IntVector2 & Size,
-		const Graphics::ColorFormat Format,
-		const Graphics::FilterMode & Filter,
-		const Graphics::AddressMode & Address)
+		const EColorFormat Format,
+		const EFilterMode & Filter,
+		const ESamplerAddressMode & Address)
 	{
 		Dimension = Size;
 		ColorFormat = Format;
@@ -19,7 +19,7 @@ namespace EmptySource {
 		glGenTextures(1, &TextureObject);
 		Use();
 		SetFilterMode(Filter);
-		SetAddressMode(Address);
+		SetSamplerAddressMode(Address);
 
 		{
 			glTexImage2D(
@@ -32,10 +32,10 @@ namespace EmptySource {
 
 	Texture2D::Texture2D(
 		const IntVector2 & Size,
-		const Graphics::ColorFormat Format,
-		const Graphics::FilterMode & Filter,
-		const Graphics::AddressMode & Address,
-		const Graphics::ColorFormat InputFormat,
+		const EColorFormat Format,
+		const EFilterMode & Filter,
+		const ESamplerAddressMode & Address,
+		const EColorFormat InputFormat,
 		const void * BufferData)
 	{
 		Dimension = Size;
@@ -45,7 +45,7 @@ namespace EmptySource {
 		glGenTextures(1, &TextureObject);
 		Use();
 		SetFilterMode(Filter);
-		SetAddressMode(Address);
+		SetSamplerAddressMode(Address);
 
 		{
 			glTexImage2D(
@@ -94,46 +94,46 @@ namespace EmptySource {
 		return TextureObject != GL_FALSE && GetDimension().MagnitudeSquared() > 0;
 	}
 
-	void Texture2D::SetFilterMode(const Graphics::FilterMode & Mode) {
+	void Texture2D::SetFilterMode(const EFilterMode & Mode) {
 		FilterMode = Mode;
 
 		switch (Mode) {
-		case Graphics::FM_MinMagLinear:
+		case FM_MinMagLinear:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 			break;
-		case Graphics::FM_MinMagNearest:
+		case FM_MinMagNearest:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
 			break;
-		case Graphics::FM_MinLinearMagNearest:
+		case FM_MinLinearMagNearest:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 			break;
-		case Graphics::FM_MinNearestMagLinear:
+		case FM_MinNearestMagLinear:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bLods ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
 			break;
 		}
 	}
 
-	void Texture2D::SetAddressMode(const Graphics::AddressMode & Mode) {
+	void Texture2D::SetSamplerAddressMode(const ESamplerAddressMode & Mode) {
 		AddressMode = Mode;
 
 		switch (Mode) {
-		case Graphics::AM_Repeat:
+		case SAM_Repeat:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			break;
-		case Graphics::AM_Mirror:
+		case SAM_Mirror:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 			break;
-		case Graphics::AM_Clamp:
+		case SAM_Clamp:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			break;
-		case Graphics::AM_Border:
+		case SAM_Border:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 			break;

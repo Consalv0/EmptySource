@@ -34,9 +34,9 @@ namespace EmptySource {
 
 		Cubemap(
 			const int & Width,
-			const Graphics::ColorFormat & Format,
-			const Graphics::FilterMode & Filter,
-			const Graphics::AddressMode & Address
+			const EColorFormat & Format,
+			const EFilterMode & Filter,
+			const ESamplerAddressMode & AddressMode
 		);
 
 		//* Use the cubemap
@@ -65,9 +65,9 @@ namespace EmptySource {
 		void Delete();
 
 	private:
-		void SetFilterMode(const Graphics::FilterMode& Mode);
+		void SetFilterMode(const EFilterMode& FilterMode);
 
-		void SetAddressMode(const Graphics::AddressMode& Mode);
+		void SetSamplerAddressMode(const ESamplerAddressMode& SamplerAddressMode);
 
 		int Width;
 	};

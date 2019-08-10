@@ -17,7 +17,7 @@ namespace EmptySource {
 
 	namespace Debug {
 
-#ifndef __APPLE__
+#ifndef ES_PLATFORM_APPLE
 		//* Error Callback related to OpenGL > 4.3
 		inline void APIENTRY OGLError(
 			GLenum ErrorSource, GLenum ErrorType, GLuint ErrorID, GLenum ErrorSeverity, GLsizei ErrorLength,
@@ -52,10 +52,10 @@ namespace EmptySource {
 			const GLubyte *GLSLVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
 			LOG_CORE_INFO("GPU Render Device Info");
-			LOG_CORE_INFO("|-> GC Vendor	: {0}", (const NChar*)Vendor);
-			LOG_CORE_INFO("|-> GC Renderer	: {0}", (const NChar*)Renderer);
-			LOG_CORE_INFO("|-> GL Version	: {0}", (const NChar*)Version);
-			LOG_CORE_INFO("|-> GLSL Version	: {0}", (const NChar*)GLSLVersion);
+			LOG_CORE_INFO(" - GC Vendor	: {0}", (const NChar*)Vendor);
+			LOG_CORE_INFO(" - GC Renderer	: {0}", (const NChar*)Renderer);
+			LOG_CORE_INFO(" - GL Version	: {0}", (const NChar*)Version);
+			LOG_CORE_INFO(" - GLSL Version	: {0}", (const NChar*)GLSLVersion);
 		}
 	}
 
@@ -104,7 +104,7 @@ namespace EmptySource {
 			}
 		}
 
-#ifndef __APPLE__
+#ifndef ES_PLATFORM_APPLE
 		glEnable(GL_DEBUG_OUTPUT);
 		// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(Debug::OGLError, nullptr);

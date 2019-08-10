@@ -9,7 +9,7 @@ namespace EmptySource {
 	private:
 		bool bInitialized;
 
-		bool isRunning;
+		bool bRunning;
 		
 		double RenderTimeSum;
 
@@ -53,10 +53,10 @@ namespace EmptySource {
 		inline Window & GetWindow() { return *WindowInstance; };
 
 		//* Call this to close the application
-		inline void ShouldClose() { isRunning = false; };
+		inline void ShouldClose() { bRunning = false; };
 
 		//* The application is running
-		bool IsRunning() { return isRunning; }
+		bool IsRunning() { return bRunning; }
 
 		//* Entry point of the application
 		void Run();

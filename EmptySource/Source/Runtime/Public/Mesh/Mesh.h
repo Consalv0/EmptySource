@@ -7,16 +7,9 @@
 #include "Math/Vector4.h"
 #include "Math/Box3D.h"
 
-namespace EmptySource {
+#include "Rendering/Rendering.h"
 
-	// Default vertex Locations
-	constexpr auto PositionLocation = 0;
-	constexpr auto NormalLocation = 1;
-	constexpr auto TangentLocation = 2;
-	constexpr auto UV0Location = 3;
-	constexpr auto UV1Location = 4;
-	constexpr auto ColorLocation = 5;
-	constexpr auto WeightsLocation = 9;
+namespace EmptySource {
 
 	struct MeshVertex {
 		Vector3 Position;
@@ -66,19 +59,8 @@ namespace EmptySource {
 
 	class Mesh {
 	private:
-		struct ElementBuffer {
-			unsigned int VertexArrayObject; unsigned int Buffer;
-			void Clear();
-			bool SetUpBuffers(const unsigned int & VertexBuffer, const MeshFaces & Indices);
-			void Bind() const;
-			bool IsValid() const;
-		};
-
-		//* Vertex Array Object 
-		unsigned int VertexBuffer;
-
-		ElementBuffer ElementBufferObject;
-		TArray<ElementBuffer> ElementBufferSubdivisions;
+		VertexArrayPtr VertexArrayObject;
+		TArray<VertexArrayPtr> MeshSubdivisions;
 
 	public:
 		MeshData Data;
@@ -89,7 +71,7 @@ namespace EmptySource {
 		//* Transfer information to the mesh, the data will be swapped
 		Mesh(MeshData * OtherData);
 
-		//* *Create or Bind Vertex Array Object
+		//* Create or Bind Vertex Array Object
 		void BindVertexArray() const;
 
 		//* Bind Element Subdivision Array Object

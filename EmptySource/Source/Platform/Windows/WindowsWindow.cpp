@@ -1,7 +1,7 @@
 
 #include "Engine/Log.h"
 #include "Engine/Application.h"
-#include "Rendering/Graphics.h"
+#include "Rendering/RenderingDefinitions.h"
 #include "Rendering/Bitmap.h"
 
 #include "Utility/TextFormatting.h"
@@ -53,7 +53,7 @@ namespace EmptySource {
 		Width = Properties.Width;
 		Height = Properties.Height;
 		Name = Properties.Name;
-		Mode = WindowMode::WM_Windowed;
+		Mode = WM_Windowed;
 		Initialize();
 	}
 

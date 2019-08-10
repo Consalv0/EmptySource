@@ -16,7 +16,7 @@ namespace EmptySource {
 
 	public:
 
-		void AddShaderStage(WString Name, ShaderType Type, WString FilePath);
+		void AddShaderStage(WString Name, EShaderType Type, WString FilePath);
 
 		ShaderStageResource * GetResourceByUniqueName(const WString& Name) const { return GetResourceByUniqueID(WStringToHash(Name)); };
 

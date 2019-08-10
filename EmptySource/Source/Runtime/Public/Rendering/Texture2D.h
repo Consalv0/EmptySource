@@ -15,14 +15,14 @@ namespace EmptySource {
 	public:
 		//* Constructor
 		Texture2D(
-			const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
-			const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode
+			const IntVector2& Size, const EColorFormat ColorFormat,
+			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode
 		);
 
 		Texture2D(
-			const IntVector2& Size, const Graphics::ColorFormat ColorFormat,
-			const Graphics::FilterMode& FilterMode, const Graphics::AddressMode& AddressMode,
-			const Graphics::ColorFormat InputFormat, const void* BufferData
+			const IntVector2& Size, const EColorFormat ColorFormat,
+			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode,
+			const EColorFormat InputFormat, const void* BufferData
 		);
 
 		//* Get Dimension of the texture
@@ -43,9 +43,9 @@ namespace EmptySource {
 		//* Check if texture is valid
 		bool IsValid() const;
 
-		void SetFilterMode(const Graphics::FilterMode& Mode);
+		void SetFilterMode(const EFilterMode& Mode);
 
-		void SetAddressMode(const Graphics::AddressMode& Mode);
+		void SetSamplerAddressMode(const ESamplerAddressMode& Mode);
 
 		//* 
 		void Delete();

@@ -1,6 +1,10 @@
 
-#include "Engine/Application.h"
+#include "Engine/Log.h"
+#include "Engine/Core.h"
 #include "Engine/Window.h"
+#include "Engine/Application.h"
+#include "Math/CoreMath.h"
+#include "Rendering/RenderingResources.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/GLFunctions.h"
