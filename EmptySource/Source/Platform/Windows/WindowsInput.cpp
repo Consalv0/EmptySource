@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Platform/Windows/WindowsInput.h"
 #include "Engine/Application.h"
 #include "Engine/Window.h"

@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Engine/GameObject.h"
 #include "Components/Component.h"
 

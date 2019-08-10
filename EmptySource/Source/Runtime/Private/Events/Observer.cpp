@@ -1,3 +1,5 @@
+
+#include "CoreMinimal.h"
 #include "Events/Observer.h"
 
 namespace EmptySource {

@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/Bitmap.h"
 #include <memory>

@@ -1,6 +1,5 @@
 ﻿
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Engine/Application.h"
 #include "Engine/CoreTime.h"
 #include "Engine/Window.h"

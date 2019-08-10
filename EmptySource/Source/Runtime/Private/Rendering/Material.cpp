@@ -1,6 +1,5 @@
 
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Rendering/GLFunctions.h"
 #include "Rendering/Material.h"
 #include "Rendering/Texture2D.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 #include "Engine/Application.h"
 
 #include <SDL_main.h>

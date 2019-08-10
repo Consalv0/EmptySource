@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Fonts/SDFGenerator.h"
 #include "Fonts/Glyph.h"

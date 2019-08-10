@@ -1,5 +1,5 @@
 
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 #include "Files/FileStream.h"
 #include "Files/FileManager.h"
 #include "Resources/Resources.h"

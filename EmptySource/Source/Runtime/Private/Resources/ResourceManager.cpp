@@ -1,5 +1,5 @@
 
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 #include "Resources/ResourceManager.h"
 
 #include <yaml-cpp/yaml.h>

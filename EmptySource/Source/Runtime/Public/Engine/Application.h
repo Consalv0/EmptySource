@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/Window.h"
-#include <memory>
 
 namespace EmptySource {
 

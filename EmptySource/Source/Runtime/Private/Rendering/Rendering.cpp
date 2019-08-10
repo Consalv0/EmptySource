@@ -1,6 +1,5 @@
 
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Math/CoreMath.h"
 #include "Rendering/Rendering.h"
 #include "Platform/OpenGL/OpenGLAPI.h"

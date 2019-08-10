@@ -1,5 +1,5 @@
 ﻿
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 #include <fbxsdk.h>
 #include "Resources/FBXLoader.h"
 

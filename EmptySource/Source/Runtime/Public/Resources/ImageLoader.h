@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Files/FileManager.h"
 #include "Rendering/Bitmap.h"
 

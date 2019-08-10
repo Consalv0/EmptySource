@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/GraphicContext.h"
 

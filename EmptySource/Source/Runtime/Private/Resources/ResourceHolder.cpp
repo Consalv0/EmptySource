@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Resources/ResourceHolder.h"
 
 namespace EmptySource {

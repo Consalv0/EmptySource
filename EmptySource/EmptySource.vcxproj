@@ -73,7 +73,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CoreMinimal.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External\SDL2\include;External\SPDLOG\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -93,7 +94,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CoreMinimal.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External\SDL2\include;External\SPDLOG\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -117,7 +119,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CoreMinimal.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ES_PLATFORM_WINDOWS;ES_DLLEXPORT;ES_SHIPPING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\include;Source;Source\Runtime;Source\Runtime\Public;External\SDL2\include;External\SPDLOG\include;External\GLAD\include;External\FreeType\include;External\RobinMap\include;External\STB;External\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -144,17 +147,18 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Source\Platform\Platform.h" />
-    <ClInclude Include="Source\Platform\Windows\MinWindows.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsMinimal.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h" />
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Core.h" />
+    <ClInclude Include="Source\Runtime\Public\CoreMinimal.h" />
+    <ClInclude Include="Source\Runtime\Public\CoreTypes.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Application.h" />
-    <ClInclude Include="Source\Runtime\Public\Engine\Core.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h" />
-    <ClInclude Include="Source\Runtime\Public\Engine\CoreTypes.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h" />
@@ -204,17 +208,17 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
     <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h" />
     <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Cubemap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\ShaderProgram.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\ShaderStage.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h" />
@@ -242,8 +246,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp" />
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffers.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
@@ -258,7 +262,6 @@
     <ClCompile Include="Source\Runtime\Private\Engine\Object.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Space.cpp" />
     <ClCompile Include="Source\Runtime\Private\Engine\Transform.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Engine\Window.cpp" />
     <ClCompile Include="Source\Runtime\Private\Events\Observer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Files\FileManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Files\FileStream.cpp" />
@@ -274,11 +277,11 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\ShaderProgram.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\ShaderStage.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp" />
@@ -299,6 +302,9 @@
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp" />
+    <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="External\YAML\YAML-CPP.vcxproj">

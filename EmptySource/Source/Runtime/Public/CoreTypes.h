@@ -3,6 +3,8 @@
 #include <string>
 #include <tsl/robin_map.h>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace EmptySource {
 
@@ -21,7 +23,7 @@ namespace EmptySource {
 
 }
 
-#ifdef __CUDACC__
+#ifdef ES_PLATFORM_CUDA
 #include <cuda_runtime.h>
 #define HOST_DEVICE __host__ __device__
 #else

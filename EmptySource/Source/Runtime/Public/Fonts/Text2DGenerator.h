@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/CoreTypes.h"
+#include "CoreTypes.h"
 #include "Fonts/Font.h"
 #include "Mesh/Mesh.h"
 #include "Rendering/Bitmap.h"

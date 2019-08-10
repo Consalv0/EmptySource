@@ -1,6 +1,5 @@
 ﻿
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Resources/OBJLoader.h"
 #include "Resources/FBXLoader.h"
 #include "Resources/MeshLoader.h"

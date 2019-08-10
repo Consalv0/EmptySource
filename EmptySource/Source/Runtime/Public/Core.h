@@ -15,14 +15,5 @@
 #endif // EMPTYSOURCE_CORE_LOG
 
 #include "Platform/Platform.h"
-
-// Include main standard headers
-#include <stdexcept>
-#include <errno.h>
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <memory>
-
-#include "Engine/CoreTypes.h"
+#include "CoreTypes.h"
 

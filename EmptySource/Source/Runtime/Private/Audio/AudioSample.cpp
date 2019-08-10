@@ -1,4 +1,6 @@
-#include "Audio\AudioSample.h"
+
+#include "CoreMinimal.h"
+#include "Audio/AudioSample.h"
 
 namespace EmptySource {
 

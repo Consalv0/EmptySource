@@ -1,5 +1,5 @@
 
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 

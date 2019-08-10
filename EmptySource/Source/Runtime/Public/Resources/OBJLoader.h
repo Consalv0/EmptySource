@@ -1,8 +1,8 @@
 #pragma once
 
+#include "CoreMinimal.h"
 #include "Files/FileManager.h"
 #include "Resources/MeshLoader.h"
-#include "Engine/Core.h"
 #include "Utility/Hasher.h"
 
 namespace EmptySource {

@@ -4,7 +4,7 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Utility/TextFormatting.h"
 #include "Files/FileManager.h"
 

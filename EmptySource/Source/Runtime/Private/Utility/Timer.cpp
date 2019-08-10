@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Engine/CoreTime.h"
 #include "Utility/Timer.h"
 

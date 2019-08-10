@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Engine/Application.h"
 #include "Engine/Window.h"
 #include "Rendering/RenderPipeline.h"

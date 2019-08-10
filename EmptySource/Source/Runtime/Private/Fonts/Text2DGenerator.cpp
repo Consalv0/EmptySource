@@ -1,6 +1,5 @@
 
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Utility/TexturePacking.h"
 #include "Utility/LogFreeType.h"
 #include "Utility/Timer.h"

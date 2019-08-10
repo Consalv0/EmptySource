@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #define RESOURCES_ADD_SHADERSTAGE
 #include "Resources/ResourceShaderStage.h"
 #include "Rendering/ShaderStage.h"

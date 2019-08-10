@@ -40,6 +40,9 @@ project "EmptySource"
 	targetdir ("%{prj.name}/Build/" .. outputdir)
 	objdir ("%{prj.name}/BinObjs/" .. outputdir)
 
+	pchheader "CoreMinimal.h"
+	pchsource "EmptySource/Source/Runtime/Public/CoreMinimal.cpp"
+
 	files {
 		"%{prj.name}/Source/**.h",
 		"%{prj.name}/Source/**.inl",

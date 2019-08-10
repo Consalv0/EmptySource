@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "Resources/ResourceShaderProgram.h"
 #include "Rendering/ShaderProgram.h"

@@ -1,3 +1,5 @@
+
+#include "CoreMinimal.h"
 #include "Engine/Transform.h"
 
 namespace EmptySource {

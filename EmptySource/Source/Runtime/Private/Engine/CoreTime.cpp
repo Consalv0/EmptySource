@@ -1,5 +1,5 @@
 
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Engine/Application.h"
 #include "Engine/CoreTime.h"

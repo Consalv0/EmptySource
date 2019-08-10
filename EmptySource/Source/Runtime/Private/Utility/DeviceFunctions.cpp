@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Utility/DeviceFunctions.h"
 
 #ifdef __APPLE__

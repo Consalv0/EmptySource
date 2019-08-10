@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/Texture2D.h"
 #include "Rendering/Cubemap.h"

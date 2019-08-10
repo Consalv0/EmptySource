@@ -1,6 +1,6 @@
 ﻿
 #include "Engine\Log.h"
-#include "Engine\Core.h"
+#include "Core.h"
 #include "Rendering\Graphics.h"
 
 // CUDA HEADERS

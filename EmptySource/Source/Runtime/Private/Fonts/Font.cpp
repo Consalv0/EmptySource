@@ -1,12 +1,11 @@
 
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 #include <freetype/freetype.h>
 
-#include "Engine/Core.h"
 #include "Utility/LogFreeType.h"
 #include "Files/FileStream.h"
 #include "Fonts/Font.h"

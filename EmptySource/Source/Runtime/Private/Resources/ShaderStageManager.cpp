@@ -1,3 +1,5 @@
+
+#include "CoreMinimal.h"
 #include "Resources\ShaderStageManager.h"
 
 namespace EmptySource {

@@ -1,5 +1,5 @@
 
-#include "Engine/Log.h"
+#include "CoreMinimal.h"
 #include "Engine/Application.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/Bitmap.h"

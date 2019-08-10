@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Engine/IIdentifier.h"
 #include "Files/FileManager.h"
 

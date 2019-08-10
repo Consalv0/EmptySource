@@ -1,5 +1,5 @@
 
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Engine/Object.h"
 
 namespace EmptySource {

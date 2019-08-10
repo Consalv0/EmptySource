@@ -87,16 +87,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Platform.h">
       <Filter>Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\Windows\MinWindows.h">
+    <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
+    <ClInclude Include="Source\Platform\Windows\WindowsMinimal.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h">
@@ -111,16 +117,22 @@
     <ClInclude Include="Source\Runtime\Public\Components\Component.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core.h">
+      <Filter>Runtime\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\CoreMinimal.h">
+      <Filter>Runtime\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\CoreTypes.h">
+      <Filter>Runtime\Public</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\Application.h">
       <Filter>Runtime\Public\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Core.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\CoreTypes.h">
       <Filter>Runtime\Public\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h">
@@ -294,6 +306,15 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\ShaderProgram.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -366,26 +387,14 @@
     <ClInclude Include="Source\Runtime\Public\Utility\Timer.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h">
-      <Filter>Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h">
-      <Filter>Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h">
-      <Filter>Runtime\Public\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffers.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
@@ -397,6 +406,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp">
       <Filter>Runtime\Private\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp">
+      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp">
       <Filter>Runtime\Private\Engine</Filter>
@@ -426,9 +438,6 @@
       <Filter>Runtime\Private\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\Transform.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Window.cpp">
       <Filter>Runtime\Private\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Events\Observer.cpp">
@@ -483,6 +492,12 @@
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\ShaderProgram.cpp">
@@ -545,20 +560,8 @@
     <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp">
       <Filter>Runtime\Private\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffers.cpp">
-      <Filter>Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
-      <Filter>Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp">
-      <Filter>Runtime\Private\Components</Filter>
+    <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
+      <Filter>Runtime\Public</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

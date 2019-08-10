@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
 #include "Utility/TextFormatting.h"

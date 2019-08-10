@@ -1,6 +1,6 @@
 
+#include "CoreMinimal.h"
 #include "Engine/EmptySource.h"
-#include "Engine/Core.h"
 #include "Engine/CoreTime.h"
 #include "Engine/Window.h"
 #include "Engine/Space.h"

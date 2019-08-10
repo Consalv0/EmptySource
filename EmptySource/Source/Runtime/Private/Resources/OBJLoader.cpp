@@ -2,8 +2,7 @@
 #include <cctype>
 #include <cstdio>
 
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Utility/Timer.h"
 #include "Files/FileStream.h"
 #include "Resources/OBJLoader.h"

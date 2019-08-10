@@ -1,6 +1,5 @@
 
-#include "Engine/Log.h"
-#include "Engine/Core.h"
+#include "CoreMinimal.h"
 #include "Rendering/Material.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"

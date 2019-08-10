@@ -1,4 +1,5 @@
 
+#include "CoreMinimal.h"
 #include "Utility/TextFormatting.h"
 
 namespace EmptySource::Text {
