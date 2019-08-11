@@ -23,4 +23,5 @@
 #include "Core.h"
 
 // Engine classes
+#include "Events/Event.h"
 #include "Math/CoreMath.h"

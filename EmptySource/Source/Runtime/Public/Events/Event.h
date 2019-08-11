@@ -1,29 +1,38 @@
 #pragma once
 
 #include "CoreTypes.h"
-#include "Events/Observer.h"
+
+#define EVENT_ENUM_TYPE(EnumType, Type) static EnumType GetStaticType() { return EnumType::##Type; }\
+										virtual EnumType GetEventType() const override { return GetStaticType(); }\
+										virtual const WChar* GetName() const override { return L#EnumType ## "::" ## #Type; }
 
 namespace EmptySource {
 
-	struct Event {
-	protected:
-		TArray<const Observer*> Observers;
-
+	class Event {
 	public:
+		virtual const WChar* GetName() const = 0;
+	};
 
-		virtual inline void Notify() {
-			for (auto& ItObserver : Observers) {
-				ItObserver->Call();
+	template<typename B>
+	class EventDispatcher {
+		template<typename T>
+		using EventFunction = std::function<void(T&)>;
+	public:
+		EventDispatcher(B& BaseEvent)
+			: DispatchedEvent(BaseEvent) {
+		}
+
+		template<typename T>
+		bool Dispatch(EventFunction<T> Function) {
+			if (DispatchedEvent.GetEventType() == T::GetStaticType()) {
+				Function(*(T*)&DispatchedEvent);
+				return true;
 			}
+			return false;
 		}
 
-		virtual inline void AttachObserver(const Observer* Value) {
-			Observers.push_back(Value);
-		}
-
-		virtual inline void DetachObserver(const Observer* Value) {
-			Observers.erase(std::remove(Observers.begin(), Observers.end(), Value), Observers.end());
-		}
+	private:
+		B& DispatchedEvent;
 	};
 
 }

@@ -10,6 +10,8 @@ namespace EmptySource {
 
 		bool CloseDeviceFunctions();
 
+		bool IsRunningOnBattery();
+
 		float GetDeviceTemperature(const int& DeviceIndex);
 	}
 

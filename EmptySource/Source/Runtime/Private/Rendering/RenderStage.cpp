@@ -63,7 +63,7 @@ namespace EmptySource {
 
 	void RenderStage::RunStage() {
 		Prepare();
-		OnRenderEvent.Notify();
+		// OnRenderEvent.Notify();
 		Finish();
 	}
 

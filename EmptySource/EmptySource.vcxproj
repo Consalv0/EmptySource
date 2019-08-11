@@ -172,6 +172,7 @@
     <ClInclude Include="Source\Runtime\Public\Events\Observer.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Property.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Task.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\WindowEvent.h" />
     <ClInclude Include="Source\Runtime\Public\Files\FileManager.h" />
     <ClInclude Include="Source\Runtime\Public\Files\FileStream.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\EdgeHolder.h" />

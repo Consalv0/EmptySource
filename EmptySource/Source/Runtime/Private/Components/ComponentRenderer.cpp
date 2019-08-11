@@ -19,7 +19,7 @@ namespace EmptySource {
 	bool CRenderer::Initialize() {
 		RenderStage * TestStage = Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage");
 		if (TestStage != NULL) {
-			TestStage->OnRenderEvent.AttachObserver(&TestStageObserver);
+			// TestStage->OnRenderEvent.AttachObserver(&TestStageObserver);
 			TestStageObserver.AddCallback("Render", std::bind(&CRenderer::Render, this));
 		}
 
@@ -37,7 +37,7 @@ namespace EmptySource {
 
 	void CRenderer::OnDelete() {
 		TestStageObserver.RemoveAllCallbacks();
-		LOG_CORE_DEBUG(L"Renderer '%ls'[%d] Destroyed", GetUniqueName(), GetUniqueID());
+		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", GetUniqueName(), GetUniqueID());
 	}
 
 	void CRenderer::Render() {

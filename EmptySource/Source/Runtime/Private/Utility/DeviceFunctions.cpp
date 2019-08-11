@@ -2,13 +2,13 @@
 #include "CoreMinimal.h"
 #include "Utility/DeviceFunctions.h"
 
-#ifdef __APPLE__
+#ifdef ES_PLATFORM_APPLE
 #include <IOKit/IOKitLib.h>
-#elif defined(_WIN32) & defined(USE_CUDA)
+#elif defined(ES_PLATFORM_WINDOWS) & defined(USE_PLATFORM_NVIDIA)
 #include <nvml.h>
 #endif
 
-#ifdef __APPLE__
+#ifdef ES_PLATFORM_APPLE
 static io_connect_t IOConnection;
 
 typedef char              SMCBytes_t[32];
@@ -116,7 +116,7 @@ inline kern_return_t SMCReadKey(UInt32Char_t Key, SMCVal_t *Value) {
 namespace EmptySource {
 
 	bool Debug::InitializeDeviceFunctions() {
-#if defined(WIN32) & defined(USE_CUDA)
+#if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
 		nvmlReturn_t DeviceResult = nvmlInit();
 
 		if (NVML_SUCCESS != DeviceResult) {
@@ -125,7 +125,7 @@ namespace EmptySource {
 		}
 
 		return true;
-#elif __APPLE__
+#elif ES_PLATFORM_APPLE
 		kern_return_t Result;
 		io_iterator_t Iterator;
 		io_object_t   Device;
@@ -156,9 +156,36 @@ namespace EmptySource {
 		return true;
 #endif
 	}
+	
+	bool Debug::IsRunningOnBattery() {
+		SYSTEM_POWER_STATUS Status;
+		GetSystemPowerStatus(&Status);
+
+		switch (Status.ACLineStatus) {
+			case 0://	"Offline"
+			case 255://	"Unknown status"
+				return true;
+			case 1://	"Online"
+				return false;
+		}
+
+		switch (Status.BatteryFlag) {
+			case 4://	"Critical-the battery capacity is at less than five percent"
+			case 2://	"Low-the battery capacity is at less than 33 percent"
+			case 1://	"High-the battery capacity is at more than 66 percent"
+			case 8://	"Charging"
+				return true;
+			case 128://	"No system battery"
+			case 255://	"Unknown status-unable to read the battery flag information"
+			default:
+				return false;
+		}
+
+		return false;
+	}
 
 	bool Debug::CloseDeviceFunctions() {
-#if defined(_WIN32) & defined(USE_CUDA)
+#if defined(ES_PLATFORM_WINDOWS) & defined(USE_PLATFORM_CUDA)
 		nvmlReturn_t DeviceResult = nvmlShutdown();
 
 		if (NVML_SUCCESS != DeviceResult) {
@@ -167,7 +194,7 @@ namespace EmptySource {
 		}
 
 		return true;
-#elif __APPLE__
+#elif ES_PLATFORM_APPLE
 		kern_return_t Result;
 
 		Result = IOServiceClose(IOConnection);
@@ -184,7 +211,7 @@ namespace EmptySource {
 	}
 
 	float Debug::GetDeviceTemperature(const int & DeviceIndex) {
-#if defined(_WIN32) & defined(USE_CUDA)
+#if defined(ES_PLATFORM_WINDOWS) & defined(USE_PLATFORM_CUDA)
 		nvmlDevice_t Device;
 		nvmlReturn_t DeviceResult;
 		unsigned int DeviceTemperature = 0;
@@ -202,7 +229,7 @@ namespace EmptySource {
 
 		return (float)DeviceTemperature;
 
-#elif __APPLE__
+#elif ES_PLATFORM_APPLE
 		SMCVal_t Value;
 		kern_return_t Result;
 		std::string DeviceTempKey = "TG" + std::to_string(DeviceIndex) + "P";

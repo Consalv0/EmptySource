@@ -5,19 +5,18 @@
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"
 
-#include <memory>
-
 namespace EmptySource {
 
 	class WindowsWindow : public Window {
 	public:
-		typedef Window Supper;
+		typedef Window Super;
 
 		struct {
 			WString Name;
 			unsigned int Width;
 			unsigned int Height;
 			bool VSync;
+			EventCallbackFunction WindowEventCallback;
 		};
 
 	private:
@@ -49,9 +48,6 @@ namespace EmptySource {
 		//* Rename the window title
 		void SetName(const WString & NewName);
 
-		// //* Total frames drawed since the creation of this window
-		// unsigned long long GetFrameCount();
-
 		//* Get mouse position in screen coordinates relative to the upper left position of this window
 		struct Vector2 GetMousePosition(bool Clamp = false);
 
@@ -60,9 +56,6 @@ namespace EmptySource {
 
 		//* Sets the window icon
 		void SetIcon(class Bitmap<UCharRGBA> * Icon);
-
-		// //* Window update events
-		// void PollEvents();
 
 		//* Window update events
 		virtual void EndFrame() override;
@@ -87,6 +80,8 @@ namespace EmptySource {
 
 		//* Get the platform Window pointer
 		virtual void* GetHandle() const override;
+
+		inline void SetWindowEventCallback(const EventCallbackFunction& Callback) override { WindowEventCallback = Callback; }
 
 	};
 

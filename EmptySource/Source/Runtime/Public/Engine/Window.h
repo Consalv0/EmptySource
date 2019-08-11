@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Events/WindowEvent.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/GraphicContext.h"
 
@@ -29,9 +30,10 @@ namespace EmptySource {
 
 	};
 
-	//* Cointains the properties and functions of a GLFW window
+	//* Cointains the properties and functions of a window
 	class Window {
 	public:
+		using EventCallbackFunction = std::function<void(WindowEvent&)>;
 
 		virtual ~Window() = default;
 
@@ -49,6 +51,9 @@ namespace EmptySource {
 
 		//* Get the height in pixels of the window
 		virtual unsigned int GetHeight() const = 0;
+
+		//* Set callback communication with window events
+		virtual void SetWindowEventCallback(const EventCallbackFunction& Callback) = 0;
 
 		//* Get the aspect of width divided by height in pixels of the window
 		virtual float GetAspectRatio() const = 0;

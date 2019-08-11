@@ -387,6 +387,9 @@
     <ClInclude Include="Source\Runtime\Public\Utility\Timer.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Events\WindowEvent.h">
+      <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">

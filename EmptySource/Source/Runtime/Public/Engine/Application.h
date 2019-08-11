@@ -5,24 +5,28 @@
 namespace EmptySource {
 
 	class Application {
-	private:
-		bool bInitialized;
 
-		bool bRunning;
-		
-		double RenderTimeSum;
+	public:
 
-		//* Initialize the application, it creates a window, a context and loads the OpenGL functions.
-		void Initalize();
+		virtual ~Application() = default;
 
-		//* Application loading point
-		void Awake();
+		static Application * GetInstance();
 
-		//* Application loop
-		void UpdateLoop();
+		class RenderPipeline & GetRenderPipeline();
 
-		//* Terminates Application
-		void Terminate();
+		void OnWindowEvent(WindowEvent& WinEvent);
+
+		//* Appication Instance
+		inline Window & GetWindow() { return *WindowInstance; };
+
+		//* Call this to close the application
+		inline void ShouldClose() { bRunning = false; };
+
+		//* The application is running
+		bool IsRunning() { return bRunning; }
+
+		//* Entry point of the application
+		void Run();
 
 	protected:
 
@@ -40,25 +44,26 @@ namespace EmptySource {
 
 		virtual void OnTerminate() {};
 
-	public:
+	private:
+		bool bInitialized;
 
-		virtual ~Application() = default;
+		bool bRunning;
 
-		static Application * GetInstance();
+		double RenderTimeSum;
 
-		class RenderPipeline & GetRenderPipeline();
+		//* Initialize the application, it creates a window, a context and loads the OpenGL functions.
+		void Initalize();
 
-		//* Appication Instance
-		inline Window & GetWindow() { return *WindowInstance; };
+		//* Application loading point
+		void Awake();
 
-		//* Call this to close the application
-		inline void ShouldClose() { bRunning = false; };
+		//* Application loop
+		void UpdateLoop();
 
-		//* The application is running
-		bool IsRunning() { return bRunning; }
+		//* Terminates Application
+		void Terminate();
 
-		//* Entry point of the application
-		void Run();
+		void OnWindowClose(WindowCloseEvent & CloseEvent);
 	};
 
 	Application * CreateApplication();

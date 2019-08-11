@@ -29,7 +29,7 @@ namespace EmptySource {
 
 	public:
 		// TArray<Task<>> RenderTasks;
-		Event OnRenderEvent;
+		// Event OnRenderEvent;
 
 		class Material * CurrentMaterial;
 

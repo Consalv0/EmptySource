@@ -13,13 +13,36 @@
 
 #include <SDL.h>
 
-
 namespace EmptySource {
 
-	int OnCloseWindow(void * Data, SDL_Event * Event) {
-		if (Event->type == SDL_QUIT) {
-			Application::GetInstance()->ShouldClose();
+	int OnSDLEvent(void * UserData, SDL_Event * Event) {
+		WindowsWindow& Data = *(WindowsWindow*)UserData;
+		
+		if (Event->type == SDL_WINDOWEVENT) {
+			if (Event->window.event == SDL_WINDOWEVENT_RESIZED || Event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+				Data.Resize(Event->window.data1, Event->window.data2);
+				return 0;
+			}
+
+			if (Event->window.event == SDL_WINDOWEVENT_CLOSE) {
+				WindowCloseEvent Event;
+				Data.WindowEventCallback(Event);
+				return 0;
+			}
+
+			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
+				WindowGainFocusEvent Event;
+				Data.WindowEventCallback(Event);
+				return 0;
+			}
+
+			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
+				WindowLostFocusEvent Event;
+				Data.WindowEventCallback(Event);
+				return 0;
+			}
 		}
+
 		return 0;
 	}
 
@@ -40,9 +63,11 @@ namespace EmptySource {
 			return;
 		}
 
+		SDL_SetWindowData((SDL_Window *)WindowHandle, "WindowData", this);
+
 		Context = std::unique_ptr<OpenGLContext>(new OpenGLContext((SDL_Window *)WindowHandle, 4, 6));
 
-		SDL_AddEventWatch(OnCloseWindow, (void *)this);
+		SDL_AddEventWatch(OnSDLEvent, (void *)this);
 
 		Context->Initialize();
 	}
@@ -66,6 +91,9 @@ namespace EmptySource {
 		if (Width != Wth || Height != Hht) {
 			Width = Wth; Height = Hht;
 			SDL_SetWindowSize((SDL_Window *)(WindowHandle), Wth, Hht);
+
+			WindowResizeEvent Event(Width, Height);
+			WindowEventCallback(Event);
 		}
 	}
 
@@ -119,7 +147,7 @@ namespace EmptySource {
 #endif // ES_DEBUG
 			SDL_DestroyWindow((SDL_Window *)(WindowHandle));
 			WindowHandle = NULL;
-			SDL_DelEventWatch(OnCloseWindow, (void *)this);
+			SDL_DelEventWatch(OnSDLEvent, (void *)this);
 			Context.reset(NULL);
 			// SDL_DelEventWatch(OnResizeWindow, this);
 		}
