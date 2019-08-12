@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Events/WindowEvent.h"
+#include "Events/InputEvent.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/GraphicContext.h"
 
@@ -33,7 +34,8 @@ namespace EmptySource {
 	//* Cointains the properties and functions of a window
 	class Window {
 	public:
-		using EventCallbackFunction = std::function<void(WindowEvent&)>;
+		using WindowEventCallbackFunction = std::function<void(WindowEvent&)>;
+		using InputEventCallbackFunction = std::function<void(InputEvent&)>;
 
 		virtual ~Window() = default;
 
@@ -53,7 +55,10 @@ namespace EmptySource {
 		virtual unsigned int GetHeight() const = 0;
 
 		//* Set callback communication with window events
-		virtual void SetWindowEventCallback(const EventCallbackFunction& Callback) = 0;
+		virtual void SetWindowEventCallback(const WindowEventCallbackFunction& Callback) = 0;
+
+		//* Set callback communication with input events
+		virtual void SetInputEventCallback(const InputEventCallbackFunction& Callback) = 0;
 
 		//* Get the aspect of width divided by height in pixels of the window
 		virtual float GetAspectRatio() const = 0;

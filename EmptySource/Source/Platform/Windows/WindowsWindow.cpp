@@ -25,22 +25,55 @@ namespace EmptySource {
 			}
 
 			if (Event->window.event == SDL_WINDOWEVENT_CLOSE) {
-				WindowCloseEvent Event;
-				Data.WindowEventCallback(Event);
+				WindowCloseEvent WinEvent;
+				Data.WindowEventCallback(WinEvent);
 				return 0;
 			}
 
 			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
-				WindowGainFocusEvent Event;
-				Data.WindowEventCallback(Event);
+				WindowGainFocusEvent WinEvent;
+				Data.WindowEventCallback(WinEvent);
 				return 0;
 			}
 
 			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
-				WindowLostFocusEvent Event;
-				Data.WindowEventCallback(Event);
+				WindowLostFocusEvent WinEvent;
+				Data.WindowEventCallback(WinEvent);
 				return 0;
 			}
+		}
+
+		if (Event->type == SDL_KEYDOWN) {
+			KeyPressedEvent InEvent(Event->key.keysym.scancode, Event->key.repeat);
+			Data.InputEventCallback(InEvent);
+		}
+
+		if (Event->type == SDL_KEYUP) {
+			KeyReleasedEvent InEvent(Event->key.keysym.scancode);
+			Data.InputEventCallback(InEvent);
+		}
+
+		if (Event->type == SDL_MOUSEBUTTONDOWN) {
+			MouseButtonPressedEvent InEvent(Event->button.button);
+			Data.InputEventCallback(InEvent);
+		}
+
+		if (Event->type == SDL_MOUSEBUTTONUP) {
+			MouseButtonReleasedEvent InEvent(Event->button.button);
+			Data.InputEventCallback(InEvent);
+		}
+
+		if (Event->type == SDL_MOUSEMOTION) {
+			MouseMovedEvent InEvent((float)Event->motion.x, (float)Event->motion.y);
+			Data.InputEventCallback(InEvent);
+		}
+
+		if (Event->type == SDL_MOUSEWHEEL) {
+			MouseScrolledEvent InEvent(
+				(float)Event->wheel.x, (float)Event->wheel.y,
+				Event->wheel.direction == SDL_MOUSEWHEEL_FLIPPED
+			);
+			Data.InputEventCallback(InEvent);
 		}
 
 		return 0;

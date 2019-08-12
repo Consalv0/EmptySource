@@ -2,15 +2,18 @@
 
 #include "CoreTypes.h"
 
-#define EVENT_ENUM_TYPE(EnumType, Type) static EnumType GetStaticType() { return EnumType::##Type; }\
-										virtual EnumType GetEventType() const override { return GetStaticType(); }\
-										virtual const WChar* GetName() const override { return L#EnumType ## "::" ## #Type; }
+#define IMPLEMENT_EVENT_ENUMTYPE(EnumType, Type) static EnumType GetStaticType() { return EnumType::##Type; }\
+												 virtual EnumType GetEventType() const override { return GetStaticType(); }\
+												 virtual const WChar* GetName() const override { return L#EnumType ## "::" ## #Type; }
+
+#define IMPLEMENT_EVENT_CATEGORY(Category) virtual unsigned int GetCategoryFlags() const override { return Category; }
 
 namespace EmptySource {
 
 	class Event {
 	public:
 		virtual const WChar* GetName() const = 0;
+		virtual unsigned int GetCategoryFlags() const = 0;
 	};
 
 	template<typename B>

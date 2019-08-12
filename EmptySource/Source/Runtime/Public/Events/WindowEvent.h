@@ -5,19 +5,28 @@
 namespace EmptySource {
 
 	enum class EWindowEventType {
-		WindowClose, WindowResize, WindowGainFocus, WindowLostFocus, WindowMoved
+		WindowClose,
+		WindowResize,
+		WindowGainFocus,
+		WindowLostFocus,
+		WindowMoved
 	};
 
 	class WindowEvent : public Event {
 	public:
 		virtual EWindowEventType GetEventType() const = 0;
+
+		IMPLEMENT_EVENT_CATEGORY(0u);
+
+	protected:
+		WindowEvent() {};
 	};
 
 	class WindowCloseEvent : public WindowEvent {
 	public:
 		WindowCloseEvent() {}
 
-		EVENT_ENUM_TYPE(EWindowEventType, WindowClose)
+		IMPLEMENT_EVENT_ENUMTYPE(EWindowEventType, WindowClose);
 	};
 
 	class WindowResizeEvent : public WindowEvent {
@@ -28,7 +37,7 @@ namespace EmptySource {
 		inline unsigned int GetWidth() const { return Width; }
 		inline unsigned int GetHeight() const { return Height; }
 
-		EVENT_ENUM_TYPE(EWindowEventType, WindowResize)
+		IMPLEMENT_EVENT_ENUMTYPE(EWindowEventType, WindowResize);
 
 	private:
 		unsigned int Width, Height;
@@ -41,7 +50,7 @@ namespace EmptySource {
 		inline unsigned int GetWidth() const { return Width; }
 		inline unsigned int GetHeight() const { return Height; }
 
-		EVENT_ENUM_TYPE(EWindowEventType, WindowGainFocus)
+		IMPLEMENT_EVENT_ENUMTYPE(EWindowEventType, WindowGainFocus);
 
 	private:
 		unsigned int Width, Height;
@@ -54,7 +63,7 @@ namespace EmptySource {
 		inline unsigned int GetWidth() const { return Width; }
 		inline unsigned int GetHeight() const { return Height; }
 
-		EVENT_ENUM_TYPE(EWindowEventType, WindowLostFocus)
+		IMPLEMENT_EVENT_ENUMTYPE(EWindowEventType, WindowLostFocus);
 
 	private:
 		unsigned int Width, Height;

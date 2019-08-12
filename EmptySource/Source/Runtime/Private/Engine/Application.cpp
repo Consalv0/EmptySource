@@ -82,9 +82,27 @@ namespace EmptySource {
 
 	void Application::OnWindowEvent(WindowEvent & WinEvent) {
 		LOG_CORE_DEBUG(L"App Window Event : '{}'", WinEvent.GetName());
-		LOG_CORE_DEBUG(L"Is Running On Battery : {}", Debug::IsRunningOnBattery());
 		EventDispatcher<WindowEvent> Dispatcher(WinEvent);
 		Dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+
+		// for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		// {
+		// 	(*--it)->OnEvent(e);
+		// 	if (e.Handled)
+		// 		break;
+		// }
+	}
+
+	void Application::OnInputEvent(InputEvent & InEvent) {
+		LOG_CORE_DEBUG(L"App Input Event : '{}'", InEvent.GetName());
+		EventDispatcher<InputEvent> Dispatcher(InEvent);
+		Dispatcher.Dispatch<MouseMovedEvent>([](MouseMovedEvent & Event){
+			LOG_CORE_INFO(L"  Mouse Position : {}", Text::FormatMath(Event.GetMousePosition()));
+		});
+		Dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent & Event) {
+			if (!Event.IsRepeated())
+				LOG_CORE_INFO(L"  Key Code : {:d}", Event.GetKeyCode());
+		});
 
 		// for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		// {
@@ -99,6 +117,7 @@ namespace EmptySource {
 
 		WindowInstance = std::unique_ptr<Window>(Window::Create());
 		WindowInstance->SetWindowEventCallback(std::bind(&Application::OnWindowEvent, this, std::placeholders::_1));
+		WindowInstance->SetInputEventCallback(std::bind(&Application::OnInputEvent, this, std::placeholders::_1));
 		
 		if (!GetWindow().IsRunning()) return;
 		if (Debug::InitializeDeviceFunctions() == false) {

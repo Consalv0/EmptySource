@@ -16,7 +16,8 @@ namespace EmptySource {
 			unsigned int Width;
 			unsigned int Height;
 			bool VSync;
-			EventCallbackFunction WindowEventCallback;
+			WindowEventCallbackFunction WindowEventCallback;
+			InputEventCallbackFunction InputEventCallback;
 		};
 
 	private:
@@ -81,7 +82,11 @@ namespace EmptySource {
 		//* Get the platform Window pointer
 		virtual void* GetHandle() const override;
 
-		inline void SetWindowEventCallback(const EventCallbackFunction& Callback) override { WindowEventCallback = Callback; }
+		//* Set callback communication with window events
+		inline void SetWindowEventCallback(const WindowEventCallbackFunction& Callback) override { WindowEventCallback = Callback; }
+
+		//* Set callback communication with input events
+		inline void SetInputEventCallback(const InputEventCallbackFunction& Callback) override { InputEventCallback = Callback; }
 
 	};
 

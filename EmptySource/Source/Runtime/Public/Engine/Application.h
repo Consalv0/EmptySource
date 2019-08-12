@@ -16,6 +16,8 @@ namespace EmptySource {
 
 		void OnWindowEvent(WindowEvent& WinEvent);
 
+		void OnInputEvent(InputEvent& InEvent);
+
 		//* Appication Instance
 		inline Window & GetWindow() { return *WindowInstance; };
 

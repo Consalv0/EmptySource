@@ -390,6 +390,9 @@
     <ClInclude Include="Source\Runtime\Public\Engine\Layer.h">
       <Filter>Runtime\Private\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Events\InputEvent.h">
+      <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">

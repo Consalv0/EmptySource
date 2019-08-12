@@ -170,6 +170,7 @@
     <ClInclude Include="Source\Runtime\Public\Engine\Transform.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Window.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Event.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\InputEvent.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Observer.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Property.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Task.h" />
