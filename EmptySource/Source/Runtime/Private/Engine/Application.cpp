@@ -12,8 +12,7 @@
 #include "Math/Physics.h"
 
 #include "Utility/TextFormattingMath.h"
-#include "Utility/Timer.h"
-#if defined(ES_PLATFORM_WINDOWS) & defined(ES_USE_CUDA)
+#if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
 #include "CUDA/CoreCUDA.h"
 #endif
 #include "Utility/DeviceFunctions.h"
@@ -135,7 +134,7 @@ namespace EmptySource {
 
 			OnUpdate();
 
-			RenderTimeSum += Time::GetDeltaTime();
+			RenderTimeSum += Time::GetDeltaTime<Time::Second>();
 			const float MaxFramerate = (1 / 65.F);
 			if (RenderTimeSum > MaxFramerate) {
 				RenderTimeSum = 0;

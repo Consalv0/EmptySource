@@ -163,6 +163,7 @@
     <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Input.h" />
+    <ClInclude Include="Source\Runtime\Public\Engine\Layer.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Log.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Object.h" />
     <ClInclude Include="Source\Runtime\Public\Engine\Space.h" />
@@ -243,7 +244,6 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TextFormatting.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\TextFormattingMath.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h" />
-    <ClInclude Include="Source\Runtime\Public\Utility\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp" />
@@ -302,7 +302,6 @@
     <ClCompile Include="Source\Runtime\Private\Utility\DeviceFunctions.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp" />
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

@@ -158,6 +158,7 @@ namespace EmptySource {
 	}
 	
 	bool Debug::IsRunningOnBattery() {
+#ifdef ES_PLATFORM_WINDOWS
 		SYSTEM_POWER_STATUS Status;
 		GetSystemPowerStatus(&Status);
 
@@ -180,6 +181,7 @@ namespace EmptySource {
 			default:
 				return false;
 		}
+#endif
 
 		return false;
 	}

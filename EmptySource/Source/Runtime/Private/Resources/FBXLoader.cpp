@@ -3,7 +3,6 @@
 #include <fbxsdk.h>
 #include "Resources/FBXLoader.h"
 
-#include "Utility/Timer.h"
 #include "Utility/TextFormatting.h"
 
 namespace EmptySource {
@@ -450,8 +449,8 @@ namespace EmptySource {
 		if (gSdkManager == NULL)
 			return false;
 
-		Debug::Timer Timer;
-		Timer.Start();
+		Timestamp Timer;
+		Timer.Begin();
 
 		FbxScene* Scene = FbxScene::Create(gSdkManager, Text::WideToNarrow(FileData.File->GetShortPath()).c_str());
 
@@ -467,9 +466,9 @@ namespace EmptySource {
 		size_t TotalAllocatedSize = 0;
 
 		Timer.Stop();
-		LOG_CORE_INFO(L"├> Readed and parsed in {:0.3f}s", Timer.GetEnlapsedSeconds());
+		LOG_CORE_INFO(L"├> Readed and parsed in {:0.3f}ms", Timer.GetDeltaTime<Time::Mili>());
 
-		Timer.Start();
+		Timer.Begin();
 		for (int NodeIndex = 0; NodeIndex < NodeCount; NodeIndex++) {
 			FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
 			FbxMesh * lMesh = Node->GetMesh();
@@ -495,7 +494,7 @@ namespace EmptySource {
 		}
 
 		Timer.Stop();
-		LOG_CORE_INFO(L"└> Allocated {0} in {1:.2f}s", Text::FormatData(TotalAllocatedSize, 2), Timer.GetEnlapsedSeconds());
+		LOG_CORE_INFO(L"└> Allocated {0} in {1:.2f}ms", Text::FormatData(TotalAllocatedSize, 2), Timer.GetDeltaTime<Time::Mili>());
 
 		return bStatus;
 	}

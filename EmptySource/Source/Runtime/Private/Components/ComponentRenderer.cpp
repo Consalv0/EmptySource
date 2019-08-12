@@ -47,11 +47,11 @@ namespace EmptySource {
 		if (Stage == NULL) return;
 
 		if (Model->SetUpBuffers()) {
-			Model->BindSubdivisionVertexArray((int)fmodf(Time::GetEpochTimeSeconds(), (float)Model->Data.Materials.size()));
+			Model->BindSubdivisionVertexArray((int)fmodf(Time::GetEpochTime<Time::Second>(), (float)Model->Data.Materials.size()));
 
 			Material * CurrentMaterial = Stage->CurrentMaterial;
 			CurrentMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, &GetGameObject().Transformation.GetLocalToWorldMatrix(), Stage->GetMatrixBuffer());
-			Model->DrawSubdivisionInstanciated(1, (int)fmodf(Time::GetEpochTimeSeconds(), (float)Model->Data.Materials.size()));
+			Model->DrawSubdivisionInstanciated(1, (int)fmodf(Time::GetEpochTime<Time::Second>(), (float)Model->Data.Materials.size()));
 		}
 	}
 

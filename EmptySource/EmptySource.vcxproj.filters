@@ -384,11 +384,11 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Utility\Timer.h">
-      <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Events\WindowEvent.h">
       <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Engine\Layer.h">
+      <Filter>Runtime\Private\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -558,9 +558,6 @@
       <Filter>Runtime\Private\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp">
-      <Filter>Runtime\Private\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Utility\Timer.cpp">
       <Filter>Runtime\Private\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">

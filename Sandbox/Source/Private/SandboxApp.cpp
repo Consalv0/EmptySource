@@ -12,8 +12,7 @@
 #include "Math/Physics.h"
 
 #include "Utility/TextFormattingMath.h"
-#include "Utility/Timer.h"
-#if defined(_WIN32) & defined(USE_CUDA)
+#if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
 #include "CUDA/CoreCUDA.h"
 #endif
 #include "Utility/DeviceFunctions.h"
@@ -515,22 +514,22 @@ protected:
 
 		if (Input::IsKeyDown(SDL_SCANCODE_W)) {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
-			EyePosition += Forward * Time::GetDeltaTime() *
+			EyePosition += Forward * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_A)) {
 			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
-			EyePosition += Right * Time::GetDeltaTime() *
+			EyePosition += Right * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_S)) {
 			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
-			EyePosition += Back * Time::GetDeltaTime() *
+			EyePosition += Back * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_D)) {
 			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
-			EyePosition += Left * Time::GetDeltaTime() *
+			EyePosition += Left * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 
@@ -549,26 +548,26 @@ protected:
 		// Debug::Log(Debug::LogDebug, L"%ls", Text::FormatMath(ViewMatrix).c_str());
 
 		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
-			MaterialMetalness -= 1.F * Time::GetDeltaTime();
+			MaterialMetalness -= 1.F * Time::GetDeltaTime<Time::Second>();
 			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_M)) {
-			MaterialMetalness += 1.F * Time::GetDeltaTime();
+			MaterialMetalness += 1.F * Time::GetDeltaTime<Time::Second>();
 			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_E)) {
-			MaterialRoughness -= 0.5F * Time::GetDeltaTime();
+			MaterialRoughness -= 0.5F * Time::GetDeltaTime<Time::Second>();
 			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_R)) {
-			MaterialRoughness += 0.5F * Time::GetDeltaTime();
+			MaterialRoughness += 0.5F * Time::GetDeltaTime<Time::Second>();
 			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_L)) {
-			LightIntencity += LightIntencity * Time::GetDeltaTime();
+			LightIntencity += LightIntencity * Time::GetDeltaTime<Time::Second>();
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_K)) {
-			LightIntencity -= LightIntencity * Time::GetDeltaTime();
+			LightIntencity -= LightIntencity * Time::GetDeltaTime<Time::Second>();
 		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
@@ -583,36 +582,36 @@ protected:
 		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_UP)) {
-			MeshSelector += Time::GetDeltaTime() * 10;
+			MeshSelector += Time::GetDeltaTime<Time::Second>() * 10;
 			MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_DOWN)) {
-			MeshSelector -= Time::GetDeltaTime() * 10;
+			MeshSelector -= Time::GetDeltaTime<Time::Second>() * 10;
 			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_RIGHT)) {
-			MultiuseValue += Time::GetDeltaTime() * MultiuseValue;
+			MultiuseValue += Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_LEFT)) {
-			MultiuseValue -= Time::GetDeltaTime() * MultiuseValue;
+			MultiuseValue -= Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
 			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
-				FontSize += Time::GetDeltaTime() * FontSize;
+				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 
 			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
-				FontSize -= Time::GetDeltaTime() * FontSize;
+				FontSize -= Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 		}
 		else {
 			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
-				FontBoldness += Time::GetDeltaTime() / 10;
+				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10;
 			}
 
 			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
-				FontBoldness -= Time::GetDeltaTime() / 10;
+				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10;
 			}
 		}
 
@@ -650,13 +649,13 @@ protected:
 		InverseTransform = Transforms[0].GetWorldToLocalMatrix();
 
 		TestArrowTransform.Scale = 0.1F;
-		TestArrowTransform.Position += TestArrowDirection * TestSphereVelocity * Time::GetDeltaTime();
+		TestArrowTransform.Position += TestArrowDirection * TestSphereVelocity * Time::GetDeltaTime<Time::Second>();
 	}
 
 	virtual void OnRender() override {
 		GetRenderPipeline().PrepareFrame();
 
-		Debug::Timer Timer;
+		Timestamp Timer;
 
 		// --- Run the device part of the program
 		if (!bRandomArray) {
@@ -905,7 +904,7 @@ protected:
 			LightModels[0].DrawInstanciated(2);
 		}
 
-		float AppTime = (float)Time::GetEpochTimeMicro() / 1000.F;
+		float AppTime = (float)Time::GetEpochTime<Time::Mili>();
 		glViewport(0, 0, EquirectangularTextureHDR->GetWidth() / 4 * abs(1 - MultiuseValue), EquirectangularTextureHDR->GetHeight() / 4 * abs(1 - MultiuseValue));
 
 		RenderTextureMaterial.Use();
@@ -945,14 +944,14 @@ protected:
 		int TotalCharacterSize = 0;
 		DynamicMesh.Clear();
 		for (int i = 0; i < TextCount; i++) {
-			Timer.Start();
+			Timer.Begin();
 			Vector2 Pivot = TextPivot + Vector2(0.F, GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 			TextGenerator.GenerateMesh(
 				Box2D(0, 0, (float)GetWindow().GetWidth(), Pivot.y),
 				FontSize, RenderingText[i], &DynamicMesh.Data.Faces, &DynamicMesh.Data.Vertices
 			);
 			Timer.Stop();
-			TimeCount += Timer.GetEnlapsedMili();
+			TimeCount += Timer.GetDeltaTime<Time::Mili>();
 			TotalCharacterSize += (int)RenderingText[i].size();
 		}
 		if (DynamicMesh.SetUpBuffers()) {
@@ -974,8 +973,8 @@ protected:
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
 			Debug::GetDeviceTemperature(0),
-			Time::GetFrameRatePerSecond(),
-			(1.F / Time::GetFrameRatePerSecond()) * 1000.F,
+			Time::GetFrameRate<Time::Second>(),
+			Time::GetDeltaTime<Time::Mili>(),
 			LightIntencity / 10000.F + 1.F,
 			Text::FormatUnit(VerticesCount, 2).c_str(),
 			Text::FormatMath(CursorPosition).c_str(),

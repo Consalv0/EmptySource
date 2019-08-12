@@ -2,7 +2,41 @@
 
 namespace EmptySource {
 
+	class Time;
+
+	struct Timestamp {
+	public:
+		Timestamp() {
+		}
+
+		Timestamp(unsigned long long Last, unsigned long long Now)
+			: LastEpochTime(Last), NowEpochTime(Now){
+		};
+
+	public:
+		template<typename T>
+		inline typename T::ReturnType GetDeltaTime() const { 
+			return (NowEpochTime - LastEpochTime) / (typename T::ReturnType)T::GetSizeInMicro();
+		};
+
+		void Begin();
+
+		void Stop();
+
+	private:
+		unsigned long long LastEpochTime;
+		unsigned long long NowEpochTime;
+	};
+
 	class Time {
+	public:
+		template<unsigned long long Size, typename Type>
+		struct Duration { static constexpr unsigned long long GetSizeInMicro() { return Size; }; using ReturnType = Type; };
+
+		using Micro  = Duration<1, unsigned long long>;
+		using Mili   = Duration<1000, double>;
+		using Second = Duration<1000000, float>;
+		using Minute = Duration<166666667, float>;
 
 	private:
 		friend class Application;
@@ -21,26 +55,33 @@ namespace EmptySource {
 		static bool bHasInitialized;
 
 		static unsigned int TickCount;
-		static double TickAverage;
+		static unsigned long long TickAverage;
 		static const unsigned int MaxTickSamples = 25;
 		static unsigned long long TickBuffer[MaxTickSamples];
 
+		static unsigned long long Time::GetEpochTimeMicro();
+
 	public:
 
+		static Timestamp GetTimeStamp();
+
 		// Time in seconds since the last frame;
-		static float GetDeltaTime();
+		template<typename T>
+		static inline typename T::ReturnType GetDeltaTime() {
+			return (LastDeltaMicro) / (typename T::ReturnType)T::GetSizeInMicro();
+		}
 
-		// Time in milliseconds since the last frame;
-		static double GetDeltaTimeMilis();
-
-		// Get frame rate per second (FPS)
-		static float GetFrameRatePerSecond();
+		// Get the application frame rate
+		template<typename T>
+		static inline typename T::ReturnType GetFrameRate() {
+			return (typename T::ReturnType)(1) / (TickAverage / (typename T::ReturnType)T::GetSizeInMicro());
+		}
 
 		// Machine Time
-		static unsigned long long GetEpochTimeMicro();
-
-		// Machine Time
-		static float GetEpochTimeSeconds();
+		template<typename T>
+		static inline typename T::ReturnType GetEpochTime() {
+			return GetEpochTimeMicro() / (typename T::ReturnType)T::GetSizeInMicro();
+		}
 	};
 
 }

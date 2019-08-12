@@ -2,7 +2,6 @@
 #include "CoreMinimal.h"
 #include "Utility/TexturePacking.h"
 #include "Utility/LogFreeType.h"
-#include "Utility/Timer.h"
 #include "Fonts/Text2DGenerator.h"
 #include "Fonts/SDFGenerator.h"
 
@@ -25,8 +24,8 @@ namespace EmptySource {
 
 	void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
 		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From, From, From, To, To);
-		Debug::Timer Timer;
-		Timer.Start();
+		Timestamp Timer;
+		Timer.Begin();
 		TextFont->SetGlyphHeight(GlyphHeight);
 		for (unsigned long Character = From; Character <= To; Character++) {
 			FontGlyph Glyph;
@@ -40,7 +39,7 @@ namespace EmptySource {
 			}
 		}
 		Timer.Stop();
-		LOG_CORE_INFO(L"└> Glyphs loaded in {:.3f}s", Timer.GetEnlapsedSeconds());
+		LOG_CORE_INFO(L"└> Glyphs loaded in {:.3f}s", Timer.GetDeltaTime<Time::Second>());
 	}
 
 	void Text2DGenerator::GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {

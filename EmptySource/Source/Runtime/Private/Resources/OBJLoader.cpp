@@ -3,7 +3,6 @@
 #include <cstdio>
 
 #include "CoreMinimal.h"
-#include "Utility/Timer.h"
 #include "Files/FileStream.h"
 #include "Resources/OBJLoader.h"
 
@@ -333,9 +332,9 @@ namespace EmptySource {
 
 		// --- Read File
 		{
-			Debug::Timer Timer;
+			Timestamp Timer;
 
-			Timer.Start();
+			Timer.Begin();
 			NString* MemoryText = new NString();
 			FileData.File->ReadNarrowStream(MemoryText);
 
@@ -354,10 +353,10 @@ namespace EmptySource {
 
 			Timer.Stop();
 			LOG_CORE_INFO(
-				L"├> Parsed {0} vertices and {1} triangles in {2:.3f}s",
+				L"├> Parsed {0} vertices and {1} triangles in {2:.3f}ms",
 				Text::FormatUnit(ModelData.VertexIndices.size(), 2),
 				Text::FormatUnit(ModelData.VertexIndices.size() / 3, 2),
-				Timer.GetEnlapsedSeconds()
+				Timer.GetDeltaTime<Time::Mili>()
 			);
 		}
 
@@ -367,8 +366,8 @@ namespace EmptySource {
 		size_t TotalAllocatedSize = 0;
 		size_t TotalUniqueVertices = 0;
 
-		Debug::Timer Timer;
-		Timer.Start();
+		Timestamp Timer;
+		Timer.Begin();
 		for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
 			ObjectData & Data = ModelData.Objects[ObjectCount];
 
@@ -453,7 +452,7 @@ namespace EmptySource {
 		delete[] Indices;
 
 		Timer.Stop();
-		LOG_CORE_INFO(L"└> Allocated {0} in {1:.2f}s", Text::FormatData(TotalAllocatedSize, 2), Timer.GetEnlapsedSeconds());
+		LOG_CORE_INFO(L"└> Allocated {0} in {1:.2f}ms", Text::FormatData(TotalAllocatedSize, 2), Timer.GetDeltaTime<Time::Mili>());
 
 		return true;
 	}
