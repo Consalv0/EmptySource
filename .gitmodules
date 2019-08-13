@@ -15,7 +15,7 @@
 	url = https://github.com/spurious/SDL-mirror.git
 [submodule "EmptySource/External/SPDLOG"]
 	path = EmptySource/External/SPDLOG
-	url = https://github.com/gabime/spdlog.git
+	url = https://github.com/Consalv0/spdlog.git
 [submodule "EmptySource/External/IMGUI"]
 	path = EmptySource/External/IMGUI
 	url = https://github.com/ocornut/imgui.git
