@@ -83,6 +83,8 @@ namespace EmptySource {
 		//* Get the platform Window pointer
 		virtual void* GetHandle() const override;
 
+		virtual GraphicContext* GetContext() const override;
+
 		//* Set callback communication with window events
 		inline void SetWindowEventCallback(const WindowEventCallbackFunction& Callback) override { WindowEventCallback = Callback; }
 

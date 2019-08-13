@@ -66,6 +66,8 @@ namespace EmptySource {
 		//* Get Window Pointer
 		virtual void* GetHandle() const = 0;
 
+		virtual GraphicContext * GetContext() const = 0;
+
 		//* Creates a Window with a Name, Width and Height
 		static Window * Create(const WindowProperties& Properties = WindowProperties());
 	};

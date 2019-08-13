@@ -85,6 +85,12 @@
     <Filter Include="Runtime\Public\Utility">
       <UniqueIdentifier>{9A71936E-866B-BCC0-6FD8-52D15B71222D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Runtime\Private\ImGUI">
+      <UniqueIdentifier>{eced3eb9-f1c3-4825-b893-c259ae597f67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime\Public\ImGUI">
+      <UniqueIdentifier>{f30a65fc-6dee-483f-8e6d-213b4a1086b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Platform\DeviceFunctions.h">
@@ -399,6 +405,9 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\ImGUI\ImGUILayer.h">
+      <Filter>Runtime\Public\ImGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -577,6 +586,12 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUILayer.cpp">
+      <Filter>Runtime\Private\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUIBuild.cpp">
+      <Filter>Runtime\Private\ImGUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 
+#define _CRT_SECURE_NO_WARNINGS
+
 // Include main standard headers
 #include <stdexcept>
 #include <errno.h>

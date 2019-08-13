@@ -44,6 +44,8 @@ namespace EmptySource {
 
 		std::unique_ptr<DeviceFunctions> DeviceFunctionsInstance;
 
+		class ImGUILayer * ImGUILayerInstance;
+
 		Application();
 
 	private:

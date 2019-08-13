@@ -188,6 +188,7 @@
     <ClInclude Include="Source\Runtime\Public\Fonts\Shape2D.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\Shape2DContour.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h" />
+    <ClInclude Include="Source\Runtime\Public\ImGUI\ImGUILayer.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Box3D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\CoreMath.h" />
@@ -280,6 +281,8 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Shape2D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Fonts\Shape2DContour.cpp" />
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
+    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUIBuild.cpp" />
+    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUILayer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp" />

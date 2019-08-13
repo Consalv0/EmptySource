@@ -206,6 +206,10 @@ namespace EmptySource {
 		return WindowHandle;
 	}
 
+	GraphicContext * WindowsWindow::GetContext() const {
+		return Context.get();
+	}
+
 	Window * Window::Create(const WindowProperties& Properties) {
 		return new WindowsWindow(Properties);
 	}

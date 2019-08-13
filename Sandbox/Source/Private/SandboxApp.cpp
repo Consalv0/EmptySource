@@ -995,7 +995,7 @@ protected:
 
 	}
 
-	virtual void OnTerminate() override {
+	virtual void OnDetach() override {
 		if (Space::GetMainSpace() == NULL) {
 			return;
 		}

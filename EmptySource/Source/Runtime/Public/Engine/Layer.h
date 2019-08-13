@@ -23,10 +23,8 @@ namespace EmptySource {
 		virtual void OnRender() {}
 		
 		virtual void OnUpdate(Timestamp Stamp) {}
-
-		virtual void OnTerminate() {}
 		
-		virtual void OnImGuiRender() {}
+		virtual void OnImGUIRender() {}
 		
 		virtual void OnWindowEvent(WindowEvent& WinEvent) {}
 		

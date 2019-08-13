@@ -1,5 +1,6 @@
 ﻿
 #include "CoreMinimal.h"
+#include "ImGUI/ImGUILayer.h"
 #include "Engine/Application.h"
 #include "Engine/CoreTime.h"
 #include "Engine/Window.h"
@@ -136,10 +137,15 @@ namespace EmptySource {
 		MeshPrimitives::Initialize();
 		Font::InitializeFreeType();
 
+		ImGUILayerInstance = new ImGUILayer();
+		PushOverlay(ImGUILayerInstance);
+
 		bInitialized = true;
 	}
 
 	void Application::Awake() {
+		if (!bInitialized) return;
+
 		srand(SDL_GetTicks());
 
 		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
@@ -157,17 +163,21 @@ namespace EmptySource {
 			MeshLoader::UpdateStatus();
 			Time::Tick();
 
-			for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
-				(*--LayerIt)->OnUpdate(Time::GetTimeStamp());
+			for (Layer * LayerIt : AppLayerStack) {
+				LayerIt->OnUpdate(Time::GetTimeStamp());
 			}
 
 			RenderTimeSum += Time::GetDeltaTime<Time::Second>();
 			if (RenderTimeSum > MaxFramerate) {
 				RenderTimeSum = 0.0;
 
-				for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
-					(*--LayerIt)->OnRender();
-				}
+				for (Layer* LayerPointer : AppLayerStack)
+					LayerPointer->OnRender();
+
+				ImGUILayerInstance->Begin();
+				for (Layer* LayerPointer : AppLayerStack)
+					LayerPointer->OnImGUIRender();
+				ImGUILayerInstance->End();
 
 				GetWindow().EndFrame();
 				GetRenderPipeline().EndOfFrame();
@@ -182,8 +192,8 @@ namespace EmptySource {
 		
 		ShouldClose();
 
-		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
-			(*--LayerIt)->OnTerminate();
+		for (Layer * LayerIt : AppLayerStack) {
+			LayerIt->OnDetach();
 		}
 
 		DeviceFunctionsInstance.reset(NULL);

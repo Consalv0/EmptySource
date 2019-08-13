@@ -9,8 +9,7 @@ namespace EmptySource {
 	}
 
 	LayerStack::~LayerStack() {
-		for (Layer * ItLayer : Layers)
-			delete ItLayer;
+		Clear();
 	}
 
 	void LayerStack::Clear() {
