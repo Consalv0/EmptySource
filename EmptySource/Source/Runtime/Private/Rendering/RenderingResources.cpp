@@ -11,10 +11,10 @@ namespace EmptySource {
 
 	RenderingAPI::API RenderingAPI::AppInterface = RenderingAPI::API::OpenGL;
 
-	VertexBuffer * VertexBuffer::Create(float* Vertices, unsigned int Size, EUsageMode Usage) {
+	VertexBufferPtr VertexBuffer::Create(float* Vertices, unsigned int Size, EUsageMode Usage) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLVertexBuffer(Vertices, Size, Usage);
+			return std::make_shared<OpenGLVertexBuffer>(Vertices, Size, Usage);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid, can't create vertex buffer!");
@@ -22,10 +22,10 @@ namespace EmptySource {
 		}
 	}
 
-	IndexBuffer * IndexBuffer::Create(unsigned int* Indices, unsigned int Size, EUsageMode Usage) {
+	IndexBufferPtr IndexBuffer::Create(unsigned int* Indices, unsigned int Size, EUsageMode Usage) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLIndexBuffer(Indices, Size, Usage);
+			return std::make_shared<OpenGLIndexBuffer>(Indices, Size, Usage);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create index buffer!");
@@ -33,10 +33,10 @@ namespace EmptySource {
 		}
 	}
 
-	VertexArray * VertexArray::Create() {
+	VertexArrayPtr VertexArray::Create() {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLVertexArray();
+			return std::make_shared<OpenGLVertexArray>();
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create index buffer!");

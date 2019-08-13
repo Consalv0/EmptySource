@@ -58,18 +58,21 @@ namespace EmptySource {
 	};
 
 	class Mesh {
-	private:
-		VertexArrayPtr VertexArrayObject;
-		TArray<VertexArrayPtr> MeshSubdivisions;
-
 	public:
-		MeshData Data;
 
 		Mesh();
 		//* Copy the information to the mesh, the data will be duplicated
 		Mesh(const MeshData & OtherData);
 		//* Transfer information to the mesh, the data will be swapped
 		Mesh(MeshData * OtherData);
+
+		inline const MeshData& GetMeshData() const { return Data; };
+
+		//* Swap all contents of the mesh for new data
+		void SwapMeshData(MeshData & Data);
+
+		//* Copy all contents of the mesh for new data
+		void CopyMeshData(const MeshData & Data);
 
 		//* Create or Bind Vertex Array Object
 		void BindVertexArray() const;
@@ -94,6 +97,11 @@ namespace EmptySource {
 
 		//* Give Vertices to OpenGL **This must be done once per render**
 		bool SetUpBuffers();
+
+	private:
+		VertexArrayPtr VertexArrayObject;
+		TArray<VertexArrayPtr> MeshSubdivisions;
+		MeshData Data;
 	};
 
 }

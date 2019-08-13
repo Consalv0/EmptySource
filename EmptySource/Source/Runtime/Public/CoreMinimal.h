@@ -26,3 +26,4 @@
 #include "Events/Event.h"
 #include "Engine/CoreTime.h"
 #include "Math/CoreMath.h"
+#include "Platform/DeviceFunctions.h"

@@ -59,6 +59,8 @@ namespace EmptySource {
 
 	};
 
+	typedef std::shared_ptr<class VertexBuffer> VertexBufferPtr;
+
 	class VertexBuffer {
 	public:
 		virtual ~VertexBuffer() = default;
@@ -80,11 +82,11 @@ namespace EmptySource {
 
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer * Create(float* Vertices, unsigned int Size, EUsageMode Usage);
+		static VertexBufferPtr Create(float* Vertices, unsigned int Size, EUsageMode Usage);
 
 	};
 
-	typedef std::shared_ptr<VertexBuffer> VertexBufferPtr;
+	typedef std::shared_ptr<class IndexBuffer> IndexBufferPtr;
 
 	class IndexBuffer {
 	public:
@@ -105,10 +107,10 @@ namespace EmptySource {
 		//* The number of indices in the vertex buffer
 		virtual inline unsigned int GetCount() const = 0;
 
-		static IndexBuffer * Create(unsigned int* Indices, unsigned int Count, EUsageMode Usage);
+		static IndexBufferPtr Create(unsigned int* Indices, unsigned int Count, EUsageMode Usage);
 	};
 
-	typedef std::shared_ptr<IndexBuffer> IndexBufferPtr;
+	typedef std::shared_ptr<class VertexArray> VertexArrayPtr;
 
 	class VertexArray {
 	public:
@@ -127,11 +129,9 @@ namespace EmptySource {
 
 		virtual IndexBufferPtr GetIndexBuffer() = 0;
 
-		static VertexArray * Create();
+		static VertexArrayPtr Create();
 
 	};
-
-	typedef std::shared_ptr<VertexArray> VertexArrayPtr;
 
 	class RenderingAPI {
 	public:

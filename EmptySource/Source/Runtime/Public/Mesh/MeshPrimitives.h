@@ -83,10 +83,10 @@ namespace EmptySource {
 
 		static void Initialize() {
 			MeshData CubeData = CreateCubeMeshData(0.F, 1.F);
-			Cube.Data.Swap(CubeData);
+			Cube.SwapMeshData(CubeData);
 			Cube.SetUpBuffers();
 			MeshData QuadData = CreateQuadMeshData(0.F, 1.F);
-			Quad.Data.Swap(QuadData);
+			Quad.SwapMeshData(QuadData);
 			Quad.SetUpBuffers();
 		}
 	}

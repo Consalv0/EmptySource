@@ -87,6 +87,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Platform\DeviceFunctions.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
@@ -98,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="Source\Platform\Platform.h">
       <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsDeviceFunctions.h">
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h">
       <Filter>Platform\Windows</Filter>
@@ -147,6 +153,12 @@
     <ClInclude Include="Source\Runtime\Public\Engine\Input.h">
       <Filter>Runtime\Public\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Engine\Layer.h">
+      <Filter>Runtime\Public\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Engine\LayerStack.h">
+      <Filter>Runtime\Public\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Engine\Log.h">
       <Filter>Runtime\Public\Engine</Filter>
     </ClInclude>
@@ -165,6 +177,9 @@
     <ClInclude Include="Source\Runtime\Public\Events\Event.h">
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Events\InputEvent.h">
+      <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Events\Observer.h">
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
@@ -172,6 +187,9 @@
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Events\Task.h">
+      <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Events\WindowEvent.h">
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Files\FileManager.h">
@@ -366,9 +384,6 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageResource.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Utility\DeviceFunctions.h">
-      <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
@@ -384,15 +399,6 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Events\WindowEvent.h">
-      <Filter>Runtime\Public\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Layer.h">
-      <Filter>Runtime\Private\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Events\InputEvent.h">
-      <Filter>Runtime\Public\Events</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -403,6 +409,9 @@
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp">
       <Filter>Platform\Windows</Filter>
@@ -432,6 +441,12 @@
       <Filter>Runtime\Private\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\IIdentifier.cpp">
+      <Filter>Runtime\Private\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Engine\Layer.cpp">
+      <Filter>Runtime\Private\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Engine\LayerStack.cpp">
       <Filter>Runtime\Private\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Engine\Log.cpp">
@@ -553,9 +568,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageResource.cpp">
       <Filter>Runtime\Private\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Utility\DeviceFunctions.cpp">
-      <Filter>Runtime\Private\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp">
       <Filter>Runtime\Private\Utility</Filter>

@@ -15,7 +15,6 @@
 #if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
 #include "CUDA/CoreCUDA.h"
 #endif
-#include "Utility/DeviceFunctions.h"
 
 #include "Mesh/Mesh.h"
 #include "Mesh/MeshPrimitives.h"
@@ -53,9 +52,8 @@
 
 using namespace EmptySource;
 
-class SandboxApplication : public EmptySource::Application {
+class SandboxLayer : public Layer {
 private:
-
 	Font FontFace;
 	Text2DGenerator TextGenerator;
 	Bitmap<UCharRed> FontAtlas;
@@ -127,10 +125,10 @@ private:
 
 protected:
 
-	virtual void OnInitialize() override { };
+	virtual void OnAttach() override {}
 
 	virtual void OnAwake() override {
-		GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
+		Application::GetInstance()->GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
 
 		Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
 		GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
@@ -380,7 +378,7 @@ protected:
 
 		BaseMaterial.SetShaderProgram(BRDFShader->GetData());
 
-		GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
 
 		UnlitMaterial.SetShaderProgram(UnlitShader->GetData());
 
@@ -433,7 +431,10 @@ protected:
 		// });
 
 		Texture2D RenderedTexture = Texture2D(
-			IntVector2(GetWindow().GetWidth(), GetWindow().GetHeight()) / 2, CF_RGBA32F, FM_MinLinearMagNearest, SAM_Repeat
+			IntVector2(
+				Application::GetInstance()->GetWindow().GetWidth(),
+				Application::GetInstance()->GetWindow().GetHeight())
+			/ 2, CF_RGBA32F, FM_MinLinearMagNearest, SAM_Repeat
 		);
 
 		///////// Create Matrices Buffer //////////////
@@ -494,15 +495,15 @@ protected:
 
 		Transforms.push_back(Transform());
 
-		GetRenderPipeline().Initialize();
-		GetRenderPipeline().ContextInterval(0);
+		Application::GetInstance()->GetRenderPipeline().Initialize();
+		Application::GetInstance()->GetRenderPipeline().ContextInterval(0);
 	}
 
-	virtual void OnUpdate() override {
+	virtual void OnUpdate(Timestamp Stamp) override {
 
 		ProjectionMatrix = Matrix4x4::Perspective(
 			60.0F * MathConstants::DegreeToRad,	// Aperute angle
-			GetWindow().GetAspectRatio(),	    // Aspect ratio
+			Application::GetInstance()->GetWindow().GetAspectRatio(),	    // Aspect ratio
 			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
@@ -534,8 +535,8 @@ protected:
 		}
 
 		CameraRayDirection = {
-			(2.F * Input::GetMouseX()) / GetWindow().GetWidth() - 1.F,
-			1.F - (2.F * Input::GetMouseY()) / GetWindow().GetHeight(),
+			(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,
+			1.F - (2.F * Input::GetMouseY()) / Application::GetInstance()->GetWindow().GetHeight(),
 			-1.F,
 		};
 		CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
@@ -653,7 +654,7 @@ protected:
 	}
 
 	virtual void OnRender() override {
-		GetRenderPipeline().PrepareFrame();
+		Application::GetInstance()->GetRenderPipeline().PrepareFrame();
 
 		Timestamp Timer;
 
@@ -667,7 +668,7 @@ protected:
 		Ray TestRayArrow(TestArrowTransform.Position, TestArrowDirection);
 		if (SceneModels.size() > 100)
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Data.Bounding.Transform(TransformMat);
+				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].GetMeshData().Bounding.Transform(TransformMat);
 				TArray<RayHit> Hits;
 
 				if (Physics::RaycastAxisAlignedBox(TestRayArrow, ModelSpaceAABox)) {
@@ -676,14 +677,14 @@ protected:
 						InverseTransform.MultiplyPoint(TestArrowTransform.Position),
 						InverseTransform.MultiplyVector(TestArrowDirection)
 					);
-					for (MeshFaces::const_iterator Face = SceneModels[MeshCount].Data.Faces.begin(); Face != SceneModels[MeshCount].Data.Faces.end(); ++Face) {
+					for (MeshFaces::const_iterator Face = SceneModels[MeshCount].GetMeshData().Faces.begin(); Face != SceneModels[MeshCount].GetMeshData().Faces.end(); ++Face) {
 						if (Physics::RaycastTriangle(
 							Hit, ModelSpaceCameraRay,
-							SceneModels[MeshCount].Data.Vertices[(*Face)[0]].Position,
-							SceneModels[MeshCount].Data.Vertices[(*Face)[1]].Position,
-							SceneModels[MeshCount].Data.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
+							SceneModels[MeshCount].GetMeshData().Vertices[(*Face)[0]].Position,
+							SceneModels[MeshCount].GetMeshData().Vertices[(*Face)[1]].Position,
+							SceneModels[MeshCount].GetMeshData().Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
 						)) {
-							Hit.TriangleIndex = int(Face - SceneModels[MeshCount].Data.Faces.begin());
+							Hit.TriangleIndex = int(Face - SceneModels[MeshCount].GetMeshData().Faces.begin());
 							Hits.push_back(Hit);
 						}
 					}
@@ -696,10 +697,10 @@ protected:
 
 						if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
 						{
-							const IntVector3 & Face = SceneModels[MeshCount].Data.Faces[Hits[0].TriangleIndex];
-							const Vector3 & N0 = SceneModels[MeshCount].Data.Vertices[Face[0]].Normal;
-							const Vector3 & N1 = SceneModels[MeshCount].Data.Vertices[Face[1]].Normal;
-							const Vector3 & N2 = SceneModels[MeshCount].Data.Vertices[Face[2]].Normal;
+							const IntVector3 & Face = SceneModels[MeshCount].GetMeshData().Faces[Hits[0].TriangleIndex];
+							const Vector3 & N0 = SceneModels[MeshCount].GetMeshData().Vertices[Face[0]].Normal;
+							const Vector3 & N1 = SceneModels[MeshCount].GetMeshData().Vertices[Face[1]].Normal;
+							const Vector3 & N2 = SceneModels[MeshCount].GetMeshData().Vertices[Face[2]].Normal;
 							Vector3 InterpolatedNormal =
 								N0 * Hits[0].BaricenterCoordinates[0] +
 								N1 * Hits[0].BaricenterCoordinates[1] +
@@ -735,7 +736,7 @@ protected:
 		RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
 		RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessTemp);
 
-		if (SphereModel.Data.Faces.size() >= 1) {
+		if (SphereModel.GetMeshData().Faces.size() >= 1) {
 			SphereModel.SetUpBuffers();
 			SphereModel.BindVertexArray();
 
@@ -744,15 +745,15 @@ protected:
 			SphereModel.DrawElement();
 		}
 
-		GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
-		GetRenderPipeline().GetStage(L"TestStage")->SetViewProjection(Matrix4x4::Perspective(
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetViewProjection(Matrix4x4::Perspective(
 			60.0F * MathConstants::DegreeToRad,	 // Aperute angle
-			GetWindow().GetAspectRatio(),		 // Aspect ratio
+			Application::GetInstance()->GetWindow().GetAspectRatio(),		 // Aspect ratio
 			0.03F,								 // Near plane
 			1000.0F								 // Far plane
 		));
 
-		GetRenderPipeline().RunStage(L"TestStage");
+		Application::GetInstance()->GetRenderPipeline().RunStage(L"TestStage");
 
 		BaseMaterial.Use();
 
@@ -783,7 +784,7 @@ protected:
 		size_t TotalHitCount = 0;
 		Ray CameraRay(EyePosition, CameraRayDirection);
 		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			const MeshData & ModelData = SceneModels[MeshCount].Data;
+			const MeshData & ModelData = SceneModels[MeshCount].GetMeshData();
 			BoundingBox3D ModelSpaceAABox = ModelData.Bounding.Transform(TransformMat);
 			TArray<RayHit> Hits;
 
@@ -836,8 +837,8 @@ protected:
 						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &HitMatrix[0], ModelMatrixBuffer);
 
 						LightModels[0].DrawInstanciated(2);
-						TriangleCount += LightModels[0].Data.Faces.size() * 1;
-						VerticesCount += LightModels[0].Data.Vertices.size() * 1;
+						TriangleCount += LightModels[0].GetMeshData().Faces.size() * 1;
+						VerticesCount += LightModels[0].GetMeshData().Vertices.size() * 1;
 					}
 				}
 			}
@@ -860,8 +861,8 @@ protected:
 			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
 			LightModels[0].DrawInstanciated(1);
-			TriangleCount += LightModels[0].Data.Faces.size() * 1;
-			VerticesCount += LightModels[0].Data.Vertices.size() * 1;
+			TriangleCount += LightModels[0].GetMeshData().Faces.size() * 1;
+			VerticesCount += LightModels[0].GetMeshData().Vertices.size() * 1;
 		}
 
 		UnlitMaterialWire.Use();
@@ -872,7 +873,7 @@ protected:
 
 		ElementsIntersected.clear();
 		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].Data.Bounding.Transform(TransformMat);
+			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].GetMeshData().Bounding.Transform(TransformMat);
 			if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
 				UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
 
@@ -926,13 +927,16 @@ protected:
 
 		MeshPrimitives::Quad.DrawInstanciated(1);
 
-		glViewport(0, 0, GetWindow().GetWidth(), GetWindow().GetHeight());
+		glViewport(0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight());
 		// --- Activate corresponding render state
 		RenderTextMaterial.Use();
 		RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
 		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetDimension().FloatVector2().PointerToValue());
 		RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix",
-			Matrix4x4::Orthographic(0.F, (float)GetWindow().GetWidth(), 0.F, (float)GetWindow().GetHeight()).PointerToValue()
+			Matrix4x4::Orthographic(
+				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),
+				0.F, (float)Application::GetInstance()->GetWindow().GetHeight()
+			).PointerToValue()
 		);
 
 		float FontScale = (FontSize / TextGenerator.GlyphHeight);
@@ -942,18 +946,22 @@ protected:
 
 		double TimeCount = 0;
 		int TotalCharacterSize = 0;
-		DynamicMesh.Clear();
+		MeshData TextMeshData;
 		for (int i = 0; i < TextCount; i++) {
 			Timer.Begin();
-			Vector2 Pivot = TextPivot + Vector2(0.F, GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
+			Vector2 Pivot = TextPivot + Vector2(
+				0.F, Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight)
+			;
+
 			TextGenerator.GenerateMesh(
-				Box2D(0, 0, (float)GetWindow().GetWidth(), Pivot.y),
-				FontSize, RenderingText[i], &DynamicMesh.Data.Faces, &DynamicMesh.Data.Vertices
+				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.y),
+				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.Vertices
 			);
 			Timer.Stop();
 			TimeCount += Timer.GetDeltaTime<Time::Mili>();
 			TotalCharacterSize += (int)RenderingText[i].size();
 		}
+		DynamicMesh.SwapMeshData(TextMeshData);
 		if (DynamicMesh.SetUpBuffers()) {
 			DynamicMesh.BindVertexArray();
 			RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
@@ -972,7 +980,7 @@ protected:
 			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), Vertices(%ls), Cursor(%ls), Camera(P%ls, R%ls)",
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
-			Debug::GetDeviceTemperature(0),
+			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
 			Time::GetFrameRate<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>(),
 			LightIntencity / 10000.F + 1.F,
@@ -983,7 +991,7 @@ protected:
 		);
 
 		if (Input::IsKeyDown(SDL_SCANCODE_ESCAPE)) {
-			ShouldClose();
+			Application::GetInstance()->ShouldClose();
 		}
 
 	}
@@ -997,9 +1005,19 @@ protected:
 	}
 
 public:
-	typedef Application Supper;
 	
-	SandboxApplication() : Supper() {}
+	SandboxLayer() : Layer(L"SandboxApp") {}
+};
+
+class SandboxApplication : public Application {
+public:
+	SandboxApplication() : Application() {
+		PushLayer(new SandboxLayer());
+	}
+
+	~SandboxApplication() {
+
+	}
 };
 
 EmptySource::Application * EmptySource::CreateApplication() {

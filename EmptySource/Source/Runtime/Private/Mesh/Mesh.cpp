@@ -46,6 +46,14 @@ namespace EmptySource {
 		Data.Swap(*OtherData);
 	}
 
+	void Mesh::SwapMeshData(MeshData & NewData) {
+		Clear(); Data.Swap(NewData);
+	}
+
+	void Mesh::CopyMeshData(const MeshData & NewData) {
+		Clear(); Data = NewData;
+	}
+
 	void Mesh::BindVertexArray() const {
 		ES_CORE_ASSERT(VertexArrayObject == NULL, L"Model buffers are empty, use SetUpBuffers first");
 		VertexArrayObject->Bind();
@@ -82,7 +90,7 @@ namespace EmptySource {
 		if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
 		if (VertexArrayObject != NULL && VertexArrayObject->GetIndexBuffer()->GetSize() > 0) return true;
 
-		VertexArrayObject.reset(VertexArray::Create());
+		VertexArrayObject = VertexArray::Create();
 
 		static BufferLayout DafultLayout = {
 			{ EShaderDataType::Float3, "_iVertexPosition" },
@@ -95,23 +103,23 @@ namespace EmptySource {
 
 		// Give our vertices to VAO
 		VertexBufferPtr VertexBufferPointer = NULL;
-		VertexBufferPointer.reset(VertexBuffer::Create((float *)&Data.Vertices[0], (unsigned int)(Data.Vertices.size() * sizeof(MeshVertex)), UM_Static));
+		VertexBufferPointer = VertexBuffer::Create((float *)&Data.Vertices[0], (unsigned int)(Data.Vertices.size() * sizeof(MeshVertex)), UM_Static);
 		VertexBufferPointer->SetLayout(DafultLayout);
 
 		for (int ElementBufferCount = 0; ElementBufferCount <= Data.MaterialSubdivisions.size(); ElementBufferCount++) {
 			if (ElementBufferCount == 0) {
 				IndexBufferPtr IndexBufferObjectPointer = NULL;
-				IndexBufferObjectPointer.reset(IndexBuffer::Create((unsigned int *)&Data.Faces[0], (unsigned int)Data.Faces.size() * 3, UM_Static));
+				IndexBufferObjectPointer = IndexBuffer::Create((unsigned int *)&Data.Faces[0], (unsigned int)Data.Faces.size() * 3, UM_Static);
 				VertexArrayObject->AddVertexBuffer(VertexBufferPointer);
 				VertexArrayObject->AddIndexBuffer(IndexBufferObjectPointer);
 				VertexArrayObject->Unbind();
 			} else {
 				VertexArrayPtr VertexArrayPointer = NULL;
-				VertexArrayPointer.reset(VertexArray::Create());
+				VertexArrayPointer = VertexArray::Create();
 				IndexBufferPtr IndexBufferPointer = NULL;
-				IndexBufferPointer.reset(IndexBuffer::Create(
+				IndexBufferPointer = IndexBuffer::Create(
 					(unsigned int *)&Data.MaterialSubdivisions[ElementBufferCount - 1][0],
-					(unsigned int)Data.MaterialSubdivisions[ElementBufferCount - 1].size() * 3, UM_Static)
+					(unsigned int)Data.MaterialSubdivisions[ElementBufferCount - 1].size() * 3, UM_Static
 				);
 				VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
 				VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
@@ -125,7 +133,7 @@ namespace EmptySource {
 	}
 
 	void Mesh::ClearBuffers() {
-		VertexArrayObject.reset();
+		VertexArrayObject = nullptr;
 		MeshSubdivisions.clear();
 	}
 

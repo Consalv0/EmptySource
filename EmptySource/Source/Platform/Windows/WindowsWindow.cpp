@@ -150,10 +150,6 @@ namespace EmptySource {
 		return Vector2(float(MouseX), float(MouseY));
 	}
 
-	Window * Window::Create(const WindowProperties& Properties) {
-		return new WindowsWindow(Properties);
-	}
-
 	void WindowsWindow::SetIcon(Bitmap<UCharRGBA>* Icon) {
 		SDL_Surface * Surface = SDL_CreateRGBSurfaceFrom(
 			(void*)Icon->PointerToValue(),
@@ -208,6 +204,10 @@ namespace EmptySource {
 
 	void * WindowsWindow::GetHandle() const	{
 		return WindowHandle;
+	}
+
+	Window * Window::Create(const WindowProperties& Properties) {
+		return new WindowsWindow(Properties);
 	}
 
 }
