@@ -21,6 +21,7 @@ IncludeDir["RobinMap"] = "EmptySource/External/RobinMap/include"
 IncludeDir["SPDLOG"] = "EmptySource/External/SPDLOG/include"
 IncludeDir["STB"] = "EmptySource/External/STB"
 IncludeDir["YAML"] = "EmptySource/External/YAML/include"
+IncludeDir["NVML"] = "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\include"
 
 group "Dependencies"
 	--include "EmptySource/External/SDL2/include"
@@ -60,7 +61,8 @@ project "EmptySource"
 		"%{IncludeDir.FreeType}",
         "%{IncludeDir.RobinMap}",
         "%{IncludeDir.STB}",
-        "%{IncludeDir.YAML}"
+		"%{IncludeDir.YAML}",
+		"%{IncludeDir.NVML}"
     }
 
     libdirs { 
@@ -96,7 +98,16 @@ project "EmptySource"
 
 		defines {
             "ES_PLATFORM_WINDOWS",
-            "ES_DLLEXPORT"
+			"ES_DLLEXPORT",
+			"ES_PLATFORM_NVML"
+		}
+
+		libdirs {
+			"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\lib\\x64"
+		}
+
+		links {
+			"nvml.lib",
 		}
 
 	filter "configurations:Debug"
