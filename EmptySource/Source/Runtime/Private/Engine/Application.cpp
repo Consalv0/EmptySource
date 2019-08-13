@@ -151,7 +151,7 @@ namespace EmptySource {
 		if (!bInitialized) return;
 
 		double RenderTimeSum = 0.0;
-		const double MaxFramerate = 1.0 / 60.0;
+		const double MaxFramerate = 1.0 / 45.0;
 
 		do {
 			MeshLoader::UpdateStatus();

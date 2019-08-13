@@ -124,9 +124,9 @@ namespace EmptySource {
 		int MaterialIndex;
 		bool bWarned = false;
 
-		if (pMesh->GetElementUVCount() != 0) OutData.TextureCoordsCount = Math::Clamp(pMesh->GetElementUVCount(), 0, 2);
-		if (pMesh->GetElementNormalCount() != 0) OutData.hasNormals = true;
-		if (pMesh->GetElementVertexColorCount() != 0) OutData.hasVertexColor = true;
+		OutData.TextureCoordsCount = Math::Clamp(pMesh->GetElementUVCount(), 0, 2);
+		OutData.hasNormals = pMesh->GetElementNormalCount() != 0;
+		OutData.hasVertexColor = pMesh->GetElementVertexColorCount() != 0;
 
 		int VertexIndex = 0;
 		for (PolygonIndex = 0; PolygonIndex < PolygonCount; ++PolygonIndex) {
@@ -370,6 +370,8 @@ namespace EmptySource {
 					break;
 				}
 			}
+		} else {
+			Vertex.Color = { 1.F };
 		}
 	}
 

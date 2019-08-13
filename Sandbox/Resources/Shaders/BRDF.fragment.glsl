@@ -148,7 +148,7 @@ void main() {
   vec3 Intensity = vec3(dot(Sum, vec3(0.2125, 0.7154, 0.0721)));
   Sum = mix(Intensity, Sum, 1.45);
 
-  FragColor = vec4(Sum, 1);
+  FragColor = vec4(Sum, Vertex.Color.a);
 
   if (FragColor.x == 0.001) {
     FragColor *= Matrix.Model * vec4(0);

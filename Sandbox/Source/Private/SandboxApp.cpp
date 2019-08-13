@@ -656,6 +656,7 @@ protected:
 	virtual void OnRender() override {
 		Application::GetInstance()->GetRenderPipeline().PrepareFrame();
 
+		VerticesCount = 0;
 		Timestamp Timer;
 
 		// --- Run the device part of the program
@@ -865,24 +866,26 @@ protected:
 			VerticesCount += LightModels[0].GetMeshData().Vertices.size() * 1;
 		}
 
-		UnlitMaterialWire.Use();
-
-		UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-		UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-
 		ElementsIntersected.clear();
+		TArray<Matrix4x4> BBoxTransforms;
 		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
 			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].GetMeshData().Bounding.Transform(TransformMat);
 			if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
-				UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
-
-				MeshPrimitives::Cube.BindVertexArray();
 				ElementsIntersected.push_back(MeshCount);
-				Matrix4x4 Transform = Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize());
-				UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", 1, &Transform, ModelMatrixBuffer);
-				MeshPrimitives::Cube.DrawInstanciated(1);
+				BBoxTransforms.push_back(Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()));
 			}
+		}
+		if (BBoxTransforms.size() > 0) {
+			UnlitMaterialWire.Use();
+
+			UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
+			UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
+			UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
+			UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
+
+			MeshPrimitives::Cube.BindVertexArray();
+			UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", BBoxTransforms.size(), &BBoxTransforms[0], ModelMatrixBuffer);
+			MeshPrimitives::Cube.DrawInstanciated(BBoxTransforms.size());
 		}
 
 		UnlitMaterial.Use();
@@ -890,20 +893,17 @@ protected:
 		UnlitMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 		UnlitMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 		UnlitMaterial.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-		UnlitMaterial.SetFloat4Array("_Material.Color", Vector4(LightIntencity, 0, 0, 1).PointerToValue());
+		UnlitMaterial.SetFloat4Array("_Material.Color", (Vector4(1.F, 1.F, .9F, 1.F) * LightIntencity).PointerToValue());
 
-		if (LightModels.size() >= 1) {
-			LightModels[0].SetUpBuffers();
-			LightModels[0].BindVertexArray();
+		MeshPrimitives::Cube.BindVertexArray();
 
-			TArray<Matrix4x4> LightPositions;
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
+		TArray<Matrix4x4> LightPositions;
+		LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
+		LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
 
-			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
+		UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
 
-			LightModels[0].DrawInstanciated(2);
-		}
+		MeshPrimitives::Cube.DrawInstanciated(2);
 
 		float AppTime = (float)Time::GetEpochTime<Time::Mili>();
 		glViewport(0, 0, EquirectangularTextureHDR->GetWidth() / 4 * abs(1 - MultiuseValue), EquirectangularTextureHDR->GetHeight() / 4 * abs(1 - MultiuseValue));
@@ -950,8 +950,7 @@ protected:
 		for (int i = 0; i < TextCount; i++) {
 			Timer.Begin();
 			Vector2 Pivot = TextPivot + Vector2(
-				0.F, Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight)
-			;
+				0.F, Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 
 			TextGenerator.GenerateMesh(
 				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.y),
@@ -981,7 +980,7 @@ protected:
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
 			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
-			Time::GetFrameRate<Time::Second>(),
+			1.F / Time::GetAverageDelta<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>(),
 			LightIntencity / 10000.F + 1.F,
 			Text::FormatUnit(VerticesCount, 2).c_str(),
