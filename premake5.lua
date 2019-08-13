@@ -21,12 +21,14 @@ IncludeDir["RobinMap"] = "EmptySource/External/RobinMap/include"
 IncludeDir["SPDLOG"] = "EmptySource/External/SPDLOG/include"
 IncludeDir["STB"] = "EmptySource/External/STB"
 IncludeDir["YAML"] = "EmptySource/External/YAML/include"
+IncludeDir["IMGUI"] = "EmptySource/External/IMGUI"
 IncludeDir["NVML"] = "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\include"
 
 group "Dependencies"
 	--include "EmptySource/External/SDL2/include"
 	include "EmptySource/External/GLAD"
 	--include "EmptySource/External/STB"
+	include "EmptySource/External/IMGUI"
 	include "EmptySource/External/YAML"
 
 group ""
@@ -62,6 +64,7 @@ project "EmptySource"
         "%{IncludeDir.RobinMap}",
         "%{IncludeDir.STB}",
 		"%{IncludeDir.YAML}",
+		"%{IncludeDir.IMGUI}",
 		"%{IncludeDir.NVML}"
     }
 
@@ -75,7 +78,8 @@ project "EmptySource"
         "freetype.lib",
         "libfbxsdk-mt.lib",
         "YAML-CPP",
-        "GLAD",
+		"GLAD",
+		"IMGUI"
     }
 
     configuration "Debug"
