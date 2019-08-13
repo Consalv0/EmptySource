@@ -1,6 +1,7 @@
 
 #include "Engine/Window.h"
 #include "Rendering/GraphicContext.h"
+#include "Platform/DeviceFunctions.h"
 #include "Events/Property.h"
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"

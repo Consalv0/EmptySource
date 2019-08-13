@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreTypes.h"
-#include "Utility/Hasher.h"
 
 namespace EmptySource {
 

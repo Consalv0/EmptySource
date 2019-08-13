@@ -15,7 +15,6 @@
 #if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
 #include "CUDA/CoreCUDA.h"
 #endif
-#include "Utility/DeviceFunctions.h"
 
 #include "Mesh/Mesh.h"
 #include "Mesh/MeshPrimitives.h"
@@ -56,7 +55,6 @@ namespace EmptySource {
 	Application::Application() {
 		bInitialized = false;
 		bRunning = false;
-		RenderTimeSum = 0;
 	}
 
 	void Application::Run() {
@@ -81,35 +79,40 @@ namespace EmptySource {
 	}
 
 	void Application::OnWindowEvent(WindowEvent & WinEvent) {
-		LOG_CORE_DEBUG(L"App Window Event : '{}'", WinEvent.GetName());
+		// LOG_CORE_DEBUG(L"App Window Event : '{}'", WinEvent.GetName());
 		EventDispatcher<WindowEvent> Dispatcher(WinEvent);
 		Dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
 
-		// for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-		// {
-		// 	(*--it)->OnEvent(e);
-		// 	if (e.Handled)
-		// 		break;
-		// }
+		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
+			(*--LayerIt)->OnWindowEvent(WinEvent);
+		}
 	}
 
 	void Application::OnInputEvent(InputEvent & InEvent) {
-		LOG_CORE_DEBUG(L"App Input Event : '{}'", InEvent.GetName());
+		// LOG_CORE_DEBUG(L"App Input Event : '{}'", InEvent.GetName());
 		EventDispatcher<InputEvent> Dispatcher(InEvent);
-		Dispatcher.Dispatch<MouseMovedEvent>([](MouseMovedEvent & Event){
-			LOG_CORE_INFO(L"  Mouse Position : {}", Text::FormatMath(Event.GetMousePosition()));
-		});
 		Dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent & Event) {
 			if (!Event.IsRepeated())
 				LOG_CORE_INFO(L"  Key Code : {:d}", Event.GetKeyCode());
 		});
 
-		// for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-		// {
-		// 	(*--it)->OnEvent(e);
-		// 	if (e.Handled)
-		// 		break;
-		// }
+		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
+			(*--LayerIt)->OnInputEvent(InEvent);
+		}
+	}
+
+	void Application::PushLayer(Layer * PushedLayer) {
+		AppLayerStack.PushLayer(PushedLayer);
+		PushedLayer->OnAttach();
+		if (bInitialized)
+			PushedLayer->OnAwake();
+	}
+
+	void Application::PushOverlay(Layer * PushedOverlay) {
+		AppLayerStack.PushOverlay(PushedOverlay);
+		PushedOverlay->OnAttach();
+		if (bInitialized)
+			PushedOverlay->OnAwake();
 	}
 
 	void Application::Initalize() {
@@ -120,13 +123,12 @@ namespace EmptySource {
 		WindowInstance->SetInputEventCallback(std::bind(&Application::OnInputEvent, this, std::placeholders::_1));
 		
 		if (!GetWindow().IsRunning()) return;
-		if (Debug::InitializeDeviceFunctions() == false) {
-			LOG_CORE_WARN(L"Couldn't initialize device functions");
-		};
 
 #ifdef ES_PLATFORM_CUDA
 		CUDA::FindCudaDevice();
 #endif
+
+		DeviceFunctionsInstance = std::unique_ptr<DeviceFunctions>(DeviceFunctions::Create());
 
 		if (!MeshLoader::Initialize())
 			return;
@@ -134,31 +136,38 @@ namespace EmptySource {
 		MeshPrimitives::Initialize();
 		Font::InitializeFreeType();
 
-		OnInitialize();
-
 		bInitialized = true;
 	}
 
 	void Application::Awake() {
 		srand(SDL_GetTicks());
-		OnAwake();
+
+		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
+			(*--LayerIt)->OnAwake();
+		}
 	}
 
 	void Application::UpdateLoop() {
 		if (!bInitialized) return;
 
+		double RenderTimeSum = 0.0;
+		const double MaxFramerate = 1.0 / 60.0;
+
 		do {
 			MeshLoader::UpdateStatus();
 			Time::Tick();
 
-			OnUpdate();
+			for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
+				(*--LayerIt)->OnUpdate(Time::GetTimeStamp());
+			}
 
 			RenderTimeSum += Time::GetDeltaTime<Time::Second>();
-			const float MaxFramerate = (1 / 65.F);
 			if (RenderTimeSum > MaxFramerate) {
-				RenderTimeSum = 0;
+				RenderTimeSum = 0.0;
 
-				OnRender();
+				for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
+					(*--LayerIt)->OnRender();
+				}
 
 				GetWindow().EndFrame();
 				GetRenderPipeline().EndOfFrame();
@@ -173,12 +182,16 @@ namespace EmptySource {
 		
 		ShouldClose();
 
-		Debug::CloseDeviceFunctions();
-		MeshLoader::Exit();
+		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
+			(*--LayerIt)->OnTerminate();
+		}
 
-		OnTerminate();
-
+		DeviceFunctionsInstance.reset(NULL);
 		WindowInstance.reset(NULL);
+
+		AppLayerStack.Clear();
+
+		MeshLoader::Exit();
 
 	}
 

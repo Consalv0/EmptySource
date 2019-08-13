@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Utility/TextFormatting.h"
 #include "Engine/IIdentifier.h"
+#include "Utility/Hasher.h"
 #include <stddef.h>
 
 namespace EmptySource {
