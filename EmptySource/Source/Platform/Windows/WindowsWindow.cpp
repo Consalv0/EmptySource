@@ -18,62 +18,86 @@ namespace EmptySource {
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
 		WindowsWindow& Data = *(WindowsWindow*)UserData;
 		
-		if (Event->type == SDL_WINDOWEVENT) {
+		switch (Event->type) {
+		case SDL_WINDOWEVENT: {
 			if (Event->window.event == SDL_WINDOWEVENT_RESIZED || Event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 				Data.Resize(Event->window.data1, Event->window.data2);
-				return 0;
+				break;
 			}
-
 			if (Event->window.event == SDL_WINDOWEVENT_CLOSE) {
 				WindowCloseEvent WinEvent;
 				Data.WindowEventCallback(WinEvent);
-				return 0;
+				break;
 			}
-
 			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
 				WindowGainFocusEvent WinEvent;
 				Data.WindowEventCallback(WinEvent);
-				return 0;
+				break;
 			}
-
 			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
 				WindowLostFocusEvent WinEvent;
 				Data.WindowEventCallback(WinEvent);
-				return 0;
+				break;
 			}
 		}
 
-		if (Event->type == SDL_KEYDOWN) {
-			KeyPressedEvent InEvent(Event->key.keysym.scancode, Event->key.repeat);
+		case SDL_KEYDOWN: {
+			KeyPressedEvent InEvent(
+				Event->key.keysym.scancode,
+				(SDL_GetModState() & KMOD_SHIFT) != 0,
+				(SDL_GetModState() & KMOD_CTRL) != 0,
+				(SDL_GetModState() & KMOD_ALT) != 0,
+				(SDL_GetModState() & KMOD_GUI) != 0,
+				Event->key.repeat
+			);
 			Data.InputEventCallback(InEvent);
+			break;
 		}
 
-		if (Event->type == SDL_KEYUP) {
-			KeyReleasedEvent InEvent(Event->key.keysym.scancode);
+		case SDL_KEYUP: {
+			KeyReleasedEvent InEvent(
+				Event->key.keysym.scancode,
+				(SDL_GetModState() & KMOD_SHIFT) != 0,
+				(SDL_GetModState() & KMOD_CTRL) != 0,
+				(SDL_GetModState() & KMOD_ALT) != 0,
+				(SDL_GetModState() & KMOD_GUI) != 0
+			);
 			Data.InputEventCallback(InEvent);
+			break;
 		}
 
-		if (Event->type == SDL_MOUSEBUTTONDOWN) {
+		case SDL_TEXTINPUT: {
+			KeyTypedEvent InEvent(Event->text.text);
+			Data.InputEventCallback(InEvent);
+			break;
+		}
+
+		case SDL_MOUSEBUTTONDOWN: {
 			MouseButtonPressedEvent InEvent(Event->button.button);
 			Data.InputEventCallback(InEvent);
+			break;
 		}
 
-		if (Event->type == SDL_MOUSEBUTTONUP) {
+		case SDL_MOUSEBUTTONUP: {
 			MouseButtonReleasedEvent InEvent(Event->button.button);
 			Data.InputEventCallback(InEvent);
+			break;
 		}
 
-		if (Event->type == SDL_MOUSEMOTION) {
+		case SDL_MOUSEMOTION: {
 			MouseMovedEvent InEvent((float)Event->motion.x, (float)Event->motion.y);
 			Data.InputEventCallback(InEvent);
+			break;
 		}
 
-		if (Event->type == SDL_MOUSEWHEEL) {
+		case SDL_MOUSEWHEEL: {
 			MouseScrolledEvent InEvent(
 				(float)Event->wheel.x, (float)Event->wheel.y,
 				Event->wheel.direction == SDL_MOUSEWHEEL_FLIPPED
 			);
 			Data.InputEventCallback(InEvent);
+			break;
+		}
 		}
 
 		return 0;

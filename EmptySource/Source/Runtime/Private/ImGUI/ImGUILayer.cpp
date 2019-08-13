@@ -30,11 +30,36 @@ namespace EmptySource {
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
+		ImVec4* Colors = ImGui::GetStyle().Colors;
+		Colors[ImGuiCol_Text]                   = ImVec4(0.99f, 0.96f, 0.93f, 1.00f);
+		Colors[ImGuiCol_FrameBg]                = ImVec4(0.22f, 0.22f, 0.22f, 0.54f);
+		Colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.56f, 0.56f, 0.56f, 0.40f);
+		Colors[ImGuiCol_FrameBgActive]          = ImVec4(0.65f, 0.65f, 0.65f, 0.67f);
+		Colors[ImGuiCol_TitleBgActive]          = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+		Colors[ImGuiCol_CheckMark]              = ImVec4(0.96f, 0.91f, 0.88f, 1.00f);
+		Colors[ImGuiCol_SliderGrab]             = ImVec4(0.96f, 0.91f, 0.88f, 1.00f);
+		Colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.97f, 0.95f, 0.93f, 1.00f);
+		Colors[ImGuiCol_Button]                 = ImVec4(0.96f, 0.91f, 0.88f, 0.13f);
+		Colors[ImGuiCol_ButtonHovered]          = ImVec4(0.96f, 0.91f, 0.88f, 0.32f);
+		Colors[ImGuiCol_ButtonActive]           = ImVec4(0.96f, 0.91f, 0.98f, 0.40f);
+		Colors[ImGuiCol_Header]                 = ImVec4(0.39f, 0.39f, 0.39f, 0.31f);
+		Colors[ImGuiCol_HeaderHovered]          = ImVec4(0.47f, 0.47f, 0.47f, 0.80f);
+		Colors[ImGuiCol_HeaderActive]           = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
+		Colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.82f, 0.82f, 0.82f, 0.78f);
+		Colors[ImGuiCol_SeparatorActive]        = ImVec4(0.91f, 0.88f, 0.85f, 1.00f);
+		Colors[ImGuiCol_ResizeGrip]             = ImVec4(0.93f, 0.92f, 0.89f, 0.25f);
+		Colors[ImGuiCol_ResizeGripHovered]      = ImVec4(0.96f, 0.94f, 0.90f, 0.67f);
+		Colors[ImGuiCol_ResizeGripActive]       = ImVec4(1.00f, 1.00f, 1.00f, 0.95f);
+		Colors[ImGuiCol_Tab]                    = ImVec4(0.39f, 0.38f, 0.36f, 0.86f);
+		Colors[ImGuiCol_TabHovered]             = ImVec4(0.54f, 0.53f, 0.51f, 0.80f);
+		Colors[ImGuiCol_TabActive]              = ImVec4(0.60f, 0.48f, 0.31f, 1.00f);
+		Colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.22f, 0.20f, 0.18f, 1.00f);
+		Colors[ImGuiCol_DockingPreview]         = ImVec4(0.61f, 0.59f, 0.54f, 0.70f);
+		ImGui::GetStyle().WindowRounding = 0.0f;
 
 		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 		// ImGuiStyle& style = ImGui::GetStyle();
 		// if (IO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-		// 	style.WindowRounding = 0.0f;
 		// 	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		// }
 
@@ -61,6 +86,11 @@ namespace EmptySource {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(Window);
 		ImGui::NewFrame();
+
+		SDL_Event Event;
+		while (SDL_PollEvent(&Event)) {
+			ImGui_ImplSDL2_ProcessEvent(&Event);
+		}
 	}
 
 	void ImGUILayer::End() {

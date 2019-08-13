@@ -92,9 +92,8 @@ namespace EmptySource {
 	void Application::OnInputEvent(InputEvent & InEvent) {
 		// LOG_CORE_DEBUG(L"App Input Event : '{}'", InEvent.GetName());
 		EventDispatcher<InputEvent> Dispatcher(InEvent);
-		Dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent & Event) {
-			if (!Event.IsRepeated())
-				LOG_CORE_INFO(L"  Key Code : {:d}", Event.GetKeyCode());
+		Dispatcher.Dispatch<KeyTypedEvent>([](KeyTypedEvent & Event) {
+			LOG_CORE_INFO(" Text : '{}'", Event.GetText());
 		});
 
 		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {

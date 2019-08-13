@@ -37,25 +37,31 @@ namespace EmptySource {
 	public:
 		inline int GetKeyCode() const { return EventKeyCode; }
 
-		IMPLEMENT_EVENT_CATEGORY(IEC_Keyboard);
+		inline bool GetKeyShiftModifier() const { return ModKeyShift; };
+		inline bool GetKeyCtrlModifier() const { return ModKeyCtrl; };
+		inline bool GetKeyAltModifier() const { return ModKeyAlt; };
+		inline bool GetKeySuperModifier() const { return ModKeySuper; };
+
+		IMPLEMENT_EVENT_CATEGORY(IEC_Keyboard)
 
 	protected:
-		KeyEvent(int Code)
-			: EventKeyCode(Code) {
+		KeyEvent(int Code, bool Shift, bool Ctrl, bool Alt, bool Super)
+			: EventKeyCode(Code), ModKeyShift(Shift), ModKeyCtrl(Ctrl), ModKeyAlt(Alt), ModKeySuper(Super) {
 		}
 
 		int EventKeyCode;
+		bool ModKeyShift; bool ModKeyCtrl; bool ModKeyAlt; bool ModKeySuper;
 	};
 
 	class KeyPressedEvent : public KeyEvent {
 	public:
-		KeyPressedEvent(int Code, bool Repeated)
-			: KeyEvent(Code), bRepeat(Repeated) {}
+		KeyPressedEvent(int Code, bool Shift, bool Ctrl, bool Alt, bool Super, bool Repeated)
+			: KeyEvent(Code, Shift, Ctrl, Alt, Super), bRepeat(Repeated) {}
 
 		//* The key event was fired by maintaining the key pressed?
 		inline bool IsRepeated() const { return bRepeat; }
 
-		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, KeyPressed);
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, KeyPressed)
 
 	private:
 		bool bRepeat;
@@ -63,25 +69,32 @@ namespace EmptySource {
 
 	class KeyReleasedEvent : public KeyEvent {
 	public:
-		KeyReleasedEvent(int Code)
-			: KeyEvent(Code) {}
+		KeyReleasedEvent(int Code, bool Shift, bool Ctrl, bool Alt, bool Super)
+			: KeyEvent(Code, Shift, Ctrl, Alt, Super) {}
 
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, KeyReleased)
 	};
 
 	class KeyTypedEvent : public KeyEvent {
 	public:
-		KeyTypedEvent(int Code)
-			: KeyEvent(Code) {}
+		KeyTypedEvent(const NChar Text[32])
+			: KeyEvent(0, false, false, false, false) {
+			for (size_t i = 0; i < 32; ++i) EventText[i] = Text[i];
+		}
+
+		inline NString GetText() const { return EventText; }
 
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, KeyTyped)
+
+	private:
+		NChar EventText[32];
 	};
 
 	// Mouse Events //
 
 	class MouseEvent : public InputEvent {
 	public:
-		IMPLEMENT_EVENT_CATEGORY(IEC_Mouse);
+		IMPLEMENT_EVENT_CATEGORY(IEC_Mouse)
 
 	protected:
 		MouseEvent() {}
@@ -97,7 +110,7 @@ namespace EmptySource {
 		inline float GetY() const { return MouseY; }
 		inline Point2 GetMousePosition() const { return { MouseX, MouseY }; }
 
-		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseMoved);
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseMoved)
 
 	private:
 		float MouseX, MouseY;
@@ -112,7 +125,7 @@ namespace EmptySource {
 		inline float GetOffsetY() const { return OffsetY; }
 		inline bool IsFlipped() const { return bFlipped; }
 
-		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseScrolled);
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseScrolled)
 	
 	private:
 		float OffsetX, OffsetY;
@@ -135,7 +148,7 @@ namespace EmptySource {
 		MouseButtonPressedEvent(int Button)
 			: MouseButtonEvent(Button) {}
 
-		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonPressed);
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonPressed)
 	};
 
 	class MouseButtonReleasedEvent : public MouseButtonEvent {
@@ -143,7 +156,7 @@ namespace EmptySource {
 		MouseButtonReleasedEvent(int Button)
 			: MouseButtonEvent(Button) {}
 		
-		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonReleased);
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonReleased)
 	};
 
 }
