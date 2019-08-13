@@ -884,8 +884,8 @@ protected:
 			UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
 
 			MeshPrimitives::Cube.BindVertexArray();
-			UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", BBoxTransforms.size(), &BBoxTransforms[0], ModelMatrixBuffer);
-			MeshPrimitives::Cube.DrawInstanciated(BBoxTransforms.size());
+			UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", (int)BBoxTransforms.size(), &BBoxTransforms[0], ModelMatrixBuffer);
+			MeshPrimitives::Cube.DrawInstanciated((int)BBoxTransforms.size());
 		}
 
 		UnlitMaterial.Use();

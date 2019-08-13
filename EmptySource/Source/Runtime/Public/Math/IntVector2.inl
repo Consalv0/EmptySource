@@ -63,12 +63,12 @@ namespace EmptySource {
 	}
 
 	inline int & IntVector2::operator[](unsigned int i) {
-		if ((i >= 2)) return y;
+		ES_CORE_ASSERT(i > 1, "IntVector2 index out of bounds");
 		return ((int*)this)[i];
 	}
 
 	inline int const & IntVector2::operator[](unsigned int i) const {
-		if ((i >= 2)) return y;
+		ES_CORE_ASSERT(i > 1, "IntVector2 index out of bounds");
 		return ((int*)this)[i];
 	}
 

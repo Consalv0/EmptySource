@@ -22,7 +22,7 @@ namespace EmptySource {
 			: xMin(xMin), yMin(yMin), zMin(zMin), xMax(xMax), yMax(yMax), zMax(zMax)
 		{ }
 
-		inline Box3D Transform(Matrix4x4 Transformation) const {
+		inline Box3D Transform(const Matrix4x4 & Transformation) const {
 			Vector3 MinN = Transformation * (Vector3(xMin, yMin, zMin));
 			Vector3 MaxN = Transformation * (Vector3(xMax, yMax, zMax));
 			Vector3 MinZ = Transformation * (Vector3(xMin, yMin, zMax));

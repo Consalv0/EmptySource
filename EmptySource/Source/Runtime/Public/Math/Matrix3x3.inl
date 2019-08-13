@@ -40,33 +40,28 @@ namespace EmptySource {
 		return Matrix3x3(Column(0), Column(1), Column(2));
 	}
 
-	inline Vector3 Matrix3x3::Row(const int & i) const {
-		switch (i) {
-		case 0: return m0;
-		case 1: return m1;
-		case 2: return m2;
-		}
-
-		return Vector3();
+	inline Vector3 Matrix3x3::Row(const unsigned int & i) const {
+		if ((i > 2)) return Vector3();
+		return ((Vector3*)this)[i];
 	}
 
-	inline Vector3 Matrix3x3::Column(const int & i) const {
+	inline Vector3 Matrix3x3::Column(const unsigned int & i) const {
 		switch (i) {
-		case 0: return Vector3(m0[0], m1[0], m2[0]);
-		case 1: return Vector3(m0[1], m1[1], m2[1]);
-		case 2: return Vector3(m0[2], m1[2], m2[2]);
+			case 0: return Vector3(m0[0], m1[0], m2[0]);
+			case 1: return Vector3(m0[1], m1[1], m2[1]);
+			case 2: return Vector3(m0[2], m1[2], m2[2]);
 		}
 
 		return Vector3();
 	}
 
 	inline Vector3 & Matrix3x3::operator[](unsigned int i) {
-		if ((i >= 3)) return m2;
+		ES_CORE_ASSERT(i > 2, "Matrix3x3 index out of bounds");
 		return ((Vector3*)this)[i];
 	}
 
 	inline Vector3 const & Matrix3x3::operator[](unsigned int i) const {
-		if ((i >= 3)) return m2;
+		ES_CORE_ASSERT(i >= 2, "Matrix3x3 index out of bounds");
 		return ((Vector3*)this)[i];
 	}
 

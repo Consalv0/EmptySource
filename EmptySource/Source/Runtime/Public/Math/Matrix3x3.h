@@ -21,8 +21,8 @@ namespace EmptySource {
 		HOST_DEVICE inline void Transpose();
 		HOST_DEVICE inline Matrix3x3 Transposed() const;
 
-		HOST_DEVICE inline Vector3 Row(const int& i) const;
-		HOST_DEVICE inline Vector3 Column(const int& i) const;
+		HOST_DEVICE inline Vector3 Row(const unsigned int& i) const;
+		HOST_DEVICE inline Vector3 Column(const unsigned int& i) const;
 
 		HOST_DEVICE inline Vector3 & operator[](unsigned int i);
 		HOST_DEVICE inline Vector3 const& operator[](unsigned int i) const;

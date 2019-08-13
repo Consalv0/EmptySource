@@ -71,10 +71,16 @@ namespace EmptySource {
 			return (LastDeltaMicro) / (typename T::ReturnType)T::GetSizeInMicro();
 		}
 
+		// Get the application tick average
+		template<typename T>
+		static inline typename T::ReturnType GetAverageDelta() {
+			return (typename T::ReturnType)TickAverage / (typename T::ReturnType)T::GetSizeInMicro();
+		}
+
 		// Get the application frame rate
 		template<typename T>
 		static inline typename T::ReturnType GetFrameRate() {
-			return (typename T::ReturnType)(1) / (TickAverage / (typename T::ReturnType)T::GetSizeInMicro());
+			return (typename T::ReturnType)(1) / ((typename T::ReturnType)TickAverage / (typename T::ReturnType)T::GetSizeInMicro());
 		}
 
 		// Machine Time

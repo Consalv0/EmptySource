@@ -87,12 +87,12 @@ namespace EmptySource {
 	}
 
 	inline float & Vector4::operator[](unsigned int i) {
-		if ((i >= 4)) return w;
+		ES_CORE_ASSERT(i > 3, "Vector4 index out of bounds");
 		return ((float*)this)[i];
 	}
 
 	inline float const & Vector4::operator[](unsigned int i) const {
-		if ((i >= 4)) return w;
+		ES_CORE_ASSERT(i > 3, "Vector4 index out of bounds");
 		return ((float*)this)[i];
 	}
 

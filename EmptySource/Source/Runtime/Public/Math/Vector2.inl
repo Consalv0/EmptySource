@@ -86,12 +86,12 @@ namespace EmptySource {
 	}
 
 	inline float & Vector2::operator[](unsigned int i) {
-		if ((i >= 2)) return y;
+		ES_CORE_ASSERT(i > 1, "Vector2 index out of bounds");
 		return ((float*)this)[i];
 	}
 
 	inline float const & Vector2::operator[](unsigned int i) const {
-		if ((i >= 2)) return y;
+		ES_CORE_ASSERT(i > 1, "Vector2 index out of bounds");
 		return ((float*)this)[i];
 	}
 
@@ -137,40 +137,28 @@ namespace EmptySource {
 	}
 
 	FORCEINLINE Vector2& Vector2::operator+=(const Vector2& Other) {
-		x += Other.x;
-		y += Other.y;
-		return *this;
+		x += Other.x; y += Other.y; return *this;
 	}
 
 	FORCEINLINE Vector2& Vector2::operator-=(const Vector2& Other) {
-		x -= Other.x;
-		y -= Other.y;
-		return *this;
+		x -= Other.x; y -= Other.y; return *this;
 	}
 
 	FORCEINLINE Vector2 & Vector2::operator*=(const Vector2 & Other) {
-		x *= Other.x;
-		y *= Other.y;
-		return *this;
+		x *= Other.x; y *= Other.y; return *this;
 	}
 
 	FORCEINLINE Vector2 & Vector2::operator/=(const Vector2 & Other) {
-		x /= Other.x;
-		y /= Other.y;
-		return *this;
+		x /= Other.x; y /= Other.y; return *this;
 	}
 
 	FORCEINLINE Vector2& Vector2::operator*=(const float& Value) {
-		x *= Value;
-		y *= Value;
-		return *this;
+		x *= Value;	y *= Value; return *this;
 	}
 
 	FORCEINLINE Vector2& Vector2::operator/=(const float& Value) {
 		if (Value == 0) x = y = 0;
-		x /= Value;
-		y /= Value;
-		return *this;
+		x /= Value; y /= Value; return *this;
 	}
 
 	inline Vector2 operator*(float Value, const Vector2 & Vector) {

@@ -229,35 +229,29 @@ namespace EmptySource {
 		return Result * OneOverDeterminant;
 	}
 
-	inline Vector4 Matrix4x4::Row(const int & i) const {
-		switch (i) {
-		case 0: return m0;
-		case 1: return m1;
-		case 2: return m2;
-		case 3: return m3;
-		}
-
-		return Vector4();
+	inline Vector4 Matrix4x4::Row(const unsigned int & i) const {
+		if (i > 3) return Vector4();
+		return ((Vector4*)this)[i];
 	}
 
-	inline Vector4 Matrix4x4::Column(const int & i) const {
+	inline Vector4 Matrix4x4::Column(const unsigned int & i) const {
 		switch (i) {
-		case 0: return Vector4(m0[0], m1[0], m2[0], m3[0]);
-		case 1: return Vector4(m0[1], m1[1], m2[1], m3[1]);
-		case 2: return Vector4(m0[2], m1[2], m2[2], m3[2]);
-		case 3: return Vector4(m0[3], m1[3], m2[3], m3[3]);
+			case 0: return { m0[0], m1[0], m2[0], m3[0] };
+			case 1: return { m0[1], m1[1], m2[1], m3[1] };
+			case 2: return { m0[2], m1[2], m2[2], m3[2] };
+			case 3: return { m0[3], m1[3], m2[3], m3[3] };
 		}
 
 		return Vector4();
 	}
 
 	inline Vector4 & Matrix4x4::operator[](unsigned int i) {
-		if ((i >= 4)) return m3;
+		ES_CORE_ASSERT(i > 3, "Matrix4x4 index out of bounds");
 		return ((Vector4*)this)[i];
 	}
 
 	inline Vector4 const & Matrix4x4::operator[](unsigned int i) const {
-		if ((i >= 4)) return m3;
+		ES_CORE_ASSERT(i > 3, "Matrix4x4 index out of bounds");
 		return ((Vector4*)this)[i];
 	}
 
