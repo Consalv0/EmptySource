@@ -9,7 +9,7 @@
 	url = https://github.com/Tessil/robin-map.git
 [submodule "EmptySource/External/YAML"]
 	path = EmptySource/External/YAML
-	url = git@github.com:Consalv0/yaml-cpp.git
+	url = https://github.com/Consalv0/yaml-cpp.git
 [submodule "EmptySource/External/SDL2"]
 	path = EmptySource/External/SDL2
 	url = https://github.com/spurious/SDL-mirror.git
