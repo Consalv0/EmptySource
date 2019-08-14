@@ -37,8 +37,8 @@
     <Filter Include="Runtime\Private\Fonts">
       <UniqueIdentifier>{AC29E569-1896-A064-E189-38C24DB5C2CC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Private\ImGUI">
-      <UniqueIdentifier>{5DB0196A-C91C-D564-9210-6DC2FE3BF7CC}</UniqueIdentifier>
+    <Filter Include="Runtime\Private\ImGui">
+      <UniqueIdentifier>{9DB4196A-0921-D564-D214-6DC23E40F7CC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Private\Mesh">
       <UniqueIdentifier>{CF12DC8E-BBA1-6558-64C0-7953502E76FE}</UniqueIdentifier>
@@ -73,8 +73,8 @@
     <Filter Include="Runtime\Public\Fonts">
       <UniqueIdentifier>{D0DBF83E-BC6A-8208-6589-960351F792AE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Public\ImGUI">
-      <UniqueIdentifier>{81622D3F-6DF1-B608-1610-CB03027EC7AE}</UniqueIdentifier>
+    <Filter Include="Runtime\Public\ImGui">
+      <UniqueIdentifier>{C1662D3F-ADF5-B608-5614-CB034282C7AE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Public\Math">
       <UniqueIdentifier>{90FF6F11-FC60-4D1F-85CE-93D1F12E84DE}</UniqueIdentifier>
@@ -228,8 +228,8 @@
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h">
       <Filter>Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\ImGUI\ImGUILayer.h">
-      <Filter>Runtime\Public\ImGUI</Filter>
+    <ClInclude Include="Source\Runtime\Public\ImGui\ImGuiLayer.h">
+      <Filter>Runtime\Public\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h">
       <Filter>Runtime\Public\Math</Filter>
@@ -503,11 +503,11 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp">
       <Filter>Runtime\Private\Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUIBuild.cpp">
-      <Filter>Runtime\Private\ImGUI</Filter>
+    <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiBuild.cpp">
+      <Filter>Runtime\Private\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUILayer.cpp">
-      <Filter>Runtime\Private\ImGUI</Filter>
+    <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp">
+      <Filter>Runtime\Private\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
       <Filter>Runtime\Private\Mesh</Filter>

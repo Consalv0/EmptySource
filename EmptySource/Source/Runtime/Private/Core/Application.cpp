@@ -1,6 +1,6 @@
 ﻿
 #include "CoreMinimal.h"
-#include "ImGUI/ImGUILayer.h"
+#include "ImGui/ImGuiLayer.h"
 #include "Core/Application.h"
 #include "Core/CoreTime.h"
 #include "Core/Window.h"
@@ -129,8 +129,8 @@ namespace EmptySource {
 		MeshPrimitives::Initialize();
 		Font::InitializeFreeType();
 
-		ImGUILayerInstance = new ImGUILayer();
-		PushLayer(ImGUILayerInstance);
+		ImGuiLayerInstance = new ImGuiLayer();
+		PushLayer(ImGuiLayerInstance);
 
 		bInitialized = true;
 	}
@@ -166,10 +166,10 @@ namespace EmptySource {
 				for (Layer* LayerPointer : AppLayerStack)
 					LayerPointer->OnRender();
 
-				ImGUILayerInstance->Begin();
+				ImGuiLayerInstance->Begin();
 				for (Layer* LayerPointer : AppLayerStack)
-					LayerPointer->OnImGUIRender();
-				ImGUILayerInstance->End();
+					LayerPointer->OnImGuiRender();
+				ImGuiLayerInstance->End();
 
 				GetWindow().EndFrame();
 				GetRenderPipeline().EndOfFrame();

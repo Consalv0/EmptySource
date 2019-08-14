@@ -127,7 +127,7 @@ protected:
 
 	virtual void OnAttach() override {}
 
-	virtual void OnImGUIRender() override {
+	virtual void OnImGuiRender() override {
 		static Texture2D TextureSample(IntVector2(1024, 1024), CF_RGB16F, FM_MinMagLinear, SAM_Repeat);
 		const NChar* Textures[] = {
 			"BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",

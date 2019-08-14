@@ -8,14 +8,14 @@
 
 namespace EmptySource {
 
-	class ImGUILayer : public Layer {
+	class ImGuiLayer : public Layer {
 	public:
-		ImGUILayer();
-		~ImGUILayer() = default;
+		ImGuiLayer();
+		~ImGuiLayer() = default;
 
 		virtual void OnAwake() override;
 		virtual void OnDetach() override;
-		virtual void OnImGUIRender() override;
+		virtual void OnImGuiRender() override;
 
 		void Begin();
 		void End();

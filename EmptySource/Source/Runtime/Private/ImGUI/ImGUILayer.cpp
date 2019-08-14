@@ -4,7 +4,7 @@
 #include <examples/imgui_impl_sdl.h>
 #include <examples/imgui_impl_opengl3.h>
 
-#include "ImGUI/ImGUILayer.h"
+#include "ImGui/ImGuiLayer.h"
 
 // TEMPORARY
 #include <SDL.h>
@@ -12,11 +12,11 @@
 
 namespace EmptySource {
 
-	ImGUILayer::ImGUILayer()
-		: Layer(L"ImGUILayer", 1000) {
+	ImGuiLayer::ImGuiLayer()
+		: Layer(L"ImGuiLayer", 1000) {
 	}
 
-	void ImGUILayer::OnAwake() {
+	void ImGuiLayer::OnAwake() {
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -77,13 +77,13 @@ namespace EmptySource {
 #endif
 	}
 
-	void ImGUILayer::OnDetach() {
+	void ImGuiLayer::OnDetach() {
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();
 	}
 
-	void ImGUILayer::Begin() {
+	void ImGuiLayer::Begin() {
 		SDL_Event Event;
 		SDL_Window* Window = static_cast<SDL_Window*>(Application::GetInstance()->GetWindow().GetHandle());
 		
@@ -95,7 +95,7 @@ namespace EmptySource {
 		ImGui::NewFrame();
 	}
 
-	void ImGUILayer::End() {
+	void ImGuiLayer::End() {
 		ImGuiIO& IO = ImGui::GetIO();
 		Application& App = *Application::GetInstance();
 		IO.DisplaySize = ImVec2((float)App.GetWindow().GetWidth(), (float)App.GetWindow().GetHeight());
@@ -114,7 +114,7 @@ namespace EmptySource {
 
 	}
 
-	void ImGUILayer::ShowApplicationDockspace(bool * Open) {
+	void ImGuiLayer::ShowApplicationDockspace(bool * Open) {
 		static bool OptFullscreenPersistant = true;
 		bool OptFullscreen = OptFullscreenPersistant;
 		static ImGuiDockNodeFlags DockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_AutoHideTabBar;
@@ -156,7 +156,7 @@ namespace EmptySource {
 	}
 	
 
-	void ImGUILayer::OnImGUIRender() {
+	void ImGuiLayer::OnImGuiRender() {
 		static bool Docking = true;
 		ShowApplicationDockspace(&Docking);
 		static bool show = true;

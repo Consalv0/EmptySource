@@ -24,7 +24,7 @@ namespace EmptySource {
 		
 		virtual void OnUpdate(Timestamp Stamp) {}
 		
-		virtual void OnImGUIRender() {}
+		virtual void OnImGuiRender() {}
 		
 		virtual void OnWindowEvent(WindowEvent& WinEvent) {}
 		
