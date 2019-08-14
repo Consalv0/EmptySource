@@ -190,3 +190,6 @@ Temporary Items
 !/**/Libraries/*.dylib
 !/**/Libraries/*.a
 !/**/Libraries/*.la
+
+#ImGui
+imgui.ini
