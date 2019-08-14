@@ -1,7 +1,7 @@
 
 #include "CoreMinimal.h"
-#include "Engine/Object.h"
-#include "Engine/Space.h"
+#include "Core/Object.h"
+#include "Core/Space.h"
 
 #include "Utility/TextFormatting.h"
 

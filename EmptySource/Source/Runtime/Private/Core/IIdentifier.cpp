@@ -1,7 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Utility/TextFormatting.h"
-#include "Engine/IIdentifier.h"
+#include "Core/IIdentifier.h"
 #include "Utility/Hasher.h"
 #include <stddef.h>
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreTypes.h"
-#include "Engine/IIdentifier.h"
+#include "Core/IIdentifier.h"
 
 namespace EmptySource {
 

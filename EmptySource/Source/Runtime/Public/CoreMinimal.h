@@ -19,13 +19,13 @@
 #include <float.h>
 #include <string.h>
 
-// Engine basic log functions
-#include "Engine/Log.h"
+// Core basic log functions
+#include "Core/Log.h"
 #include "CoreTypes.h"
 #include "Core.h"
 
-// Engine classes
+// Core classes
 #include "Events/Event.h"
-#include "Engine/CoreTime.h"
+#include "Core/CoreTime.h"
 #include "Math/CoreMath.h"
 #include "Platform/DeviceFunctions.h"

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Window.h"
-#include "Engine/LayerStack.h"
+#include "Core/Window.h"
+#include "Core/LayerStack.h"
 
 namespace EmptySource {
 

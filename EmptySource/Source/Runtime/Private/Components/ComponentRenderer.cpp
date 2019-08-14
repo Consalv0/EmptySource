@@ -5,9 +5,9 @@
 #include "Rendering/RenderPipeline.h"
 #include "Mesh/Mesh.h"
 #include "Resources/MeshLoader.h"
-#include "Engine/GameObject.h"
-#include "Engine/CoreTime.h"
-#include "Engine/Application.h"
+#include "Core/GameObject.h"
+#include "Core/CoreTime.h"
+#include "Core/Application.h"
 
 #include "Components/ComponentRenderer.h"
 

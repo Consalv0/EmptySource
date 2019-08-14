@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Object.h"
-#include "Engine/Transform.h"
+#include "Core/Object.h"
+#include "Core/Transform.h"
 #include "Components/Component.h"
 
 namespace EmptySource {

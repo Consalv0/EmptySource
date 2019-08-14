@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Object.h"
+#include "Core/Object.h"
 
 namespace EmptySource {
 

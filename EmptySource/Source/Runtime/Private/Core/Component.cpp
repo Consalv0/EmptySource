@@ -1,6 +1,6 @@
 
 #include "CoreMinimal.h"
-#include "Engine/GameObject.h"
+#include "Core/GameObject.h"
 #include "Components/Component.h"
 
 namespace EmptySource {

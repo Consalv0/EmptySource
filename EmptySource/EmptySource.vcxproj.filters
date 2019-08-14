@@ -25,8 +25,8 @@
     <Filter Include="Runtime\Private\Components">
       <UniqueIdentifier>{68C41E68-54D4-CA38-BD8D-2F57A9BCB9D1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Private\Engine">
-      <UniqueIdentifier>{58181FA4-4412-48F6-2D7F-DE061918AE62}</UniqueIdentifier>
+    <Filter Include="Runtime\Private\Core">
+      <UniqueIdentifier>{6BC1D68E-5750-6058-006F-7453ECDC70FE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Private\Events">
       <UniqueIdentifier>{B7D9AEA4-A3D3-D7F6-8C40-6E0778D93D63}</UniqueIdentifier>
@@ -36,6 +36,9 @@
     </Filter>
     <Filter Include="Runtime\Private\Fonts">
       <UniqueIdentifier>{AC29E569-1896-A064-E189-38C24DB5C2CC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime\Private\ImGUI">
+      <UniqueIdentifier>{5DB0196A-C91C-D564-9210-6DC2FE3BF7CC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Private\Mesh">
       <UniqueIdentifier>{CF12DC8E-BBA1-6558-64C0-7953502E76FE}</UniqueIdentifier>
@@ -58,8 +61,8 @@
     <Filter Include="Runtime\Public\Components">
       <UniqueIdentifier>{0C6D4BEB-782F-7F75-C1DF-0D022DE15753}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Public\Engine">
-      <UniqueIdentifier>{FC0EA91B-687B-6416-316F-FC739D9A867E}</UniqueIdentifier>
+    <Filter Include="Runtime\Public\Core">
+      <UniqueIdentifier>{0FBF6A11-7B20-481F-048E-8ED170EE7EDE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Public\Events">
       <UniqueIdentifier>{5BD0381C-C73C-F416-9030-8C74FC5B167F}</UniqueIdentifier>
@@ -69,6 +72,9 @@
     </Filter>
     <Filter Include="Runtime\Public\Fonts">
       <UniqueIdentifier>{D0DBF83E-BC6A-8208-6589-960351F792AE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime\Public\ImGUI">
+      <UniqueIdentifier>{81622D3F-6DF1-B608-1610-CB03027EC7AE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Public\Math">
       <UniqueIdentifier>{90FF6F11-FC60-4D1F-85CE-93D1F12E84DE}</UniqueIdentifier>
@@ -84,12 +90,6 @@
     </Filter>
     <Filter Include="Runtime\Public\Utility">
       <UniqueIdentifier>{9A71936E-866B-BCC0-6FD8-52D15B71222D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Runtime\Private\ImGUI">
-      <UniqueIdentifier>{eced3eb9-f1c3-4825-b893-c259ae597f67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Runtime\Public\ImGUI">
-      <UniqueIdentifier>{f30a65fc-6dee-483f-8e6d-213b4a1086b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -135,50 +135,50 @@
     <ClInclude Include="Source\Runtime\Public\Core.h">
       <Filter>Runtime\Public</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Application.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\CoreTime.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\EmptySource.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\GameObject.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\IIdentifier.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Input.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Layer.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\LayerStack.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Log.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Object.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Space.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Transform.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Window.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\CoreMinimal.h">
       <Filter>Runtime\Public</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\CoreTypes.h">
       <Filter>Runtime\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Application.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\CoreTime.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\EmptySource.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\GameObject.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\IIdentifier.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Input.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Layer.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\LayerStack.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Log.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Object.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Space.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Transform.h">
-      <Filter>Runtime\Public\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Engine\Window.h">
-      <Filter>Runtime\Public\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Events\Event.h">
       <Filter>Runtime\Public\Events</Filter>
@@ -227,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h">
       <Filter>Runtime\Public\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\ImGUI\ImGUILayer.h">
+      <Filter>Runtime\Public\ImGUI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h">
       <Filter>Runtime\Public\Math</Filter>
@@ -405,9 +408,6 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\ImGUI\ImGUILayer.h">
-      <Filter>Runtime\Public\ImGUI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -434,41 +434,41 @@
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp">
       <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Application.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Application.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Component.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Component.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\CoreTime.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\CoreTime.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\EntryPoint.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\EntryPoint.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\GameObject.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\GameObject.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\IIdentifier.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\IIdentifier.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Layer.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Layer.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\LayerStack.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\LayerStack.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Log.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Log.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Object.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Object.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Space.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Space.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Engine\Transform.cpp">
-      <Filter>Runtime\Private\Engine</Filter>
+    <ClCompile Include="Source\Runtime\Private\Core\Transform.cpp">
+      <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Events\Observer.cpp">
       <Filter>Runtime\Private\Events</Filter>
@@ -502,6 +502,12 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp">
       <Filter>Runtime\Private\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUIBuild.cpp">
+      <Filter>Runtime\Private\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUILayer.cpp">
+      <Filter>Runtime\Private\ImGUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
       <Filter>Runtime\Private\Mesh</Filter>
@@ -586,12 +592,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUILayer.cpp">
-      <Filter>Runtime\Private\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\ImGUI\ImGUIBuild.cpp">
-      <Filter>Runtime\Private\ImGUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utility/TextFormatting.h"
-#include "Engine/IIdentifier.h"
+#include "Core/IIdentifier.h"
 #include "Resources/ResourceManager.h"
 #include "Events/Property.h"
 

@@ -1,6 +1,6 @@
 
 #include "CoreMinimal.h"
-#include "Engine/Application.h"
+#include "Core/Application.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/Bitmap.h"
 
@@ -18,6 +18,11 @@ namespace EmptySource {
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
 		WindowsWindow& Data = *(WindowsWindow*)UserData;
 		
+		if (Event->type == SDL_WINDOWEVENT) {
+			if (Event->window.windowID != SDL_GetWindowID((SDL_Window*)Data.GetHandle()))
+				return 0;
+		}
+
 		switch (Event->type) {
 		case SDL_WINDOWEVENT: {
 			if (Event->window.event == SDL_WINDOWEVENT_RESIZED || Event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {

@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef EMPTYSOURCE_CORE
-#pragma message ( "You have placed Engine/Log.h before Core.h. This may cause errors in ftm headers" )
+#pragma message ( "You have placed Core/Log.h before Core.h. This may cause errors in ftm headers" )
 #else 
 #define EMPTYSOURCE_CORE_LOG
 #endif // EMPTYSOURCE_CORE

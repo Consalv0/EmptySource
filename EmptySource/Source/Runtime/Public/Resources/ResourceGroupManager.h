@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Resources/ResourceHolder.h"
-#include "Engine/CoreTypes.h"
-#include "Engine/Text.h"
+#include "Core/CoreTypes.h"
+#include "Core/Text.h"
 
 namespace EmptySource {
 

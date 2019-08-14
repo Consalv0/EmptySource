@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/Application.h"
+#include "Core/Application.h"
 
 #include <SDL_main.h>
 

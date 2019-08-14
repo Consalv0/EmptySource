@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Space.h"
-#include "Engine/IIdentifier.h"
+#include "Core/Space.h"
+#include "Core/IIdentifier.h"
 
 namespace EmptySource {
 

@@ -1,8 +1,8 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Engine/Application.h"
-#include "Engine/CoreTime.h"
+#include "Core/Application.h"
+#include "Core/CoreTime.h"
 #include <chrono>
 #include <ctime>
 

@@ -1,5 +1,5 @@
 ﻿
-#include "Engine\Log.h"
+#include "Core\Log.h"
 #include "Core.h"
 #include "Rendering\Graphics.h"
 

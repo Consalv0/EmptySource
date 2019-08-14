@@ -1,8 +1,8 @@
 
 #include "CoreMinimal.h"
 #include "Platform/Windows/WindowsInput.h"
-#include "Engine/Application.h"
-#include "Engine/Window.h"
+#include "Core/Application.h"
+#include "Core/Window.h"
 
 #include <SDL.h>
 

@@ -3,8 +3,8 @@
 #include "CoreTypes.h"
 #include "Events/WindowEvent.h"
 #include "Events/InputEvent.h"
-#include "Engine/CoreTime.h"
-#include "Engine/IIdentifier.h"
+#include "Core/CoreTime.h"
+#include "Core/IIdentifier.h"
 
 namespace EmptySource {
 
