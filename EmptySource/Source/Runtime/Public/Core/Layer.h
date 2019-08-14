@@ -10,7 +10,7 @@ namespace EmptySource {
 
 	class Layer : public IIdentifier {
 	public:
-		Layer(const WString& Name);
+		Layer(const WString& Name, unsigned int Level);
 
 		virtual ~Layer() = default;
 
@@ -32,11 +32,27 @@ namespace EmptySource {
 
 		inline WString GetName() { return Name; }
 
+		inline unsigned int GetLevel() const { return Level; }
+
+		inline bool operator < (const Layer& Other) const {
+			return (GetLevel() < Other.GetLevel());
+		}
+		inline bool operator <= (const Layer& Other) const {
+			return (GetLevel() <= Other.GetLevel());
+		}
+		inline bool operator > (const Layer& Other) const {
+			return (GetLevel() > Other.GetLevel());
+		}
+		inline bool operator >= (const Layer& Other) const {
+			return (GetLevel() >= Other.GetLevel());
+		}
+
 	protected:
 		virtual inline int GetLayerPriority() { return 0; };
 
 	private:
 		WString Name;
+		unsigned int Level;
 
 	};
 

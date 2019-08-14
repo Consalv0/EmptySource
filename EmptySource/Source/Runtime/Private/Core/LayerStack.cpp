@@ -5,7 +5,6 @@
 namespace EmptySource {
 
 	LayerStack::LayerStack() {
-		LayerInsert = Layers.begin();
 	}
 
 	LayerStack::~LayerStack() {
@@ -18,23 +17,16 @@ namespace EmptySource {
 	}
 
 	void LayerStack::PushLayer(Layer * NewLayer) {
-		LayerInsert = Layers.emplace(LayerInsert, NewLayer);
-	}
-
-	void LayerStack::PushOverlay(Layer * NewOverlay) {
-		Layers.emplace_back(NewOverlay);
-	}
-
-	void LayerStack::PopLayer(Layer * PopingLayer) {
-		auto LayerIt = std::find(Layers.begin(), Layers.end(), PopingLayer);
-		if (LayerIt != Layers.end()) {
-			Layers.erase(LayerIt);
-			LayerInsert--;
+		auto LayerIt = begin();
+		for (; LayerIt != end(); ++LayerIt) {
+			if (*(*LayerIt) >= *NewLayer)
+				break;
 		}
+		Layers.emplace(LayerIt, NewLayer);
 	}
 
-	void LayerStack::PopOverlay(Layer * PopingOverlay) {
-		auto LayerIt = std::find(Layers.begin(), Layers.end(), PopingOverlay);
+	void LayerStack::PopLayer(Layer * RemoveLayer) {
+		auto LayerIt = std::find(begin(), end(), RemoveLayer);
 		if (LayerIt != Layers.end()) {
 			Layers.erase(LayerIt);
 		}

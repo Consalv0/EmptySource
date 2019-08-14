@@ -16,6 +16,6 @@
 [submodule "EmptySource/External/SPDLOG"]
 	path = EmptySource/External/SPDLOG
 	url = https://github.com/Consalv0/spdlog.git
-[submodule "EmptySource/External/IMGUI"]
-	path = EmptySource/External/IMGUI
+[submodule "EmptySource/External/ImGui"]
+	path = EmptySource/External/ImGui
 	url = https://github.com/Consalv0/imgui.git

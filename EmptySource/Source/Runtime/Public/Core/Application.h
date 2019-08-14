@@ -19,8 +19,6 @@ namespace EmptySource {
 
 		void PushLayer(Layer * PushedLayer);
 
-		void PushOverlay(Layer * PushedOverlay);
-
 		//* Appication Instance
 		inline Window & GetWindow() { return *WindowInstance; };
 

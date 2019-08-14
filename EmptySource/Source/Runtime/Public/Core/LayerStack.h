@@ -14,19 +14,14 @@ namespace EmptySource {
 
 		void PushLayer(Layer * NewLayer);
 
-		void PushOverlay(Layer * Overlay);
-		
-		void PopLayer(Layer * PopingLayer);
-		
-		void PopOverlay(Layer * PopingOverlay);
+		void PopLayer(Layer * RemoveLayer);
 
-		TArray<Layer *>::iterator begin() { return Layers.begin(); }
-		TArray<Layer *>::iterator end() { return Layers.end(); }
+		inline TArray<Layer *>::iterator begin() { return Layers.begin(); }
+		inline TArray<Layer *>::iterator end() { return Layers.end(); }
 
 	private:
 
 		TArray<Layer *> Layers;
-		TArray<Layer *>::iterator LayerInsert;
 	};
 
 }

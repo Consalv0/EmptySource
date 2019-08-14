@@ -13,7 +13,7 @@
 namespace EmptySource {
 
 	ImGUILayer::ImGUILayer()
-		: Layer(L"ImGUILayer") {
+		: Layer(L"ImGUILayer", 1000) {
 	}
 
 	void ImGUILayer::OnAwake() {

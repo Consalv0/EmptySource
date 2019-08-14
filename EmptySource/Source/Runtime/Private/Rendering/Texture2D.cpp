@@ -59,6 +59,10 @@ namespace EmptySource {
 		return Dimension;
 	}
 
+	float Texture2D::GetAspectRatio() const {
+		return (float)Dimension.x / (float)Dimension.y;
+	}
+
 	int Texture2D::GetWidth() const {
 		return Dimension.x;
 	}

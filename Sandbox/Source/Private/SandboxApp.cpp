@@ -45,8 +45,8 @@
 
 #include "Events/Property.h"
 
+#include "../External/IMGUI/imgui.h"
 #include "../External/GLAD/include/glad/glad.h"
-
 #include "../External/SDL2/include/SDL_keycode.h"
 #include "../External/SDL2/include/SDL_audio.h"
 
@@ -126,6 +126,58 @@ private:
 protected:
 
 	virtual void OnAttach() override {}
+
+	virtual void OnImGUIRender() override {
+		static Texture2D TextureSample(IntVector2(1024, 1024), CF_RGB16F, FM_MinMagLinear, SAM_Repeat);
+		const NChar* Textures[] = {
+			"BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
+			"BaseRoughnessTexture", "BaseNormalTexture", "FlamerAlbedoTexture",
+			"FlamerMetallicTexture", "FlamerNormalTexture", "EquirectangularTextureHDR"
+		};
+		static int CurrentTexture = 0;
+		static float LODLevel = 0.F;
+
+		if (OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
+			Texture2D * SelectedTexture = OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())->GetData();
+			RenderTarget Renderer = RenderTarget();
+			Renderer.SetUpBuffers();
+			TextureSample.Use(); 
+			float DeltaTime = Time::GetTimeStamp().GetDeltaTime<Time::Second>();
+			RenderTextureMaterial.Use();
+			RenderTextureMaterial.SetFloat1Array("_Time", &DeltaTime);
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
+			float LodLevel = log2f((float)SelectedTexture->GetWidth()) * abs(LODLevel);
+			RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
+
+			Renderer.Resize(1024, 1024);
+			MeshPrimitives::Quad.BindVertexArray();
+			Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
+			RenderTextureMaterial.SetAttribMatrix4x4Array(
+				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
+			);
+
+			Renderer.PrepareTexture(&TextureSample);
+			Renderer.Clear();
+			MeshPrimitives::Quad.DrawInstanciated(1);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			Renderer.Delete();
+		}
+
+		ImGui::Begin("Textures");
+		ImGui::Combo("Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures));
+		ImGui::SliderFloat("LOD Level", &LODLevel, 0.0f, 1.0f, "ratio = %.3f");
+		if (OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
+			Texture2D * SampleTexture = OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())->GetData();
+			float MinSideSize = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * SampleTexture->GetAspectRatio());
+			MinSideSize -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
+			ImGui::Image(
+				(void *)TextureSample.GetTextureObject(), { MinSideSize, MinSideSize / SampleTexture->GetAspectRatio() }
+			);
+		}
+		ImGui::End();
+	}
 
 	virtual void OnAwake() override {
 		Application::GetInstance()->GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
@@ -239,7 +291,7 @@ protected:
 		ImageLoader::Load(FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 		ImageLoader::Load(White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
 		ImageLoader::Load(Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
-		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/glacier.hdr"));
+		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 
 		Texture2D EquirectangularTexture = Texture2D(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
@@ -444,6 +496,7 @@ protected:
 		EquirectangularTextureHDR = new Texture2D(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
 		);
+		OldResourceManager::Load(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
 		{
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
@@ -1005,7 +1058,7 @@ protected:
 
 public:
 	
-	SandboxLayer() : Layer(L"SandboxApp") {}
+	SandboxLayer() : Layer(L"SandboxApp", 2000) {}
 };
 
 class SandboxApplication : public Application {

@@ -108,13 +108,6 @@ namespace EmptySource {
 			PushedLayer->OnAwake();
 	}
 
-	void Application::PushOverlay(Layer * PushedOverlay) {
-		AppLayerStack.PushOverlay(PushedOverlay);
-		PushedOverlay->OnAttach();
-		if (bInitialized)
-			PushedOverlay->OnAwake();
-	}
-
 	void Application::Initalize() {
 		if (bInitialized) return;
 
@@ -137,7 +130,7 @@ namespace EmptySource {
 		Font::InitializeFreeType();
 
 		ImGUILayerInstance = new ImGUILayer();
-		PushOverlay(ImGUILayerInstance);
+		PushLayer(ImGUILayerInstance);
 
 		bInitialized = true;
 	}
