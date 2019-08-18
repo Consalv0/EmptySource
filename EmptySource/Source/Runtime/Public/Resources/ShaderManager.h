@@ -9,13 +9,17 @@ namespace EmptySource {
 	class ShaderManager : public ResourceManager {
 
 	public:
-		ShaderPtr GetProgramByName(const WString& Name) const;
+		ShaderPtr GetProgram(const WString& Name) const;
 
-		ShaderPtr GetProgramByUniqueID(const size_t & UID) const;
+		ShaderPtr GetProgram(const size_t & UID) const;
 
-		ShaderStagePtr GetStageByName(const WString& Name) const;
+		ShaderStagePtr GetStage(const WString& Name) const;
 
-		ShaderStagePtr GetStageByUniqueID(const size_t & UID) const;
+		ShaderStagePtr GetStage(const size_t & UID) const;
+
+		void FreeShaderProgram(const WString& Name);
+
+		void FreeShaderStage(const WString& Name);
 
 		void AddShaderProgram(ShaderPtr& Shader);
 
@@ -29,8 +33,8 @@ namespace EmptySource {
 
 	private:
 		TDictionary<size_t, ShaderPtr> ShaderProgramList;
-		TDictionary<size_t, ShaderStagePtr> ShaderStageList;
 
+		TDictionary<size_t, ShaderStagePtr> ShaderStageList;
 	};
 
 }

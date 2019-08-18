@@ -372,9 +372,6 @@
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ResourceGroupManager.h">
-      <Filter>Runtime\Public\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>

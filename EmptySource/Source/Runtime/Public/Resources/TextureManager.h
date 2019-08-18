@@ -9,9 +9,11 @@ namespace EmptySource {
 
 	public:
 
-		Texture * GetTextureByName(const WString& Name) const;
+		Texture * GetTexture(const WString& Name) const;
 
-		Texture * GetTextureByUniqueID(const size_t & UID) const;
+		Texture * GetTexture(const size_t & UID) const;
+
+		void FreeTexture(const WString& Name);
 
 		void AddTexture(const WString& Name, Texture * Shader);
 

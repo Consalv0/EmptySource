@@ -6,12 +6,12 @@
 
 namespace EmptySource {
 
-	ShaderPtr ShaderManager::GetProgramByName(const WString & Name) const {
+	ShaderPtr ShaderManager::GetProgram(const WString & Name) const {
 		size_t UID = WStringToHash(Name);
-		return GetProgramByUniqueID(UID);
+		return GetProgram(UID);
 	}
 
-	ShaderPtr ShaderManager::GetProgramByUniqueID(const size_t & UID) const {
+	ShaderPtr ShaderManager::GetProgram(const size_t & UID) const {
 		auto Resource = ShaderProgramList.find(UID);
 		if (Resource != ShaderProgramList.end()) {
 			return Resource->second;
@@ -20,18 +20,28 @@ namespace EmptySource {
 		return NULL;
 	}
 
-	ShaderStagePtr ShaderManager::GetStageByName(const WString & Name) const {
+	ShaderStagePtr ShaderManager::GetStage(const WString & Name) const {
 		size_t UID = WStringToHash(Name);
-		return GetStageByUniqueID(UID);
+		return GetStage(UID);
 	}
 
-	ShaderStagePtr ShaderManager::GetStageByUniqueID(const size_t & UID) const {
+	ShaderStagePtr ShaderManager::GetStage(const size_t & UID) const {
 		auto Resource = ShaderStageList.find(UID);
 		if (Resource != ShaderStageList.end()) {
 			return Resource->second;
 		}
 
 		return NULL;
+	}
+
+	void ShaderManager::FreeShaderProgram(const WString & Name) {
+		size_t UID = WStringToHash(Name);
+		ShaderProgramList.erase(UID);
+	}
+
+	void ShaderManager::FreeShaderStage(const WString & Name) {
+		size_t UID = WStringToHash(Name);
+		ShaderStageList.erase(UID);
 	}
 
 	void ShaderManager::AddShaderProgram(ShaderPtr & Shader) {

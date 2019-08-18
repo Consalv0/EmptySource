@@ -6,7 +6,7 @@
 
 namespace EmptySource {
 
-	void ResourceHolderShaderStage::Load() {
+	void ShaderStageResource::Load() {
 		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
 
 		LoadState = LS_Loading;
@@ -17,7 +17,7 @@ namespace EmptySource {
 		LoadState = LS_Loaded;
 	}
 
-	void ResourceHolderShaderStage::Unload() {
+	void ShaderStageResource::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
@@ -25,13 +25,13 @@ namespace EmptySource {
 		LoadState = LS_Unloaded;
 	}
 
-	void ResourceHolderShaderStage::Reload() {
+	void ShaderStageResource::Reload() {
 		Unload();
 		Load();
 	}
 
-	ResourceHolderShaderStage::ResourceHolderShaderStage(const ResourceShaderStageData & InData)
-		: ResourceHolder(InData.Name), Stage(), LoadState(LS_Unloaded) {
+	ShaderStageResource::ShaderStageResource(const ResourceShaderStageData & InData)
+		: Resource(InData.Name), Stage(), LoadState(LS_Unloaded) {
 		Data.Name = InData.Name;
 		Data.ShaderType = InData.ShaderType;
 		Data.Code = InData.Code;
@@ -39,7 +39,7 @@ namespace EmptySource {
 
 	// Shader Program
 
-	void ResourceHolderShader::Load() {
+	void ShaderProgramResource::Load() {
 		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
 
 		TArray<ShaderStagePtr> Stages;
@@ -57,7 +57,7 @@ namespace EmptySource {
 		LoadState = LS_Loaded;
 	}
 
-	void ResourceHolderShader::Unload() {
+	void ShaderProgramResource::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
@@ -65,17 +65,17 @@ namespace EmptySource {
 		LoadState = LS_Unloaded;
 	}
 
-	void ResourceHolderShader::Reload() {
+	void ShaderProgramResource::Reload() {
 		Unload();
 		Load();
 	}
 
-	ResourceHolderShader::ResourceHolderShader(const ResourceShaderData & Data)
-		: ResourceHolder(Data.Name), Data(Data), Shader(), LoadState(LS_Unloaded) {
+	ShaderProgramResource::ShaderProgramResource(const ResourceShaderData & Data)
+		: Resource(Data.Name), Data(Data), Shader(), LoadState(LS_Unloaded) {
 	}
 
-	ResourceHolderShader::ResourceHolderShader(const WString& Name, TArray<ShaderStagePtr> Stages) 
-		: ResourceHolder(Name), Data(), Shader(), LoadState(LS_Unloaded) {
+	ShaderProgramResource::ShaderProgramResource(const WString& Name, TArray<ShaderStagePtr> Stages) 
+		: Resource(Name), Data(), Shader(), LoadState(LS_Unloaded) {
 		Data.Name = Name;
 		for (auto Stage : Stages) {
 			switch (Stage->GetType()) {

@@ -6,16 +6,18 @@
 
 namespace EmptySource {
 
-	class ResourceHolder {
+	class Resource {
 	protected:
 		friend class ResourceManager;
 
 		const WString Name;
 
-		ResourceHolder(const WString& Name);
+		const size_t UID;
+
+		Resource(const WString& Name);
 
 	public:
-		virtual ~ResourceHolder() = default;
+		virtual ~Resource() = default;
 
 		virtual void Load() = 0;
 
@@ -27,8 +29,12 @@ namespace EmptySource {
 
 		virtual inline EResourceLoadState GetLoadState() const = 0;
 
-		inline WString GetFriendlyName() const { return Name; };
+		virtual size_t GetMemorySize() const = 0;
+
+		inline WString GetName() const { return Name; };
 
 	};
+
+	typedef std::shared_ptr<Resource> ResourcePtr;
 
 }

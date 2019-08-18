@@ -6,7 +6,7 @@
 
 namespace EmptySource {
 
-	typedef std::shared_ptr<class ResourceHolderShaderStage> ResourceHolderShaderStagePtr;
+	typedef std::shared_ptr<class ShaderStageResource> ResourceHolderShaderStagePtr;
 
 	struct ResourceShaderStageData {
 	public:
@@ -21,7 +21,7 @@ namespace EmptySource {
 		ResourceShaderStageData(const WString& FilePath, size_t UID);
 	};
 
-	class ResourceHolderShaderStage : public ResourceHolder {
+	class ShaderStageResource : public Resource {
 	public:
 		virtual void Load() override;
 
@@ -40,9 +40,9 @@ namespace EmptySource {
 	protected:
 		friend class ResourceManager;
 
-		ResourceHolderShaderStage(const ResourceShaderStageData & Data);
+		ShaderStageResource(const ResourceShaderStageData & Data);
 
-		ResourceHolderShaderStage(ShaderStagePtr & Data);
+		ShaderStageResource(ShaderStagePtr & Data);
 
 	private:
 		ShaderStagePtr Stage;
@@ -64,9 +64,9 @@ namespace EmptySource {
 		ResourceShaderData(const WString& FilePath, size_t UID);
 	};
 
-	typedef std::shared_ptr<class ResourceHolderShader> ResourceHolderShaderPtr;
+	typedef std::shared_ptr<class ShaderProgramResource> ResourceHolderShaderPtr;
 
-	class ResourceHolderShader : public ResourceHolder {
+	class ShaderProgramResource : public Resource {
 	public:
 		virtual void Load() override;
 
@@ -85,11 +85,11 @@ namespace EmptySource {
 	protected:
 		friend class ResourceManager;
 
-		ResourceHolderShader(const ResourceShaderData& Data);
+		ShaderProgramResource(const ResourceShaderData& Data);
 
-		ResourceHolderShader(const WString & Name, TArray<ShaderStagePtr> Stages);
+		ShaderProgramResource(const WString & Name, TArray<ShaderStagePtr> Stages);
 
-		ResourceHolderShader(ShaderPtr & Data);
+		ShaderProgramResource(ShaderPtr & Data);
 
 	private:
 		ShaderPtr Shader;

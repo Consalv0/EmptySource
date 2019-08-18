@@ -236,7 +236,6 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
-    <ClInclude Include="Source\Runtime\Public\Resources\ResourceGroupManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceShader.h" />
@@ -325,4 +324,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

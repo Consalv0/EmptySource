@@ -141,9 +141,9 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		if (TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
+		if (TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
 			Texture2D * SelectedTexture = dynamic_cast<Texture2D *>(
-				TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
+				TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
 			);
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
@@ -189,9 +189,9 @@ protected:
 		ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
 		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
 		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
-		if (TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
+		if (TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
 			Texture2D * SampleTexture = dynamic_cast<Texture2D *>(
-				TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
+				TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
 			);
 			float MinSideSize = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * SampleTexture->GetAspectRatio());
 			MinSideSize -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
@@ -304,16 +304,16 @@ protected:
 		TextGenerator.PixelRange = 1.5F;
 		TextGenerator.Pivot = 0;
 
-		ImageLoader::Load(BaseAlbedo, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_diff.png"));
-		ImageLoader::Load(BaseMetallic, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_arch_spec.png"));
-		ImageLoader::Load(BaseRoughness, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_roug.jpg"));
-		ImageLoader::Load(BaseNormal, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_normal.png"));
-		ImageLoader::Load(FlamerAlbedo, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
-		ImageLoader::Load(FlamerMetallic, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
+		ImageLoader::Load(     BaseAlbedo, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_diff.png"));
+		ImageLoader::Load(   BaseMetallic, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_arch_spec.png"));
+		ImageLoader::Load(  BaseRoughness, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_roug.jpg"));
+		ImageLoader::Load(     BaseNormal, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_normal.png"));
+		ImageLoader::Load(   FlamerAlbedo, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
+		ImageLoader::Load( FlamerMetallic, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
 		ImageLoader::Load(FlamerRoughness, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
-		ImageLoader::Load(FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
-		ImageLoader::Load(White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
-		ImageLoader::Load(Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
+		ImageLoader::Load(   FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
+		ImageLoader::Load(          White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
+		ImageLoader::Load(          Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
 		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 
 		Texture2D EquirectangularTexture = Texture2D(
@@ -444,14 +444,14 @@ protected:
 		// --- Create and compile our GLSL shader programs from text files
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.GetResourcesFromFile(L"Resources/Resources.yaml");
-		ShaderPtr EquiToCubemapShader = ShaderMng.GetProgramByName(L"EquirectangularToCubemap");
-		ShaderPtr HDRClampingShader   = ShaderMng.GetProgramByName(L"HDRClampingShader");
-		ShaderPtr BRDFShader          = ShaderMng.GetProgramByName(L"BRDFShader");
-		ShaderPtr UnlitShader         = ShaderMng.GetProgramByName(L"UnLitShader");
-		ShaderPtr RenderTextureShader = ShaderMng.GetProgramByName(L"RenderTextureShader");
-		ShaderPtr IntegrateBRDFShader = ShaderMng.GetProgramByName(L"IntegrateBRDFShader");
-		ShaderPtr RenderTextShader    = ShaderMng.GetProgramByName(L"RenderTextShader");
-		ShaderPtr RenderCubemapShader = ShaderMng.GetProgramByName(L"RenderCubemapShader");
+		ShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
+		ShaderPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
+		ShaderPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
+		ShaderPtr UnlitShader         = ShaderMng.GetProgram(L"UnLitShader");
+		ShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
+		ShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
+		ShaderPtr RenderTextShader    = ShaderMng.GetProgram(L"RenderTextShader");
+		ShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
 
 		BaseMaterial.SetShaderProgram(BRDFShader);
 
@@ -627,23 +627,22 @@ protected:
 
 		ViewMatrix = Transform(EyePosition, FrameRotation).GetGLViewMatrix();
 		// ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
-		// Debug::Log(Debug::LogDebug, L"%ls", Text::FormatMath(ViewMatrix).c_str());
 
 		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime<Time::Second>();
-			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+			MaterialMetalness = Math::Clamp01(MaterialMetalness);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_M)) {
 			MaterialMetalness += 1.F * Time::GetDeltaTime<Time::Second>();
-			MaterialMetalness = std::clamp(MaterialMetalness, 0.F, 1.F);
+			MaterialMetalness = Math::Clamp01(MaterialMetalness);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_E)) {
 			MaterialRoughness -= 0.5F * Time::GetDeltaTime<Time::Second>();
-			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+			MaterialRoughness = Math::Clamp01(MaterialRoughness);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_R)) {
 			MaterialRoughness += 0.5F * Time::GetDeltaTime<Time::Second>();
-			MaterialRoughness = std::clamp(MaterialRoughness, 0.F, 1.F);
+			MaterialRoughness = Math::Clamp01(MaterialRoughness);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_L)) {
 			LightIntencity += LightIntencity * Time::GetDeltaTime<Time::Second>();
@@ -689,11 +688,11 @@ protected:
 		}
 		else {
 			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
-				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10;
+				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 
 			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
-				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10;
+				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 		}
 
@@ -853,15 +852,15 @@ protected:
 		BaseMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 		BaseMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 		BaseMaterial.SetTexture2D("_MainTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTextureByName(L"BaseAlbedoTexture")), 0);
+			TextureManager::GetInstance().GetTexture(L"BaseAlbedoTexture")), 0);
 		BaseMaterial.SetTexture2D("_NormalTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTextureByName(L"BaseNormalTexture")), 1);
+			TextureManager::GetInstance().GetTexture(L"BaseNormalTexture")), 1);
 		BaseMaterial.SetTexture2D("_RoughnessTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTextureByName(L"BaseRoughnessTexture")), 2);
+			TextureManager::GetInstance().GetTexture(L"BaseRoughnessTexture")), 2);
 		BaseMaterial.SetTexture2D("_MetallicTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTextureByName(L"BaseMetallicTexture")), 3);
+			TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture")), 3);
 		BaseMaterial.SetTexture2D("_BRDFLUT", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTextureByName(L"BRDFLut")), 4);
+			TextureManager::GetInstance().GetTexture(L"BRDFLut")), 4);
 		BaseMaterial.SetTextureCubemap("_EnviromentMap", CubemapTexture, 5);
 		float CubemapTextureMipmaps = CubemapTexture->GetMipmapCount();
 		BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
