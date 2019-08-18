@@ -1,9 +1,11 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Rendering/RenderingResources.h"
+#include "Rendering/RenderingBuffers.h"
+#include "Rendering/RenderingAPI.h"
 
 #include "Platform/OpenGL/OpenGLBuffers.h"
+#include "Platform/OpenGL/OpenGLAPI.h"
 
 #include "Rendering/Rendering.h"
 
@@ -39,7 +41,7 @@ namespace EmptySource {
 			return std::make_shared<OpenGLVertexArray>();
 		case RenderingAPI::API::None:
 		default:
-			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create index buffer!");
+			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create vertex array!");
 			return NULL;
 		}
 	}

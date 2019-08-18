@@ -6,11 +6,11 @@ Resources:
   - GUID: 9724844382453382494
     ShaderStage:
       FilePath: Resources/Shaders/EquirectangularToCubemap.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 14487276356520426687
     ShaderStage:
       FilePath: Resources/Shaders/HDRClamping.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 16658501045142873423
     ShaderStage:
       FilePath: Resources/Shaders/Base.vertex.glsl
@@ -26,27 +26,27 @@ Resources:
   - GUID: 1168590647783747496
     ShaderStage:
       FilePath: Resources/Shaders/BRDF.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 9154606323356647483
     ShaderStage:
       FilePath: Resources/Shaders/IntegrateBRDF.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 4750013093861987399
     ShaderStage:
       FilePath: Resources/Shaders/RenderTexture.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 16113507823090325981
     ShaderStage:
       FilePath: Resources/Shaders/RenderText.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 9467077380870312549
     ShaderStage:
       FilePath: Resources/Shaders/RenderCubemap.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 2988000627463272952
     ShaderStage:
       FilePath: Resources/Shaders/Unlit.fragment.glsl
-      Type: Fragment
+      Type: Pixel
   - GUID: 11528219194579939156
     ShaderStage:
       FilePath: Resources/Shaders/Voxelizer.geometry.glsl

@@ -20,7 +20,7 @@ namespace EmptySource {
 		CullMode = CM_CounterClockWise;
 	}
 
-	void Material::SetShaderProgram(ShaderProgram* Value) {
+	void Material::SetShaderProgram(ShaderPtr Value) {
 		if (Value != NULL && Value->IsValid()) {
 			MaterialShader = Value;
 		}
@@ -29,12 +29,12 @@ namespace EmptySource {
 		}
 	}
 
-	ShaderProgram * Material::GetShaderProgram() const {
+	ShaderPtr Material::GetShaderProgram() const {
 		return MaterialShader;
 	}
 
 	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const unsigned int & Buffer) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int AttribLocation = Program->GetAttribLocation(AttributeName);
 
@@ -57,42 +57,49 @@ namespace EmptySource {
 	}
 
 	void Material::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniformMatrix4fv(UniformLocation, Count, GL_FALSE, Data);
 	}
 
 	void Material::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform1fv(UniformLocation, Count, Data);
 	}
 
+	void Material::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) const {
+		ShaderPtr Program = GetShaderProgram();
+		if (Program == NULL) return;
+		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
+		glUniform1iv(UniformLocation, Count, (GLint *)Data);
+	}
+
 	void Material::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform2fv(UniformLocation, Count, Data);
 	}
 
 	void Material::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform3fv(UniformLocation, Count, Data);
 	}
 
 	void Material::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform4fv(UniformLocation, Count, Data);
 	}
 
 	void Material::SetTexture2D(const NChar * UniformName, Texture2D * Tex, const unsigned int & Position) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL || Tex == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
@@ -101,7 +108,7 @@ namespace EmptySource {
 	}
 
 	void Material::SetTextureCubemap(const NChar * UniformName, Cubemap * Tex, const unsigned int & Position) const {
-		ShaderProgram * Program = GetShaderProgram();
+		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
@@ -162,7 +169,7 @@ namespace EmptySource {
 		}
 
 		if (MaterialShader && MaterialShader->IsValid()) {
-			MaterialShader->Use();
+			MaterialShader->Bind();
 		}
 	}
 

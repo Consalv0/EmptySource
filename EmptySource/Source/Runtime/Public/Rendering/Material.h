@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Rendering/RenderingDefinitions.h"
-#include "Rendering/ShaderProgram.h"
+#include "Rendering/Shader.h"
 
 namespace EmptySource {
 
 	class Material {
 	private:
-		ShaderProgram* MaterialShader;
+		ShaderPtr MaterialShader;
 
 	public:
 		bool bUseDepthTest;
@@ -19,10 +19,10 @@ namespace EmptySource {
 		Material();
 
 		//* Set material shader
-		void SetShaderProgram(ShaderProgram* Value);
+		void SetShaderProgram(ShaderPtr Value);
 
 		//* Get material shader
-		ShaderProgram* GetShaderProgram() const;
+		ShaderPtr GetShaderProgram() const;
 
 		//* Pass Matrix4x4 Buffer Array
 		void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const unsigned int& Buffer) const;
@@ -32,6 +32,9 @@ namespace EmptySource {
 
 		//* Pass one float vector value array
 		void SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
+
+		//* Pass one int vector value array
+		void SetInt1Array(const NChar * UniformName, const int * Data, const int & Count = 1) const;
 
 		//* Pass two float vector value array
 		void SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;

@@ -1,11 +1,12 @@
 
 #include "CoreMinimal.h"
 #include "Resources/ResourceManager.h"
+#include "Resources/ResourceShader.h"
 
 #include <yaml-cpp/yaml.h>
 
 namespace EmptySource {
-
+	
 	FileStream * ResourceManager::GetResourcesFile(const WString & ResourceFilePath) {
 		FileStream * ResourceFile = FileManager::GetFile(ResourceFilePath);
 
@@ -32,7 +33,7 @@ namespace EmptySource {
 		return ResourceFile;
 	}
 
-	FileStream * ResourceManager::CreateResourceFile(const WString & ResourceFilePath) {
+	FileStream * ResourceManager::CreateResourcesFile(const WString & ResourceFilePath) {
 		FileStream * ResourceFile = FileManager::GetFile(ResourceFilePath);
 
 		YAML::Node BaseNode;
@@ -42,8 +43,6 @@ namespace EmptySource {
 
 		if (ResourceFile->IsValid()) {
 			ResourceFile->Clean();
-			YAML::Node GroupsNode;
-			BaseNode["Groups"] = GroupsNode;
 			YAML::Node ResourcesNode;
 			BaseNode["Resources"] = ResourcesNode;
 			YAML::Emitter Out;

@@ -10,30 +10,18 @@ namespace EmptySource {
 	};
 
 	enum EResourceType {
-		RT_Texture, RT_ShaderStage, RT_ShaderProgram, RT_Material, RT_Mesh
+		RT_Texture, RT_Shader, RT_Material, RT_Mesh
 	};
 
 	class ResourceManager {
-	protected:
-		const unsigned int LoadOrder;
-
-		const EResourceType Type;
-
-		ResourceManager(unsigned int LoadOrder, EResourceType Type) : LoadOrder(LoadOrder), Type(Type) {};
-
 	public:
-		//* Lower value indicate it will be loaded firts
-		const unsigned int & GetLoadOrder() const { return LoadOrder; };
+		virtual inline EResourceType GetResourceType() const = 0;
 
-		const EResourceType & GetResourceType() const { return Type; };
-
-		virtual class ResourceHolder * GetResourceByUniqueName(const WString& Name) const { return NULL; };
-
-		virtual class ResourceHolder * GetResourceByUniqueID(const size_t & UID) const { return NULL; };
+		virtual void GetResourcesFromFile(const WString& FilePath) = 0;
 
 		static FileStream * GetResourcesFile(const WString & FilePath);
 
-		static FileStream * CreateResourceFile(const WString & FilePath);
+		static FileStream * CreateResourcesFile(const WString & FilePath);
 	};
 
 }

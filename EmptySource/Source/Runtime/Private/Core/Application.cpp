@@ -24,7 +24,7 @@
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
-#include "Rendering/ShaderProgram.h"
+#include "Rendering/Shader.h"
 #include "Rendering/Material.h"
 #include "Rendering/Texture2D.h"
 #include "Rendering/Texture3D.h"
@@ -32,12 +32,9 @@
 
 #include "Files/FileManager.h"
 
-#define RESOURCES_ADD_SHADERSTAGE
-#define RESOURCES_ADD_SHADERPROGRAM
-#include "Resources/Resources.h"
 #include "Resources/MeshLoader.h"
 #include "Resources/ImageLoader.h"
-#include "Resources/ShaderStageManager.h"
+#include "Resources/ShaderManager.h"
 
 #include "Fonts/Font.h"
 

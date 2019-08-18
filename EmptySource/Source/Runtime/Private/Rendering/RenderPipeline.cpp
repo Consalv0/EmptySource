@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Core/Window.h"
 #include "Core/Application.h"
-#include "Rendering/RenderingResources.h"
+#include "Rendering/RenderingBuffers.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/GLFunctions.h"

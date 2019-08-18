@@ -1,7 +1,7 @@
 #version 410
 
 const float PI = 3.1415926535;
-const float Gamma = 1.8;
+const float Gamma = 2.2;
 
 uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;

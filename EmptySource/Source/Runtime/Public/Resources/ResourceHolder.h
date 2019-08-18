@@ -3,21 +3,19 @@
 #include "Utility/TextFormatting.h"
 #include "Core/IIdentifier.h"
 #include "Resources/ResourceManager.h"
-#include "Events/Property.h"
 
 namespace EmptySource {
 
-	class ResourceHolder : public IIdentifier {
+	class ResourceHolder {
 	protected:
 		friend class ResourceManager;
 
-		Property<EResourceLoadState> LoadState;
-		ResourceManager * Manager;
 		const WString Name;
 
-		ResourceHolder(ResourceManager * Manager, const WString & Name);
+		ResourceHolder(const WString& Name);
 
 	public:
+		virtual ~ResourceHolder() = default;
 
 		virtual void Load() = 0;
 
@@ -25,11 +23,12 @@ namespace EmptySource {
 
 		virtual void Reload() = 0;
 
-		const EResourceLoadState & GetLoadState() const { return LoadState.Get(); };
+		virtual inline EResourceType GetResourceType() const = 0;
 
-		WString GetFriendlyName() const { return Name; };
+		virtual inline EResourceLoadState GetLoadState() const = 0;
 
-		ResourceManager * GetResourceManager() const { return Manager; };
+		inline WString GetFriendlyName() const { return Name; };
+
 	};
 
 }

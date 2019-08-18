@@ -105,6 +105,9 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\Platform.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -336,16 +339,16 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingAPI.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingBuffers.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderingResources.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\ShaderProgram.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\ShaderStage.h">
+    <ClInclude Include="Source\Runtime\Public\Rendering\Shader.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h">
@@ -378,19 +381,13 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShaderProgram.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShader.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShaderStage.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\Resources.h">
-      <Filter>Runtime\Public\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageManager.h">
-      <Filter>Runtime\Public\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ShaderStageResource.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h">
@@ -417,6 +414,9 @@
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp">
@@ -533,13 +533,10 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingResources.cpp">
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderingBuffers.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\ShaderProgram.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\ShaderStage.cpp">
+    <ClCompile Include="Source\Runtime\Private\Rendering\Shader.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp">
@@ -569,19 +566,13 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShaderProgram.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShader.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShaderStage.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\Resources.cpp">
-      <Filter>Runtime\Private\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageManager.cpp">
-      <Filter>Runtime\Private\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ShaderStageResource.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp">

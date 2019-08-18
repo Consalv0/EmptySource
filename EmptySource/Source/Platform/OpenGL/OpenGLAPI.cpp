@@ -1,7 +1,9 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Rendering/RenderingResources.h"
+#include "Rendering/RenderingBuffers.h"
+
+#include "Rendering/RenderingAPI.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
 
 #include <glad/glad.h>

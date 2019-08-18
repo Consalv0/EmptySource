@@ -2,10 +2,6 @@
 
 namespace EmptySource {
 
-	enum class EShaderDataType {
-		None = 0, Bool, Float, Float2, Float3, Float4, Int, Int2, Int3, Int4, Mat3x3, Mat4x4 
-	};
-
 	unsigned int ShaderDataTypeSize(EShaderDataType Type);
 
 	struct BufferElement {
@@ -130,27 +126,6 @@ namespace EmptySource {
 		virtual IndexBufferPtr GetIndexBuffer() = 0;
 
 		static VertexArrayPtr Create();
-
-	};
-
-	class RenderingAPI {
-	public:
-
-		enum class API {
-			None = 0, OpenGL = 1, Vulkan = 2
-		};
-
-		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) = 0;
-
-		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) = 0;
-
-		inline static API GetAPI() {
-			return AppInterface;
-		};
-
-	private:
-
-		static API AppInterface;
 
 	};
 

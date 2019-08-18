@@ -1,10 +1,10 @@
 
 #include "CoreMinimal.h"
-#include "Rendering/Cubemap.h"
 #include "Rendering/GLFunctions.h"
 #include "Rendering/Texture2D.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/Material.h"
+#include "Rendering/Cubemap.h"
 #include "Mesh/Mesh.h"
 #include "Mesh/MeshPrimitives.h"
 #include "Math/Matrix4x4.h"
@@ -175,7 +175,7 @@ namespace EmptySource {
 		return true;
 	}
 
-	bool Cubemap::FromEquirectangular(Cubemap & Map, Texture2D * Equirectangular, ShaderProgram * ShaderConverter) {
+	bool Cubemap::FromEquirectangular(Cubemap & Map, Texture2D * Equirectangular, ShaderPtr ShaderConverter) {
 		if (!Map.IsValid()) return false;
 
 		Material EquirectangularToCubemapMaterial = Material();
@@ -236,7 +236,7 @@ namespace EmptySource {
 		return true;
 	}
 
-	bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular, ShaderProgram * ShaderConverter) {
+	bool Cubemap::FromHDREquirectangular(Cubemap & Map, Texture2D * Equirectangular, ShaderPtr ShaderConverter) {
 		if (!Map.IsValid()) return false;
 
 		Material EquirectangularToCubemapMaterial = Material();

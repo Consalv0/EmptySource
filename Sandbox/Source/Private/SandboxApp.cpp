@@ -23,7 +23,7 @@
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
-#include "Rendering/ShaderProgram.h"
+#include "Rendering/Shader.h"
 #include "Rendering/Material.h"
 #include "Rendering/Texture2D.h"
 #include "Rendering/Texture3D.h"
@@ -33,10 +33,11 @@
 
 #define RESOURCES_ADD_SHADERSTAGE
 #define RESOURCES_ADD_SHADERPROGRAM
-#include "Resources/Resources.h"
+#include "Resources/ResourceManager.h"
 #include "Resources/MeshLoader.h"
 #include "Resources/ImageLoader.h"
-#include "Resources/ShaderStageManager.h"
+#include "Resources/ShaderManager.h"
+#include "Resources/TextureManager.h"
 
 #include "Components/ComponentRenderer.h"
 
@@ -128,7 +129,7 @@ protected:
 	virtual void OnAttach() override {}
 
 	virtual void OnImGuiRender() override {
-		static Texture2D TextureSample(IntVector2(1024, 1024), CF_RGB16F, FM_MinMagLinear, SAM_Repeat);
+		static Texture2D TextureSample(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
 		const NChar* Textures[] = {
 			"BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
 			"BaseRoughnessTexture", "BaseNormalTexture", "FlamerAlbedoTexture",
@@ -136,15 +137,26 @@ protected:
 		};
 		static int CurrentTexture = 0;
 		static float LODLevel = 0.F;
+		static float Gamma = 2.2F;
+		static bool ColorFilter[4] = {true, true, true, true};
+		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		if (OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
-			Texture2D * SelectedTexture = OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())->GetData();
+		if (TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
+			Texture2D * SelectedTexture = dynamic_cast<Texture2D *>(
+				TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
+			);
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
 			TextureSample.Use(); 
 			float DeltaTime = Time::GetTimeStamp().GetDeltaTime<Time::Second>();
 			RenderTextureMaterial.Use();
 			RenderTextureMaterial.SetFloat1Array("_Time", &DeltaTime);
+			RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
+			RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
+			RenderTextureMaterial.SetFloat4Array("_ColorFilter",
+				Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
+				.PointerToValue()
+			);
 			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample.GetDimension().FloatVector2().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
@@ -167,9 +179,20 @@ protected:
 
 		ImGui::Begin("Textures");
 		ImGui::Combo("Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures));
-		ImGui::SliderFloat("LOD Level", &LODLevel, 0.0f, 1.0f, "ratio = %.3f");
-		if (OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
-			Texture2D * SampleTexture = OldResourceManager::Get<Texture2D>(Text::NarrowToWide(Textures[CurrentTexture]).c_str())->GetData();
+		ImGui::SliderFloat("LOD Level", &LODLevel, 0.0f, 1.0f, "%.3f");
+		ImGui::SliderFloat("Gamma", &Gamma, 1.0f, 4.0f, "%.3f");
+		ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
+		ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
+		ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
+		ImGui::ColorButton("GreenFilter##RefColor", ImColor(0.F, ColorFilter[1] ? 1.F : 0.F, 0.F, 1.F));
+		ImGui::SameLine(); ImGui::Checkbox("##BlueFilter", &ColorFilter[2]); ImGui::SameLine();
+		ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
+		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
+		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
+		if (TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
+			Texture2D * SampleTexture = dynamic_cast<Texture2D *>(
+				TextureManager::GetInstance().GetTextureByName(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
+			);
 			float MinSideSize = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * SampleTexture->GetAspectRatio());
 			MinSideSize -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
 			ImGui::Image(
@@ -310,7 +333,7 @@ protected:
 			BaseAlbedo.PointerToValue()
 		);
 		BaseAlbedoTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"BaseAlbedoTexture", BaseAlbedoTexture);
+		TextureManager::GetInstance().AddTexture(L"BaseAlbedoTexture", BaseAlbedoTexture);
 		Texture2D * BaseMetallicTexture = new Texture2D(
 			IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
 			CF_Red,
@@ -320,7 +343,7 @@ protected:
 			BaseMetallic.PointerToValue()
 		);
 		BaseMetallicTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"BaseMetallicTexture", BaseMetallicTexture);
+		TextureManager::GetInstance().AddTexture(L"BaseMetallicTexture", BaseMetallicTexture);
 		Texture2D * BaseRoughnessTexture = new Texture2D(
 			IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
 			CF_Red,
@@ -330,7 +353,7 @@ protected:
 			BaseRoughness.PointerToValue()
 		);
 		BaseRoughnessTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"BaseRoughnessTexture", BaseRoughnessTexture);
+		TextureManager::GetInstance().AddTexture(L"BaseRoughnessTexture", BaseRoughnessTexture);
 		Texture2D * BaseNormalTexture = new Texture2D(
 			IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
 			CF_RGB,
@@ -340,7 +363,7 @@ protected:
 			BaseNormal.PointerToValue()
 		);
 		BaseNormalTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"BaseNormalTexture", BaseNormalTexture);
+		TextureManager::GetInstance().AddTexture(L"BaseNormalTexture", BaseNormalTexture);
 
 		////
 		Texture2D * FlamerAlbedoTexture = new Texture2D(
@@ -352,7 +375,7 @@ protected:
 			FlamerAlbedo.PointerToValue()
 		);
 		FlamerAlbedoTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
+		TextureManager::GetInstance().AddTexture(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
 		Texture2D * FlamerMetallicTexture = new Texture2D(
 			IntVector2(FlamerMetallic.GetWidth(), FlamerMetallic.GetHeight()),
 			CF_Red,
@@ -362,7 +385,7 @@ protected:
 			FlamerMetallic.PointerToValue()
 		);
 		FlamerMetallicTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"FlamerMetallicTexture", FlamerMetallicTexture);
+		TextureManager::GetInstance().AddTexture(L"FlamerMetallicTexture", FlamerMetallicTexture);
 		Texture2D * FlamerRoughnessTexture = new Texture2D(
 			IntVector2(FlamerRoughness.GetWidth(), FlamerRoughness.GetHeight()),
 			CF_Red,
@@ -372,7 +395,7 @@ protected:
 			FlamerRoughness.PointerToValue()
 		);
 		FlamerRoughnessTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
+		TextureManager::GetInstance().AddTexture(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
 		Texture2D * FlamerNormalTexture = new Texture2D(
 			IntVector2(FlamerNormal.GetWidth(), FlamerNormal.GetHeight()),
 			CF_RGB,
@@ -382,7 +405,7 @@ protected:
 			FlamerNormal.PointerToValue()
 		);
 		FlamerNormalTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"FlamerNormalTexture", FlamerNormalTexture);
+		TextureManager::GetInstance().AddTexture(L"FlamerNormalTexture", FlamerNormalTexture);
 		////
 
 		Texture2D * WhiteTexture = new Texture2D(
@@ -394,7 +417,7 @@ protected:
 			White.PointerToValue()
 		);
 		WhiteTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"WhiteTexture", WhiteTexture);
+		TextureManager::GetInstance().AddTexture(L"WhiteTexture", WhiteTexture);
 		Texture2D * BlackTexture = new Texture2D(
 			IntVector2(Black.GetWidth(), Black.GetHeight()),
 			CF_RGB,
@@ -404,7 +427,7 @@ protected:
 			Black.PointerToValue()
 		);
 		BlackTexture->GenerateMipMaps();
-		OldResourceManager::Load(L"BlackTexture", BlackTexture);
+		TextureManager::GetInstance().AddTexture(L"BlackTexture", BlackTexture);
 
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 
@@ -419,43 +442,45 @@ protected:
 		FontMap->GenerateMipMaps();
 
 		// --- Create and compile our GLSL shader programs from text files
-		Resource<ShaderProgram> * EquiToCubemapShader = OldResourceManager::Load<ShaderProgram>(L"EquirectangularToCubemap");
-		Resource<ShaderProgram> * HDRClampingShader = OldResourceManager::Load<ShaderProgram>(L"HDRClampingShader");
-		Resource<ShaderProgram> * BRDFShader = OldResourceManager::Load<ShaderProgram>(L"BRDFShader");
-		Resource<ShaderProgram> * UnlitShader = OldResourceManager::Load<ShaderProgram>(L"UnLitShader");
-		Resource<ShaderProgram> * RenderTextureShader = OldResourceManager::Load<ShaderProgram>(L"RenderTextureShader");
-		Resource<ShaderProgram> * IntegrateBRDFShader = OldResourceManager::Load<ShaderProgram>(L"IntegrateBRDFShader");
-		Resource<ShaderProgram> * RenderTextShader = OldResourceManager::Load<ShaderProgram>(L"RenderTextShader");
-		Resource<ShaderProgram> * RenderCubemapShader = OldResourceManager::Load<ShaderProgram>(L"RenderCubemapShader");
+		ShaderManager& ShaderMng = ShaderManager::GetInstance();
+		ShaderMng.GetResourcesFromFile(L"Resources/Resources.yaml");
+		ShaderPtr EquiToCubemapShader = ShaderMng.GetProgramByName(L"EquirectangularToCubemap");
+		ShaderPtr HDRClampingShader   = ShaderMng.GetProgramByName(L"HDRClampingShader");
+		ShaderPtr BRDFShader          = ShaderMng.GetProgramByName(L"BRDFShader");
+		ShaderPtr UnlitShader         = ShaderMng.GetProgramByName(L"UnLitShader");
+		ShaderPtr RenderTextureShader = ShaderMng.GetProgramByName(L"RenderTextureShader");
+		ShaderPtr IntegrateBRDFShader = ShaderMng.GetProgramByName(L"IntegrateBRDFShader");
+		ShaderPtr RenderTextShader    = ShaderMng.GetProgramByName(L"RenderTextShader");
+		ShaderPtr RenderCubemapShader = ShaderMng.GetProgramByName(L"RenderCubemapShader");
 
-		BaseMaterial.SetShaderProgram(BRDFShader->GetData());
+		BaseMaterial.SetShaderProgram(BRDFShader);
 
 		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
 
-		UnlitMaterial.SetShaderProgram(UnlitShader->GetData());
+		UnlitMaterial.SetShaderProgram(UnlitShader);
 
-		UnlitMaterialWire.SetShaderProgram(UnlitShader->GetData());
+		UnlitMaterialWire.SetShaderProgram(UnlitShader);
 		UnlitMaterialWire.FillMode = FM_Wireframe;
 		UnlitMaterialWire.CullMode = CM_None;
 
 		RenderTextureMaterial.DepthFunction = DF_Always;
 		RenderTextureMaterial.CullMode = CM_None;
-		RenderTextureMaterial.SetShaderProgram(RenderTextureShader->GetData());
+		RenderTextureMaterial.SetShaderProgram(RenderTextureShader);
 
 		RenderTextMaterial.DepthFunction = DF_Always;
 		RenderTextMaterial.CullMode = CM_None;
-		RenderTextMaterial.SetShaderProgram(RenderTextShader->GetData());
+		RenderTextMaterial.SetShaderProgram(RenderTextShader);
 
 		RenderCubemapMaterial.CullMode = CM_None;
-		RenderCubemapMaterial.SetShaderProgram(RenderCubemapShader->GetData());
+		RenderCubemapMaterial.SetShaderProgram(RenderCubemapShader);
 
 		IntegrateBRDFMaterial.DepthFunction = DF_Always;
 		IntegrateBRDFMaterial.CullMode = CM_None;
-		IntegrateBRDFMaterial.SetShaderProgram(IntegrateBRDFShader->GetData());
+		IntegrateBRDFMaterial.SetShaderProgram(IntegrateBRDFShader);
 
 		HDRClampingMaterial.DepthFunction = DF_Always;
 		HDRClampingMaterial.CullMode = CM_None;
-		HDRClampingMaterial.SetShaderProgram(HDRClampingShader->GetData());
+		HDRClampingMaterial.SetShaderProgram(HDRClampingShader);
 
 		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [this](MeshLoader::FileData & ModelData) {
 			if (ModelData.bLoaded) {
@@ -496,7 +521,7 @@ protected:
 		EquirectangularTextureHDR = new Texture2D(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
 		);
-		OldResourceManager::Load(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
+		TextureManager::GetInstance().AddTexture(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
 		{
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
@@ -540,16 +565,24 @@ protected:
 			Renderer.Delete();
 			// BRDFLut.GenerateMipMaps();
 		}
-		OldResourceManager::Load(L"BRDFLut", BRDFLut);
+		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
 		CubemapTexture = new Cubemap(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
-		Cubemap::FromHDREquirectangular(*CubemapTexture, EquirectangularTextureHDR, EquiToCubemapShader->GetData());
-		OldResourceManager::Load(L"CubemapTexture", CubemapTexture);
+		Cubemap::FromHDREquirectangular(*CubemapTexture, EquirectangularTextureHDR, EquiToCubemapShader);
+		TextureManager::GetInstance().AddTexture(L"CubemapTexture", CubemapTexture);
 
 		Transforms.push_back(Transform());
 
 		Application::GetInstance()->GetRenderPipeline().Initialize();
 		Application::GetInstance()->GetRenderPipeline().ContextInterval(0);
+	}
+
+	virtual void OnInputEvent(InputEvent & InEvent) override {
+		EventDispatcher<InputEvent> Dispatcher(InEvent);
+		Dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent & Event) {
+			CursorPosition = Event.GetMousePosition();
+			FrameRotation = Quaternion::EulerAngles(Vector3(Event.GetY(), -Event.GetX()));
+		});
 	}
 
 	virtual void OnUpdate(Timestamp Stamp) override {
@@ -560,11 +593,6 @@ protected:
 			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
-
-		// --- Camera rotation, position Matrix
-		CursorPosition = Input::GetMousePosition();
-
-		FrameRotation = Quaternion::EulerAngles(Vector3(CursorPosition.y, -CursorPosition.x));
 
 		if (Input::IsKeyDown(SDL_SCANCODE_W)) {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
@@ -824,11 +852,16 @@ protected:
 
 		BaseMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 		BaseMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		BaseMaterial.SetTexture2D("_MainTexture", OldResourceManager::Get<Texture2D>(L"BaseAlbedoTexture")->GetData(), 0);
-		BaseMaterial.SetTexture2D("_NormalTexture", OldResourceManager::Get<Texture2D>(L"BaseNormalTexture")->GetData(), 1);
-		BaseMaterial.SetTexture2D("_RoughnessTexture", OldResourceManager::Get<Texture2D>(L"BaseRoughnessTexture")->GetData(), 2);
-		BaseMaterial.SetTexture2D("_MetallicTexture", OldResourceManager::Get<Texture2D>(L"BaseMetallicTexture")->GetData(), 3);
-		BaseMaterial.SetTexture2D("_BRDFLUT", OldResourceManager::Get<Texture2D>(L"BRDFLut")->GetData(), 4);
+		BaseMaterial.SetTexture2D("_MainTexture", dynamic_cast<Texture2D *>(
+			TextureManager::GetInstance().GetTextureByName(L"BaseAlbedoTexture")), 0);
+		BaseMaterial.SetTexture2D("_NormalTexture", dynamic_cast<Texture2D *>(
+			TextureManager::GetInstance().GetTextureByName(L"BaseNormalTexture")), 1);
+		BaseMaterial.SetTexture2D("_RoughnessTexture", dynamic_cast<Texture2D *>(
+			TextureManager::GetInstance().GetTextureByName(L"BaseRoughnessTexture")), 2);
+		BaseMaterial.SetTexture2D("_MetallicTexture", dynamic_cast<Texture2D *>(
+			TextureManager::GetInstance().GetTextureByName(L"BaseMetallicTexture")), 3);
+		BaseMaterial.SetTexture2D("_BRDFLUT", dynamic_cast<Texture2D *>(
+			TextureManager::GetInstance().GetTextureByName(L"BRDFLut")), 4);
 		BaseMaterial.SetTextureCubemap("_EnviromentMap", CubemapTexture, 5);
 		float CubemapTextureMipmaps = CubemapTexture->GetMipmapCount();
 		BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
@@ -960,10 +993,13 @@ protected:
 
 		float AppTime = (float)Time::GetEpochTime<Time::Mili>();
 		glViewport(0, 0, EquirectangularTextureHDR->GetWidth() / 4 * abs(1 - MultiuseValue), EquirectangularTextureHDR->GetHeight() / 4 * abs(1 - MultiuseValue));
+		int bMonochrome = false;
 
 		RenderTextureMaterial.Use();
 
 		RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
+		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
+		RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(1.F).PointerToValue());
 		RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR->GetDimension().FloatVector2().PointerToValue());
 		RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		RenderTextureMaterial.SetTexture2D("_MainTexture", EquirectangularTextureHDR, 0);

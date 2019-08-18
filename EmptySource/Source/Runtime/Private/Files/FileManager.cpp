@@ -32,7 +32,7 @@ namespace EmptySource {
 
 	FileStream * FileManager::MakeFile(const WString & FilePath) {
 		std::fstream Stream;
-#ifdef WIN32
+#ifdef ES_PLATFORM_WINDOWS
 		Stream.open(FilePath, std::ios::in | std::ios::out | std::ios::trunc);
 #else
 		Stream.open(WStringToString(FilePath), std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
@@ -56,11 +56,11 @@ namespace EmptySource {
 	}
 
 	WString FileManager::GetFullPath(const WString & Path) {
-#ifdef WIN32
+#ifdef ES_PLATFORM_WINDOWS
 		WChar FullPath[MAX_PATH + 1];
 		GetFullPathName(Path.c_str(), MAX_PATH, FullPath, NULL);
 		return FullPath;
-#elif __APPLE__
+#elif ES_PLATFORM_APPLE
 		WString ResourcesPath = Path;
 		WString ResourcesFolderName = L"Resources/";
 		Text::Replace(ResourcesPath, ResourcesFolderName, WString(L""));
