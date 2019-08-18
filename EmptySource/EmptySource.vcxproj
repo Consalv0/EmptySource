@@ -148,6 +148,7 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="Source\Platform\Platform.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsDeviceFunctions.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsInput.h" />
@@ -217,7 +218,6 @@
     <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h" />
     <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\Cubemap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
@@ -230,8 +230,6 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Shader.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\Texture2D.h" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\Texture3D.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
@@ -252,6 +250,7 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffers.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
@@ -284,7 +283,6 @@
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp" />
@@ -293,8 +291,6 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderingBuffers.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Shader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Rendering\Texture2D.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Rendering\Texture3D.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp" />
@@ -324,4 +320,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 

@@ -1,5 +1,6 @@
 
 #include "CoreMinimal.h"
+#include "Rendering/Texture.h"
 #include "Rendering/Material.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"

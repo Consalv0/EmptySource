@@ -1,9 +1,8 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/GLFunctions.h"
+#include "Rendering/Texture.h"
 #include "Rendering/Material.h"
-#include "Rendering/Texture2D.h"
-#include "Rendering/Cubemap.h"
 #include "Math/MathUtility.h"
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
@@ -98,25 +97,25 @@ namespace EmptySource {
 		glUniform4fv(UniformLocation, Count, Data);
 	}
 
-	void Material::SetTexture2D(const NChar * UniformName, Texture2D * Tex, const unsigned int & Position) const {
+	void Material::SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL || Tex == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
-		Tex->Use();
+		Tex->Bind();
 	}
 
-	void Material::SetTextureCubemap(const NChar * UniformName, Cubemap * Tex, const unsigned int & Position) const {
+	void Material::SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
-		Tex->Use();
+		Tex->Bind();
 	}
 
-	void Material::Use() {
+	void Material::Use() const {
 		// --- Activate Z-buffer
 		if (bUseDepthTest) {
 			glEnable(GL_DEPTH_TEST);

@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Utility/TexturePacking.h"
 #include "Rendering/Bitmap.h"
-#include "Rendering/Texture2D.h"
+#include "Rendering/Texture.h"
 
 namespace EmptySource {
 

@@ -4,6 +4,7 @@
 
 namespace EmptySource {
 
+	struct IntVector2;
 	struct Vector2;
 	struct Vector3;
 	struct Vector4;
@@ -17,6 +18,7 @@ namespace EmptySource {
 
 		HOST_DEVICE FORCEINLINE IntVector3();
 		HOST_DEVICE FORCEINLINE IntVector3(const IntVector3& Vector);
+		HOST_DEVICE FORCEINLINE IntVector3(const IntVector2& Vector);
 		HOST_DEVICE FORCEINLINE IntVector3(const Vector2& Vector);
 		HOST_DEVICE FORCEINLINE IntVector3(const Vector3& Vector);
 		HOST_DEVICE FORCEINLINE IntVector3(const Vector4& Vector);

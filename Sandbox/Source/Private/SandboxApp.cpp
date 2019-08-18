@@ -24,10 +24,8 @@
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/Shader.h"
+#include "Rendering/Texture.h"
 #include "Rendering/Material.h"
-#include "Rendering/Texture2D.h"
-#include "Rendering/Texture3D.h"
-#include "Rendering/Cubemap.h"
 
 #include "Files/FileManager.h"
 
@@ -113,9 +111,9 @@ private:
 	Mesh DynamicMesh;
 	Point2 TextPivot;
 
-	Texture2D * EquirectangularTextureHDR;
-	Texture2D * FontMap;
-	Cubemap * CubemapTexture;
+	Texture2DPtr EquirectangularTextureHDR;
+	Texture2DPtr FontMap;
+	CubemapPtr CubemapTexture;
 
 	Transform TestArrowTransform;
 	Vector3 TestArrowDirection = 0;
@@ -129,7 +127,7 @@ protected:
 	virtual void OnAttach() override {}
 
 	virtual void OnImGuiRender() override {
-		static Texture2D TextureSample(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
+		static Texture2DPtr TextureSample = Texture2D::Create(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
 		const NChar* Textures[] = {
 			"BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
 			"BaseRoughnessTexture", "BaseNormalTexture", "FlamerAlbedoTexture",
@@ -142,12 +140,12 @@ protected:
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
 		if (TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
-			Texture2D * SelectedTexture = dynamic_cast<Texture2D *>(
+			Texture2DPtr SelectedTexture = std::dynamic_pointer_cast<Texture2D>(
 				TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
 			);
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
-			TextureSample.Use(); 
+			TextureSample->Bind(); 
 			float DeltaTime = Time::GetTimeStamp().GetDeltaTime<Time::Second>();
 			RenderTextureMaterial.Use();
 			RenderTextureMaterial.SetFloat1Array("_Time", &DeltaTime);
@@ -157,7 +155,7 @@ protected:
 				Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
 				.PointerToValue()
 			);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample.GetDimension().FloatVector2().PointerToValue());
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample->GetDimensions().FloatVector3().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
 			float LodLevel = log2f((float)SelectedTexture->GetWidth()) * abs(LODLevel);
@@ -170,7 +168,7 @@ protected:
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 			);
 
-			Renderer.PrepareTexture(&TextureSample);
+			Renderer.PrepareTexture(TextureSample);
 			Renderer.Clear();
 			MeshPrimitives::Quad.DrawInstanciated(1);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -190,13 +188,13 @@ protected:
 		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
 		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
 		if (TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
-			Texture2D * SampleTexture = dynamic_cast<Texture2D *>(
+			Texture2DPtr SampleTexture = std::dynamic_pointer_cast<Texture2D>(
 				TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
 			);
 			float MinSideSize = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * SampleTexture->GetAspectRatio());
 			MinSideSize -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
 			ImGui::Image(
-				(void *)TextureSample.GetTextureObject(), { MinSideSize, MinSideSize / SampleTexture->GetAspectRatio() }
+				(void *)TextureSample->GetTextureObject(), { MinSideSize, MinSideSize / SampleTexture->GetAspectRatio() }
 			);
 		}
 		ImGui::End();
@@ -316,7 +314,7 @@ protected:
 		ImageLoader::Load(          Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
 		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
 
-		Texture2D EquirectangularTexture = Texture2D(
+		Texture2DPtr EquirectangularTexture = Texture2D::Create(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
 			CF_RGB16F,
 			FM_MinMagLinear,
@@ -324,7 +322,7 @@ protected:
 			CF_RGB16F,
 			Equirectangular.PointerToValue()
 		);
-		Texture2D * BaseAlbedoTexture = new Texture2D(
+		Texture2DPtr BaseAlbedoTexture = Texture2D::Create(
 			IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
 			CF_RGBA,
 			FM_MinMagLinear,
@@ -334,7 +332,7 @@ protected:
 		);
 		BaseAlbedoTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"BaseAlbedoTexture", BaseAlbedoTexture);
-		Texture2D * BaseMetallicTexture = new Texture2D(
+		Texture2DPtr BaseMetallicTexture = Texture2D::Create(
 			IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
 			CF_Red,
 			FM_MinMagLinear,
@@ -344,7 +342,7 @@ protected:
 		);
 		BaseMetallicTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"BaseMetallicTexture", BaseMetallicTexture);
-		Texture2D * BaseRoughnessTexture = new Texture2D(
+		Texture2DPtr BaseRoughnessTexture = Texture2D::Create(
 			IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
 			CF_Red,
 			FM_MinMagLinear,
@@ -354,7 +352,7 @@ protected:
 		);
 		BaseRoughnessTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"BaseRoughnessTexture", BaseRoughnessTexture);
-		Texture2D * BaseNormalTexture = new Texture2D(
+		Texture2DPtr BaseNormalTexture = Texture2D::Create(
 			IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
 			CF_RGB,
 			FM_MinMagLinear,
@@ -366,7 +364,7 @@ protected:
 		TextureManager::GetInstance().AddTexture(L"BaseNormalTexture", BaseNormalTexture);
 
 		////
-		Texture2D * FlamerAlbedoTexture = new Texture2D(
+		Texture2DPtr FlamerAlbedoTexture = Texture2D::Create(
 			IntVector2(FlamerAlbedo.GetWidth(), FlamerAlbedo.GetHeight()),
 			CF_RGBA,
 			FM_MinMagLinear,
@@ -376,7 +374,7 @@ protected:
 		);
 		FlamerAlbedoTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
-		Texture2D * FlamerMetallicTexture = new Texture2D(
+		Texture2DPtr FlamerMetallicTexture = Texture2D::Create(
 			IntVector2(FlamerMetallic.GetWidth(), FlamerMetallic.GetHeight()),
 			CF_Red,
 			FM_MinMagLinear,
@@ -386,7 +384,7 @@ protected:
 		);
 		FlamerMetallicTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"FlamerMetallicTexture", FlamerMetallicTexture);
-		Texture2D * FlamerRoughnessTexture = new Texture2D(
+		Texture2DPtr FlamerRoughnessTexture = Texture2D::Create(
 			IntVector2(FlamerRoughness.GetWidth(), FlamerRoughness.GetHeight()),
 			CF_Red,
 			FM_MinMagLinear,
@@ -396,7 +394,7 @@ protected:
 		);
 		FlamerRoughnessTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
-		Texture2D * FlamerNormalTexture = new Texture2D(
+		Texture2DPtr FlamerNormalTexture = Texture2D::Create(
 			IntVector2(FlamerNormal.GetWidth(), FlamerNormal.GetHeight()),
 			CF_RGB,
 			FM_MinMagLinear,
@@ -408,7 +406,7 @@ protected:
 		TextureManager::GetInstance().AddTexture(L"FlamerNormalTexture", FlamerNormalTexture);
 		////
 
-		Texture2D * WhiteTexture = new Texture2D(
+		Texture2DPtr WhiteTexture = Texture2D::Create(
 			IntVector2(White.GetWidth(), White.GetHeight()),
 			CF_RGB,
 			FM_MinMagLinear,
@@ -418,7 +416,7 @@ protected:
 		);
 		WhiteTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"WhiteTexture", WhiteTexture);
-		Texture2D * BlackTexture = new Texture2D(
+		Texture2DPtr BlackTexture = Texture2D::Create(
 			IntVector2(Black.GetWidth(), Black.GetHeight()),
 			CF_RGB,
 			FM_MinMagLinear,
@@ -431,7 +429,7 @@ protected:
 
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 
-		FontMap = new Texture2D(
+		FontMap = Texture2D::Create(
 			IntVector2(TextGenerator.AtlasSize),
 			CF_Red,
 			FM_MinMagLinear,
@@ -482,6 +480,11 @@ protected:
 		HDRClampingMaterial.CullMode = CM_None;
 		HDRClampingMaterial.SetShaderProgram(HDRClampingShader);
 
+		Material EquirectangularToCubemapMaterial = Material();
+		EquirectangularToCubemapMaterial.SetShaderProgram(EquiToCubemapShader);
+		EquirectangularToCubemapMaterial.CullMode = CM_None;
+		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
+
 		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [this](MeshLoader::FileData & ModelData) {
 			if (ModelData.bLoaded) {
 				SphereModel = Mesh(&(ModelData.Meshes.back()));
@@ -507,7 +510,7 @@ protected:
 		// 	}
 		// });
 
-		Texture2D RenderedTexture = Texture2D(
+		Texture2DPtr RenderedTexture = Texture2D::Create(
 			IntVector2(
 				Application::GetInstance()->GetWindow().GetWidth(),
 				Application::GetInstance()->GetWindow().GetHeight())
@@ -518,17 +521,17 @@ protected:
 		glGenBuffers(1, &ModelMatrixBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
 
-		EquirectangularTextureHDR = new Texture2D(
+		EquirectangularTextureHDR = Texture2D::Create(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
 		);
 		TextureManager::GetInstance().AddTexture(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
 		{
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
-			EquirectangularTextureHDR->Use();
+			EquirectangularTextureHDR->Bind();
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", &EquirectangularTexture, 0);
+			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
 			Renderer.Resize(EquirectangularTextureHDR->GetWidth(), EquirectangularTextureHDR->GetHeight());
 			MeshPrimitives::Quad.BindVertexArray();
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
@@ -544,7 +547,7 @@ protected:
 			EquirectangularTextureHDR->GenerateMipMaps();
 		}
 
-		Texture2D * BRDFLut = new Texture2D(IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
+		Texture2DPtr BRDFLut = Texture2D::Create(IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
 		{
 			RenderTarget Renderer = RenderTarget();
 			Renderer.SetUpBuffers();
@@ -567,8 +570,8 @@ protected:
 		}
 		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
-		CubemapTexture = new Cubemap(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
-		Cubemap::FromHDREquirectangular(*CubemapTexture, EquirectangularTextureHDR, EquiToCubemapShader);
+		CubemapTexture = Cubemap::Create(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
+		Cubemap::ConvertFromHDREquirectangular(CubemapTexture, EquirectangularTextureHDR, &EquirectangularToCubemapMaterial);
 		TextureManager::GetInstance().AddTexture(L"CubemapTexture", CubemapTexture);
 
 		Transforms.push_back(Transform());
@@ -711,9 +714,9 @@ protected:
 		for (int i = 0; i < TextCount; i++) {
 			if (TextGenerator.FindCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
-				FontMap->Delete();
-				delete FontMap;
-				FontMap = new Texture2D(
+				FontMap.reset();
+
+				FontMap = Texture2D::Create(
 					IntVector2(TextGenerator.AtlasSize),
 					CF_Red,
 					FM_MinMagLinear,
@@ -811,7 +814,7 @@ protected:
 
 		RenderCubemapMaterial.Use();
 
-		float MaterialRoughnessTemp = (1 - MaterialRoughness) * (CubemapTexture->GetMipmapCount() - 3);
+		float MaterialRoughnessTemp = (1 - MaterialRoughness) * (CubemapTexture->GetMipMapCount() - 3);
 		RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 		RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 		RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
@@ -851,18 +854,13 @@ protected:
 
 		BaseMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 		BaseMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		BaseMaterial.SetTexture2D("_MainTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTexture(L"BaseAlbedoTexture")), 0);
-		BaseMaterial.SetTexture2D("_NormalTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTexture(L"BaseNormalTexture")), 1);
-		BaseMaterial.SetTexture2D("_RoughnessTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTexture(L"BaseRoughnessTexture")), 2);
-		BaseMaterial.SetTexture2D("_MetallicTexture", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture")), 3);
-		BaseMaterial.SetTexture2D("_BRDFLUT", dynamic_cast<Texture2D *>(
-			TextureManager::GetInstance().GetTexture(L"BRDFLut")), 4);
+		BaseMaterial.SetTexture2D("_MainTexture", TextureManager::GetInstance().GetTexture(L"BaseAlbedoTexture"), 0);
+		BaseMaterial.SetTexture2D("_NormalTexture", TextureManager::GetInstance().GetTexture(L"BaseNormalTexture"), 1);
+		BaseMaterial.SetTexture2D("_RoughnessTexture", TextureManager::GetInstance().GetTexture(L"BaseRoughnessTexture"), 2);
+		BaseMaterial.SetTexture2D("_MetallicTexture", TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture"), 3);
+		BaseMaterial.SetTexture2D("_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), 4);
 		BaseMaterial.SetTextureCubemap("_EnviromentMap", CubemapTexture, 5);
-		float CubemapTextureMipmaps = CubemapTexture->GetMipmapCount();
+		float CubemapTextureMipmaps = CubemapTexture->GetMipMapCount();
 		BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
 		// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
@@ -999,7 +997,7 @@ protected:
 		RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
 		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
 		RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(1.F).PointerToValue());
-		RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR->GetDimension().FloatVector2().PointerToValue());
+		RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR->GetDimensions().FloatVector3().PointerToValue());
 		RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		RenderTextureMaterial.SetTexture2D("_MainTexture", EquirectangularTextureHDR, 0);
 		float LodLevel = log2f((float)EquirectangularTextureHDR->GetWidth()) * abs(MultiuseValue);
@@ -1019,7 +1017,7 @@ protected:
 		// --- Activate corresponding render state
 		RenderTextMaterial.Use();
 		RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
-		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetDimension().FloatVector2().PointerToValue());
+		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetDimensions().FloatVector3().PointerToValue());
 		RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix",
 			Matrix4x4::Orthographic(
 				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),

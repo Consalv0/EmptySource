@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "IntVector2.h"
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
@@ -23,6 +24,10 @@ namespace EmptySource {
 
 	FORCEINLINE IntVector3::IntVector3(const IntVector3& Vector)
 		: x(Vector.x), y(Vector.y), z(Vector.z) {
+	}
+
+	FORCEINLINE IntVector3::IntVector3(const IntVector2 & Vector)
+		: x(Vector.x), y(Vector.y), z(0) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const Vector4 & Vector)

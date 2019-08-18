@@ -108,6 +108,9 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\Platform.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -315,9 +318,6 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\Cubemap.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -352,12 +352,6 @@
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\Texture2D.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\Texture3D.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h">
@@ -414,6 +408,9 @@
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp">
@@ -512,9 +509,6 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\Cubemap.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
@@ -537,12 +531,6 @@
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\Texture2D.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\Texture3D.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp">

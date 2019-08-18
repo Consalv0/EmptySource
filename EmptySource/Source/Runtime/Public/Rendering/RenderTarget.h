@@ -11,7 +11,7 @@ namespace EmptySource {
 	private:
 		unsigned int FramebufferObject;
 
-		const Texture* TextureColor0Target;
+		TexturePtr TextureColor0Target;
 		unsigned int RenderbufferObject;
 
 		//* Render dimesions
@@ -25,9 +25,9 @@ namespace EmptySource {
 		IntVector2 GetDimension() const;
 
 		//* All future texture functions will modify this texture
-		void PrepareTexture(const struct Texture2D * Texture, const int& Lod = 0, const int& TextureAttachment = 0);
+		void PrepareTexture(const Texture2DPtr Texture, const int& Lod = 0, const int& TextureAttachment = 0);
 		//* All future texture functions will modify this texture
-		void PrepareTexture(const struct Cubemap * Texture, const int& TexturePos, const int& Lod = 0, const int& TextureAttachment = 0);
+		void PrepareTexture(const CubemapPtr Texture, const int& TexturePos, const int& Lod = 0, const int& TextureAttachment = 0);
 
 		//* Set resolution of render
 		void Resize(const int & x, const int & y);

@@ -9,13 +9,13 @@ namespace EmptySource {
 
 	public:
 
-		Texture * GetTexture(const WString& Name) const;
+		TexturePtr GetTexture(const WString& Name) const;
 
-		Texture * GetTexture(const size_t & UID) const;
+		TexturePtr GetTexture(const size_t & UID) const;
 
 		void FreeTexture(const WString& Name);
 
-		void AddTexture(const WString& Name, Texture * Shader);
+		void AddTexture(const WString& Name, TexturePtr Texture);
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Texture; };
 
@@ -24,7 +24,7 @@ namespace EmptySource {
 		static TextureManager& GetInstance();
 
 	private:
-		TDictionary<size_t, Texture *> TextureList;
+		TDictionary<size_t, TexturePtr> TextureList;
 
 	};
 

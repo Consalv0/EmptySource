@@ -103,13 +103,13 @@ namespace EmptySource {
 					WString Name = ShaderProgramNode["Name"].IsDefined() ? Text::NarrowToWide(ShaderProgramNode["Name"].as<NString>()) : L"";
 					TArray<ShaderStagePtr> Stages;
 					if (ShaderProgramNode["VertexShader"].IsDefined()) 
-						Stages.push_back(GetStageByUniqueID(ShaderProgramNode["VertexShader"].as<size_t>()));
+						Stages.push_back(GetStage(ShaderProgramNode["VertexShader"].as<size_t>()));
 					if (ShaderProgramNode["FragmentShader"].IsDefined())
-						Stages.push_back(GetStageByUniqueID(ShaderProgramNode["FragmentShader"].as<size_t>()));
+						Stages.push_back(GetStage(ShaderProgramNode["FragmentShader"].as<size_t>()));
 					if (ShaderProgramNode["ComputeShader"].IsDefined())
-						Stages.push_back(GetStageByUniqueID(ShaderProgramNode["ComputeShader"].as<size_t>()));
+						Stages.push_back(GetStage(ShaderProgramNode["ComputeShader"].as<size_t>()));
 					if (ShaderProgramNode["GeometryShader"].IsDefined())
-						Stages.push_back(GetStageByUniqueID(ShaderProgramNode["GeometryShader"].as<size_t>()));
+						Stages.push_back(GetStage(ShaderProgramNode["GeometryShader"].as<size_t>()));
 
 					AddShaderProgram(ShaderProgram::Create(Name, Stages));
 				}

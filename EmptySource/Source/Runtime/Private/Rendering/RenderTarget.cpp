@@ -1,8 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderTarget.h"
-#include "Rendering/Texture2D.h"
-#include "Rendering/Cubemap.h"
+#include "Rendering/Texture.h"
 #include "Rendering/GLFunctions.h"
 
 namespace EmptySource {
@@ -18,26 +17,26 @@ namespace EmptySource {
 		return Resolution;
 	}
 
-	void RenderTarget::PrepareTexture(const Texture2D * Texture, const int& Lod, const int& TextureAttachment) {
+	void RenderTarget::PrepareTexture(const Texture2DPtr Texture, const int& Lod, const int& TextureAttachment) {
 		TextureColor0Target = Texture;
 		if (!IsValid()) return;
 		Use();
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, TextureColor0Target->GetTextureObject(), Lod);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (unsigned int)(unsigned long long)TextureColor0Target->GetTextureObject(), Lod);
 		// Set the list of draw buffers.
 		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
 		glDrawBuffers(1, DrawBuffers);
 	}
 
-	void RenderTarget::PrepareTexture(const Cubemap * Texture, const int& TexturePos, const int& Lod, const int& TextureAttachment) {
+	void RenderTarget::PrepareTexture(const CubemapPtr Texture, const int& TexturePos, const int& Lod, const int& TextureAttachment) {
 		TextureColor0Target = Texture;
 		if (!IsValid()) return;
 		Use();
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X + TexturePos, TextureColor0Target->GetTextureObject(), Lod);
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + TexturePos, (unsigned int)(unsigned long long)TextureColor0Target->GetTextureObject(), Lod);
 	}
 
 	void RenderTarget::Resize(const int & x, const int & y) {

@@ -154,14 +154,7 @@ namespace EmptySource {
 		int AtlasSizeSqr = AtlasSize * AtlasSize;
 		Atlas = Bitmap<UCharRed>(AtlasSize, AtlasSize);
 
-		for (int i = 0; i < AtlasSizeSqr; i++) {
-			// if (i % GlyphHeight == 0 || (i / (AtlasSize)) % GlyphHeight == 0) {
-			// 	Atlas[i] = 255;
-			// }
-			// else {
-			Atlas[i].R = 0;
-			// }
-		}
+		for (int i = 0; i < AtlasSizeSqr; i++) { Atlas[i].R = 0; }
 
 		TexturePacking<Bitmap<FloatRed>> TextureAtlas;
 		TextureAtlas.CreateTexture({ AtlasSize, AtlasSize });

@@ -4,9 +4,9 @@
 #include "Core/Window.h"
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/RenderStage.h"
+#include "Rendering/Texture.h"
 #include "Rendering/Material.h"
 #include "Rendering/GLFunctions.h"
-#include "Rendering/Cubemap.h"
 #include "Mesh/Mesh.h"
 #include "Utility/TextFormattingMath.h"
 

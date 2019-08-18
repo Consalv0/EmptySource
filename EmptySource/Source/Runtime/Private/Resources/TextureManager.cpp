@@ -6,12 +6,12 @@
 
 namespace EmptySource {
 
-	Texture * TextureManager::GetTexture(const WString & Name) const {
+	TexturePtr TextureManager::GetTexture(const WString & Name) const {
 		size_t UID = WStringToHash(Name);
 		return GetTexture(UID);
 	}
 
-	Texture * TextureManager::GetTexture(const size_t & UID) const {
+	TexturePtr TextureManager::GetTexture(const size_t & UID) const {
 		auto Resource = TextureList.find(UID);
 		if (Resource != TextureList.end()) {
 			return Resource->second;
@@ -25,7 +25,7 @@ namespace EmptySource {
 		TextureList.erase(UID);
 	}
 
-	void TextureManager::AddTexture(const WString& Name, Texture * Tex) {
+	void TextureManager::AddTexture(const WString& Name, TexturePtr Tex) {
 		size_t UID = WStringToHash(Name);
 		TextureList.insert({ UID, Tex });
 	}

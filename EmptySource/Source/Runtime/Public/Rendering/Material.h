@@ -46,13 +46,13 @@ namespace EmptySource {
 		void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass Texture 2D array
-		void SetTexture2D(const NChar * UniformName, struct Texture2D* Tex, const unsigned int& Position) const;
+		void SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) const;
 
 		//* Pass Cubemap array
-		void SetTextureCubemap(const NChar * UniformName, struct Cubemap* Tex, const unsigned int& Position) const;
+		void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) const;
 
 		//* Use shader program and render mode
-		void Use();
+		void Use() const;
 	};
 
 }

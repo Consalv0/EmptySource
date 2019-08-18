@@ -26,9 +26,7 @@
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/Shader.h"
 #include "Rendering/Material.h"
-#include "Rendering/Texture2D.h"
-#include "Rendering/Texture3D.h"
-#include "Rendering/Cubemap.h"
+#include "Rendering/Texture.h"
 
 #include "Files/FileManager.h"
 
