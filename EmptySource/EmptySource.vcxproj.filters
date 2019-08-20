@@ -105,6 +105,9 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTexture.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
@@ -336,6 +339,9 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderTexture.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -405,6 +411,9 @@
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTexture.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
@@ -505,6 +514,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
       <Filter>Runtime\Private\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\RenderTexture.cpp">
+      <Filter>Runtime\Private</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp">
       <Filter>Runtime\Private\Rendering</Filter>

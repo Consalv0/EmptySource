@@ -75,27 +75,10 @@ project "EmptySource"
     links { 
         "SDL2.lib",
         "SDL2main.lib",
-        "freetype.lib",
-        "libfbxsdk-mt.lib",
         "YAML-CPP",
 		"GLAD",
 		"IMGUI"
     }
-
-    configuration "Debug"
-        libdirs { 
-            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\debug"
-        }
-    
-    configuration "Release"
-        libdirs {
-            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
-        }
-
-    configuration "Shipping"
-        libdirs {
-            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
-        }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -106,16 +89,10 @@ project "EmptySource"
 			"ES_PLATFORM_NVML"
 		}
 
-		libdirs {
-			"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\lib\\x64"
-		}
-
-		links {
-			"nvml.lib",
-		}
-
 	filter "configurations:Debug"
-		defines "ES_DEBUG"
+		defines { 
+			"ES_DEBUG", "ES_ENABLE_ASSERTS"
+		}
 		runtime "Debug"
         symbols "on"
 
@@ -153,9 +130,30 @@ project "Sandbox"
 		"%{IncludeDir.GLAD}"
 	}
 
+    libdirs { 
+        "EmptySource/Libraries"
+    }
+
 	links {
+        "freetype.lib",
+        "libfbxsdk-mt.lib",
 		"EmptySource"
     }
+
+    configuration "Debug"
+        libdirs { 
+            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\debug"
+        }
+    
+    configuration "Release"
+        libdirs {
+            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
+        }
+
+    configuration "Shipping"
+        libdirs {
+            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
+        }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -164,8 +162,18 @@ project "Sandbox"
             "ES_PLATFORM_WINDOWS"
 		}
 
+		libdirs {
+			"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\lib\\x64"
+		}
+
+		links {
+			"nvml.lib",
+		}
+
 	filter "configurations:Debug"
-		defines "ES_DEBUG"
+		defines { 
+			"ES_DEBUG", "ES_ENABLE_ASSERTS"
+		}
 		runtime "Debug"
 		symbols "on"
 
