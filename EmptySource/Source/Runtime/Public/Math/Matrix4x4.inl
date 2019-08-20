@@ -246,12 +246,12 @@ namespace EmptySource {
 	}
 
 	inline Vector4 & Matrix4x4::operator[](unsigned int i) {
-		ES_CORE_ASSERT(i > 3, "Matrix4x4 index out of bounds");
+		ES_CORE_ASSERT(i <= 3, "Matrix4x4 index out of bounds");
 		return ((Vector4*)this)[i];
 	}
 
 	inline Vector4 const & Matrix4x4::operator[](unsigned int i) const {
-		ES_CORE_ASSERT(i > 3, "Matrix4x4 index out of bounds");
+		ES_CORE_ASSERT(i <= 3, "Matrix4x4 index out of bounds");
 		return ((Vector4*)this)[i];
 	}
 

@@ -55,7 +55,7 @@ namespace EmptySource {
 	}
 
 	void Mesh::BindVertexArray() const {
-		ES_CORE_ASSERT(VertexArrayObject == NULL, L"Model buffers are empty, use SetUpBuffers first");
+		ES_CORE_ASSERT(VertexArrayObject != NULL, "Model buffers are empty, use SetUpBuffers first");
 		VertexArrayObject->Bind();
 	}
 

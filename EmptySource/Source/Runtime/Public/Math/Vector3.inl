@@ -101,12 +101,12 @@ namespace EmptySource {
 	}
 
 	inline float & Vector3::operator[](unsigned int i) {
-		ES_CORE_ASSERT(i > 2, "Vector3 index out of bounds");
+		ES_CORE_ASSERT(i <= 2, "Vector3 index out of bounds");
 		return ((float*)this)[i];
 	}
 
 	inline float const & Vector3::operator[](unsigned int i) const {
-		ES_CORE_ASSERT(i > 2, "Vector3 index out of bounds");
+		ES_CORE_ASSERT(i <= 2, "Vector3 index out of bounds");
 		return ((float*)this)[i];
 	}
 

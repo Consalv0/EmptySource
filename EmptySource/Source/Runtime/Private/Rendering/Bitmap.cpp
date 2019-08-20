@@ -21,7 +21,7 @@ namespace EmptySource {
 	}
 
 	template<typename T>
-	void Bitmap<T>::PerPixelOperator(std::function<void(T)> const & Function) {
+	void Bitmap<T>::PerPixelOperator(std::function<void(T &)> const & Function) {
 		for (int y = 0; y < Height; ++y) {
 			for (int x = 0; x < Width; ++x) {
 				Function((*this)(x, y));

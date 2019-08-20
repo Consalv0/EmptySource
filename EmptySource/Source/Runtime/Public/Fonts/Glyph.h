@@ -20,6 +20,7 @@ namespace EmptySource {
 		Box2D UV;
 		Shape2D VectorShape;
 		Bitmap<FloatRed> SDFResterized;
+		bool bUndefined;
 
 		FontGlyph();
 

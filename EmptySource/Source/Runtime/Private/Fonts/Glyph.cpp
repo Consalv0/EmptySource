@@ -13,6 +13,7 @@ namespace EmptySource {
 		Width = 0;
 		Height = 0;
 		Advance = 0;
+		bUndefined = true;
 		UV = { 0, 0, 0, 0 };
 		VectorShape = Shape2D();
 		SDFResterized = Bitmap<FloatRed>();
@@ -23,6 +24,7 @@ namespace EmptySource {
 		Bearing(Other.Bearing), Advance(Other.Advance), UV(Other.UV) {
 		VectorShape = Other.VectorShape;
 		SDFResterized = Other.SDFResterized;
+		bUndefined = Other.bUndefined;
 	}
 
 	void FontGlyph::GenerateSDF(float PixelRange) {

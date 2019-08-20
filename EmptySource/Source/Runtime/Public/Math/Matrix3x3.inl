@@ -56,12 +56,12 @@ namespace EmptySource {
 	}
 
 	inline Vector3 & Matrix3x3::operator[](unsigned int i) {
-		ES_CORE_ASSERT(i > 2, "Matrix3x3 index out of bounds");
+		ES_CORE_ASSERT(i <= 2, "Matrix3x3 index out of bounds");
 		return ((Vector3*)this)[i];
 	}
 
 	inline Vector3 const & Matrix3x3::operator[](unsigned int i) const {
-		ES_CORE_ASSERT(i >= 2, "Matrix3x3 index out of bounds");
+		ES_CORE_ASSERT(i <= 2, "Matrix3x3 index out of bounds");
 		return ((Vector3*)this)[i];
 	}
 

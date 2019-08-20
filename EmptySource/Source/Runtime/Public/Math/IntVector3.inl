@@ -75,12 +75,12 @@ namespace EmptySource {
 	}
 
 	inline int & IntVector3::operator[](unsigned int i) {
-		ES_CORE_ASSERT(i > 2, "IntVector3 index out of bounds");
+		ES_CORE_ASSERT(i <= 2, "IntVector3 index out of bounds");
 		return ((int*)this)[i];
 	}
 
 	inline int const & IntVector3::operator[](unsigned int i) const {
-		ES_CORE_ASSERT(i > 2, "IntVector3 index out of bounds");
+		ES_CORE_ASSERT(i <= 2, "IntVector3 index out of bounds");
 		return ((int*)this)[i];
 	}
 

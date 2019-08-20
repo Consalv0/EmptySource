@@ -86,12 +86,12 @@ namespace EmptySource {
 	}
 
 	inline float & Vector2::operator[](unsigned int i) {
-		ES_CORE_ASSERT(i > 1, "Vector2 index out of bounds");
+		ES_CORE_ASSERT(i <= 1, "Vector2 index out of bounds");
 		return ((float*)this)[i];
 	}
 
 	inline float const & Vector2::operator[](unsigned int i) const {
-		ES_CORE_ASSERT(i > 1, "Vector2 index out of bounds");
+		ES_CORE_ASSERT(i <= 1, "Vector2 index out of bounds");
 		return ((float*)this)[i];
 	}
 

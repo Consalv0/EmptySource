@@ -39,7 +39,7 @@ namespace EmptySource {
 			}
 		}
 
-		void PerPixelOperator(std::function<void(T)> const& Function);
+		void PerPixelOperator(std::function<void(T&)> const& Function);
 
 		~Bitmap();
 

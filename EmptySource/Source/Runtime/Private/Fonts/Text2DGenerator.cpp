@@ -73,10 +73,14 @@ namespace EmptySource {
 				continue;
 			}
 
-			FontGlyph * Glyph = LoadedCharacters[*Character];
-			if (Glyph == NULL) {
-				CursorPivot.x += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
-				continue;
+			FontGlyph * Glyph = NULL;
+			if (!IsCharacterLoaded(*Character)) {
+				Glyph = LoadedCharacters[L'\0'];
+			} else {
+				Glyph = LoadedCharacters[*Character];
+				if (Glyph->bUndefined) {
+					Glyph = LoadedCharacters[L'\0'];
+				}
 			}
 
 			if (CursorPivot.x + (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor > Box.xMax) {
@@ -114,31 +118,31 @@ namespace EmptySource {
 
 		// --- Iterate through all characters
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
-			FontGlyph * Glyph = LoadedCharacters[*Character];
-			if (Glyph == NULL) {
+			if (!IsCharacterLoaded(*Character)) {
 				Pivot.x += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
 				continue;
 			}
 
+			FontGlyph * Glyph = LoadedCharacters[*Character];
 			Pivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 		}
 
 		return Pivot;
 	}
 
-	int Text2DGenerator::FindCharacters(const WString & InText) {
+	int Text2DGenerator::PrepareFindedCharacters(const WString & InText) {
 		TextFont->SetGlyphHeight(GlyphHeight);
 		int Count = 0;
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
-			if (LoadedCharacters.find(*Character) == LoadedCharacters.end()) {
+			if (!IsCharacterLoaded(*Character)) {
 				Count++; FontGlyph Glyph;
 				if (TextFont->GetGlyph(Glyph, (unsigned int)*Character)) {
 					if (!Glyph.VectorShape.Validate())
-						LOG_CORE_ERROR(L" The geometry of the loaded shape is invalid.");
+						LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
 					Glyph.VectorShape.Normalize();
 
 					Glyph.GenerateSDF(PixelRange);
-					LoadedCharacters.insert_or_assign(*Character, new FontGlyph(Glyph));
+					AddNewGlyph(Glyph);
 				}
 			}
 		}
@@ -154,22 +158,31 @@ namespace EmptySource {
 		int AtlasSizeSqr = AtlasSize * AtlasSize;
 		Atlas = Bitmap<UCharRed>(AtlasSize, AtlasSize);
 
-		for (int i = 0; i < AtlasSizeSqr; i++) { Atlas[i].R = 0; }
+		// ---- Clear Bitmap
+		Atlas.PerPixelOperator([](EmptySource::UCharRed & Pixel) { Pixel.R = 0; });
 
 		TexturePacking<Bitmap<FloatRed>> TextureAtlas;
 		TextureAtlas.CreateTexture({ AtlasSize, AtlasSize });
-
 		size_t Count = 0;
 		TArray<FontGlyph *> GlyphArray = TArray<FontGlyph * >(LoadedCharacters.size());
+
 		for (TDictionary<unsigned long, FontGlyph*>::const_iterator Begin = LoadedCharacters.begin(); Begin != LoadedCharacters.end(); Begin++)
 			GlyphArray[Count++] = Begin->second;
+
 		std::sort(GlyphArray.begin(), GlyphArray.end(), [](FontGlyph * A, FontGlyph * B) {
-			return Math::Max(A->Width, A->Height) / Math::Min(A->Width, A->Height) * A->Width * A->Height
-		> Math::Max(B->Width, B->Height) / Math::Min(B->Width, B->Height) * B->Width * B->Height;
+			ES_CORE_ASSERT(A, "Glyph is NULL");
+			ES_CORE_ASSERT(B, "Glyph is NULL");
+			return Math::Max(A->Width, A->Height) / Math::Min(A->Width, A->Height) * A->Width * A->Height > 
+				   Math::Max(B->Width, B->Height) / Math::Min(B->Width, B->Height) * B->Width * B->Height;
 		});
 
 		for (TArray<FontGlyph * >::const_iterator Begin = GlyphArray.begin(); Begin != GlyphArray.end(); Begin++) {
 			FontGlyph * Character = *Begin;
+			ES_CORE_ASSERT(Character != NULL, "Glyph is NULL");
+
+			if (Character->bUndefined)
+				continue;
+
 			TexturePacking<Bitmap<FloatRed>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
 			if (!ResultNode.bValid || ResultNode.Element == NULL) {
 				LOG_CORE_ERROR(L"Error writting texture of {0:c}({1:d})", Character->UnicodeValue, Character->UnicodeValue);
@@ -198,6 +211,14 @@ namespace EmptySource {
 		}
 
 		return true;
+	}
+
+	bool Text2DGenerator::IsCharacterLoaded(unsigned long Character) const {
+		return LoadedCharacters.find(Character) != LoadedCharacters.end();
+	}
+
+	void Text2DGenerator::AddNewGlyph(const FontGlyph & Glyph) {
+		LoadedCharacters.insert_or_assign(Glyph.UnicodeValue, new FontGlyph(Glyph));
 	}
 
 }
