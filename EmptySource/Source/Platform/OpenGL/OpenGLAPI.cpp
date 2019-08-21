@@ -22,7 +22,7 @@ namespace EmptySource {
 			case EmptySource::UM_Inmutable:  return GL_STREAM_DRAW;
 		}
 
-		ES_CORE_ASSERT(true, L"Unknown OpenGL EUsageMode!");
+		ES_CORE_ASSERT(true, "Unknown OpenGL EUsageMode!");
 		return 0;
 	}
 	
@@ -44,7 +44,7 @@ namespace EmptySource {
 				return GL_BOOL;
 		}
 
-		ES_CORE_ASSERT(true, L"Unknown OpenGL EShaderDataType!");
+		ES_CORE_ASSERT(true, "Unknown OpenGL EShaderDataType!");
 		return 0;
 	}
 
@@ -68,8 +68,9 @@ namespace EmptySource {
 	}
 
 	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer, unsigned int Count) {
-		ES_CORE_ASSERT(VertexArrayPointer == NULL, L"Can't draw VertexArrayObject, is NULL");
-		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() == NULL, L"Can't draw VertexArrayObject, IndexBuffer is missing");
+		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
+		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
+		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
 		glDrawElementsInstanced(GL_TRIANGLES, VertexArrayPointer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr, Count);
 	}
 

@@ -30,7 +30,9 @@ namespace EmptySource {
 
 		virtual inline EFilterMode GetFilterMode() const = 0;
 
-		virtual inline IntVector3 GetDimensions() const = 0;
+		virtual inline IntVector3 GetSize() const = 0;
+
+		virtual inline ETextureDimension GetDimension() const = 0;
 		
 		virtual inline ESamplerAddressMode GetSamplerAddressMode() const = 0;
 
@@ -89,8 +91,6 @@ namespace EmptySource {
 				return true;
 			}
 		};
-
-		virtual inline unsigned int GetSize() const = 0;
 
 		static bool ConvertFromCube(CubemapPtr & Cubemap, const TextureData<UCharRGB>& Textures);
 

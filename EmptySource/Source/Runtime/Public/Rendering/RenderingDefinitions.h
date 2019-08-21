@@ -11,8 +11,36 @@ namespace EmptySource {
 	typedef struct FloatRGB  { typedef float Range; static constexpr unsigned char Channels = 3; Range R; Range G; Range B; } FloatRGB;
 	typedef struct FloatRGBA { typedef float Range; static constexpr unsigned char Channels = 4; Range R; Range G; Range B; Range A; } FloatRGBA;
 
+	enum class ETextureDimension {
+		None,
+		Texture1D,
+		Texture2D, 
+		Texture3D, 
+		Cubemap
+	};
+
+	enum class ECubemapFace {
+		Front, 
+		Back, 
+		Right,
+		Left,
+		Up,
+		Down
+	};
+
 	enum class EShaderDataType {
-		None = 0, Bool, Float, Float2, Float3, Float4, Int, Int2, Int3, Int4, Mat3x3, Mat4x4
+		None = 0,
+		Bool,
+		Float,
+		Float2,
+		Float3,
+		Float4,
+		Int,
+		Int2,
+		Int3, 
+		Int4, 
+		Mat3x3,
+		Mat4x4
 	};
 
 	enum EShaderType {

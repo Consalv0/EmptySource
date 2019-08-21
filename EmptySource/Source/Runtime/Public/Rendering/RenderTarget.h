@@ -7,48 +7,56 @@
 
 namespace EmptySource {
 
-	struct RenderTarget {
-	private:
-		unsigned int FramebufferObject;
+	typedef std::shared_ptr<class RenderTarget> RenderTargetPtr;
 
-		TexturePtr TextureColor0Target;
-		unsigned int RenderbufferObject;
-
-		//* Render dimesions
-		IntVector2 Resolution;
-
+	class RenderTarget {
 	public:
-		//* Constructor
-		RenderTarget();
 
-		//* Get Dimension of the texture
-		IntVector2 GetDimension() const;
+		virtual ~RenderTarget() = default;
 
-		//* All future texture functions will modify this texture
-		void PrepareTexture(const Texture2DPtr Texture, const int& Lod = 0, const int& TextureAttachment = 0);
-		//* All future texture functions will modify this texture
-		void PrepareTexture(const CubemapPtr Texture, const int& TexturePos, const int& Lod = 0, const int& TextureAttachment = 0);
+		//* Get the dimension of the texture
+		virtual inline ETextureDimension GetDimension() const = 0;
 
-		//* Set resolution of render
-		void Resize(const int & x, const int & y);
+		//* All future functions will modify this texture
+		virtual void BindTexture2D(const TexturePtr & Texture, int Lod = 0, int TextureAttachment = 0) = 0;
 
-		//* Set up framebuffer and renderbuffer
-		void SetUpBuffers();
+		//* All future functions will modify this texture
+		virtual void BindCubemapFace(const TexturePtr & Texture, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
+
+		//* Returns empty if no texture
+		virtual TexturePtr GetBindedTexture() const = 0;
+
+		//* Get the renderbuffer object
+		virtual void * GetNativeObject() const = 0;
+
+		//* Set size of render
+		virtual void Resize(const IntVector3 & NewSize) = 0;
+
+		//* Get size of render
+		virtual IntVector3 GetSize() const = 0;
+
+		//* Generate MipMaps using Hardware
+		virtual void GenerateTextureMipMaps() = 0;
 
 		//* Checks the framebuffer status
-		bool CheckStatus() const;
+		virtual bool CheckStatus() const = 0;
 
-		//* Use the texture
-		void Use() const;
+		//* Bind the render target
+		virtual void Bind() const = 0;
 
-		//* Clears the renderbuffer
-		void Clear() const;
+		//* Unbind the render target
+		virtual void Unbind() const = 0;
 
-		//* Check if texture is valid
-		bool IsValid() const;
+		//* Clears the texture binded
+		virtual void Clear() const = 0;
 
-		//* 
-		void Delete();
+		//* Release the texture binded
+		virtual void ReleaseTexture() = 0;
+
+		//* Check if render target is valid
+		virtual bool IsValid() const = 0;
+
+		static RenderTargetPtr Create();
 	};
 
 }

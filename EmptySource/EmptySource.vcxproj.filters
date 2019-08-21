@@ -105,9 +105,6 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTexture.h">
-      <Filter>Platform\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
@@ -339,9 +336,6 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderTexture.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -402,6 +396,9 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTarget.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -411,9 +408,6 @@
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
-      <Filter>Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTexture.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
@@ -580,6 +574,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTarget.cpp">
+      <Filter>Platform\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

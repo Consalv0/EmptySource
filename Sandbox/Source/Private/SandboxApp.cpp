@@ -25,6 +25,7 @@
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/Shader.h"
 #include "Rendering/Texture.h"
+#include "Rendering/RenderTarget.h"
 #include "Rendering/Material.h"
 
 #include "Files/FileManager.h"
@@ -127,9 +128,9 @@ protected:
 	virtual void OnAttach() override {}
 
 	virtual void OnImGuiRender() override {
-		static Texture2DPtr TextureSample = Texture2D::Create(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
+		static TexturePtr TextureSample = Texture2D::Create(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
 		const NChar* Textures[] = {
-			"BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
+			"FontMap", "BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
 			"BaseRoughnessTexture", "BaseNormalTexture", "FlamerAlbedoTexture",
 			"FlamerMetallicTexture", "FlamerNormalTexture", "EquirectangularTextureHDR"
 		};
@@ -139,13 +140,9 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		if (TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
-			Texture2DPtr SelectedTexture = std::dynamic_pointer_cast<Texture2D>(
-				TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
-			);
-			RenderTarget Renderer = RenderTarget();
-			Renderer.SetUpBuffers();
-			TextureSample->Bind(); 
+		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str());
+		if (SelectedTexture) {
+			RenderTargetPtr Renderer = RenderTarget::Create();
 			float DeltaTime = Time::GetTimeStamp().GetDeltaTime<Time::Second>();
 			RenderTextureMaterial.Use();
 			RenderTextureMaterial.SetFloat1Array("_Time", &DeltaTime);
@@ -155,29 +152,29 @@ protected:
 				Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
 				.PointerToValue()
 			);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample->GetDimensions().FloatVector3().PointerToValue());
+			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample->GetSize().FloatVector3().PointerToValue());
 			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			TextureSample->Bind();
 			RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
-			float LodLevel = log2f((float)SelectedTexture->GetWidth()) * abs(LODLevel);
-			RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
+			RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 
-			Renderer.Resize(1024, 1024);
+			Renderer->Bind();
 			MeshPrimitives::Quad.BindVertexArray();
 			Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 			RenderTextureMaterial.SetAttribMatrix4x4Array(
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 			);
 
-			Renderer.PrepareTexture(TextureSample);
-			Renderer.Clear();
+			Renderer->BindTexture2D(TextureSample);
+			Renderer->Clear();
 			MeshPrimitives::Quad.DrawInstanciated(1);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			Renderer.Delete();
 		}
 
 		ImGui::Begin("Textures");
 		ImGui::Combo("Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures));
-		ImGui::SliderFloat("LOD Level", &LODLevel, 0.0f, 1.0f, "%.3f");
+		if (SelectedTexture) {
+			ImGui::SliderFloat("LOD Level", &LODLevel, 0.0f, (float)SelectedTexture->GetMipMapCount(), "%.3f");
+		}
 		ImGui::SliderFloat("Gamma", &Gamma, 1.0f, 4.0f, "%.3f");
 		ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
 		ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
@@ -187,14 +184,15 @@ protected:
 		ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
 		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
 		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
-		if (TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())) {
-			Texture2DPtr SampleTexture = std::dynamic_pointer_cast<Texture2D>(
-				TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str())
+		if (SelectedTexture) {
+			float MinSideSize = Math::Min(
+				ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
+				* std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio()
 			);
-			float MinSideSize = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * SampleTexture->GetAspectRatio());
 			MinSideSize -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
-			ImGui::Image(
-				(void *)TextureSample->GetTextureObject(), { MinSideSize, MinSideSize / SampleTexture->GetAspectRatio() }
+			ImGui::Image((void *)TextureSample->GetTextureObject(), 
+				{ MinSideSize,
+				MinSideSize / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio() }
 			);
 		}
 		ImGui::End();
@@ -294,11 +292,11 @@ protected:
 			Value = 3;
 		}
 
-		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/SourceSansPro.ttf"));
+		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
 
 		TextGenerator.TextFont = &FontFace;
-		TextGenerator.GlyphHeight = 32;
-		TextGenerator.AtlasSize = 512;
+		TextGenerator.GlyphHeight = 45;
+		TextGenerator.AtlasSize = 1024;
 		TextGenerator.PixelRange = 1.5F;
 		TextGenerator.Pivot = 0;
 
@@ -312,7 +310,7 @@ protected:
 		ImageLoader::Load(   FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 		ImageLoader::Load(          White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
 		ImageLoader::Load(          Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
-		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/Arches_E_PineTree_3k.hdr"));
+		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/OutdoorResidentialRiverwalkAfternoon.hdr"));
 
 		Texture2DPtr EquirectangularTexture = Texture2D::Create(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
@@ -427,8 +425,8 @@ protected:
 		BlackTexture->GenerateMipMaps();
 		TextureManager::GetInstance().AddTexture(L"BlackTexture", BlackTexture);
 
+		TextGenerator.PrepareCharacters(0ul, 255ul);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
-
 		FontMap = Texture2D::Create(
 			IntVector2(TextGenerator.AtlasSize),
 			CF_Red,
@@ -526,47 +524,40 @@ protected:
 		);
 		TextureManager::GetInstance().AddTexture(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
 		{
-			RenderTarget Renderer = RenderTarget();
-			Renderer.SetUpBuffers();
+			RenderTargetPtr Renderer = RenderTarget::Create();
 			EquirectangularTextureHDR->Bind();
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
-			Renderer.Resize(EquirectangularTextureHDR->GetWidth(), EquirectangularTextureHDR->GetHeight());
 			MeshPrimitives::Quad.BindVertexArray();
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			HDRClampingMaterial.SetAttribMatrix4x4Array(
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 			);
 
-			Renderer.PrepareTexture(EquirectangularTextureHDR);
-			Renderer.Clear();
+			Renderer->BindTexture2D(EquirectangularTextureHDR);
+			Renderer->Clear();
 			MeshPrimitives::Quad.DrawInstanciated(1);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			Renderer.Delete();
 			EquirectangularTextureHDR->GenerateMipMaps();
 		}
 
 		Texture2DPtr BRDFLut = Texture2D::Create(IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
 		{
-			RenderTarget Renderer = RenderTarget();
-			Renderer.SetUpBuffers();
-			Renderer.Use();
+			RenderTargetPtr Renderer = RenderTarget::Create();
 			IntegrateBRDFMaterial.Use();
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			Renderer.Resize(BRDFLut->GetWidth(), BRDFLut->GetHeight());
+
 			MeshPrimitives::Quad.BindVertexArray();
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			IntegrateBRDFMaterial.SetAttribMatrix4x4Array(
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 			);
 
-			Renderer.PrepareTexture(BRDFLut);
-			Renderer.Clear();
+			Renderer->BindTexture2D(BRDFLut);
+			Renderer->Clear();
 			MeshPrimitives::Quad.DrawInstanciated(1);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			Renderer.Delete();
-			// BRDFLut.GenerateMipMaps();
 		}
 		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
@@ -701,7 +692,7 @@ protected:
 
 		if (Input::IsKeyDown(SDL_SCANCODE_V)) {
 			for (int i = 0; i < 10; i++) {
-				RenderingText[1] += (unsigned long)(rand() % 0x3ff);
+				RenderingText[1] += (unsigned long)(rand() % 0x3fff);
 			}
 		}
 
@@ -712,10 +703,9 @@ protected:
 		}
 
 		for (int i = 0; i < TextCount; i++) {
-			if (TextGenerator.FindCharacters(RenderingText[i]) > 0) {
+			if (TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
-				FontMap.reset();
-
+				TextureManager::GetInstance().FreeTexture(L"FontMap");
 				FontMap = Texture2D::Create(
 					IntVector2(TextGenerator.AtlasSize),
 					CF_Red,
@@ -725,6 +715,7 @@ protected:
 					FontAtlas.PointerToValue()
 				);
 				FontMap->GenerateMipMaps();
+				TextureManager::GetInstance().AddTexture(L"FontMap", FontMap);
 			}
 		}
 
@@ -997,7 +988,7 @@ protected:
 		RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
 		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
 		RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(1.F).PointerToValue());
-		RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR->GetDimensions().FloatVector3().PointerToValue());
+		RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR->GetSize().FloatVector3().PointerToValue());
 		RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 		RenderTextureMaterial.SetTexture2D("_MainTexture", EquirectangularTextureHDR, 0);
 		float LodLevel = log2f((float)EquirectangularTextureHDR->GetWidth()) * abs(MultiuseValue);
@@ -1017,7 +1008,7 @@ protected:
 		// --- Activate corresponding render state
 		RenderTextMaterial.Use();
 		RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
-		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetDimensions().FloatVector3().PointerToValue());
+		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetSize().FloatVector3().PointerToValue());
 		RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix",
 			Matrix4x4::Orthographic(
 				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),

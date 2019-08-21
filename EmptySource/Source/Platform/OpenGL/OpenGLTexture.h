@@ -38,29 +38,26 @@ namespace EmptySource {
 		//* Check if texture is valid
 		virtual bool IsValid() const override;
 
-		virtual inline int GetWidth() const override { return Dimensions.x; }
+		virtual inline int GetWidth() const override { return Size.x; }
 
-		virtual inline int GetHeight() const override { return Dimensions.y; }
+		virtual inline int GetHeight() const override { return Size.y; }
 
-		virtual inline float GetAspectRatio() const override { return (float)Dimensions.x / (float)Dimensions.y; };
+		virtual inline float GetAspectRatio() const override { return (float)Size.x / (float)Size.y; };
 
-		virtual inline IntVector3 GetDimensions() const override { return Dimensions; };
+		virtual inline IntVector3 GetSize() const override { return Size; }
+
+		virtual inline ETextureDimension GetDimension() const override { return ETextureDimension::Texture2D; };
 
 		virtual unsigned int GetMipMapCount() const override { return MipMapCount; };
 
 		virtual inline EFilterMode GetFilterMode() const override { return FilterMode; };
 
-		virtual void SetFilterMode(const EFilterMode& Mode) override;
+		virtual inline EColorFormat GetColorFormat() const override { return ColorFormat; }
 
 		virtual inline ESamplerAddressMode GetSamplerAddressMode() const override { return AddressMode; };
 
-		virtual inline EColorFormat GetColorFormat() const override { return ColorFormat; }
-
-		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
-
 	private:
-
-		IntVector2 Dimensions;
+		IntVector2 Size;
 
 		bool bValid;
 
@@ -73,6 +70,10 @@ namespace EmptySource {
 		EColorFormat ColorFormat;
 
 		unsigned int MipMapCount;
+
+		virtual void SetFilterMode(const EFilterMode& Mode) override;
+
+		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
 
 	};
 
@@ -102,21 +103,17 @@ namespace EmptySource {
 		//* Check if texture is valid
 		virtual bool IsValid() const override;
 
-		virtual inline unsigned int GetSize() const override { return Size; }
+		virtual inline IntVector3 GetSize() const override { return IntVector2(Size); }
 
-		virtual inline IntVector3 GetDimensions() const override { return IntVector2(Size); };
+		virtual inline ETextureDimension GetDimension() const override { return ETextureDimension::Cubemap; };
 
 		virtual unsigned int GetMipMapCount() const override { return MipMapCount; };
 
 		virtual inline EFilterMode GetFilterMode() const override { return FilterMode; };
 
-		virtual void SetFilterMode(const EFilterMode& Mode) override;
-
 		virtual inline ESamplerAddressMode GetSamplerAddressMode() const override { return AddressMode; };
 
 		virtual inline EColorFormat GetColorFormat() const override { return ColorFormat; }
-
-		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
 
 		static bool ConvertFromCube(CubemapPtr & Cube, const TextureData<UCharRGB>& Textures);
 
@@ -141,6 +138,10 @@ namespace EmptySource {
 		EColorFormat ColorFormat;
 
 		unsigned int MipMapCount;
+
+		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
+
+		virtual void SetFilterMode(const EFilterMode& Mode) override;
 
 	};
 }
