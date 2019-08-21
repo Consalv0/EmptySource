@@ -24,6 +24,7 @@ namespace EmptySource {
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer() {
+		Unbind();
 		glDeleteBuffers(1, &VertexBufferID);
 	}
 
@@ -33,6 +34,10 @@ namespace EmptySource {
 
 	void OpenGLVertexBuffer::Unbind() const {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	void * OpenGLVertexBuffer::GetNativeObject() {
+		return (void *)(unsigned long long)VertexBufferID;
 	}
 
 	// Index Buffer //
@@ -46,6 +51,7 @@ namespace EmptySource {
 	}
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer() {
+		Unbind();
 		glDeleteBuffers(1, &IndexBufferID);
 	}
 
@@ -57,6 +63,10 @@ namespace EmptySource {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	void * OpenGLIndexBuffer::GetNativeObject() {
+		return (void *)(unsigned long long)IndexBufferID;
+	}
+
 	// Vertex Array //
 
 	OpenGLVertexArray::OpenGLVertexArray() {
@@ -64,6 +74,7 @@ namespace EmptySource {
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray() {
+		Unbind();
 		glDeleteVertexArrays(1, &VertexArrayID);
 	}
 
@@ -75,8 +86,12 @@ namespace EmptySource {
 		glBindVertexArray(0);
 	}
 
+	void * OpenGLVertexArray::GetNativeObject() {
+		return (void *)(unsigned long long)VertexArrayID;
+	}
+
 	void OpenGLVertexArray::AddVertexBuffer(const VertexBufferPtr & Buffer) {
-		ES_CORE_ASSERT(Buffer->GetLayout().GetElements().size(), L"Vertex Buffer has no layout!");
+		ES_CORE_ASSERT(Buffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		glBindVertexArray(VertexArrayID);
 		Buffer->Bind();
 

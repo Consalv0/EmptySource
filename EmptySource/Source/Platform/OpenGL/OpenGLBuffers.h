@@ -14,6 +14,8 @@ namespace EmptySource {
 		//* Unbind the vertex buffer
 		virtual void Unbind() const override;
 
+		virtual void * GetNativeObject() override;
+
 		//* The number of bytes in the vertex buffer
 		virtual inline unsigned int GetSize() const override { return Size; }
 
@@ -45,6 +47,8 @@ namespace EmptySource {
 		//* Unbind the index buffer
 		virtual void Unbind() const override;
 
+		virtual void * GetNativeObject() override;
+
 		//* The number of bytes in the index buffer
 		virtual inline unsigned int GetSize() const override { return Size; }
 
@@ -72,6 +76,8 @@ namespace EmptySource {
 
 		//* Unbind the index buffer
 		virtual void Unbind() const override;
+
+		virtual void * GetNativeObject() override;
 
 		//* Bind a vertex bufer to this vertex array
 		virtual void AddVertexBuffer(const VertexBufferPtr & Buffer) override;
