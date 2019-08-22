@@ -133,7 +133,7 @@ namespace EmptySource {
 	}
 
 	void Mesh::ClearBuffers() {
-		VertexArrayObject = nullptr;
+		VertexArrayObject.reset();
 		MeshSubdivisions.clear();
 	}
 

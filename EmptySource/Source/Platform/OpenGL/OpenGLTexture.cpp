@@ -395,9 +395,7 @@ namespace EmptySource {
 		   { ECubemapFace::Front, Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F,  0.F, -1.F), Vector3(0.F, -1.F,  0.F)) }
 		};
 
-		GLuint ModelMatrixBuffer;
-		glGenBuffers(1, &ModelMatrixBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+		VertexBufferPtr ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 		RenderTargetPtr Renderer = RenderTarget::Create();
 		
 		// --- Convert HDR equirectangular environment map to cubemap equivalent
@@ -419,8 +417,6 @@ namespace EmptySource {
 		}
 		if (bGenerateMipMaps) GenerateMipMaps();
 		Unbind();
-		
-		glDeleteBuffers(1, &ModelMatrixBuffer);
 		return true;
 	}
 
@@ -449,9 +445,7 @@ namespace EmptySource {
 		   { ECubemapFace::Front, Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F,  0.F, -1.F), Vector3(0.F, -1.F,  0.F)) }
 		};
 
-		GLuint ModelMatrixBuffer;
-		glGenBuffers(1, &ModelMatrixBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+		VertexBufferPtr ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 		RenderTargetPtr Renderer = RenderTarget::Create();
 		
 		// --- Convert HDR equirectangular environment map to cubemap equivalent
@@ -482,7 +476,6 @@ namespace EmptySource {
 		}
 		
 		Unbind();
-		glDeleteBuffers(1, &ModelMatrixBuffer);
 		return true;
 	}
 

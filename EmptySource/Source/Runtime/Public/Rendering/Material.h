@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Rendering/RenderingDefinitions.h"
+#include "Rendering/RenderingBuffers.h"
 #include "Rendering/Shader.h"
 
 namespace EmptySource {
@@ -25,7 +26,7 @@ namespace EmptySource {
 		ShaderPtr GetShaderProgram() const;
 
 		//* Pass Matrix4x4 Buffer Array
-		void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const unsigned int& Buffer) const;
+		void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const VertexBufferPtr& Buffer) const;
 
 		//* Pass Matrix4x4 Array
 		void SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;

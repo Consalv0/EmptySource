@@ -13,7 +13,7 @@ namespace EmptySource {
 
 		RenderPipeline * Pipeline;
 
-		unsigned int ModelMatrixBuffer;
+		VertexBufferPtr ModelMatrixBuffer;
 
 		Transform EyeTransform;
 
@@ -37,7 +37,7 @@ namespace EmptySource {
 
 		virtual void SetViewProjection(const Matrix4x4 & Projection);
 
-		unsigned int GetMatrixBuffer() const;
+		VertexBufferPtr GetMatrixBuffer() const;
 	};
 
 }

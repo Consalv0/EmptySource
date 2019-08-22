@@ -20,13 +20,13 @@ namespace EmptySource {
 		ViewProjection = Projection;
 	}
 
-	unsigned int RenderStage::GetMatrixBuffer() const {
+
+	VertexBufferPtr RenderStage::GetMatrixBuffer() const {
 		return ModelMatrixBuffer;
 	}
 
 	void RenderStage::Initialize() {
-		glGenBuffers(1, &ModelMatrixBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
+		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 	}
 
 	void RenderStage::Prepare() {
