@@ -1,12 +1,15 @@
 
 #include "CoreMinimal.h"
-#include "Rendering/GLFunctions.h"
-#include "Rendering/Texture.h"
-#include "Rendering/Material.h"
+
 #include "Math/MathUtility.h"
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
 #include "Math/Matrix4x4.h"
+
+#include "Rendering/Texture.h"
+#include "Rendering/Material.h"
+
+#include "Rendering/GLFunctions.h"
 
 namespace EmptySource {
 
@@ -32,12 +35,12 @@ namespace EmptySource {
 		return MaterialShader;
 	}
 
-	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const unsigned int & Buffer) const {
+	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
 		unsigned int AttribLocation = Program->GetAttribLocation(AttributeName);
 
-		glBindBuffer(GL_ARRAY_BUFFER, Buffer);
+		Buffer->Bind();
 		glBufferData(GL_ARRAY_BUFFER, Count * sizeof(Matrix4x4), Data, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(AttribLocation);

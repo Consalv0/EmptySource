@@ -52,11 +52,15 @@ namespace EmptySource {
 		const NChar * SourcePointer = Code.c_str();
 		glShaderSource(ShaderObject, 1, &SourcePointer, NULL);
 		glCompileShader(ShaderObject);
-		
-		GLint Result = GL_FALSE;
-		glGetShaderiv(ShaderObject, GL_COMPILE_STATUS, &Result);
-		if (Result <= 0)
+
+		GLint LogSize = 0;
+		glGetShaderiv(ShaderObject, GL_INFO_LOG_LENGTH, &LogSize);
+		if (LogSize > 0) {
 			LOG_CORE_ERROR(L"Error while compiling shader '{:d}'", ShaderObject);
+			TArray<NChar> ShaderErrorMessage(LogSize + 1);
+			glGetShaderInfoLog(ShaderObject, LogSize, NULL, &ShaderErrorMessage[0]);
+			LOG_CORE_ERROR("'{}'", NString((const NChar*)&ShaderErrorMessage[0]));
+		}
 		else
 			bValid = true;
 
@@ -89,11 +93,14 @@ namespace EmptySource {
 		glShaderSource(ShaderObject, 1, &SourcePointer, NULL);
 		glCompileShader(ShaderObject);
 
-		GLint Result = GL_FALSE;
-		glGetShaderiv(ShaderObject, GL_COMPILE_STATUS, &Result);
-		if (Result <= 0)
+		GLint LogSize = 0;
+		glGetShaderiv(ShaderObject, GL_INFO_LOG_LENGTH, &LogSize);
+		if (LogSize > 0) {
 			LOG_CORE_ERROR(L"Error while compiling shader '{:d}'", ShaderObject);
-		else
+			TArray<NChar> ShaderErrorMessage(LogSize + 1);
+			glGetShaderInfoLog(ShaderObject, LogSize, NULL, &ShaderErrorMessage[0]);
+			LOG_CORE_ERROR("'{}'", NString((const NChar*)&ShaderErrorMessage[0]));
+		} else
 			bValid = true;
 	}
 

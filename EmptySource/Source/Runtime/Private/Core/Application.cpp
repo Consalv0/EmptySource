@@ -75,7 +75,6 @@ namespace EmptySource {
 	}
 
 	void Application::OnWindowEvent(WindowEvent & WinEvent) {
-		// LOG_CORE_DEBUG(L"App Window Event : '{}'", WinEvent.GetName());
 		EventDispatcher<WindowEvent> Dispatcher(WinEvent);
 		Dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
 
@@ -85,12 +84,6 @@ namespace EmptySource {
 	}
 
 	void Application::OnInputEvent(InputEvent & InEvent) {
-		// LOG_CORE_DEBUG(L"App Input Event : '{}'", InEvent.GetName());
-		EventDispatcher<InputEvent> Dispatcher(InEvent);
-		Dispatcher.Dispatch<KeyTypedEvent>([](KeyTypedEvent & Event) {
-			LOG_CORE_INFO(" Text : '{}'", Event.GetText());
-		});
-
 		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
 			(*--LayerIt)->OnInputEvent(InEvent);
 		}

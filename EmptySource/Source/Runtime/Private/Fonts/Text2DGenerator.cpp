@@ -23,7 +23,7 @@ namespace EmptySource {
 	}
 
 	void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
-		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From, From, From, To, To);
+		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From + 1, (WChar)From, From, (WChar)To, To);
 		Timestamp Timer;
 		Timer.Begin();
 		TextFont->SetGlyphHeight(GlyphHeight);
@@ -166,19 +166,18 @@ namespace EmptySource {
 		size_t Count = 0;
 		TArray<FontGlyph *> GlyphArray = TArray<FontGlyph * >(LoadedCharacters.size());
 
-		for (TDictionary<unsigned long, FontGlyph*>::const_iterator Begin = LoadedCharacters.begin(); Begin != LoadedCharacters.end(); Begin++)
+		for (TDictionary<unsigned long, FontGlyph*>::const_iterator Begin = LoadedCharacters.begin(); Begin != LoadedCharacters.end(); Begin++) {
+			ES_CORE_ASSERT(Begin->second != NULL, "Glyph is NULL");
 			GlyphArray[Count++] = Begin->second;
+		}
 
 		std::sort(GlyphArray.begin(), GlyphArray.end(), [](FontGlyph * A, FontGlyph * B) {
-			ES_CORE_ASSERT(A, "Glyph is NULL");
-			ES_CORE_ASSERT(B, "Glyph is NULL");
 			return Math::Max(A->Width, A->Height) / Math::Min(A->Width, A->Height) * A->Width * A->Height > 
 				   Math::Max(B->Width, B->Height) / Math::Min(B->Width, B->Height) * B->Width * B->Height;
 		});
 
 		for (TArray<FontGlyph * >::const_iterator Begin = GlyphArray.begin(); Begin != GlyphArray.end(); Begin++) {
 			FontGlyph * Character = *Begin;
-			ES_CORE_ASSERT(Character != NULL, "Glyph is NULL");
 
 			if (Character->bUndefined)
 				continue;
