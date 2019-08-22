@@ -115,13 +115,13 @@ namespace EmptySource {
 
 		virtual inline EColorFormat GetColorFormat() const override { return ColorFormat; }
 
-		static bool ConvertFromCube(CubemapPtr & Cube, const TextureData<UCharRGB>& Textures);
+		virtual bool ConvertFromCube(const CubeFaceTextures<UCharRGB>& Textures, bool GenerateMipMaps) override;
 
-		static bool ConvertFromHDRCube(CubemapPtr & Cube, const TextureData<FloatRGB>& Textures);
+		virtual bool ConvertFromHDRCube(const CubeFaceTextures<FloatRGB>& Textures, bool GenerateMipMaps) override;
 
-		static bool ConvertFromEquirectangular(CubemapPtr & Cube, Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial);
+		virtual bool ConvertFromEquirectangular(Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) override;
 
-		static bool ConvertFromHDREquirectangular(CubemapPtr & Cube, Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial);
+		virtual bool ConvertFromHDREquirectangular(Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) override;
 
 	private:
 

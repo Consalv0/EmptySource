@@ -320,70 +320,69 @@ namespace EmptySource {
 		}
 	}
 
-	bool OpenGLCubemap::ConvertFromCube(CubemapPtr & Cube, const TextureData<UCharRGB>& Textures) {
-		if (!Cube->IsValid()) return false;
+	bool OpenGLCubemap::ConvertFromCube(const CubeFaceTextures<UCharRGB>& Textures, bool bGenerateMipMaps) {
+		if (!IsValid()) return false;
 
-		if (!Textures.CheckDimensions(Cube->GetSize().x) || Cube->GetSize().x <= 0) {
+		if (!Textures.CheckDimensions(GetSize().x) || GetSize().x <= 0) {
 			return false;
 		}
 
-		Cube->Bind();
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		Bind();
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_UNSIGNED_BYTE, Textures.Right.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_UNSIGNED_BYTE, Textures.Left.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_UNSIGNED_BYTE, Textures.Top.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_UNSIGNED_BYTE, Textures.Bottom.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_UNSIGNED_BYTE, Textures.Front.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_UNSIGNED_BYTE, Textures.Back.PointerToValue());
 
-		Cube->GenerateMipMaps();
-		Cube->Unbind();
+		if (bGenerateMipMaps) GenerateMipMaps();
+		Unbind();
 		return true;
 	}
 
-	bool OpenGLCubemap::ConvertFromHDRCube(CubemapPtr & Cube, const TextureData<FloatRGB>& Textures) {
-		if (!Cube->IsValid()) return false;
+	bool OpenGLCubemap::ConvertFromHDRCube(const CubeFaceTextures<FloatRGB>& Textures, bool bGenerateMipMaps) {
+		if (!IsValid()) return false;
 
-		if (!Textures.CheckDimensions(Cube->GetSize().x) || Cube->GetSize().x <= 0) {
+		if (!Textures.CheckDimensions(GetSize().x) || GetSize().x <= 0) {
 			return false;
 		}
 
-		Cube->Bind();
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		Bind();
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_FLOAT, Textures.Right.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_FLOAT, Textures.Left.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_FLOAT, Textures.Top.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_FLOAT, Textures.Bottom.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_FLOAT, Textures.Front.PointerToValue());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GetOpenGLTextureColorFormat(Cube->GetColorFormat()), Cube->GetSize().x, Cube->GetSize().x,
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GetOpenGLTextureColorFormat(GetColorFormat()), GetSize().x, GetSize().x,
 			0, GL_RGB, GL_FLOAT, Textures.Back.PointerToValue());
 
-		Cube->GenerateMipMaps();
-		Cube->Unbind();
+		if (bGenerateMipMaps) GenerateMipMaps();
+		Unbind();
 		return true;
 	}
 
-	bool OpenGLCubemap::ConvertFromEquirectangular(CubemapPtr & Cube, Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial) {
-		if (!Cube->IsValid()) return false;
+	bool OpenGLCubemap::ConvertFromEquirectangular(Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool bGenerateMipMaps) {
+		if (!IsValid()) return false;
 
-		Cube->Bind();
+		Bind();
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			Cube->GenerateMipMaps();
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
 		}
 
 		static const Matrix4x4 CaptureProjection = Matrix4x4::Perspective(90.F * MathConstants::DegreeToRad, 1.F, 0.1F, 10.F);
@@ -413,31 +412,31 @@ namespace EmptySource {
 			MeshPrimitives::Cube.SetUpBuffers();
 			MeshPrimitives::Cube.BindVertexArray();
 			EquirectangularToCubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
-			Renderer->BindCubemapFace(Cube, View.first);
+			Renderer->BindCubemapFace(shared_from_this(), View.first);
 			Renderer->Clear();
 		
 			MeshPrimitives::Cube.DrawElement();
 		}
-		Cube->GenerateMipMaps();
-		Cube->Unbind();
+		if (bGenerateMipMaps) GenerateMipMaps();
+		Unbind();
 		
 		glDeleteBuffers(1, &ModelMatrixBuffer);
 		return true;
 	}
 
-	bool OpenGLCubemap::ConvertFromHDREquirectangular(CubemapPtr & Cube, Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial) {
-		if (!Cube->IsValid()) return false;
+	bool OpenGLCubemap::ConvertFromHDREquirectangular(Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool bGenerateMipMaps) {
+		if (!IsValid()) return false;
 
-		Cube->Bind();
+		Bind();
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB16F, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB16F, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB16F, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB16F, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB16F, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB16F, Cube->GetSize().x, Cube->GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB16F, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB16F, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB16F, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB16F, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB16F, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB16F, GetSize().x, GetSize().y, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
 
-			Cube->GenerateMipMaps();
+			if (bGenerateMipMaps) GenerateMipMaps();
 		}
 
 		static const Matrix4x4 CaptureProjection = Matrix4x4::Perspective(90.F * MathConstants::DegreeToRad, 1.F, 0.1F, 10.F);
@@ -460,7 +459,7 @@ namespace EmptySource {
 		EquirectangularToCubemapMaterial->SetTexture2D("_EquirectangularMap", Equirectangular, 0);
 		EquirectangularToCubemapMaterial->SetMatrix4x4Array("_ProjectionMatrix", CaptureProjection.PointerToValue());
 		
-		const unsigned int MaxMipLevels = (unsigned int)Cube->GetMipMapCount();
+		const unsigned int MaxMipLevels = (unsigned int)GetMipMapCount();
 		for (unsigned int Lod = 0; Lod <= MaxMipLevels; ++Lod) {
 
 			float Roughness = (float)Lod / (float)(MaxMipLevels);
@@ -474,7 +473,7 @@ namespace EmptySource {
 				MeshPrimitives::Cube.BindVertexArray();
 				EquirectangularToCubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 		
-				Renderer->BindCubemapFace(Cube, View.first, Lod);
+				Renderer->BindCubemapFace(shared_from_this(), View.first, Lod);
 				Renderer->Clear();
 		
 				MeshPrimitives::Cube.DrawElement();
@@ -482,7 +481,7 @@ namespace EmptySource {
 			}
 		}
 		
-		Cube->Unbind();
+		Unbind();
 		glDeleteBuffers(1, &ModelMatrixBuffer);
 		return true;
 	}

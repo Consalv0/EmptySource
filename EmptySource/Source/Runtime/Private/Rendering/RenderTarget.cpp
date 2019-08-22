@@ -2,22 +2,16 @@
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderingBuffers.h"
-#include "Rendering/Shader.h"
-#include "Rendering/Texture.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderingAPI.h"
-
-#include "Rendering/Material.h"
-#include "Mesh/Mesh.h"
-#include "Mesh/MeshPrimitives.h"
-#include "Math/Matrix4x4.h"
-#include "Math/MathUtility.h"
+#include "Rendering/Shader.h"
+#include "Rendering/Texture.h"
 
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLRenderTarget.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
 
-#include "glad/glad.h"
+#include "Rendering/Rendering.h"
 
 namespace EmptySource {
 

@@ -40,9 +40,6 @@ namespace EmptySource {
 		//* Clear the render buffer
 		virtual void Clear() const override;
 
-		//* Generate MipMaps using Hardware
-		virtual void GenerateTextureMipMaps() override;
-
 		//* Check if texture is valid
 		virtual bool IsValid() const override;
 

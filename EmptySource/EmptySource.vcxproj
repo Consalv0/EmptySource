@@ -284,7 +284,6 @@
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
-    <ClCompile Include="Source\Runtime\Private\RenderTexture.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />

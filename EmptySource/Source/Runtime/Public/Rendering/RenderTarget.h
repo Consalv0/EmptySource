@@ -35,9 +35,6 @@ namespace EmptySource {
 		//* Get size of render
 		virtual IntVector3 GetSize() const = 0;
 
-		//* Generate MipMaps using Hardware
-		virtual void GenerateTextureMipMaps() = 0;
-
 		//* Checks the framebuffer status
 		virtual bool CheckStatus() const = 0;
 

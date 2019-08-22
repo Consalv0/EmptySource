@@ -509,9 +509,6 @@
     <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
       <Filter>Runtime\Private\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\RenderTexture.cpp">
-      <Filter>Runtime\Private</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>

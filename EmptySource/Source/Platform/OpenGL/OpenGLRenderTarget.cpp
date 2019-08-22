@@ -121,12 +121,6 @@ namespace EmptySource {
 		Rendering::ClearCurrentRender(true, 0, true, 1, false, 0);
 	}
 
-	void OpenGLRenderTarget::GenerateTextureMipMaps(){
-		if (RenderingTexture != NULL) {
-			RenderingTexture->GenerateMipMaps();
-		}
-	}
-
 	bool OpenGLRenderTarget::IsValid() const {
 		return FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE;
 	}

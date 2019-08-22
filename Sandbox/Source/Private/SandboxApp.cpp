@@ -562,7 +562,7 @@ protected:
 		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
 		CubemapTexture = Cubemap::Create(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
-		Cubemap::ConvertFromHDREquirectangular(CubemapTexture, EquirectangularTextureHDR, &EquirectangularToCubemapMaterial);
+		CubemapTexture->ConvertFromHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
 		TextureManager::GetInstance().AddTexture(L"CubemapTexture", CubemapTexture);
 
 		Transforms.push_back(Transform());

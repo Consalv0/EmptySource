@@ -5,7 +5,29 @@
 
 namespace EmptySource {
 
-	class Texture {
+	template<typename T>
+	struct CubeFaceTextures {
+		Bitmap<T> Right;
+		Bitmap<T> Left;
+		Bitmap<T> Top;
+		Bitmap<T> Bottom;
+		Bitmap<T> Back;
+		Bitmap<T> Front;
+
+		inline bool CheckDimensions(const int Width) const {
+			if (Right.GetHeight() != Width || Right.GetWidth() != Width) return false;
+			if (Left.GetHeight() != Width || Left.GetWidth() != Width) return false;
+			if (Top.GetHeight() != Width || Top.GetWidth() != Width) return false;
+			if (Bottom.GetHeight() != Width || Bottom.GetWidth() != Width) return false;
+			if (Back.GetHeight() != Width || Back.GetWidth() != Width) return false;
+			return true;
+		}
+	};
+
+	template struct CubeFaceTextures<UCharRGB>;
+	template struct CubeFaceTextures<FloatRGB>;
+
+	class Texture : public std::enable_shared_from_this<Texture>{
 	public:
 		virtual ~Texture() = default;
 
@@ -73,32 +95,6 @@ namespace EmptySource {
 	
 	class Cubemap : public Texture {
 	public:
-		template<typename T>
-		struct TextureData {
-			Bitmap<T> Right;
-			Bitmap<T> Left;
-			Bitmap<T> Top;
-			Bitmap<T> Bottom;
-			Bitmap<T> Back;
-			Bitmap<T> Front;
-
-			inline bool CheckDimensions(const int Width) const {
-				if (Right.GetHeight() != Width || Right.GetWidth() != Width) return false;
-				if (Left.GetHeight() != Width || Left.GetWidth() != Width) return false;
-				if (Top.GetHeight() != Width || Top.GetWidth() != Width) return false;
-				if (Bottom.GetHeight() != Width || Bottom.GetWidth() != Width) return false;
-				if (Back.GetHeight() != Width || Back.GetWidth() != Width) return false;
-				return true;
-			}
-		};
-
-		static bool ConvertFromCube(CubemapPtr & Cubemap, const TextureData<UCharRGB>& Textures);
-
-		static bool ConvertFromHDRCube(CubemapPtr & Cubemap, const TextureData<FloatRGB>& Textures);
-
-		static bool ConvertFromEquirectangular(CubemapPtr & Cubemap, Texture2DPtr Equirectangular, class Material * EquirectangularToCubemapMaterial);
-
-		static bool ConvertFromHDREquirectangular(CubemapPtr & Cubemap, Texture2DPtr Equirectangular, class Material * EquirectangularToCubemapMaterial);
 
 		static CubemapPtr Create(
 			const unsigned int & Size,
@@ -107,9 +103,14 @@ namespace EmptySource {
 			const ESamplerAddressMode & AddressMode
 		);
 
-	};
+		virtual bool ConvertFromCube(const CubeFaceTextures<UCharRGB>& Textures, bool GenerateMipMaps) = 0;
 
-	template struct Cubemap::TextureData<UCharRGB>;
-	template struct Cubemap::TextureData<FloatRGB>;
+		virtual bool ConvertFromHDRCube(const CubeFaceTextures<FloatRGB>& Textures, bool GenerateMipMaps) = 0;
+
+		virtual bool ConvertFromEquirectangular(Texture2DPtr Equirectangular, class Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) = 0;
+
+		virtual bool ConvertFromHDREquirectangular(Texture2DPtr Equirectangular, class Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) = 0;
+
+	};
 
 }

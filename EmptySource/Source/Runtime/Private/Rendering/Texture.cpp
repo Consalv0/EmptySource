@@ -40,50 +40,6 @@ namespace EmptySource {
 		}
 	}
 
-	bool Cubemap::ConvertFromCube(CubemapPtr & Cube, const TextureData<UCharRGB>& Textures) {
-		switch (Rendering::GetAPI()) {
-		case RenderingAPI::API::OpenGL:
-			return OpenGLCubemap::ConvertFromCube(Cube, Textures);
-		case RenderingAPI::API::None:
-		default:
-			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't convert cubemap from texture2D!");
-			return NULL;
-		}
-	}
-
-	bool Cubemap::ConvertFromHDRCube(CubemapPtr & Cube, const TextureData<FloatRGB>& Textures) {
-		switch (Rendering::GetAPI()) {
-		case RenderingAPI::API::OpenGL:
-			return OpenGLCubemap::ConvertFromHDRCube(Cube, Textures);
-		case RenderingAPI::API::None:
-		default:
-			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't convert cubemap from HDR texture2D!");
-			return NULL;
-		}
-	}
-
-	bool Cubemap::ConvertFromEquirectangular(CubemapPtr & Cube, Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial) {
-		switch (Rendering::GetAPI()) {
-		case RenderingAPI::API::OpenGL:
-			return OpenGLCubemap::ConvertFromEquirectangular(Cube, Equirectangular, EquirectangularToCubemapMaterial);
-		case RenderingAPI::API::None:
-		default:
-			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't convert cubemap from texture2D!");
-			return NULL;
-		}
-	}
-
-	bool Cubemap::ConvertFromHDREquirectangular(CubemapPtr & Cube, Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial) {
-		switch (Rendering::GetAPI()) {
-		case RenderingAPI::API::OpenGL:
-			return OpenGLCubemap::ConvertFromHDREquirectangular(Cube, Equirectangular, EquirectangularToCubemapMaterial);
-		case RenderingAPI::API::None:
-		default:
-			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't convert cubemap from texture2D!");
-			return NULL;
-		}
-	}
-
 	CubemapPtr EmptySource::Cubemap::Create(
 		const unsigned int & Size, const EColorFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode) 
 	{
