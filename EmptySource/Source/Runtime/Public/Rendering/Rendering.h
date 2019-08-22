@@ -16,6 +16,10 @@ namespace EmptySource {
 			RendererAppInterface->ClearCurrentRender(bClearColor, Color, bClearDepth, Depth, bClearStencil, Stencil);
 		}
 
+		inline static void SetViewport(const Box2D& Viewport) {
+			RendererAppInterface->SetViewport(Viewport);
+		}
+
 		inline static void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) {
 			RendererAppInterface->DrawIndexed(VertexArray, Count);
 		}

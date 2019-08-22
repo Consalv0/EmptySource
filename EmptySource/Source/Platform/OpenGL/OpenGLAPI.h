@@ -11,6 +11,8 @@ namespace EmptySource {
 
 		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) override;
 
+		virtual void SetViewport(const Box2D& Viewport) override;
+
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) override;
 
 	};
