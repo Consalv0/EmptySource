@@ -29,15 +29,26 @@ namespace EmptySource {
 
 	inline Quaternion Quaternion::EulerAngles(Vector3 const & EulerAngles) {
 		float Scale = MathConstants::DegreeToRad * 0.5F;
-		Vector3 Vcos = { std::cos(EulerAngles.x * Scale), std::cos(EulerAngles.y * Scale), std::cos(EulerAngles.z * Scale) };
-		Vector3 Vsin = { std::sin(EulerAngles.x * Scale), std::sin(EulerAngles.y * Scale), std::sin(EulerAngles.z * Scale) };
+		float HalfRoll  =  EulerAngles[Roll] * Scale;
+		float HalfPitch = EulerAngles[Pitch] * Scale;
+		float HalfYaw   =   EulerAngles[Yaw] * Scale;
 
-		return Quaternion(
-			Vcos.x * Vcos.y * Vcos.z + Vsin.x * Vsin.y * Vsin.z,
-			Vsin.x * Vcos.y * Vcos.z - Vcos.x * Vsin.y * Vsin.z,
-			Vcos.x * Vsin.y * Vcos.z + Vsin.x * Vcos.y * Vsin.z,
-			Vcos.x * Vcos.y * Vsin.z - Vsin.x * Vsin.y * Vcos.z
-		);
+		float SinRoll  = std::sin(HalfRoll);
+		float CosRoll  = std::cos(HalfRoll);
+		float SinPitch = std::sin(HalfPitch);
+		float CosPitch = std::cos(HalfPitch);
+		float SinYaw   = std::sin(HalfYaw);
+		float CosYaw   = std::cos(HalfYaw);
+
+		float CosYawPitch = CosYaw * CosPitch;
+		float SinYawPitch = SinYaw * SinPitch;
+
+		Quaternion Result;
+		Result.x = (CosYaw * SinPitch * CosRoll) + (SinYaw * CosPitch * SinRoll);
+		Result.y = (SinYaw * CosPitch * CosRoll) - (CosYaw * SinPitch * SinRoll);
+		Result.z = (CosYawPitch * SinRoll) - (SinYawPitch * CosRoll);
+		Result.w = (CosYawPitch * CosRoll) + (SinYawPitch * SinRoll);
+		return Result;
 	}
 
 	FORCEINLINE Quaternion Quaternion::FromToRotation(Vector3 const & From, Vector3 const & To) {
@@ -240,32 +251,28 @@ namespace EmptySource {
 	}
 
 	inline Vector3 Quaternion::ToEulerAngles() const {
-		// --- Reference 
-		// --- http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+		float xx(x * x);
+		float yy(y * y);
+		float zz(z * z);
+		float xy(x * y);
+		float zw(z * w);
+		float zx(z * x);
+		float yw(y * w);
+		float yz(y * z);
+		float xw(x * w);
 
-		Vector3 EulerAngles;
+		Vector3 Result;
+		Result[Pitch] = std::asin(2.F * (xw - yz));
+		double Test = std::cos((double)Result[Pitch]);
+		if (Test > MathConstants::TendencyZero) {
+			Result[Roll] = std::atan2(2.F * (xy + zw), 1.F - (2.F * (zz + xx)));
+			Result[Yaw]  = std::atan2(2.F * (zx + yw), 1.F - (2.F * (yy + xx)));
+		} else {
+			Result[Roll] = std::atan2(-2.F * (xy - zw), 1.F - (2.F * (yy + zz)));
+			Result[Yaw] = 0.F;
+		}
 
-		// --- Is close to the pole?
-		float SingularityTest = x * y + z * w;
-		if (SingularityTest > 0.499F) {
-			EulerAngles[Yaw] = 2 * atan2(x, w);
-			EulerAngles[Roll] = MathConstants::HalfPi;
-			EulerAngles[Pitch] = 0;
-		}
-		else if (SingularityTest < -0.499F) {
-			EulerAngles[Yaw] = -2 * atan2(x, w);
-			EulerAngles[Roll] = -MathConstants::HalfPi;
-			EulerAngles[Pitch] = 0;
-		}
-		else {
-			const float sqx = x * x;
-			const float sqy = y * y;
-			const float sqz = z * z;
-			EulerAngles[Yaw] = atan2((2 * y * w) - (2 * x * z), 1 - (2 * sqy) - (2 * sqz));
-			EulerAngles[Roll] = asin(2 * SingularityTest);
-			EulerAngles[Pitch] = atan2((2 * x * w) - (2 * y * z), 1 - (2 * sqx) - (2 * sqz));
-		}
-		return EulerAngles * MathConstants::RadToDegree;
+		return Result * MathConstants::RadToDegree;
 	}
 
 	FORCEINLINE float Quaternion::Dot(const Quaternion & Other) const {

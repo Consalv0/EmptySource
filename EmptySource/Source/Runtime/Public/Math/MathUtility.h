@@ -7,6 +7,7 @@ namespace EmptySource {
 
 	namespace MathConstants {
 		static constexpr float Pi = 3.1415926535897932F;
+		static constexpr float TendencyZero = 1e-6F;
 		static constexpr float SmallNumber = 1.e-8F;
 		static constexpr float BigNumber = 3.4e+38f;
 		static constexpr float Euler = 2.71828182845904523536F;

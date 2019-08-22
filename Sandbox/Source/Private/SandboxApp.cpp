@@ -46,7 +46,6 @@
 #include "Events/Property.h"
 
 #include "../External/IMGUI/imgui.h"
-#include "../External/GLAD/include/glad/glad.h"
 #include "../External/SDL2/include/SDL_keycode.h"
 #include "../External/SDL2/include/SDL_audio.h"
 
@@ -61,15 +60,14 @@ private:
 	Bitmap<UCharRed> BaseMetallic, BaseRoughness, FlamerMetallic, FlamerRoughness;
 	Bitmap<UCharRGB> BaseNormal, FlamerNormal;
 	Bitmap<UCharRGB> White, Black;
-	Bitmap<FloatRGB> Equirectangular;
 
 	// --- Perpective matrix (ProjectionMatrix)
-	GLuint ModelMatrixBuffer;
+	VertexBufferPtr ModelMatrixBuffer;
 	size_t TriangleCount = 0;
 	size_t VerticesCount = 0;
 	Matrix4x4 ProjectionMatrix;
 
-	Vector3 EyePosition = { -1.132F , 2.692F , -4.048F };
+	Vector3 EyePosition = { -1.132F, 2.692F, -4.048F };
 	Vector3 LightPosition0 = Vector3(2, 1);
 	Vector3 LightPosition1 = Vector3(2, 1);
 
@@ -94,6 +92,7 @@ private:
 	Material HDRClampingMaterial = Material();
 	Material BaseMaterial = Material();
 
+	float SkyboxRoughness = 1.F;
 	float MaterialMetalness = 1.F;
 	float MaterialRoughness = 1.F;
 	float LightIntencity = 20.F;
@@ -125,6 +124,57 @@ private:
 
 protected:
 
+	void SetSceneSkybox(const WString & Path) {
+		Bitmap<FloatRGB> Equirectangular;
+		ImageLoader::Load(Equirectangular, FileManager::GetFile(Path));
+
+		Texture2DPtr EquirectangularTexture = Texture2D::Create(
+			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
+			CF_RGB16F,
+			FM_MinMagLinear,
+			SAM_Repeat,
+			CF_RGB16F,
+			Equirectangular.PointerToValue()
+		);
+		EquirectangularTextureHDR = Texture2D::Create(
+			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
+		);
+		if (TextureManager::GetInstance().GetTexture(L"EquirectangularTextureHDR") != NULL) {
+			TextureManager::GetInstance().FreeTexture(L"EquirectangularTextureHDR");
+		}
+		TextureManager::GetInstance().AddTexture(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
+
+		{
+			RenderTargetPtr Renderer = RenderTarget::Create();
+			EquirectangularTextureHDR->Bind();
+			HDRClampingMaterial.Use();
+			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
+			MeshPrimitives::Quad.BindVertexArray();
+			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
+			HDRClampingMaterial.SetAttribMatrix4x4Array(
+				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
+			);
+
+			Renderer->BindTexture2D(EquirectangularTextureHDR);
+			Renderer->Clear();
+			MeshPrimitives::Quad.DrawInstanciated(1);
+			EquirectangularTextureHDR->GenerateMipMaps();
+		}
+
+		Material EquirectangularToCubemapMaterial = Material();
+		EquirectangularToCubemapMaterial.SetShaderProgram(ShaderManager::GetInstance().GetProgram(L"EquirectangularToCubemap"));
+		EquirectangularToCubemapMaterial.CullMode = CM_None;
+		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
+
+		CubemapTexture = Cubemap::Create(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
+		CubemapTexture->ConvertFromHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
+		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") != NULL) {
+			TextureManager::GetInstance().FreeTexture(L"CubemapTexture");
+		}
+		TextureManager::GetInstance().AddTexture(L"CubemapTexture", CubemapTexture);
+	}
+
 	virtual void OnAttach() override {}
 
 	virtual void OnImGuiRender() override {
@@ -132,50 +182,115 @@ protected:
 		const NChar* Textures[] = {
 			"FontMap", "BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
 			"BaseRoughnessTexture", "BaseNormalTexture", "FlamerAlbedoTexture",
-			"FlamerMetallicTexture", "FlamerNormalTexture", "EquirectangularTextureHDR"
+			"FlamerMetallicTexture", "FlamerNormalTexture", "EquirectangularTextureHDR",
+			"CubemapTexture"
 		};
+		const NChar* SkyBoxes[]{
+			"Resources/Textures/Arches_E_PineTree_3k.hdr",
+			"Resources/Textures/doge2.hdr",
+			"Resources/Textures/ennis.hdr",
+			"Resources/Textures/Factory_Catwalk_2k.hdr",
+			"Resources/Textures/flower_road_2k.hdr",
+			"Resources/Textures/grace-new.hdr",
+			"Resources/Textures/Milkyway.hdr",
+			"Resources/Textures/OutdoorResidentialRiverwalkAfternoon.hdr",
+			"Resources/Textures/spruit_sunrise_2k.hdr",
+			"Resources/Textures/studio_small_03_2k.hdr",
+			"Resources/Textures/tucker_wreck_2k.hdr"
+		};
+
 		static int CurrentTexture = 0;
-		static float LODLevel = 0.F;
+		static int CurrentSkybox = 0;
+		static float SampleLevel = 0.F;
+		static float ImageZoom = 4.F;
 		static float Gamma = 2.2F;
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
 		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str());
 		if (SelectedTexture) {
-			RenderTargetPtr Renderer = RenderTarget::Create();
-			float DeltaTime = Time::GetTimeStamp().GetDeltaTime<Time::Second>();
-			RenderTextureMaterial.Use();
-			RenderTextureMaterial.SetFloat1Array("_Time", &DeltaTime);
-			RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
-			RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
-			RenderTextureMaterial.SetFloat4Array("_ColorFilter",
-				Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
-				.PointerToValue()
-			);
-			RenderTextureMaterial.SetFloat2Array("_MainTextureSize", TextureSample->GetSize().FloatVector3().PointerToValue());
-			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			TextureSample->Bind();
-			RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
-			RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
+			int bCubemap;
+			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
+				RenderTargetPtr Renderer = RenderTarget::Create();
+				RenderTextureMaterial.Use();
+				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
+				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
+				RenderTextureMaterial.SetFloat4Array("_ColorFilter",
+					Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
+					.PointerToValue()
+				);
+				RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+				RenderTextureMaterial.SetInt1Array("_IsCubemap", &bCubemap);
+				SelectedTexture->Bind();
+				RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
+				RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", SelectedTexture, 1);
+				float LODLevel = SampleLevel * (float)SelectedTexture->GetMipMapCount();
+				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 
-			Renderer->Bind();
-			MeshPrimitives::Quad.BindVertexArray();
-			Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
-			RenderTextureMaterial.SetAttribMatrix4x4Array(
-				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
-			);
+				Renderer->Bind();
+				MeshPrimitives::Quad.BindVertexArray();
+				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
+				RenderTextureMaterial.SetAttribMatrix4x4Array(
+					"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
+				);
 
-			Renderer->BindTexture2D(TextureSample);
-			Renderer->Clear();
-			MeshPrimitives::Quad.DrawInstanciated(1);
+				Renderer->BindTexture2D(TextureSample);
+				Renderer->Clear();
+				MeshPrimitives::Quad.DrawInstanciated(1);
+			}
+			if (bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap) {
+				RenderTargetPtr Renderer = RenderTarget::Create();
+				RenderTextureMaterial.Use();
+				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
+				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
+				RenderTextureMaterial.SetFloat4Array("_ColorFilter",
+					Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
+					.PointerToValue()
+				);
+				RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+				RenderTextureMaterial.SetInt1Array("_IsCubemap", &bCubemap);
+				SelectedTexture->Bind();
+				RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
+				RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", SelectedTexture, 1);
+				float LODLevel = SampleLevel * (float)SelectedTexture->GetMipMapCount();
+				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
+
+				Renderer->Bind();
+				MeshPrimitives::Quad.BindVertexArray();
+				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
+				RenderTextureMaterial.SetAttribMatrix4x4Array(
+					"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
+				);
+
+				Renderer->BindTexture2D(TextureSample);
+				Renderer->Clear();
+				MeshPrimitives::Quad.DrawInstanciated(1);
+			}
 		}
+
+		ImGui::Begin("Scene Settings");
+		ImGui::DragFloat3("Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+		ImGui::SliderFloat4("Eye Rotation", &FrameRotation[0], -1.F, 1.F, "");
+		Vector3 EulerFrameRotation = FrameRotation.ToEulerAngles();
+		if (ImGui::DragFloat3("Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
+			FrameRotation = Quaternion::EulerAngles(EulerFrameRotation);
+		}
+		ImGui::SliderFloat("Skybox Roughness", &SkyboxRoughness, 0.F, 1.F);
+		if (ImGui::Combo("Skybox Texture", &CurrentSkybox, SkyBoxes, IM_ARRAYSIZE(SkyBoxes))) {
+			SetSceneSkybox(Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
+		}
+		ImGui::End();
+
+		ImGui::Begin("Audio Settings");
+		ImGui::End();
 
 		ImGui::Begin("Textures");
+		ImGuiIO& IO = ImGui::GetIO();
 		ImGui::Combo("Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures));
 		if (SelectedTexture) {
-			ImGui::SliderFloat("LOD Level", &LODLevel, 0.0f, (float)SelectedTexture->GetMipMapCount(), "%.3f");
+			ImGui::SliderFloat("LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f");
 		}
-		ImGui::SliderFloat("Gamma", &Gamma, 1.0f, 4.0f, "%.3f");
+		ImGui::SliderFloat("Gamma", &Gamma, 1.0F, 4.0F, "%.3f");
 		ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
 		ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
 		ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
@@ -184,16 +299,38 @@ protected:
 		ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
 		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
 		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
+		ImGui::SliderFloat("Image Zoom", &ImageZoom, 1.F, 4.F);
 		if (SelectedTexture) {
-			float MinSideSize = Math::Min(
-				ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
-				* std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio()
-			);
-			MinSideSize -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
-			ImGui::Image((void *)TextureSample->GetTextureObject(), 
-				{ MinSideSize,
-				MinSideSize / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio() }
-			);
+			ImVec2 ImageSize;
+			ImVec2 MPos = ImGui::GetCursorScreenPos();
+			if (SelectedTexture->GetDimension() == ETextureDimension::Texture2D) {
+				ImageSize.x = Math::Min(
+					ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
+					* std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio()
+				);
+				ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
+				ImageSize.y = ImageSize.x / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio();
+			} else {
+				ImageSize.x = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * 2.F);
+				ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
+				ImageSize.y = ImageSize.x / 2.F;
+			}
+			ImGui::Image((void *)TextureSample->GetTextureObject(), ImageSize);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				float RegionSize = 32.0f / ImageZoom;
+				float RegionX = IO.MousePos.x - MPos.x - RegionSize * 0.5F; 
+				RegionX < 0.F ? RegionX = 0.F : (RegionX > ImageSize.x - RegionSize) ? RegionX = ImageSize.x - RegionSize : RegionX = RegionX;
+				float RegionY = IO.MousePos.y - MPos.y - RegionSize * 0.5F; 
+				RegionY < 0.F ? RegionY = 0.F : (RegionY > ImageSize.y - RegionSize) ? RegionY = ImageSize.y - RegionSize : RegionY = RegionY;
+				ImGui::Text("Min: (%.2f, %.2f)", RegionX, RegionY);
+				ImGui::Text("Max: (%.2f, %.2f)", RegionX + RegionSize, RegionY + RegionSize);
+				ImVec2 UV0 = ImVec2((RegionX) / ImageSize.x, (RegionY) / ImageSize.y);
+				ImVec2 UV1 = ImVec2((RegionX + RegionSize) / ImageSize.x, (RegionY + RegionSize) / ImageSize.y);
+				ImGui::Image((void *)TextureSample->GetTextureObject(), ImVec2(140.F, 140.F), UV0, UV1, ImVec4(1.F, 1.F, 1.F, 1.F), ImVec4(1.F, 1.F, 1.F, .5F));
+				ImGui::EndTooltip();
+			}
 		}
 		ImGui::End();
 	}
@@ -310,16 +447,7 @@ protected:
 		ImageLoader::Load(   FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
 		ImageLoader::Load(          White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
 		ImageLoader::Load(          Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
-		ImageLoader::Load(Equirectangular, FileManager::GetFile(L"Resources/Textures/OutdoorResidentialRiverwalkAfternoon.hdr"));
 
-		Texture2DPtr EquirectangularTexture = Texture2D::Create(
-			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-			CF_RGB16F,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGB16F,
-			Equirectangular.PointerToValue()
-		);
 		Texture2DPtr BaseAlbedoTexture = Texture2D::Create(
 			IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
 			CF_RGBA,
@@ -478,11 +606,6 @@ protected:
 		HDRClampingMaterial.CullMode = CM_None;
 		HDRClampingMaterial.SetShaderProgram(HDRClampingShader);
 
-		Material EquirectangularToCubemapMaterial = Material();
-		EquirectangularToCubemapMaterial.SetShaderProgram(EquiToCubemapShader);
-		EquirectangularToCubemapMaterial.CullMode = CM_None;
-		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
-
 		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [this](MeshLoader::FileData & ModelData) {
 			if (ModelData.bLoaded) {
 				SphereModel = Mesh(&(ModelData.Meshes.back()));
@@ -501,7 +624,7 @@ protected:
 				SceneModels.back().SetUpBuffers();
 			}
 		});
-		// MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [&SceneModels](MeshLoader::FileData & ModelData) {
+		// MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [this](MeshLoader::FileData & ModelData) {
 		// 	for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
 		// 		SceneModels.push_back(Mesh(&(*Data)));
 		// 		SceneModels.back().SetUpBuffers();
@@ -516,31 +639,7 @@ protected:
 		);
 
 		///////// Create Matrices Buffer //////////////
-		glGenBuffers(1, &ModelMatrixBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, ModelMatrixBuffer);
-
-		EquirectangularTextureHDR = Texture2D::Create(
-			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
-		);
-		TextureManager::GetInstance().AddTexture(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
-		{
-			RenderTargetPtr Renderer = RenderTarget::Create();
-			EquirectangularTextureHDR->Bind();
-			HDRClampingMaterial.Use();
-			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
-			MeshPrimitives::Quad.BindVertexArray();
-			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-			HDRClampingMaterial.SetAttribMatrix4x4Array(
-				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
-			);
-
-			Renderer->BindTexture2D(EquirectangularTextureHDR);
-			Renderer->Clear();
-			MeshPrimitives::Quad.DrawInstanciated(1);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			EquirectangularTextureHDR->GenerateMipMaps();
-		}
+		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 
 		Texture2DPtr BRDFLut = Texture2D::Create(IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
 		{
@@ -557,13 +656,10 @@ protected:
 			Renderer->BindTexture2D(BRDFLut);
 			Renderer->Clear();
 			MeshPrimitives::Quad.DrawInstanciated(1);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
-		CubemapTexture = Cubemap::Create(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
-		CubemapTexture->ConvertFromHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
-		TextureManager::GetInstance().AddTexture(L"CubemapTexture", CubemapTexture);
+		SetSceneSkybox(L"Resources/Textures/Arches_E_PineTree_3k.hdr");
 
 		Transforms.push_back(Transform());
 
@@ -574,8 +670,10 @@ protected:
 	virtual void OnInputEvent(InputEvent & InEvent) override {
 		EventDispatcher<InputEvent> Dispatcher(InEvent);
 		Dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent & Event) {
-			CursorPosition = Event.GetMousePosition();
-			FrameRotation = Quaternion::EulerAngles(Vector3(Event.GetY(), -Event.GetX()));
+			if (Input::IsMouseButtonDown(3)) {
+				CursorPosition = Event.GetMousePosition();
+				FrameRotation = Quaternion::EulerAngles(Vector3(Event.GetY(), -Event.GetX()));
+			}
 		});
 	}
 
@@ -805,11 +903,11 @@ protected:
 
 		RenderCubemapMaterial.Use();
 
-		float MaterialRoughnessTemp = (1 - MaterialRoughness) * (CubemapTexture->GetMipMapCount() - 3);
+		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
 		RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
 		RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
 		RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
-		RenderCubemapMaterial.SetFloat1Array("_Roughness", &MaterialRoughnessTemp);
+		RenderCubemapMaterial.SetFloat1Array("_Lod", &SkyRoughnessTemp);
 
 		if (SphereModel.GetMeshData().Faces.size() >= 1) {
 			SphereModel.SetUpBuffers();
@@ -851,7 +949,7 @@ protected:
 		BaseMaterial.SetTexture2D("_MetallicTexture", TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture"), 3);
 		BaseMaterial.SetTexture2D("_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), 4);
 		BaseMaterial.SetTextureCubemap("_EnviromentMap", CubemapTexture, 5);
-		float CubemapTextureMipmaps = CubemapTexture->GetMipMapCount();
+		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
 		BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
 		// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
@@ -979,35 +1077,9 @@ protected:
 
 		MeshPrimitives::Cube.DrawInstanciated(2);
 
-		float AppTime = (float)Time::GetEpochTime<Time::Mili>();
-		glViewport(0, 0, EquirectangularTextureHDR->GetWidth() / 4 * abs(1 - MultiuseValue), EquirectangularTextureHDR->GetHeight() / 4 * abs(1 - MultiuseValue));
-		int bMonochrome = false;
-
-		RenderTextureMaterial.Use();
-
-		RenderTextureMaterial.SetFloat1Array("_Time", &AppTime);
-		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
-		RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(1.F).PointerToValue());
-		RenderTextureMaterial.SetFloat2Array("_MainTextureSize", EquirectangularTextureHDR->GetSize().FloatVector3().PointerToValue());
-		RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-		RenderTextureMaterial.SetTexture2D("_MainTexture", EquirectangularTextureHDR, 0);
-		float LodLevel = log2f((float)EquirectangularTextureHDR->GetWidth()) * abs(MultiuseValue);
-		RenderTextureMaterial.SetFloat1Array("_Lod", &LodLevel);
-
-		MeshPrimitives::Quad.BindVertexArray();
-
-		Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
-		RenderTextureMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1,
-			/*(Quaternion({ MathConstants::HalfPi, 0, 0}).ToMatrix4x4() * */QuadPosition.PointerToValue(),
-			ModelMatrixBuffer
-		);
-
-		MeshPrimitives::Quad.DrawInstanciated(1);
-
-		glViewport(0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight());
+		Rendering::SetViewport(Box2D(0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight()));
 		// --- Activate corresponding render state
 		RenderTextMaterial.Use();
-		RenderTextMaterial.SetFloat1Array("_Time", &AppTime);
 		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetSize().FloatVector3().PointerToValue());
 		RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix",
 			Matrix4x4::Orthographic(
