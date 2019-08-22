@@ -2,7 +2,6 @@
 
 uniform sampler2D _MainTexture;
 uniform vec2 _MainTextureSize;
-uniform float _Time;
 
 uniform float _TextSize;
 uniform float _TextBold;

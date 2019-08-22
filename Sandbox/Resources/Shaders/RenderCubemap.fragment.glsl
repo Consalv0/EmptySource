@@ -3,7 +3,7 @@
 const float Gamma = 2.2;
 
 uniform samplerCube _Skybox;
-uniform float _Roughness;
+uniform float _Lod;
 
 uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;
@@ -25,7 +25,7 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main(){
-  vec3 Color = textureLod(_Skybox, normalize((Vertex.Position).xyz), _Roughness).xyz;
+  vec3 Color = textureLod(_Skybox, normalize((Vertex.Position).xyz), _Lod).xyz;
   Color = Color / (Color + vec3(1.0));
   Color = pow(Color, vec3(1.0/Gamma));
   vec3 Intensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
