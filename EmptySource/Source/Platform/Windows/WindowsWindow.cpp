@@ -192,10 +192,6 @@ namespace EmptySource {
 
 	void WindowsWindow::EndFrame() {
 		Context->SwapBuffers();
-
-		SDL_Event Event;
-		while (SDL_PollEvent(&Event)) {
-		}
 	}
 
 	void WindowsWindow::Terminate() {

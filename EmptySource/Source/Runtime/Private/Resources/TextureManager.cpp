@@ -30,7 +30,7 @@ namespace EmptySource {
 		TextureList.insert({ UID, Tex });
 	}
 
-	void TextureManager::GetResourcesFromFile(const WString & FilePath) {
+	void TextureManager::LoadResourcesFromFile(const WString & FilePath) {
 		FileStream * ResourcesFile = ResourceManager::GetResourcesFile(FilePath);
 
 		YAML::Node BaseNode;

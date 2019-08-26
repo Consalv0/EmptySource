@@ -231,6 +231,7 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderingDefinitions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Shader.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\AudioManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
@@ -293,6 +294,7 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderingBuffers.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Shader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\AudioManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp" />

@@ -10,14 +10,14 @@ namespace EmptySource {
 	};
 
 	enum EResourceType {
-		RT_Texture, RT_Shader, RT_Material, RT_Mesh
+		RT_Texture, RT_Shader, RT_Material, RT_Mesh, RT_Audio
 	};
 
 	class ResourceManager {
 	public:
 		virtual inline EResourceType GetResourceType() const = 0;
 
-		virtual void GetResourcesFromFile(const WString& FilePath) = 0;
+		virtual void LoadResourcesFromFile(const WString& FilePath) = 0;
 
 		static FileStream * GetResourcesFile(const WString & FilePath);
 

@@ -54,7 +54,7 @@ namespace EmptySource {
 		ShaderStageList.insert({ UID, Stage });
 	}
 
-	void ShaderManager::GetResourcesFromFile(const WString & FilePath) {
+	void ShaderManager::LoadResourcesFromFile(const WString & FilePath) {
 		FileStream * ResourcesFile = ResourceManager::GetResourcesFile(FilePath);
 
 		YAML::Node BaseNode; 

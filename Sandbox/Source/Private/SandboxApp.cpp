@@ -28,6 +28,7 @@
 #include "Rendering/RenderTarget.h"
 #include "Rendering/Material.h"
 
+
 #include "Files/FileManager.h"
 
 #define RESOURCES_ADD_SHADERSTAGE
@@ -37,6 +38,7 @@
 #include "Resources/ImageLoader.h"
 #include "Resources/ShaderManager.h"
 #include "Resources/TextureManager.h"
+#include "Resources/AudioManager.h"
 
 #include "Components/ComponentRenderer.h"
 
@@ -53,6 +55,18 @@ using namespace EmptySource;
 
 class SandboxLayer : public Layer {
 private:
+
+	struct AudioVoice {
+		AudioSamplePtr Audio0;
+		AudioSamplePtr Audio1;
+		bool Loop0;
+		bool Loop1;
+		float Volume0;
+		float Volume1;
+		unsigned int Audio0Pos;
+		unsigned int Audio1Pos;
+	};
+
 	Font FontFace;
 	Text2DGenerator TextGenerator;
 	Bitmap<UCharRed> FontAtlas;
@@ -118,6 +132,8 @@ private:
 	Transform TestArrowTransform;
 	Vector3 TestArrowDirection = 0;
 	float TestSphereVelocity = .5F;
+
+	AudioVoice Voice = AudioVoice();
 
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
@@ -202,7 +218,6 @@ protected:
 		static int CurrentTexture = 0;
 		static int CurrentSkybox = 0;
 		static float SampleLevel = 0.F;
-		static float ImageZoom = 4.F;
 		static float Gamma = 2.2F;
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
@@ -269,28 +284,153 @@ protected:
 		}
 
 		ImGui::Begin("Scene Settings");
-		ImGui::DragFloat3("Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
-		ImGui::SliderFloat4("Eye Rotation", &FrameRotation[0], -1.F, 1.F, "");
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+		ImGui::Columns(2);
+		ImGui::Separator();
+
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Rotation"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Eye Rotation", &FrameRotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
 		Vector3 EulerFrameRotation = FrameRotation.ToEulerAngles();
-		if (ImGui::DragFloat3("Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Euler Rotation"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
 			FrameRotation = Quaternion::EulerAngles(EulerFrameRotation);
-		}
-		ImGui::SliderFloat("Skybox Roughness", &SkyboxRoughness, 0.F, 1.F);
-		if (ImGui::Combo("Skybox Texture", &CurrentSkybox, SkyBoxes, IM_ARRAYSIZE(SkyBoxes))) {
+		} ImGui::NextColumn();
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); if (ImGui::Combo("##Skybox Texture", &CurrentSkybox, SkyBoxes, IM_ARRAYSIZE(SkyBoxes))) {
 			SetSceneSkybox(Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
-		}
+		} ImGui::NextColumn();
+		ImGui::PushItemWidth(0);
+
+		ImGui::Columns(1);
+		ImGui::Separator();
+		ImGui::PopStyleVar();
 		ImGui::End();
 
+		char ProgressText[30]; 
 		ImGui::Begin("Audio Settings");
+		if (ImGui::TreeNode("Audio0")) {
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+			ImGui::Columns(2);
+			ImGui::Separator();
+
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio0 Volume", &Voice.Volume0, 0.F, 1.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Loop", &Voice.Loop0); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
+			sprintf(ProgressText, "%.2f", Voice.Audio0->GetDurationAt<Time::Second>(Voice.Audio0Pos));
+			ImGui::ProgressBar((float)Voice.Audio0Pos / Voice.Audio0->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
+			unsigned int AudioPlotDetail = (unsigned int)(Voice.Audio0->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
+			TArray<float> AudioChannel1(Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+			TArray<float> AudioChannel2(Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+			for (unsigned int i = 0; i < Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+				AudioChannel1[i * 2] = -MathConstants::BigNumber;
+				AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
+				for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio0->GetBufferLength(); j += (2 * 4)) {
+					AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *(float *)(Voice.Audio0->GetBufferAt(j)));
+					AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *(float *)(Voice.Audio0->GetBufferAt(j)));
+				}
+			}
+			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio0 Channel 1",
+				&AudioChannel1[0], Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2, NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+			for (unsigned int i = 0; i < Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+				AudioChannel2[i * 2] = -MathConstants::BigNumber;
+				AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
+				for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio0->GetBufferLength(); j += (2 * 4)) {
+					AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *(float *)(Voice.Audio0->GetBufferAt(j + 4)));
+					AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *(float *)(Voice.Audio0->GetBufferAt(j + 4)));
+				}
+			}
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio0 Channel 2",
+				&AudioChannel2[0], Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2, NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+
+			ImGui::Columns(1);
+			ImGui::Separator();
+			ImGui::PopStyleVar();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Audio1")) {
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+			ImGui::Columns(2);
+			ImGui::Separator();
+
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio1 Volume", &Voice.Volume1, 0.F, 1.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio1 Loop", &Voice.Loop1); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
+			sprintf(ProgressText, "%.2f", Voice.Audio1->GetDurationAt<Time::Second>(Voice.Audio1Pos));
+			ImGui::ProgressBar((float)Voice.Audio1Pos / Voice.Audio1->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
+
+			static unsigned int AudioPlotDetail = 0;
+			static TArray<float> AudioChannel1(1);
+			static TArray<float> AudioChannel2(1);
+			if (AudioPlotDetail != (unsigned int)(Voice.Audio1->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4))) {
+				AudioPlotDetail = (unsigned int)(Voice.Audio1->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
+				AudioChannel1.resize(Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+				AudioChannel2.resize(Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+				float * BufferPtr = (float *)Voice.Audio1->GetBufferAt(0);
+				float * BufferEndPtr = (float *)Voice.Audio1->GetBufferAt(Voice.Audio1->GetBufferLength() - 4);
+				for (unsigned int i = 0; i < Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+					AudioChannel1[i * 2] = -MathConstants::BigNumber;
+					AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
+					for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio1->GetBufferLength(); j += (2 * 4)) {
+						AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *BufferPtr);
+						AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *BufferPtr);
+						BufferPtr += 2;
+					}
+				}
+				BufferPtr = (float *)Voice.Audio1->GetBufferAt(4);
+				for (unsigned int i = 0; i < Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+					AudioChannel2[i * 2] = -MathConstants::BigNumber;
+					AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
+					for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio1->GetBufferLength(); j += (2 * 4)) {
+						AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *BufferPtr);
+						AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *BufferPtr);
+						BufferPtr += 2;
+					}
+				}
+			}
+
+			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio1 Channel 1",
+				&AudioChannel1[0], (int)AudioChannel1.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio1 Channel 2",
+				&AudioChannel2[0], (int)AudioChannel2.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+
+			ImGui::Columns(1);
+			ImGui::Separator();
+			ImGui::PopStyleVar(); 
+			ImGui::TreePop();
+		}
 		ImGui::End();
 
 		ImGui::Begin("Textures");
 		ImGuiIO& IO = ImGui::GetIO();
-		ImGui::Combo("Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+		ImGui::Columns(2);
+		ImGui::Separator();
+
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Texture"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures)); ImGui::NextColumn();
 		if (SelectedTexture) {
-			ImGui::SliderFloat("LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f");
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
 		}
-		ImGui::SliderFloat("Gamma", &Gamma, 1.0F, 4.0F, "%.3f");
+		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
+
+		ImGui::Columns(1);
+		ImGui::Separator();
+		ImGui::PopStyleVar();
+
 		ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
 		ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
 		ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
@@ -299,7 +439,6 @@ protected:
 		ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
 		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
 		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
-		ImGui::SliderFloat("Image Zoom", &ImageZoom, 1.F, 4.F);
 		if (SelectedTexture) {
 			ImVec2 ImageSize;
 			ImVec2 MPos = ImGui::GetCursorScreenPos();
@@ -316,10 +455,9 @@ protected:
 				ImageSize.y = ImageSize.x / 2.F;
 			}
 			ImGui::Image((void *)TextureSample->GetTextureObject(), ImageSize);
-			if (ImGui::IsItemHovered())
-			{
+			if (ImGui::IsItemHovered()) {
 				ImGui::BeginTooltip();
-				float RegionSize = 32.0f / ImageZoom;
+				float RegionSize = 32.0f;
 				float RegionX = IO.MousePos.x - MPos.x - RegionSize * 0.5F; 
 				RegionX < 0.F ? RegionX = 0.F : (RegionX > ImageSize.x - RegionSize) ? RegionX = ImageSize.x - RegionSize : RegionX = RegionX;
 				float RegionY = IO.MousePos.y - MPos.y - RegionSize * 0.5F; 
@@ -342,78 +480,58 @@ protected:
 		GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
 		CComponent * Component = GameObject->CreateComponent<CRenderer>();
 
-		static Uint32 SampleLength; // length of our sample
-		static Uint8 * SampleBuffer; // buffer containing our audio file
 		static SDL_AudioSpec SampleSpecs; // the specs of our piece of music
-		static Uint8 * AudioPosition; // global pointer to the audio buffer to be played
-		static Uint32  AudioLength; // remaining length of the sample we have to play
-		FileStream * SampleFile = FileManager::GetFile(L"Resources/Sounds/6503.wav");
-		if (SampleFile != NULL) {
-			SampleFile->Close();
-		}
+		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
+		AudioManager::GetInstance().LoadAudioFromFile(L"JoJosBizarreAdventure-DiamondisUnbreakableOST-SignofFear.wav", L"Resources/Sounds/JoJosBizarreAdventure-DiamondisUnbreakableOST-SignofFear.wav");
+		Voice.Audio0 = AudioManager::GetInstance().GetAudioSample(L"6503.wav");
+		Voice.Audio1 = AudioManager::GetInstance().GetAudioSample(L"JoJosBizarreAdventure-DiamondisUnbreakableOST-SignofFear.wav");
 
-		if (SampleFile == NULL || SDL_LoadWAV(Text::WideToNarrow(SampleFile->GetPath()).c_str(), &SampleSpecs, &SampleBuffer, &SampleLength) == NULL) {
+		if (Voice.Audio0 == NULL) {
 			LOG_ERROR("Couldn't not open the sound file or is invalid");
-		}
-		else {
-			{
-				static SDL_AudioCVT AudioConvert;
-				if (SDL_BuildAudioCVT(&AudioConvert, SampleSpecs.format, SampleSpecs.channels, SampleSpecs.freq,
-					AUDIO_F32LSB, SampleSpecs.channels, SampleSpecs.freq)) {
-					AudioConvert.len = SampleLength;
-					AudioConvert.buf = (Uint8 *)SDL_malloc(SampleLength * AudioConvert.len_mult);
-					SDL_memcpy(AudioConvert.buf, SampleBuffer, SampleLength);
-					SDL_ConvertAudio(&AudioConvert);
-					SDL_FreeWAV(SampleBuffer);
-					SampleSpecs.format = AUDIO_F32LSB;
-					SampleBuffer = AudioConvert.buf;
-					SampleLength = AudioConvert.len_cvt;
-				}
-			}
+		} else {
+			SampleSpecs.channels = 2;
+			SampleSpecs.format = AUDIO_F32LSB;
+			SampleSpecs.freq = 48000;
+
 			// Set the callback function
 			SampleSpecs.callback = [](void *UserData, Uint8 *Stream, int Length) -> void {
 				/* Silence the main buffer */
 				SDL_memset(Stream, 0, Length);
+				AudioVoice * Voice = (AudioVoice *)UserData;
 
-				if (SampleLength <= 0) {
+				if (Voice->Audio0->GetBufferLength() <= 0) {
 					return;
 				}
 
-				Length = ((uint32_t)Length > AudioLength) ? AudioLength : (uint32_t)Length;
+				int FixLength0 = ((uint32_t)Length > Voice->Audio0->GetBufferLength() - Voice->Audio0Pos) ? Voice->Audio0->GetBufferLength() - Voice->Audio0Pos : (uint32_t)Length;
+				int FixLength1 = ((uint32_t)Length > Voice->Audio1->GetBufferLength() - Voice->Audio1Pos) ? Voice->Audio1->GetBufferLength() - Voice->Audio1Pos : (uint32_t)Length;
 				// SDL_memcpy(Stream, AudioPosition, Length); 		    // simply copy from one buffer into the other
-				try {
-					SDL_MixAudioFormat(Stream, AudioPosition, SampleSpecs.format, Length, SDL_MIX_MAXVOLUME / 4);	// mix from one buffer into another
-				}
-				catch (...) {
-					LOG_DEBUG("Error in Audio Data");
-				}
+				SDL_MixAudioFormat(Stream, Voice->Audio0->GetBufferAt(Voice->Audio0Pos), SampleSpecs.format, FixLength0, (int)(SDL_MIX_MAXVOLUME * Voice->Volume0));
+				SDL_MixAudioFormat(Stream, Voice->Audio1->GetBufferAt(Voice->Audio1Pos), SampleSpecs.format, FixLength1, (int)(SDL_MIX_MAXVOLUME * Voice->Volume1));
 
-				AudioPosition += Length;
-				AudioLength -= Length;
+				Voice->Audio0Pos += FixLength0;
+				Voice->Audio1Pos += FixLength1;
 
-				if (AudioLength <= 0) {
+				if (Voice->Audio0->GetBufferLength() - Voice->Audio0Pos <= 0 && Voice->Loop0) {
 					// SDL_PauseAudio(1);
-					AudioPosition = SampleBuffer; // copy sound buffer
-					AudioLength = SampleLength; // copy file length
+					Voice->Audio0Pos = 0;
+				}
+				if (Voice->Audio1->GetBufferLength() - Voice->Audio1Pos <= 0 && Voice->Loop1) {
+					Voice->Audio1Pos = 0;
 				}
 			};
 
-			SampleSpecs.userdata = NULL;
+			SampleSpecs.userdata = &Voice;
 			// Set the variables
-			AudioPosition = SampleBuffer; // copy sound buffer
-			AudioLength = SampleLength; // copy file length
+			Voice.Audio0Pos = 0;
+			Voice.Audio1Pos = 0;
 
 			/* Open the audio device */
 			if (SDL_OpenAudio(&SampleSpecs, NULL) < 0) {
-				LOG_ERROR("Couldn't open audio: {0}\n", SDL_GetError());
-				exit(-1);
+				ES_CORE_ASSERT(true, "Couldn't open audio device: {0}\n", SDL_GetError());
 			}
 			/* Start playing */
 			SDL_PauseAudio(false);
-
-			int SampleSize = SDL_AUDIO_BITSIZE(SampleSpecs.format);
-			bool IsFloat = SDL_AUDIO_ISFLOAT(SampleSpecs.format);
-			LOG_DEBUG("Audio Time Length: {:0.3f}", (SampleLength * 8 / (SampleSize * SampleSpecs.channels)) / (float)SampleSpecs.freq);
 		}
 
 		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
@@ -567,7 +685,7 @@ protected:
 
 		// --- Create and compile our GLSL shader programs from text files
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
-		ShaderMng.GetResourcesFromFile(L"Resources/Resources.yaml");
+		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
 		ShaderPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
 		ShaderPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
@@ -685,6 +803,11 @@ protected:
 			0.03F,						        // Near plane
 			1000.0F						        // Far plane
 		);
+
+		if (Input::IsMouseButtonDown(3)) {
+			CursorPosition = Input::GetMousePosition();
+			FrameRotation = Quaternion::EulerAngles(Vector3(Input::GetMouseY(), -Input::GetMouseX()));
+		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_W)) {
 			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
@@ -1067,15 +1190,17 @@ protected:
 		UnlitMaterial.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
 		UnlitMaterial.SetFloat4Array("_Material.Color", (Vector4(1.F, 1.F, .9F, 1.F) * LightIntencity).PointerToValue());
 
-		MeshPrimitives::Cube.BindVertexArray();
+		if (LightModels.size() > 0) {
+			MeshPrimitives::Cube.BindVertexArray();
 
-		TArray<Matrix4x4> LightPositions;
-		LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
-		LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
+			TArray<Matrix4x4> LightPositions;
+			LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
+			LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
 
-		UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
+			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
 
-		MeshPrimitives::Cube.DrawInstanciated(2);
+			MeshPrimitives::Cube.DrawInstanciated(2);
+		}
 
 		Rendering::SetViewport(Box2D(0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight()));
 		// --- Activate corresponding render state

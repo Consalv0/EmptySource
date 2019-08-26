@@ -27,7 +27,7 @@ namespace EmptySource {
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Shader; };
 
-		virtual void GetResourcesFromFile(const WString& FilePath) override;
+		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
 		static ShaderManager& GetInstance();
 
