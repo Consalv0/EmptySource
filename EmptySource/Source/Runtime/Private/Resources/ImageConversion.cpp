@@ -1,7 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Resources/ImageLoader.h"
+#include "Resources/ImageConversion.h"
 
 // --- Visual Studio
 #if defined(_MSC_VER) && (_MSC_VER >= 1310) 
@@ -41,6 +41,7 @@ namespace EmptySource {
 		stbi_set_flip_vertically_on_load(FlipVertically);
 		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
 		auto * Image = LoadFromFile<typename T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
+		fclose(FILEFile);
 		if (Image == NULL) return false;
 		RefBitmap = Bitmap<T>(Width, Height);
 		memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(T));
@@ -48,31 +49,71 @@ namespace EmptySource {
 	}
 
 	template<>
-	bool ImageLoader::Load(Bitmap<UCharRGBA>& RefBitmap, FileStream * File, bool FlipVertically) {
+	bool ImageConversion::LoadFromFile(Bitmap<UCharRGBA>& RefBitmap, FileStream * File, bool FlipVertically) {
 		return _LoadBitmap<UCharRGBA>(RefBitmap, File, FlipVertically);
 	}
 
 	template<>
-	bool ImageLoader::Load(Bitmap<UCharRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
+	bool ImageConversion::LoadFromFile(Bitmap<UCharRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
 		return _LoadBitmap<UCharRGB>(RefBitmap, File, FlipVertically);
 	}
 
 	template<>
-	bool ImageLoader::Load(Bitmap<UCharRG>& RefBitmap, FileStream * File, bool FlipVertically) {
+	bool ImageConversion::LoadFromFile(Bitmap<UCharRG>& RefBitmap, FileStream * File, bool FlipVertically) {
 		return _LoadBitmap<UCharRG>(RefBitmap, File, FlipVertically);
 	}
 
 	template<>
-	bool ImageLoader::Load(Bitmap<UCharRed>& RefBitmap, FileStream * File, bool FlipVertically) {
+	bool ImageConversion::LoadFromFile(Bitmap<UCharRed>& RefBitmap, FileStream * File, bool FlipVertically) {
 		return _LoadBitmap<UCharRed>(RefBitmap, File, FlipVertically);
 	}
 
 	template<>
-	bool ImageLoader::Load(Bitmap<FloatRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
+	bool ImageConversion::LoadFromFile(Bitmap<FloatRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
 		return _LoadBitmap<FloatRGB>(RefBitmap, File, FlipVertically);
 	}
 
-	bool ImageLoader::Write(const Bitmap<FloatRed>& RefBitmap, FileStream * File) {
+	template<>
+	bool ImageConversion::LoadFromFile(Bitmap<FloatRGBA>& RefBitmap, FileStream * File, bool FlipVertically) {
+		return _LoadBitmap<FloatRGBA>(RefBitmap, File, FlipVertically);
+	}
+
+	int ImageConversion::GetChannelCount(FileStream * File) {
+		if (File == NULL) return 0;
+		int Width, Height, Comp;
+		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
+		stbi_info_from_file(FILEFile, &Width, &Height, &Comp);
+		return Comp;
+	}
+
+	bool ImageConversion::IsHDR(FileStream * File) {
+		if (File == NULL) return false;
+		return stbi_is_hdr(Text::WideToNarrow(File->GetPath()).c_str());
+	}
+
+	EColorFormat ImageConversion::GetColorFormat(FileStream * File) {
+		EColorFormat InputColorFormat = EColorFormat::CF_RGBA;
+		bool IsFloat32 = ImageConversion::IsHDR(File);
+
+		switch (ImageConversion::GetChannelCount(File)) {
+		case 1:
+			if (IsFloat32) ES_CORE_ASSERT(true, "Color format not supported");
+			else InputColorFormat = EColorFormat::CF_Red;
+		case 2:
+			if (IsFloat32) ES_CORE_ASSERT(true, "Color format not supported");
+			else InputColorFormat = EColorFormat::CF_RG;
+		case 3:
+			if (IsFloat32) InputColorFormat = EColorFormat::CF_RGB32F;
+			else InputColorFormat = EColorFormat::CF_RGB;
+		case 4:
+			if (IsFloat32) InputColorFormat = EColorFormat::CF_RGBA32F;
+			else InputColorFormat = EColorFormat::CF_RGBA;
+		}
+
+		return InputColorFormat;
+	}
+
+	bool ImageConversion::EncodeToFile(const Bitmap<FloatRed>& RefBitmap, FileStream * File) {
 		// TArray<unsigned char> Pixels(RefBitmap.GetWidth() * RefBitmap.GetHeight());
 		// TArray<unsigned char>::iterator it = Pixels.begin();
 		// for (int y = RefBitmap.GetHeight() - 1; y >= 0; --y)

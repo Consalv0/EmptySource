@@ -16,6 +16,8 @@ namespace EmptySource {
 		//* Height in pixels.
 		int GetHeight() const;
 
+		inline IntVector2 GetSize() const { return { GetWidth(), GetHeight() }; }
+
 		//* Flips the pixels vertically
 		void FlipVertically();
 

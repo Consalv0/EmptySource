@@ -16,8 +16,8 @@
 #include "CUDA/CoreCUDA.h"
 #endif
 
-#include "Mesh/Mesh.h"
-#include "Mesh/MeshPrimitives.h"
+#include "Rendering/Mesh.h"
+#include "Rendering/MeshPrimitives.h"
 
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderTarget.h"
@@ -35,7 +35,7 @@
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "Resources/ResourceManager.h"
 #include "Resources/MeshLoader.h"
-#include "Resources/ImageLoader.h"
+#include "Resources/ImageConversion.h"
 #include "Resources/ShaderManager.h"
 #include "Resources/TextureManager.h"
 #include "Resources/AudioManager.h"
@@ -59,8 +59,10 @@ private:
 	struct AudioVoice {
 		AudioSamplePtr Audio0;
 		AudioSamplePtr Audio1;
-		bool Loop0;
-		bool Loop1;
+		bool bPause0;
+		bool bPause1;
+		bool bLoop0;
+		bool bLoop1;
 		float Volume0;
 		float Volume1;
 		unsigned int Audio0Pos;
@@ -70,10 +72,6 @@ private:
 	Font FontFace;
 	Text2DGenerator TextGenerator;
 	Bitmap<UCharRed> FontAtlas;
-	Bitmap<UCharRGBA> BaseAlbedo, FlamerAlbedo;
-	Bitmap<UCharRed> BaseMetallic, BaseRoughness, FlamerMetallic, FlamerRoughness;
-	Bitmap<UCharRGB> BaseNormal, FlamerNormal;
-	Bitmap<UCharRGB> White, Black;
 
 	// --- Perpective matrix (ProjectionMatrix)
 	VertexBufferPtr ModelMatrixBuffer;
@@ -142,18 +140,18 @@ protected:
 
 	void SetSceneSkybox(const WString & Path) {
 		Bitmap<FloatRGB> Equirectangular;
-		ImageLoader::Load(Equirectangular, FileManager::GetFile(Path));
+		ImageConversion::LoadFromFile(Equirectangular, FileManager::GetFile(Path));
 
 		Texture2DPtr EquirectangularTexture = Texture2D::Create(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-			CF_RGB16F,
+			CF_RGB32F,
 			FM_MinMagLinear,
 			SAM_Repeat,
-			CF_RGB16F,
+			CF_RGB32F,
 			Equirectangular.PointerToValue()
 		);
 		EquirectangularTextureHDR = Texture2D::Create(
-			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB16F, FM_MinMagLinear, SAM_Repeat
+			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB32F, FM_MinMagLinear, SAM_Repeat
 		);
 		if (TextureManager::GetInstance().GetTexture(L"EquirectangularTextureHDR") != NULL) {
 			TextureManager::GetInstance().FreeTexture(L"EquirectangularTextureHDR");
@@ -320,7 +318,7 @@ protected:
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio0 Volume", &Voice.Volume0, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Loop", &Voice.Loop0); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Loop", &Voice.bLoop0); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
 			sprintf(ProgressText, "%.2f", Voice.Audio0->GetDurationAt<Time::Second>(Voice.Audio0Pos));
 			ImGui::ProgressBar((float)Voice.Audio0Pos / Voice.Audio0->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
@@ -363,7 +361,9 @@ protected:
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio1 Volume", &Voice.Volume1, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio1 Loop", &Voice.Loop1); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio1 Loop", &Voice.bLoop1); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio1 Pused", &Voice.bPause1); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
 			sprintf(ProgressText, "%.2f", Voice.Audio1->GetDurationAt<Time::Second>(Voice.Audio1Pos));
 			ImGui::ProgressBar((float)Voice.Audio1Pos / Voice.Audio1->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
@@ -505,19 +505,23 @@ protected:
 
 				int FixLength0 = ((uint32_t)Length > Voice->Audio0->GetBufferLength() - Voice->Audio0Pos) ? Voice->Audio0->GetBufferLength() - Voice->Audio0Pos : (uint32_t)Length;
 				int FixLength1 = ((uint32_t)Length > Voice->Audio1->GetBufferLength() - Voice->Audio1Pos) ? Voice->Audio1->GetBufferLength() - Voice->Audio1Pos : (uint32_t)Length;
-				// SDL_memcpy(Stream, AudioPosition, Length); 		    // simply copy from one buffer into the other
-				SDL_MixAudioFormat(Stream, Voice->Audio0->GetBufferAt(Voice->Audio0Pos), SampleSpecs.format, FixLength0, (int)(SDL_MIX_MAXVOLUME * Voice->Volume0));
-				SDL_MixAudioFormat(Stream, Voice->Audio1->GetBufferAt(Voice->Audio1Pos), SampleSpecs.format, FixLength1, (int)(SDL_MIX_MAXVOLUME * Voice->Volume1));
-
-				Voice->Audio0Pos += FixLength0;
-				Voice->Audio1Pos += FixLength1;
-
-				if (Voice->Audio0->GetBufferLength() - Voice->Audio0Pos <= 0 && Voice->Loop0) {
-					// SDL_PauseAudio(1);
-					Voice->Audio0Pos = 0;
+				
+				if (!Voice->bPause0) {
+					SDL_MixAudioFormat(Stream, Voice->Audio0->GetBufferAt(Voice->Audio0Pos), SampleSpecs.format, FixLength0, (int)(SDL_MIX_MAXVOLUME * Voice->Volume0));
+					Voice->Audio0Pos += FixLength0;
 				}
-				if (Voice->Audio1->GetBufferLength() - Voice->Audio1Pos <= 0 && Voice->Loop1) {
+				if (!Voice->bPause1) {
+					SDL_MixAudioFormat(Stream, Voice->Audio1->GetBufferAt(Voice->Audio1Pos), SampleSpecs.format, FixLength1, (int)(SDL_MIX_MAXVOLUME * Voice->Volume1));
+					Voice->Audio1Pos += FixLength1;
+				}
+
+				if (Voice->Audio0->GetBufferLength() - Voice->Audio0Pos <= 0) {
+					Voice->Audio0Pos = 0;
+					Voice->bPause0 = !Voice->bLoop0;
+				}
+				if (Voice->Audio1->GetBufferLength() - Voice->Audio1Pos <= 0) {
 					Voice->Audio1Pos = 0;
+					Voice->bPause1 = !Voice->bLoop1;
 				}
 			};
 
@@ -547,6 +551,19 @@ protected:
 			Value = 3;
 		}
 
+		TextureManager& TextureMng = TextureManager::GetInstance();
+		TextureMng.LoadImageFromFile(L"BaseAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_diff.png");
+		TextureMng.LoadImageFromFile(L"BaseMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_arch_spec.png");
+		TextureMng.LoadImageFromFile(L"BaseRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_roug.jpg");
+		TextureMng.LoadImageFromFile(L"BaseNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_normal.png");
+		TextureMng.LoadImageFromFile(L"FlamerAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_BaseColor.png");
+		TextureMng.LoadImageFromFile(L"FlamerMetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Metallic.png");
+		TextureMng.LoadImageFromFile(L"FlamerRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Roughness.png");
+		TextureMng.LoadImageFromFile(L"FlamerNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Normal.png");
+		TextureMng.LoadImageFromFile(L"WhiteTexture",           CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
+		TextureMng.LoadImageFromFile(L"BlackTexture",           CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
+
+
 		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
 
 		TextGenerator.TextFont = &FontFace;
@@ -554,122 +571,6 @@ protected:
 		TextGenerator.AtlasSize = 1024;
 		TextGenerator.PixelRange = 1.5F;
 		TextGenerator.Pivot = 0;
-
-		ImageLoader::Load(     BaseAlbedo, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_diff.png"));
-		ImageLoader::Load(   BaseMetallic, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_arch_spec.png"));
-		ImageLoader::Load(  BaseRoughness, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_roug.jpg"));
-		ImageLoader::Load(     BaseNormal, FileManager::GetFile(L"Resources/Textures/Sponza/sponza_column_a_normal.png"));
-		ImageLoader::Load(   FlamerAlbedo, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_BaseColor.png"));
-		ImageLoader::Load( FlamerMetallic, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Metallic.png"));
-		ImageLoader::Load(FlamerRoughness, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Roughness.png"));
-		ImageLoader::Load(   FlamerNormal, FileManager::GetFile(L"Resources/Textures/EscafandraMV1971_Normal.png"));
-		ImageLoader::Load(          White, FileManager::GetFile(L"Resources/Textures/White.jpg"));
-		ImageLoader::Load(          Black, FileManager::GetFile(L"Resources/Textures/Black.jpg"));
-
-		Texture2DPtr BaseAlbedoTexture = Texture2D::Create(
-			IntVector2(BaseAlbedo.GetWidth(), BaseAlbedo.GetHeight()),
-			CF_RGBA,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGBA,
-			BaseAlbedo.PointerToValue()
-		);
-		BaseAlbedoTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"BaseAlbedoTexture", BaseAlbedoTexture);
-		Texture2DPtr BaseMetallicTexture = Texture2D::Create(
-			IntVector2(BaseMetallic.GetWidth(), BaseMetallic.GetHeight()),
-			CF_Red,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_Red,
-			BaseMetallic.PointerToValue()
-		);
-		BaseMetallicTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"BaseMetallicTexture", BaseMetallicTexture);
-		Texture2DPtr BaseRoughnessTexture = Texture2D::Create(
-			IntVector2(BaseRoughness.GetWidth(), BaseRoughness.GetHeight()),
-			CF_Red,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_Red,
-			BaseRoughness.PointerToValue()
-		);
-		BaseRoughnessTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"BaseRoughnessTexture", BaseRoughnessTexture);
-		Texture2DPtr BaseNormalTexture = Texture2D::Create(
-			IntVector2(BaseNormal.GetWidth(), BaseNormal.GetHeight()),
-			CF_RGB,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGB,
-			BaseNormal.PointerToValue()
-		);
-		BaseNormalTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"BaseNormalTexture", BaseNormalTexture);
-
-		////
-		Texture2DPtr FlamerAlbedoTexture = Texture2D::Create(
-			IntVector2(FlamerAlbedo.GetWidth(), FlamerAlbedo.GetHeight()),
-			CF_RGBA,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGBA,
-			FlamerAlbedo.PointerToValue()
-		);
-		FlamerAlbedoTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"FlamerAlbedoTexture", FlamerAlbedoTexture);
-		Texture2DPtr FlamerMetallicTexture = Texture2D::Create(
-			IntVector2(FlamerMetallic.GetWidth(), FlamerMetallic.GetHeight()),
-			CF_Red,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_Red,
-			FlamerMetallic.PointerToValue()
-		);
-		FlamerMetallicTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"FlamerMetallicTexture", FlamerMetallicTexture);
-		Texture2DPtr FlamerRoughnessTexture = Texture2D::Create(
-			IntVector2(FlamerRoughness.GetWidth(), FlamerRoughness.GetHeight()),
-			CF_Red,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_Red,
-			FlamerRoughness.PointerToValue()
-		);
-		FlamerRoughnessTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"FlamerRoughnessTexture", FlamerRoughnessTexture);
-		Texture2DPtr FlamerNormalTexture = Texture2D::Create(
-			IntVector2(FlamerNormal.GetWidth(), FlamerNormal.GetHeight()),
-			CF_RGB,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGB,
-			FlamerNormal.PointerToValue()
-		);
-		FlamerNormalTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"FlamerNormalTexture", FlamerNormalTexture);
-		////
-
-		Texture2DPtr WhiteTexture = Texture2D::Create(
-			IntVector2(White.GetWidth(), White.GetHeight()),
-			CF_RGB,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGB,
-			White.PointerToValue()
-		);
-		WhiteTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"WhiteTexture", WhiteTexture);
-		Texture2DPtr BlackTexture = Texture2D::Create(
-			IntVector2(Black.GetWidth(), Black.GetHeight()),
-			CF_RGB,
-			FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGB,
-			Black.PointerToValue()
-		);
-		BlackTexture->GenerateMipMaps();
-		TextureManager::GetInstance().AddTexture(L"BlackTexture", BlackTexture);
 
 		TextGenerator.PrepareCharacters(0ul, 255ul);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);

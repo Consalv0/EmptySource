@@ -21,6 +21,11 @@ namespace EmptySource {
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
+		void TextureManager::LoadImageFromFile(
+			const WString& Name, EColorFormat ColorFormat, EFilterMode FilterMode,
+			ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath
+		);
+
 		static TextureManager& GetInstance();
 
 	private:
