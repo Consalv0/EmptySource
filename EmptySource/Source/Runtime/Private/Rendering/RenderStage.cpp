@@ -7,7 +7,7 @@
 #include "Rendering/Texture.h"
 #include "Rendering/Material.h"
 #include "Rendering/GLFunctions.h"
-#include "Mesh/Mesh.h"
+#include "Rendering/Mesh.h"
 #include "Utility/TextFormattingMath.h"
 
 namespace EmptySource {
@@ -19,7 +19,6 @@ namespace EmptySource {
 	void RenderStage::SetViewProjection(const Matrix4x4 & Projection) {
 		ViewProjection = Projection;
 	}
-
 
 	VertexBufferPtr RenderStage::GetMatrixBuffer() const {
 		return ModelMatrixBuffer;

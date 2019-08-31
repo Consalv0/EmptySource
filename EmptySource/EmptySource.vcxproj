@@ -216,12 +216,12 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
-    <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h" />
-    <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Mesh.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\MeshPrimitives.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h" />
@@ -233,7 +233,7 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\AudioManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
-    <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ImageConversion.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h" />
@@ -284,9 +284,9 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp" />
@@ -296,7 +296,7 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\AudioManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ImageConversion.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceHolder.cpp" />

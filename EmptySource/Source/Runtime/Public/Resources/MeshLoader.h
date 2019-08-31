@@ -2,7 +2,7 @@
 
 #include "Files/FileManager.h"
 #include "Core/Transform.h"
-#include "Mesh/Mesh.h"
+#include "Rendering/Mesh.h"
 
 #include <queue>
 #include <future>

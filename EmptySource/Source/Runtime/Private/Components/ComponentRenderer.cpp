@@ -4,7 +4,7 @@
 #include "Rendering/Material.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
-#include "Mesh/Mesh.h"
+#include "Rendering/Mesh.h"
 #include "Resources/MeshLoader.h"
 #include "Core/GameObject.h"
 #include "Core/CoreTime.h"

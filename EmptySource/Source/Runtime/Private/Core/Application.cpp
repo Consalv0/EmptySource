@@ -17,8 +17,8 @@
 #include "CUDA/CoreCUDA.h"
 #endif
 
-#include "Mesh/Mesh.h"
-#include "Mesh/MeshPrimitives.h"
+#include "Rendering/Mesh.h"
+#include "Rendering/MeshPrimitives.h"
 
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderTarget.h"
@@ -31,7 +31,6 @@
 #include "Files/FileManager.h"
 
 #include "Resources/MeshLoader.h"
-#include "Resources/ImageLoader.h"
 #include "Resources/ShaderManager.h"
 
 #include "Fonts/Font.h"
@@ -143,9 +142,8 @@ namespace EmptySource {
 			MeshLoader::UpdateStatus();
 			Time::Tick();
 
-			for (Layer * LayerIt : AppLayerStack) {
+			for (Layer * LayerIt : AppLayerStack)
 				LayerIt->OnUpdate(Time::GetTimeStamp());
-			}
 
 			RenderTimeSum += Time::GetDeltaTime<Time::Second>();
 			if (RenderTimeSum > MaxFramerate) {

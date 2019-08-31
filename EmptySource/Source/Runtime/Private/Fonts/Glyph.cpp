@@ -1,9 +1,9 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
+#include "Rendering/Mesh.h"
 #include "Fonts/SDFGenerator.h"
 #include "Fonts/Glyph.h"
-#include "Mesh/Mesh.h"
 
 namespace EmptySource {
 

@@ -92,13 +92,13 @@ namespace EmptySource {
 	enum EColorFormat {
 		CF_Red,
 		CF_RG,
-		CF_RGB,
-		CF_RGBA,
 		CF_RG16F,
-		CF_RGBA16F,
+		CF_RGB,
 		CF_RGB16F,
-		CF_RGBA32F,
-		CF_RGB32F
+		CF_RGB32F,
+		CF_RGBA,
+		CF_RGBA16F,
+		CF_RGBA32F
 	};
 
 	enum ESamplerAddressMode {

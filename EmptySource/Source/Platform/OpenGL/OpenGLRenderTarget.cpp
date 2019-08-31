@@ -6,10 +6,10 @@
 #include "Rendering/Texture.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderingAPI.h"
-
 #include "Rendering/Material.h"
-#include "Mesh/Mesh.h"
-#include "Mesh/MeshPrimitives.h"
+#include "Rendering/Mesh.h"
+
+#include "Rendering/MeshPrimitives.h"
 #include "Math/Matrix4x4.h"
 #include "Math/MathUtility.h"
 

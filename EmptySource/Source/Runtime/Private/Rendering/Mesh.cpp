@@ -1,7 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Mesh/Mesh.h"
+#include "Rendering/Mesh.h"
 
 namespace EmptySource {
 

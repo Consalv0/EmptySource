@@ -40,9 +40,6 @@
     <Filter Include="Runtime\Private\ImGui">
       <UniqueIdentifier>{9DB4196A-0921-D564-D214-6DC23E40F7CC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Private\Mesh">
-      <UniqueIdentifier>{CF12DC8E-BBA1-6558-64C0-7953502E76FE}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Runtime\Private\Rendering">
       <UniqueIdentifier>{408AADDB-AC4C-E165-F5FC-6FF261FEB943}</UniqueIdentifier>
     </Filter>
@@ -79,9 +76,6 @@
     <Filter Include="Runtime\Public\Math">
       <UniqueIdentifier>{90FF6F11-FC60-4D1F-85CE-93D1F12E84DE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime\Public\Mesh">
-      <UniqueIdentifier>{73107011-DF71-4D1F-68DF-93D1D43F84DE}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Runtime\Public\Rendering">
       <UniqueIdentifier>{64AED599-50D3-241A-791E-0AAA65A22338}</UniqueIdentifier>
     </Filter>
@@ -103,6 +97,9 @@
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTarget.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h">
@@ -309,12 +306,6 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Mesh\Mesh.h">
-      <Filter>Runtime\Public\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Mesh\MeshPrimitives.h">
-      <Filter>Runtime\Public\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -325,6 +316,12 @@
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\Mesh.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\MeshPrimitives.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h">
@@ -354,10 +351,10 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Texture.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\AudioManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ImageLoader.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h">
@@ -396,10 +393,7 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTarget.h">
-      <Filter>Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\AudioManager.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ImageConversion.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -411,6 +405,9 @@
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTarget.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
@@ -509,13 +506,13 @@
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp">
       <Filter>Runtime\Private\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Mesh\Mesh.cpp">
-      <Filter>Runtime\Private\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp">
@@ -539,10 +536,10 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Texture.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\AudioManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ImageLoader.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp">
@@ -575,10 +572,7 @@
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTarget.cpp">
-      <Filter>Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\AudioManager.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ImageConversion.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
   </ItemGroup>
