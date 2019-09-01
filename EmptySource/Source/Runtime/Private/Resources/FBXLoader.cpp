@@ -1,6 +1,7 @@
 ﻿
 #include "CoreMinimal.h"
 #include <fbxsdk.h>
+#include "Resources/MeshParser.h"
 #include "Resources/FBXLoader.h"
 
 #include "Utility/TextFormatting.h"
@@ -447,16 +448,16 @@ namespace EmptySource {
 		return false;
 	}
 
-	bool FBXLoader::Load(MeshLoader::FileData & FileData) {
+	bool FBXLoader::Load(MeshParser::ResourceData & ResourceData) {
 		if (gSdkManager == NULL)
 			return false;
 
 		Timestamp Timer;
 		Timer.Begin();
 
-		FbxScene* Scene = FbxScene::Create(gSdkManager, Text::WideToNarrow(FileData.File->GetShortPath()).c_str());
+		FbxScene* Scene = FbxScene::Create(gSdkManager, Text::WideToNarrow(ResourceData.File->GetShortPath()).c_str());
 
-		bool bStatus = LoadScene(Scene, FileData.File);
+		bool bStatus = LoadScene(Scene, ResourceData.File);
 		if (bStatus == false) return false;
 
 		FbxAxisSystem::OpenGL.ConvertScene(Scene);
@@ -475,23 +476,23 @@ namespace EmptySource {
 			FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
 			FbxMesh * lMesh = Node->GetMesh();
 			if (lMesh) {
-				FileData.Meshes.push_back(MeshData());
+				ResourceData.Meshes.push_back(MeshData());
 				const int MaterialCount = Node->GetMaterialCount();
 				for (int MaterialIndex = 0; MaterialIndex < MaterialCount; ++MaterialIndex) {
-					FileData.Meshes.back().Materials.insert({ Node->GetMaterial(MaterialIndex)->GetName(), MaterialIndex });
-					FileData.Meshes.back().MaterialSubdivisions.insert({ MaterialIndex, MeshFaces() });
+					ResourceData.Meshes.back().Materials.insert({ Node->GetMaterial(MaterialIndex)->GetName(), MaterialIndex });
+					ResourceData.Meshes.back().MaterialSubdivisions.insert({ MaterialIndex, MeshFaces() });
 				}
-				ExtractVertexData(lMesh, FileData.Meshes.back());
+				ExtractVertexData(lMesh, ResourceData.Meshes.back());
 
 #ifdef ES_DEBUG
 				LOG_CORE_DEBUG(L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
-					Text::FormatUnit(FileData.Meshes.back().Vertices.size(), 2),
-					Text::FormatData(sizeof(IntVector3) * FileData.Meshes.back().Faces.size() + sizeof(MeshVertex) * FileData.Meshes.back().Vertices.size(), 2),
-					FileData.Meshes.size(),
+					Text::FormatUnit(ResourceData.Meshes.back().Vertices.size(), 2),
+					Text::FormatData(sizeof(IntVector3) * ResourceData.Meshes.back().Faces.size() + sizeof(MeshVertex) * ResourceData.Meshes.back().Vertices.size(), 2),
+					ResourceData.Meshes.size(),
 					Text::NarrowToWide(Node->GetName())
 				);
 #endif
-				TotalAllocatedSize += sizeof(IntVector3) * FileData.Meshes.back().Faces.size() + sizeof(MeshVertex) * FileData.Meshes.back().Vertices.size();
+				TotalAllocatedSize += sizeof(IntVector3) * ResourceData.Meshes.back().Faces.size() + sizeof(MeshVertex) * ResourceData.Meshes.back().Vertices.size();
 			}
 		}
 

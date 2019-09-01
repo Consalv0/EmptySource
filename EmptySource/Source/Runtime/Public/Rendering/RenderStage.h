@@ -21,17 +21,14 @@ namespace EmptySource {
 
 		virtual void Initialize();
 
-		virtual void Prepare();
+		virtual void Prepare() {};
 
 		virtual void Finish() {};
 
 		virtual void RunStage();
 
 	public:
-		// TArray<Task<>> RenderTasks;
-		// Event OnRenderEvent;
-
-		class Material * CurrentMaterial;
+		virtual void SubmitMesh(const class Mesh * Model, int Subdivision, const class Material * Mat, const Matrix4x4& Matrix) {};
 
 		virtual void SetEyeTransform(const Transform & EyeTransform);
 

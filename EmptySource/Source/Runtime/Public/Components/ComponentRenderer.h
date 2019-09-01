@@ -16,14 +16,17 @@ namespace EmptySource {
 
 		virtual void OnDelete();
 
-		// Maybe the material will be called here. It will use the event sistem in the App RP
-		// So this component needs to be suscribed to the render event.
-		void Render();
+		virtual void SetMesh(MeshPtr Value);
+
+		virtual void SetMaterials(TArray<class Material *> Materials);
+
+		virtual void SetMaterialAt(unsigned int At, class Material * Mat);
+
+		MeshPtr Model;
 
 	public:
-		Observer TestStageObserver;
 
-		class Mesh * Model;
+		virtual void OnRender();
 	};
 
 }

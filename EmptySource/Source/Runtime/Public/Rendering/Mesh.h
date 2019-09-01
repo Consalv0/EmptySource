@@ -104,4 +104,6 @@ namespace EmptySource {
 		MeshData Data;
 	};
 
+	typedef std::shared_ptr<Mesh> MeshPtr;
+
 }

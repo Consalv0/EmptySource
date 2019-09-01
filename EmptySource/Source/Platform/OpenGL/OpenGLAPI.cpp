@@ -48,6 +48,24 @@ namespace EmptySource {
 		return 0;
 	}
 
+	unsigned int OpenGLAPI::BlendFactorToBaseType(EBlendFactor Factor) {
+		switch (Factor) {
+		case EmptySource::BF_Zero:				return GL_ZERO;
+		case EmptySource::BF_One:				return GL_ONE;
+		case EmptySource::BF_SrcColor:			return GL_SRC_COLOR;
+		case EmptySource::BF_SrcAlpha:			return GL_ONE_MINUS_SRC_COLOR;
+		case EmptySource::BF_DstAlpha:			return GL_SRC_ALPHA;
+		case EmptySource::BF_DstColor:			return GL_ONE_MINUS_SRC_ALPHA;
+		case EmptySource::BF_OneMinusSrcColor:	return GL_DST_ALPHA;
+		case EmptySource::BF_OneMinusSrcAlpha:	return GL_ONE_MINUS_DST_ALPHA;
+		case EmptySource::BF_OneMinusDstAlpha:	return GL_DST_COLOR;
+		case EmptySource::BF_OneMinusDstColor:	return GL_ONE_MINUS_DST_COLOR;
+		case EmptySource::BF_None:
+		default:
+			return GL_NONE;
+		}
+	}
+
 	void OpenGLAPI::ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) {
 		GLbitfield ClearFlags = 0;
 
@@ -76,6 +94,23 @@ namespace EmptySource {
 		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
 		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
 		glDrawElementsInstanced(GL_TRIANGLES, VertexArrayPointer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr, Count);
+	}
+
+	void OpenGLAPI::SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) {
+		//////////////////////////////////////
+		//////////////////////////////////////
+		// This will be in the correct place 
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		///////////////////////////////////////
+
+		if (BlendFactorToBaseType(Source)) {
+			glEnable(GL_BLEND);
+			glBlendFunc(BlendFactorToBaseType(Source), BlendFactorToBaseType(Destination));
+		}
+		else {
+			glDisable(GL_BLEND);
+		}
 	}
 
 }

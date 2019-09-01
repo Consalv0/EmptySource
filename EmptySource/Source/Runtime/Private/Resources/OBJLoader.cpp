@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Files/FileStream.h"
+#include "Resources/MeshParser.h"
 #include "Resources/OBJLoader.h"
 
 
@@ -325,8 +326,8 @@ namespace EmptySource {
 		ModelData.VertexIndices.reserve(FaceCount * 4);
 	}
 
-	bool OBJLoader::Load(MeshLoader::FileData & FileData) {
-		if (FileData.File == NULL || !FileData.File->IsValid()) return false;
+	bool OBJLoader::Load(MeshParser::ResourceData & ResourceData) {
+		if (ResourceData.File == NULL || !ResourceData.File->IsValid()) return false;
 
 		ExtractedData ModelData;
 
@@ -336,7 +337,7 @@ namespace EmptySource {
 
 			Timer.Begin();
 			NString* MemoryText = new NString();
-			FileData.File->ReadNarrowStream(MemoryText);
+			ResourceData.File->ReadNarrowStream(MemoryText);
 
 			PrepareData(MemoryText->c_str(), ModelData);
 			ParseFaces(ModelData);
@@ -374,8 +375,8 @@ namespace EmptySource {
 			TDictionary<MeshVertex, unsigned> VertexToIndex;
 			VertexToIndex.reserve(Data.VertexIndicesCount);
 
-			FileData.Meshes.push_back(MeshData());
-			MeshData* OutMesh = &FileData.Meshes.back();
+			ResourceData.Meshes.push_back(MeshData());
+			MeshData* OutMesh = &ResourceData.Meshes.back();
 			OutMesh->Name = Text::NarrowToWide(Data.Name);
 
 			for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
@@ -401,7 +402,7 @@ namespace EmptySource {
 
 					unsigned Index = Count;
 					bool bFoundIndex = false;
-					if (FileData.Optimize) {
+					if (ResourceData.Optimize) {
 						bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
 					}
 
@@ -414,7 +415,7 @@ namespace EmptySource {
 						OutMesh->Vertices.push_back(NewVertex);
 						unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
 						Indices[Count] = NewIndex;
-						if (FileData.Optimize) VertexToIndex[NewVertex] = NewIndex;
+						if (ResourceData.Optimize) VertexToIndex[NewVertex] = NewIndex;
 						TotalUniqueVertices++;
 					}
 
@@ -436,7 +437,7 @@ namespace EmptySource {
 				L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
 				Text::FormatUnit(Data.VertexIndicesCount, 2),
 				Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2),
-				FileData.Meshes.size(),
+				ResourceData.Meshes.size(),
 				OutMesh->Name
 			);
 #endif // ES_DEBUG

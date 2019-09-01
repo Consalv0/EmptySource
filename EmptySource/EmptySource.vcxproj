@@ -234,7 +234,8 @@
     <ClInclude Include="Source\Runtime\Public\Resources\AudioManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ImageConversion.h" />
-    <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshParser.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h" />
@@ -297,7 +298,8 @@
     <ClCompile Include="Source\Runtime\Private\Resources\AudioManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageConversion.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshParser.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceHolder.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp" />

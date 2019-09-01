@@ -51,18 +51,17 @@ namespace EmptySource {
 	};
 
 	enum EBlendFactor {
+		BF_None,
 		BF_Zero,
 		BF_One,
-		BF_SourceColor,
-		BF_InverseSourceColor,
-		BF_SourceAlpha,
-		BF_InverseSourceAlpha,
-		BF_DestAlpha,
-		BF_InverseDestAlpha,
-		BF_DestColor,
-		BF_InverseDestColor,
-		BF_ConstantBlendFactor,
-		BF_InverseConstantBlendFactor
+		BF_SrcColor,
+		BF_SrcAlpha,
+		BF_DstAlpha,
+		BF_DstColor,
+		BF_OneMinusSrcColor,
+		BF_OneMinusSrcAlpha,
+		BF_OneMinusDstAlpha,
+		BF_OneMinusDstColor,
 	};
 
 	enum EUsageMode {

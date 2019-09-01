@@ -34,7 +34,7 @@
 #define RESOURCES_ADD_SHADERSTAGE
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "Resources/ResourceManager.h"
-#include "Resources/MeshLoader.h"
+#include "Resources/MeshManager.h"
 #include "Resources/ImageConversion.h"
 #include "Resources/ShaderManager.h"
 #include "Resources/TextureManager.h"
@@ -67,6 +67,7 @@ private:
 		float Volume1;
 		unsigned int Audio0Pos;
 		unsigned int Audio1Pos;
+		unsigned char CurrentSample[32768];
 	};
 
 	Font FontFace;
@@ -83,9 +84,9 @@ private:
 	Vector3 LightPosition0 = Vector3(2, 1);
 	Vector3 LightPosition1 = Vector3(2, 1);
 
-	TArray<Mesh> SceneModels;
-	TArray<Mesh> LightModels;
-	Mesh SphereModel;
+	TArray<MeshPtr> SceneModels;
+	TArray<MeshPtr> LightModels;
+	MeshPtr SphereModel;
 	float MeshSelector = 0;
 	
 	// --- Camera rotation, position Matrix
@@ -144,8 +145,7 @@ protected:
 
 		Texture2DPtr EquirectangularTexture = Texture2D::Create(
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-			CF_RGB32F,
-			FM_MinMagLinear,
+			CF_RGB32F, FM_MinMagLinear,
 			SAM_Repeat,
 			CF_RGB32F,
 			Equirectangular.PointerToValue()
@@ -310,6 +310,23 @@ protected:
 
 		char ProgressText[30]; 
 		ImGui::Begin("Audio Settings");
+		
+		{
+			static TArray<float> AudioChannel1(1);
+			{
+				AudioChannel1.resize(32768 / (2 * 4) / 2);
+				float * BufferPtr = (float *)&Voice.CurrentSample[0];
+				for (unsigned int i = 0; i < 32768 / (2 * 4) / 2; ++i) {
+					for (unsigned int j = i * (2 * 4); j < (i + 1) * (2 * 4) && j < 32768; j += (2 * 4)) {
+						AudioChannel1[i] = *BufferPtr;
+						BufferPtr += 2;
+					}
+				}
+			}
+			
+			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 250));
+		}
+
 		if (ImGui::TreeNode("Audio0")) {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 			ImGui::Columns(2);
@@ -319,6 +336,8 @@ protected:
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio0 Volume", &Voice.Volume0, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Loop", &Voice.bLoop0); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Pused", &Voice.bPause0); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
 			sprintf(ProgressText, "%.2f", Voice.Audio0->GetDurationAt<Time::Second>(Voice.Audio0Pos));
 			ImGui::ProgressBar((float)Voice.Audio0Pos / Voice.Audio0->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
@@ -482,9 +501,10 @@ protected:
 
 		static SDL_AudioSpec SampleSpecs; // the specs of our piece of music
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
-		AudioManager::GetInstance().LoadAudioFromFile(L"JoJosBizarreAdventure-DiamondisUnbreakableOST-SignofFear.wav", L"Resources/Sounds/JoJosBizarreAdventure-DiamondisUnbreakableOST-SignofFear.wav");
+		AudioManager::GetInstance().LoadAudioFromFile(L"IWannaBe.wav", L"Resources/Sounds/IWannaBe.wav");
+		Voice.Volume1 = 0.225F;
 		Voice.Audio0 = AudioManager::GetInstance().GetAudioSample(L"6503.wav");
-		Voice.Audio1 = AudioManager::GetInstance().GetAudioSample(L"JoJosBizarreAdventure-DiamondisUnbreakableOST-SignofFear.wav");
+		Voice.Audio1 = AudioManager::GetInstance().GetAudioSample(L"IWannaBe.wav");
 
 		if (Voice.Audio0 == NULL) {
 			LOG_ERROR("Couldn't not open the sound file or is invalid");
@@ -507,13 +527,15 @@ protected:
 				int FixLength1 = ((uint32_t)Length > Voice->Audio1->GetBufferLength() - Voice->Audio1Pos) ? Voice->Audio1->GetBufferLength() - Voice->Audio1Pos : (uint32_t)Length;
 				
 				if (!Voice->bPause0) {
-					SDL_MixAudioFormat(Stream, Voice->Audio0->GetBufferAt(Voice->Audio0Pos), SampleSpecs.format, FixLength0, (int)(SDL_MIX_MAXVOLUME * Voice->Volume0));
+					SDL_MixAudioFormat(Stream, Voice->Audio0->GetBufferAt(Voice->Audio0Pos), SampleSpecs.format, FixLength0, (int)(SDL_MIX_MAXVOLUME * Voice->Volume0 * 0.5F));
 					Voice->Audio0Pos += FixLength0;
 				}
 				if (!Voice->bPause1) {
-					SDL_MixAudioFormat(Stream, Voice->Audio1->GetBufferAt(Voice->Audio1Pos), SampleSpecs.format, FixLength1, (int)(SDL_MIX_MAXVOLUME * Voice->Volume1));
+					SDL_MixAudioFormat(Stream, Voice->Audio1->GetBufferAt(Voice->Audio1Pos), SampleSpecs.format, FixLength1, (int)(SDL_MIX_MAXVOLUME * Voice->Volume1 * 0.5F));
 					Voice->Audio1Pos += FixLength1;
 				}
+
+				memcpy(Voice->CurrentSample, Stream, Length);
 
 				if (Voice->Audio0->GetBufferLength() - Voice->Audio0Pos <= 0) {
 					Voice->Audio0Pos = 0;
@@ -598,7 +620,7 @@ protected:
 
 		BaseMaterial.SetShaderProgram(BRDFShader);
 
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
+		// Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
 
 		UnlitMaterial.SetShaderProgram(UnlitShader);
 
@@ -625,30 +647,9 @@ protected:
 		HDRClampingMaterial.CullMode = CM_None;
 		HDRClampingMaterial.SetShaderProgram(HDRClampingShader);
 
-		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/SphereUV.obj"), true, [this](MeshLoader::FileData & ModelData) {
-			if (ModelData.bLoaded) {
-				SphereModel = Mesh(&(ModelData.Meshes.back()));
-				SphereModel.SetUpBuffers();
-			}
-		});
-		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Arrow.fbx"), false, [this](MeshLoader::FileData & ModelData) {
-			for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
-				LightModels.push_back(Mesh(&(*Data)));
-				LightModels.back().SetUpBuffers();
-			}
-		});
-		MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/Sponza.obj"), true, [this](MeshLoader::FileData & ModelData) {
-			for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
-				SceneModels.push_back(Mesh(&(*Data)));
-				SceneModels.back().SetUpBuffers();
-			}
-		});
-		// MeshLoader::LoadAsync(FileManager::GetFile(L"Resources/Models/EscafandraMV1971.fbx"), true, [this](MeshLoader::FileData & ModelData) {
-		// 	for (TArray<MeshData>::iterator Data = ModelData.Meshes.begin(); Data != ModelData.Meshes.end(); ++Data) {
-		// 		SceneModels.push_back(Mesh(&(*Data)));
-		// 		SceneModels.back().SetUpBuffers();
-		// 	}
-		// });
+		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
+		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
+		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
 
 		Texture2DPtr RenderedTexture = Texture2D::Create(
 			IntVector2(
@@ -865,7 +866,7 @@ protected:
 		Ray TestRayArrow(TestArrowTransform.Position, TestArrowDirection);
 		if (SceneModels.size() > 100)
 			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].GetMeshData().Bounding.Transform(TransformMat);
+				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
 				TArray<RayHit> Hits;
 
 				if (Physics::RaycastAxisAlignedBox(TestRayArrow, ModelSpaceAABox)) {
@@ -874,14 +875,14 @@ protected:
 						InverseTransform.MultiplyPoint(TestArrowTransform.Position),
 						InverseTransform.MultiplyVector(TestArrowDirection)
 					);
-					for (MeshFaces::const_iterator Face = SceneModels[MeshCount].GetMeshData().Faces.begin(); Face != SceneModels[MeshCount].GetMeshData().Faces.end(); ++Face) {
+					for (MeshFaces::const_iterator Face = SceneModels[MeshCount]->GetMeshData().Faces.begin(); Face != SceneModels[MeshCount]->GetMeshData().Faces.end(); ++Face) {
 						if (Physics::RaycastTriangle(
 							Hit, ModelSpaceCameraRay,
-							SceneModels[MeshCount].GetMeshData().Vertices[(*Face)[0]].Position,
-							SceneModels[MeshCount].GetMeshData().Vertices[(*Face)[1]].Position,
-							SceneModels[MeshCount].GetMeshData().Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
+							SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[0]].Position,
+							SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[1]].Position,
+							SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
 						)) {
-							Hit.TriangleIndex = int(Face - SceneModels[MeshCount].GetMeshData().Faces.begin());
+							Hit.TriangleIndex = int(Face - SceneModels[MeshCount]->GetMeshData().Faces.begin());
 							Hits.push_back(Hit);
 						}
 					}
@@ -894,10 +895,10 @@ protected:
 
 						if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
 						{
-							const IntVector3 & Face = SceneModels[MeshCount].GetMeshData().Faces[Hits[0].TriangleIndex];
-							const Vector3 & N0 = SceneModels[MeshCount].GetMeshData().Vertices[Face[0]].Normal;
-							const Vector3 & N1 = SceneModels[MeshCount].GetMeshData().Vertices[Face[1]].Normal;
-							const Vector3 & N2 = SceneModels[MeshCount].GetMeshData().Vertices[Face[2]].Normal;
+							const IntVector3 & Face = SceneModels[MeshCount]->GetMeshData().Faces[Hits[0].TriangleIndex];
+							const Vector3 & N0 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[0]].Normal;
+							const Vector3 & N1 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[1]].Normal;
+							const Vector3 & N2 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[2]].Normal;
 							Vector3 InterpolatedNormal =
 								N0 * Hits[0].BaricenterCoordinates[0] +
 								N1 * Hits[0].BaricenterCoordinates[1] +
@@ -933,13 +934,12 @@ protected:
 		RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
 		RenderCubemapMaterial.SetFloat1Array("_Lod", &SkyRoughnessTemp);
 
-		if (SphereModel.GetMeshData().Faces.size() >= 1) {
-			SphereModel.SetUpBuffers();
-			SphereModel.BindVertexArray();
+		if (SphereModel && SphereModel->GetMeshData().Faces.size() >= 1) {
+			SphereModel->BindVertexArray();
 
 			Matrix4x4 MatrixScale = Matrix4x4::Scaling({ 500, 500, 500 });
 			RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, MatrixScale.PointerToValue(), ModelMatrixBuffer);
-			SphereModel.DrawElement();
+			SphereModel->DrawElement();
 		}
 
 		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
@@ -981,7 +981,7 @@ protected:
 		size_t TotalHitCount = 0;
 		Ray CameraRay(EyePosition, CameraRayDirection);
 		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			const MeshData & ModelData = SceneModels[MeshCount].GetMeshData();
+			const MeshData & ModelData = SceneModels[MeshCount]->GetMeshData();
 			BoundingBox3D ModelSpaceAABox = ModelData.Bounding.Transform(TransformMat);
 			TArray<RayHit> Hits;
 
@@ -1008,8 +1008,8 @@ protected:
 
 				if (Hits.size() > 0 && Hits[0].bHit) {
 					if (LightModels.size() > 0) {
-						LightModels[0].SetUpBuffers();
-						LightModels[0].BindVertexArray();
+						LightModels[0]->SetUpBuffers();
+						LightModels[0]->BindVertexArray();
 
 						IntVector3 Face = ModelData.Faces[Hits[0].TriangleIndex];
 						const Vector3 & N0 = ModelData.Vertices[Face[0]].Normal;
@@ -1033,39 +1033,39 @@ protected:
 						};
 						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &HitMatrix[0], ModelMatrixBuffer);
 
-						LightModels[0].DrawInstanciated(2);
-						TriangleCount += LightModels[0].GetMeshData().Faces.size() * 1;
-						VerticesCount += LightModels[0].GetMeshData().Vertices.size() * 1;
+						LightModels[0]->DrawInstanciated(2);
+						TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
+						VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
 					}
 				}
 			}
 
-			SceneModels[MeshCount].SetUpBuffers();
-			SceneModels[MeshCount].BindVertexArray();
+			SceneModels[MeshCount]->SetUpBuffers();
+			SceneModels[MeshCount]->BindVertexArray();
 
 			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
-			SceneModels[MeshCount].DrawInstanciated(1);
+			SceneModels[MeshCount]->DrawInstanciated(1);
 
 			TriangleCount += ModelData.Faces.size() * 1;
 			VerticesCount += ModelData.Vertices.size() * 1;
 		}
 
 		if (LightModels.size() > 0) {
-			LightModels[0].SetUpBuffers();
-			LightModels[0].BindVertexArray();
+			LightModels[0]->SetUpBuffers();
+			LightModels[0]->BindVertexArray();
 
 			Matrix4x4 ModelMatrix = TestArrowTransform.GetLocalToWorldMatrix();
 			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
 
-			LightModels[0].DrawInstanciated(1);
-			TriangleCount += LightModels[0].GetMeshData().Faces.size() * 1;
-			VerticesCount += LightModels[0].GetMeshData().Vertices.size() * 1;
+			LightModels[0]->DrawInstanciated(1);
+			TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
+			VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
 		}
 
 		ElementsIntersected.clear();
 		TArray<Matrix4x4> BBoxTransforms;
 		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount].GetMeshData().Bounding.Transform(TransformMat);
+			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
 			if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
 				ElementsIntersected.push_back(MeshCount);
 				BBoxTransforms.push_back(Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()));

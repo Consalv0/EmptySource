@@ -97,10 +97,10 @@ namespace EmptySource {
 
 		switch (ImageConversion::GetChannelCount(File)) {
 		case 1:
-			if (IsFloat32) ES_CORE_ASSERT(true, "Color format not supported");
+			if (IsFloat32) { ES_CORE_ASSERT(true, "Color format not supported"); }
 			else InputColorFormat = EColorFormat::CF_Red;
 		case 2:
-			if (IsFloat32) ES_CORE_ASSERT(true, "Color format not supported");
+			if (IsFloat32) { ES_CORE_ASSERT(true, "Color format not supported"); }
 			else InputColorFormat = EColorFormat::CF_RG;
 		case 3:
 			if (IsFloat32) InputColorFormat = EColorFormat::CF_RGB32F;

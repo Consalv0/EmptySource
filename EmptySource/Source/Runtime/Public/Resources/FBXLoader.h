@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Files/FileManager.h"
-#include "Resources/MeshLoader.h"
 
 namespace EmptySource {
 
@@ -41,7 +40,7 @@ namespace EmptySource {
 
 		/** Load mesh data from FBX, it will return the models separated by objects, optionaly
 		  * there's a way to optimize the vertices. */
-		static bool Load(MeshLoader::FileData & FileData);
+		static bool Load(MeshParser::ResourceData & ResourceData);
 	};
 
 }

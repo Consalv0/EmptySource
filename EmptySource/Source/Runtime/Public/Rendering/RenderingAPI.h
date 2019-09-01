@@ -12,6 +12,8 @@ namespace EmptySource {
 
 		virtual void SetViewport(const Box2D& Viewport) = 0;
 
+		virtual void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) = 0;
+
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) = 0;
 
 		inline static API GetAPI() {

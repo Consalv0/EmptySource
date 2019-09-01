@@ -357,9 +357,6 @@
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\MeshLoader.h">
-      <Filter>Runtime\Public\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
@@ -394,6 +391,12 @@
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\ImageConversion.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshManager.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshParser.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -542,9 +545,6 @@
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\MeshLoader.cpp">
-      <Filter>Runtime\Private\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
@@ -573,6 +573,12 @@
       <Filter>Runtime\Public</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\ImageConversion.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshManager.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshParser.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
   </ItemGroup>

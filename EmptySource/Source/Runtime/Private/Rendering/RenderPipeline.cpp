@@ -5,7 +5,6 @@
 #include "Rendering/RenderingBuffers.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
-#include "Rendering/GLFunctions.h"
 
 // SDL 2.0.9
 #include <SDL.h>
@@ -22,10 +21,7 @@ namespace EmptySource {
 	}
 
 	void RenderPipeline::Initialize() {
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glEnable(GL_BLEND);
-		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Rendering::SetAlphaBlending(EBlendFactor::BF_SrcAlpha, EBlendFactor::BF_OneMinusSrcAlpha);
 
 		for (auto & Stage : RenderStages) {
 			Stage.second->Initialize();
@@ -66,14 +62,11 @@ namespace EmptySource {
 	}
 
 	void RenderPipeline::PrepareFrame() {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight());
+		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
 		Rendering::ClearCurrentRender(true, 0.25F, true, 1, false, 0);
 	}
 
 	void RenderPipeline::EndOfFrame() {
-		// Application::GetInstance().GetWindow().EndOfFrame();
-		glBindVertexArray(0);
 	}
 
 }

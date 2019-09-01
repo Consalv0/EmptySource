@@ -11,7 +11,7 @@ namespace EmptySource {
 	public:
 
 		inline static RenderingAPI::API GetAPI() { return RenderingAPI::GetAPI(); };
-		
+
 		inline static void ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) {
 			RendererAppInterface->ClearCurrentRender(bClearColor, Color, bClearDepth, Depth, bClearStencil, Stencil);
 		}
@@ -22,6 +22,10 @@ namespace EmptySource {
 
 		inline static void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) {
 			RendererAppInterface->DrawIndexed(VertexArray, Count);
+		}
+
+		inline static void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) {
+			RendererAppInterface->SetAlphaBlending(Source, Destination);
 		}
 
 	private:

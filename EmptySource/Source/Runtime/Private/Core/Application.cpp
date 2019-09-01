@@ -30,7 +30,7 @@
 
 #include "Files/FileManager.h"
 
-#include "Resources/MeshLoader.h"
+#include "Resources/MeshParser.h"
 #include "Resources/ShaderManager.h"
 
 #include "Fonts/Font.h"
@@ -110,7 +110,7 @@ namespace EmptySource {
 
 		DeviceFunctionsInstance = std::unique_ptr<DeviceFunctions>(DeviceFunctions::Create());
 
-		if (!MeshLoader::Initialize())
+		if (!MeshParser::Initialize())
 			return;
 
 		MeshPrimitives::Initialize();
@@ -139,7 +139,7 @@ namespace EmptySource {
 		const double MaxFramerate = 1.0 / 45.0;
 
 		do {
-			MeshLoader::UpdateStatus();
+			MeshParser::UpdateStatus();
 			Time::Tick();
 
 			for (Layer * LayerIt : AppLayerStack)
@@ -179,7 +179,7 @@ namespace EmptySource {
 
 		AppLayerStack.Clear();
 
-		MeshLoader::Exit();
+		MeshParser::Exit();
 
 	}
 

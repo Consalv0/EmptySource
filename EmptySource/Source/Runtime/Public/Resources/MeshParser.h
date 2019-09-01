@@ -9,9 +9,9 @@
 
 namespace EmptySource {
 
-	struct MeshLoader {
+	class MeshParser {
 	public:
-		struct FileData {
+		struct ResourceData {
 			const FileStream * File;
 			bool Optimize;
 			TArray<MeshData> Meshes;
@@ -20,42 +20,50 @@ namespace EmptySource {
 			//* The model data has been loaded
 			bool bLoaded;
 
-			FileData(const FileStream * File, bool Optimize);
-			FileData(const FileData & Other) = delete;
-			FileData& operator = (FileData & Other);
+			ResourceData(const FileStream * File, bool Optimize);
+			ResourceData(const ResourceData & Other) = delete;
+			ResourceData& operator = (ResourceData & Other);
 		};
 
 	private:
-		typedef std::function<void(FileData &)> FinishTaskFunction;
-		typedef std::function<std::future<bool>(FileData &)> FutureTask;
+		typedef std::function<void(ResourceData &)> FinishTaskFunction;
+		typedef std::function<std::future<bool>(ResourceData &)> FutureTask;
 
 		static bool _TaskRunning;
 
 		struct Task {
-			FileData Data;
+			ResourceData Data;
 			FinishTaskFunction FinishFunction;
-			std::function<std::future<bool>(FileData &)> Future;
+			std::function<std::future<bool>(ResourceData &)> Future;
 
 			Task(const Task& Other) = delete;
 			Task(const FileStream * File, bool Optimize, FinishTaskFunction FinishFunction, FutureTask Future);
 		};
 
-		static bool RecognizeFileExtensionAndLoad(FileData & Data);
+		static bool RecognizeFileExtensionAndLoad(ResourceData & Data);
+
 		static void FinishCurrentAsyncTask();
 
 		//* Mesh Loading Threads
 		static std::queue<Task *> PendingTasks;
 		static std::future<bool> CurrentFuture;
-
+	
 	public:
+
 		static bool Initialize();
+
 		static void UpdateStatus();
+
 		static void FinishAsyncTasks();
+
 		static size_t GetAsyncTaskCount();
 
 		static void Exit();
-		static bool Load(FileData & Data);
+
+		static bool Load(ResourceData & Data);
+
 		static void LoadAsync(FileStream * File, bool Optimize, FinishTaskFunction OnComplete);
+
 	};
 
 }
