@@ -13,6 +13,8 @@ namespace EmptySource {
 
 		MeshPtr GetMesh(const size_t & UID) const;
 
+		TArray<WString> GetResourceNames() const;
+
 		void FreeMesh(const WString& Name);
 
 		void AddMesh(const WString& Name, MeshPtr Mesh);

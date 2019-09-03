@@ -22,6 +22,13 @@ namespace EmptySource {
 		return NULL;
 	}
 
+	TArray<WString> MeshManager::GetResourceNames() const {
+		TArray<WString> Names;
+		for (auto KeyValue : MeshList)
+			Names.push_back(KeyValue.second->GetMeshData().Name);
+		return Names;
+	}
+
 	void MeshManager::FreeMesh(const WString & Name) {
 		size_t UID = WStringToHash(Name);
 		MeshList.erase(UID);

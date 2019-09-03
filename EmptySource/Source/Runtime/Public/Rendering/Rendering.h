@@ -16,6 +16,10 @@ namespace EmptySource {
 			RendererAppInterface->ClearCurrentRender(bClearColor, Color, bClearDepth, Depth, bClearStencil, Stencil);
 		}
 
+		inline static void SetDefaultRender() {
+			RendererAppInterface->SetDefaultRender();
+		}
+
 		inline static void SetViewport(const Box2D& Viewport) {
 			RendererAppInterface->SetViewport(Viewport);
 		}

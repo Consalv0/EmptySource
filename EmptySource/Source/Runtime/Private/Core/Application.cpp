@@ -107,7 +107,7 @@ namespace EmptySource {
 #ifdef ES_PLATFORM_CUDA
 		CUDA::FindCudaDevice();
 #endif
-
+		AudioDeviceInstance = std::make_unique<AudioDevice>();
 		DeviceFunctionsInstance = std::unique_ptr<DeviceFunctions>(DeviceFunctions::Create());
 
 		if (!MeshParser::Initialize())

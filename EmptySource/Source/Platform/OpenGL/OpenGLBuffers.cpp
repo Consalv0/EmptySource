@@ -79,6 +79,7 @@ namespace EmptySource {
 
 	void OpenGLVertexArray::Bind() const {
 		glBindVertexArray(VertexArrayID);
+		if (IndexBufferPointer) IndexBufferPointer->Bind();
 	}
 
 	void OpenGLVertexArray::Unbind() const {

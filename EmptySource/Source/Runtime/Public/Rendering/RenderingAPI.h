@@ -10,6 +10,8 @@ namespace EmptySource {
 
 		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) = 0;
 
+		virtual void SetDefaultRender() = 0;
+
 		virtual void SetViewport(const Box2D& Viewport) = 0;
 
 		virtual void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) = 0;

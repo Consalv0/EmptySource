@@ -52,13 +52,13 @@ namespace EmptySource {
 		switch (Factor) {
 		case EmptySource::BF_Zero:				return GL_ZERO;
 		case EmptySource::BF_One:				return GL_ONE;
+		case EmptySource::BF_SrcAlpha:			return GL_SRC_ALPHA;
 		case EmptySource::BF_SrcColor:			return GL_SRC_COLOR;
-		case EmptySource::BF_SrcAlpha:			return GL_ONE_MINUS_SRC_COLOR;
-		case EmptySource::BF_DstAlpha:			return GL_SRC_ALPHA;
-		case EmptySource::BF_DstColor:			return GL_ONE_MINUS_SRC_ALPHA;
-		case EmptySource::BF_OneMinusSrcColor:	return GL_DST_ALPHA;
-		case EmptySource::BF_OneMinusSrcAlpha:	return GL_ONE_MINUS_DST_ALPHA;
-		case EmptySource::BF_OneMinusDstAlpha:	return GL_DST_COLOR;
+		case EmptySource::BF_DstAlpha:			return GL_DST_ALPHA;
+		case EmptySource::BF_DstColor:			return GL_DST_COLOR;
+		case EmptySource::BF_OneMinusSrcAlpha:	return GL_ONE_MINUS_SRC_ALPHA;
+		case EmptySource::BF_OneMinusSrcColor:	return GL_ONE_MINUS_SRC_COLOR;
+		case EmptySource::BF_OneMinusDstAlpha:	return GL_ONE_MINUS_DST_ALPHA;
 		case EmptySource::BF_OneMinusDstColor:	return GL_ONE_MINUS_DST_COLOR;
 		case EmptySource::BF_None:
 		default:
@@ -83,6 +83,10 @@ namespace EmptySource {
 		}
 
 		glClear(ClearFlags);
+	}
+
+	void OpenGLAPI::SetDefaultRender() {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void OpenGLAPI::SetViewport(const Box2D & Viewport) {

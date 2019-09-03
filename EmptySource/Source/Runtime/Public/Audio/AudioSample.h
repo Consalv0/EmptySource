@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CoreTypes.h"
+
 namespace EmptySource {
 
 	enum class EAudioFormat {

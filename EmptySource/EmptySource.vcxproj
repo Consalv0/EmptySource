@@ -156,6 +156,7 @@
     <ClInclude Include="Source\Platform\Windows\WindowsMinimal.h" />
     <ClInclude Include="Source\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\Runtime\Private\CUDA\CoreCUDA.h" />
+    <ClInclude Include="Source\Runtime\Public\Audio\AudioDevice.h" />
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Component.cpp" />

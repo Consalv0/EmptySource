@@ -399,6 +399,9 @@
     <ClInclude Include="Source\Runtime\Public\Resources\MeshParser.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Audio\AudioDevice.h">
+      <Filter>Runtime\Public\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -580,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\MeshParser.cpp">
       <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp">
+      <Filter>Runtime\Private\Audio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

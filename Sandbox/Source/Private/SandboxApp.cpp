@@ -28,6 +28,7 @@
 #include "Rendering/RenderTarget.h"
 #include "Rendering/Material.h"
 
+#include "Audio/AudioDevice.h"
 
 #include "Files/FileManager.h"
 
@@ -49,27 +50,11 @@
 
 #include "../External/IMGUI/imgui.h"
 #include "../External/SDL2/include/SDL_keycode.h"
-#include "../External/SDL2/include/SDL_audio.h"
 
 using namespace EmptySource;
 
 class SandboxLayer : public Layer {
 private:
-
-	struct AudioVoice {
-		AudioSamplePtr Audio0;
-		AudioSamplePtr Audio1;
-		bool bPause0;
-		bool bPause1;
-		bool bLoop0;
-		bool bLoop1;
-		float Volume0;
-		float Volume1;
-		unsigned int Audio0Pos;
-		unsigned int Audio1Pos;
-		unsigned char CurrentSample[32768];
-	};
-
 	Font FontFace;
 	Text2DGenerator TextGenerator;
 	Bitmap<UCharRed> FontAtlas;
@@ -84,10 +69,10 @@ private:
 	Vector3 LightPosition0 = Vector3(2, 1);
 	Vector3 LightPosition1 = Vector3(2, 1);
 
-	TArray<MeshPtr> SceneModels;
-	TArray<MeshPtr> LightModels;
-	MeshPtr SphereModel;
-	float MeshSelector = 0;
+	// TArray<MeshPtr> SceneModels;
+	// TArray<MeshPtr> LightModels;
+	MeshPtr SelectedMesh;
+	WString SelectedMeshName;
 	
 	// --- Camera rotation, position Matrix
 	float ViewSpeed = 3;
@@ -131,8 +116,6 @@ private:
 	Transform TestArrowTransform;
 	Vector3 TestArrowDirection = 0;
 	float TestSphereVelocity = .5F;
-
-	AudioVoice Voice = AudioVoice();
 
 	bool bRandomArray = false;
 	const void* curandomStateArray = 0;
@@ -193,12 +176,12 @@ protected:
 
 	virtual void OnImGuiRender() override {
 		static TexturePtr TextureSample = Texture2D::Create(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
-		const NChar* Textures[] = {
-			"FontMap", "BRDFLut", "BaseAlbedoTexture", "BaseMetallicTexture",
-			"BaseRoughnessTexture", "BaseNormalTexture", "FlamerAlbedoTexture",
-			"FlamerMetallicTexture", "FlamerNormalTexture", "EquirectangularTextureHDR",
-			"CubemapTexture"
-		};
+
+		TArray<WString> TextureList = TextureManager::GetInstance().GetResourceNames();
+		TArray<NString> NarrowTextureList(TextureList.size());
+		for (int i = 0; i < NarrowTextureList.size(); ++i)
+			NarrowTextureList[i] = Text::WideToNarrow((TextureList)[i]);
+
 		const NChar* SkyBoxes[]{
 			"Resources/Textures/Arches_E_PineTree_3k.hdr",
 			"Resources/Textures/doge2.hdr",
@@ -220,7 +203,7 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Textures[CurrentTexture]).c_str());
+		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(TextureList[CurrentTexture]);
 		if (SelectedTexture) {
 			int bCubemap;
 			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
@@ -281,6 +264,30 @@ protected:
 			}
 		}
 
+		ImGui::Begin("Resources");
+		TArray<WString> MeshResourcesList = MeshManager::GetInstance().GetResourceNames();
+		if (MeshResourcesList.size() > 0) {
+			TArray<NString> NarrowMeshResourcesList(MeshResourcesList.size());
+			for (int i = 0; i < NarrowMeshResourcesList.size(); ++i)
+				NarrowMeshResourcesList[i] = Text::WideToNarrow((MeshResourcesList)[i]);
+
+			static int Selection = 0;
+			ImGui::ListBox("Mesh List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
+				TArray<NString>* Items = (TArray<NString> *)Data;
+				if (outText) *outText = (*Items)[indx].c_str();
+				return true;
+			}, &NarrowMeshResourcesList, (int)NarrowMeshResourcesList.size());
+			ImGui::Text("Selected Mesh: %s", NarrowMeshResourcesList[Selection].c_str());
+			MeshPtr SelectedMesh = MeshManager::GetInstance().GetMesh(MeshResourcesList[Selection]);
+			if (SelectedMesh) {
+				SelectedMeshName = SelectedMesh->GetMeshData().Name;
+				for (auto KeyValue : SelectedMesh->GetMeshData().Materials) {
+					ImGui::Text(" - Materials: %s : %d", KeyValue.first.c_str(), KeyValue.second);
+				}
+			}
+		}
+		ImGui::End();
+
 		ImGui::Begin("Scene Settings");
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 		ImGui::Columns(2);
@@ -315,7 +322,7 @@ protected:
 			static TArray<float> AudioChannel1(1);
 			{
 				AudioChannel1.resize(32768 / (2 * 4) / 2);
-				float * BufferPtr = (float *)&Voice.CurrentSample[0];
+				float * BufferPtr = (float *)&(Application::GetInstance()->GetAudioDevice().CurrentSample[0]);
 				for (unsigned int i = 0; i < 32768 / (2 * 4) / 2; ++i) {
 					for (unsigned int j = i * (2 * 4); j < (i + 1) * (2 * 4) && j < 32768; j += (2 * 4)) {
 						AudioChannel1[i] = *BufferPtr;
@@ -326,108 +333,66 @@ protected:
 			
 			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 250));
 		}
+		for (auto KeyValue : Application::GetInstance()->GetAudioDevice()) {
+			AudioDevice::SamplePlayInfo * Info = KeyValue.second;
 
-		if (ImGui::TreeNode("Audio0")) {
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-			ImGui::Columns(2);
-			ImGui::Separator();
+			if (ImGui::TreeNode(("Audio" + std::to_string(Info->Identifier)).c_str())) {
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+				ImGui::Columns(2);
+				ImGui::Separator();
 
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio0 Volume", &Voice.Volume0, 0.F, 1.F); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Loop", &Voice.bLoop0); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio0 Pused", &Voice.bPause0); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
-			sprintf(ProgressText, "%.2f", Voice.Audio0->GetDurationAt<Time::Second>(Voice.Audio0Pos));
-			ImGui::ProgressBar((float)Voice.Audio0Pos / Voice.Audio0->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
-			unsigned int AudioPlotDetail = (unsigned int)(Voice.Audio0->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
-			TArray<float> AudioChannel1(Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
-			TArray<float> AudioChannel2(Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
-			for (unsigned int i = 0; i < Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
-				AudioChannel1[i * 2] = -MathConstants::BigNumber;
-				AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
-				for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio0->GetBufferLength(); j += (2 * 4)) {
-					AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *(float *)(Voice.Audio0->GetBufferAt(j)));
-					AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *(float *)(Voice.Audio0->GetBufferAt(j)));
-				}
-			}
-			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio0 Channel 1",
-				&AudioChannel1[0], Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2, NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
-			for (unsigned int i = 0; i < Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
-				AudioChannel2[i * 2] = -MathConstants::BigNumber;
-				AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
-				for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio0->GetBufferLength(); j += (2 * 4)) {
-					AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *(float *)(Voice.Audio0->GetBufferAt(j + 4)));
-					AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *(float *)(Voice.Audio0->GetBufferAt(j + 4)));
-				}
-			}
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio0 Channel 2",
-				&AudioChannel2[0], Voice.Audio0->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2, NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio Volume", &Info->Volume, 0.F, 1.F); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Loop", &Info->bLoop); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Pused", &Info->bPause); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
+				sprintf(ProgressText, "%.2f", Info->Sample->GetDurationAt<Time::Second>(Info->Pos));
+				ImGui::ProgressBar((float)Info->Pos / Info->Sample->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
 
-			ImGui::Columns(1);
-			ImGui::Separator();
-			ImGui::PopStyleVar();
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("Audio1")) {
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-			ImGui::Columns(2);
-			ImGui::Separator();
-
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio1 Volume", &Voice.Volume1, 0.F, 1.F); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio1 Loop", &Voice.bLoop1); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio1 Pused", &Voice.bPause1); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
-			sprintf(ProgressText, "%.2f", Voice.Audio1->GetDurationAt<Time::Second>(Voice.Audio1Pos));
-			ImGui::ProgressBar((float)Voice.Audio1Pos / Voice.Audio1->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
-
-			static unsigned int AudioPlotDetail = 0;
-			static TArray<float> AudioChannel1(1);
-			static TArray<float> AudioChannel2(1);
-			if (AudioPlotDetail != (unsigned int)(Voice.Audio1->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4))) {
-				AudioPlotDetail = (unsigned int)(Voice.Audio1->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
-				AudioChannel1.resize(Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
-				AudioChannel2.resize(Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
-				float * BufferPtr = (float *)Voice.Audio1->GetBufferAt(0);
-				float * BufferEndPtr = (float *)Voice.Audio1->GetBufferAt(Voice.Audio1->GetBufferLength() - 4);
-				for (unsigned int i = 0; i < Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
-					AudioChannel1[i * 2] = -MathConstants::BigNumber;
-					AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
-					for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio1->GetBufferLength(); j += (2 * 4)) {
-						AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *BufferPtr);
-						AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *BufferPtr);
-						BufferPtr += 2;
+				unsigned int AudioPlotDetail = 0;
+				TArray<float> AudioChannel1(1);
+				TArray<float> AudioChannel2(1);
+				if (AudioPlotDetail != (unsigned int)(Info->Sample->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4))) {
+					AudioPlotDetail = (unsigned int)(Info->Sample->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
+					AudioChannel1.resize(Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+					AudioChannel2.resize(Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+					float * BufferPtr = (float *)Info->Sample->GetBufferAt(0);
+					float * BufferEndPtr = (float *)Info->Sample->GetBufferAt(Info->Sample->GetBufferLength() - 4);
+					for (unsigned int i = 0; i < Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+						AudioChannel1[i * 2] = -MathConstants::BigNumber;
+						AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
+						for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Info->Sample->GetBufferLength(); j += (2 * 4)) {
+							AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *BufferPtr);
+							AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *BufferPtr);
+							BufferPtr += 2;
+						}
+					}
+					BufferPtr = (float *)Info->Sample->GetBufferAt(4);
+					for (unsigned int i = 0; i < Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+						AudioChannel2[i * 2] = -MathConstants::BigNumber;
+						AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
+						for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Info->Sample->GetBufferLength(); j += (2 * 4)) {
+							AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *BufferPtr);
+							AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *BufferPtr);
+							BufferPtr += 2;
+						}
 					}
 				}
-				BufferPtr = (float *)Voice.Audio1->GetBufferAt(4);
-				for (unsigned int i = 0; i < Voice.Audio1->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
-					AudioChannel2[i * 2] = -MathConstants::BigNumber;
-					AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
-					for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Voice.Audio1->GetBufferLength(); j += (2 * 4)) {
-						AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *BufferPtr);
-						AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *BufferPtr);
-						BufferPtr += 2;
-					}
-				}
+
+				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio Channel 1",
+					&AudioChannel1[0], (int)AudioChannel1.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio Channel 2",
+					&AudioChannel2[0], (int)AudioChannel2.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+
+				ImGui::Columns(1);
+				ImGui::Separator();
+				ImGui::PopStyleVar();
+				ImGui::TreePop();
 			}
-
-			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio1 Channel 1",
-				&AudioChannel1[0], (int)AudioChannel1.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio1 Channel 2",
-				&AudioChannel2[0], (int)AudioChannel2.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
-
-			ImGui::Columns(1);
-			ImGui::Separator();
-			ImGui::PopStyleVar(); 
-			ImGui::TreePop();
 		}
 		ImGui::End();
 
@@ -438,7 +403,11 @@ protected:
 		ImGui::Separator();
 
 		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Texture"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, Textures, IM_ARRAYSIZE(Textures)); ImGui::NextColumn();
+		ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, [](void * Data, int indx, const char ** outText) -> bool {
+			TArray<NString>* Items = (TArray<NString> *)Data;
+			if (outText) *outText = (*Items)[indx].c_str();
+			return true;
+		}, &NarrowTextureList, (int)NarrowTextureList.size()); ImGui::NextColumn();
 		if (SelectedTexture) {
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
@@ -499,66 +468,10 @@ protected:
 		GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
 		CComponent * Component = GameObject->CreateComponent<CRenderer>();
 
-		static SDL_AudioSpec SampleSpecs; // the specs of our piece of music
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
-		AudioManager::GetInstance().LoadAudioFromFile(L"IWannaBe.wav", L"Resources/Sounds/IWannaBe.wav");
-		Voice.Volume1 = 0.225F;
-		Voice.Audio0 = AudioManager::GetInstance().GetAudioSample(L"6503.wav");
-		Voice.Audio1 = AudioManager::GetInstance().GetAudioSample(L"IWannaBe.wav");
-
-		if (Voice.Audio0 == NULL) {
-			LOG_ERROR("Couldn't not open the sound file or is invalid");
-		} else {
-			SampleSpecs.channels = 2;
-			SampleSpecs.format = AUDIO_F32LSB;
-			SampleSpecs.freq = 48000;
-
-			// Set the callback function
-			SampleSpecs.callback = [](void *UserData, Uint8 *Stream, int Length) -> void {
-				/* Silence the main buffer */
-				SDL_memset(Stream, 0, Length);
-				AudioVoice * Voice = (AudioVoice *)UserData;
-
-				if (Voice->Audio0->GetBufferLength() <= 0) {
-					return;
-				}
-
-				int FixLength0 = ((uint32_t)Length > Voice->Audio0->GetBufferLength() - Voice->Audio0Pos) ? Voice->Audio0->GetBufferLength() - Voice->Audio0Pos : (uint32_t)Length;
-				int FixLength1 = ((uint32_t)Length > Voice->Audio1->GetBufferLength() - Voice->Audio1Pos) ? Voice->Audio1->GetBufferLength() - Voice->Audio1Pos : (uint32_t)Length;
-				
-				if (!Voice->bPause0) {
-					SDL_MixAudioFormat(Stream, Voice->Audio0->GetBufferAt(Voice->Audio0Pos), SampleSpecs.format, FixLength0, (int)(SDL_MIX_MAXVOLUME * Voice->Volume0 * 0.5F));
-					Voice->Audio0Pos += FixLength0;
-				}
-				if (!Voice->bPause1) {
-					SDL_MixAudioFormat(Stream, Voice->Audio1->GetBufferAt(Voice->Audio1Pos), SampleSpecs.format, FixLength1, (int)(SDL_MIX_MAXVOLUME * Voice->Volume1 * 0.5F));
-					Voice->Audio1Pos += FixLength1;
-				}
-
-				memcpy(Voice->CurrentSample, Stream, Length);
-
-				if (Voice->Audio0->GetBufferLength() - Voice->Audio0Pos <= 0) {
-					Voice->Audio0Pos = 0;
-					Voice->bPause0 = !Voice->bLoop0;
-				}
-				if (Voice->Audio1->GetBufferLength() - Voice->Audio1Pos <= 0) {
-					Voice->Audio1Pos = 0;
-					Voice->bPause1 = !Voice->bLoop1;
-				}
-			};
-
-			SampleSpecs.userdata = &Voice;
-			// Set the variables
-			Voice.Audio0Pos = 0;
-			Voice.Audio1Pos = 0;
-
-			/* Open the audio device */
-			if (SDL_OpenAudio(&SampleSpecs, NULL) < 0) {
-				ES_CORE_ASSERT(true, "Couldn't open audio device: {0}\n", SDL_GetError());
-			}
-			/* Start playing */
-			SDL_PauseAudio(false);
-		}
+		AudioManager::GetInstance().LoadAudioFromFile(L"ZEF_TV_by_Dune.wav", L"Resources/Sounds/ZEF_TV_by_Dune.wav");
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, true, true);
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"ZEF_TV_by_Dune.wav"), 0.255F, true, true);
 
 		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
 
@@ -574,10 +487,10 @@ protected:
 		}
 
 		TextureManager& TextureMng = TextureManager::GetInstance();
-		TextureMng.LoadImageFromFile(L"BaseAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_diff.png");
-		TextureMng.LoadImageFromFile(L"BaseMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_arch_spec.png");
-		TextureMng.LoadImageFromFile(L"BaseRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_roug.jpg");
-		TextureMng.LoadImageFromFile(L"BaseNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_normal.png");
+		TextureMng.LoadImageFromFile(L"BaseAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_diff.tga");
+		TextureMng.LoadImageFromFile(L"BaseMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
+		TextureMng.LoadImageFromFile(L"BaseRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_spec.tga");
+		TextureMng.LoadImageFromFile(L"BaseNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_ddna.tga");
 		TextureMng.LoadImageFromFile(L"FlamerAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_BaseColor.png");
 		TextureMng.LoadImageFromFile(L"FlamerMetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Metallic.png");
 		TextureMng.LoadImageFromFile(L"FlamerRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Roughness.png");
@@ -779,14 +692,6 @@ protected:
 			}
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_UP)) {
-			MeshSelector += Time::GetDeltaTime<Time::Second>() * 10;
-			MeshSelector = MeshSelector > SceneModels.size() - 1 ? SceneModels.size() - 1 : MeshSelector;
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_DOWN)) {
-			MeshSelector -= Time::GetDeltaTime<Time::Second>() * 10;
-			MeshSelector = MeshSelector < 0 ? 0 : MeshSelector;
-		}
 		if (Input::IsKeyDown(SDL_SCANCODE_RIGHT)) {
 			MultiuseValue += Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
@@ -863,56 +768,56 @@ protected:
 		}
 		bool bTestResult = false;
 
-		Ray TestRayArrow(TestArrowTransform.Position, TestArrowDirection);
-		if (SceneModels.size() > 100)
-			for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-				BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
-				TArray<RayHit> Hits;
-
-				if (Physics::RaycastAxisAlignedBox(TestRayArrow, ModelSpaceAABox)) {
-					RayHit Hit;
-					Ray ModelSpaceCameraRay(
-						InverseTransform.MultiplyPoint(TestArrowTransform.Position),
-						InverseTransform.MultiplyVector(TestArrowDirection)
-					);
-					for (MeshFaces::const_iterator Face = SceneModels[MeshCount]->GetMeshData().Faces.begin(); Face != SceneModels[MeshCount]->GetMeshData().Faces.end(); ++Face) {
-						if (Physics::RaycastTriangle(
-							Hit, ModelSpaceCameraRay,
-							SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[0]].Position,
-							SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[1]].Position,
-							SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
-						)) {
-							Hit.TriangleIndex = int(Face - SceneModels[MeshCount]->GetMeshData().Faces.begin());
-							Hits.push_back(Hit);
-						}
-					}
-
-					std::sort(Hits.begin(), Hits.end());
-
-					if (Hits.size() > 0 && Hits[0].bHit) {
-						Vector3 ArrowClosestContactPoint = TestArrowTransform.Position;
-						Vector3 ClosestContactPoint = TestRayArrow.PointAt(Hits[0].Stamp);
-
-						if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
-						{
-							const IntVector3 & Face = SceneModels[MeshCount]->GetMeshData().Faces[Hits[0].TriangleIndex];
-							const Vector3 & N0 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[0]].Normal;
-							const Vector3 & N1 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[1]].Normal;
-							const Vector3 & N2 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[2]].Normal;
-							Vector3 InterpolatedNormal =
-								N0 * Hits[0].BaricenterCoordinates[0] +
-								N1 * Hits[0].BaricenterCoordinates[1] +
-								N2 * Hits[0].BaricenterCoordinates[2];
-
-							Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-							Hits[0].Normal.Normalize();
-							Vector3 ReflectedDirection = Vector3::Reflect(TestArrowDirection, Hits[0].Normal);
-							TestArrowDirection = ReflectedDirection.Normalized();
-							TestArrowTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
-						}
-					}
-				}
-			}
+		// Ray TestRayArrow(TestArrowTransform.Position, TestArrowDirection);
+		// if (SceneModels.size() > 100)
+		// 	for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+		// 		BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
+		// 		TArray<RayHit> Hits;
+		// 
+		// 		if (Physics::RaycastAxisAlignedBox(TestRayArrow, ModelSpaceAABox)) {
+		// 			RayHit Hit;
+		// 			Ray ModelSpaceCameraRay(
+		// 				InverseTransform.MultiplyPoint(TestArrowTransform.Position),
+		// 				InverseTransform.MultiplyVector(TestArrowDirection)
+		// 			);
+		// 			for (MeshFaces::const_iterator Face = SceneModels[MeshCount]->GetMeshData().Faces.begin(); Face != SceneModels[MeshCount]->GetMeshData().Faces.end(); ++Face) {
+		// 				if (Physics::RaycastTriangle(
+		// 					Hit, ModelSpaceCameraRay,
+		// 					SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[0]].Position,
+		// 					SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[1]].Position,
+		// 					SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
+		// 				)) {
+		// 					Hit.TriangleIndex = int(Face - SceneModels[MeshCount]->GetMeshData().Faces.begin());
+		// 					Hits.push_back(Hit);
+		// 				}
+		// 			}
+		// 
+		// 			std::sort(Hits.begin(), Hits.end());
+		// 
+		// 			if (Hits.size() > 0 && Hits[0].bHit) {
+		// 				Vector3 ArrowClosestContactPoint = TestArrowTransform.Position;
+		// 				Vector3 ClosestContactPoint = TestRayArrow.PointAt(Hits[0].Stamp);
+		// 
+		// 				if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
+		// 				{
+		// 					const IntVector3 & Face = SceneModels[MeshCount]->GetMeshData().Faces[Hits[0].TriangleIndex];
+		// 					const Vector3 & N0 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[0]].Normal;
+		// 					const Vector3 & N1 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[1]].Normal;
+		// 					const Vector3 & N2 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[2]].Normal;
+		// 					Vector3 InterpolatedNormal =
+		// 						N0 * Hits[0].BaricenterCoordinates[0] +
+		// 						N1 * Hits[0].BaricenterCoordinates[1] +
+		// 						N2 * Hits[0].BaricenterCoordinates[2];
+		// 
+		// 					Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+		// 					Hits[0].Normal.Normalize();
+		// 					Vector3 ReflectedDirection = Vector3::Reflect(TestArrowDirection, Hits[0].Normal);
+		// 					TestArrowDirection = ReflectedDirection.Normalized();
+		// 					TestArrowTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
+		// 				}
+		// 			}
+		// 		}
+		// 	}
 
 		LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 4));
 		LightPosition1 = Vector3();
@@ -934,11 +839,12 @@ protected:
 		RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
 		RenderCubemapMaterial.SetFloat1Array("_Lod", &SkyRoughnessTemp);
 
-		if (SphereModel && SphereModel->GetMeshData().Faces.size() >= 1) {
+		MeshPtr SphereModel = MeshManager::GetInstance().GetMesh(L"pSphere1");
+		if (SphereModel) {
 			SphereModel->BindVertexArray();
-
+		
 			Matrix4x4 MatrixScale = Matrix4x4::Scaling({ 500, 500, 500 });
-			RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, MatrixScale.PointerToValue(), ModelMatrixBuffer);
+			RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, MatrixScale.PointerToValue(), ModelMatrixBuffer);
 			SphereModel->DrawElement();
 		}
 
@@ -976,132 +882,139 @@ protected:
 		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
 		BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
 
-		// Transforms[0].Position += Transforms[0].Rotation * Vector3(0, 0, Time::GetDeltaTime() * 2);
+		// size_t TotalHitCount = 0;
+		// Ray CameraRay(EyePosition, CameraRayDirection);
+		// for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+		// 	const MeshData & ModelData = SceneModels[MeshCount]->GetMeshData();
+		// 	BoundingBox3D ModelSpaceAABox = ModelData.Bounding.Transform(TransformMat);
+		// 	TArray<RayHit> Hits;
+		// 
+		// 	if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
+		// 		RayHit Hit;
+		// 		Ray ModelSpaceCameraRay(
+		// 			InverseTransform.MultiplyPoint(EyePosition),
+		// 			InverseTransform.MultiplyVector(CameraRayDirection)
+		// 		);
+		// 		for (MeshFaces::const_iterator Face = ModelData.Faces.begin(); Face != ModelData.Faces.end(); ++Face) {
+		// 			if (Physics::RaycastTriangle(
+		// 				Hit, ModelSpaceCameraRay,
+		// 				ModelData.Vertices[(*Face)[0]].Position,
+		// 				ModelData.Vertices[(*Face)[1]].Position,
+		// 				ModelData.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
+		// 			)) {
+		// 				Hit.TriangleIndex = int(Face - ModelData.Faces.begin());
+		// 				Hits.push_back(Hit);
+		// 			}
+		// 		}
+		// 
+		// 		std::sort(Hits.begin(), Hits.end());
+		// 		TotalHitCount += Hits.size();
+		// 
+		// 		if (Hits.size() > 0 && Hits[0].bHit) {
+		// 			if (LightModels.size() > 0) {
+		// 				LightModels[0]->SetUpBuffers();
+		// 				LightModels[0]->BindVertexArray();
+		// 
+		// 				IntVector3 Face = ModelData.Faces[Hits[0].TriangleIndex];
+		// 				const Vector3 & N0 = ModelData.Vertices[Face[0]].Normal;
+		// 				const Vector3 & N1 = ModelData.Vertices[Face[1]].Normal;
+		// 				const Vector3 & N2 = ModelData.Vertices[Face[2]].Normal;
+		// 				Vector3 InterpolatedNormal =
+		// 					N0 * Hits[0].BaricenterCoordinates[0] +
+		// 					N1 * Hits[0].BaricenterCoordinates[1] +
+		// 					N2 * Hits[0].BaricenterCoordinates[2];
+		// 
+		// 				Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+		// 				Hits[0].Normal.Normalize();
+		// 				Vector3 ReflectedCameraDir = Vector3::Reflect(CameraRayDirection, Hits[0].Normal);
+		// 				Matrix4x4 HitMatrix[2] = {
+		// 					Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
+		// 					Matrix4x4::Rotation(Quaternion::LookRotation(ReflectedCameraDir, Vector3(0, 1, 0))) *
+		// 					Matrix4x4::Scaling(0.1F),
+		// 					Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
+		// 					Matrix4x4::Rotation(Quaternion::LookRotation(Hits[0].Normal, Vector3(0, 1, 0))) *
+		// 					Matrix4x4::Scaling(0.07F)
+		// 				};
+		// 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &HitMatrix[0], ModelMatrixBuffer);
+		// 
+		// 				LightModels[0]->DrawInstanciated(2);
+		// 				TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
+		// 				VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
+		// 			}
+		// 		}
+		// 	}
+		// 
+		// 	SceneModels[MeshCount]->SetUpBuffers();
+		// 	SceneModels[MeshCount]->BindVertexArray();
+		// 
+		// 	BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
+		// 	SceneModels[MeshCount]->DrawInstanciated(1);
+		// 
+		// 	TriangleCount += ModelData.Faces.size() * 1;
+		// 	VerticesCount += ModelData.Vertices.size() * 1;
+		// }
 
-		size_t TotalHitCount = 0;
-		Ray CameraRay(EyePosition, CameraRayDirection);
-		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			const MeshData & ModelData = SceneModels[MeshCount]->GetMeshData();
-			BoundingBox3D ModelSpaceAABox = ModelData.Bounding.Transform(TransformMat);
-			TArray<RayHit> Hits;
-
-			if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
-				RayHit Hit;
-				Ray ModelSpaceCameraRay(
-					InverseTransform.MultiplyPoint(EyePosition),
-					InverseTransform.MultiplyVector(CameraRayDirection)
-				);
-				for (MeshFaces::const_iterator Face = ModelData.Faces.begin(); Face != ModelData.Faces.end(); ++Face) {
-					if (Physics::RaycastTriangle(
-						Hit, ModelSpaceCameraRay,
-						ModelData.Vertices[(*Face)[0]].Position,
-						ModelData.Vertices[(*Face)[1]].Position,
-						ModelData.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
-					)) {
-						Hit.TriangleIndex = int(Face - ModelData.Faces.begin());
-						Hits.push_back(Hit);
-					}
-				}
-
-				std::sort(Hits.begin(), Hits.end());
-				TotalHitCount += Hits.size();
-
-				if (Hits.size() > 0 && Hits[0].bHit) {
-					if (LightModels.size() > 0) {
-						LightModels[0]->SetUpBuffers();
-						LightModels[0]->BindVertexArray();
-
-						IntVector3 Face = ModelData.Faces[Hits[0].TriangleIndex];
-						const Vector3 & N0 = ModelData.Vertices[Face[0]].Normal;
-						const Vector3 & N1 = ModelData.Vertices[Face[1]].Normal;
-						const Vector3 & N2 = ModelData.Vertices[Face[2]].Normal;
-						Vector3 InterpolatedNormal =
-							N0 * Hits[0].BaricenterCoordinates[0] +
-							N1 * Hits[0].BaricenterCoordinates[1] +
-							N2 * Hits[0].BaricenterCoordinates[2];
-
-						Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-						Hits[0].Normal.Normalize();
-						Vector3 ReflectedCameraDir = Vector3::Reflect(CameraRayDirection, Hits[0].Normal);
-						Matrix4x4 HitMatrix[2] = {
-							Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
-							Matrix4x4::Rotation(Quaternion::LookRotation(ReflectedCameraDir, Vector3(0, 1, 0))) *
-							Matrix4x4::Scaling(0.1F),
-							Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
-							Matrix4x4::Rotation(Quaternion::LookRotation(Hits[0].Normal, Vector3(0, 1, 0))) *
-							Matrix4x4::Scaling(0.07F)
-						};
-						BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &HitMatrix[0], ModelMatrixBuffer);
-
-						LightModels[0]->DrawInstanciated(2);
-						TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
-						VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
-					}
-				}
-			}
-
-			SceneModels[MeshCount]->SetUpBuffers();
-			SceneModels[MeshCount]->BindVertexArray();
-
+		SelectedMesh = MeshManager::GetInstance().GetMesh(SelectedMeshName);
+		if (SelectedMesh) {
+			SelectedMesh->BindVertexArray();
+			
 			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
-			SceneModels[MeshCount]->DrawInstanciated(1);
-
-			TriangleCount += ModelData.Faces.size() * 1;
-			VerticesCount += ModelData.Vertices.size() * 1;
+			SelectedMesh->DrawInstanciated(1);
 		}
 
-		if (LightModels.size() > 0) {
-			LightModels[0]->SetUpBuffers();
-			LightModels[0]->BindVertexArray();
-
-			Matrix4x4 ModelMatrix = TestArrowTransform.GetLocalToWorldMatrix();
-			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
-
-			LightModels[0]->DrawInstanciated(1);
-			TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
-			VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
-		}
+		// 
+		// if (LightModels.size() > 0) {
+		// 	LightModels[0]->SetUpBuffers();
+		// 	LightModels[0]->BindVertexArray();
+		// 
+		// 	Matrix4x4 ModelMatrix = TestArrowTransform.GetLocalToWorldMatrix();
+		// 	BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
+		// 
+		// 	LightModels[0]->DrawInstanciated(1);
+		// 	TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
+		// 	VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
+		// }
 
 		ElementsIntersected.clear();
-		TArray<Matrix4x4> BBoxTransforms;
-		for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-			BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
-			if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
-				ElementsIntersected.push_back(MeshCount);
-				BBoxTransforms.push_back(Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()));
-			}
-		}
-		if (BBoxTransforms.size() > 0) {
-			UnlitMaterialWire.Use();
-
-			UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-			UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-			UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-			UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
-
-			MeshPrimitives::Cube.BindVertexArray();
-			UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", (int)BBoxTransforms.size(), &BBoxTransforms[0], ModelMatrixBuffer);
-			MeshPrimitives::Cube.DrawInstanciated((int)BBoxTransforms.size());
-		}
-
-		UnlitMaterial.Use();
-
-		UnlitMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-		UnlitMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		UnlitMaterial.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-		UnlitMaterial.SetFloat4Array("_Material.Color", (Vector4(1.F, 1.F, .9F, 1.F) * LightIntencity).PointerToValue());
-
-		if (LightModels.size() > 0) {
-			MeshPrimitives::Cube.BindVertexArray();
-
-			TArray<Matrix4x4> LightPositions;
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
-			LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
-
-			UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
-
-			MeshPrimitives::Cube.DrawInstanciated(2);
-		}
+		// TArray<Matrix4x4> BBoxTransforms;
+		// for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
+		// 	BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
+		// 	if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
+		// 		ElementsIntersected.push_back(MeshCount);
+		// 		BBoxTransforms.push_back(Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()));
+		// 	}
+		// }
+		// if (BBoxTransforms.size() > 0) {
+		// 	UnlitMaterialWire.Use();
+		// 
+		// 	UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
+		// 	UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
+		// 	UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
+		// 	UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
+		// 
+		// 	MeshPrimitives::Cube.BindVertexArray();
+		// 	UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", (int)BBoxTransforms.size(), &BBoxTransforms[0], ModelMatrixBuffer);
+		// 	MeshPrimitives::Cube.DrawInstanciated((int)BBoxTransforms.size());
+		// }
+		// 
+		// UnlitMaterial.Use();
+		// 
+		// UnlitMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
+		// UnlitMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
+		// UnlitMaterial.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
+		// UnlitMaterial.SetFloat4Array("_Material.Color", (Vector4(1.F, 1.F, .9F, 1.F) * LightIntencity).PointerToValue());
+		// 
+		// if (LightModels.size() > 0) {
+		// 	MeshPrimitives::Cube.BindVertexArray();
+		// 
+		// 	TArray<Matrix4x4> LightPositions;
+		// 	LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
+		// 	LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
+		// 
+		// 	UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
+		// 
+		// 	MeshPrimitives::Cube.DrawInstanciated(2);
+		// }
 
 		Rendering::SetViewport(Box2D(0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight()));
 		// --- Activate corresponding render state
@@ -1147,7 +1060,7 @@ protected:
 			Text::FormatMath(Spheres[0]).c_str(),
 			Text::FormatMath(Spheres[1]).c_str(),
 			ElementsIntersected.size(),
-			TotalHitCount
+			0 // TotalHitCount
 		);
 
 		RenderingText[0] = Text::Formatted(

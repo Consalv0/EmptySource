@@ -477,6 +477,7 @@ namespace EmptySource {
 			FbxMesh * lMesh = Node->GetMesh();
 			if (lMesh) {
 				ResourceData.Meshes.push_back(MeshData());
+				ResourceData.Meshes.back().Name = Text::NarrowToWide(lMesh->GetName());
 				const int MaterialCount = Node->GetMaterialCount();
 				for (int MaterialIndex = 0; MaterialIndex < MaterialCount; ++MaterialIndex) {
 					ResourceData.Meshes.back().Materials.insert({ Node->GetMaterial(MaterialIndex)->GetName(), MaterialIndex });

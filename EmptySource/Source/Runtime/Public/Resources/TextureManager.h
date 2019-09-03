@@ -6,9 +6,7 @@
 namespace EmptySource {
 
 	class TextureManager : public ResourceManager {
-
 	public:
-
 		TexturePtr GetTexture(const WString& Name) const;
 
 		TexturePtr GetTexture(const size_t & UID) const;
@@ -16,6 +14,8 @@ namespace EmptySource {
 		void FreeTexture(const WString& Name);
 
 		void AddTexture(const WString& Name, TexturePtr Texture);
+		
+		TArray<WString> GetResourceNames() const;
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Texture; };
 
@@ -28,7 +28,11 @@ namespace EmptySource {
 
 		static TextureManager& GetInstance();
 
+		inline TDictionary<size_t, TexturePtr>::iterator begin() { return TextureList.begin(); }
+		inline TDictionary<size_t, TexturePtr>::iterator end() { return TextureList.end(); }
+
 	private:
+		TDictionary<size_t, WString> TextureNameList;
 		TDictionary<size_t, TexturePtr> TextureList;
 
 	};

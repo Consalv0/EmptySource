@@ -2,6 +2,7 @@
 
 #include "Core/Window.h"
 #include "Core/LayerStack.h"
+#include "Audio/AudioDevice.h"
 
 namespace EmptySource {
 
@@ -25,6 +26,9 @@ namespace EmptySource {
 		//* Application Device Functions
 		inline DeviceFunctions & GetDeviceFunctions() { return *DeviceFunctionsInstance; };
 
+		//* Application Audio Output
+		inline AudioDevice & GetAudioDevice() { return *AudioDeviceInstance; }
+
 		//* Call this to close the application
 		inline void ShouldClose() { bRunning = false; };
 
@@ -41,6 +45,8 @@ namespace EmptySource {
 		std::unique_ptr<Window> WindowInstance;
 
 		std::unique_ptr<DeviceFunctions> DeviceFunctionsInstance;
+
+		std::unique_ptr<AudioDevice> AudioDeviceInstance;
 
 		class ImGuiLayer * ImGuiLayerInstance;
 

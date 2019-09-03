@@ -42,7 +42,10 @@ namespace EmptySource {
 		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
 		auto * Image = LoadFromFile<typename T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
 		fclose(FILEFile);
-		if (Image == NULL) return false;
+		if (Image == NULL) {
+			LOG_CORE_ERROR(L"Texture '{0}' coldn´t be loaded", File->GetFileName().c_str());
+			return false;
+		}
 		RefBitmap = Bitmap<T>(Width, Height);
 		memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(T));
 		return true;

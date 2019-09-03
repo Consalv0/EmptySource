@@ -23,12 +23,21 @@ namespace EmptySource {
 
 	void TextureManager::FreeTexture(const WString & Name) {
 		size_t UID = WStringToHash(Name);
+		TextureNameList.erase(UID);
 		TextureList.erase(UID);
 	}
 
 	void TextureManager::AddTexture(const WString& Name, TexturePtr Tex) {
 		size_t UID = WStringToHash(Name);
+		TextureNameList.insert({ UID, Name });
 		TextureList.insert({ UID, Tex });
+	}
+
+	TArray<WString> TextureManager::GetResourceNames() const {
+		TArray<WString> Names;
+		for (auto KeyValue : TextureNameList)
+			Names.push_back(KeyValue.second);
+		return Names;
 	}
 
 	void TextureManager::LoadResourcesFromFile(const WString & FilePath) {

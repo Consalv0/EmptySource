@@ -62,6 +62,7 @@ namespace EmptySource {
 	}
 
 	void RenderPipeline::PrepareFrame() {
+		Rendering::SetDefaultRender();
 		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
 		Rendering::ClearCurrentRender(true, 0.25F, true, 1, false, 0);
 	}
