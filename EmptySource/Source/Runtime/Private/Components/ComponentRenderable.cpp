@@ -10,37 +10,38 @@
 #include "Core/CoreTime.h"
 #include "Core/Application.h"
 
-#include "Components/ComponentRenderer.h"
+#include "Components/ComponentRenderable.h"
 
 namespace EmptySource {
 
-	CRenderer::CRenderer(GGameObject & GameObject) : CComponent(L"Renderer", GameObject), Model(NULL) {
+	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Renderer", GameObject), Model(NULL) {
 	}
 
-	bool CRenderer::Initialize() {
+	bool CRenderable::Initialize() {
 		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Initalized", GetUniqueName(), GetUniqueID());
 		return true;
 	}
 
-	void CRenderer::OnDelete() {
+	void CRenderable::OnDelete() {
 		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", GetUniqueName(), GetUniqueID());
 	}
 
-	void CRenderer::SetMesh(MeshPtr Value)
+	void CRenderable::SetMesh(MeshPtr Value)
 	{
 	}
 
-	void CRenderer::SetMaterials(TArray<class Material*> Materials)
+	void CRenderable::SetMaterials(TArray<class Material*> Materials)
 	{
 	}
 
-	void CRenderer::SetMaterialAt(unsigned int At, Material* Mat) {
+	void CRenderable::SetMaterialAt(unsigned int At, Material* Mat) {
 	}
 
-	void CRenderer::OnRender() {
+	void CRenderable::OnRender() {
 		if (Model == NULL) return;
 
 		if (Model->SetUpBuffers()) {
+			Application::GetInstance()->GetRenderPipeline().GetActiveStage();
 		// 	Model->BindSubdivisionVertexArray((int)fmodf(Time::GetEpochTime<Time::Second>(), (float)Model->GetMeshData().Materials.size()));
 		// 
 		// 	CurrentMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, &GetGameObject().Transformation.GetLocalToWorldMatrix(), Stage->GetMatrixBuffer());

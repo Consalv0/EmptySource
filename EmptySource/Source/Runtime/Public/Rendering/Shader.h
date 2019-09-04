@@ -1,6 +1,8 @@
 #pragma once
 
 #include "RenderingDefinitions.h"
+#include "Rendering/RenderingBuffers.h"
+#include "Rendering/Texture.h"
 
 namespace EmptySource {
 
@@ -43,6 +45,34 @@ namespace EmptySource {
 		//* Get the location of the attrib in this shader
 		virtual unsigned int GetAttribLocation(const NChar* LocationName) = 0;
 
+		//* Pass Matrix4x4 Buffer Array
+		virtual void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const VertexBufferPtr& Buffer) = 0;
+
+		//* Pass Matrix4x4 Array
+		virtual void SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
+
+		//* Pass one float vector value array
+		virtual void SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
+
+		//* Pass one int vector value array
+		virtual void SetInt1Array(const NChar * UniformName, const int * Data, const int & Count = 1) = 0;
+
+		//* Pass two float vector value array
+		virtual void SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
+
+		//* Pass three float vector value array
+		virtual void SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
+
+		//* Pass four float vector value array
+		virtual void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
+
+		//* Pass Texture 2D array
+		virtual void SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) = 0;
+
+		//* Pass Cubemap array
+		virtual void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) = 0;
+
+		//* Get the name of the shader
 		virtual inline WString GetName() const = 0;
 		
 		//* Get the shader object

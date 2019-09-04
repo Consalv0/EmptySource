@@ -193,6 +193,80 @@ namespace EmptySource {
 		return Location;
 	}
 
+	void OpenGLShaderProgram::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) {
+		if (!IsValid()) return;
+		unsigned int AttribLocation = GetAttribLocation(AttributeName);
+
+		Buffer->Bind();
+		glBufferData(GL_ARRAY_BUFFER, Count * sizeof(Matrix4x4), Data, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(AttribLocation);
+		glVertexAttribPointer(AttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(AttribLocation + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
+		glEnableVertexAttribArray(8);
+		glVertexAttribPointer(AttribLocation + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
+		glEnableVertexAttribArray(9);
+		glVertexAttribPointer(AttribLocation + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
+
+		glVertexAttribDivisor(AttribLocation, 1);
+		glVertexAttribDivisor(AttribLocation + 1, 1);
+		glVertexAttribDivisor(AttribLocation + 2, 1);
+		glVertexAttribDivisor(AttribLocation + 3, 1);
+	}
+
+	void OpenGLShaderProgram::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniformMatrix4fv(UniformLocation, Count, GL_FALSE, Data);
+	}
+
+	void OpenGLShaderProgram::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform1fv(UniformLocation, Count, Data);
+	}
+
+	void OpenGLShaderProgram::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform1iv(UniformLocation, Count, (GLint *)Data);
+	}
+
+	void OpenGLShaderProgram::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform2fv(UniformLocation, Count, Data);
+	}
+
+	void OpenGLShaderProgram::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform3fv(UniformLocation, Count, Data);
+	}
+
+	void OpenGLShaderProgram::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform4fv(UniformLocation, Count, Data);
+	}
+
+	void OpenGLShaderProgram::SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform1i(UniformLocation, Position);
+		glActiveTexture(GL_TEXTURE0 + Position);
+		Tex->Bind();
+	}
+
+	void OpenGLShaderProgram::SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) {
+		if (!IsValid()) return;
+		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		glUniform1i(UniformLocation, Position);
+		glActiveTexture(GL_TEXTURE0 + Position);
+		Tex->Bind();
+	}
+
 	void OpenGLShaderProgram::AppendStage(ShaderStagePtr Shader) {
 		if (IsValid()) {
 			LOG_CORE_WARN(L"Program '{}' is already linked and compiled, can't modify shader stages", Name);

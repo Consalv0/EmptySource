@@ -22,7 +22,6 @@ namespace EmptySource {
 
 	class BufferLayout {
 	public:
-
 		BufferLayout() {}
 
 		BufferLayout(const TArrayInitializer<BufferElement> BufferElements) : ElementLayouts(BufferElements) {
@@ -52,7 +51,6 @@ namespace EmptySource {
 				Stride += Element.Size;
 			}
 		}
-
 	};
 
 	typedef std::shared_ptr<class VertexBuffer> VertexBufferPtr;

@@ -41,7 +41,7 @@
 #include "Resources/TextureManager.h"
 #include "Resources/AudioManager.h"
 
-#include "Components/ComponentRenderer.h"
+#include "Components/ComponentRenderable.h"
 
 #include "Fonts/Font.h"
 #include "Fonts/Text2DGenerator.h"
@@ -293,6 +293,11 @@ protected:
 		ImGui::Columns(2);
 		ImGui::Separator();
 
+		Space * MainSpace = Space::GetMainSpace();
+		if (MainSpace) {
+			MainSpace->GetObject()
+		}
+
 		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
 		ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
 		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Rotation"); ImGui::NextColumn();
@@ -462,29 +467,18 @@ protected:
 	}
 
 	virtual void OnAwake() override {
+		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
+
 		Application::GetInstance()->GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
 
 		Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
-		GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform());
-		CComponent * Component = GameObject->CreateComponent<CRenderer>();
+		GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform(0, Quaternion(), 500));
+		CComponent * Component = GameObject->CreateComponent<CRenderable>();
 
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
-		AudioManager::GetInstance().LoadAudioFromFile(L"ZEF_TV_by_Dune.wav", L"Resources/Sounds/ZEF_TV_by_Dune.wav");
+		AudioManager::GetInstance().LoadAudioFromFile(L"YellowFlickerBeat.wav", L"Resources/Sounds/YellowFlickerBeat.wav");
 		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, true, true);
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"ZEF_TV_by_Dune.wav"), 0.255F, true, true);
-
-		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
-
-		{
-			Property<int> Value(0);
-
-			Observer IntObserver;
-			IntObserver.AddCallback("Test", [&Value]() { LOG_DEBUG("PropertyInt Changed with value {0:d}", (int)Value); });
-			Value.AttachObserver(&IntObserver);
-
-			Value = 1;
-			Value = 3;
-		}
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"YellowFlickerBeat.wav"), 0.255F, true, true);
 
 		TextureManager& TextureMng = TextureManager::GetInstance();
 		TextureMng.LoadImageFromFile(L"BaseAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Sponza/sponza_column_a_diff.tga");
@@ -831,13 +825,14 @@ protected:
 
 		// Framebuffer.Use();
 
-		RenderCubemapMaterial.Use();
-
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
-		RenderCubemapMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-		RenderCubemapMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		RenderCubemapMaterial.SetTextureCubemap("_Skybox", CubemapTexture, 0);
-		RenderCubemapMaterial.SetFloat1Array("_Lod", &SkyRoughnessTemp);
+		RenderCubemapMaterial.SetVariables({
+			{ "_ProjectionMatrix", { ProjectionMatrix } },
+			{ "_ViewMatrix", { ViewMatrix } },
+			{ "_Skybox", CubemapTexture, ETextureDimension::Cubemap },
+			{ "_Lod", TArray<float>({ SkyRoughnessTemp }) }
+		});
+		RenderCubemapMaterial.Use();
 
 		MeshPtr SphereModel = MeshManager::GetInstance().GetMesh(L"pSphere1");
 		if (SphereModel) {
@@ -856,31 +851,31 @@ protected:
 			1000.0F								 // Far plane
 		));
 
-		Application::GetInstance()->GetRenderPipeline().RunStage(L"TestStage");
+		Application::GetInstance()->GetRenderPipeline().BeginStage(L"TestStage");
 
-		BaseMaterial.Use();
-
-		BaseMaterial.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-		BaseMaterial.SetFloat3Array("_Lights[0].Position", LightPosition0.PointerToValue());
-		BaseMaterial.SetFloat3Array("_Lights[0].Color", Vector3(1.F, 1.F, .9F).PointerToValue());
-		BaseMaterial.SetFloat1Array("_Lights[0].Intencity", &LightIntencity);
-		BaseMaterial.SetFloat3Array("_Lights[1].Position", LightPosition1.PointerToValue());
-		BaseMaterial.SetFloat3Array("_Lights[1].Color", Vector3(1.F, 1.F, .9F).PointerToValue());
-		BaseMaterial.SetFloat1Array("_Lights[1].Intencity", &LightIntencity);
-		BaseMaterial.SetFloat1Array("_Material.Metalness", &MaterialMetalness);
-		BaseMaterial.SetFloat1Array("_Material.Roughness", &MaterialRoughness);
-		BaseMaterial.SetFloat3Array("_Material.Color", Vector3(1.F).PointerToValue());
-
-		BaseMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-		BaseMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		BaseMaterial.SetTexture2D("_MainTexture", TextureManager::GetInstance().GetTexture(L"BaseAlbedoTexture"), 0);
-		BaseMaterial.SetTexture2D("_NormalTexture", TextureManager::GetInstance().GetTexture(L"BaseNormalTexture"), 1);
-		BaseMaterial.SetTexture2D("_RoughnessTexture", TextureManager::GetInstance().GetTexture(L"BaseRoughnessTexture"), 2);
-		BaseMaterial.SetTexture2D("_MetallicTexture", TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture"), 3);
-		BaseMaterial.SetTexture2D("_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), 4);
-		BaseMaterial.SetTextureCubemap("_EnviromentMap", CubemapTexture, 5);
 		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
-		BaseMaterial.SetFloat1Array("_EnviromentMapLods", &CubemapTextureMipmaps);
+		BaseMaterial.SetVariables({
+			{ "_ViewPosition", TArray<Vector3>({ EyePosition }) },
+			{ "_ProjectionMatrix", { ProjectionMatrix } },
+			{ "_ViewMatrix", { ViewMatrix } },
+			{ "_Lights[0].Position", TArray<Vector3>({ LightPosition0 }) },
+			{ "_Lights[0].Color", TArray<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
+			{ "_Lights[0].Intencity", TArray<float>({ LightIntencity }) },
+			{ "_Lights[1].Position", TArray<Vector3>({ LightPosition1 }) },
+			{ "_Lights[1].Color", TArray<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
+			{ "_Lights[1].Intencity", TArray<float>({ LightIntencity }) },
+			{ "_Material.Metalness", TArray<float>({ MaterialMetalness }) },
+			{ "_Material.Roughness", TArray<float>({ MaterialRoughness }) },
+			{ "_Material.Color", TArray<Vector3>({ Vector3(1.F) }) },
+			{ "_MainTexture", TextureManager::GetInstance().GetTexture(L"BaseAlbedoTexture"), ETextureDimension::Texture2D },
+			{ "_NormalTexture", TextureManager::GetInstance().GetTexture(L"BaseNormalTexture"), ETextureDimension::Texture2D },
+			{ "_RoughnessTexture", TextureManager::GetInstance().GetTexture(L"BaseRoughnessTexture"), ETextureDimension::Texture2D },
+			{ "_MetallicTexture", TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture"), ETextureDimension::Texture2D },
+			{ "_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), ETextureDimension::Texture2D },
+			{ "_EnviromentMap", CubemapTexture, ETextureDimension::Cubemap },
+			{ "_EnviromentMapLods", TArray<float>({ CubemapTextureMipmaps }) }
+		});
+		BaseMaterial.Use();
 
 		// size_t TotalHitCount = 0;
 		// Ray CameraRay(EyePosition, CameraRayDirection);

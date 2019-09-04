@@ -132,9 +132,6 @@
     <ClInclude Include="Source\Runtime\Public\Components\Component.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h">
-      <Filter>Runtime\Public\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Core.h">
       <Filter>Runtime\Public</Filter>
     </ClInclude>
@@ -402,6 +399,12 @@
     <ClInclude Include="Source\Runtime\Public\Audio\AudioDevice.h">
       <Filter>Runtime\Public\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\MaterialManager.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -433,9 +436,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp">
       <Filter>Runtime\Private\Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp">
-      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp">
       <Filter>Runtime\Private\Core</Filter>
@@ -586,6 +586,12 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp">
       <Filter>Runtime\Private\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp">
+      <Filter>Runtime\Private\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\MaterialManager.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

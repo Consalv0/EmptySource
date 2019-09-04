@@ -28,6 +28,18 @@ namespace EmptySource {
 		Down
 	};
 
+	enum class EMaterialDataType {
+		None = 0,
+		Matrix4x4Array,
+		FloatArray,
+		Float2DArray,
+		Float3DArray,
+		Float4DArray,
+		Texture2D,
+		Cubemap,
+		IntArray,
+	};
+
 	enum class EShaderDataType {
 		None = 0,
 		Bool,

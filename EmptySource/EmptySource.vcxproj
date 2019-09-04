@@ -159,7 +159,7 @@
     <ClInclude Include="Source\Runtime\Public\Audio\AudioDevice.h" />
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
-    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderer.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h" />
     <ClInclude Include="Source\Runtime\Public\Core.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Application.h" />
     <ClInclude Include="Source\Runtime\Public\Core\CoreTime.h" />
@@ -235,6 +235,7 @@
     <ClInclude Include="Source\Runtime\Public\Resources\AudioManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\FBXLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ImageConversion.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\MaterialManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshParser.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
@@ -261,7 +262,7 @@
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderer.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Component.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\CoreTime.cpp" />
@@ -300,6 +301,7 @@
     <ClCompile Include="Source\Runtime\Private\Resources\AudioManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageConversion.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\MaterialManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MeshManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MeshParser.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp" />

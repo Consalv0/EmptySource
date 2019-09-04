@@ -25,7 +25,7 @@ namespace EmptySource {
 
 		virtual void Finish() {};
 
-		virtual void RunStage();
+		virtual void Begin() {};
 
 	public:
 		virtual void SubmitMesh(const class Mesh * Model, int Subdivision, const class Material * Mat, const Matrix4x4& Matrix) {};

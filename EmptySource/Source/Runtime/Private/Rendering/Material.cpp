@@ -38,84 +38,55 @@ namespace EmptySource {
 	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int AttribLocation = Program->GetAttribLocation(AttributeName);
-
-		Buffer->Bind();
-		glBufferData(GL_ARRAY_BUFFER, Count * sizeof(Matrix4x4), Data, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(AttribLocation);
-		glVertexAttribPointer(AttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(AttribLocation + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Vector4)));
-		glEnableVertexAttribArray(8);
-		glVertexAttribPointer(AttribLocation + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Vector4)));
-		glEnableVertexAttribArray(9);
-		glVertexAttribPointer(AttribLocation + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Vector4)));
-
-		glVertexAttribDivisor(AttribLocation, 1);
-		glVertexAttribDivisor(AttribLocation + 1, 1);
-		glVertexAttribDivisor(AttribLocation + 2, 1);
-		glVertexAttribDivisor(AttribLocation + 3, 1);
+		Program->SetAttribMatrix4x4Array(AttributeName, Count, Data, Buffer);
 	}
 
 	void Material::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniformMatrix4fv(UniformLocation, Count, GL_FALSE, Data);
+		Program->SetMatrix4x4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform1fv(UniformLocation, Count, Data);
+		Program->SetFloat1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform1iv(UniformLocation, Count, (GLint *)Data);
+		Program->SetInt1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform2fv(UniformLocation, Count, Data);
+		Program->SetFloat2Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform3fv(UniformLocation, Count, Data);
+		Program->SetFloat3Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform4fv(UniformLocation, Count, Data);
+		Program->SetFloat4Array(UniformName, Data, Count);
 	}
 
-	void Material::SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL || Tex == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform1i(UniformLocation, Position);
-		glActiveTexture(GL_TEXTURE0 + Position);
-		Tex->Bind();
-	}
-
-	void Material::SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) const {
+	void Material::SetTexture2D(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
 		ShaderPtr Program = GetShaderProgram();
 		if (Program == NULL) return;
-		unsigned int UniformLocation = Program->GetUniformLocation(UniformName);
-		glUniform1i(UniformLocation, Position);
-		glActiveTexture(GL_TEXTURE0 + Position);
-		Tex->Bind();
+		Program->SetTexture2D(UniformName, Text, Position);
+	}
+
+	void Material::SetTextureCubemap(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
+		ShaderPtr Program = GetShaderProgram();
+		if (Program == NULL) return;
+		Program->SetTexture2D(UniformName, Text, Position);
 	}
 
 	void Material::Use() const {
@@ -172,6 +143,38 @@ namespace EmptySource {
 
 		if (MaterialShader && MaterialShader->IsValid()) {
 			MaterialShader->Bind();
+			unsigned int i = 0;
+			for (auto& Uniform : VariableLayout) {
+				switch (Uniform.VariableType) {
+				case EmptySource::EMaterialDataType::Matrix4x4Array:
+					SetMatrix4x4Array(Uniform.Name.c_str(), Uniform.Matrix4x4Array[0].PointerToValue(), (int)Uniform.Matrix4x4Array.size());
+					break;
+				case EmptySource::EMaterialDataType::FloatArray:
+					SetFloat1Array(Uniform.Name.c_str(), &Uniform.FloatArray[0], (int)Uniform.FloatArray.size());
+					break;
+				case EmptySource::EMaterialDataType::Float2DArray:
+					SetFloat2Array(Uniform.Name.c_str(), Uniform.Float2DArray[0].PointerToValue(), (int)Uniform.Float2DArray.size());
+					break;
+				case EmptySource::EMaterialDataType::Float3DArray:
+					SetFloat3Array(Uniform.Name.c_str(), Uniform.Float3DArray[0].PointerToValue(), (int)Uniform.Float3DArray.size());
+					break;
+				case EmptySource::EMaterialDataType::Float4DArray:
+					SetFloat4Array(Uniform.Name.c_str(), Uniform.Float4DArray[0].PointerToValue(), (int)Uniform.Float4DArray.size());
+					break;
+				case EmptySource::EMaterialDataType::Texture2D:
+					SetTexture2D(Uniform.Name.c_str(), Uniform.Texture, i); i++;
+					break;
+				case EmptySource::EMaterialDataType::Cubemap:
+					SetTextureCubemap(Uniform.Name.c_str(), Uniform.Texture, i); i++;
+					break;
+				case EmptySource::EMaterialDataType::IntArray:
+					SetInt1Array(Uniform.Name.c_str(), &Uniform.IntArray[0], (int)Uniform.IntArray.size());
+					break;
+				case EmptySource::EMaterialDataType::None:
+				default:
+					break;
+				}
+			}
 		}
 	}
 

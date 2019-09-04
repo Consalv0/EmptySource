@@ -5,12 +5,12 @@
 
 namespace EmptySource {
 
-	class CRenderer : public CComponent {
+	class CRenderable : public CComponent {
 	protected:
 		typedef CComponent Supper;
 		friend class GGameObject;
 		friend class Space;
-		CRenderer(GGameObject & GameObject);
+		CRenderable(GGameObject & GameObject);
 
 		virtual bool Initialize();
 

@@ -27,9 +27,4 @@ namespace EmptySource {
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 	}
 
-	void RenderStage::RunStage() {
-		Prepare();
-		Finish();
-	}
-
 }

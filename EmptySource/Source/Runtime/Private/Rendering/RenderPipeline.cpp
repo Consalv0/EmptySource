@@ -32,11 +32,17 @@ namespace EmptySource {
 		SDL_GL_SetSwapInterval(Interval);
 	}
 
-	void RenderPipeline::RunStage(WString StageName) {
+	void RenderPipeline::BeginStage(WString StageName) {
 		TDictionary<WString, RenderStage *>::iterator Stage;
 		if ((Stage = RenderStages.find(StageName)) != RenderStages.end()) {
-			Stage->second->RunStage();
+			ActiveStage = Stage->second;
+			Stage->second->Begin();
 		}
+	}
+
+	void RenderPipeline::EndStage() {
+		if (ActiveStage != NULL)
+			ActiveStage->Finish();
 	}
 
 	bool RenderPipeline::AddStage(WString StageName, RenderStage * Stage) {
@@ -59,6 +65,10 @@ namespace EmptySource {
 			return RenderStages.find(StageName)->second;
 		}
 		return NULL;
+	}
+
+	RenderStage * RenderPipeline::GetActiveStage() const {
+		return ActiveStage;
 	}
 
 	void RenderPipeline::PrepareFrame() {
