@@ -135,7 +135,8 @@ void main() {
   vec3 VertNormal = normalize(TBN * TangentNormal);
   float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
   float Metalness = _Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r;
-  vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma)) * _Material.Color;
+  vec4 Diffuse = texture(_MainTexture, Vertex.UV0);
+  vec3 DiffuseColor = pow(Diffuse.rgb, vec3(Gamma)) * _Material.Color;
 
   for( int i = 0; i < 2; i++ ) {
     Sum += MicrofacetModel(i, Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);
@@ -148,7 +149,7 @@ void main() {
   vec3 Intensity = vec3(dot(Sum, vec3(0.2125, 0.7154, 0.0721)));
   Sum = mix(Intensity, Sum, 1.45);
 
-  FragColor = vec4(Sum, Vertex.Color.a);
+  FragColor = vec4(Sum, Vertex.Color.a * Diffuse.a);
 
   if (FragColor.x == 0.001) {
     FragColor *= Matrix.Model * vec4(0);

@@ -4,9 +4,11 @@
 #include "Core/Window.h"
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/RenderStage.h"
-#include "Rendering/Texture.h"
 #include "Rendering/Material.h"
 #include "Rendering/Mesh.h"
+
+#include "Resources/TextureManager.h"
+
 #include "Utility/TextFormattingMath.h"
 
 namespace EmptySource {
@@ -14,6 +16,7 @@ namespace EmptySource {
 	void RenderStage::SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
 		Model->BindSubdivisionVertexArray(Subdivision);
 
+		float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
 		Mat->SetVariables({
 			{ "_ViewPosition", TArrayInitializer<Vector3>({ EyeTransform.Position }) },
 			{ "_ProjectionMatrix", { ViewProjection } },
@@ -24,6 +27,9 @@ namespace EmptySource {
 			{ "_Lights[1].Position", TArrayInitializer<Vector3>({  Vector3(-2, 1) }) },
 			{ "_Lights[1].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
 			{ "_Lights[1].Intencity", TArrayInitializer<float>({ 20 }) },
+			{ "_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), ETextureDimension::Texture2D },
+			{ "_EnviromentMap", TextureManager::GetInstance().GetTexture(L"CubemapTexture"), ETextureDimension::Cubemap },
+			{ "_EnviromentMapLods", TArrayInitializer<float>({ CubemapTextureMipmaps }) }
 		});
 		Mat->Use();
 		Mat->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix.PointerToValue(), GetMatrixBuffer());

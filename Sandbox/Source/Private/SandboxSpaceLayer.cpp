@@ -16,8 +16,6 @@ SandboxSpaceLayer::SandboxSpaceLayer(const EmptySource::WString & Name, unsigned
 }
 
 void SandboxSpaceLayer::OnAwake() {
-	GGameObject * GameObject = CreateObject<GGameObject>(L"TestObject", Transform(0.F, Quaternion(), 1.F));
-	GameObject->CreateComponent<CRenderable>();
 	Super::OnAwake();
 }
 
@@ -64,7 +62,7 @@ void SandboxSpaceLayer::OnImGuiRender() {
 			} ImGui::NextColumn();
 
 			ImGui::AlignTextToFramePadding(); ImGui::Text("Scale"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Scale", &GameObject->Transformation.Scale[0], .5F, -MathConstants::BigNumber, MathConstants::BigNumber);
+			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Scale", &GameObject->Transformation.Scale[0], .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
 			ImGui::NextColumn();
 
 			ImGui::Separator();
