@@ -32,23 +32,20 @@ namespace EmptySource {
 
 		inline WString GetName() { return Name; }
 
-		inline unsigned int GetLevel() const { return Level; }
+		inline unsigned int GetLayerPriority() const { return Level; }
 
 		inline bool operator < (const Layer& Other) const {
-			return (GetLevel() < Other.GetLevel());
+			return (GetLayerPriority() < Other.GetLayerPriority());
 		}
 		inline bool operator <= (const Layer& Other) const {
-			return (GetLevel() <= Other.GetLevel());
+			return (GetLayerPriority() <= Other.GetLayerPriority());
 		}
 		inline bool operator > (const Layer& Other) const {
-			return (GetLevel() > Other.GetLevel());
+			return (GetLayerPriority() > Other.GetLayerPriority());
 		}
 		inline bool operator >= (const Layer& Other) const {
-			return (GetLevel() >= Other.GetLevel());
+			return (GetLayerPriority() >= Other.GetLayerPriority());
 		}
-
-	protected:
-		virtual inline int GetLayerPriority() { return 0; };
 
 	private:
 		WString Name;

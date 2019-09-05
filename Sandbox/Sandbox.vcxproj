@@ -140,7 +140,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Public\SandboxSpaceLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Source\Private\SandboxApp.cpp" />
+    <ClCompile Include="Source\Private\SandboxSpaceLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EmptySource\EmptySource.vcxproj">

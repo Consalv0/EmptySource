@@ -6,27 +6,31 @@
 namespace EmptySource {
 
 	class CRenderable : public CComponent {
+		IMPLEMENT_COMPONENT(CRenderable)
+	public:
+		virtual void SetMesh(MeshPtr Value);
+
+		virtual void SetMaterials(TArray<MaterialPtr> & Materials);
+
+		virtual void SetMaterialAt(unsigned int At, MaterialPtr Mat);
+
+		virtual const TDictionary<int, MaterialPtr> & GetMaterials() const;
+
+		virtual MeshPtr GetMesh() const;
+
+		virtual void OnRender();
+
 	protected:
 		typedef CComponent Supper;
-		friend class GGameObject;
-		friend class Space;
 		CRenderable(GGameObject & GameObject);
 
 		virtual bool Initialize();
 
 		virtual void OnDelete();
 
-		virtual void SetMesh(MeshPtr Value);
+		MeshPtr ActiveMesh;
 
-		virtual void SetMaterials(TArray<class Material *> Materials);
-
-		virtual void SetMaterialAt(unsigned int At, class Material * Mat);
-
-		MeshPtr Model;
-
-	public:
-
-		virtual void OnRender();
+		TDictionary<int, MaterialPtr> Materials;
 	};
 
 }

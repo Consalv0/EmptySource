@@ -15,10 +15,6 @@ namespace EmptySource {
 		Supper::OnDelete();
 	}
 
-	bool CComponent::Initialize() {
-		return true;
-	}
-
 	GGameObject & CComponent::GetGameObject() const {
 		return Holder;
 	}

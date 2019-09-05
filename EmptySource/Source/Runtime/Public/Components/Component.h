@@ -2,28 +2,40 @@
 
 #include "Core/Object.h"
 
+#define IMPLEMENT_COMPONENT(Name) public: \
+inline virtual WString GetObjectName() override { return L#Name;} \
+static WString GetStaticObjectName() { return L#Name;} \
+protected: \
+friend class GGameObject; friend class SpaceLayer; 
+
 namespace EmptySource {
 
 	class GGameObject;
 
 	class CComponent : public OObject {
+		IMPLEMENT_COMPONENT(CComponent)
+	public:
+		GGameObject & GetGameObject() const;
+
 	protected:
 		typedef OObject Supper;
-		friend class GGameObject;
-		friend class Space;
-
+		
 		CComponent(GGameObject & GameObject);
 		CComponent(WString Name, GGameObject & GameObject);
 
-		virtual void OnDelete();
+		virtual void OnRender() {};
 
-		virtual bool Initialize();
+		virtual void OnUpdate(const Timestamp& Stamp) {};
+
+		virtual void OnImGuiRender() {};
+
+		virtual void OnWindowEvent(WindowEvent& WinEvent) {};
+
+		virtual void OnInputEvent(InputEvent& InEvent) {};
+
+		virtual void OnDelete() override;
 
 		GGameObject & Holder;
-
-	public:
-
-		GGameObject & GetGameObject() const;
 
 	};
 

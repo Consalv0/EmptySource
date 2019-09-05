@@ -140,13 +140,15 @@ namespace EmptySource {
 		ERasterizerFillMode FillMode;
 		ECullMode CullMode;
 
-		Material();
+		Material(const WString & Name);
 
 		//* Set material shader
 		void SetShaderProgram(ShaderPtr Value);
 
 		//* Get material shader
 		ShaderPtr GetShaderProgram() const;
+
+		WString GetName() const;
 
 		//* Pass Matrix4x4 Buffer Array
 		void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const VertexBufferPtr& Buffer) const;
@@ -186,6 +188,7 @@ namespace EmptySource {
 		ShaderPtr MaterialShader;
 		MaterialLayout VariableLayout;
 
+		WString Name;
 	};
 
 	typedef std::shared_ptr<Material> MaterialPtr;

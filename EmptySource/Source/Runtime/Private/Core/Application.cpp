@@ -4,9 +4,6 @@
 #include "Core/Application.h"
 #include "Core/CoreTime.h"
 #include "Core/Window.h"
-#include "Core/Space.h"
-#include "Core/GameObject.h"
-#include "Core/Transform.h"
 #include "Core/Input.h"
 
 #include "Math/CoreMath.h"

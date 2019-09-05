@@ -3,7 +3,7 @@
 #include "Core/EmptySource.h"
 #include "Core/CoreTime.h"
 #include "Core/Window.h"
-#include "Core/Space.h"
+#include "Core/SpaceLayer.h"
 #include "Core/GameObject.h"
 #include "Core/Transform.h"
 #include "Core/Input.h"
@@ -36,6 +36,7 @@
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "Resources/ResourceManager.h"
 #include "Resources/MeshManager.h"
+#include "Resources/MaterialManager.h"
 #include "Resources/ImageConversion.h"
 #include "Resources/ShaderManager.h"
 #include "Resources/TextureManager.h"
@@ -50,6 +51,8 @@
 
 #include "../External/IMGUI/imgui.h"
 #include "../External/SDL2/include/SDL_keycode.h"
+
+#include "../Public/SandboxSpaceLayer.h"
 
 using namespace EmptySource;
 
@@ -81,14 +84,14 @@ private:
 	Quaternion FrameRotation; 
 	Vector2 CursorPosition;
 
-	Material UnlitMaterial = Material();
-	Material UnlitMaterialWire = Material();
-	Material RenderTextureMaterial = Material();
-	Material RenderTextMaterial = Material();
-	Material RenderCubemapMaterial = Material();
-	Material IntegrateBRDFMaterial = Material();
-	Material HDRClampingMaterial = Material();
-	Material BaseMaterial = Material();
+	Material UnlitMaterial = Material(L"UnlitMaterial");
+	Material UnlitMaterialWire = Material(L"UnlitMaterialWire");
+	Material RenderTextureMaterial = Material(L"RenderTextureMaterial");
+	Material RenderTextMaterial = Material(L"RenderTextMaterial");
+	Material RenderCubemapMaterial = Material(L"RenderCubemapMaterial");
+	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
+	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
+	MaterialPtr BaseMaterial = std::make_shared<Material>(L"BaseMaterial");
 
 	float SkyboxRoughness = 1.F;
 	float MaterialMetalness = 1.F;
@@ -159,7 +162,7 @@ protected:
 			EquirectangularTextureHDR->GenerateMipMaps();
 		}
 
-		Material EquirectangularToCubemapMaterial = Material();
+		Material EquirectangularToCubemapMaterial = Material(L"EquirectangularToCubemapMaterial");
 		EquirectangularToCubemapMaterial.SetShaderProgram(ShaderManager::GetInstance().GetProgram(L"EquirectangularToCubemap"));
 		EquirectangularToCubemapMaterial.CullMode = CM_None;
 		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
@@ -264,7 +267,7 @@ protected:
 			}
 		}
 
-		ImGui::Begin("Resources");
+		ImGui::Begin("Meshes", 0, ImVec2(250, 300));
 		TArray<WString> MeshResourcesList = MeshManager::GetInstance().GetResourceNames();
 		if (MeshResourcesList.size() > 0) {
 			TArray<NString> NarrowMeshResourcesList(MeshResourcesList.size());
@@ -282,7 +285,7 @@ protected:
 			if (SelectedMesh) {
 				SelectedMeshName = SelectedMesh->GetMeshData().Name;
 				for (auto KeyValue : SelectedMesh->GetMeshData().Materials) {
-					ImGui::Text(" - Materials: %s : %d", KeyValue.first.c_str(), KeyValue.second);
+					ImGui::Text(" - Materials: %s : %d", KeyValue.second.c_str(), KeyValue.second);
 				}
 			}
 		}
@@ -292,11 +295,6 @@ protected:
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 		ImGui::Columns(2);
 		ImGui::Separator();
-
-		Space * MainSpace = Space::GetMainSpace();
-		if (MainSpace) {
-			MainSpace->GetObject()
-		}
 
 		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
 		ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
@@ -318,6 +316,7 @@ protected:
 		ImGui::Columns(1);
 		ImGui::Separator();
 		ImGui::PopStyleVar();
+
 		ImGui::End();
 
 		char ProgressText[30]; 
@@ -471,9 +470,9 @@ protected:
 
 		Application::GetInstance()->GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
 
-		Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
-		GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform(0, Quaternion(), 500));
-		CComponent * Component = GameObject->CreateComponent<CRenderable>();
+		// Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
+		// GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform(0, Quaternion(), 500));
+		// CComponent * Component = GameObject->CreateComponent<CRenderable>();
 
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
 		AudioManager::GetInstance().LoadAudioFromFile(L"YellowFlickerBeat.wav", L"Resources/Sounds/YellowFlickerBeat.wav");
@@ -525,7 +524,8 @@ protected:
 		ShaderPtr RenderTextShader    = ShaderMng.GetProgram(L"RenderTextShader");
 		ShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
 
-		BaseMaterial.SetShaderProgram(BRDFShader);
+		BaseMaterial->SetShaderProgram(BRDFShader);
+		MaterialManager::GetInstance().AddMaterial(BaseMaterial->GetName(), BaseMaterial);
 
 		// Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
 
@@ -677,11 +677,11 @@ protected:
 
 		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
 			if (Input::IsKeyDown(SDL_SCANCODE_W)) {
-				if (BaseMaterial.FillMode == FM_Solid) {
-					BaseMaterial.FillMode = FM_Wireframe;
+				if (BaseMaterial->FillMode == FM_Solid) {
+					BaseMaterial->FillMode = FM_Wireframe;
 				}
 				else {
-					BaseMaterial.FillMode = FM_Solid;
+					BaseMaterial->FillMode = FM_Solid;
 				}
 			}
 		}
@@ -750,6 +750,7 @@ protected:
 	}
 
 	virtual void OnRender() override {
+
 		Application::GetInstance()->GetRenderPipeline().PrepareFrame();
 
 		VerticesCount = 0;
@@ -854,7 +855,7 @@ protected:
 		Application::GetInstance()->GetRenderPipeline().BeginStage(L"TestStage");
 
 		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
-		BaseMaterial.SetVariables({
+		BaseMaterial->SetVariables({
 			{ "_ViewPosition", TArray<Vector3>({ EyePosition }) },
 			{ "_ProjectionMatrix", { ProjectionMatrix } },
 			{ "_ViewMatrix", { ViewMatrix } },
@@ -875,7 +876,7 @@ protected:
 			{ "_EnviromentMap", CubemapTexture, ETextureDimension::Cubemap },
 			{ "_EnviromentMapLods", TArray<float>({ CubemapTextureMipmaps }) }
 		});
-		BaseMaterial.Use();
+		BaseMaterial->Use();
 
 		// size_t TotalHitCount = 0;
 		// Ray CameraRay(EyePosition, CameraRayDirection);
@@ -953,7 +954,7 @@ protected:
 		if (SelectedMesh) {
 			SelectedMesh->BindVertexArray();
 			
-			BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
+			BaseMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
 			SelectedMesh->DrawInstanciated(1);
 		}
 
@@ -1078,13 +1079,7 @@ protected:
 
 	}
 
-	virtual void OnDetach() override {
-		if (Space::GetMainSpace() == NULL) {
-			return;
-		}
-
-		Space::Destroy(Space::GetMainSpace());
-	}
+	virtual void OnDetach() override { }
 
 public:
 	
@@ -1095,6 +1090,7 @@ class SandboxApplication : public Application {
 public:
 	SandboxApplication() : Application() {
 		PushLayer(new SandboxLayer());
+		PushLayer(new SandboxSpaceLayer(L"Main", 2001));
 	}
 
 	~SandboxApplication() {

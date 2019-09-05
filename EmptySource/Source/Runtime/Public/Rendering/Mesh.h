@@ -33,7 +33,7 @@ namespace EmptySource {
 	typedef TArray<Vector2>    MeshUVs;
 	typedef TArray<Vector4>    MeshColors;
 	typedef TArray<MeshVertex> MeshVertices;
-	typedef TDictionary<NString, int> MeshMaterials;
+	typedef TDictionary<int, NString> MeshMaterials;
 
 	struct MeshData {
 		WString Name;

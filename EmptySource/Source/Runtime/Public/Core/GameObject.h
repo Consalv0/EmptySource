@@ -8,9 +8,20 @@ namespace EmptySource {
 
 	//* Basic class for any object that contains components and a spacial representation
 	class GGameObject : public OObject {
+		IMPLEMENT_OBJECT(GGameObject)
+	public:
+		Transform Transformation;
+
+		TArray<GGameObject> Children;
+
+		template<typename T>
+		T * GetFirstComponent();
+
+		template<typename T, typename... Rest>
+		T * CreateComponent(Rest... Args);
+
 	private:
 		typedef OObject Supper;
-		friend class Space;
 
 		GGameObject();
 		GGameObject(const WString & Name);
@@ -26,16 +37,28 @@ namespace EmptySource {
 		void DeleteComponent(CComponent * Component);
 		void DeleteAllComponents();
 
+		virtual void OnRender();
+
+		virtual void OnUpdate(const Timestamp& Stamp) ;
+
+		virtual void OnImGuiRender();
+
+		virtual void OnWindowEvent(WindowEvent& WinEvent);
+
+		virtual void OnInputEvent(InputEvent& InEvent);
+
 		virtual void OnDelete();
-
-	public:
-		Transform Transformation;
-
-		TArray<GGameObject> Children;
-
-		template<typename T, typename... Rest>
-		T * CreateComponent(Rest... Args);
 	};
+
+	template<typename T>
+	T * GGameObject::GetFirstComponent() {
+		for (auto & Iterator : ComponentsIn) {
+			if (Iterator.second->GetObjectName() == T::GetStaticObjectName())
+				return dynamic_cast<T *>(Iterator.second);
+		}
+
+		return NULL;
+	}
 
 	template<typename T, typename ...Rest>
 	T * GGameObject::CreateComponent(Rest ...Args) {

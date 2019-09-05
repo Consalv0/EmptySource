@@ -381,7 +381,7 @@ namespace EmptySource {
 
 			for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
 				ObjectData::Subdivision & MaterialIndex = Data.Materials[MaterialCount];
-				OutMesh->Materials.insert({ MaterialIndex.Name, (int)OutMesh->Materials.size() });
+				OutMesh->Materials.insert({ (int)OutMesh->Materials.size(), MaterialIndex.Name });
 				OutMesh->MaterialSubdivisions.insert({ MaterialCount, MeshFaces() });
 
 				int InitialCount = Count;

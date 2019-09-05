@@ -171,7 +171,7 @@
     <ClInclude Include="Source\Runtime\Public\Core\LayerStack.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Log.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Object.h" />
-    <ClInclude Include="Source\Runtime\Public\Core\Space.h" />
+    <ClInclude Include="Source\Runtime\Public\Core\SpaceLayer.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Transform.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Window.h" />
     <ClInclude Include="Source\Runtime\Public\CoreMinimal.h" />
@@ -260,8 +260,8 @@
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Component.cpp" />
@@ -273,7 +273,7 @@
     <ClCompile Include="Source\Runtime\Private\Core\LayerStack.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Log.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Object.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Core\Space.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Core\SpaceLayer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Transform.cpp" />
     <ClCompile Include="Source\Runtime\Private\Events\Observer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Files\FileManager.cpp" />

@@ -3,6 +3,7 @@
 #include "Events/Event.h"
 #include "Core/Transform.h"
 #include "Rendering/RenderPipeline.h"
+#include "Rendering/Material.h"
 #include "Rendering/Mesh.h"
 
 namespace EmptySource {
@@ -28,7 +29,7 @@ namespace EmptySource {
 		virtual void Begin() {};
 
 	public:
-		virtual void SubmitMesh(const class Mesh * Model, int Subdivision, const class Material * Mat, const Matrix4x4& Matrix) {};
+		virtual void SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
 		virtual void SetEyeTransform(const Transform & EyeTransform);
 

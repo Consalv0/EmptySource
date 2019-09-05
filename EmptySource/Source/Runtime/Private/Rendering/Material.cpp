@@ -13,7 +13,7 @@
 
 namespace EmptySource {
 
-	Material::Material() {
+	Material::Material(const WString & Name) : Name(Name) {
 		MaterialShader = NULL;
 		RenderPriority = 1000;
 		bUseDepthTest = true;
@@ -33,6 +33,10 @@ namespace EmptySource {
 
 	ShaderPtr Material::GetShaderProgram() const {
 		return MaterialShader;
+	}
+
+	WString Material::GetName() const {
+		return Name;
 	}
 
 	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) const {
