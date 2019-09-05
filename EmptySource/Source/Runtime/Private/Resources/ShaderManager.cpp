@@ -41,17 +41,26 @@ namespace EmptySource {
 
 	void ShaderManager::FreeShaderStage(const WString & Name) {
 		size_t UID = WStringToHash(Name);
+		ShaderNameList.erase(UID);
 		ShaderStageList.erase(UID);
 	}
 
 	void ShaderManager::AddShaderProgram(ShaderPtr & Shader) {
 		size_t UID = WStringToHash(Shader->GetName());
+		ShaderNameList.insert({ UID, Shader->GetName() });
 		ShaderProgramList.insert({ UID, Shader });
 	}
 
 	void ShaderManager::AddShaderStage(const WString & Name, ShaderStagePtr & Stage) {
 		size_t UID = WStringToHash(Name);
 		ShaderStageList.insert({ UID, Stage });
+	}
+
+	TArray<WString> ShaderManager::GetResourceShaderNames() const {
+		TArray<WString> Names;
+		for (auto KeyValue : ShaderNameList)
+			Names.push_back(KeyValue.second);
+		return Names;
 	}
 
 	void ShaderManager::LoadResourcesFromFile(const WString & FilePath) {

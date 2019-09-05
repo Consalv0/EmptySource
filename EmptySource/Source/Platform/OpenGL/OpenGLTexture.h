@@ -11,17 +11,19 @@ namespace EmptySource {
 	class OpenGLTexture2D : public Texture2D {
 	public:
 		OpenGLTexture2D(
-			const IntVector2& Size, const EColorFormat ColorFormat,
+			const WString& Name, const IntVector2& Size, const EColorFormat ColorFormat,
 			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode
 		);
 
 		OpenGLTexture2D(
-			const IntVector2& Size, const EColorFormat ColorFormat,
+			const WString& Name, const IntVector2& Size, const EColorFormat ColorFormat,
 			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode,
 			const EColorFormat InputFormat, const void* BufferData
 		);
 
 		virtual ~OpenGLTexture2D() override;
+
+		virtual inline WString GetName() const override { return Name; };
 
 		//* Use the texture
 		virtual void Bind() const override;
@@ -71,6 +73,8 @@ namespace EmptySource {
 
 		unsigned int MipMapCount;
 
+		WString Name;
+
 		virtual void SetFilterMode(const EFilterMode& Mode) override;
 
 		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
@@ -80,6 +84,7 @@ namespace EmptySource {
 	class OpenGLCubemap : public Cubemap {
 	public:
 		OpenGLCubemap(
+			const WString& Name, 
 			const int & WidthSize,
 			const EColorFormat & Format,
 			const EFilterMode & Filter,
@@ -87,6 +92,8 @@ namespace EmptySource {
 		);
 
 		virtual ~OpenGLCubemap() override;
+
+		virtual inline WString GetName() const override { return Name; };
 
 		//* Use the texture
 		virtual void Bind() const override;
@@ -138,6 +145,8 @@ namespace EmptySource {
 		EColorFormat ColorFormat;
 
 		unsigned int MipMapCount;
+
+		WString Name;
 
 		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
 

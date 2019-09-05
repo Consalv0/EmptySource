@@ -94,32 +94,32 @@ namespace EmptySource {
 		case EmptySource::CF_Red: {
 			Bitmap<UCharRed> Bitmap;
 			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
 		} break;
 		case EmptySource::CF_RG: {
 			Bitmap<UCharRG> Bitmap;
 			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
 		} break;
 		case EmptySource::CF_RGB: {
 			Bitmap<UCharRGB> Bitmap;
 			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
 		} break;
 		case EmptySource::CF_RGBA: {
 			Bitmap<UCharRGBA> Bitmap;
 			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
 		} break;
 		case EmptySource::CF_RGBA32F: {
 			Bitmap<FloatRGBA> Bitmap;
 			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
 		} break;
 		case EmptySource::CF_RGB32F: {
 			Bitmap<FloatRGB> Bitmap;
 			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
 		} break;
 		default:
 			ES_CORE_ASSERT(true, "Color format not implemented");

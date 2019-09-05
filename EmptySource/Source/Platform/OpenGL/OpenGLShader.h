@@ -72,6 +72,12 @@ namespace EmptySource {
 
 		virtual inline WString GetName() const override { return Name; }
 
+		//* Get the chader properties
+		virtual const TArray<ShaderProperty> & GetProperties() const override { return Properties; }
+
+		//* Get the chader properties
+		virtual void SetProperties(const TArrayInitializer<ShaderProperty> Properties) override;
+
 		//* Get the shader object
 		virtual void * GetShaderObject() const override { return (void *)(unsigned long long)ProgramObject; }
 
@@ -83,12 +89,14 @@ namespace EmptySource {
 		virtual void AppendStage(ShaderStagePtr ShaderProgram) override;
 
 	private:
-		typedef TDictionary<const NChar *, unsigned int> LocationMap;
+		typedef TDictionary<NString, unsigned int> LocationMap;
 		
 		ShaderStagePtr VertexShader;
 		ShaderStagePtr PixelShader;
 		ShaderStagePtr ComputeShader;
 		ShaderStagePtr GeometryShader;
+
+		TArray<ShaderProperty> Properties;
 		
 		WString Name;
 		

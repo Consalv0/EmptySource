@@ -17,6 +17,9 @@ namespace EmptySource {
 		template<typename T>
 		T * GetFirstComponent();
 
+		template<typename T>
+		void GetAllComponents(TArray<T *> & Components);
+
 		template<typename T, typename... Rest>
 		T * CreateComponent(Rest... Args);
 
@@ -58,6 +61,14 @@ namespace EmptySource {
 		}
 
 		return NULL;
+	}
+
+	template<typename T>
+	void GGameObject::GetAllComponents(TArray<T *>& Components) {
+		for (auto & Iterator : ComponentsIn) {
+			if (Iterator.second->GetObjectName() == T::GetStaticObjectName())
+				Components.push_back(dynamic_cast<T *>(Iterator.second));
+		}
 	}
 
 	template<typename T, typename ...Rest>

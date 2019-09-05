@@ -90,11 +90,12 @@ namespace EmptySource {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(
+		const WString& Name,
 		const IntVector2 & Size,
 		const EColorFormat Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & Address)
-		: Size(Size), ColorFormat(Format), MipMapCount(1), TextureObject(0)
+		: Size(Size), ColorFormat(Format), MipMapCount(1), TextureObject(0), Name(Name)
 	{
 
 		glGenTextures(1, &TextureObject);
@@ -115,14 +116,14 @@ namespace EmptySource {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(
+		const WString& Name,
 		const IntVector2 & Size,
 		const EColorFormat Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & Address,
 		const EColorFormat InputFormat,
 		const void * BufferData) 
-		: Size(Size), ColorFormat(Format), MipMapCount(1)
-	{
+		: Size(Size), ColorFormat(Format), MipMapCount(1), Name(Name) {
 		glGenTextures(1, &TextureObject);
 		bValid = TextureObject != GL_FALSE;
 		Bind();
@@ -217,11 +218,12 @@ namespace EmptySource {
 	// Cubemap
 
 	OpenGLCubemap::OpenGLCubemap(
+		const WString& Name,
 		const int & WidthSize,
 		const EColorFormat & Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & SamplerAddress)
-	{
+	: Name(Name) {
 		Size = WidthSize;
 		ColorFormat = Format;
 		MipMapCount = 1;

@@ -10,6 +10,7 @@
 #include "Rendering/Material.h"
 
 #include "Rendering/GLFunctions.h"
+#include "..\..\Public\Rendering\Material.h"
 
 namespace EmptySource {
 
@@ -23,11 +24,13 @@ namespace EmptySource {
 	}
 
 	void Material::SetShaderProgram(ShaderPtr Value) {
+		VariableLayout.Clear();
 		if (Value != NULL && Value->IsValid()) {
-			MaterialShader = Value;
-		}
-		else {
-			LOG_CORE_ERROR(L"The Shader Program '{}' is not a valid program", Value != NULL ? Value->GetName() : L"NULL");
+			MaterialShader.swap(Value);
+			SetProperties(MaterialShader->GetProperties());
+		} else {
+			LOG_CORE_ERROR(L"The Shader Program '{}' is not a valid program", Value != NULL ? Value->GetName().c_str() : L"NULL");
+			MaterialShader.reset();
 		}
 	}
 
@@ -93,6 +96,24 @@ namespace EmptySource {
 		Program->SetTexture2D(UniformName, Text, Position);
 	}
 
+	void Material::SetVariables(const MaterialLayout & NewLayout) {
+		if (GetShaderProgram() == NULL) return;
+		for (auto& Layout : NewLayout) {
+			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
+				VariableLayout.SetVariable(Layout);
+			}
+		}
+	}
+
+	void Material::SetProperties(const TArray<ShaderProperty>& NewLayout) {
+		if (GetShaderProgram() == NULL) return;
+		for (auto& Layout : NewLayout) {
+			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
+				VariableLayout.AddVariable({ Layout.Name, Layout.Type });
+			}
+		}
+	}
+
 	void Material::Use() const {
 		// --- Activate Z-buffer
 		if (bUseDepthTest) {
@@ -149,37 +170,59 @@ namespace EmptySource {
 			MaterialShader->Bind();
 			unsigned int i = 0;
 			for (auto& Uniform : VariableLayout) {
-				switch (Uniform.VariableType) {
-				case EmptySource::EMaterialDataType::Matrix4x4Array:
+				switch (Uniform.Type) {
+				case EmptySource::EShaderPropertyType::Matrix4x4Array:
 					SetMatrix4x4Array(Uniform.Name.c_str(), Uniform.Matrix4x4Array[0].PointerToValue(), (int)Uniform.Matrix4x4Array.size());
 					break;
-				case EmptySource::EMaterialDataType::FloatArray:
+				case EmptySource::EShaderPropertyType::FloatArray:
 					SetFloat1Array(Uniform.Name.c_str(), &Uniform.FloatArray[0], (int)Uniform.FloatArray.size());
 					break;
-				case EmptySource::EMaterialDataType::Float2DArray:
+				case EmptySource::EShaderPropertyType::Float2DArray:
 					SetFloat2Array(Uniform.Name.c_str(), Uniform.Float2DArray[0].PointerToValue(), (int)Uniform.Float2DArray.size());
 					break;
-				case EmptySource::EMaterialDataType::Float3DArray:
+				case EmptySource::EShaderPropertyType::Float3DArray:
 					SetFloat3Array(Uniform.Name.c_str(), Uniform.Float3DArray[0].PointerToValue(), (int)Uniform.Float3DArray.size());
 					break;
-				case EmptySource::EMaterialDataType::Float4DArray:
+				case EmptySource::EShaderPropertyType::Float4DArray:
 					SetFloat4Array(Uniform.Name.c_str(), Uniform.Float4DArray[0].PointerToValue(), (int)Uniform.Float4DArray.size());
 					break;
-				case EmptySource::EMaterialDataType::Texture2D:
+				case EmptySource::EShaderPropertyType::Texture2D:
 					SetTexture2D(Uniform.Name.c_str(), Uniform.Texture, i); i++;
 					break;
-				case EmptySource::EMaterialDataType::Cubemap:
+				case EmptySource::EShaderPropertyType::Cubemap:
 					SetTextureCubemap(Uniform.Name.c_str(), Uniform.Texture, i); i++;
 					break;
-				case EmptySource::EMaterialDataType::IntArray:
+				case EmptySource::EShaderPropertyType::IntArray:
 					SetInt1Array(Uniform.Name.c_str(), &Uniform.IntArray[0], (int)Uniform.IntArray.size());
 					break;
-				case EmptySource::EMaterialDataType::None:
+				case EmptySource::EShaderPropertyType::None:
 				default:
 					break;
 				}
 			}
 		}
+	}
+
+	void MaterialLayout::SetVariable(const MaterialVariable & Variable) {
+		auto Iterator = Find(Variable.Name);
+		if (Iterator == end())
+			MaterialVariables.push_back(Variable);
+		else
+			(*Iterator) = Variable;
+	}
+
+	void MaterialLayout::AddVariable(const ShaderProperty & Property) {
+		auto Iterator = Find(Property.Name);
+		if (Iterator == end())
+			MaterialVariables.push_back( MaterialVariable(Property.Name, Property.Type) );
+	}
+
+	TArray<MaterialVariable>::const_iterator MaterialLayout::Find(const NString & Name) const {
+		return std::find_if(begin(), end(), [&Name](const MaterialVariable& Var) { return Var.Name == Name; });
+	}
+
+	TArray<MaterialVariable>::iterator MaterialLayout::Find(const NString & Name) {
+		return std::find_if(begin(), end(), [&Name](const MaterialVariable& Var) { return Var.Name == Name; });
 	}
 
 }

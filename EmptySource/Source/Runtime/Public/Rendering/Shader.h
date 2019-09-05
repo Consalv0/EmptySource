@@ -8,9 +8,26 @@ namespace EmptySource {
 
 	typedef std::shared_ptr<class ShaderStage> ShaderStagePtr;
 
+	struct ShaderProperty {
+		NString Name;
+		EShaderPropertyType Type;
+
+		ShaderProperty(const NString Name, EShaderPropertyType Type) : Name(Name), Type(Type) {};
+
+		ShaderProperty(const ShaderProperty& Other) {
+			Type = Other.Type;
+			Name = Other.Name;
+		};
+
+		ShaderProperty& operator=(const ShaderProperty & Other) {
+			Type = Other.Type;
+			Name = Other.Name;
+			return *this;
+		}
+	};
+
 	class ShaderStage {
 	public:
-
 		virtual ~ShaderStage() = default;
 
 		//* Get the shader type
@@ -77,6 +94,12 @@ namespace EmptySource {
 		
 		//* Get the shader object
 		virtual void * GetShaderObject() const = 0;
+
+		//* Get the chader properties
+		virtual const TArray<ShaderProperty> & GetProperties() const = 0;
+
+		//* Get the chader properties
+		virtual void SetProperties(const TArrayInitializer<ShaderProperty> Properties) = 0;
 
 		//* The shader is valid for use?
 		virtual inline bool IsValid() const = 0;

@@ -13,7 +13,18 @@ namespace EmptySource {
 
 	void RenderStage::SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
 		Model->BindSubdivisionVertexArray(Subdivision);
-		
+
+		Mat->SetVariables({
+			{ "_ViewPosition", TArrayInitializer<Vector3>({ EyeTransform.Position }) },
+			{ "_ProjectionMatrix", { ViewProjection } },
+			{ "_ViewMatrix", { EyeTransform.GetGLViewMatrix() } },
+			{ "_Lights[0].Position", TArrayInitializer<Vector3>({  Vector3(2, 1) }) },
+			{ "_Lights[0].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
+			{ "_Lights[0].Intencity", TArrayInitializer<float>({ 20 }) },
+			{ "_Lights[1].Position", TArrayInitializer<Vector3>({  Vector3(-2, 1) }) },
+			{ "_Lights[1].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
+			{ "_Lights[1].Intencity", TArrayInitializer<float>({ 20 }) },
+		});
 		Mat->Use();
 		Mat->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix.PointerToValue(), GetMatrixBuffer());
 		Model->DrawSubdivisionInstanciated(1, Subdivision);
@@ -23,7 +34,7 @@ namespace EmptySource {
 		this->EyeTransform = EyeTransform;
 	}
 
-	void RenderStage::SetViewProjection(const Matrix4x4 & Projection) {
+	void RenderStage::SetProjectionMatrix(const Matrix4x4 & Projection) {
 		ViewProjection = Projection;
 	}
 

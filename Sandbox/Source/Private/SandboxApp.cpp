@@ -88,7 +88,7 @@ private:
 	Material UnlitMaterialWire = Material(L"UnlitMaterialWire");
 	Material RenderTextureMaterial = Material(L"RenderTextureMaterial");
 	Material RenderTextMaterial = Material(L"RenderTextMaterial");
-	Material RenderCubemapMaterial = Material(L"RenderCubemapMaterial");
+	MaterialPtr RenderCubemapMaterial = std::make_shared<Material>(L"RenderCubemapMaterial");
 	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
 	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
 	MaterialPtr BaseMaterial = std::make_shared<Material>(L"BaseMaterial");
@@ -129,14 +129,12 @@ protected:
 		Bitmap<FloatRGB> Equirectangular;
 		ImageConversion::LoadFromFile(Equirectangular, FileManager::GetFile(Path));
 
-		Texture2DPtr EquirectangularTexture = Texture2D::Create(
+		Texture2DPtr EquirectangularTexture = Texture2D::Create(L"EquirectangularTexture",
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-			CF_RGB32F, FM_MinMagLinear,
-			SAM_Repeat,
-			CF_RGB32F,
+			CF_RGB32F, FM_MinMagLinear, SAM_Repeat, CF_RGB32F,
 			Equirectangular.PointerToValue()
 		);
-		EquirectangularTextureHDR = Texture2D::Create(
+		EquirectangularTextureHDR = Texture2D::Create(L"EquirectangularTextureHDR",
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB32F, FM_MinMagLinear, SAM_Repeat
 		);
 		if (TextureManager::GetInstance().GetTexture(L"EquirectangularTextureHDR") != NULL) {
@@ -167,7 +165,7 @@ protected:
 		EquirectangularToCubemapMaterial.CullMode = CM_None;
 		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
 
-		CubemapTexture = Cubemap::Create(Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
+		CubemapTexture = Cubemap::Create(L"CubemapTexture", Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
 		CubemapTexture->ConvertFromHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
 		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") != NULL) {
 			TextureManager::GetInstance().FreeTexture(L"CubemapTexture");
@@ -178,12 +176,12 @@ protected:
 	virtual void OnAttach() override {}
 
 	virtual void OnImGuiRender() override {
-		static TexturePtr TextureSample = Texture2D::Create(IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
+		static TexturePtr TextureSample = Texture2D::Create(L"TextureSample", IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
 
-		TArray<WString> TextureList = TextureManager::GetInstance().GetResourceNames();
-		TArray<NString> NarrowTextureList(TextureList.size());
-		for (int i = 0; i < NarrowTextureList.size(); ++i)
-			NarrowTextureList[i] = Text::WideToNarrow((TextureList)[i]);
+		TArray<WString> TextureNameList = TextureManager::GetInstance().GetResourceNames();
+		TArray<NString> NarrowTextureNameList(TextureNameList.size());
+		for (int i = 0; i < NarrowTextureNameList.size(); ++i)
+			NarrowTextureNameList[i] = Text::WideToNarrow((TextureNameList)[i]);
 
 		const NChar* SkyBoxes[]{
 			"Resources/Textures/Arches_E_PineTree_3k.hdr",
@@ -206,7 +204,7 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(TextureList[CurrentTexture]);
+		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(TextureNameList[CurrentTexture]);
 		if (SelectedTexture) {
 			int bCubemap;
 			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
@@ -267,199 +265,384 @@ protected:
 			}
 		}
 
-		ImGui::Begin("Meshes", 0, ImVec2(250, 300));
-		TArray<WString> MeshResourcesList = MeshManager::GetInstance().GetResourceNames();
-		if (MeshResourcesList.size() > 0) {
-			TArray<NString> NarrowMeshResourcesList(MeshResourcesList.size());
-			for (int i = 0; i < NarrowMeshResourcesList.size(); ++i)
-				NarrowMeshResourcesList[i] = Text::WideToNarrow((MeshResourcesList)[i]);
+		ImGui::Begin("Meshes", 0, ImVec2(250, 300)); 
+		{
+			TArray<WString> MeshResourcesList = MeshManager::GetInstance().GetResourceNames();
+			if (MeshResourcesList.size() > 0) {
+				TArray<NString> NarrowMeshResourcesList(MeshResourcesList.size());
+				for (int i = 0; i < NarrowMeshResourcesList.size(); ++i)
+					NarrowMeshResourcesList[i] = Text::WideToNarrow((MeshResourcesList)[i]);
 
-			static int Selection = 0;
-			ImGui::ListBox("Mesh List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
-				TArray<NString>* Items = (TArray<NString> *)Data;
-				if (outText) *outText = (*Items)[indx].c_str();
-				return true;
-			}, &NarrowMeshResourcesList, (int)NarrowMeshResourcesList.size());
-			ImGui::Text("Selected Mesh: %s", NarrowMeshResourcesList[Selection].c_str());
-			MeshPtr SelectedMesh = MeshManager::GetInstance().GetMesh(MeshResourcesList[Selection]);
-			if (SelectedMesh) {
-				SelectedMeshName = SelectedMesh->GetMeshData().Name;
-				for (auto KeyValue : SelectedMesh->GetMeshData().Materials) {
-					ImGui::Text(" - Materials: %s : %d", KeyValue.second.c_str(), KeyValue.second);
+				static int Selection = 0;
+				ImGui::ListBox("Mesh List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
+					TArray<NString>* Items = (TArray<NString> *)Data;
+					if (outText) *outText = (*Items)[indx].c_str();
+					return true;
+				}, &NarrowMeshResourcesList, (int)NarrowMeshResourcesList.size());
+				ImGui::Text("Selected Mesh: %s", NarrowMeshResourcesList[Selection].c_str());
+				MeshPtr SelectedMesh = MeshManager::GetInstance().GetMesh(MeshResourcesList[Selection]);
+				if (SelectedMesh) {
+					SelectedMeshName = SelectedMesh->GetMeshData().Name;
+					for (auto KeyValue : SelectedMesh->GetMeshData().Materials) {
+						ImGui::Text(" - Materials: %s : %d", KeyValue.second.c_str(), KeyValue.first);
+					}
+				}
+			}
+		}
+		ImGui::End();
+
+		ImGui::Begin("Materials", 0, ImVec2(250, 300));
+		{
+			static NChar Text[100];
+			ImGui::InputText("##MaterialName", Text, 100);
+			ImGui::SameLine();
+			if (ImGui::Button("Create New Material")) {
+				MaterialPtr NewMaterial = std::make_shared<Material>(Text::NarrowToWide(NString(Text)));
+				MaterialManager::GetInstance().AddMaterial(NewMaterial->GetName(), NewMaterial);
+			}
+
+			TArray<WString> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
+			TArray<NString> NarrowMaterialNameList(MaterialNameList.size());
+			for (int i = 0; i < MaterialNameList.size(); ++i)
+				NarrowMaterialNameList[i] = Text::WideToNarrow((MaterialNameList)[i]);
+
+			TArray<WString> ShaderNameList = ShaderManager::GetInstance().GetResourceShaderNames();
+			TArray<NString> NarrowShaderNameList(ShaderNameList.size());
+			for (int i = 0; i < ShaderNameList.size(); ++i)
+				NarrowShaderNameList[i] = Text::WideToNarrow((ShaderNameList)[i]);
+
+			if (MaterialNameList.size() > 0) {
+				static int Selection = 0;
+				ImGui::ListBox("Material List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
+					TArray<NString>* Items = (TArray<NString> *)Data;
+					if (outText) *outText = (*Items)[indx].c_str();
+					return true;
+				}, &NarrowMaterialNameList, (int)NarrowMaterialNameList.size());
+				ImGui::Text("Selected Material: %s", NarrowMaterialNameList[Selection].c_str());
+				MaterialPtr SelectedMaterial = MaterialManager::GetInstance().GetMaterial(MaterialNameList[Selection]);
+				if (SelectedMaterial) {
+					ImGui::Columns(2);
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+					ImGui::Separator();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Shader"); ImGui::NextColumn();
+					int ShaderSelection = SelectedMaterial->GetShaderProgram() ? 0 : -1;
+					if (ShaderSelection == 0) {
+						for (int i = 0; i < NarrowShaderNameList.size(); i++) {
+							if (SelectedMaterial->GetShaderProgram()->GetName() == ShaderNameList[i]) {
+								ShaderSelection = i; break;
+							}
+						}
+					}
+					ImGui::PushItemWidth(-1); 
+					if (ImGui::Combo(("##Shader" + 
+						Text::WideToNarrow(SelectedMaterial->GetShaderProgram() ? SelectedMaterial->GetShaderProgram()->GetName() : L"0")).c_str(),
+						&ShaderSelection, [](void * Data, int indx, const char ** outText) -> bool {
+						TArray<NString>* Items = (TArray<NString> *)Data;
+						if (outText) *outText = (*Items)[indx].c_str();
+						return true;
+					}, &NarrowShaderNameList, (int)NarrowShaderNameList.size())) {
+						if (ShaderSelection >= 0 && ShaderSelection < ShaderNameList.size())
+							SelectedMaterial->SetShaderProgram(ShaderManager::GetInstance().GetProgram(ShaderNameList[ShaderSelection]));
+					}
+					ImGui::NextColumn();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Depth Test"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Checkbox("##bDepthTest", &SelectedMaterial->bUseDepthTest);
+					ImGui::NextColumn();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Depth Function"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Combo("##DepthFunction", (int *)&SelectedMaterial->DepthFunction, 
+						"Never\0Less\0Equal\0LessEqual\0Greater\0NotEqual\0GreaterEqual\0Always\0");
+					ImGui::NextColumn();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Cull Mode"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Combo("##CullMode", (int *)&SelectedMaterial->CullMode,
+						"None\0ClockWise\0CounterClockWise\0");
+					ImGui::NextColumn();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Fill Mode"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Combo("##FillMode", (int *)&SelectedMaterial->FillMode,
+						"Point\0Wireframe\0Solid\0");
+					ImGui::NextColumn();
+
+					for (auto & KeyValue : SelectedMaterial->GetVariables()) {
+						int i = 0;
+						switch (KeyValue.Type) {
+						case EShaderPropertyType::Matrix4x4Array:
+							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
+							for (auto& Value : KeyValue.Matrix4x4Array) {
+								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix0", (float *)&Value[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix1", (float *)&Value[1], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix2", (float *)&Value[2], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix3", (float *)&Value[3], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::TreePop();
+								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::FloatArray:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							for (auto& Value : KeyValue.FloatArray) {
+								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+									ImGui::PushItemWidth(-1); ImGui::DragFloat("##Float", &Value, .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::TreePop();
+								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Float2DArray:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							for (auto& Value : KeyValue.Float2DArray) {
+								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+									ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Float2D", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::TreePop();
+								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Float3DArray:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							for (auto& Value : KeyValue.Float3DArray) {
+								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+									ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Float3D", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::TreePop();
+								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Float4DArray:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							for (auto& Value : KeyValue.Float4DArray) {
+								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Float4D", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::TreePop();
+								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::IntArray:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							for (auto& Value : KeyValue.IntArray) {
+								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+									ImGui::PushItemWidth(-1); ImGui::DragInt("##IntArray", &Value, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
+									ImGui::TreePop();
+								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Cubemap:
+						case EShaderPropertyType::Texture2D:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							i = KeyValue.Texture ? 0 : -1;
+							if (i == 0) {
+								for (int j = 0; j < NarrowTextureNameList.size(); j++) {
+									if (KeyValue.Texture->GetName() == TextureNameList[j]) {
+										i = j; break;
+									}
+								}
+							}
+							ImGui::PushItemWidth(-1); 
+							if (ImGui::Combo(("##Texture" + KeyValue.Name).c_str(), &i, [](void * Data, int indx, const char ** outText) -> bool {
+								TArray<NString>* Items = (TArray<NString> *)Data;
+								if (outText) *outText = (*Items)[indx].c_str();
+								return true;
+							}, &NarrowTextureNameList, (int)NarrowTextureNameList.size())) {
+								if (i >= 0 && i < TextureNameList.size())
+									KeyValue.Texture = TextureManager::GetInstance().GetTexture(TextureNameList[i]);
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::None:
+						default:
+							ImGui::AlignTextToFramePadding(); ImGui::Text("%s[%d]", KeyValue.Name.c_str(), (int)KeyValue.Type); ImGui::NextColumn();
+							ImGui::NextColumn();
+							break;
+						}
+					}
+					ImGui::PopStyleVar();
+					ImGui::Separator();
+					ImGui::Columns(1);
 				}
 			}
 		}
 		ImGui::End();
 
 		ImGui::Begin("Scene Settings");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-		ImGui::Columns(2);
-		ImGui::Separator();
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+			ImGui::Columns(2);
+			ImGui::Separator();
 
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Rotation"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Eye Rotation", &FrameRotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
-		Vector3 EulerFrameRotation = FrameRotation.ToEulerAngles();
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Euler Rotation"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
-			FrameRotation = Quaternion::EulerAngles(EulerFrameRotation);
-		} ImGui::NextColumn();
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); if (ImGui::Combo("##Skybox Texture", &CurrentSkybox, SkyBoxes, IM_ARRAYSIZE(SkyBoxes))) {
-			SetSceneSkybox(Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
-		} ImGui::NextColumn();
-		ImGui::PushItemWidth(0);
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Rotation"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Eye Rotation", &FrameRotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
+			Vector3 EulerFrameRotation = FrameRotation.ToEulerAngles();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Euler Rotation"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
+				FrameRotation = Quaternion::EulerAngles(EulerFrameRotation);
+			} ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); if (ImGui::Combo("##Skybox Texture", &CurrentSkybox, SkyBoxes, IM_ARRAYSIZE(SkyBoxes))) {
+				SetSceneSkybox(Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
+			} ImGui::NextColumn();
+			ImGui::PushItemWidth(0);
 
-		ImGui::Columns(1);
-		ImGui::Separator();
-		ImGui::PopStyleVar();
-
+			ImGui::Columns(1);
+			ImGui::Separator();
+			ImGui::PopStyleVar();
+		}
 		ImGui::End();
 
 		char ProgressText[30]; 
 		ImGui::Begin("Audio Settings");
-		
 		{
-			static TArray<float> AudioChannel1(1);
 			{
-				AudioChannel1.resize(32768 / (2 * 4) / 2);
-				float * BufferPtr = (float *)&(Application::GetInstance()->GetAudioDevice().CurrentSample[0]);
-				for (unsigned int i = 0; i < 32768 / (2 * 4) / 2; ++i) {
-					for (unsigned int j = i * (2 * 4); j < (i + 1) * (2 * 4) && j < 32768; j += (2 * 4)) {
-						AudioChannel1[i] = *BufferPtr;
-						BufferPtr += 2;
+				static TArray<float> AudioChannel1(1);
+				{
+					AudioChannel1.resize(32768 / (2 * 4) / 2);
+					float * BufferPtr = (float *)&(Application::GetInstance()->GetAudioDevice().CurrentSample[0]);
+					for (unsigned int i = 0; i < 32768 / (2 * 4) / 2; ++i) {
+						for (unsigned int j = i * (2 * 4); j < (i + 1) * (2 * 4) && j < 32768; j += (2 * 4)) {
+							AudioChannel1[i] = *BufferPtr;
+							BufferPtr += 2;
+						}
 					}
 				}
+
+				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 250));
 			}
-			
-			ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 250));
-		}
-		for (auto KeyValue : Application::GetInstance()->GetAudioDevice()) {
-			AudioDevice::SamplePlayInfo * Info = KeyValue.second;
+			for (auto KeyValue : Application::GetInstance()->GetAudioDevice()) {
+				AudioDevice::SamplePlayInfo * Info = KeyValue.second;
 
-			if (ImGui::TreeNode(("Audio" + std::to_string(Info->Identifier)).c_str())) {
-				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-				ImGui::Columns(2);
-				ImGui::Separator();
+				if (ImGui::TreeNode(("Audio" + std::to_string(Info->Identifier)).c_str())) {
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+					ImGui::Columns(2);
+					ImGui::Separator();
 
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio Volume", &Info->Volume, 0.F, 1.F); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Loop", &Info->bLoop); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Pused", &Info->bPause); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
-				sprintf(ProgressText, "%.2f", Info->Sample->GetDurationAt<Time::Second>(Info->Pos));
-				ImGui::ProgressBar((float)Info->Pos / Info->Sample->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
+					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Volume"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Audio Volume", &Info->Volume, 0.F, 1.F); ImGui::NextColumn();
+					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Loop"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Loop", &Info->bLoop); ImGui::NextColumn();
+					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Pused", &Info->bPause); ImGui::NextColumn();
+					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
+					sprintf(ProgressText, "%.2f", Info->Sample->GetDurationAt<Time::Second>(Info->Pos));
+					ImGui::ProgressBar((float)Info->Pos / Info->Sample->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
+					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
 
-				unsigned int AudioPlotDetail = 0;
-				TArray<float> AudioChannel1(1);
-				TArray<float> AudioChannel2(1);
-				if (AudioPlotDetail != (unsigned int)(Info->Sample->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4))) {
-					AudioPlotDetail = (unsigned int)(Info->Sample->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
-					AudioChannel1.resize(Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
-					AudioChannel2.resize(Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
-					float * BufferPtr = (float *)Info->Sample->GetBufferAt(0);
-					float * BufferEndPtr = (float *)Info->Sample->GetBufferAt(Info->Sample->GetBufferLength() - 4);
-					for (unsigned int i = 0; i < Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
-						AudioChannel1[i * 2] = -MathConstants::BigNumber;
-						AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
-						for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Info->Sample->GetBufferLength(); j += (2 * 4)) {
-							AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *BufferPtr);
-							AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *BufferPtr);
-							BufferPtr += 2;
+					unsigned int AudioPlotDetail = 0;
+					TArray<float> AudioChannel1(1);
+					TArray<float> AudioChannel2(1);
+					if (AudioPlotDetail != (unsigned int)(Info->Sample->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4))) {
+						AudioPlotDetail = (unsigned int)(Info->Sample->GetBufferLength() / ((ImGui::GetColumnWidth() - 12) * 4));
+						AudioChannel1.resize(Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+						AudioChannel2.resize(Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail) * 2);
+						float * BufferPtr = (float *)Info->Sample->GetBufferAt(0);
+						float * BufferEndPtr = (float *)Info->Sample->GetBufferAt(Info->Sample->GetBufferLength() - 4);
+						for (unsigned int i = 0; i < Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+							AudioChannel1[i * 2] = -MathConstants::BigNumber;
+							AudioChannel1[i * 2 + 1] = MathConstants::BigNumber;
+							for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Info->Sample->GetBufferLength(); j += (2 * 4)) {
+								AudioChannel1[i * 2] = Math::Max(AudioChannel1[i * 2], *BufferPtr);
+								AudioChannel1[i * 2 + 1] = Math::Min(AudioChannel1[i * 2 + 1], *BufferPtr);
+								BufferPtr += 2;
+							}
+						}
+						BufferPtr = (float *)Info->Sample->GetBufferAt(4);
+						for (unsigned int i = 0; i < Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
+							AudioChannel2[i * 2] = -MathConstants::BigNumber;
+							AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
+							for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Info->Sample->GetBufferLength(); j += (2 * 4)) {
+								AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *BufferPtr);
+								AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *BufferPtr);
+								BufferPtr += 2;
+							}
 						}
 					}
-					BufferPtr = (float *)Info->Sample->GetBufferAt(4);
-					for (unsigned int i = 0; i < Info->Sample->GetBufferLength() / ((2 * 4) * AudioPlotDetail); ++i) {
-						AudioChannel2[i * 2] = -MathConstants::BigNumber;
-						AudioChannel2[i * 2 + 1] = MathConstants::BigNumber;
-						for (unsigned int j = i * (2 * 4) * AudioPlotDetail; j < (i + 1) * ((2 * 4) * AudioPlotDetail) && j < Info->Sample->GetBufferLength(); j += (2 * 4)) {
-							AudioChannel2[i * 2] = Math::Max(AudioChannel2[i * 2], *BufferPtr);
-							AudioChannel2[i * 2 + 1] = Math::Min(AudioChannel2[i * 2 + 1], *BufferPtr);
-							BufferPtr += 2;
-						}
-					}
+
+					ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio Channel 1",
+						&AudioChannel1[0], (int)AudioChannel1.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio Channel 2",
+						&AudioChannel2[0], (int)AudioChannel2.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
+
+					ImGui::Columns(1);
+					ImGui::Separator();
+					ImGui::PopStyleVar();
+					ImGui::TreePop();
 				}
-
-				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio Channel 1",
-					&AudioChannel1[0], (int)AudioChannel1.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 2"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio Channel 2",
-					&AudioChannel2[0], (int)AudioChannel2.size(), NULL, 0, -1.F, 1.F, ImVec2(0, 40)); ImGui::NextColumn();
-
-				ImGui::Columns(1);
-				ImGui::Separator();
-				ImGui::PopStyleVar();
-				ImGui::TreePop();
 			}
 		}
 		ImGui::End();
 
 		ImGui::Begin("Textures");
-		ImGuiIO& IO = ImGui::GetIO();
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-		ImGui::Columns(2);
-		ImGui::Separator();
+		{
+			ImGuiIO& IO = ImGui::GetIO();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+			ImGui::Columns(2);
+			ImGui::Separator();
 
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Texture"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, [](void * Data, int indx, const char ** outText) -> bool {
-			TArray<NString>* Items = (TArray<NString> *)Data;
-			if (outText) *outText = (*Items)[indx].c_str();
-			return true;
-		}, &NarrowTextureList, (int)NarrowTextureList.size()); ImGui::NextColumn();
-		if (SelectedTexture) {
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
-		}
-		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
-
-		ImGui::Columns(1);
-		ImGui::Separator();
-		ImGui::PopStyleVar();
-
-		ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
-		ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
-		ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
-		ImGui::ColorButton("GreenFilter##RefColor", ImColor(0.F, ColorFilter[1] ? 1.F : 0.F, 0.F, 1.F));
-		ImGui::SameLine(); ImGui::Checkbox("##BlueFilter", &ColorFilter[2]); ImGui::SameLine();
-		ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
-		ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
-		ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
-		if (SelectedTexture) {
-			ImVec2 ImageSize;
-			ImVec2 MPos = ImGui::GetCursorScreenPos();
-			if (SelectedTexture->GetDimension() == ETextureDimension::Texture2D) {
-				ImageSize.x = Math::Min(
-					ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
-					* std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio()
-				);
-				ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
-				ImageSize.y = ImageSize.x / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio();
-			} else {
-				ImageSize.x = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * 2.F);
-				ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
-				ImageSize.y = ImageSize.x / 2.F;
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Texture"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, [](void * Data, int indx, const char ** outText) -> bool {
+				TArray<NString>* Items = (TArray<NString> *)Data;
+				if (outText) *outText = (*Items)[indx].c_str();
+				return true;
+			}, &NarrowTextureNameList, (int)NarrowTextureNameList.size()); ImGui::NextColumn();
+			if (SelectedTexture) {
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
 			}
-			ImGui::Image((void *)TextureSample->GetTextureObject(), ImageSize);
-			if (ImGui::IsItemHovered()) {
-				ImGui::BeginTooltip();
-				float RegionSize = 32.0f;
-				float RegionX = IO.MousePos.x - MPos.x - RegionSize * 0.5F; 
-				RegionX < 0.F ? RegionX = 0.F : (RegionX > ImageSize.x - RegionSize) ? RegionX = ImageSize.x - RegionSize : RegionX = RegionX;
-				float RegionY = IO.MousePos.y - MPos.y - RegionSize * 0.5F; 
-				RegionY < 0.F ? RegionY = 0.F : (RegionY > ImageSize.y - RegionSize) ? RegionY = ImageSize.y - RegionSize : RegionY = RegionY;
-				ImGui::Text("Min: (%.2f, %.2f)", RegionX, RegionY);
-				ImGui::Text("Max: (%.2f, %.2f)", RegionX + RegionSize, RegionY + RegionSize);
-				ImVec2 UV0 = ImVec2((RegionX) / ImageSize.x, (RegionY) / ImageSize.y);
-				ImVec2 UV1 = ImVec2((RegionX + RegionSize) / ImageSize.x, (RegionY + RegionSize) / ImageSize.y);
-				ImGui::Image((void *)TextureSample->GetTextureObject(), ImVec2(140.F, 140.F), UV0, UV1, ImVec4(1.F, 1.F, 1.F, 1.F), ImVec4(1.F, 1.F, 1.F, .5F));
-				ImGui::EndTooltip();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
+
+			ImGui::Columns(1);
+			ImGui::Separator();
+			ImGui::PopStyleVar();
+
+			ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
+			ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
+			ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
+			ImGui::ColorButton("GreenFilter##RefColor", ImColor(0.F, ColorFilter[1] ? 1.F : 0.F, 0.F, 1.F));
+			ImGui::SameLine(); ImGui::Checkbox("##BlueFilter", &ColorFilter[2]); ImGui::SameLine();
+			ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
+			ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
+			ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
+			if (SelectedTexture) {
+				ImVec2 ImageSize;
+				ImVec2 MPos = ImGui::GetCursorScreenPos();
+				if (SelectedTexture->GetDimension() == ETextureDimension::Texture2D) {
+					ImageSize.x = Math::Min(
+						ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
+						* std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio()
+					);
+					ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
+					ImageSize.y = ImageSize.x / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio();
+				}
+				else {
+					ImageSize.x = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * 2.F);
+					ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
+					ImageSize.y = ImageSize.x / 2.F;
+				}
+				ImGui::Image((void *)TextureSample->GetTextureObject(), ImageSize);
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					float RegionSize = 32.0f;
+					float RegionX = IO.MousePos.x - MPos.x - RegionSize * 0.5F;
+					RegionX < 0.F ? RegionX = 0.F : (RegionX > ImageSize.x - RegionSize) ? RegionX = ImageSize.x - RegionSize : RegionX = RegionX;
+					float RegionY = IO.MousePos.y - MPos.y - RegionSize * 0.5F;
+					RegionY < 0.F ? RegionY = 0.F : (RegionY > ImageSize.y - RegionSize) ? RegionY = ImageSize.y - RegionSize : RegionY = RegionY;
+					ImGui::Text("Min: (%.2f, %.2f)", RegionX, RegionY);
+					ImGui::Text("Max: (%.2f, %.2f)", RegionX + RegionSize, RegionY + RegionSize);
+					ImVec2 UV0 = ImVec2((RegionX) / ImageSize.x, (RegionY) / ImageSize.y);
+					ImVec2 UV1 = ImVec2((RegionX + RegionSize) / ImageSize.x, (RegionY + RegionSize) / ImageSize.y);
+					ImGui::Image((void *)TextureSample->GetTextureObject(), ImVec2(140.F, 140.F), UV0, UV1, ImVec4(1.F, 1.F, 1.F, 1.F), ImVec4(1.F, 1.F, 1.F, .5F));
+					ImGui::EndTooltip();
+				}
 			}
 		}
 		ImGui::End();
@@ -503,6 +686,7 @@ protected:
 		TextGenerator.PrepareCharacters(0ul, 255ul);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 		FontMap = Texture2D::Create(
+			L"FontMap",
 			IntVector2(TextGenerator.AtlasSize),
 			CF_Red,
 			FM_MinMagLinear,
@@ -518,6 +702,27 @@ protected:
 		ShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
 		ShaderPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
 		ShaderPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
+		BRDFShader->SetProperties({
+			{ "_ViewPosition",        EShaderPropertyType::Float3DArray },
+			{ "_ProjectionMatrix",    EShaderPropertyType::Matrix4x4Array },
+			{ "_ViewMatrix",          EShaderPropertyType::Matrix4x4Array },
+			{ "_Lights[0].Position",  EShaderPropertyType::Float3DArray },
+			{ "_Lights[0].Color",     EShaderPropertyType::Float3DArray },
+			{ "_Lights[0].Intencity", EShaderPropertyType::FloatArray },
+			{ "_Lights[1].Position",  EShaderPropertyType::Float3DArray },
+			{ "_Lights[1].Color",     EShaderPropertyType::Float3DArray },
+			{ "_Lights[1].Intencity", EShaderPropertyType::FloatArray },
+			{ "_Material.Metalness",  EShaderPropertyType::FloatArray },
+			{ "_Material.Roughness",  EShaderPropertyType::FloatArray },
+			{ "_Material.Color",      EShaderPropertyType::Float3DArray },
+			{ "_MainTexture",         EShaderPropertyType::Texture2D },
+			{ "_NormalTexture",       EShaderPropertyType::Texture2D },
+			{ "_RoughnessTexture",    EShaderPropertyType::Texture2D },
+			{ "_MetallicTexture",     EShaderPropertyType::Texture2D },
+			{ "_BRDFLUT",             EShaderPropertyType::Texture2D },
+			{ "_EnviromentMap",       EShaderPropertyType::Cubemap },
+			{ "_EnviromentMapLods",   EShaderPropertyType::FloatArray }
+		});
 		ShaderPtr UnlitShader         = ShaderMng.GetProgram(L"UnLitShader");
 		ShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
 		ShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
@@ -543,8 +748,9 @@ protected:
 		RenderTextMaterial.CullMode = CM_None;
 		RenderTextMaterial.SetShaderProgram(RenderTextShader);
 
-		RenderCubemapMaterial.CullMode = CM_None;
-		RenderCubemapMaterial.SetShaderProgram(RenderCubemapShader);
+		RenderCubemapMaterial->CullMode = CM_None;
+		RenderCubemapMaterial->SetShaderProgram(RenderCubemapShader);
+		MaterialManager::GetInstance().AddMaterial(RenderCubemapMaterial->GetName(), RenderCubemapMaterial);
 
 		IntegrateBRDFMaterial.DepthFunction = DF_Always;
 		IntegrateBRDFMaterial.CullMode = CM_None;
@@ -559,6 +765,7 @@ protected:
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
 
 		Texture2DPtr RenderedTexture = Texture2D::Create(
+			L"RenderedTexture",
 			IntVector2(
 				Application::GetInstance()->GetWindow().GetWidth(),
 				Application::GetInstance()->GetWindow().GetHeight())
@@ -568,7 +775,7 @@ protected:
 		///////// Create Matrices Buffer //////////////
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 
-		Texture2DPtr BRDFLut = Texture2D::Create(IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
+		Texture2DPtr BRDFLut = Texture2D::Create(L"BRDFLut", IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
 		{
 			RenderTargetPtr Renderer = RenderTarget::Create();
 			IntegrateBRDFMaterial.Use();
@@ -729,6 +936,7 @@ protected:
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
 				TextureManager::GetInstance().FreeTexture(L"FontMap");
 				FontMap = Texture2D::Create(
+					L"FontMap",
 					IntVector2(TextGenerator.AtlasSize),
 					CF_Red,
 					FM_MinMagLinear,
@@ -752,6 +960,12 @@ protected:
 	virtual void OnRender() override {
 
 		Application::GetInstance()->GetRenderPipeline().PrepareFrame();
+
+		RenderStage * Stage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
+		if (Stage != NULL) { 
+			Stage->SetEyeTransform(Transform(EyePosition, FrameRotation));
+			Stage->SetProjectionMatrix(ProjectionMatrix);
+		}
 
 		VerticesCount = 0;
 		Timestamp Timer;
@@ -827,25 +1041,25 @@ protected:
 		// Framebuffer.Use();
 
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
-		RenderCubemapMaterial.SetVariables({
+		RenderCubemapMaterial->SetVariables({
 			{ "_ProjectionMatrix", { ProjectionMatrix } },
 			{ "_ViewMatrix", { ViewMatrix } },
 			{ "_Skybox", CubemapTexture, ETextureDimension::Cubemap },
-			{ "_Lod", TArray<float>({ SkyRoughnessTemp }) }
+			{ "_Lod", TArrayInitializer<float>({ SkyRoughnessTemp }) }
 		});
-		RenderCubemapMaterial.Use();
+		RenderCubemapMaterial->Use();
 
 		MeshPtr SphereModel = MeshManager::GetInstance().GetMesh(L"pSphere1");
 		if (SphereModel) {
 			SphereModel->BindVertexArray();
 		
 			Matrix4x4 MatrixScale = Matrix4x4::Scaling({ 500, 500, 500 });
-			RenderCubemapMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, MatrixScale.PointerToValue(), ModelMatrixBuffer);
+			RenderCubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, MatrixScale.PointerToValue(), ModelMatrixBuffer);
 			SphereModel->DrawElement();
 		}
 
 		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetViewProjection(Matrix4x4::Perspective(
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetProjectionMatrix(Matrix4x4::Perspective(
 			60.0F * MathConstants::DegreeToRad,	 // Aperute angle
 			Application::GetInstance()->GetWindow().GetAspectRatio(),		 // Aspect ratio
 			0.03F,								 // Near plane
@@ -856,25 +1070,25 @@ protected:
 
 		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
 		BaseMaterial->SetVariables({
-			{ "_ViewPosition", TArray<Vector3>({ EyePosition }) },
+			{ "_ViewPosition", TArrayInitializer<Vector3>({ EyePosition }) },
 			{ "_ProjectionMatrix", { ProjectionMatrix } },
 			{ "_ViewMatrix", { ViewMatrix } },
-			{ "_Lights[0].Position", TArray<Vector3>({ LightPosition0 }) },
-			{ "_Lights[0].Color", TArray<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
-			{ "_Lights[0].Intencity", TArray<float>({ LightIntencity }) },
-			{ "_Lights[1].Position", TArray<Vector3>({ LightPosition1 }) },
-			{ "_Lights[1].Color", TArray<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
-			{ "_Lights[1].Intencity", TArray<float>({ LightIntencity }) },
-			{ "_Material.Metalness", TArray<float>({ MaterialMetalness }) },
-			{ "_Material.Roughness", TArray<float>({ MaterialRoughness }) },
-			{ "_Material.Color", TArray<Vector3>({ Vector3(1.F) }) },
+			{ "_Lights[0].Position", TArrayInitializer<Vector3>({ LightPosition0 }) },
+			{ "_Lights[0].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
+			{ "_Lights[0].Intencity", TArrayInitializer<float>({ LightIntencity }) },
+			{ "_Lights[1].Position", TArrayInitializer<Vector3>({ LightPosition1 }) },
+			{ "_Lights[1].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
+			{ "_Lights[1].Intencity", TArrayInitializer<float>({ LightIntencity }) },
+			{ "_Material.Metalness", TArrayInitializer<float>({ MaterialMetalness }) },
+			{ "_Material.Roughness", TArrayInitializer<float>({ MaterialRoughness }) },
+			{ "_Material.Color", TArrayInitializer<Vector3>({ 1.F }) },
 			{ "_MainTexture", TextureManager::GetInstance().GetTexture(L"BaseAlbedoTexture"), ETextureDimension::Texture2D },
 			{ "_NormalTexture", TextureManager::GetInstance().GetTexture(L"BaseNormalTexture"), ETextureDimension::Texture2D },
 			{ "_RoughnessTexture", TextureManager::GetInstance().GetTexture(L"BaseRoughnessTexture"), ETextureDimension::Texture2D },
 			{ "_MetallicTexture", TextureManager::GetInstance().GetTexture(L"BaseMetallicTexture"), ETextureDimension::Texture2D },
 			{ "_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), ETextureDimension::Texture2D },
 			{ "_EnviromentMap", CubemapTexture, ETextureDimension::Cubemap },
-			{ "_EnviromentMapLods", TArray<float>({ CubemapTextureMipmaps }) }
+			{ "_EnviromentMapLods", TArrayInitializer<float>({ CubemapTextureMipmaps }) }
 		});
 		BaseMaterial->Use();
 

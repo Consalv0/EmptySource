@@ -34,9 +34,42 @@ void SandboxSpaceLayer::OnImGuiRender() {
 	for (int i = 0; i < MeshNameList.size(); ++i)
 		NarrowMeshNameList[i] = Text::WideToNarrow((MeshNameList)[i]);
 
-	GGameObject * GameObject = GetFirstObject<GGameObject>();
-	if (GameObject != NULL)
+	static NChar Text[20];
+	ImGui::InputText("##Renderer", Text, 20);
+	ImGui::SameLine();
+	if (ImGui::Button("Create Renderer")) {
+		GGameObject * GameObject = CreateObject<GGameObject>(Text::NarrowToWide(NString(Text)), Transform(0.F, Quaternion(), 1.F));
+		GameObject->CreateComponent<CRenderable>();
+		Text[0] = '\0';
+	}
+
+	TArray<GGameObject *> GameObjects;
+	GetAllObjects<GGameObject>(GameObjects);
+	for (auto & GameObject : GameObjects)
 		if (ImGui::TreeNode(Text::WideToNarrow(GameObject->GetUniqueName()).c_str())) {
+			ImGui::Columns(2);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+			ImGui::Separator();
+
+			ImGui::AlignTextToFramePadding(); ImGui::Text("Position"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Position", &GameObject->Transformation.Position[0], .5F, -MathConstants::BigNumber, MathConstants::BigNumber);
+			ImGui::NextColumn();
+
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Rotation"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Rotation", &GameObject->Transformation.Rotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
+			Vector3 EulerFrameRotation = GameObject->Transformation.Rotation.ToEulerAngles();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Euler Rotation"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
+				GameObject->Transformation.Rotation = Quaternion::EulerAngles(EulerFrameRotation);
+			} ImGui::NextColumn();
+
+			ImGui::AlignTextToFramePadding(); ImGui::Text("Scale"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Scale", &GameObject->Transformation.Scale[0], .5F, -MathConstants::BigNumber, MathConstants::BigNumber);
+			ImGui::NextColumn();
+
+			ImGui::Separator();
+			ImGui::PopStyleVar();
+			ImGui::Columns(1);
 			CRenderable * Renderable = GameObject->GetFirstComponent<CRenderable>();
 			if (Renderable != NULL) {
 				if (ImGui::TreeNode(Text::WideToNarrow(Renderable->GetUniqueName()).c_str())) {

@@ -33,7 +33,7 @@ namespace EmptySource {
 
 		virtual void SetEyeTransform(const Transform & EyeTransform);
 
-		virtual void SetViewProjection(const Matrix4x4 & Projection);
+		virtual void SetProjectionMatrix(const Matrix4x4 & Projection);
 
 		VertexBufferPtr GetMatrixBuffer() const;
 	};

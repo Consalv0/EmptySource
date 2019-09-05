@@ -29,6 +29,8 @@ namespace EmptySource {
 
 	class Texture : public std::enable_shared_from_this<Texture> {
 	public:
+		virtual WString GetName() const = 0;
+
 		virtual ~Texture() = default;
 
 		//* Use the texture
@@ -59,11 +61,9 @@ namespace EmptySource {
 		virtual inline ESamplerAddressMode GetSamplerAddressMode() const = 0;
 
 	protected:
-
 		virtual void SetFilterMode(const EFilterMode& Mode) = 0;
 
 		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) = 0;
-
 	};
 
 	typedef std::shared_ptr<Texture> TexturePtr;
@@ -80,13 +80,13 @@ namespace EmptySource {
 		virtual inline int GetHeight() const = 0;
 
 		static Texture2DPtr Create(
-			const IntVector2& Size, const EColorFormat ColorFormat,
+			const WString& Name, const IntVector2& Size, const EColorFormat ColorFormat,
 			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode,
 			const EColorFormat InputFormat, const void* BufferData
 		);
 
 		static Texture2DPtr Create(
-			const IntVector2& Size, const EColorFormat ColorFormat,
+			const WString& Name, const IntVector2& Size, const EColorFormat ColorFormat,
 			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode
 		);
 	};
@@ -97,6 +97,7 @@ namespace EmptySource {
 	public:
 
 		static CubemapPtr Create(
+			const WString& Name,
 			const unsigned int & Size,
 			const EColorFormat & Format,
 			const EFilterMode & Filter,

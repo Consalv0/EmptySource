@@ -135,7 +135,7 @@ void main() {
   vec3 VertNormal = normalize(TBN * TangentNormal);
   float Roughness = _Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r + 0.0001;
   float Metalness = _Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r;
-  vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma));
+  vec3 DiffuseColor = pow(texture(_MainTexture, Vertex.UV0).rgb, vec3(Gamma)) * _Material.Color;
 
   for( int i = 0; i < 2; i++ ) {
     Sum += MicrofacetModel(i, Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);

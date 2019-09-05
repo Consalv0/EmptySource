@@ -28,7 +28,7 @@ namespace EmptySource {
 		Down
 	};
 
-	enum class EMaterialDataType {
+	enum class EShaderPropertyType {
 		None = 0,
 		Matrix4x4Array,
 		FloatArray,

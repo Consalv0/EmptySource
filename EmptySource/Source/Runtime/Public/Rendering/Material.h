@@ -6,7 +6,7 @@
 
 namespace EmptySource {
 
-	struct MaterialVariable {
+	struct MaterialVariable : public ShaderProperty {
 		union {
 			TArray<Matrix4x4> Matrix4x4Array;
 			TArray<float> FloatArray;
@@ -16,74 +16,97 @@ namespace EmptySource {
 			TArray<int> IntArray;
 			TexturePtr Texture;
 		};
-		NString Name;
-		EMaterialDataType VariableType;
 
-		MaterialVariable() {};
+		MaterialVariable() : ShaderProperty("", EShaderPropertyType::None) {};
 
-		MaterialVariable(const MaterialVariable& Other) 
-			: Matrix4x4Array(), FloatArray(), Float2DArray(), Float3DArray(), Float4DArray(), IntArray(), Texture(NULL) {
-			VariableType = Other.VariableType;
-			Name = Other.Name;
-			switch (Other.VariableType) {
-			case EmptySource::EMaterialDataType::Matrix4x4Array:
+		MaterialVariable(const MaterialVariable& Other)
+			: Matrix4x4Array(), FloatArray(), Float2DArray(), Float3DArray(),
+			Float4DArray(), IntArray(), Texture(NULL), ShaderProperty(Other)
+		{
+			switch (Other.Type) {
+			case EmptySource::EShaderPropertyType::Matrix4x4Array:
 				Matrix4x4Array = Other.Matrix4x4Array; break;
-			case EmptySource::EMaterialDataType::FloatArray:
+			case EmptySource::EShaderPropertyType::FloatArray:
 				FloatArray = Other.FloatArray; break;
-			case EmptySource::EMaterialDataType::Float2DArray:
+			case EmptySource::EShaderPropertyType::Float2DArray:
 				Float2DArray = Other.Float2DArray; break;
-			case EmptySource::EMaterialDataType::Float3DArray:
+			case EmptySource::EShaderPropertyType::Float3DArray:
 				Float3DArray = Other.Float3DArray; break;
-			case EmptySource::EMaterialDataType::Float4DArray:
+			case EmptySource::EShaderPropertyType::Float4DArray:
 				Float4DArray = Other.Float4DArray; break;
-			case EmptySource::EMaterialDataType::Texture2D:
-			case EmptySource::EMaterialDataType::Cubemap:
+			case EmptySource::EShaderPropertyType::Texture2D:
+			case EmptySource::EShaderPropertyType::Cubemap:
 				Texture = Other.Texture; break;
-			case EmptySource::EMaterialDataType::IntArray:
+			case EmptySource::EShaderPropertyType::IntArray:
 				IntArray = Other.IntArray; break;
-			case EmptySource::EMaterialDataType::None:
+			case EmptySource::EShaderPropertyType::None:
 			default:
 				break;
 			}
 		};
 
-		MaterialVariable(const NString& Name, const TArray<Matrix4x4> & Matrix4x4Array) 
-			: Name(Name), VariableType(EMaterialDataType::Matrix4x4Array), Matrix4x4Array(Matrix4x4Array) { }
-		MaterialVariable(const NString& Name, const TArray<float> & FloatArray) 
-			: Name(Name), VariableType(EMaterialDataType::FloatArray), FloatArray(FloatArray) { }
-		MaterialVariable(const NString& Name, const TArray<Vector2> & Float2DArray) 
-			: Name(Name), VariableType(EMaterialDataType::Float2DArray), Float2DArray(Float2DArray) { }
-		MaterialVariable(const NString& Name, const TArray<Vector3> & Float3DArray) 
-			: Name(Name), VariableType(EMaterialDataType::Float3DArray), Float3DArray(Float3DArray) { }
-		MaterialVariable(const NString& Name, const TArray<Vector4> & Float4DArray) 
-			: Name(Name), VariableType(EMaterialDataType::Float4DArray), Float4DArray(Float4DArray) { }
-		MaterialVariable(const NString& Name, const TArray<int> & IntArray) 
-			: Name(Name), VariableType(EMaterialDataType::IntArray), IntArray(IntArray) { }
+		MaterialVariable(const NString& Name, const EShaderPropertyType & Type)
+			: Matrix4x4Array(), FloatArray(), Float2DArray(), Float3DArray(),
+			Float4DArray(), IntArray(), Texture(NULL), ShaderProperty(Name, Type) 
+		{
+			switch (Type) {
+			case EmptySource::EShaderPropertyType::Matrix4x4Array:
+				Matrix4x4Array = TArray<Matrix4x4>(1); break;
+			case EmptySource::EShaderPropertyType::FloatArray:
+				FloatArray = TArray<float>(1); break;
+			case EmptySource::EShaderPropertyType::Float2DArray:
+				Float2DArray = TArray<Vector2>(1); break;
+			case EmptySource::EShaderPropertyType::Float3DArray:
+				Float3DArray = TArray<Vector3>(1); break;
+			case EmptySource::EShaderPropertyType::Float4DArray:
+				Float4DArray = TArray<Vector4>(1); break;
+			case EmptySource::EShaderPropertyType::Texture2D:
+			case EmptySource::EShaderPropertyType::Cubemap:
+				Texture = NULL; break;
+			case EmptySource::EShaderPropertyType::IntArray:
+				IntArray = TArray<int>(1); break;
+			case EmptySource::EShaderPropertyType::None:
+			default:
+				break;
+			}
+		};
+
+		MaterialVariable(const NString& Name, const TArrayInitializer<Matrix4x4> Matrix4x4Array)
+			: ShaderProperty(Name, EShaderPropertyType::Matrix4x4Array), Matrix4x4Array(Matrix4x4Array) { }
+		MaterialVariable(const NString& Name, const TArrayInitializer<float> FloatArray)
+			: ShaderProperty(Name, EShaderPropertyType::FloatArray), FloatArray(FloatArray) { }
+		MaterialVariable(const NString& Name, const TArrayInitializer<Vector2> Float2DArray)
+			: ShaderProperty(Name, EShaderPropertyType::Float2DArray), Float2DArray(Float2DArray) { }
+		MaterialVariable(const NString& Name, const TArrayInitializer<Vector3> Float3DArray)
+			: ShaderProperty(Name, EShaderPropertyType::Float3DArray), Float3DArray(Float3DArray) { }
+		MaterialVariable(const NString& Name, const TArrayInitializer<Vector4> Float4DArray)
+			: ShaderProperty(Name, EShaderPropertyType::Float4DArray), Float4DArray(Float4DArray) { }
+		MaterialVariable(const NString& Name, const TArrayInitializer<int> IntArray)
+			: ShaderProperty(Name, EShaderPropertyType::IntArray), IntArray(IntArray) { }
 		MaterialVariable(const NString& Name, TexturePtr Texture, ETextureDimension Type) 
-			: Name(Name), Texture(Texture) { 
-			VariableType = Type == ETextureDimension::Cubemap ? EMaterialDataType::Cubemap : EMaterialDataType::Texture2D;
-		}
+			: ShaderProperty(Name, Type == ETextureDimension::Cubemap ? EShaderPropertyType::Cubemap : EShaderPropertyType::Texture2D),
+			Texture(Texture) { }
 
 		MaterialVariable& operator=(const MaterialVariable & Other) {
-			VariableType = Other.VariableType;
+			Type = Other.Type;
 			Name = Other.Name;
-			switch (Other.VariableType) {
-			case EmptySource::EMaterialDataType::Matrix4x4Array:
+			switch (Other.Type) {
+			case EmptySource::EShaderPropertyType::Matrix4x4Array:
 				Matrix4x4Array = Other.Matrix4x4Array; break;
-			case EmptySource::EMaterialDataType::FloatArray:
+			case EmptySource::EShaderPropertyType::FloatArray:
 				FloatArray = Other.FloatArray; break;
-			case EmptySource::EMaterialDataType::Float2DArray:
+			case EmptySource::EShaderPropertyType::Float2DArray:
 				Float2DArray = Other.Float2DArray; break;
-			case EmptySource::EMaterialDataType::Float3DArray:
+			case EmptySource::EShaderPropertyType::Float3DArray:
 				Float3DArray = Other.Float3DArray; break;
-			case EmptySource::EMaterialDataType::Float4DArray:
+			case EmptySource::EShaderPropertyType::Float4DArray:
 				Float4DArray = Other.Float4DArray; break;
-			case EmptySource::EMaterialDataType::Texture2D:
-			case EmptySource::EMaterialDataType::Cubemap:
+			case EmptySource::EShaderPropertyType::Texture2D:
+			case EmptySource::EShaderPropertyType::Cubemap:
 				Texture = Other.Texture; break;
-			case EmptySource::EMaterialDataType::IntArray:
+			case EmptySource::EShaderPropertyType::IntArray:
 				IntArray = Other.IntArray; break;
-			case EmptySource::EMaterialDataType::None:
+			case EmptySource::EShaderPropertyType::None:
 			default:
 				break;
 			}
@@ -92,23 +115,23 @@ namespace EmptySource {
 		}
 
 		~MaterialVariable() { 
-			switch (VariableType) {
-			case EmptySource::EMaterialDataType::Matrix4x4Array:
+			switch (Type) {
+			case EmptySource::EShaderPropertyType::Matrix4x4Array:
 				Matrix4x4Array.~vector(); break;
-			case EmptySource::EMaterialDataType::FloatArray:
+			case EmptySource::EShaderPropertyType::FloatArray:
 				FloatArray.~vector(); break;
-			case EmptySource::EMaterialDataType::Float2DArray:
+			case EmptySource::EShaderPropertyType::Float2DArray:
 				Float2DArray.~vector(); break;
-			case EmptySource::EMaterialDataType::Float3DArray:
+			case EmptySource::EShaderPropertyType::Float3DArray:
 				Float3DArray.~vector(); break;
-			case EmptySource::EMaterialDataType::Float4DArray:
+			case EmptySource::EShaderPropertyType::Float4DArray:
 				Float4DArray.~vector(); break;
-			case EmptySource::EMaterialDataType::Texture2D:
-			case EmptySource::EMaterialDataType::Cubemap:
+			case EmptySource::EShaderPropertyType::Texture2D:
+			case EmptySource::EShaderPropertyType::Cubemap:
 				Texture.~shared_ptr(); break;
-			case EmptySource::EMaterialDataType::IntArray:
+			case EmptySource::EShaderPropertyType::IntArray:
 				IntArray.~vector(); break;
-			case EmptySource::EMaterialDataType::None:
+			case EmptySource::EShaderPropertyType::None:
 			default:
 				break;
 			}
@@ -121,7 +144,19 @@ namespace EmptySource {
 
 		MaterialLayout(const TArrayInitializer<MaterialVariable> MaterialVariables) : MaterialVariables(MaterialVariables) { }
 
-		inline const TArray<MaterialVariable>& GetVariables() const { return MaterialVariables; };
+		const TArray<MaterialVariable>& GetVariables() const { return MaterialVariables; };
+
+		MaterialVariable & GetVariable(const NString & Name) const { Find(Name); };
+
+		void SetVariable(const MaterialVariable& Variable);
+
+		void AddVariable(const ShaderProperty& Property);
+
+		TArray<MaterialVariable>::const_iterator Find(const NString & Name) const;
+
+		TArray<MaterialVariable>::iterator Find(const NString & Name);
+
+		void Clear() { MaterialVariables.clear(); };
 
 		TArray<MaterialVariable>::iterator begin() { return MaterialVariables.begin(); }
 		TArray<MaterialVariable>::iterator end() { return MaterialVariables.end(); }
@@ -177,9 +212,11 @@ namespace EmptySource {
 		//* Pass Cubemap array
 		void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) const;
 
-		inline const MaterialLayout& GetVariables() const { return VariableLayout; };
+		inline MaterialLayout& GetVariables() { return VariableLayout; };
 
-		void SetVariables(const MaterialLayout& NewLayout) { VariableLayout = NewLayout; };
+		void SetVariables(const MaterialLayout& NewLayout);
+
+		void SetProperties(const TArray<ShaderProperty>& NewLayout);
 
 		//* Use shader program, asign uniform and render mode
 		void Use() const;

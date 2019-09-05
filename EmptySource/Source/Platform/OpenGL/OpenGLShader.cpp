@@ -112,7 +112,7 @@ namespace EmptySource {
 	// Shader Program
 
 	OpenGLShaderProgram::OpenGLShaderProgram(const WString& Name, TArray<ShaderStagePtr> ShaderStages) 
-		: Name(Name), Locations() 
+		: Name(Name), Locations(), Properties()
 	{
 		bValid = false;
 		VertexShader = NULL;
@@ -170,13 +170,14 @@ namespace EmptySource {
 	unsigned int OpenGLShaderProgram::GetUniformLocation(const NChar * LocationName) {
 		if (!IsValid()) return 0;
 
-		auto Finds = Locations.find(LocationName);
-		if (Finds != Locations.end()) {
-			return Finds->second;
+		auto Find = Locations.find(LocationName);
+		if (Find != Locations.end()) {
+			return Find->second;
 		}
 
 		unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
-		Locations.insert_or_assign(LocationName, Location);
+		if (Location == -1) LOG_CORE_WARN("Uniform location not present in {0} : {1}", Text::WideToNarrow(Name).c_str(), LocationName);
+		Locations.emplace(LocationName, Location);
 		return Location;
 	}
 
@@ -252,7 +253,7 @@ namespace EmptySource {
 	}
 
 	void OpenGLShaderProgram::SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) {
-		if (!IsValid()) return;
+		if (!IsValid() || Tex == NULL) return;
 		unsigned int UniformLocation = GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
@@ -260,11 +261,15 @@ namespace EmptySource {
 	}
 
 	void OpenGLShaderProgram::SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) {
-		if (!IsValid()) return;
+		if (!IsValid() || Tex == NULL) return;
 		unsigned int UniformLocation = GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
 		Tex->Bind();
+	}
+
+	void OpenGLShaderProgram::SetProperties(const TArrayInitializer<ShaderProperty> Properties) {
+		this->Properties = Properties;
 	}
 
 	void OpenGLShaderProgram::AppendStage(ShaderStagePtr Shader) {
