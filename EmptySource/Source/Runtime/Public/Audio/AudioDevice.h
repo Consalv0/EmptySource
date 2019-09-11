@@ -26,6 +26,12 @@ namespace EmptySource {
 
 		size_t AddSample(AudioSamplePtr Sample, float Volume, bool Loop, bool PlayOnAdd);
 
+		inline unsigned int GetFrecuency() const { return 48000; };
+
+		inline int GetChannelCount() const { return 2; }
+
+		inline unsigned int SampleSize() { return 4 * 8; }
+
 		void RemoveSample(const size_t& Identifier);
 
 		inline TDictionary<size_t, SamplePlayInfo *>::iterator begin() { return PlayInfoList.begin(); }
@@ -35,6 +41,7 @@ namespace EmptySource {
 		float Volume;
 
 		unsigned char CurrentSample[32768];
+		unsigned long long LastAudioUpdate;
 
 	private:
 		bool bInitialized;

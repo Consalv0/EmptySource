@@ -17,6 +17,10 @@ namespace EmptySource {
 
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
 		WindowsWindow& Data = *(WindowsWindow*)UserData;
+		static unsigned int MouseButtonPressedCount[255] = { 
+			(unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, 
+			(unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1
+		};
 		
 		if (Event->type == SDL_WINDOWEVENT) {
 			if (Event->window.windowID != SDL_GetWindowID((SDL_Window*)Data.GetHandle()))
@@ -78,19 +82,21 @@ namespace EmptySource {
 		}
 
 		case SDL_MOUSEBUTTONDOWN: {
-			MouseButtonPressedEvent InEvent(Event->button.button);
+			MouseButtonPressedCount[Event->button.button]++;
+			MouseButtonPressedEvent InEvent(Event->button.button, Event->button.clicks == 2, MouseButtonPressedCount[Event->button.button]);
 			Data.InputEventCallback(InEvent);
 			break;
 		}
 
 		case SDL_MOUSEBUTTONUP: {
+			MouseButtonPressedCount[Event->button.button] = -1;
 			MouseButtonReleasedEvent InEvent(Event->button.button);
 			Data.InputEventCallback(InEvent);
 			break;
 		}
 
 		case SDL_MOUSEMOTION: {
-			MouseMovedEvent InEvent((float)Event->motion.x, (float)Event->motion.y);
+			MouseMovedEvent InEvent((float)Event->motion.x, (float)Event->motion.y, (float)Event->motion.xrel, (float)Event->motion.yrel);
 			Data.InputEventCallback(InEvent);
 			break;
 		}

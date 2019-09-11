@@ -176,7 +176,6 @@ namespace EmptySource {
 		}
 
 		unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
-		if (Location == -1) LOG_CORE_WARN("Uniform location not present in {0} : {1}", Text::WideToNarrow(Name).c_str(), LocationName);
 		Locations.emplace(LocationName, Location);
 		return Location;
 	}
@@ -268,7 +267,11 @@ namespace EmptySource {
 		Tex->Bind();
 	}
 
-	void OpenGLShaderProgram::SetProperties(const TArrayInitializer<ShaderProperty> Properties) {
+	void OpenGLShaderProgram::SetProperties(const TArrayInitializer<ShaderProperty> & Properties) {
+		this->Properties = Properties;
+	}
+
+	void OpenGLShaderProgram::SetProperties(const TArray<ShaderProperty>& Properties) {
 		this->Properties = Properties;
 	}
 

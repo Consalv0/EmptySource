@@ -50,4 +50,8 @@ namespace EmptySource {
 		NowEpochTime = Time::GetEpochTime<Time::Micro>();
 	}
 
+	Timestamp Timestamp::operator+(const Timestamp & Other) {
+		return Timestamp(Math::Max(LastEpochTime, Other.LastEpochTime), Math::Min(NowEpochTime, Other.NowEpochTime));
+	}
+
 }

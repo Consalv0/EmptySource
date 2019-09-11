@@ -86,7 +86,7 @@ vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 Normal, float Roughness,
   vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
   vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
   vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2));
-       Irradiance = sqrt(pow(Irradiance, vec3(1.0/1.45)));
+       // Irradiance = sqrt(pow(Irradiance, vec3(1.0/2.2)));
   vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3)));
 
   vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);

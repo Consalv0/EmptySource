@@ -31,12 +31,18 @@ namespace EmptySource {
 	enum class EShaderPropertyType {
 		None = 0,
 		Matrix4x4Array,
+		Matrix4x4,
 		FloatArray,
+		Float,
 		Float2DArray,
+		Float2D,
 		Float3DArray,
+		Float3D,
 		Float4DArray,
+		Float4D,
 		Texture2D,
 		Cubemap,
+		Int,
 		IntArray,
 	};
 

@@ -23,6 +23,11 @@ namespace EmptySource {
 
 		void Stop();
 
+		unsigned long long GetLastEpoch() const { return LastEpochTime; };
+		unsigned long long GetNowEpoch() const { return NowEpochTime; };
+
+		Timestamp operator+(const Timestamp& Other);
+
 	private:
 		unsigned long long LastEpochTime;
 		unsigned long long NowEpochTime;

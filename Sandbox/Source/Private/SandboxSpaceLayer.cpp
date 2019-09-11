@@ -36,10 +36,13 @@ void SandboxSpaceLayer::OnImGuiRender() {
 	ImGui::InputText("##Renderer", Text, 20);
 	ImGui::SameLine();
 	if (ImGui::Button("Create Renderer")) {
-		GGameObject * GameObject = CreateObject<GGameObject>(Text::NarrowToWide(NString(Text)), Transform(0.F, Quaternion(), 1.F));
-		GameObject->CreateComponent<CRenderable>();
+		if (strlen(Text) > 0) {
+			GGameObject * GameObject = CreateObject<GGameObject>(Text::NarrowToWide(NString(Text)), Transform(0.F, Quaternion(), 1.F));
+			GameObject->CreateComponent<CRenderable>();
+		}
 		Text[0] = '\0';
 	}
+	ImGui::Separator();
 
 	TArray<GGameObject *> GameObjects;
 	GetAllObjects<GGameObject>(GameObjects);

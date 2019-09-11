@@ -1,5 +1,6 @@
 
 #include "CoreMinimal.h"
+#include "Utility/TextFormatting.h"
 
 #include "Math/MathUtility.h"
 #include "Math/Vector4.h"
@@ -8,9 +9,7 @@
 
 #include "Rendering/Texture.h"
 #include "Rendering/Material.h"
-
-#include "Rendering/GLFunctions.h"
-#include "..\..\Public\Rendering\Material.h"
+#include "Rendering/Rendering.h"
 
 namespace EmptySource {
 
@@ -96,11 +95,15 @@ namespace EmptySource {
 		Program->SetTexture2D(UniformName, Text, Position);
 	}
 
-	void Material::SetVariables(const MaterialLayout & NewLayout) {
+	void Material::SetVariables(const TArray<ShaderProperty>& NewLayout) {
 		if (GetShaderProgram() == NULL) return;
 		for (auto& Layout : NewLayout) {
 			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
 				VariableLayout.SetVariable(Layout);
+			}
+			else {
+				LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
+					Text::WideToNarrow(GetShaderProgram()->GetName()).c_str(), Layout.Name.c_str());
 			}
 		}
 	}
@@ -109,92 +112,55 @@ namespace EmptySource {
 		if (GetShaderProgram() == NULL) return;
 		for (auto& Layout : NewLayout) {
 			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
-				VariableLayout.AddVariable({ Layout.Name, Layout.Type });
+				VariableLayout.AddVariable(Layout);
+			}
+			else {
+				LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
+					Text::WideToNarrow(GetShaderProgram()->GetName()).c_str(), Layout.Name.c_str());
 			}
 		}
 	}
 
 	void Material::Use() const {
-		// --- Activate Z-buffer
-		if (bUseDepthTest) {
-			glEnable(GL_DEPTH_TEST);
-		}
-		else {
-			glDisable(GL_DEPTH_TEST);
-		}
-
-		switch (DepthFunction) {
-		case DF_Always:
-			glDepthFunc(GL_ALWAYS); break;
-		case DF_Equal:
-			glDepthFunc(GL_EQUAL); break;
-		case DF_Greater:
-			glDepthFunc(GL_GREATER); break;
-		case DF_GreaterEqual:
-			glDepthFunc(GL_GEQUAL); break;
-		case DF_Less:
-			glDepthFunc(GL_LESS); break;
-		case DF_LessEqual:
-			glDepthFunc(GL_LEQUAL); break;
-		case DF_Never:
-			glDepthFunc(GL_NEVER); break;
-		case DF_NotEqual:
-			glDepthFunc(GL_NOTEQUAL); break;
-		}
-
-		if (CullMode == CM_None) {
-			glDisable(GL_CULL_FACE);
-		}
-		else {
-			glEnable(GL_CULL_FACE);
-			switch (CullMode) {
-			case CM_ClockWise:
-				glCullFace(GL_FRONT); break;
-			case CM_CounterClockWise:
-				glCullFace(GL_BACK); break;
-			case CM_None:
-				break;
-			}
-		}
-
-		switch (FillMode) {
-		case FM_Point:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); break;
-		case FM_Wireframe:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
-		case FM_Solid:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
-		}
+		
+		Rendering::SetActiveDepthTest(bUseDepthTest);
+		Rendering::SetDepthFunction(DepthFunction);
+		Rendering::SetRasterizerFillMode(FillMode);
+		Rendering::SetCullMode(CullMode);
 
 		if (MaterialShader && MaterialShader->IsValid()) {
 			MaterialShader->Bind();
 			unsigned int i = 0;
 			for (auto& Uniform : VariableLayout) {
-				switch (Uniform.Type) {
+				switch (Uniform.Value.GetType()) {
 				case EmptySource::EShaderPropertyType::Matrix4x4Array:
-					SetMatrix4x4Array(Uniform.Name.c_str(), Uniform.Matrix4x4Array[0].PointerToValue(), (int)Uniform.Matrix4x4Array.size());
-					break;
+					SetMatrix4x4Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Matrix4x4Array.size()); break;
+				case EmptySource::EShaderPropertyType::Matrix4x4:
+					SetMatrix4x4Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
 				case EmptySource::EShaderPropertyType::FloatArray:
-					SetFloat1Array(Uniform.Name.c_str(), &Uniform.FloatArray[0], (int)Uniform.FloatArray.size());
-					break;
+					SetFloat1Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.FloatArray.size()); break;
+				case EmptySource::EShaderPropertyType::Float:
+					SetFloat1Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
 				case EmptySource::EShaderPropertyType::Float2DArray:
-					SetFloat2Array(Uniform.Name.c_str(), Uniform.Float2DArray[0].PointerToValue(), (int)Uniform.Float2DArray.size());
-					break;
+					SetFloat2Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Float2DArray.size()); break;
+				case EmptySource::EShaderPropertyType::Float2D:
+					SetFloat2Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
 				case EmptySource::EShaderPropertyType::Float3DArray:
-					SetFloat3Array(Uniform.Name.c_str(), Uniform.Float3DArray[0].PointerToValue(), (int)Uniform.Float3DArray.size());
-					break;
+					SetFloat3Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Float3DArray.size()); break;
+				case EmptySource::EShaderPropertyType::Float3D:
+					SetFloat3Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
 				case EmptySource::EShaderPropertyType::Float4DArray:
-					SetFloat4Array(Uniform.Name.c_str(), Uniform.Float4DArray[0].PointerToValue(), (int)Uniform.Float4DArray.size());
-					break;
-				case EmptySource::EShaderPropertyType::Texture2D:
-					SetTexture2D(Uniform.Name.c_str(), Uniform.Texture, i); i++;
-					break;
-				case EmptySource::EShaderPropertyType::Cubemap:
-					SetTextureCubemap(Uniform.Name.c_str(), Uniform.Texture, i); i++;
-					break;
+					SetFloat3Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Float3DArray.size()); break;
+				case EmptySource::EShaderPropertyType::Float4D:
+					SetFloat4Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
 				case EmptySource::EShaderPropertyType::IntArray:
-					SetInt1Array(Uniform.Name.c_str(), &Uniform.IntArray[0], (int)Uniform.IntArray.size());
-					break;
+					SetInt1Array(Uniform.Name.c_str(), (int *)Uniform.Value.PointerToValue(), (int)Uniform.Value.IntArray.size()); break;
+				case EmptySource::EShaderPropertyType::Int:
+					SetInt1Array(Uniform.Name.c_str(), (int *)Uniform.Value.PointerToValue(), 1); break;
+				case EmptySource::EShaderPropertyType::Texture2D:
+					SetTexture2D(Uniform.Name.c_str(), Uniform.Value.Texture, i); i++; break;
+				case EmptySource::EShaderPropertyType::Cubemap:
+					SetTextureCubemap(Uniform.Name.c_str(), Uniform.Value.Texture, i); i++; break;
 				case EmptySource::EShaderPropertyType::None:
 				default:
 					break;
@@ -203,26 +169,26 @@ namespace EmptySource {
 		}
 	}
 
-	void MaterialLayout::SetVariable(const MaterialVariable & Variable) {
+	void MaterialLayout::SetVariable(const ShaderProperty & Variable) {
 		auto Iterator = Find(Variable.Name);
 		if (Iterator == end())
 			MaterialVariables.push_back(Variable);
 		else
-			(*Iterator) = Variable;
+			(*Iterator) = Variable.Value;
 	}
 
 	void MaterialLayout::AddVariable(const ShaderProperty & Property) {
 		auto Iterator = Find(Property.Name);
 		if (Iterator == end())
-			MaterialVariables.push_back( MaterialVariable(Property.Name, Property.Type) );
+			MaterialVariables.push_back(Property);
 	}
 
-	TArray<MaterialVariable>::const_iterator MaterialLayout::Find(const NString & Name) const {
-		return std::find_if(begin(), end(), [&Name](const MaterialVariable& Var) { return Var.Name == Name; });
+	TArray<ShaderProperty>::const_iterator MaterialLayout::Find(const NString & Name) const {
+		return std::find_if(begin(), end(), [&Name](const ShaderProperty& Var) { return Var.Name == Name; });
 	}
 
-	TArray<MaterialVariable>::iterator MaterialLayout::Find(const NString & Name) {
-		return std::find_if(begin(), end(), [&Name](const MaterialVariable& Var) { return Var.Name == Name; });
+	TArray<ShaderProperty>::iterator MaterialLayout::Find(const NString & Name) {
+		return std::find_if(begin(), end(), [&Name](const ShaderProperty& Var) { return Var.Name == Name; });
 	}
 
 }

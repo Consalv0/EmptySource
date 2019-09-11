@@ -32,6 +32,22 @@ namespace EmptySource {
 			RendererAppInterface->SetAlphaBlending(Source, Destination);
 		}
 
+		inline static void SetActiveDepthTest(bool Option) {
+			RendererAppInterface->SetActiveDepthTest(Option);
+		}
+
+		inline static void SetDepthFunction(EDepthFunction Function) {
+			RendererAppInterface->SetDepthFunction(Function);
+		}
+
+		inline static void SetCullMode(ECullMode Mode) {
+			RendererAppInterface->SetCullMode(Mode);
+		}
+
+		inline static void SetRasterizerFillMode(ERasterizerFillMode Mode) {
+			RendererAppInterface->SetRasterizerFillMode(Mode);
+		}
+
 	private:
 
 		static RenderingAPI * RendererAppInterface;

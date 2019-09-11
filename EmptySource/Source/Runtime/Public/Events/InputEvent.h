@@ -103,17 +103,21 @@ namespace EmptySource {
 
 	class MouseMovedEvent : public MouseEvent {
 	public:
-		MouseMovedEvent(float x, float y)
-			: MouseX(x), MouseY(y) {}
+		MouseMovedEvent(float x, float y, float xRelative, float yRelative)
+			: MouseX(x), MouseY(y), MouseXRelative(xRelative), MouseYRelative(yRelative) {}
 
 		inline float GetX() const { return MouseX; }
 		inline float GetY() const { return MouseY; }
+		inline float GetXRelative() const { return MouseXRelative; }
+		inline float GetYRelative() const { return MouseYRelative; }
 		inline Point2 GetMousePosition() const { return { MouseX, MouseY }; }
+		inline Point2 GetMouseRelativeMotion() const { return { MouseXRelative, MouseYRelative }; }
 
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseMoved)
 
 	private:
 		float MouseX, MouseY;
+		float MouseXRelative, MouseYRelative;
 	};
 
 	class MouseScrolledEvent : public MouseEvent {
@@ -136,17 +140,23 @@ namespace EmptySource {
 	public:
 		inline int GetMouseButton() const { return EventButton; }
 
+		inline int IsDoubleClick() const { return bDoubleClick; }
+
+		inline int GetRepeatCount() const { return RepeatCount; }
+
 	protected:
-		MouseButtonEvent(int Button)
-			: EventButton(Button) {}
+		MouseButtonEvent(int Button, bool DoubleClick, int RepeatCount)
+			: EventButton(Button), bDoubleClick(DoubleClick), RepeatCount(RepeatCount) {}
 
 		int EventButton;
+		bool bDoubleClick;
+		int RepeatCount;
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent {
 	public:
-		MouseButtonPressedEvent(int Button)
-			: MouseButtonEvent(Button) {}
+		MouseButtonPressedEvent(int Button, bool DoubleClick, int RepeatCount)
+			: MouseButtonEvent(Button, DoubleClick, RepeatCount) {}
 
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonPressed)
 	};
@@ -154,7 +164,7 @@ namespace EmptySource {
 	class MouseButtonReleasedEvent : public MouseButtonEvent {
 	public:
 		MouseButtonReleasedEvent(int Button)
-			: MouseButtonEvent(Button) {}
+			: MouseButtonEvent(Button, false, 0) {}
 		
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonReleased)
 	};

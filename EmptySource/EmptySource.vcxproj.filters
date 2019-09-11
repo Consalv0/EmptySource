@@ -312,9 +312,6 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\GLFunctions.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>

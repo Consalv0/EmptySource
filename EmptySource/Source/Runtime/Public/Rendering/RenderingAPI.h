@@ -18,6 +18,14 @@ namespace EmptySource {
 
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) = 0;
 
+		virtual void SetActiveDepthTest(bool Option) = 0;
+
+		virtual void SetDepthFunction(EDepthFunction Function) = 0;
+
+		virtual void SetCullMode(ECullMode Mode) = 0;
+
+		virtual void SetRasterizerFillMode(ERasterizerFillMode Mode) = 0;
+
 		inline static API GetAPI() {
 			return AppInterface;
 		};

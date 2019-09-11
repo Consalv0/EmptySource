@@ -4,6 +4,56 @@
 
 #include <yaml-cpp/yaml.h>
 
+namespace YAML {
+	template<>
+	struct convert<EmptySource::EShaderPropertyType> {
+		static Node encode(const EmptySource::EShaderPropertyType& rhs) {
+			Node node;
+			switch (rhs) {
+				case EmptySource::EShaderPropertyType::None:           node.push_back("None");           break;
+				case EmptySource::EShaderPropertyType::Matrix4x4Array: node.push_back("Matrix4x4Array"); break;
+				case EmptySource::EShaderPropertyType::Matrix4x4:      node.push_back("Matrix4x4");      break;
+				case EmptySource::EShaderPropertyType::FloatArray:     node.push_back("FloatArray");     break;
+				case EmptySource::EShaderPropertyType::Float:          node.push_back("Float");          break;
+				case EmptySource::EShaderPropertyType::Float2DArray:   node.push_back("Float2DArray");   break;
+				case EmptySource::EShaderPropertyType::Float2D:        node.push_back("Float2D");        break;
+				case EmptySource::EShaderPropertyType::Float3DArray:   node.push_back("Float3DArray");   break;
+				case EmptySource::EShaderPropertyType::Float3D:        node.push_back("Float3D");        break;
+				case EmptySource::EShaderPropertyType::Float4DArray:   node.push_back("Float4DArray");   break;
+				case EmptySource::EShaderPropertyType::Float4D:        node.push_back("Float4D");        break;
+				case EmptySource::EShaderPropertyType::Texture2D:      node.push_back("Texture2D");      break;
+				case EmptySource::EShaderPropertyType::Cubemap:        node.push_back("Cubemap");        break;
+				case EmptySource::EShaderPropertyType::Int:            node.push_back("Int");            break;
+				case EmptySource::EShaderPropertyType::IntArray:       node.push_back("IntArray");       break;
+			}
+			return node;
+		}
+
+		static bool decode(const Node& node, EmptySource::EShaderPropertyType& rhs) {
+			if (!node.IsSequence()) {
+				return false;
+			}
+			EmptySource::NString TypeName = node.as<EmptySource::NString>();
+			if (TypeName == "None")           rhs = EmptySource::EShaderPropertyType::None;           return true;
+			if (TypeName == "Matrix4x4Array") rhs = EmptySource::EShaderPropertyType::Matrix4x4Array; return true;
+			if (TypeName == "Matrix4x4")      rhs = EmptySource::EShaderPropertyType::Matrix4x4;      return true;
+			if (TypeName == "FloatArray")     rhs = EmptySource::EShaderPropertyType::FloatArray;     return true;
+			if (TypeName == "Float")          rhs = EmptySource::EShaderPropertyType::Float;          return true;
+			if (TypeName == "Float2DArray")   rhs = EmptySource::EShaderPropertyType::Float2DArray;   return true;
+			if (TypeName == "Float2D")        rhs = EmptySource::EShaderPropertyType::Float2D;        return true;
+			if (TypeName == "Float3DArray")   rhs = EmptySource::EShaderPropertyType::Float3DArray;   return true;
+			if (TypeName == "Float3D")        rhs = EmptySource::EShaderPropertyType::Float3D;        return true;
+			if (TypeName == "Float4DArray")   rhs = EmptySource::EShaderPropertyType::Float4DArray;   return true;
+			if (TypeName == "Float4D")        rhs = EmptySource::EShaderPropertyType::Float4D;        return true;
+			if (TypeName == "Texture2D")      rhs = EmptySource::EShaderPropertyType::Texture2D;      return true;
+			if (TypeName == "Cubemap")        rhs = EmptySource::EShaderPropertyType::Cubemap;        return true;
+			if (TypeName == "Int")            rhs = EmptySource::EShaderPropertyType::Int;            return true;
+			if (TypeName == "IntArray")       rhs = EmptySource::EShaderPropertyType::IntArray;       return true;
+			return true;
+		}
+	};
+}
+
 namespace EmptySource {
 
 	ShaderPtr ShaderManager::GetProgram(const WString & Name) const {
@@ -60,6 +110,15 @@ namespace EmptySource {
 		TArray<WString> Names;
 		for (auto KeyValue : ShaderNameList)
 			Names.push_back(KeyValue.second);
+		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
+			unsigned int i = 0;
+			while ((i < first.length()) && (i < second.length())) {
+				if (tolower(first[i]) < tolower(second[i])) return true;
+				else if (tolower(first[i]) > tolower(second[i])) return false;
+				++i;
+			}
+			return (first.length() < second.length());
+		});
 		return Names;
 	}
 
@@ -120,7 +179,34 @@ namespace EmptySource {
 					if (ShaderProgramNode["GeometryShader"].IsDefined())
 						Stages.push_back(GetStage(ShaderProgramNode["GeometryShader"].as<size_t>()));
 
-					AddShaderProgram(ShaderProgram::Create(Name, Stages));
+					YAML::Node PropertiesNode = ShaderProgramNode["Properties"];
+					TArray<ShaderProperty> Properties;
+					for (auto & Uniform : PropertiesNode) {
+						NString UniformName = Uniform["Uniform"].as<NString>();
+						NString TypeName    = Uniform["Type"].as<NString>();
+						if      (TypeName == "None")           Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(), false);
+						else if (TypeName == "Matrix4x4Array") Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Matrix4x4>()), false);
+						else if (TypeName == "Matrix4x4")      Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Matrix4x4()), false);
+						else if (TypeName == "FloatArray")     Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<float>()), false);
+						else if (TypeName == "Float")          Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Uniform["DefaultValue"].as<float>()), false);
+						else if (TypeName == "Float2DArray")   Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector2>()), false);
+						else if (TypeName == "Float2D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector2()), false);
+						else if (TypeName == "Float3DArray")   Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector3>()), false);
+						else if (TypeName == "Float3D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector3(
+							Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>())
+						), Uniform["IsColor"].as<bool>());
+						else if (TypeName == "Float4DArray")   Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector4>()), false);
+						else if (TypeName == "Float4D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector4()), false);
+						else if (TypeName == "Texture2D")      Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Texture2D, NULL), false);
+						else if (TypeName == "Cubemap")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Cubemap, NULL), false);
+						else if (TypeName == "IntArray")       Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<int>()), false);
+						else if (TypeName == "Int")            Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(0), false);
+					}
+
+					ShaderPtr CreatedShader = ShaderProgram::Create(Name, Stages);
+					CreatedShader->SetProperties(Properties);
+					AddShaderProgram(CreatedShader);
+
 				}
 			}
 		}

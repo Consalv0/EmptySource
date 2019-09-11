@@ -38,6 +38,7 @@ namespace EmptySource {
 			}
 
 			memcpy(Device.CurrentSample, Stream, Length);
+			Device.LastAudioUpdate = Time::GetEpochTime<Time::Micro>();
 		};
 
 		SampleSpecs.userdata = this;

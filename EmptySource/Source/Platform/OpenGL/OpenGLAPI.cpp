@@ -117,4 +117,57 @@ namespace EmptySource {
 		}
 	}
 
+	void OpenGLAPI::SetActiveDepthTest(bool Option) {
+		if (Option) glEnable(GL_DEPTH_TEST);
+		else        glDisable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLAPI::SetDepthFunction(EDepthFunction Function) {
+		switch (Function) {
+		case DF_Always:
+			glDepthFunc(GL_ALWAYS); break;
+		case DF_Equal:
+			glDepthFunc(GL_EQUAL); break;
+		case DF_Greater:
+			glDepthFunc(GL_GREATER); break;
+		case DF_GreaterEqual:
+			glDepthFunc(GL_GEQUAL); break;
+		case DF_Less:
+			glDepthFunc(GL_LESS); break;
+		case DF_LessEqual:
+			glDepthFunc(GL_LEQUAL); break;
+		case DF_Never:
+			glDepthFunc(GL_NEVER); break;
+		case DF_NotEqual:
+			glDepthFunc(GL_NOTEQUAL); break;
+		}
+	}
+
+	void OpenGLAPI::SetCullMode(ECullMode Mode) {
+		if (Mode == CM_None)
+			glDisable(GL_CULL_FACE);
+		else {
+			glEnable(GL_CULL_FACE);
+			switch (Mode) {
+			case CM_ClockWise:
+				glCullFace(GL_FRONT); break;
+			case CM_CounterClockWise:
+				glCullFace(GL_BACK); break;
+			case CM_None:
+				break;
+			}
+		}
+	}
+
+	void OpenGLAPI::SetRasterizerFillMode(ERasterizerFillMode Mode) {
+		switch (Mode) {
+		case FM_Point:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); break;
+		case FM_Wireframe:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
+		case FM_Solid:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+		}
+	}
+
 }

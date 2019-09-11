@@ -18,18 +18,18 @@ namespace EmptySource {
 
 		float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
 		Mat->SetVariables({
-			{ "_ViewPosition", TArrayInitializer<Vector3>({ EyeTransform.Position }) },
-			{ "_ProjectionMatrix", { ViewProjection } },
-			{ "_ViewMatrix", { EyeTransform.GetGLViewMatrix() } },
-			{ "_Lights[0].Position", TArrayInitializer<Vector3>({  Vector3(2, 1) }) },
-			{ "_Lights[0].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
-			{ "_Lights[0].Intencity", TArrayInitializer<float>({ 20 }) },
-			{ "_Lights[1].Position", TArrayInitializer<Vector3>({  Vector3(-2, 1) }) },
-			{ "_Lights[1].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
-			{ "_Lights[1].Intencity", TArrayInitializer<float>({ 20 }) },
-			{ "_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), ETextureDimension::Texture2D },
-			{ "_EnviromentMap", TextureManager::GetInstance().GetTexture(L"CubemapTexture"), ETextureDimension::Cubemap },
-			{ "_EnviromentMapLods", TArrayInitializer<float>({ CubemapTextureMipmaps }) }
+			{ "_ViewPosition",        { EyeTransform.Position }, SPFlags_IsInternal },
+			{ "_ProjectionMatrix",    { ViewProjection }, SPFlags_IsInternal },
+			{ "_ViewMatrix",          { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
+			{ "_Lights[0].Position",  { Vector3(2, 1) }, SPFlags_IsInternal },
+			{ "_Lights[0].Color",     { Vector3(1.F, 1.F, .9F) }, SPFlags_IsInternal | SPFlags_IsColor },
+			{ "_Lights[0].Intencity", { float(20) }, SPFlags_IsInternal },
+			{ "_Lights[1].Position",  { Vector3(-2, 1) }, SPFlags_IsInternal },
+			{ "_Lights[1].Color",     { Vector3(1.F, 1.F, .9F) }, SPFlags_IsInternal | SPFlags_IsColor },
+			{ "_Lights[1].Intencity", { float( 20 ) }, SPFlags_IsInternal },
+			{ "_BRDFLUT",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BRDFLut") }, SPFlags_IsInternal },
+			{ "_EnviromentMap",       { ETextureDimension::Cubemap, TextureManager::GetInstance().GetTexture(L"CubemapTexture") }, SPFlags_IsInternal },
+			{ "_EnviromentMapLods",   { CubemapTextureMipmaps }, SPFlags_IsInternal }
 		});
 		Mat->Use();
 		Mat->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix.PointerToValue(), GetMatrixBuffer());

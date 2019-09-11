@@ -75,8 +75,10 @@ namespace EmptySource {
 		//* Get the chader properties
 		virtual const TArray<ShaderProperty> & GetProperties() const override { return Properties; }
 
-		//* Get the chader properties
-		virtual void SetProperties(const TArrayInitializer<ShaderProperty> Properties) override;
+		//* Set the shader properties
+		virtual void SetProperties(const TArrayInitializer<ShaderProperty> & Properties) override;
+		//* Set the shader properties
+		virtual void SetProperties(const TArray<ShaderProperty> & Properties) override;
 
 		//* Get the shader object
 		virtual void * GetShaderObject() const override { return (void *)(unsigned long long)ProgramObject; }

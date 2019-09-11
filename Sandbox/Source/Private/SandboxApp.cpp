@@ -81,7 +81,9 @@ private:
 	float ViewSpeed = 3;
 	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix; 
-	Quaternion FrameRotation; 
+	Quaternion CameraRotation; 
+	Quaternion LastCameraRotation;
+	Vector2 LastCursorPosition;
 	Vector2 CursorPosition;
 
 	Material UnlitMaterial = Material(L"UnlitMaterial");
@@ -91,7 +93,6 @@ private:
 	MaterialPtr RenderCubemapMaterial = std::make_shared<Material>(L"RenderCubemapMaterial");
 	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
 	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
-	MaterialPtr BaseMaterial = std::make_shared<Material>(L"BaseMaterial");
 
 	float SkyboxRoughness = 1.F;
 	float MaterialMetalness = 1.F;
@@ -282,9 +283,16 @@ protected:
 				ImGui::Text("Selected Mesh: %s", NarrowMeshResourcesList[Selection].c_str());
 				MeshPtr SelectedMesh = MeshManager::GetInstance().GetMesh(MeshResourcesList[Selection]);
 				if (SelectedMesh) {
-					SelectedMeshName = SelectedMesh->GetMeshData().Name;
+					ImGui::Text("Triangle count: %d", SelectedMesh->GetMeshData().Faces.size());
+					ImGui::Text("Vertices count: %d", SelectedMesh->GetMeshData().Vertices.size());
+					ImGui::Text("Tangents: %s", SelectedMesh->GetMeshData().hasTangents ? "true" : "false");
+					ImGui::Text("Normals: %s", SelectedMesh->GetMeshData().hasNormals ? "true" : "false");
+					ImGui::Text("Vertex Color: %s", SelectedMesh->GetMeshData().hasVertexColor ? "true" : "false");
+					ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh->GetMeshData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
+					ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh->GetMeshData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
+					ImGui::TextUnformatted("Materials:");
 					for (auto KeyValue : SelectedMesh->GetMeshData().Materials) {
-						ImGui::Text(" - Materials: %s : %d", KeyValue.second.c_str(), KeyValue.first);
+						ImGui::BulletText("%s : %d", KeyValue.second.c_str(), KeyValue.first);
 					}
 				}
 			}
@@ -297,8 +305,11 @@ protected:
 			ImGui::InputText("##MaterialName", Text, 100);
 			ImGui::SameLine();
 			if (ImGui::Button("Create New Material")) {
-				MaterialPtr NewMaterial = std::make_shared<Material>(Text::NarrowToWide(NString(Text)));
-				MaterialManager::GetInstance().AddMaterial(NewMaterial->GetName(), NewMaterial);
+				if (strlen(Text) > 0) {
+					MaterialPtr NewMaterial = std::make_shared<Material>(Text::NarrowToWide(NString(Text)));
+					MaterialManager::GetInstance().AddMaterial(NewMaterial->GetName(), NewMaterial);
+				}
+				Text[0] = '\0';
 			}
 
 			TArray<WString> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
@@ -368,77 +379,130 @@ protected:
 
 					for (auto & KeyValue : SelectedMaterial->GetVariables()) {
 						int i = 0;
-						switch (KeyValue.Type) {
+						if (KeyValue.bInternal) continue;
+						switch (KeyValue.Value.GetType()) {
 						case EShaderPropertyType::Matrix4x4Array:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
-							for (auto& Value : KeyValue.Matrix4x4Array) {
+							for (auto& Value : KeyValue.Value.Matrix4x4Array) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix0", (float *)&Value[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
-									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix1", (float *)&Value[1], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
-									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix2", (float *)&Value[2], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
-									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Matrix3", (float *)&Value[3], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##MatA", (float *)&Value[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##MatA", (float *)&Value[1], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##MatA", (float *)&Value[2], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##MatA", (float *)&Value[3], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
 									ImGui::TreePop();
 								}
+							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Matrix4x4:
+							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
+							if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
+								ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Mat0", (float *)&KeyValue.Value.Mat4x4[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+								ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Mat1", (float *)&KeyValue.Value.Mat4x4[1], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+								ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Mat2", (float *)&KeyValue.Value.Mat4x4[2], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+								ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Mat3", (float *)&KeyValue.Value.Mat4x4[3], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
+								ImGui::TreePop();
 							}
 							ImGui::NextColumn();
 							break;
 						case EShaderPropertyType::FloatArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							for (auto& Value : KeyValue.FloatArray) {
+							for (auto& Value : KeyValue.Value.FloatArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragFloat("##Float", &Value, .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat("##FloatA", &Value, .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
 									ImGui::TreePop();
 								}
 							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Float:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							ImGui::PushItemWidth(-1); ImGui::DragFloat(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float, .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
 						case EShaderPropertyType::Float2DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							for (auto& Value : KeyValue.Float2DArray) {
+							for (auto& Value : KeyValue.Value.Float2DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Float2D", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Float2DA", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 									ImGui::TreePop();
 								}
 							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Float2D:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							ImGui::PushItemWidth(-1); ImGui::DragFloat2(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float2D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
 						case EShaderPropertyType::Float3DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							for (auto& Value : KeyValue.Float3DArray) {
+							for (auto& Value : KeyValue.Value.Float3DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Float3D", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1);
+									if (KeyValue.bColor)
+										ImGui::ColorEdit3("##Float3DAC", &Value[0], ImGuiColorEditFlags_Float);
+									else
+										ImGui::DragFloat3("##Float3DA", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 									ImGui::TreePop();
 								}
 							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Float3D:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							ImGui::PushItemWidth(-1);
+							if (KeyValue.bColor)
+								ImGui::ColorEdit3(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float3D[0], ImGuiColorEditFlags_Float);
+							else
+								ImGui::DragFloat3(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float3D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
 						case EShaderPropertyType::Float4DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							for (auto& Value : KeyValue.Float4DArray) {
+							for (auto& Value : KeyValue.Value.Float4DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Float4D", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1);
+									if (KeyValue.bColor)
+										ImGui::ColorEdit4("##Float4DAC", &Value[0], ImGuiColorEditFlags_Float);
+									else
+										ImGui::DragFloat4("##Float4DA", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 									ImGui::TreePop();
 								}
 							}
 							ImGui::NextColumn();
 							break;
+						case EShaderPropertyType::Float4D:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							ImGui::PushItemWidth(-1);
+							if (KeyValue.bColor)
+								ImGui::ColorEdit4(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float4D[0], ImGuiColorEditFlags_Float);
+							else
+								ImGui::DragFloat4(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float4D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
+							ImGui::NextColumn();
+							break;
 						case EShaderPropertyType::IntArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							for (auto& Value : KeyValue.IntArray) {
+							for (auto& Value : KeyValue.Value.IntArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragInt("##IntArray", &Value, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragInt("##IntA", &Value, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
 									ImGui::TreePop();
 								}
 							}
+							ImGui::NextColumn();
+							break;
+						case EShaderPropertyType::Int:
+							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
+							ImGui::PushItemWidth(-1); ImGui::DragInt(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Int, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
 						case EShaderPropertyType::Cubemap:
 						case EShaderPropertyType::Texture2D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							i = KeyValue.Texture ? 0 : -1;
+							i = KeyValue.Value.Texture ? 0 : -1;
 							if (i == 0) {
 								for (int j = 0; j < NarrowTextureNameList.size(); j++) {
-									if (KeyValue.Texture->GetName() == TextureNameList[j]) {
+									if (KeyValue.Value.Texture->GetName() == TextureNameList[j]) {
 										i = j; break;
 									}
 								}
@@ -450,13 +514,13 @@ protected:
 								return true;
 							}, &NarrowTextureNameList, (int)NarrowTextureNameList.size())) {
 								if (i >= 0 && i < TextureNameList.size())
-									KeyValue.Texture = TextureManager::GetInstance().GetTexture(TextureNameList[i]);
+									KeyValue.Value.Texture = TextureManager::GetInstance().GetTexture(TextureNameList[i]);
 							}
 							ImGui::NextColumn();
 							break;
 						case EShaderPropertyType::None:
 						default:
-							ImGui::AlignTextToFramePadding(); ImGui::Text("%s[%d]", KeyValue.Name.c_str(), (int)KeyValue.Type); ImGui::NextColumn();
+							ImGui::AlignTextToFramePadding(); ImGui::Text("%s[%d]", KeyValue.Name.c_str(), (int)KeyValue.Value.GetType()); ImGui::NextColumn();
 							ImGui::NextColumn();
 							break;
 						}
@@ -478,11 +542,11 @@ protected:
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Rotation"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Eye Rotation", &FrameRotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
-			Vector3 EulerFrameRotation = FrameRotation.ToEulerAngles();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Eye Rotation", &CameraRotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
+			Vector3 EulerFrameRotation = CameraRotation.ToEulerAngles();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Euler Rotation"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
-				FrameRotation = Quaternion::EulerAngles(EulerFrameRotation);
+				CameraRotation = Quaternion::EulerAngles(EulerFrameRotation);
 			} ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
@@ -503,18 +567,25 @@ protected:
 		{
 			{
 				static TArray<float> AudioChannel1(1);
+				static TArray<float> AudioChannel2(1);
 				{
 					AudioChannel1.resize(32768 / (2 * 4) / 2);
+					AudioChannel2.resize(32768 / (2 * 4) / 2);
+					auto& Device = Application::GetInstance()->GetAudioDevice();
+					auto Duration = (Time::Micro::ReturnType)(((32768 * 8u / (Device.SampleSize() * Device.GetChannelCount())) / (float)Device.GetFrecuency()) * Time::Second::GetSizeInMicro());
+					unsigned long long Delta = Time::GetEpochTime<Time::Micro>() - Device.LastAudioUpdate;
 					float * BufferPtr = (float *)&(Application::GetInstance()->GetAudioDevice().CurrentSample[0]);
 					for (unsigned int i = 0; i < 32768 / (2 * 4) / 2; ++i) {
 						for (unsigned int j = i * (2 * 4); j < (i + 1) * (2 * 4) && j < 32768; j += (2 * 4)) {
 							AudioChannel1[i] = *BufferPtr;
-							BufferPtr += 2;
+							AudioChannel2[i] = *BufferPtr++;
+							BufferPtr++;
 						}
 					}
 				}
 
-				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 250));
+				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 125));
+				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel2[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 125));
 			}
 			for (auto KeyValue : Application::GetInstance()->GetAudioDevice()) {
 				AudioDevice::SamplePlayInfo * Info = KeyValue.second;
@@ -653,14 +724,10 @@ protected:
 
 		Application::GetInstance()->GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
 
-		// Space * OtherNewSpace = Space::CreateSpace(L"MainSpace");
-		// GGameObject * GameObject = Space::GetMainSpace()->CreateObject<GGameObject>(L"SkyBox", Transform(0, Quaternion(), 500));
-		// CComponent * Component = GameObject->CreateComponent<CRenderable>();
-
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
-		AudioManager::GetInstance().LoadAudioFromFile(L"YellowFlickerBeat.wav", L"Resources/Sounds/YellowFlickerBeat.wav");
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, true, true);
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"YellowFlickerBeat.wav"), 0.255F, true, true);
+		AudioManager::GetInstance().LoadAudioFromFile(L"Hololooo.wav", L"Resources/Sounds/Hololooo.wav");
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, false, true);
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Hololooo.wav"), 0.255F, false, true);
 
 		TextureManager& TextureMng = TextureManager::GetInstance();
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnAAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
@@ -670,8 +737,8 @@ protected:
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnBRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnBNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_normal.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnCAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnCNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnCRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/BricksAAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Albedo.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/BricksARoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/BricksANormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Normal.tga");
@@ -693,6 +760,12 @@ protected:
 		TextureMng.LoadImageFromFile(L"Sponza/VaseAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_diffuse.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VaseRoughnessTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VaseNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseHangAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseHangRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseHangNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_normal.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VasePlantAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_diffuse.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VasePlantRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VasePlantNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_normal.tga");
@@ -721,13 +794,17 @@ protected:
 		TextureMng.LoadImageFromFile(L"FlamerGunMetallicTexture",         CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg");
 		TextureMng.LoadImageFromFile(L"FlamerGunRoughnessTexture",        CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg");
 		TextureMng.LoadImageFromFile(L"FlamerGunNormalTexture",           CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarAlbedoTexture",           CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_d_orange.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarMetallicTexture",         CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_g.jpg");
-		TextureMng.LoadImageFromFile(L"PonyCarRoughnessTexture",        CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_s.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarNormalTexture",           CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_n.jpg");
-		TextureMng.LoadImageFromFile(L"WhiteTexture",                     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
-		TextureMng.LoadImageFromFile(L"BlackTexture",                     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
-		TextureMng.LoadImageFromFile(L"NormalTexture",                    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Normal.jpg");
+		TextureMng.LoadImageFromFile(L"PonyCarExteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_d_orange.jpeg");
+		TextureMng.LoadImageFromFile(L"PonyCarExteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_s.jpeg");
+		TextureMng.LoadImageFromFile(L"PonyCarExteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_g.jpg");
+		TextureMng.LoadImageFromFile(L"PonyCarExteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_n.jpg");
+		TextureMng.LoadImageFromFile(L"PonyCarInteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_d_black.jpeg");
+		TextureMng.LoadImageFromFile(L"PonyCarInteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_s.jpeg");
+		TextureMng.LoadImageFromFile(L"PonyCarInteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_g.jpg");
+		TextureMng.LoadImageFromFile(L"PonyCarInteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_n.jpg");
+		TextureMng.LoadImageFromFile(L"WhiteTexture",                     CF_RGB,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
+		TextureMng.LoadImageFromFile(L"BlackTexture",                     CF_RGB,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
+		TextureMng.LoadImageFromFile(L"NormalTexture",                    CF_RGBA, FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Normal.jpg");
 
 
 		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
@@ -757,35 +834,11 @@ protected:
 		ShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
 		ShaderPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
 		ShaderPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
-		BRDFShader->SetProperties({
-			{ "_ViewPosition",        EShaderPropertyType::Float3DArray },
-			{ "_ProjectionMatrix",    EShaderPropertyType::Matrix4x4Array },
-			{ "_ViewMatrix",          EShaderPropertyType::Matrix4x4Array },
-			{ "_Lights[0].Position",  EShaderPropertyType::Float3DArray },
-			{ "_Lights[0].Color",     EShaderPropertyType::Float3DArray },
-			{ "_Lights[0].Intencity", EShaderPropertyType::FloatArray },
-			{ "_Lights[1].Position",  EShaderPropertyType::Float3DArray },
-			{ "_Lights[1].Color",     EShaderPropertyType::Float3DArray },
-			{ "_Lights[1].Intencity", EShaderPropertyType::FloatArray },
-			{ "_Material.Metalness",  EShaderPropertyType::FloatArray },
-			{ "_Material.Roughness",  EShaderPropertyType::FloatArray },
-			{ "_Material.Color",      EShaderPropertyType::Float3DArray },
-			{ "_MainTexture",         EShaderPropertyType::Texture2D },
-			{ "_NormalTexture",       EShaderPropertyType::Texture2D },
-			{ "_RoughnessTexture",    EShaderPropertyType::Texture2D },
-			{ "_MetallicTexture",     EShaderPropertyType::Texture2D },
-			{ "_BRDFLUT",             EShaderPropertyType::Texture2D },
-			{ "_EnviromentMap",       EShaderPropertyType::Cubemap },
-			{ "_EnviromentMapLods",   EShaderPropertyType::FloatArray }
-		});
 		ShaderPtr UnlitShader         = ShaderMng.GetProgram(L"UnLitShader");
 		ShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
 		ShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
 		ShaderPtr RenderTextShader    = ShaderMng.GetProgram(L"RenderTextShader");
 		ShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
-
-		BaseMaterial->SetShaderProgram(BRDFShader);
-		MaterialManager::GetInstance().AddMaterial(BaseMaterial->GetName(), BaseMaterial);
 
 		// Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->CurrentMaterial = &BaseMaterial;
 
@@ -862,9 +915,12 @@ protected:
 	virtual void OnInputEvent(InputEvent & InEvent) override {
 		EventDispatcher<InputEvent> Dispatcher(InEvent);
 		Dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent & Event) {
-			if (Input::IsMouseButtonDown(3)) {
-				CursorPosition = Event.GetMousePosition();
-				FrameRotation = Quaternion::EulerAngles(Vector3(Event.GetY(), -Event.GetX()));
+			CursorPosition = Event.GetMousePosition();
+		});
+		Dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent & Event) {
+			if (Event.GetMouseButton() == 3 && Event.GetRepeatCount() <= 0) {
+				LastCursorPosition = { Input::GetMouseX(), Input::GetMouseY() };
+				LastCameraRotation = CameraRotation;
 			}
 		});
 	}
@@ -879,27 +935,27 @@ protected:
 		);
 
 		if (Input::IsMouseButtonDown(3)) {
-			CursorPosition = Input::GetMousePosition();
-			FrameRotation = Quaternion::EulerAngles(Vector3(Input::GetMouseY(), -Input::GetMouseX()));
+			Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
+			CameraRotation = Quaternion::EulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.y, -Input::GetMouseX() - -LastCursorPosition.x));
 		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_W)) {
-			Vector3 Forward = FrameRotation * Vector3(0, 0, ViewSpeed);
+			Vector3 Forward = CameraRotation * Vector3(0, 0, ViewSpeed);
 			EyePosition += Forward * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_A)) {
-			Vector3 Right = FrameRotation * Vector3(ViewSpeed, 0, 0);
+			Vector3 Right = CameraRotation * Vector3(ViewSpeed, 0, 0);
 			EyePosition += Right * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_S)) {
-			Vector3 Back = FrameRotation * Vector3(0, 0, -ViewSpeed);
+			Vector3 Back = CameraRotation * Vector3(0, 0, -ViewSpeed);
 			EyePosition += Back * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_D)) {
-			Vector3 Left = FrameRotation * Vector3(-ViewSpeed, 0, 0);
+			Vector3 Left = CameraRotation * Vector3(-ViewSpeed, 0, 0);
 			EyePosition += Left * Time::GetDeltaTime<Time::Second>() *
 				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
 		}
@@ -914,7 +970,7 @@ protected:
 		CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
 		CameraRayDirection.Normalize();
 
-		ViewMatrix = Transform(EyePosition, FrameRotation).GetGLViewMatrix();
+		ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
 		// ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
 
 		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
@@ -938,17 +994,6 @@ protected:
 		}
 		if (Input::IsKeyDown(SDL_SCANCODE_K)) {
 			LightIntencity -= LightIntencity * Time::GetDeltaTime<Time::Second>();
-		}
-
-		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
-			if (Input::IsKeyDown(SDL_SCANCODE_W)) {
-				if (BaseMaterial->FillMode == FM_Solid) {
-					BaseMaterial->FillMode = FM_Wireframe;
-				}
-				else {
-					BaseMaterial->FillMode = FM_Solid;
-				}
-			}
 		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_RIGHT)) {
@@ -1021,7 +1066,7 @@ protected:
 
 		RenderStage * Stage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
 		if (Stage != NULL) { 
-			Stage->SetEyeTransform(Transform(EyePosition, FrameRotation));
+			Stage->SetEyeTransform(Transform(EyePosition, CameraRotation));
 			Stage->SetProjectionMatrix(ProjectionMatrix);
 		}
 
@@ -1100,10 +1145,10 @@ protected:
 
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
 		RenderCubemapMaterial->SetVariables({
-			{ "_ProjectionMatrix", { ProjectionMatrix } },
-			{ "_ViewMatrix", { ViewMatrix } },
-			{ "_Skybox", CubemapTexture, ETextureDimension::Cubemap },
-			{ "_Lod", TArrayInitializer<float>({ SkyRoughnessTemp }) }
+			{ "_ProjectionMatrix", { ProjectionMatrix }, SPFlags_IsInternal },
+			{ "_ViewMatrix", { ViewMatrix }, SPFlags_IsInternal },
+			{ "_Skybox", { ETextureDimension::Cubemap, CubemapTexture } },
+			{ "_Lod", { float( SkyRoughnessTemp ) } }
 		});
 		RenderCubemapMaterial->Use();
 
@@ -1116,7 +1161,7 @@ protected:
 			SphereModel->DrawElement();
 		}
 
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, FrameRotation));
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, CameraRotation));
 		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetProjectionMatrix(Matrix4x4::Perspective(
 			60.0F * MathConstants::DegreeToRad,	 // Aperute angle
 			Application::GetInstance()->GetWindow().GetAspectRatio(),		 // Aspect ratio
@@ -1127,28 +1172,6 @@ protected:
 		Application::GetInstance()->GetRenderPipeline().BeginStage(L"TestStage");
 
 		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
-		BaseMaterial->SetVariables({
-			{ "_ViewPosition", TArrayInitializer<Vector3>({ EyePosition }) },
-			{ "_ProjectionMatrix", { ProjectionMatrix } },
-			{ "_ViewMatrix", { ViewMatrix } },
-			{ "_Lights[0].Position", TArrayInitializer<Vector3>({ LightPosition0 }) },
-			{ "_Lights[0].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
-			{ "_Lights[0].Intencity", TArrayInitializer<float>({ LightIntencity }) },
-			{ "_Lights[1].Position", TArrayInitializer<Vector3>({ LightPosition1 }) },
-			{ "_Lights[1].Color", TArrayInitializer<Vector3>({ Vector3(1.F, 1.F, .9F) }) },
-			{ "_Lights[1].Intencity", TArrayInitializer<float>({ LightIntencity }) },
-			{ "_Material.Metalness", TArrayInitializer<float>({ MaterialMetalness }) },
-			{ "_Material.Roughness", TArrayInitializer<float>({ MaterialRoughness }) },
-			{ "_Material.Color", TArrayInitializer<Vector3>({ 1.F }) },
-			{ "_MainTexture", TextureManager::GetInstance().GetTexture(L"Sponza/CulumnAAlbedoTexture"), ETextureDimension::Texture2D },
-			{ "_NormalTexture", TextureManager::GetInstance().GetTexture(L"Sponza/CulumnANormalTexture"), ETextureDimension::Texture2D },
-			{ "_RoughnessTexture", TextureManager::GetInstance().GetTexture(L"Sponza/CulumnASpecularTexture"), ETextureDimension::Texture2D },
-			{ "_MetallicTexture", TextureManager::GetInstance().GetTexture(L"BlackTexture"), ETextureDimension::Texture2D },
-			{ "_BRDFLUT", TextureManager::GetInstance().GetTexture(L"BRDFLut"), ETextureDimension::Texture2D },
-			{ "_EnviromentMap", CubemapTexture, ETextureDimension::Cubemap },
-			{ "_EnviromentMapLods", TArrayInitializer<float>({ CubemapTextureMipmaps }) }
-		});
-		// BaseMaterial->Use();
 
 		// size_t TotalHitCount = 0;
 		// Ray CameraRay(EyePosition, CameraRayDirection);
@@ -1332,7 +1355,7 @@ protected:
 		);
 
 		RenderingText[0] = Text::Formatted(
-			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), Vertices(%ls), Cursor(%ls), Camera(P%ls, R%ls)",
+			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), Vertices(%ls), DeltaCursor(%ls), Camera(P%ls, R%ls)",
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
 			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
@@ -1340,9 +1363,9 @@ protected:
 			Time::GetDeltaTime<Time::Mili>(),
 			LightIntencity / 10000.F + 1.F,
 			Text::FormatUnit(VerticesCount, 2).c_str(),
-			Text::FormatMath(CursorPosition).c_str(),
+			Text::FormatMath(Vector3(LastCursorPosition.y - Input::GetMouseY(), -LastCursorPosition.x - -Input::GetMouseX())).c_str(),
 			Text::FormatMath(EyePosition).c_str(),
-			Text::FormatMath(Math::ClampAngleComponents(FrameRotation.ToEulerAngles())).c_str()
+			Text::FormatMath(Math::ClampAngleComponents(CameraRotation.ToEulerAngles())).c_str()
 		);
 
 		if (Input::IsKeyDown(SDL_SCANCODE_ESCAPE)) {

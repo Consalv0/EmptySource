@@ -21,6 +21,14 @@ namespace EmptySource {
 
 		virtual void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) override;
 
+		virtual void SetActiveDepthTest(bool Option) override;
+
+		virtual void SetDepthFunction(EDepthFunction Function) override;
+
+		virtual void SetCullMode(ECullMode Mode) override;
+
+		virtual void SetRasterizerFillMode(ERasterizerFillMode Mode) override;
+
 	};
 
 }

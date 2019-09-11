@@ -17,6 +17,8 @@ namespace EmptySource {
 	using TArray = std::vector<T>;
 	template<class T>
 	using TArrayInitializer = std::initializer_list<T>;
+	template<class T>
+	using TList = std::list<T>;
 
 	template<class K, class T>
 	using TDictionary = tsl::robin_map<K, T>;
