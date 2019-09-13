@@ -7,6 +7,8 @@ uniform mat4 _ProjectionMatrix;
 uniform mat4 _ViewMatrix;
 uniform vec3 _ViewPosition;
 
+uniform sampler2D _MainTexture;
+
 uniform struct LightInfo {
 	vec3 Position;        // Light Position in camera coords.
   vec3 Color;           // Light Color
@@ -36,11 +38,18 @@ in struct VertexData {
 out vec4 FragColor;
 
 void main() {
-  vec3 Color = normalize(_Material.Color.xyz);
-  float Intensity = dot(_Material.Color.xyz, vec3(0.3, 0.7, 0.07));
+  vec4 Diffuse = texture(_MainTexture, Vertex.UV0);
+  vec3 DiffuseColor = pow(Diffuse.rgb, vec3(Gamma)) * _Material.Color.xyz;
+  vec3 Color = _Material.Color.xyz * DiffuseColor;
+
+  Color = Color / (Color + vec3(1.0));
+  Color = pow(Color, vec3(1.0/Gamma));
   
-  FragColor.xyz = pow(vec3(Intensity) * Color + vec3(Color), Intensity * vec3(0.3, 0.7, 0.07));
-  FragColor.a = _Material.Color.a * Vertex.Color.a;
+  vec3 Intensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
+  Color = mix(Intensity, Color, 1.45);
+
+  FragColor.xyz = Color;
+  FragColor.a = _Material.Color.a * Vertex.Color.a * Diffuse.a;
   
   if (FragColor.x < 0) {
     FragColor *= Matrix.Model * Vertex.Color;
