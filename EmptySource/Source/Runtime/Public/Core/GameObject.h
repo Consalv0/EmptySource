@@ -6,13 +6,21 @@
 
 namespace EmptySource {
 
-	//* Basic class for any object that contains components and a spacial representation
+	//* Basic class for any object that contains components and a spatial representation
 	class GGameObject : public OObject {
 		IMPLEMENT_OBJECT(GGameObject)
 	public:
-		Transform Transformation;
+		Transform LocalTransform;
 
-		TArray<GGameObject> Children;
+		void AttachTo(GGameObject * Parent);
+
+		void DeatachFromParent();
+
+		bool Contains(GGameObject * Other) const;
+
+		inline bool IsRoot() { return Parent == NULL; };
+
+		Transform GetWorldTransform() const;
 
 		template<typename T>
 		T * GetFirstComponent();
@@ -23,7 +31,14 @@ namespace EmptySource {
 		template<typename T, typename... Rest>
 		T * CreateComponent(Rest... Args);
 
+		template<typename T>
+		void GetAllChildren(TArray<T *> & OutChildren);
+
 	private:
+		TArray<GGameObject *> Children;
+
+		GGameObject * Parent;
+
 		typedef OObject Supper;
 
 		GGameObject();
@@ -35,9 +50,10 @@ namespace EmptySource {
 		TDictionary<size_t, CComponent*> ComponentsIn;
 
 		//* Add component
-		void AddComponent(CComponent * Component);
+		void AttachComponent(CComponent * Component);
 
 		void DeleteComponent(CComponent * Component);
+
 		void DeleteAllComponents();
 
 		virtual void OnRender();
@@ -74,8 +90,16 @@ namespace EmptySource {
 	template<typename T, typename ...Rest>
 	T * GGameObject::CreateComponent(Rest ...Args) {
 		T* NewObject = new T(*this, Args...);
-		AddComponent(NewObject);
+		AttachComponent(NewObject);
 		return NewObject;
+	}
+
+	template<typename T>
+	void GGameObject::GetAllChildren(TArray<T *>& OutChildren) {
+		for (auto & Iterator : Children) {
+			if (Iterator->GetObjectName() == T::GetStaticObjectName())
+				OutChildren.push_back(dynamic_cast<T *>(Iterator));
+		}
 	}
 
 }

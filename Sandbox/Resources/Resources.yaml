@@ -88,8 +88,8 @@ Resources:
           Type: Float
           DefaultValue: 1.0
         - Uniform: _Material.Color
-          Type: Float3D
-          DefaultValue: [ 1, 1, 1 ]
+          Type: Float4D
+          DefaultValue: [ 1, 1, 1, 1 ]
           IsColor: true
         - Uniform: _MainTexture
           Type: Texture2D
@@ -117,6 +117,14 @@ Resources:
       Name: UnLitShader
       VertexShader: 16658501045142873423
       FragmentShader: 2988000627463272952
+      Properties:
+        - Uniform: _Material.Color
+          Type: Float4D
+          DefaultValue: [ 1, 1, 1, 1 ]
+          IsColor: true
+        - Uniform: _MainTexture
+          Type: Texture2D
+          DefaultValue: {}
   - GUID: 13529331485394247641
     ShaderProgram:
       Name: RenderTextureShader

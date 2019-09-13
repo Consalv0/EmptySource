@@ -6,7 +6,7 @@
 
 #ifdef EMPTYSOURCE_CORE_LOG
 #ifdef ES_ENABLE_ASSERTS
-#define ES_ASSERT(x, ...) { if(!(x)) { LOG_CRTICIAL("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define ES_ASSERT(x, ...) { if(!(x)) { LOG_CRITICAL("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #define ES_CORE_ASSERT(x, ...) { if(!(x)) { LOG_CORE_CRITICAL("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 #define ES_ASSERT(x, ...)

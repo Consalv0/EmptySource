@@ -23,6 +23,8 @@ namespace EmptySource {
 		Vector3 Up() const;
 		Vector3 Right() const;
 
+		Transform operator*(const Transform & Other) const;
+
 		//* Get the inverse of the Model matrix
 		Matrix4x4 GetWorldToLocalMatrix() const;
 

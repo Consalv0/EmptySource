@@ -58,7 +58,7 @@ namespace EmptySource {
 		if (ActiveMesh == NULL) return;
 
 		RenderStage * ActiveStage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
-		Matrix4x4 GameObjectLWMatrix = GetGameObject().Transformation.GetLocalToWorldMatrix();
+		Matrix4x4 GameObjectLWMatrix = GetGameObject().GetWorldTransform().GetLocalToWorldMatrix();
 		if (ActiveStage != NULL) {
 			for (auto& ItMaterial : Materials) {
 				if (ItMaterial.second)

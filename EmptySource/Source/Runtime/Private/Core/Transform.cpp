@@ -53,4 +53,22 @@ namespace EmptySource {
 		return Rotation * Vector3(1, 0);
 	}
 
+	Transform Transform::operator*(const Transform & Other) const {
+		Transform Result;
+
+		Vector3 ResultScale = Other.Scale * Scale;
+
+		Quaternion InverseRot = Rotation.Inversed();
+		Quaternion ResultRotation = Other.Rotation * Rotation;
+
+		Vector3 RotatedTranslation = Other.Rotation * Position;
+
+		Vector3 ResultTranslation = (ResultScale * RotatedTranslation) + Other.Position;
+
+		Result.Scale = ResultScale;
+		Result.Position = ResultTranslation;
+		Result.Rotation = ResultRotation;
+		return Result;
+	}
+
 }

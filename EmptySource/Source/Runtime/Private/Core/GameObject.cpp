@@ -5,23 +5,49 @@
 
 namespace EmptySource {
 
-	GGameObject::GGameObject() : OObject(L"GameObject") {
-		Transformation = Transform();
+	GGameObject::GGameObject() : OObject(L"GameObject"), Parent(NULL) {
+		LocalTransform = Transform();
 	}
 
-	GGameObject::GGameObject(const WString & Name) : OObject(Name) {
-		Transformation = Transform();
+	GGameObject::GGameObject(const WString & Name) : OObject(Name), Parent(NULL) {
+		LocalTransform = Transform();
 	}
 
-	GGameObject::GGameObject(const Transform & LocalTransform) : OObject(L"GameObject") {
-		Transformation = LocalTransform;
+	GGameObject::GGameObject(const Transform & InTransform) : OObject(L"GameObject"), Parent(NULL) {
+		LocalTransform = InTransform;
 	}
 
-	GGameObject::GGameObject(const WString & Name, const Transform & LocalTransform) : OObject(Name) {
-		Transformation = LocalTransform;
+	GGameObject::GGameObject(const WString & Name, const Transform & InTransform) : OObject(Name), Parent(NULL) {
+		LocalTransform = InTransform;
 	}
 
-	void GGameObject::AddComponent(CComponent * Component) {
+	void GGameObject::AttachTo(GGameObject * InParent) {
+		InParent->Children.push_back(this);
+		Parent = InParent;
+	}
+
+	void GGameObject::DeatachFromParent() {
+		for (TArray<GGameObject *>::const_iterator Iterator = Parent->Children.begin(); Iterator != Parent->Children.end(); ++Iterator)
+			if ((*Iterator)->GetUniqueID() == GetUniqueID()) {
+				Parent->Children.erase(Iterator);
+				break;
+			}
+		Parent = NULL;
+	}
+
+	bool GGameObject::Contains(GGameObject * Other) const {
+		for (auto & Child : Children)
+			if (Child->GetUniqueID() == Other->GetUniqueID())
+				return true;
+		return false;
+	}
+
+	Transform GGameObject::GetWorldTransform() const {
+		if (Parent == NULL) return LocalTransform;
+		return LocalTransform * Parent->GetWorldTransform();
+	}
+
+	void GGameObject::AttachComponent(CComponent * Component) {
 		ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->GetUniqueID(), Component));
 		Component->SpaceIn = SpaceIn;
 		if (IsAttached()) Component->OnAttach();

@@ -299,6 +299,19 @@ protected:
 		}
 		ImGui::End();
 
+		ImGui::Begin("Frame Rate Graph", 0, ImVec2(250, 300));
+		{
+			static unsigned char FrameIndex = 0;
+			static float FrameRateHist[255];
+			for (unsigned int i = 1; i < 255; i++) {
+				FrameRateHist[i - 1] = FrameRateHist[i];
+			}
+			FrameRateHist[254] = (float)Time::GetDeltaTime<Time::Mili>();
+			ImGui::PushItemWidth(-1); ImGui::PlotLines("##FrameRateHistory",
+				FrameRateHist, 255, NULL, 0, 0.F, 60.F, ImVec2(0, 120)); ImGui::NextColumn();
+		}
+		ImGui::End();
+
 		ImGui::Begin("Materials", 0, ImVec2(250, 300));
 		{
 			static NChar Text[100];
@@ -556,6 +569,22 @@ protected:
 			} ImGui::NextColumn();
 			ImGui::PushItemWidth(0);
 
+			RenderStage * ActiveStage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
+			if (ActiveStage != NULL) {
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Position"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[0].Position", &ActiveStage->SceneLights[0].Position[0]); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Color"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[0].Color", &ActiveStage->SceneLights[0].Color[0]); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Intensity"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[0].Intensity", &ActiveStage->SceneLights[0].Intensity); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Position"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[1].Position", &ActiveStage->SceneLights[1].Position[0]); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Color"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[1].Color", &ActiveStage->SceneLights[1].Color[0]); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Intensity"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[1].Intensity", &ActiveStage->SceneLights[1].Intensity); ImGui::NextColumn();
+			}
+
 			ImGui::Columns(1);
 			ImGui::Separator();
 			ImGui::PopStyleVar();
@@ -794,6 +823,18 @@ protected:
 		TextureMng.LoadImageFromFile(L"FlamerGunMetallicTexture",         CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg");
 		TextureMng.LoadImageFromFile(L"FlamerGunRoughnessTexture",        CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg");
 		TextureMng.LoadImageFromFile(L"FlamerGunNormalTexture",           CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg");
+		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_COL.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileMetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_MET.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_RGH.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_NRM.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_COL.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_MET.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_RGH.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_NRM.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/GroundTileAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_COL.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/GroundTileMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_MET.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/GroundTileRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_RGH.tga");
+		TextureMng.LoadImageFromFile(L"SiFi/GroundTileNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_NRM.tga");
 		TextureMng.LoadImageFromFile(L"PonyCarExteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_d_orange.jpeg");
 		TextureMng.LoadImageFromFile(L"PonyCarExteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_s.jpeg");
 		TextureMng.LoadImageFromFile(L"PonyCarExteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_g.jpg");
@@ -874,6 +915,7 @@ protected:
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
+		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
 
 		Texture2DPtr RenderedTexture = Texture2D::Create(
 			L"RenderedTexture",

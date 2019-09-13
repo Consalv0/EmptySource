@@ -21,12 +21,12 @@ namespace EmptySource {
 			{ "_ViewPosition",        { EyeTransform.Position }, SPFlags_IsInternal },
 			{ "_ProjectionMatrix",    { ViewProjection }, SPFlags_IsInternal },
 			{ "_ViewMatrix",          { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
-			{ "_Lights[0].Position",  { Vector3(2, 1) }, SPFlags_IsInternal },
-			{ "_Lights[0].Color",     { Vector3(1.F, 1.F, .9F) }, SPFlags_IsInternal | SPFlags_IsColor },
-			{ "_Lights[0].Intencity", { float(20) }, SPFlags_IsInternal },
-			{ "_Lights[1].Position",  { Vector3(-2, 1) }, SPFlags_IsInternal },
-			{ "_Lights[1].Color",     { Vector3(1.F, 1.F, .9F) }, SPFlags_IsInternal | SPFlags_IsColor },
-			{ "_Lights[1].Intencity", { float( 20 ) }, SPFlags_IsInternal },
+			{ "_Lights[0].Position",  { SceneLights[0].Position }, SPFlags_IsInternal },
+			{ "_Lights[0].Color",     { SceneLights[0].Color }, SPFlags_IsInternal | SPFlags_IsColor },
+			{ "_Lights[0].Intencity", { SceneLights[0].Intensity }, SPFlags_IsInternal },
+			{ "_Lights[1].Position",  { SceneLights[1].Position }, SPFlags_IsInternal },
+			{ "_Lights[1].Color",     { SceneLights[1].Color }, SPFlags_IsInternal | SPFlags_IsColor },
+			{ "_Lights[1].Intencity", { SceneLights[1].Intensity }, SPFlags_IsInternal },
 			{ "_BRDFLUT",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BRDFLut") }, SPFlags_IsInternal },
 			{ "_EnviromentMap",       { ETextureDimension::Cubemap, TextureManager::GetInstance().GetTexture(L"CubemapTexture") }, SPFlags_IsInternal },
 			{ "_EnviromentMapLods",   { CubemapTextureMipmaps }, SPFlags_IsInternal }
@@ -34,6 +34,12 @@ namespace EmptySource {
 		Mat->Use();
 		Mat->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix.PointerToValue(), GetMatrixBuffer());
 		Model->DrawSubdivisionInstanciated(1, Subdivision);
+	}
+
+	void RenderStage::SetLight(unsigned int Index, const Point3 & Position, const Vector3 & Color, const float & Intensity) {
+		SceneLights[Index].Position = Position;
+		SceneLights[Index].Color = Color;
+		SceneLights[Index].Intensity = Intensity;
 	}
 
 	void RenderStage::SetEyeTransform(const Transform & EyeTransform) {
