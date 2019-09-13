@@ -25,7 +25,6 @@ namespace EmptySource {
 		};
 
 		struct ExtractedData {
-			TArray<NString> Groups;
 			TArray<ObjectData> Objects;
 			TArray<IntVector3> VertexIndices;
 			MeshVector3D ListPositions;

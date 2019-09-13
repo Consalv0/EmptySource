@@ -162,7 +162,7 @@ namespace EmptySource {
 		int VertexCount = 0;
 		const NChar * LineChar;
 		for (TArray<const NChar *>::const_iterator Line = Data.LineVertexIndices.begin(); Line != Data.LineVertexIndices.end(); ++Line) {
-			if ((CurrentObject + 1) != Data.Objects.end() &&
+			while ((CurrentObject + 1) != Data.Objects.end() &&
 				Line - Data.LineVertexIndices.begin() == (CurrentObject + 1)->VertexIndicesPos) {
 				++CurrentObject;
 				CurrentObjectMaterial = CurrentObject->Materials.begin();
@@ -269,9 +269,7 @@ namespace EmptySource {
 			if (Keyword == Face) {
 				if (ModelData.Objects.size() == 0) {
 					ModelData.Objects.push_back(ObjectData());
-					if (ModelData.Groups.size() > 0) {
-						ModelData.Objects.back().Name += ModelData.Groups.back();
-					}
+					ModelData.Objects.back().Name = "default";
 				}
 
 				if (ModelData.Objects.back().Materials.empty()) {
@@ -284,17 +282,20 @@ namespace EmptySource {
 				++Pointer;
 				FaceCount++;   continue;
 			};
-			if (Keyword == Group) {
-				ModelData.Groups.push_back(NString());
+			if (Keyword == Group || Keyword == Object) {
+				ModelData.Objects.push_back(ObjectData());
+				ModelData.Objects.back().VertexIndicesPos = (int)ModelData.LineVertexIndices.size();
 				++Pointer;
 				while (*(Pointer + 1) != '\n' && *(Pointer + 1) != '\0') {
-					ModelData.Groups.back() += *++Pointer;
+					ModelData.Objects.back().Name += *++Pointer;
 				}
 				continue;
 			}
 			if (Keyword == Material) {
 				if (ModelData.Objects.size() == 0) {
 					ModelData.Objects.push_back(ObjectData());
+					ModelData.Objects.back().VertexIndicesPos = (int)ModelData.LineVertexIndices.size();
+					ModelData.Objects.back().Name = "default";
 				}
 				Pointer += 6;
 				NString Name;
@@ -302,18 +303,6 @@ namespace EmptySource {
 				ModelData.Objects.back().Materials.push_back(ObjectData::Subdivision());
 				ModelData.Objects.back().Materials.back().Name = Name;
 				ModelData.Objects.back().Materials.back().VertexIndicesPos = (int)ModelData.LineVertexIndices.size();
-				continue;
-			}
-			if (Keyword == Object) {
-				ModelData.Objects.push_back(ObjectData());
-				ModelData.Objects.back().VertexIndicesPos = (int)ModelData.LineVertexIndices.size();
-				if (ModelData.Groups.size() > 0) {
-					ModelData.Objects.back().Name += ModelData.Groups.back() + ".";
-				}
-				++Pointer;
-				while (*(Pointer + 1) != '\n' && *(Pointer + 1) != '\0') {
-					ModelData.Objects.back().Name += *++Pointer;
-				}
 				continue;
 			}
 
@@ -371,6 +360,7 @@ namespace EmptySource {
 		Timer.Begin();
 		for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
 			ObjectData & Data = ModelData.Objects[ObjectCount];
+			if (Data.VertexIndicesCount == 0) continue;
 
 			TDictionary<MeshVertex, unsigned> VertexToIndex;
 			VertexToIndex.reserve(Data.VertexIndicesCount);
