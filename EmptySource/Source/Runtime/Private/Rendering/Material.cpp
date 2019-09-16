@@ -101,10 +101,6 @@ namespace EmptySource {
 			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
 				VariableLayout.SetVariable(Layout);
 			}
-			else {
-				LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
-					Text::WideToNarrow(GetShaderProgram()->GetName()).c_str(), Layout.Name.c_str());
-			}
 		}
 	}
 
@@ -113,10 +109,6 @@ namespace EmptySource {
 		for (auto& Layout : NewLayout) {
 			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
 				VariableLayout.AddVariable(Layout);
-			}
-			else {
-				LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
-					Text::WideToNarrow(GetShaderProgram()->GetName()).c_str(), Layout.Name.c_str());
 			}
 		}
 	}

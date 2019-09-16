@@ -27,6 +27,8 @@ namespace EmptySource {
 
 		TArray<WString> GetResourceShaderNames() const;
 
+		TArray<WString> GetResourceShaderStageNames() const;
+
 		virtual inline EResourceType GetResourceType() const override { return RT_Shader; };
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
@@ -35,8 +37,9 @@ namespace EmptySource {
 
 	private:
 		TDictionary<size_t, WString> ShaderNameList;
-		TDictionary<size_t, ShaderPtr> ShaderProgramList;
+		TDictionary<size_t, WString> ShaderStageNameList;
 
+		TDictionary<size_t, ShaderPtr> ShaderProgramList;
 		TDictionary<size_t, ShaderStagePtr> ShaderStageList;
 	};
 

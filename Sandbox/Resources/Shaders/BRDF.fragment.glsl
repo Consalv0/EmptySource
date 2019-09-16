@@ -68,7 +68,7 @@ float TrowbridgeReitzNormalDistribution(float NdotH, float Roughness){
 }
 
 float SmoothDistanceAttenuation (vec3 UnormalizedLightVector, float AttenuationRadius) {
-  float SquaredDistance = dot(UnormalizedLightVector, UnormalizedLightVector * 0.25) * (1 / AttenuationRadius);
+  float SquaredDistance = dot(UnormalizedLightVector, UnormalizedLightVector * 0.25) * (1.0 / AttenuationRadius);
 
   float Attenuation = 1.0 / ( max(SquaredDistance, 0.001) );
   return Attenuation;
@@ -79,18 +79,18 @@ vec3 MicrofacetModelEnviroment( vec3 VertPosition, vec3 Normal, float Roughness,
   vec3 EyeDirection = normalize(_ViewPosition.xyz - VertPosition.xyz);
   vec3 WorldReflection = reflect(-EyeDirection, normalize(Normal));
   
-  float NDotV = clamp(abs( dot( Normal, EyeDirection ) ) + 0.01, 0, 1);
+  float NDotV = clamp(abs( dot( Normal, EyeDirection ) ) + 0.01, 0.0, 1.0);
 
   vec3 F0 = vec3(0.2); 
   F0 = mix(F0, DiffuseColor, Metalness);
   vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
   vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
-  vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2));
+  vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2.0));
        // Irradiance = sqrt(pow(Irradiance, vec3(1.0/2.2)));
-  vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3)));
+  vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3.0)));
 
   vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
-  vec3 Color = ((vec3(1.0) - Fresnel) * (1 - Metalness) * DiffuseColor / PI * Irradiance + Specular);
+  vec3 Color = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI * Irradiance + Specular);
 
   return Color;
 }
@@ -104,11 +104,11 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 Normal, float Roug
   vec3 EyeDirection = normalize(_ViewPosition.xyz - VertPosition.xyz);
   vec3 HalfWayDirection = normalize(EyeDirection + LightDirection);
   
-  float LDotH = clamp( dot( LightDirection, HalfWayDirection ), 0, 1 );
-  float NDotH = clamp( dot( Normal, HalfWayDirection ), 0, 1 );
-  float NDotL = clamp( dot( Normal, LightDirection ), 0, 1 );
-  float NDotV = clamp( abs( dot( Normal, EyeDirection ) ) + 0.01, 0, 1);
-  float HDotV = clamp( dot( HalfWayDirection, EyeDirection ), 0, 1 );
+  float LDotH = clamp( dot( LightDirection, HalfWayDirection ), 0.0, 1.0 );
+  float NDotH = clamp( dot( Normal, HalfWayDirection ), 0.0, 1.0 );
+  float NDotL = clamp( dot( Normal, LightDirection ), 0.0, 1.0 );
+  float NDotV = clamp( abs( dot( Normal, EyeDirection ) ) + 0.01, 0.0, 1.0);
+  float HDotV = clamp( dot( HalfWayDirection, EyeDirection ), 0.0, 1.0 );
 
   float Attenuation = SmoothDistanceAttenuation(UnormalizedLightDirection, _Lights[LightIndex].Intencity);
   vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
@@ -122,7 +122,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 Normal, float Roug
   vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
 
   vec3 Specular = NormalDistribution * GeometricShadow * LightColor * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
-  vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * LightColor * NDotL;
+  vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * LightColor * NDotL;
 
   return SurfaceColor;
 }
@@ -130,7 +130,7 @@ vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 Normal, float Roug
 void main() {  
   vec3 Sum = vec3(0);
 
-  vec3 TangentNormal = texture(_NormalTexture, Vertex.UV0).rgb * 2 - 1;
+  vec3 TangentNormal = texture(_NormalTexture, Vertex.UV0).rgb * 2.0 - 1.0;
   mat3 TBN = mat3(Vertex.TangentDirection, Vertex.BitangentDirection, Vertex.NormalDirection);
   vec3 VertNormal = normalize(TBN * TangentNormal);
   float Roughness = clamp(_Material.Roughness * texture(_RoughnessTexture, Vertex.UV0).r, 0.0001, 1.0);

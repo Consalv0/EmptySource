@@ -287,6 +287,7 @@ protected:
 					ImGui::Text("Vertices count: %d", SelectedMesh->GetMeshData().Vertices.size());
 					ImGui::Text("Tangents: %s", SelectedMesh->GetMeshData().hasTangents ? "true" : "false");
 					ImGui::Text("Normals: %s", SelectedMesh->GetMeshData().hasNormals ? "true" : "false");
+					ImGui::Text("UVs: %d", SelectedMesh->GetMeshData().TextureCoordsCount);
 					ImGui::Text("Vertex Color: %s", SelectedMesh->GetMeshData().hasVertexColor ? "true" : "false");
 					ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh->GetMeshData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
 					ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh->GetMeshData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
@@ -312,6 +313,21 @@ protected:
 		}
 		ImGui::End();
 
+		ImGui::Begin("Shaders", 0, ImVec2(250, 300)); 
+		{
+			TArray<WString> ShaderNameList = ShaderManager::GetInstance().GetResourceShaderNames();
+			TArray<WString> ShaderStagesNameList = ShaderManager::GetInstance().GetResourceShaderStageNames();
+
+			if (ImGui::Button("ReloadShaders")) {
+				for (int i = 0; i < ShaderNameList.size(); ++i)
+					ShaderManager::GetInstance().FreeShaderProgram(ShaderNameList[i]);
+				for (int i = 0; i < ShaderStagesNameList.size(); ++i)
+					ShaderManager::GetInstance().FreeShaderStage(ShaderStagesNameList[i]);
+				ShaderManager::GetInstance().LoadResourcesFromFile(L"Resources/Resources.yaml");
+			}
+		}
+		ImGui::End();
+		
 		ImGui::Begin("Materials", 0, ImVec2(250, 300));
 		{
 			static NChar Text[100];
@@ -846,6 +862,7 @@ protected:
 		TextureMng.LoadImageFromFile(L"WhiteTexture",                     CF_RGB,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
 		TextureMng.LoadImageFromFile(L"BlackTexture",                     CF_RGB,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
 		TextureMng.LoadImageFromFile(L"NormalTexture",                    CF_RGBA, FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Normal.jpg");
+		TextureMng.LoadImageFromFile(L"FlowMapTexture",                   CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/FlowMap.jpg");
 
 
 		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
@@ -913,6 +930,7 @@ protected:
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
+		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/BigPlane.obj", true);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);

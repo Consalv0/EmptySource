@@ -1,6 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Resources/ShaderManager.h"
+#include "Resources/TextureManager.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -86,12 +87,13 @@ namespace EmptySource {
 
 	void ShaderManager::FreeShaderProgram(const WString & Name) {
 		size_t UID = WStringToHash(Name);
+		ShaderNameList.erase(UID);
 		ShaderProgramList.erase(UID);
 	}
 
 	void ShaderManager::FreeShaderStage(const WString & Name) {
 		size_t UID = WStringToHash(Name);
-		ShaderNameList.erase(UID);
+		ShaderStageNameList.erase(UID);
 		ShaderStageList.erase(UID);
 	}
 
@@ -103,12 +105,29 @@ namespace EmptySource {
 
 	void ShaderManager::AddShaderStage(const WString & Name, ShaderStagePtr & Stage) {
 		size_t UID = WStringToHash(Name);
+		ShaderStageNameList.insert({ UID, Name });
 		ShaderStageList.insert({ UID, Stage });
 	}
 
 	TArray<WString> ShaderManager::GetResourceShaderNames() const {
 		TArray<WString> Names;
 		for (auto KeyValue : ShaderNameList)
+			Names.push_back(KeyValue.second);
+		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
+			unsigned int i = 0;
+			while ((i < first.length()) && (i < second.length())) {
+				if (tolower(first[i]) < tolower(second[i])) return true;
+				else if (tolower(first[i]) > tolower(second[i])) return false;
+				++i;
+			}
+			return (first.length() < second.length());
+		});
+		return Names;
+	}
+
+	TArray<WString> ShaderManager::GetResourceShaderStageNames() const {
+		TArray<WString> Names;
+		for (auto KeyValue : ShaderStageNameList)
 			Names.push_back(KeyValue.second);
 		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
 			unsigned int i = 0;
@@ -194,18 +213,23 @@ namespace EmptySource {
 						else if (TypeName == "FloatArray")     Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<float>()), Flags);
 						else if (TypeName == "Float")          Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Uniform["DefaultValue"].as<float>()), Flags);
 						else if (TypeName == "Float2DArray")   Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector2>()), Flags);
-						else if (TypeName == "Float2D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector2()), Flags);
+						else if (TypeName == "Float2D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector2(
+							Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>())
+						), Flags);
 						else if (TypeName == "Float3DArray")   Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector3>()), Flags);
 						else if (TypeName == "Float3D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector3(
 							Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>())
-						), Uniform["IsColor"].as<bool>());
+						), Flags);
 						else if (TypeName == "Float4DArray")   Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector4>()), Flags);
 						else if (TypeName == "Float4D")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector4(
 							Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>(),
 							Uniform["DefaultValue"][3].as<float>())
 						), Flags);
-						else if (TypeName == "Texture2D")      Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Texture2D, NULL), Flags);
-						else if (TypeName == "Cubemap")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Cubemap, NULL), Flags);
+						else if (TypeName == "Texture2D")      Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Texture2D,
+							TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Uniform["DefaultValue"].as<NString>()))
+						), Flags);
+						else if (TypeName == "Cubemap")        Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Cubemap,
+							NULL), Flags);
 						else if (TypeName == "IntArray")       Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<int>()), Flags);
 						else if (TypeName == "Int")            Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(0), Flags);
 					}

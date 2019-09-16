@@ -27,6 +27,7 @@ namespace EmptySource {
 			{ "_Lights[1].Position",  { SceneLights[1].Position }, SPFlags_IsInternal },
 			{ "_Lights[1].Color",     { SceneLights[1].Color }, SPFlags_IsInternal | SPFlags_IsColor },
 			{ "_Lights[1].Intencity", { SceneLights[1].Intensity }, SPFlags_IsInternal },
+			{ "_GlobalTime",          { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal },
 			{ "_BRDFLUT",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BRDFLut") }, SPFlags_IsInternal },
 			{ "_EnviromentMap",       { ETextureDimension::Cubemap, TextureManager::GetInstance().GetTexture(L"CubemapTexture") }, SPFlags_IsInternal },
 			{ "_EnviromentMapLods",   { CubemapTextureMipmaps }, SPFlags_IsInternal }

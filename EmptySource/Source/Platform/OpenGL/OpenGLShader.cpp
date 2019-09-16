@@ -176,6 +176,10 @@ namespace EmptySource {
 		}
 
 		unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
+		if (Location == -1) {
+			LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
+				Text::WideToNarrow(GetName()).c_str(), LocationName);
+		}
 		Locations.emplace(LocationName, Location);
 		return Location;
 	}
@@ -189,6 +193,10 @@ namespace EmptySource {
 		}
 
 		unsigned int Location = glGetAttribLocation(ProgramObject, LocationName);
+		if (Location == -1) {
+			LOG_CORE_WARN("Setting variable to attribute location not present in {0} : {1}",
+				Text::WideToNarrow(GetName()).c_str(), LocationName);
+		}
 		Locations.insert_or_assign(LocationName, Location);
 		return Location;
 	}
