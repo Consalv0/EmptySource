@@ -4,14 +4,13 @@ namespace EmptySource {
 
 	class OpenGLShaderStage : public ShaderStage {
 	public:
-		OpenGLShaderStage(const WString & FilePath, EShaderType Type);
 
-		OpenGLShaderStage(const NString & Code, EShaderType Type);
+		OpenGLShaderStage(const NString & Code, EShaderStageType Type);
 
 		virtual ~OpenGLShaderStage() override;
 
 		//* Get the shader type
-		virtual inline EShaderType GetType() const override { return StageType; };
+		virtual inline EShaderStageType GetType() const override { return StageType; };
 
 		//* Get the shader object
 		virtual void * GetStageObject() const override { return (void *)(unsigned long long)ShaderObject; };
@@ -20,7 +19,7 @@ namespace EmptySource {
 		virtual inline bool IsValid() const override { return bValid; };
 	
 	private:
-		EShaderType StageType;
+		EShaderStageType StageType;
 
 		unsigned int ShaderObject;
 
@@ -29,7 +28,7 @@ namespace EmptySource {
 
 	class OpenGLShaderProgram : public ShaderProgram {
 	public:
-		OpenGLShaderProgram(const WString& Name, TArray<ShaderStagePtr> ShaderStages);
+		OpenGLShaderProgram(TArray<ShaderStage *> ShaderStages);
 
 		~OpenGLShaderProgram();
 
@@ -70,37 +69,14 @@ namespace EmptySource {
 		//* Pass Cubemap array
 		virtual void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) override;
 
-		virtual inline WString GetName() const override { return Name; }
-
-		//* Get the chader properties
-		virtual const TArray<ShaderProperty> & GetProperties() const override { return Properties; }
-
-		//* Set the shader properties
-		virtual void SetProperties(const TArrayInitializer<ShaderProperty> & Properties) override;
-		//* Set the shader properties
-		virtual void SetProperties(const TArray<ShaderProperty> & Properties) override;
-
 		//* Get the shader object
 		virtual void * GetShaderObject() const override { return (void *)(unsigned long long)ProgramObject; }
 
 		//* The shader is valid for use?
 		virtual inline bool IsValid() const override { return bValid; };
 
-	protected:
-		//* Appends shader unit to shader program
-		virtual void AppendStage(ShaderStagePtr ShaderProgram) override;
-
 	private:
 		typedef TDictionary<NString, unsigned int> LocationMap;
-		
-		ShaderStagePtr VertexShader;
-		ShaderStagePtr PixelShader;
-		ShaderStagePtr ComputeShader;
-		ShaderStagePtr GeometryShader;
-
-		TArray<ShaderProperty> Properties;
-		
-		WString Name;
 		
 		//* Shader Program Object
 		unsigned int ProgramObject;

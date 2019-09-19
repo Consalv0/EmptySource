@@ -1,12 +1,5 @@
 #pragma once
 
-#include "Math/MathUtility.h"
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
-#include "Math/IntVector3.h"
-#include "Math/Vector4.h"
-#include "Math/Box3D.h"
-
 #include "Rendering/Rendering.h"
 
 namespace EmptySource {

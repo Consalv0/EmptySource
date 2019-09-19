@@ -21,7 +21,8 @@ namespace EmptySource {
 		typedef OObject Supper;
 		
 		CComponent(GGameObject & GameObject);
-		CComponent(WString Name, GGameObject & GameObject);
+
+		CComponent(const IName & Name, GGameObject & GameObject);
 
 		virtual void OnRender() {};
 

@@ -3,6 +3,7 @@
 #include "Resources/ShaderManager.h"
 #include "Resources/TextureManager.h"
 
+#include "Files/FileManager.h"
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
@@ -57,12 +58,11 @@ namespace YAML {
 
 namespace EmptySource {
 
-	ShaderPtr ShaderManager::GetProgram(const WString & Name) const {
-		size_t UID = WStringToHash(Name);
-		return GetProgram(UID);
+	RShaderProgramPtr ShaderManager::GetProgram(const IName & Name) const {
+		return GetProgram(Name.GetID());
 	}
 
-	ShaderPtr ShaderManager::GetProgram(const size_t & UID) const {
+	RShaderProgramPtr ShaderManager::GetProgram(const size_t & UID) const {
 		auto Resource = ShaderProgramList.find(UID);
 		if (Resource != ShaderProgramList.end()) {
 			return Resource->second;
@@ -71,12 +71,11 @@ namespace EmptySource {
 		return NULL;
 	}
 
-	ShaderStagePtr ShaderManager::GetStage(const WString & Name) const {
-		size_t UID = WStringToHash(Name);
-		return GetStage(UID);
+	RShaderStagePtr ShaderManager::GetStage(const IName & Name) const {
+		return GetStage(Name.GetID());
 	}
 
-	ShaderStagePtr ShaderManager::GetStage(const size_t & UID) const {
+	RShaderStagePtr ShaderManager::GetStage(const size_t & UID) const {
 		auto Resource = ShaderStageList.find(UID);
 		if (Resource != ShaderStageList.end()) {
 			return Resource->second;
@@ -85,58 +84,46 @@ namespace EmptySource {
 		return NULL;
 	}
 
-	void ShaderManager::FreeShaderProgram(const WString & Name) {
-		size_t UID = WStringToHash(Name);
+	void ShaderManager::FreeShaderProgram(const IName & Name) {
+		size_t UID = Name.GetID();
 		ShaderNameList.erase(UID);
 		ShaderProgramList.erase(UID);
 	}
 
-	void ShaderManager::FreeShaderStage(const WString & Name) {
-		size_t UID = WStringToHash(Name);
+	void ShaderManager::FreeShaderStage(const IName & Name) {
+		size_t UID = Name.GetID();
 		ShaderStageNameList.erase(UID);
 		ShaderStageList.erase(UID);
 	}
 
-	void ShaderManager::AddShaderProgram(ShaderPtr & Shader) {
-		size_t UID = WStringToHash(Shader->GetName());
+	void ShaderManager::AddShaderProgram(RShaderProgramPtr & Shader) {
+		size_t UID = Shader->GetName().GetID();
 		ShaderNameList.insert({ UID, Shader->GetName() });
 		ShaderProgramList.insert({ UID, Shader });
 	}
 
-	void ShaderManager::AddShaderStage(const WString & Name, ShaderStagePtr & Stage) {
-		size_t UID = WStringToHash(Name);
+	void ShaderManager::AddShaderStage(const IName & Name, RShaderStagePtr & Stage) {
+		size_t UID = Name.GetID();
 		ShaderStageNameList.insert({ UID, Name });
 		ShaderStageList.insert({ UID, Stage });
 	}
 
-	TArray<WString> ShaderManager::GetResourceShaderNames() const {
-		TArray<WString> Names;
+	TArray<IName> ShaderManager::GetResourceShaderNames() const {
+		TArray<IName> Names;
 		for (auto KeyValue : ShaderNameList)
 			Names.push_back(KeyValue.second);
-		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
-			unsigned int i = 0;
-			while ((i < first.length()) && (i < second.length())) {
-				if (tolower(first[i]) < tolower(second[i])) return true;
-				else if (tolower(first[i]) > tolower(second[i])) return false;
-				++i;
-			}
-			return (first.length() < second.length());
+		std::sort(Names.begin(), Names.end(), [](const IName& First, const IName& Second) {
+			return First < Second;
 		});
 		return Names;
 	}
 
-	TArray<WString> ShaderManager::GetResourceShaderStageNames() const {
-		TArray<WString> Names;
+	TArray<IName> ShaderManager::GetResourceShaderStageNames() const {
+		TArray<IName> Names;
 		for (auto KeyValue : ShaderStageNameList)
 			Names.push_back(KeyValue.second);
-		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
-			unsigned int i = 0;
-			while ((i < first.length()) && (i < second.length())) {
-				if (tolower(first[i]) < tolower(second[i])) return true;
-				else if (tolower(first[i]) > tolower(second[i])) return false;
-				++i;
-			}
-			return (first.length() < second.length());
+		std::sort(Names.begin(), Names.end(), [](const IName& First, const IName& Second) {
+			return First < Second;
 		});
 		return Names;
 	}
@@ -165,7 +152,7 @@ namespace EmptySource {
 					YAML::Node ShaderStageNode = ResourcesNode[FileNodePos]["ShaderStage"];
 					WString FilePath = ShaderStageNode["FilePath"].IsDefined() ? Text::NarrowToWide(ShaderStageNode["FilePath"].as<NString>()) : L"";
 					NString Type = ShaderStageNode["Type"].IsDefined() ? ShaderStageNode["Type"].as<NString>() : "Vertex";
-					EShaderType ShaderType;
+					EShaderStageType ShaderType;
 					if (Type == "Vertex")
 						ShaderType = ST_Vertex;
 					else if (Type == "Pixel")
@@ -175,7 +162,7 @@ namespace EmptySource {
 					else if (Type == "Compute")
 						ShaderType = ST_Compute;
 
-					AddShaderStage(FilePath, ShaderStage::CreateFromFile(FilePath, ShaderType));
+					LoadStage(FilePath, FilePath, ShaderType);
 				}
 			}
 
@@ -188,11 +175,11 @@ namespace EmptySource {
 
 					YAML::Node ShaderProgramNode = ResourcesNode[FileNodePos]["ShaderProgram"];
 					WString Name = ShaderProgramNode["Name"].IsDefined() ? Text::NarrowToWide(ShaderProgramNode["Name"].as<NString>()) : L"";
-					TArray<ShaderStagePtr> Stages;
+					TArray<RShaderStagePtr> Stages;
 					if (ShaderProgramNode["VertexShader"].IsDefined()) 
 						Stages.push_back(GetStage(ShaderProgramNode["VertexShader"].as<size_t>()));
-					if (ShaderProgramNode["FragmentShader"].IsDefined())
-						Stages.push_back(GetStage(ShaderProgramNode["FragmentShader"].as<size_t>()));
+					if (ShaderProgramNode["PixelShader"].IsDefined())
+						Stages.push_back(GetStage(ShaderProgramNode["PixelShader"].as<size_t>()));
 					if (ShaderProgramNode["ComputeShader"].IsDefined())
 						Stages.push_back(GetStage(ShaderProgramNode["ComputeShader"].as<size_t>()));
 					if (ShaderProgramNode["GeometryShader"].IsDefined())
@@ -234,14 +221,26 @@ namespace EmptySource {
 						else if (TypeName == "Int")            Properties.emplace_back(UniformName, ShaderProperty::PropertyValue(0), Flags);
 					}
 
-					ShaderPtr CreatedShader = ShaderProgram::Create(Name, Stages);
+					RShaderProgramPtr CreatedShader = LoadProgram(Name, FilePath, Stages);
 					CreatedShader->SetProperties(Properties);
-					AddShaderProgram(CreatedShader);
-
 				}
 			}
 		}
 		else return;
+	}
+
+	RShaderStagePtr ShaderManager::LoadStage(const WString & Name, const WString & FilePath, EShaderStageType Type) {
+		RShaderStagePtr Shader(new RShaderStage(Name, FilePath, Type, ""));
+		Shader->Load();
+		AddShaderStage(Name, Shader);
+		return Shader;
+	}
+
+	RShaderProgramPtr ShaderManager::LoadProgram(const WString & Name, const WString & Origin, TArray<RShaderStagePtr>& Stages) {
+		RShaderProgramPtr Shader(new RShaderProgram(Name, Origin, Stages));
+		Shader->Load();
+		AddShaderProgram(Shader);
+		return Shader;
 	}
 
 	ShaderManager & ShaderManager::GetInstance() {

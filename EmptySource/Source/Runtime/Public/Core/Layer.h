@@ -4,13 +4,12 @@
 #include "Events/WindowEvent.h"
 #include "Events/InputEvent.h"
 #include "Core/CoreTime.h"
-#include "Core/IIdentifier.h"
 
 namespace EmptySource {
 
-	class Layer : public IIdentifier {
+	class Layer {
 	public:
-		Layer(const WString& Name, unsigned int Level);
+		Layer(const IName& Name, unsigned int Level);
 
 		virtual ~Layer() = default;
 
@@ -30,7 +29,7 @@ namespace EmptySource {
 		
 		virtual void OnInputEvent(InputEvent& InEvent) {}
 
-		inline WString GetName() { return Name; }
+		inline const IName & GetName() { return Name; }
 
 		inline unsigned int GetLayerPriority() const { return Level; }
 
@@ -47,8 +46,8 @@ namespace EmptySource {
 			return (GetLayerPriority() >= Other.GetLayerPriority());
 		}
 
-	private:
-		WString Name;
+	protected:
+		const IName Name;
 		unsigned int Level;
 
 	};

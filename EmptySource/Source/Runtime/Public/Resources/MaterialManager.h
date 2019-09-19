@@ -7,15 +7,15 @@ namespace EmptySource {
 
 	class MaterialManager : public ResourceManager {
 	public:
-		MaterialPtr GetMaterial(const WString& Name) const;
+		MaterialPtr GetMaterial(const IName& Name) const;
 
 		MaterialPtr GetMaterial(const size_t & UID) const;
 
-		void FreeMaterial(const WString& Name);
+		void FreeMaterial(const IName& Name);
 
-		void AddMaterial(const WString& Name, MaterialPtr Material);
+		void AddMaterial(MaterialPtr Material);
 
-		TArray<WString> GetResourceNames() const;
+		TArray<IName> GetResourceNames() const;
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Material; };
 
@@ -27,7 +27,7 @@ namespace EmptySource {
 		inline TDictionary<size_t, MaterialPtr>::iterator end() { return MaterialList.end(); }
 
 	private:
-		TDictionary<size_t, WString> MaterialNameList;
+		TDictionary<size_t, IName> MaterialNameList;
 		TDictionary<size_t, MaterialPtr> MaterialList;
 
 	};

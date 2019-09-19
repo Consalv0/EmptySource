@@ -1,5 +1,6 @@
 
 #include "CoreMinimal.h"
+#include "Utility/TextFormatting.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderingBuffers.h"
 #include "Rendering/Shader.h"
@@ -8,66 +9,11 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
 
-#include "Files/FileManager.h"
-
 #include "glad/glad.h"
 
 namespace EmptySource {
 
-	OpenGLShaderStage::OpenGLShaderStage(const WString & FilePath, EShaderType Type) : StageType(Type) {
-		bValid = false;
-		ShaderObject = GL_FALSE;
-		FileStream * ShaderCode = FileManager::GetFile(FilePath);
-
-		if (ShaderCode == NULL) {
-			LOG_CORE_ERROR(L"Error reading file for shader: '{}'", FilePath);
-			return;
-		}
-
-		NString Code;
-		if (!ShaderCode->ReadNarrowStream(&Code)) {
-			ShaderCode->Close();
-			LOG_CORE_ERROR(L"Error reading file for shader: '{}'", FilePath);
-			return;
-		}
-
-		switch (Type) {
-		case ST_Vertex:
-			ShaderObject = glCreateShader(GL_VERTEX_SHADER);
-			LOG_CORE_INFO(L"Compiling VERTEX shader '{:d}'", ShaderObject);
-			break;
-		case ST_Pixel:
-			ShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-			LOG_CORE_INFO(L"Compiling PIXEL shader '{:d}'", ShaderObject);
-			break;
-		case ST_Compute:
-			// VertexStream = FileManager::Open(ShaderPath);
-			break;
-		case ST_Geometry:
-			ShaderObject = glCreateShader(GL_GEOMETRY_SHADER);
-			LOG_CORE_INFO(L"Compiling GEOMETRY shader '{:d}'", ShaderObject);
-			break;
-		}
-
-		const NChar * SourcePointer = Code.c_str();
-		glShaderSource(ShaderObject, 1, &SourcePointer, NULL);
-		glCompileShader(ShaderObject);
-
-		GLint LogSize = 0;
-		glGetShaderiv(ShaderObject, GL_INFO_LOG_LENGTH, &LogSize);
-		if (LogSize > 0) {
-			LOG_CORE_ERROR(L"Error while compiling shader '{:d}'", ShaderObject);
-			TArray<NChar> ShaderErrorMessage(LogSize + 1);
-			glGetShaderInfoLog(ShaderObject, LogSize, NULL, &ShaderErrorMessage[0]);
-			LOG_CORE_ERROR("'{}'", NString((const NChar*)&ShaderErrorMessage[0]));
-		}
-		else
-			bValid = true;
-
-		ShaderCode->Close();
-	}
-
-	OpenGLShaderStage::OpenGLShaderStage(const NString & Code, EShaderType Type) : StageType(Type) {
+	OpenGLShaderStage::OpenGLShaderStage(const NString & Code, EShaderStageType Type) : StageType(Type) {
 		bValid = false;
 		ShaderObject = GL_FALSE;
 
@@ -111,33 +57,21 @@ namespace EmptySource {
 
 	// Shader Program
 
-	OpenGLShaderProgram::OpenGLShaderProgram(const WString& Name, TArray<ShaderStagePtr> ShaderStages) 
-		: Name(Name), Locations(), Properties()
+	OpenGLShaderProgram::OpenGLShaderProgram(TArray<ShaderStage *> ShaderStages) 
+		: Locations()
 	{
 		bValid = false;
-		VertexShader = NULL;
-		PixelShader = NULL;
-		ComputeShader = NULL;
-		GeometryShader = NULL;
 		ProgramObject = GL_FALSE;
-		
-		for (auto Shader : ShaderStages)
-			AppendStage(Shader);
 
 		int InfoLogLength;
 
 		// Link the shader program
-		LOG_CORE_DEBUG(L"Linking shader program '{}'...", Name);
 		ProgramObject = glCreateProgram();
+		LOG_CORE_DEBUG(L"Linking shader program '{}'...", ProgramObject);
 
-		if (VertexShader != NULL && VertexShader->IsValid()) {
-			glAttachShader(ProgramObject, (unsigned int)(unsigned long long)VertexShader->GetStageObject());
-		}
-		if (GeometryShader != NULL && GeometryShader->IsValid()) {
-			glAttachShader(ProgramObject, (unsigned int)(unsigned long long)GeometryShader->GetStageObject());
-		}
-		if (PixelShader != NULL && PixelShader->IsValid()) {
-			glAttachShader(ProgramObject, (unsigned int)(unsigned long long)PixelShader->GetStageObject());
+		for (auto & Stage : ShaderStages) {
+			if (Stage != NULL && Stage->IsValid())
+				glAttachShader(ProgramObject, (unsigned int)(unsigned long long)Stage->GetStageObject());
 		}
 
 		glLinkProgram(ProgramObject);
@@ -154,12 +88,12 @@ namespace EmptySource {
 	}
 
 	OpenGLShaderProgram::~OpenGLShaderProgram() {
-		LOG_CORE_DEBUG(L"Deleting shader program '{}'...", Name);
+		LOG_CORE_DEBUG(L"Deleting shader program '{}'...", ProgramObject);
 		glDeleteProgram(ProgramObject);
 	}
 
 	void OpenGLShaderProgram::Bind() const {
-		if (!IsValid()) LOG_CORE_WARN(L"Can't use shader program '{}' because is not valid", Name);
+		if (!IsValid()) LOG_CORE_WARN(L"Can't use shader program '{}' because is not valid", ProgramObject);
 		glUseProgram(ProgramObject);
 	}
 
@@ -178,7 +112,7 @@ namespace EmptySource {
 		unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
 		if (Location == -1) {
 			LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
-				Text::WideToNarrow(GetName()).c_str(), LocationName);
+				ProgramObject, LocationName);
 		}
 		Locations.emplace(LocationName, Location);
 		return Location;
@@ -195,7 +129,7 @@ namespace EmptySource {
 		unsigned int Location = glGetAttribLocation(ProgramObject, LocationName);
 		if (Location == -1) {
 			LOG_CORE_WARN("Setting variable to attribute location not present in {0} : {1}",
-				Text::WideToNarrow(GetName()).c_str(), LocationName);
+				ProgramObject, LocationName);
 		}
 		Locations.insert_or_assign(LocationName, Location);
 		return Location;
@@ -273,36 +207,6 @@ namespace EmptySource {
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
 		Tex->Bind();
-	}
-
-	void OpenGLShaderProgram::SetProperties(const TArrayInitializer<ShaderProperty> & Properties) {
-		this->Properties = Properties;
-	}
-
-	void OpenGLShaderProgram::SetProperties(const TArray<ShaderProperty>& Properties) {
-		this->Properties = Properties;
-	}
-
-	void OpenGLShaderProgram::AppendStage(ShaderStagePtr Shader) {
-		if (IsValid()) {
-			LOG_CORE_WARN(L"Program '{}' is already linked and compiled, can't modify shader stages", Name);
-			return;
-		}
-
-		if (Shader == NULL || !Shader->IsValid()) return;
-
-		switch (Shader->GetType()) {
-			case ST_Vertex:
-				VertexShader = Shader; return;
-			case ST_Pixel:
-				PixelShader = Shader; return;
-			case ST_Geometry:
-				GeometryShader = Shader; return;
-			case ST_Compute:
-				ComputeShader = Shader; return;
-			default:
-				break;
-		}
 	}
 
 }

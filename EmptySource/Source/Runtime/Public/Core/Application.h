@@ -52,6 +52,8 @@ namespace EmptySource {
 
 		Application();
 
+		virtual void OnInitialize() {};
+
 	private:
 		bool bInitialized;
 

@@ -21,6 +21,7 @@
 
 // Core basic log functions
 #include "Core/Log.h"
+#include "Core/Name.h"
 #include "CoreTypes.h"
 #include "Core.h"
 

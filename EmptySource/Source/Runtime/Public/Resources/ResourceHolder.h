@@ -1,23 +1,16 @@
 #pragma once
 
 #include "Utility/TextFormatting.h"
-#include "Core/IIdentifier.h"
+#include "Core/Name.h"
 #include "Resources/ResourceManager.h"
 
 namespace EmptySource {
 
-	class Resource {
-	protected:
-		friend class ResourceManager;
-
-		const WString Name;
-
-		const size_t UID;
-
-		Resource(const WString& Name);
-
+	class ResourceHolder {
 	public:
-		virtual ~Resource() = default;
+		virtual ~ResourceHolder() = default;
+
+		virtual bool IsValid() = 0;
 
 		virtual void Load() = 0;
 
@@ -31,10 +24,21 @@ namespace EmptySource {
 
 		virtual size_t GetMemorySize() const = 0;
 
-		inline WString GetName() const { return Name; };
+		inline const IName & GetName() const { return Name; };
+
+	protected:
+		friend class ResourceManager;
+
+		IName Name;
+
+		const WString Origin;
+
+		EResourceLoadState LoadState;
+
+		ResourceHolder(const IName& Name, const WString& Origin);
 
 	};
 
-	typedef std::shared_ptr<Resource> ResourcePtr;
+	typedef std::shared_ptr<ResourceHolder> ResourcePtr;
 
 }

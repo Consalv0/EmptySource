@@ -17,12 +17,12 @@ namespace EmptySource {
 	}
 
 	bool CRenderable::Initialize() {
-		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Initalized", GetUniqueName(), GetUniqueID());
+		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Initalized", Name.GetDisplayName(), Name.GetInstanceID());
 		return true;
 	}
 
 	void CRenderable::OnDelete() {
-		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", GetUniqueName(), GetUniqueID());
+		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
 
 	void CRenderable::SetMesh(MeshPtr Value) {

@@ -20,13 +20,9 @@ namespace EmptySource {
 
 		Matrix4x4 ViewProjection;
 
-		virtual void Initialize();
+		virtual void End() {};
 
-		virtual void Prepare() {};
-
-		virtual void Finish() {};
-
-		virtual void Begin() {};
+		virtual void Begin();
 
 	public:
 

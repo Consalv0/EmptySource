@@ -8,22 +8,11 @@
 namespace EmptySource {
 	TDictionary<size_t, SpaceLayer*> SpaceLayer::AllSpaces = TDictionary<size_t, SpaceLayer*>();
 
-	SpaceLayer::SpaceLayer(const WString& InName, unsigned int Level) : Layer(InName, Level) {
+	SpaceLayer::SpaceLayer(const IName& InName, unsigned int Level) : Layer(InName, Level) {
 		bAttached = false;
 		ObjectsIn = TDictionary<size_t, OObject*>();
-		AllSpaces.insert(std::pair<const size_t, SpaceLayer*>(GetUniqueID(), this));
+		AllSpaces.insert(std::pair<const size_t, SpaceLayer*>(Name.GetInstanceID(), this));
 	}
-
-	// SpaceLayer::SpaceLayer(SpaceLayer & OtherSpace) : Layer(OtherSpace.GetUniqueName(), OtherSpace.GetLayerPriority()) {
-	// 	WString Number, Residue;
-	// 	if (Text::GetLastNotOf(OtherSpace.Name, Residue, Number, L"0123456789"))
-	// 		Name = Residue + std::to_wstring(std::stoi(Number) + 1);
-	// 	else
-	// 		Name = OtherSpace.Name + L"_1";
-	// 
-	// 	ObjectsIn = TDictionary<size_t, OObject*>();
-	// 	AllSpaces.insert(std::pair<const size_t, SpaceLayer*>(GetUniqueID(), this));
-	// }
 
 	void SpaceLayer::OnAttach() {
 		bAttached = true;
@@ -78,8 +67,8 @@ namespace EmptySource {
 
 	SpaceLayer::~SpaceLayer() {
 		DeleteAllObjects();
-		AllSpaces.erase(GetUniqueID());
-		LOG_CORE_DEBUG(L"Space {} deleted", GetUniqueName().c_str());
+		AllSpaces.erase(Name.GetInstanceID());
+		LOG_CORE_DEBUG(L"Space {} deleted", Name.GetInstanceName().c_str());
 	}
 
 	SpaceLayer * SpaceLayer::GetSpace(const size_t & Identifier) {
@@ -90,7 +79,7 @@ namespace EmptySource {
 		return Find->second;
 	}
 
-	WString SpaceLayer::GetFriendlyName() const {
+	const IName & SpaceLayer::GetName() const {
 		return Name;
 	}
 
@@ -110,13 +99,13 @@ namespace EmptySource {
 
 	void SpaceLayer::DeleteObject(OObject * Object) {
 		Object->OnDelete();
-		ObjectsIn.erase(Object->GetUniqueID());
+		ObjectsIn.erase(Object->Name.GetInstanceID());
 		delete Object;
 	}
 
 	void SpaceLayer::AddObject(OObject * Object) {
 		Object->SpaceIn = this;
-		ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->GetUniqueID(), Object));
+		ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->Name.GetInstanceID(), Object));
 		if (bAttached) Object->OnAttach();
 		Object->OnAwake();
 	}

@@ -14,7 +14,7 @@ namespace EmptySource {
 
 		SpaceLayer() = delete;
 
-		SpaceLayer(const WString & Name, unsigned int Level);
+		SpaceLayer(const IName & Name, unsigned int Level);
 
 		// SpaceLayer(SpaceLayer& OtherSpace);
 
@@ -42,7 +42,7 @@ namespace EmptySource {
 		//* Destroy specific object in this Space
 		void DeleteObject(OObject* object);
 
-		WString GetFriendlyName() const;
+		const IName & GetName() const;
 
 		OObject * GetObjectByID(size_t Identifier);
 
@@ -68,8 +68,6 @@ namespace EmptySource {
 
 	private:
 		bool bAttached;
-
-		WString Name;
 
 		//* Dictionary that contains all the Objects in this Space
 		TDictionary<size_t, OObject*> ObjectsIn;

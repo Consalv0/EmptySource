@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/IIdentifier.h"
 #include "Files/FileManager.h"
 
 namespace EmptySource {

@@ -4,8 +4,8 @@
 
 namespace EmptySource {
 
-	Resource::Resource(const WString & Name) :
-		Name(Name), UID(WStringToHash(Name)) {
+	ResourceHolder::ResourceHolder(const IName & Name, const WString& Origin) :
+		Name(Name), LoadState(LS_Unloaded), Origin(Origin) {
 	}
 
 }

@@ -165,11 +165,11 @@
     <ClInclude Include="Source\Runtime\Public\Core\CoreTime.h" />
     <ClInclude Include="Source\Runtime\Public\Core\EmptySource.h" />
     <ClInclude Include="Source\Runtime\Public\Core\GameObject.h" />
-    <ClInclude Include="Source\Runtime\Public\Core\IIdentifier.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Input.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Layer.h" />
     <ClInclude Include="Source\Runtime\Public\Core\LayerStack.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Log.h" />
+    <ClInclude Include="Source\Runtime\Public\Core\Name.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Object.h" />
     <ClInclude Include="Source\Runtime\Public\Core\SpaceLayer.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Transform.h" />
@@ -240,8 +240,9 @@
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h" />
-    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderParameters.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderProgram.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h" />
@@ -267,10 +268,10 @@
     <ClCompile Include="Source\Runtime\Private\Core\CoreTime.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\GameObject.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Core\IIdentifier.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Layer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\LayerStack.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Log.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Core\Name.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Object.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\SpaceLayer.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Transform.cpp" />
@@ -306,8 +307,8 @@
     <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceHolder.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderProgram.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />

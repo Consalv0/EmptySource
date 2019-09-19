@@ -11,10 +11,10 @@
 
 namespace EmptySource {
 
-	ShaderStagePtr ShaderStage::CreateFromFile(const WString & FilePath, EShaderType Type) {
+	ShaderStage * ShaderStage::CreateFromText(const NString & Code, EShaderStageType Type) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return std::make_shared<OpenGLShaderStage>(FilePath, Type);
+			return new OpenGLShaderStage(Code, Type);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create shader stage!");
@@ -22,21 +22,10 @@ namespace EmptySource {
 		}
 	}
 
-	ShaderStagePtr ShaderStage::CreateFromText(const NString & Code, EShaderType Type) {
+	ShaderProgram * ShaderProgram::Create(TArray<ShaderStage *> ShaderStages) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return std::make_shared<OpenGLShaderStage>(Code, Type);
-		case RenderingAPI::API::None:
-		default:
-			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create shader stage!");
-			return NULL;
-		}
-	}
-
-	ShaderPtr ShaderProgram::Create(const WString& Name, TArray<ShaderStagePtr> ShaderStages) {
-		switch (Rendering::GetAPI()) {
-		case RenderingAPI::API::OpenGL:
-			return std::make_shared<OpenGLShaderProgram>(Name, ShaderStages);
+			return new OpenGLShaderProgram(ShaderStages);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create shader!");

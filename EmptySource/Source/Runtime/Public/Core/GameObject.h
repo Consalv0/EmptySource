@@ -18,7 +18,11 @@ namespace EmptySource {
 
 		bool Contains(GGameObject * Other) const;
 
-		inline bool IsRoot() { return Parent == NULL; };
+		bool ContainsRecursiveUp(GGameObject * Other) const;
+
+		bool ContainsRecursiveDown(GGameObject * Other) const;
+
+		inline bool IsRoot() const { return Parent == NULL; };
 
 		Transform GetWorldTransform() const;
 

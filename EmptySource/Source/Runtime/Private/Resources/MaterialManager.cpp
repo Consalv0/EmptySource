@@ -4,9 +4,8 @@
 
 namespace EmptySource {
 
-	MaterialPtr MaterialManager::GetMaterial(const WString & Name) const {
-		size_t UID = WStringToHash(Name);
-		return GetMaterial(UID);
+	MaterialPtr MaterialManager::GetMaterial(const IName & Name) const {
+		return GetMaterial(Name.GetID());
 	}
 
 	MaterialPtr MaterialManager::GetMaterial(const size_t & UID) const {
@@ -18,30 +17,24 @@ namespace EmptySource {
 		return NULL;
 	}
 
-	void MaterialManager::FreeMaterial(const WString & Name) {
-		size_t UID = WStringToHash(Name);
+	void MaterialManager::FreeMaterial(const IName & Name) {
+		size_t UID = Name.GetID();
 		MaterialNameList.erase(UID);
 		MaterialList.erase(UID);
 	}
 
-	void MaterialManager::AddMaterial(const WString & Name, MaterialPtr Material) {
-		size_t UID = WStringToHash(Name);
-		MaterialNameList.insert({ UID, Name });
+	void MaterialManager::AddMaterial(MaterialPtr Material) {
+		size_t UID = Material->GetName().GetID();
+		MaterialNameList.insert({ UID, Material->GetName() });
 		MaterialList.insert({ UID, Material });
 	}
 
-	TArray<WString> MaterialManager::GetResourceNames() const {
-		TArray<WString> Names;
+	TArray<IName> MaterialManager::GetResourceNames() const {
+		TArray<IName> Names;
 		for (auto KeyValue : MaterialNameList)
 			Names.push_back(KeyValue.second);
-		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
-			unsigned int i = 0;
-			while ((i < first.length()) && (i < second.length())) {
-				if (tolower(first[i]) < tolower(second[i])) return true;
-				else if (tolower(first[i]) > tolower(second[i])) return false;
-				++i;
-			}
-			return (first.length() < second.length());
+		std::sort(Names.begin(), Names.end(), [](const IName& First, const IName& Second) {
+			return First < Second;
 		});
 		return Names;
 	}

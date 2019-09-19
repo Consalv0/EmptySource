@@ -116,6 +116,8 @@ namespace EmptySource {
 		ImGuiLayerInstance = new ImGuiLayer();
 		PushLayer(ImGuiLayerInstance);
 
+		OnInitialize();
+
 		bInitialized = true;
 	}
 
@@ -133,7 +135,7 @@ namespace EmptySource {
 		if (!bInitialized) return;
 
 		double RenderTimeSum = 0.0;
-		const double MaxFramerate = 1.0 / 45.0;
+		const double MaxFramerate = 1.0 / 80.0;
 
 		do {
 			MeshParser::UpdateStatus();

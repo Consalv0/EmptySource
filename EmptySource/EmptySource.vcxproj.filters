@@ -153,9 +153,6 @@
     <ClInclude Include="Source\Runtime\Public\Core\GameObject.h">
       <Filter>Runtime\Public\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Core\IIdentifier.h">
-      <Filter>Runtime\Public\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Core\Input.h">
       <Filter>Runtime\Public\Core</Filter>
     </ClInclude>
@@ -166,6 +163,9 @@
       <Filter>Runtime\Public\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Core\Log.h">
+      <Filter>Runtime\Public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Core\Name.h">
       <Filter>Runtime\Public\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Core\Object.h">
@@ -378,10 +378,13 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ResourceShader.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ShaderManager.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderParameters.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderProgram.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h">
@@ -455,9 +458,6 @@
     <ClCompile Include="Source\Runtime\Private\Core\GameObject.cpp">
       <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Core\IIdentifier.cpp">
-      <Filter>Runtime\Private\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Core\Layer.cpp">
       <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
@@ -465,6 +465,9 @@
       <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Core\Log.cpp">
+      <Filter>Runtime\Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Core\Name.cpp">
       <Filter>Runtime\Private\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Core\Object.cpp">
@@ -572,10 +575,10 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ResourceShader.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderProgram.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp">

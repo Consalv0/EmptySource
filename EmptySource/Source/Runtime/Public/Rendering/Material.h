@@ -2,7 +2,8 @@
 
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderingBuffers.h"
-#include "Rendering/Shader.h"
+
+#include "Resources/ShaderProgram.h"
 
 namespace EmptySource {
 
@@ -43,15 +44,15 @@ namespace EmptySource {
 		ERasterizerFillMode FillMode;
 		ECullMode CullMode;
 
-		Material(const WString & Name);
+		Material(const IName & Name);
 
 		//* Set material shader
-		void SetShaderProgram(ShaderPtr Value);
+		void SetShaderProgram(const RShaderProgramPtr & Value);
 
 		//* Get material shader
-		ShaderPtr GetShaderProgram() const;
+		RShaderProgramPtr GetShaderProgram() const;
 
-		WString GetName() const;
+		const IName & GetName() const;
 
 		//* Pass Matrix4x4 Buffer Array
 		void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const VertexBufferPtr& Buffer) const;
@@ -90,10 +91,9 @@ namespace EmptySource {
 		void Use() const;
 
 	private:
-		ShaderPtr MaterialShader;
+		IName Name;
+		RShaderProgramPtr Shader;
 		MaterialLayout VariableLayout;
-
-		WString Name;
 	};
 
 	typedef std::shared_ptr<Material> MaterialPtr;

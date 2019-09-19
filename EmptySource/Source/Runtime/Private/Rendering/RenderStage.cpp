@@ -33,7 +33,7 @@ namespace EmptySource {
 			{ "_EnviromentMapLods",   { CubemapTextureMipmaps }, SPFlags_IsInternal }
 		});
 		Mat->Use();
-		Mat->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix.PointerToValue(), GetMatrixBuffer());
+		Mat->GetShaderProgram()->GetProgram()->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix.PointerToValue(), GetMatrixBuffer());
 		Model->DrawSubdivisionInstanciated(1, Subdivision);
 	}
 
@@ -55,7 +55,7 @@ namespace EmptySource {
 		return ModelMatrixBuffer;
 	}
 
-	void RenderStage::Initialize() {
+	void RenderStage::Begin() {
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 	}
 

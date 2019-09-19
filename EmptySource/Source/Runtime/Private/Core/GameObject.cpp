@@ -22,23 +22,50 @@ namespace EmptySource {
 	}
 
 	void GGameObject::AttachTo(GGameObject * InParent) {
+		if (InParent->ContainsRecursiveUp(this)) { 
+			DeatachFromParent(); return; 
+		}
+		if (!IsRoot()) DeatachFromParent();
 		InParent->Children.push_back(this);
 		Parent = InParent;
 	}
 
 	void GGameObject::DeatachFromParent() {
-		for (TArray<GGameObject *>::const_iterator Iterator = Parent->Children.begin(); Iterator != Parent->Children.end(); ++Iterator)
-			if ((*Iterator)->GetUniqueID() == GetUniqueID()) {
-				Parent->Children.erase(Iterator);
-				break;
-			}
+		if (!IsRoot())
+			for (TArray<GGameObject *>::const_iterator Iterator = Parent->Children.begin(); Iterator != Parent->Children.end(); ++Iterator)
+				if ((*Iterator)->Name.GetInstanceID() == Name.GetInstanceID()) {
+					Parent->Children.erase(Iterator);
+					break;
+				}
 		Parent = NULL;
 	}
 
 	bool GGameObject::Contains(GGameObject * Other) const {
 		for (auto & Child : Children)
-			if (Child->GetUniqueID() == Other->GetUniqueID())
+			if (Child->Name.GetInstanceID() == Other->Name.GetInstanceID())
 				return true;
+		return false;
+	}
+
+	bool GGameObject::ContainsRecursiveDown(GGameObject * Other) const {
+		for (auto & Child : Children)
+			if (Child->Name.GetInstanceID() != Other->Name.GetInstanceID()) {
+				if (Child->ContainsRecursiveDown(Other)) return true;
+			}
+			else {
+				return true;
+			}
+		return false;
+	}
+
+	bool GGameObject::ContainsRecursiveUp(GGameObject * Other) const {
+		if (!IsRoot())
+			if (Parent->Name.GetInstanceID() != Other->Name.GetInstanceID()) {
+				if (Parent->ContainsRecursiveUp(Other)) return true;
+			}
+			else {
+				return true;
+			}
 		return false;
 	}
 
@@ -48,7 +75,7 @@ namespace EmptySource {
 	}
 
 	void GGameObject::AttachComponent(CComponent * Component) {
-		ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->GetUniqueID(), Component));
+		ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->Name.GetInstanceID(), Component));
 		Component->SpaceIn = SpaceIn;
 		if (IsAttached()) Component->OnAttach();
 		Component->OnAwake();
@@ -56,7 +83,7 @@ namespace EmptySource {
 
 	void GGameObject::DeleteComponent(CComponent * Component) {
 		Component->OnDelete();
-		ComponentsIn.erase(Component->GetUniqueID());
+		ComponentsIn.erase(Component->Name.GetInstanceID());
 		delete Component;
 	}
 

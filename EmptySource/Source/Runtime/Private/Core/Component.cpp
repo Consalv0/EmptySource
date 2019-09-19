@@ -8,7 +8,7 @@ namespace EmptySource {
 	CComponent::CComponent(GGameObject & GameObject) : OObject(L"Component"), Holder(GameObject) {
 	}
 
-	CComponent::CComponent(WString Name, GGameObject & GameObject) : OObject(Name), Holder(GameObject) {
+	CComponent::CComponent(const IName & Name, GGameObject & GameObject) : OObject(Name), Holder(GameObject) {
 	}
 
 	void CComponent::OnDelete() {

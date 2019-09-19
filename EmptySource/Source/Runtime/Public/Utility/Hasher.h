@@ -13,7 +13,6 @@ namespace EmptySource {
 		HashCombine(seed, rest...);
 	}
 
-
 	inline size_t WStringToHash(const WString & Name) {
 		static const std::hash<WString> Hasher;
 		return Hasher(Name);

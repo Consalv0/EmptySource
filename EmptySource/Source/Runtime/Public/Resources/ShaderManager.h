@@ -1,46 +1,50 @@
 #pragma once
 
 #include "Resources/ResourceManager.h"
-#include "ResourceShader.h"
-#include "Rendering/Shader.h"
+#include "Resources/ShaderProgram.h"
+#include "Resources/ShaderParameters.h"
 
 namespace EmptySource {
 
 	class ShaderManager : public ResourceManager {
 
 	public:
-		ShaderPtr GetProgram(const WString& Name) const;
+		RShaderProgramPtr GetProgram(const IName& Name) const;
 
-		ShaderPtr GetProgram(const size_t & UID) const;
+		RShaderProgramPtr GetProgram(const size_t & UID) const;
 
-		ShaderStagePtr GetStage(const WString& Name) const;
+		RShaderStagePtr GetStage(const IName& Name) const;
 
-		ShaderStagePtr GetStage(const size_t & UID) const;
+		RShaderStagePtr GetStage(const size_t & UID) const;
 
-		void FreeShaderProgram(const WString& Name);
+		void FreeShaderProgram(const IName& Name);
 
-		void FreeShaderStage(const WString& Name);
+		void FreeShaderStage(const IName& Name);
 
-		void AddShaderProgram(ShaderPtr& Shader);
+		void AddShaderProgram(RShaderProgramPtr& Shader);
 
-		void AddShaderStage(const WString & Name, ShaderStagePtr& Stage);
+		void AddShaderStage(const IName & Name, RShaderStagePtr& Stage);
 
-		TArray<WString> GetResourceShaderNames() const;
+		TArray<IName> GetResourceShaderNames() const;
 
-		TArray<WString> GetResourceShaderStageNames() const;
+		TArray<IName> GetResourceShaderStageNames() const;
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Shader; };
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
+		RShaderStagePtr LoadStage(const WString & Name, const WString & Origin, EShaderStageType Type);
+
+		RShaderProgramPtr LoadProgram(const WString & Name, const WString & Origin, TArray<RShaderStagePtr> & Stages);
+
 		static ShaderManager& GetInstance();
 
 	private:
-		TDictionary<size_t, WString> ShaderNameList;
-		TDictionary<size_t, WString> ShaderStageNameList;
+		TDictionary<size_t, IName> ShaderNameList;
+		TDictionary<size_t, IName> ShaderStageNameList;
 
-		TDictionary<size_t, ShaderPtr> ShaderProgramList;
-		TDictionary<size_t, ShaderStagePtr> ShaderStageList;
+		TDictionary<size_t, RShaderProgramPtr> ShaderProgramList;
+		TDictionary<size_t, RShaderStagePtr> ShaderStageList;
 	};
 
 }

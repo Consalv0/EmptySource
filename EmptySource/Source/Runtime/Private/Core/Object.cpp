@@ -4,18 +4,12 @@
 
 namespace EmptySource {
 
-	OObject::OObject() : IIdentifier(L"Object") {
-		Name = GetUniqueName();
+	OObject::OObject() : Name(L"Object") {
 		bAttached = false;
 	}
 
-	OObject::OObject(const WString & InName) : IIdentifier(InName) {
-		Name = InName;
+	OObject::OObject(const IName & InName) : Name(InName) {
 		bAttached = false;
-	}
-
-	WString OObject::GetName() {
-		return Name;
 	}
 
 }

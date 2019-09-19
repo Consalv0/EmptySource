@@ -13,8 +13,8 @@
 
 namespace EmptySource {
 
-	Material::Material(const WString & Name) : Name(Name) {
-		MaterialShader = NULL;
+	Material::Material(const IName & Name) : Name(Name) {
+		Shader = NULL;
 		RenderPriority = 1000;
 		bUseDepthTest = true;
 		DepthFunction = DF_LessEqual;
@@ -22,95 +22,98 @@ namespace EmptySource {
 		CullMode = CM_CounterClockWise;
 	}
 
-	void Material::SetShaderProgram(ShaderPtr Value) {
+	void Material::SetShaderProgram(const RShaderProgramPtr & InShader) {
 		VariableLayout.Clear();
-		if (Value != NULL && Value->IsValid()) {
-			MaterialShader.swap(Value);
-			SetProperties(MaterialShader->GetProperties());
+		if (InShader != NULL && InShader->IsValid()) {
+			Shader = InShader;
+			SetProperties(Shader->GetProperties());
 		} else {
-			LOG_CORE_ERROR(L"The Shader Program '{}' is not a valid program", Value != NULL ? Value->GetName().c_str() : L"NULL");
-			MaterialShader.reset();
+			LOG_CORE_ERROR(L"Trying to set shader '{}' in '{}' wich is not a valid program",
+				InShader != NULL ? InShader->GetName().GetDisplayName().c_str() : L"NULL", Name.GetDisplayName().c_str());
+			Shader.reset();
 		}
 	}
 
-	ShaderPtr Material::GetShaderProgram() const {
-		return MaterialShader;
+	RShaderProgramPtr Material::GetShaderProgram() const {
+		return Shader;
 	}
 
-	WString Material::GetName() const {
+	const IName & Material::GetName() const {
 		return Name;
 	}
 
 	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetAttribMatrix4x4Array(AttributeName, Count, Data, Buffer);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetAttribMatrix4x4Array(AttributeName, Count, Data, Buffer);
 	}
 
 	void Material::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetMatrix4x4Array(UniformName, Data, Count);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetMatrix4x4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetFloat1Array(UniformName, Data, Count);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetFloat1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetInt1Array(UniformName, Data, Count);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetInt1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetFloat2Array(UniformName, Data, Count);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetFloat2Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetFloat3Array(UniformName, Data, Count);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetFloat3Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetFloat4Array(UniformName, Data, Count);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetFloat4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetTexture2D(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetTexture2D(UniformName, Text, Position);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetTexture2D(UniformName, Text, Position);
 	}
 
 	void Material::SetTextureCubemap(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
-		ShaderPtr Program = GetShaderProgram();
-		if (Program == NULL) return;
-		Program->SetTexture2D(UniformName, Text, Position);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			Program->GetProgram()->SetTexture2D(UniformName, Text, Position);
 	}
 
 	void Material::SetVariables(const TArray<ShaderProperty>& NewLayout) {
-		if (GetShaderProgram() == NULL) return;
-		for (auto& Layout : NewLayout) {
-			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
-				VariableLayout.SetVariable(Layout);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			for (auto& Layout : NewLayout) {
+				if (Program->GetProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
+					VariableLayout.SetVariable(Layout);
+				}
 			}
-		}
 	}
 
 	void Material::SetProperties(const TArray<ShaderProperty>& NewLayout) {
-		if (GetShaderProgram() == NULL) return;
-		for (auto& Layout : NewLayout) {
-			if (GetShaderProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
-				VariableLayout.AddVariable(Layout);
+		RShaderProgramPtr Program = GetShaderProgram();
+		if (Program != NULL && Program->IsValid())
+			for (auto& Layout : NewLayout) {
+				if (Program->GetProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
+					VariableLayout.AddVariable(Layout);
+				}
 			}
-		}
 	}
 
 	void Material::Use() const {
@@ -120,8 +123,8 @@ namespace EmptySource {
 		Rendering::SetRasterizerFillMode(FillMode);
 		Rendering::SetCullMode(CullMode);
 
-		if (MaterialShader && MaterialShader->IsValid()) {
-			MaterialShader->Bind();
+		if (Shader && Shader->IsValid()) {
+			Shader->GetProgram()->Bind();
 			unsigned int i = 0;
 			for (auto& Uniform : VariableLayout) {
 				switch (Uniform.Value.GetType()) {

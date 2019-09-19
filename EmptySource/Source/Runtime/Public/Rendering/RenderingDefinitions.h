@@ -61,7 +61,7 @@ namespace EmptySource {
 		Mat4x4
 	};
 
-	enum EShaderType {
+	enum EShaderStageType {
 		ST_Vertex,
 		ST_Geometry,
 		ST_Pixel,

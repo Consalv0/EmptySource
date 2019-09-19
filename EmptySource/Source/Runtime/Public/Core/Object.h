@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/SpaceLayer.h"
-#include "Core/IIdentifier.h"
+#include "Core/Name.h"
 
 #define IMPLEMENT_OBJECT(Name) protected: \
 inline virtual WString GetObjectName() override { return L#Name;} \
@@ -10,7 +10,7 @@ friend class SpaceLayer;
 
 namespace EmptySource {
 
-	class OObject : public IIdentifier {
+	class OObject {
 	public:
 		inline virtual WString GetObjectName() { return L"OObject"; }
 
@@ -20,7 +20,7 @@ namespace EmptySource {
 		virtual void OnDelete() {};
 
 		// Name of this object
-		WString GetName();
+		inline const IName & GetName() const { return Name; };
 
 		inline bool IsAttached() { return bAttached; }
 
@@ -29,10 +29,11 @@ namespace EmptySource {
 
 		SpaceLayer * SpaceIn;
 
-		WString Name;
+		IName Name;
 
 		OObject();
-		OObject(const WString& Name);
+
+		OObject(const IName& Name);
 
 		virtual void OnAttach() { bAttached = true; };
 

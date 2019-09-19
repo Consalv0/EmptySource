@@ -13,19 +13,19 @@
 using namespace EmptySource;
 
 void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &NarrowMaterialNameList,
-	TArray<WString> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<WString> &MeshNameList, SandboxSpaceLayer * AppLayer)
+	TArray<IName> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<WString> &MeshNameList, SandboxSpaceLayer * AppLayer)
 {
-	bool TreeNode = ImGui::TreeNode(Text::WideToNarrow(GameObject->GetName()).c_str());
+	bool TreeNode = ImGui::TreeNode(GameObject->GetName().GetNarrowInstanceName().c_str());
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 		ImGui::SetDragDropPayload("GGameObject", &GameObject, sizeof(GGameObject));
-		ImGui::Text("Moving %s", Text::WideToNarrow(GameObject->GetUniqueName()).c_str());
+		ImGui::Text("Moving %s", GameObject->GetName().GetNarrowInstanceName().c_str());
 		ImGui::EndDragDropSource();
 	}
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("GGameObject")) {
 			ES_ASSERT(Payload->DataSize == sizeof(GGameObject), "DragDropData is empty");
 			GGameObject * PayloadGameObject = *(GGameObject**)Payload->Data;
-			if (!PayloadGameObject->IsRoot())
+			if (GameObject->Contains(PayloadGameObject))
 				PayloadGameObject->DeatachFromParent();
 			else
 				PayloadGameObject->AttachTo(GameObject);
@@ -76,7 +76,13 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 			Renderable = GameObject->CreateComponent<CRenderable>();
 		}
 		if (Renderable != NULL) {
-			if (ImGui::TreeNode(Text::WideToNarrow(Renderable->GetUniqueName()).c_str())) {
+			bool TreeNode = ImGui::TreeNode(Renderable->GetName().GetNarrowInstanceName().c_str());
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("CRenderable", &Renderable, sizeof(CRenderable));
+				ImGui::Text("Moving %s", Renderable->GetName().GetNarrowInstanceName().c_str());
+				ImGui::EndDragDropSource();
+			}
+			if (TreeNode) {
 				int CurrentMeshIndex = Renderable->GetMesh() ? 0 : -1;
 				if (CurrentMeshIndex == 0) {
 					for (int i = 0; i < MeshNameList.size(); i++) {
@@ -87,7 +93,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				}
 				ImGui::TextUnformatted("Mesh");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
-				if (ImGui::Combo(("##Mesh" + std::to_string(Renderable->GetUniqueID())).c_str(), &CurrentMeshIndex,
+				if (ImGui::Combo(("##Mesh" + std::to_string(Renderable->GetName().GetInstanceID())).c_str(), &CurrentMeshIndex,
 					[](void * Data, int indx, const char ** outText) -> bool {
 					TArray<NString>* Items = (TArray<NString> *)Data;
 					if (outText) *outText = (*Items)[indx].c_str();
@@ -139,10 +145,10 @@ void SandboxSpaceLayer::OnAwake() {
 void SandboxSpaceLayer::OnImGuiRender() {
 	ImGui::Begin("Sandbox Space");
 
-	TArray<WString> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
+	TArray<IName> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
 	TArray<NString> NarrowMaterialNameList(MaterialNameList.size());
 	for (int i = 0; i < MaterialNameList.size(); ++i)
-		NarrowMaterialNameList[i] = Text::WideToNarrow((MaterialNameList)[i]);
+		NarrowMaterialNameList[i] = MaterialNameList[i].GetNarrowDisplayName();
 
 	TArray<WString> MeshNameList = MeshManager::GetInstance().GetResourceNames();
 	TArray<NString> NarrowMeshNameList(MeshNameList.size());

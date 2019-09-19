@@ -118,11 +118,11 @@ namespace EmptySource {
 	}
 
 	void OpenGLAPI::SetActiveDepthTest(bool Option) {
-		if (Option) glEnable(GL_DEPTH_TEST);
-		else        glDisable(GL_DEPTH_TEST);
+		glDepthMask(Option);
 	}
 
 	void OpenGLAPI::SetDepthFunction(EDepthFunction Function) {
+		glEnable(GL_DEPTH_TEST);
 		switch (Function) {
 		case DF_Always:
 			glDepthFunc(GL_ALWAYS); break;

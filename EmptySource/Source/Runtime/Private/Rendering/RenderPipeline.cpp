@@ -22,10 +22,6 @@ namespace EmptySource {
 
 	void RenderPipeline::Initialize() {
 		Rendering::SetAlphaBlending(EBlendFactor::BF_SrcAlpha, EBlendFactor::BF_OneMinusSrcAlpha);
-
-		for (auto & Stage : RenderStages) {
-			Stage.second->Initialize();
-		}
 	}
 
 	void RenderPipeline::ContextInterval(int Interval) {
@@ -42,7 +38,7 @@ namespace EmptySource {
 
 	void RenderPipeline::EndStage() {
 		if (ActiveStage != NULL)
-			ActiveStage->Finish();
+			ActiveStage->End();
 	}
 
 	bool RenderPipeline::AddStage(WString StageName, RenderStage * Stage) {

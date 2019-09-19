@@ -1,99 +1,129 @@
 
 #include "CoreMinimal.h"
-#include "Resources/ResourceShader.h"
+#include "Resources/ShaderProgram.h"
 
 #include <yaml-cpp/yaml.h>
 
 namespace EmptySource {
 
-	void ShaderStageResource::Load() {
+	bool RShaderStage::IsValid() {
+		return LoadState == LS_Loaded && StagePointer->IsValid();
+	}
+	
+	void RShaderStage::Load() {
 		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
 
 		LoadState = LS_Loading;
-		if (Data.Code.empty())
-			Stage = ShaderStage::CreateFromText(Data.Code, Data.ShaderType);
-		else
-			Stage = ShaderStage::CreateFromFile(Data.FilePath, Data.ShaderType);
-		LoadState = LS_Loaded;
+		{
+			FileStream * ShaderCode = FileManager::GetFile(Origin);
+			if (ShaderCode == NULL) {
+				LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+				return;
+			}
+			if (!ShaderCode->ReadNarrowStream(&SourceCode)) {
+				ShaderCode->Close();
+				LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+				return;
+			}
+
+			ShaderCode->Close();
+			if (!SourceCode.empty())
+				StagePointer = ShaderStage::CreateFromText(SourceCode, StageType);
+		}
+		LoadState = StagePointer != NULL ? LS_Loaded : LS_Unloaded;
 	}
 
-	void ShaderStageResource::Unload() {
+	void RShaderStage::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
-		Stage.reset();
+		delete StagePointer;
+		StagePointer = NULL;
 		LoadState = LS_Unloaded;
 	}
 
-	void ShaderStageResource::Reload() {
+	void RShaderStage::Reload() {
 		Unload();
 		Load();
 	}
 
-	ShaderStageResource::ShaderStageResource(const ResourceShaderStageData & InData)
-		: Resource(InData.Name), Stage(), LoadState(LS_Unloaded) {
-		Data.Name = InData.Name;
-		Data.ShaderType = InData.ShaderType;
-		Data.Code = InData.Code;
+	RShaderStage::RShaderStage(const IName & Name, const WString & Origin, EShaderStageType Type, const NString & Code)
+		: ResourceHolder(Name, Origin), StagePointer(NULL), SourceCode(Code), StageType(Type) {
+	}
+
+	RShaderStage::~RShaderStage() {
+		Unload();
 	}
 
 	// Shader Program
-
-	void ShaderProgramResource::Load() {
-		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
-
-		TArray<ShaderStagePtr> Stages;
-		if (Data.VertexShader != NULL && Data.VertexShader->IsValid())
-			Stages.push_back(Data.VertexShader);
-		if (Data.PixelShader != NULL && Data.PixelShader->IsValid())
-			Stages.push_back(Data.PixelShader);
-		if (Data.GeometryShader != NULL && Data.GeometryShader->IsValid())
-			Stages.push_back(Data.GeometryShader);
-		if (Data.ComputeShader != NULL && Data.ComputeShader->IsValid())
-			Stages.push_back(Data.ComputeShader);
-
-		LoadState = LS_Loading;
-		Shader = ShaderProgram::Create(Name, Stages);
-		LoadState = LS_Loaded;
+	bool RShaderProgram::IsValid() {
+		return LoadState == LS_Loaded && ShaderPointer->IsValid();
 	}
 
-	void ShaderProgramResource::Unload() {
+	void RShaderProgram::Load() {
+		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
+
+		LoadState = LS_Loading;
+		{
+			TArray<ShaderStage *> Stages;
+			if (VertexShader != NULL && VertexShader->IsValid())
+				Stages.push_back(VertexShader->GetShaderStage());
+			if (PixelShader != NULL && PixelShader->IsValid())
+				Stages.push_back(PixelShader->GetShaderStage());
+			if (GeometryShader != NULL && GeometryShader->IsValid())
+				Stages.push_back(GeometryShader->GetShaderStage());
+			if (ComputeShader != NULL && ComputeShader->IsValid())
+				Stages.push_back(ComputeShader->GetShaderStage());
+
+			ShaderPointer = ShaderProgram::Create(Stages);
+		}
+		LoadState = ShaderPointer != NULL ? LS_Loaded : LS_Unloaded;
+	}
+
+	void RShaderProgram::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
-		Shader.reset();
+		delete ShaderPointer;
+		ShaderPointer = NULL;
 		LoadState = LS_Unloaded;
 	}
 
-	void ShaderProgramResource::Reload() {
+	void RShaderProgram::Reload() {
 		Unload();
+		if (VertexShader)   VertexShader->Load();
+		if (PixelShader)    PixelShader->Load();
+		if (GeometryShader) GeometryShader->Load();
+		if (ComputeShader)  ComputeShader->Load();
 		Load();
 	}
 
-	ShaderProgramResource::ShaderProgramResource(const ResourceShaderData & Data)
-		: Resource(Data.Name), Data(Data), Shader(), LoadState(LS_Unloaded) {
+	void RShaderProgram::SetProperties(const TArrayInitializer<ShaderProperty> & InProperties) {
+		Properties = InProperties;
 	}
 
-	ShaderProgramResource::ShaderProgramResource(const WString& Name, TArray<ShaderStagePtr> Stages) 
-		: Resource(Name), Data(), Shader(), LoadState(LS_Unloaded) {
-		Data.Name = Name;
-		for (auto Stage : Stages) {
-			switch (Stage->GetType()) {
-			case ST_Vertex:
-				Data.VertexShader = Stage;
-			case ST_Compute:
-				Data.ComputeShader = Stage;
-			case ST_Pixel:
-				Data.PixelShader = Stage;
-			case ST_Geometry:
-				Data.GeometryShader = Stage;
-			default:
-				break;
+	void RShaderProgram::SetProperties(const TArray<ShaderProperty>& InProperties) {
+		Properties = InProperties;
+	}
+
+	RShaderProgram::RShaderProgram(const IName & Name, const WString & Origin, TArray<RShaderStagePtr>& Stages) 
+		: ResourceHolder(Name, Origin), Properties() {
+		for (RShaderStagePtr & Stage : Stages) {
+			switch (Stage->GetShaderType()) {
+				case ST_Vertex:   VertexShader   = Stage; break;
+				case ST_Pixel:    PixelShader    = Stage; break;
+				case ST_Geometry: GeometryShader = Stage; break;
+				case ST_Compute:  ComputeShader  = Stage; break;
+				default: break;
 			}
 		}
 	}
 
-	ResourceShaderData::ResourceShaderData(const WString& FilePath, size_t UID) : ResourceFile(FilePath) {
+	RShaderProgram::~RShaderProgram() {
+		Unload();
+	}
+
+	ResourceShaderData::ResourceShaderData(const WString& FilePath, size_t UID) : Origin(FilePath) {
 		FileStream * ResourcesFile = ResourceManager::GetResourcesFile(FilePath);
 		YAML::Node BaseNode;
 		{
@@ -135,7 +165,7 @@ namespace EmptySource {
 
 	}
 
-	ResourceShaderStageData::ResourceShaderStageData(const WString & FilePath, size_t UID) : ResourceFile(FilePath) {
+	ResourceShaderStageData::ResourceShaderStageData(const WString & FilePath, size_t UID) : Origin(FilePath) {
 		FileStream * ResourcesFile = ResourceManager::GetResourcesFile(FilePath);
 		YAML::Node BaseNode;
 		{

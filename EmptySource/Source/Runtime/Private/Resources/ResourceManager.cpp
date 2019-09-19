@@ -1,7 +1,6 @@
 
 #include "CoreMinimal.h"
 #include "Resources/ResourceManager.h"
-#include "Resources/ResourceShader.h"
 
 #include <yaml-cpp/yaml.h>
 

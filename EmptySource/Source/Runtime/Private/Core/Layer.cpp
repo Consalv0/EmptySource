@@ -4,8 +4,8 @@
 
 namespace EmptySource {
 
-	Layer::Layer(const WString & Name, unsigned int Level) :
-		IIdentifier(Name), Name(Name), Level(Level) { 
+	Layer::Layer(const IName & Name, unsigned int Level) :
+		Name(Name), Level(Level) { 
 	}
 
 }

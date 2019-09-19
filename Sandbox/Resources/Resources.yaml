@@ -63,7 +63,7 @@ Resources:
     ShaderProgram:
       Name: EquirectangularToCubemap
       VertexShader: 13768600653438824142
-      FragmentShader: 9724844382453382494
+      PixelShader: 9724844382453382494
       Properties:
         - Uniform: _EquirectangularMap
           Type: Texture2D
@@ -75,7 +75,7 @@ Resources:
     ShaderProgram:
       Name: HDRClampingShader
       VertexShader: 15491773793180885008
-      FragmentShader: 14487276356520426687
+      PixelShader: 14487276356520426687
       Properties:
         - Uniform: _EquirectangularMap
           Type: Texture2D
@@ -87,7 +87,7 @@ Resources:
     ShaderProgram:
       Name: BRDFShader
       VertexShader: 16658501045142873423
-      FragmentShader: 1168590647783747496
+      PixelShader: 1168590647783747496
       Properties:
         - Uniform: _Material.Metalness
           Type: Float
@@ -124,7 +124,7 @@ Resources:
     ShaderProgram:
       Name: UnLitShader
       VertexShader: 16658501045142873423
-      FragmentShader: 2988000627463272952
+      PixelShader: 2988000627463272952
       Properties:
         - Uniform: _Material.Color
           Type: Float4D
@@ -137,22 +137,22 @@ Resources:
     ShaderProgram:
       Name: RenderTextureShader
       VertexShader: 15491773793180885008
-      FragmentShader: 4750013093861987399
+      PixelShader: 4750013093861987399
   - GUID: 7125355921710917221
     ShaderProgram:
       Name: IntegrateBRDFShader
       VertexShader: 15491773793180885008
-      FragmentShader: 9154606323356647483
+      PixelShader: 9154606323356647483
   - GUID: 17535125667370803355
     ShaderProgram:
       Name: RenderTextShader
       VertexShader: 15491773793180885008
-      FragmentShader: 16113507823090325981
+      PixelShader: 16113507823090325981
   - GUID: 739022771965855291
     ShaderProgram:
       Name: RenderCubemapShader
       VertexShader: 16658501045142873423
-      FragmentShader: 9467077380870312549
+      PixelShader: 9467077380870312549
       Properties:
         - Uniform: _Gamma
           Type: Float
@@ -161,7 +161,7 @@ Resources:
     ShaderProgram:
       Name: CloudsShader
       VertexShader: 837329568064093199
-      FragmentShader: 11373371197195901944
+      PixelShader: 11373371197195901944
       Properties:
         - Uniform: _EnviromentMap
           Type: Cubemap
