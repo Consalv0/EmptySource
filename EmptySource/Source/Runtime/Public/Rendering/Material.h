@@ -38,7 +38,7 @@ namespace EmptySource {
 
 	class Material {
 	public:
-		bool bUseDepthTest;
+		bool bWriteDepth;
 		unsigned int RenderPriority;
 		EDepthFunction DepthFunction;
 		ERasterizerFillMode FillMode;
@@ -89,6 +89,8 @@ namespace EmptySource {
 
 		//* Use shader program, asign uniform and render mode
 		void Use() const;
+
+		bool operator>(const Material& Other) const;
 
 	private:
 		IName Name;

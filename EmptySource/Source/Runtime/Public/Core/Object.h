@@ -4,9 +4,9 @@
 #include "Core/Name.h"
 
 #define IMPLEMENT_OBJECT(Name) protected: \
-inline virtual WString GetObjectName() override { return L#Name;} \
-static WString GetStaticObjectName() { return L#Name;} \
-friend class SpaceLayer; 
+inline virtual EmptySource::WString GetObjectName() override { return L#Name;} \
+static EmptySource::WString GetStaticObjectName() { return L#Name;} \
+friend class EmptySource::SpaceLayer; 
 
 namespace EmptySource {
 

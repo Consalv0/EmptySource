@@ -7,7 +7,6 @@ namespace EmptySource {
 
 	class Input {
 	public:
-		
 		inline static bool IsKeyDown(int KeyCode) { return Instance->IsKeyDownNative(KeyCode); }
 
 		inline static bool IsMouseButtonDown(int Button) { return Instance->IsMouseButtonDownNative(Button); }
@@ -19,7 +18,6 @@ namespace EmptySource {
 		inline static float GetMouseY(bool Clamp = false) { return Instance->GetMouseYNative(Clamp); }
 	
 	protected:
-
 		virtual bool IsKeyDownNative(int KeyCode) = 0;
 
 		virtual bool IsMouseButtonDownNative(int Button) = 0;

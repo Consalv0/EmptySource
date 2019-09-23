@@ -1,13 +1,17 @@
 
 #include "CoreMinimal.h"
 #include "Core/EmptySource.h"
+#include "Rendering/RenderPipeline.h"
+#include "Rendering/RenderStage.h"
 #include "Rendering/Rendering.h"
 #include "Resources/MaterialManager.h"
 #include "Resources/MeshManager.h"
 
 #include "Components/ComponentRenderable.h"
+#include "Components/ComponentCamera.h"
 
 #include "../Public/SandboxSpaceLayer.h"
+#include "../Public/CameraMovement.h"
 #include "../External/IMGUI/imgui.h"
 
 using namespace EmptySource;
@@ -71,12 +75,63 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 		for (auto & GameObjectChild : GameObjectChildren)
 			RenderGameObjectRecursive(GameObjectChild, NarrowMaterialNameList, MaterialNameList, NarrowMeshNameList, MeshNameList, AppLayer);
 
+		CCamera * Camera = GameObject->GetFirstComponent<CCamera>();
+		if (Camera != NULL) {
+			bool TreeNode = ImGui::TreeNode(Camera->GetName().GetNarrowInstanceName().c_str());
+			if (ImGui::BeginPopupContextItem("Camera Edit")) {
+				if (ImGui::Button("Delete")) {
+					GameObject->DestroyComponent(Camera);
+				}
+				ImGui::EndPopup();
+			}
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("CCamera", &Camera, sizeof(Camera));
+				ImGui::Text("Moving %s", Camera->GetName().GetNarrowInstanceName().c_str());
+				ImGui::EndDragDropSource();
+			}
+			if (TreeNode) {
+				ImGui::TextUnformatted("Aperture Angle");
+				ImGui::SameLine(); ImGui::PushItemWidth(-1);
+				ImGui::DragFloat("##Angle", &Camera->ApertureAngle, 1.0F, 0.F, 360.F, "%.2F");
+				ImGui::TextUnformatted("Culling Planes");
+				ImGui::SameLine(); ImGui::PushItemWidth(-1);
+				ImGui::DragFloat2("##Angle", &Camera->CullingPlanes[0], 1.0F, 0.1F, 99999.F, "%.2F");
+				ImGui::TreePop();
+			}
+		}
+		CCameraMovement * CameraMovement = GameObject->GetFirstComponent<CCameraMovement>();
+		if (CameraMovement != NULL) {
+			bool TreeNode = ImGui::TreeNode(CameraMovement->GetName().GetNarrowInstanceName().c_str());
+			if (ImGui::BeginPopupContextItem("Camera Movement Edit")) {
+				if (ImGui::Button("Delete")) {
+					GameObject->DestroyComponent(CameraMovement);
+				}
+				ImGui::EndPopup();
+			}
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("CCameraMovement", &CameraMovement, sizeof(CameraMovement));
+				ImGui::Text("Moving %s", CameraMovement->GetName().GetNarrowInstanceName().c_str());
+				ImGui::EndDragDropSource();
+			}
+			if (TreeNode) {
+				ImGui::TextUnformatted("Speed");
+				ImGui::SameLine(); ImGui::PushItemWidth(-1);
+				ImGui::DragFloat("##ViewSpeed", &CameraMovement->ViewSpeed, 1.0F);
+				ImGui::TreePop();
+			}
+		}
 		CRenderable * Renderable = GameObject->GetFirstComponent<CRenderable>();
 		if (Renderable == NULL && ImGui::Button("Create Renderer")) {
 			Renderable = GameObject->CreateComponent<CRenderable>();
 		}
 		if (Renderable != NULL) {
-			bool TreeNode = ImGui::TreeNode(Renderable->GetName().GetNarrowInstanceName().c_str());
+			bool TreeNode = ImGui::TreeNode(Renderable->GetName().GetNarrowInstanceName().c_str()); 
+			if (ImGui::BeginPopupContextItem("Renderable Edit")) {
+				if (ImGui::Button("Delete")) {
+					GameObject->DestroyComponent(Renderable);
+				}
+				ImGui::EndPopup();
+			}
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 				ImGui::SetDragDropPayload("CRenderable", &Renderable, sizeof(CRenderable));
 				ImGui::Text("Moving %s", Renderable->GetName().GetNarrowInstanceName().c_str());
@@ -135,11 +190,18 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 	}
 }
 
-SandboxSpaceLayer::SandboxSpaceLayer(const EmptySource::WString & Name, unsigned int Level) : SpaceLayer(Name, Level) {
-}
-
 void SandboxSpaceLayer::OnAwake() {
 	Super::OnAwake();
+	Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"MainStage");
+	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(0.F, Quaternion(), 1.F));
+	Camera->CreateComponent<CCamera>();
+	Camera->CreateComponent<CCameraMovement>();
+}
+
+void SandboxSpaceLayer::OnRender() {
+	Application::GetInstance()->GetRenderPipeline().BeginStage(L"MainStage");
+	Super::OnRender();
+	Application::GetInstance()->GetRenderPipeline().EndStage();
 }
 
 void SandboxSpaceLayer::OnImGuiRender() {
@@ -174,4 +236,7 @@ void SandboxSpaceLayer::OnImGuiRender() {
 		}
 
 	ImGui::End();
+}
+
+SandboxSpaceLayer::SandboxSpaceLayer(const EmptySource::WString & Name, unsigned int Level) : SpaceLayer(Name, Level) {
 }

@@ -148,6 +148,7 @@ namespace EmptySource {
 			if (RenderTimeSum > MaxFramerate) {
 				RenderTimeSum = 0.0;
 
+				GetRenderPipeline().BeginFrame();
 				for (Layer* LayerPointer : AppLayerStack)
 					LayerPointer->OnRender();
 
@@ -156,7 +157,6 @@ namespace EmptySource {
 					LayerPointer->OnImGuiRender();
 				ImGuiLayerInstance->End();
 
-				GetWindow().EndFrame();
 				GetRenderPipeline().EndOfFrame();
 			}
 

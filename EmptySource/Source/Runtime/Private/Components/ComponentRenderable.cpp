@@ -16,11 +16,6 @@ namespace EmptySource {
 	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Renderer", GameObject), ActiveMesh() {
 	}
 
-	bool CRenderable::Initialize() {
-		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Initalized", Name.GetDisplayName(), Name.GetInstanceID());
-		return true;
-	}
-
 	void CRenderable::OnDelete() {
 		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
@@ -57,13 +52,11 @@ namespace EmptySource {
 	void CRenderable::OnRender() {
 		if (ActiveMesh == NULL) return;
 
-		RenderStage * ActiveStage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
+		RenderPipeline & Pipeline = Application::GetInstance()->GetRenderPipeline();
 		Matrix4x4 GameObjectLWMatrix = GetGameObject().GetWorldTransform().GetLocalToWorldMatrix();
-		if (ActiveStage != NULL) {
-			for (auto& ItMaterial : Materials) {
-				if (ItMaterial.second)
-					ActiveStage->SubmitMesh(ActiveMesh, ItMaterial.first, ItMaterial.second, GameObjectLWMatrix);
-			}
+		for (auto& ItMaterial : Materials) {
+			if (ItMaterial.second)
+				Pipeline.SubmitMesh(ActiveMesh, ItMaterial.first, ItMaterial.second, GameObjectLWMatrix);
 		}
 	}
 

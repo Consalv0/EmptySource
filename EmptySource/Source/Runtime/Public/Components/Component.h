@@ -3,10 +3,10 @@
 #include "Core/Object.h"
 
 #define IMPLEMENT_COMPONENT(Name) public: \
-inline virtual WString GetObjectName() override { return L#Name;} \
-static WString GetStaticObjectName() { return L#Name;} \
+inline virtual EmptySource::WString GetObjectName() override { return L#Name;} \
+static EmptySource::WString GetStaticObjectName() { return L#Name;} \
 protected: \
-friend class GGameObject; friend class SpaceLayer; 
+friend class EmptySource::GGameObject; friend class EmptySource::SpaceLayer; 
 
 namespace EmptySource {
 
@@ -34,9 +34,13 @@ namespace EmptySource {
 
 		virtual void OnInputEvent(InputEvent& InEvent) {};
 
+		GGameObject & Holder;
+
+	private:
+
 		virtual void OnDelete() override;
 
-		GGameObject & Holder;
+		virtual void OnDetach() override {};
 
 	};
 

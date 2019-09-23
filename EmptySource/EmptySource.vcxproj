@@ -159,6 +159,7 @@
     <ClInclude Include="Source\Runtime\Public\Audio\AudioDevice.h" />
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h" />
     <ClInclude Include="Source\Runtime\Public\Core.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Application.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Mesh.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\MeshPrimitives.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderScene.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderTarget.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Rendering.h" />
@@ -262,6 +264,7 @@
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Component.cpp" />
@@ -292,6 +295,7 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderScene.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderTarget.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Rendering.cpp" />

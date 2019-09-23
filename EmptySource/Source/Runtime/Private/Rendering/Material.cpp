@@ -16,7 +16,7 @@ namespace EmptySource {
 	Material::Material(const IName & Name) : Name(Name) {
 		Shader = NULL;
 		RenderPriority = 1000;
-		bUseDepthTest = true;
+		bWriteDepth = true;
 		DepthFunction = DF_LessEqual;
 		FillMode = FM_Solid;
 		CullMode = CM_CounterClockWise;
@@ -118,7 +118,7 @@ namespace EmptySource {
 
 	void Material::Use() const {
 		
-		Rendering::SetActiveDepthTest(bUseDepthTest);
+		Rendering::SetActiveDepthTest(bWriteDepth);
 		Rendering::SetDepthFunction(DepthFunction);
 		Rendering::SetRasterizerFillMode(FillMode);
 		Rendering::SetCullMode(CullMode);
@@ -162,6 +162,10 @@ namespace EmptySource {
 				}
 			}
 		}
+	}
+
+	bool Material::operator>(const Material & Other) const {
+		return RenderPriority > Other.RenderPriority;
 	}
 
 	void MaterialLayout::SetVariable(const ShaderProperty & Variable) {

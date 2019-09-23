@@ -9,6 +9,8 @@ public:
 
 	void OnAwake() override;
 
+	void OnRender() override;
+
 	void OnImGuiRender() override;
 
 };

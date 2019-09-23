@@ -22,6 +22,8 @@ namespace EmptySource {
 
 		bool ContainsRecursiveDown(GGameObject * Other) const;
 
+		virtual void DestroyComponent(CComponent * Component);
+
 		inline bool IsRoot() const { return Parent == NULL; };
 
 		Transform GetWorldTransform() const;
@@ -53,12 +55,17 @@ namespace EmptySource {
 		//* Dictionary that contains all the Components in this GameObject
 		TDictionary<size_t, CComponent*> ComponentsIn;
 
+		//* Dictionary that contains all the Components in this GameObject to destroy
+		TDictionary<size_t, CComponent*> ComponentsOut;
+
 		//* Add component
 		void AttachComponent(CComponent * Component);
 
-		void DeleteComponent(CComponent * Component);
+		void DetachComponent(CComponent * Component);
 
-		void DeleteAllComponents();
+		void DeleteOutComponents();
+
+		void DeatachAllComponents();
 
 		virtual void OnRender();
 

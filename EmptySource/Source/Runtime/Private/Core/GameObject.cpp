@@ -58,6 +58,10 @@ namespace EmptySource {
 		return false;
 	}
 
+	void GGameObject::DestroyComponent(CComponent * Component) {
+		DetachComponent(Component);
+	}
+
 	bool GGameObject::ContainsRecursiveUp(GGameObject * Other) const {
 		if (!IsRoot())
 			if (Parent->Name.GetInstanceID() != Other->Name.GetInstanceID()) {
@@ -81,15 +85,24 @@ namespace EmptySource {
 		Component->OnAwake();
 	}
 
-	void GGameObject::DeleteComponent(CComponent * Component) {
-		Component->OnDelete();
+	void GGameObject::DetachComponent(CComponent * Component) {
+		Component->OnDetach();
 		ComponentsIn.erase(Component->Name.GetInstanceID());
-		delete Component;
+		ComponentsOut.emplace(Component->Name.GetInstanceID(), Component);
 	}
 
-	void GGameObject::DeleteAllComponents() {
+	void GGameObject::DeleteOutComponents() {
+		for (auto & Iterator : ComponentsOut) {
+			Iterator.second->OnDelete();
+			delete Iterator.second;
+		}
+		
+		ComponentsOut.clear();
+	}
+
+	void GGameObject::DeatachAllComponents() {
 		for (TDictionary<size_t, CComponent*>::iterator Iterator = ComponentsIn.begin(); Iterator != ComponentsIn.end(); Iterator++)
-			DeleteComponent(Iterator->second);
+			DetachComponent(Iterator->second);
 	}
 
 	void GGameObject::OnRender() {
@@ -98,6 +111,7 @@ namespace EmptySource {
 	}
 
 	void GGameObject::OnUpdate(const Timestamp & Stamp) {
+		DeleteOutComponents();
 		for (auto & Component : ComponentsIn)
 			Component.second->OnUpdate(Stamp);
 	}
@@ -118,7 +132,8 @@ namespace EmptySource {
 	}
 
 	void GGameObject::OnDelete() {
-		DeleteAllComponents();
+		DeatachAllComponents();
+		DeleteOutComponents();
 	}
 
 }

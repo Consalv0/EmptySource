@@ -5,42 +5,37 @@
 #include "Rendering/RenderPipeline.h"
 #include "Rendering/Material.h"
 #include "Rendering/Mesh.h"
+#include "Rendering/RenderScene.h"
 
 namespace EmptySource {
 
 	class RenderStage {
+	public:
+		RenderScene Scene;
+
+		inline const IName & GetName() const { return Name; };
+
 	protected:
 		friend class RenderPipeline;
 
+		RenderStage(const IName & Name, RenderPipeline * Pipeline);
+
 		RenderPipeline * Pipeline;
 
-		VertexBufferPtr ModelMatrixBuffer;
-
-		Transform EyeTransform;
-
-		Matrix4x4 ViewProjection;
-
-		virtual void End() {};
+		virtual void End();
 
 		virtual void Begin();
 
-	public:
+		virtual void SubmitVertexArray(const VertexArrayPtr & VertexArray, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
-		struct SceneLight {
-			Point3 Position;
-			Vector3 Color;
-			float Intensity;
-		} SceneLights[2];
-
-		virtual void SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
-
-		virtual void SetLight(unsigned int Index, const Point3 & Position, const Vector3 & Color, const float & Intensity);
+		virtual void SubmitLight(unsigned int Index, const Point3 & Position, const Vector3 & Color, const float & Intensity);
 
 		virtual void SetEyeTransform(const Transform & EyeTransform);
 
 		virtual void SetProjectionMatrix(const Matrix4x4 & Projection);
 
-		VertexBufferPtr GetMatrixBuffer() const;
+	private:
+		IName Name;
 	};
 
 }

@@ -64,13 +64,6 @@ private:
 
 	// --- Perpective matrix (ProjectionMatrix)
 	VertexBufferPtr ModelMatrixBuffer;
-	size_t TriangleCount = 0;
-	size_t VerticesCount = 0;
-	Matrix4x4 ProjectionMatrix;
-
-	Vector3 EyePosition = { -1.132F, 2.692F, -4.048F };
-	Vector3 LightPosition0 = Vector3(2, 1);
-	Vector3 LightPosition1 = Vector3(2, 1);
 
 	// TArray<MeshPtr> SceneModels;
 	// TArray<MeshPtr> LightModels;
@@ -81,7 +74,7 @@ private:
 	float ViewSpeed = 3;
 	Vector3 ViewOrientation;
 	Matrix4x4 ViewMatrix; 
-	Quaternion CameraRotation; 
+	Quaternion CameraRotation;
 	Quaternion LastCameraRotation;
 	Vector2 LastCursorPosition;
 	Vector2 CursorPosition;
@@ -484,8 +477,12 @@ protected:
 					}
 					ImGui::NextColumn();
 
-					ImGui::AlignTextToFramePadding(); ImGui::Text("Depth Test"); ImGui::NextColumn();
-					ImGui::PushItemWidth(-1); ImGui::Checkbox("##bDepthTest", &SelectedMaterial->bUseDepthTest);
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Render Priority"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::DragScalar("##RPriority", ImGuiDataType_U32, &SelectedMaterial->RenderPriority, 100.F);
+					ImGui::NextColumn();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Write Depth"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Checkbox("##bDepthTest", &SelectedMaterial->bWriteDepth);
 					ImGui::NextColumn();
 
 					ImGui::AlignTextToFramePadding(); ImGui::Text("Depth Function"); ImGui::NextColumn();
@@ -665,15 +662,6 @@ protected:
 			ImGui::Columns(2);
 			ImGui::Separator();
 
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Position"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Eye Position", &EyePosition[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber); ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Rotation"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat4("##Eye Rotation", &CameraRotation[0], -1.F, 1.F, ""); ImGui::NextColumn();
-			Vector3 EulerFrameRotation = CameraRotation.ToEulerAngles();
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Eye Euler Rotation"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Eye Euler Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
-				CameraRotation = Quaternion::EulerAngles(EulerFrameRotation);
-			} ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
@@ -685,17 +673,17 @@ protected:
 			RenderStage * ActiveStage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
 			if (ActiveStage != NULL) {
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Position"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[0].Position", &ActiveStage->SceneLights[0].Position[0]); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[0].Position", &ActiveStage->Scene.Lights[0].Position[0]); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Color"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[0].Color", &ActiveStage->SceneLights[0].Color[0]); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[0].Color", &ActiveStage->Scene.Lights[0].Color[0]); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Intensity"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[0].Intensity", &ActiveStage->SceneLights[0].Intensity); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[0].Intensity", &ActiveStage->Scene.Lights[0].Intensity); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Position"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[1].Position", &ActiveStage->SceneLights[1].Position[0]); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[1].Position", &ActiveStage->Scene.Lights[1].Position[0]); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Color"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[1].Color", &ActiveStage->SceneLights[1].Color[0]); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[1].Color", &ActiveStage->Scene.Lights[1].Color[0]); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Intensity"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[1].Intensity", &ActiveStage->SceneLights[1].Intensity); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[1].Intensity", &ActiveStage->Scene.Lights[1].Intensity); ImGui::NextColumn();
 			}
 
 			ImGui::Columns(1);
@@ -864,7 +852,7 @@ protected:
 	virtual void OnAwake() override {
 		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
 
-		Application::GetInstance()->GetRenderPipeline().AddStage(L"TestStage", new RenderStage());
+		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"TestStage");
 
 		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, false, true);
 		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Hololooo.wav"), 0.255F, false, true);
@@ -972,66 +960,20 @@ protected:
 		Application::GetInstance()->GetRenderPipeline().ContextInterval(0);
 	}
 
-	virtual void OnInputEvent(InputEvent & InEvent) override {
-		EventDispatcher<InputEvent> Dispatcher(InEvent);
-		Dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent & Event) {
-			CursorPosition = Event.GetMousePosition();
-		});
-		Dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent & Event) {
-			if (Event.GetMouseButton() == 3 && Event.GetRepeatCount() <= 0) {
-				LastCursorPosition = { Input::GetMouseX(), Input::GetMouseY() };
-				LastCameraRotation = CameraRotation;
-			}
-		});
-	}
-
 	virtual void OnUpdate(Timestamp Stamp) override {
 
-		ProjectionMatrix = Matrix4x4::Perspective(
-			60.0F * MathConstants::DegreeToRad,	// Aperute angle
-			Application::GetInstance()->GetWindow().GetAspectRatio(),	    // Aspect ratio
-			0.03F,						        // Near plane
-			1000.0F						        // Far plane
-		);
-
-		if (Input::IsMouseButtonDown(3)) {
-			Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
-			CameraRotation = Quaternion::EulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.y, -Input::GetMouseX() - -LastCursorPosition.x));
-		}
-
-		if (Input::IsKeyDown(SDL_SCANCODE_W)) {
-			Vector3 Forward = CameraRotation * Vector3(0, 0, ViewSpeed);
-			EyePosition += Forward * Time::GetDeltaTime<Time::Second>() *
-				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_A)) {
-			Vector3 Right = CameraRotation * Vector3(ViewSpeed, 0, 0);
-			EyePosition += Right * Time::GetDeltaTime<Time::Second>() *
-				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_S)) {
-			Vector3 Back = CameraRotation * Vector3(0, 0, -ViewSpeed);
-			EyePosition += Back * Time::GetDeltaTime<Time::Second>() *
-				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_D)) {
-			Vector3 Left = CameraRotation * Vector3(-ViewSpeed, 0, 0);
-			EyePosition += Left * Time::GetDeltaTime<Time::Second>() *
-				(!Input::IsKeyDown(SDL_SCANCODE_LSHIFT) ? !Input::IsKeyDown(SDL_SCANCODE_LCTRL) ? 1.F : .1F : 4.F);
-		}
-
-		CameraRayDirection = {
-			(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,
-			1.F - (2.F * Input::GetMouseY()) / Application::GetInstance()->GetWindow().GetHeight(),
-			-1.F,
-		};
-		CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
-		CameraRayDirection.z = -1.F;
-		CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
-		CameraRayDirection.Normalize();
-
-		ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
-		// ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
+		// CameraRayDirection = {
+		// 	(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,
+		// 	1.F - (2.F * Input::GetMouseY()) / Application::GetInstance()->GetWindow().GetHeight(),
+		// 	-1.F,
+		// };
+		// CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
+		// CameraRayDirection.z = -1.F;
+		// CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
+		// CameraRayDirection.Normalize();
+		// 
+		// ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
+		// // ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
 
 		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime<Time::Second>();
@@ -1088,11 +1030,11 @@ protected:
 			}
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_SPACE)) {
-			TestArrowTransform.Position = EyePosition;
-			TestArrowDirection = CameraRayDirection;
-			TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
-		}
+		// if (Input::IsKeyDown(SDL_SCANCODE_SPACE)) {
+		// 	TestArrowTransform.Position = EyePosition;
+		// 	TestArrowDirection = CameraRayDirection;
+		// 	TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
+		// }
 
 		for (int i = 0; i < TextCount; i++) {
 			if (TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
@@ -1121,16 +1063,6 @@ protected:
 	}
 
 	virtual void OnRender() override {
-
-		Application::GetInstance()->GetRenderPipeline().PrepareFrame();
-
-		RenderStage * Stage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
-		if (Stage != NULL) { 
-			Stage->SetEyeTransform(Transform(EyePosition, CameraRotation));
-			Stage->SetProjectionMatrix(ProjectionMatrix);
-		}
-
-		VerticesCount = 0;
 		Timestamp Timer;
 
 		// --- Run the device part of the program
@@ -1191,46 +1123,12 @@ protected:
 		// 		}
 		// 	}
 
-		LightPosition0 = Transforms[0].Position + (Transforms[0].Rotation * Vector3(0, 0, 4));
-		LightPosition1 = Vector3();
-
-		TArray<Vector4> Spheres = TArray<Vector4>();
-		Spheres.push_back(Vector4(Matrix4x4::Translation(Vector3(0, 0, -1.F)) * Vector4(0.F, 0.F, 0.F, 1.F), 0.25F));
-		Spheres.push_back(Vector4((Matrix4x4::Translation(Vector3(0, 0, -1.F)) * Quaternion::EulerAngles(
-			Vector3(Input::GetMousePosition())
-		).ToMatrix4x4() * Matrix4x4::Translation(Vector3(0.5F))) * Vector4(0.F, 0.F, 0.F, 1.F), 0.5F));
-		// bTestResult = RTRenderToTexture2D(&RenderedTexture, &Spheres, curandomStateArray);
-
-		// Framebuffer.Use();
-
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
 		RenderCubemapMaterial->SetVariables({
-			{ "_ProjectionMatrix", { ProjectionMatrix }, SPFlags_IsInternal },
-			{ "_ViewMatrix", { ViewMatrix }, SPFlags_IsInternal },
 			{ "_Skybox", { ETextureDimension::Cubemap, CubemapTexture } },
 			{ "_Lod", { float( SkyRoughnessTemp ) } }
 		});
-		RenderCubemapMaterial->Use();
-
-		MeshPtr SphereModel = MeshManager::GetInstance().GetMesh(L"pSphere1");
-		if (SphereModel) {
-			SphereModel->BindVertexArray();
 		
-			Matrix4x4 MatrixScale = Matrix4x4::Scaling({ 500, 500, 500 });
-			RenderCubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, MatrixScale.PointerToValue(), ModelMatrixBuffer);
-			SphereModel->DrawElement();
-		}
-
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetEyeTransform(Transform(EyePosition, CameraRotation));
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"TestStage")->SetProjectionMatrix(Matrix4x4::Perspective(
-			60.0F * MathConstants::DegreeToRad,	 // Aperute angle
-			Application::GetInstance()->GetWindow().GetAspectRatio(),		 // Aspect ratio
-			0.03F,								 // Near plane
-			1000.0F								 // Far plane
-		));
-
-		Application::GetInstance()->GetRenderPipeline().BeginStage(L"TestStage");
-
 		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
 
 		// size_t TotalHitCount = 0;
@@ -1407,25 +1305,20 @@ protected:
 		}
 
 		RenderingText[2] = Text::Formatted(
-			L"└> Sphere Position(%ls), Sphere2 Position(%ls), ElementsIntersected(%d), RayHits(%d)",
-			Text::FormatMath(Spheres[0]).c_str(),
-			Text::FormatMath(Spheres[1]).c_str(),
+			L"└> ElementsIntersected(%d), RayHits(%d)",
 			ElementsIntersected.size(),
 			0 // TotalHitCount
 		);
 
 		RenderingText[0] = Text::Formatted(
-			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), Vertices(%ls), DeltaCursor(%ls), Camera(P%ls, R%ls)",
+			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), DeltaCursor(%ls)",
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
 			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
 			1.F / Time::GetAverageDelta<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>(),
 			LightIntencity / 10000.F + 1.F,
-			Text::FormatUnit(VerticesCount, 2).c_str(),
-			Text::FormatMath(Vector3(LastCursorPosition.y - Input::GetMouseY(), -LastCursorPosition.x - -Input::GetMouseX())).c_str(),
-			Text::FormatMath(EyePosition).c_str(),
-			Text::FormatMath(Math::ClampAngleComponents(CameraRotation.ToEulerAngles())).c_str()
+			Text::FormatMath(Vector3(LastCursorPosition.y - Input::GetMouseY(), -LastCursorPosition.x - -Input::GetMouseX())).c_str()
 		);
 
 		if (Input::IsKeyDown(SDL_SCANCODE_ESCAPE)) {

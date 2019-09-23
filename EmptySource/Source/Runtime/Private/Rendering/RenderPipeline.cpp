@@ -13,7 +13,7 @@
 namespace EmptySource {
 
 	RenderPipeline::RenderPipeline() :
-		RenderSacale(1.F), RenderStages() {
+		RenderScale(1.F), RenderStages() {
 	}
 
 	RenderPipeline::~RenderPipeline() {
@@ -28,37 +28,46 @@ namespace EmptySource {
 		SDL_GL_SetSwapInterval(Interval);
 	}
 
-	void RenderPipeline::BeginStage(WString StageName) {
-		TDictionary<WString, RenderStage *>::iterator Stage;
-		if ((Stage = RenderStages.find(StageName)) != RenderStages.end()) {
+	void RenderPipeline::BeginStage(const IName & StageName) {
+		ES_CORE_ASSERT(ActiveStage == NULL, "Render Stage '{}' already active. Use EndStage", ActiveStage->GetName().GetNarrowDisplayName().c_str());
+		TDictionary<size_t, RenderStage *>::iterator Stage;
+		if ((Stage = RenderStages.find(StageName.GetID())) != RenderStages.end()) {
 			ActiveStage = Stage->second;
 			Stage->second->Begin();
 		}
 	}
 
 	void RenderPipeline::EndStage() {
-		if (ActiveStage != NULL)
-			ActiveStage->End();
+		ES_CORE_ASSERT(ActiveStage != NULL, "No RenderStage active.");
+		ActiveStage->End();
+		ActiveStage = NULL;
 	}
 
-	bool RenderPipeline::AddStage(WString StageName, RenderStage * Stage) {
-		if (RenderStages.find(StageName) == RenderStages.end()) {
-			RenderStages.insert(std::pair<WString, RenderStage *>(StageName, Stage));
-			Stage->Pipeline = this;
-			return true;
+	void RenderPipeline::SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+		ActiveStage->SubmitVertexArray(Model->GetSubdivisionVertexArray(Subdivision), Mat, Matrix);
+	}
+
+	void RenderPipeline::SubmitLight(unsigned int Index, const Point3 & Position, const Vector3 & Color, const float & Intensity) {
+		ActiveStage->SubmitLight(Index, Position, Color, Intensity);
+	}
+
+	void RenderPipeline::SetEyeTransform(const Transform & EyeTransform) {
+		ActiveStage->SetEyeTransform(EyeTransform);
+	}
+
+	void RenderPipeline::SetProjectionMatrix(const Matrix4x4 & Projection) {
+		ActiveStage->SetProjectionMatrix(Projection);
+	}
+
+	void RenderPipeline::RemoveStage(const IName & StageName) {
+		if (RenderStages.find(StageName.GetID()) != RenderStages.end()) {
+			RenderStages.erase(StageName.GetID());
 		}
-		return false;
 	}
 
-	void RenderPipeline::RemoveStage(WString StageName) {
-		if (RenderStages.find(StageName) != RenderStages.end()) {
-			RenderStages.erase(StageName);
-		}
-	}
-
-	RenderStage * RenderPipeline::GetStage(WString StageName) const {
-		if (RenderStages.find(StageName) != RenderStages.end()) {
-			return RenderStages.find(StageName)->second;
+	RenderStage * RenderPipeline::GetStage(const IName & StageName) const {
+		if (RenderStages.find(StageName.GetID()) != RenderStages.end()) {
+			return RenderStages.find(StageName.GetID())->second;
 		}
 		return NULL;
 	}
@@ -67,13 +76,14 @@ namespace EmptySource {
 		return ActiveStage;
 	}
 
-	void RenderPipeline::PrepareFrame() {
+	void RenderPipeline::BeginFrame() {
 		Rendering::SetDefaultRender();
 		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
 		Rendering::ClearCurrentRender(true, 0.25F, true, 1, false, 0);
 	}
 
 	void RenderPipeline::EndOfFrame() {
+		Application::GetInstance()->GetWindow().EndFrame();
 	}
 
 }

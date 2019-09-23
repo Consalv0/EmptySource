@@ -73,6 +73,9 @@ namespace EmptySource {
 		//* Bind Element Subdivision Array Object
 		void BindSubdivisionVertexArray(int MaterialIndex) const;
 
+		//* Get VertexArray in Mesh
+		VertexArrayPtr GetSubdivisionVertexArray(int MaterialIndex) const;
+
 		//* Draw mesh using instanciated Element Buffer
 		void DrawInstanciated(int Count) const;
 

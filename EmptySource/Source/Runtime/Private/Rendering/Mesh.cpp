@@ -69,6 +69,14 @@ namespace EmptySource {
 		return;
 	}
 
+	VertexArrayPtr Mesh::GetSubdivisionVertexArray(int MaterialIndex) const {
+		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
+		if (Subdivision == Data.MaterialSubdivisions.end()) return NULL;
+		if (MaterialIndex >= MeshSubdivisions.size() || MeshSubdivisions[MaterialIndex] == NULL) return NULL;
+
+		return MeshSubdivisions[MaterialIndex];
+	}
+
 	void Mesh::DrawInstanciated(int Count) const {
 		Rendering::DrawIndexed(VertexArrayObject, Count);
 	}

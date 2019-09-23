@@ -405,6 +405,12 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderScene.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -592,6 +598,12 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderScene.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp">
+      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

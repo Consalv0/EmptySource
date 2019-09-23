@@ -18,15 +18,13 @@ namespace EmptySource {
 
 		virtual MeshPtr GetMesh() const;
 
-		virtual void OnRender();
+		virtual void OnRender() override;
 
 	protected:
 		typedef CComponent Supper;
 		CRenderable(GGameObject & GameObject);
 
-		virtual bool Initialize();
-
-		virtual void OnDelete();
+		virtual void OnDelete() override;
 
 		MeshPtr ActiveMesh;
 
