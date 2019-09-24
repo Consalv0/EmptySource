@@ -8,49 +8,49 @@
 
 namespace YAML {
 	template<>
-	struct convert<EmptySource::EShaderPropertyType> {
-		static Node encode(const EmptySource::EShaderPropertyType& rhs) {
+	struct convert<EmptySource::EShaderUniformType> {
+		static Node encode(const EmptySource::EShaderUniformType& rhs) {
 			Node node;
 			switch (rhs) {
-				case EmptySource::EShaderPropertyType::None:           node.push_back("None");           break;
-				case EmptySource::EShaderPropertyType::Matrix4x4Array: node.push_back("Matrix4x4Array"); break;
-				case EmptySource::EShaderPropertyType::Matrix4x4:      node.push_back("Matrix4x4");      break;
-				case EmptySource::EShaderPropertyType::FloatArray:     node.push_back("FloatArray");     break;
-				case EmptySource::EShaderPropertyType::Float:          node.push_back("Float");          break;
-				case EmptySource::EShaderPropertyType::Float2DArray:   node.push_back("Float2DArray");   break;
-				case EmptySource::EShaderPropertyType::Float2D:        node.push_back("Float2D");        break;
-				case EmptySource::EShaderPropertyType::Float3DArray:   node.push_back("Float3DArray");   break;
-				case EmptySource::EShaderPropertyType::Float3D:        node.push_back("Float3D");        break;
-				case EmptySource::EShaderPropertyType::Float4DArray:   node.push_back("Float4DArray");   break;
-				case EmptySource::EShaderPropertyType::Float4D:        node.push_back("Float4D");        break;
-				case EmptySource::EShaderPropertyType::Texture2D:      node.push_back("Texture2D");      break;
-				case EmptySource::EShaderPropertyType::Cubemap:        node.push_back("Cubemap");        break;
-				case EmptySource::EShaderPropertyType::Int:            node.push_back("Int");            break;
-				case EmptySource::EShaderPropertyType::IntArray:       node.push_back("IntArray");       break;
+				case EmptySource::EShaderUniformType::None:           node.push_back("None");           break;
+				case EmptySource::EShaderUniformType::Matrix4x4Array: node.push_back("Matrix4x4Array"); break;
+				case EmptySource::EShaderUniformType::Matrix4x4:      node.push_back("Matrix4x4");      break;
+				case EmptySource::EShaderUniformType::FloatArray:     node.push_back("FloatArray");     break;
+				case EmptySource::EShaderUniformType::Float:          node.push_back("Float");          break;
+				case EmptySource::EShaderUniformType::Float2DArray:   node.push_back("Float2DArray");   break;
+				case EmptySource::EShaderUniformType::Float2D:        node.push_back("Float2D");        break;
+				case EmptySource::EShaderUniformType::Float3DArray:   node.push_back("Float3DArray");   break;
+				case EmptySource::EShaderUniformType::Float3D:        node.push_back("Float3D");        break;
+				case EmptySource::EShaderUniformType::Float4DArray:   node.push_back("Float4DArray");   break;
+				case EmptySource::EShaderUniformType::Float4D:        node.push_back("Float4D");        break;
+				case EmptySource::EShaderUniformType::Texture2D:      node.push_back("Texture2D");      break;
+				case EmptySource::EShaderUniformType::Cubemap:        node.push_back("Cubemap");        break;
+				case EmptySource::EShaderUniformType::Int:            node.push_back("Int");            break;
+				case EmptySource::EShaderUniformType::IntArray:       node.push_back("IntArray");       break;
 			}
 			return node;
 		}
 
-		static bool decode(const Node& node, EmptySource::EShaderPropertyType& rhs) {
+		static bool decode(const Node& node, EmptySource::EShaderUniformType& rhs) {
 			if (!node.IsSequence()) {
 				return false;
 			}
 			EmptySource::NString TypeName = node.as<EmptySource::NString>();
-			if (TypeName == "None")           rhs = EmptySource::EShaderPropertyType::None;           return true;
-			if (TypeName == "Matrix4x4Array") rhs = EmptySource::EShaderPropertyType::Matrix4x4Array; return true;
-			if (TypeName == "Matrix4x4")      rhs = EmptySource::EShaderPropertyType::Matrix4x4;      return true;
-			if (TypeName == "FloatArray")     rhs = EmptySource::EShaderPropertyType::FloatArray;     return true;
-			if (TypeName == "Float")          rhs = EmptySource::EShaderPropertyType::Float;          return true;
-			if (TypeName == "Float2DArray")   rhs = EmptySource::EShaderPropertyType::Float2DArray;   return true;
-			if (TypeName == "Float2D")        rhs = EmptySource::EShaderPropertyType::Float2D;        return true;
-			if (TypeName == "Float3DArray")   rhs = EmptySource::EShaderPropertyType::Float3DArray;   return true;
-			if (TypeName == "Float3D")        rhs = EmptySource::EShaderPropertyType::Float3D;        return true;
-			if (TypeName == "Float4DArray")   rhs = EmptySource::EShaderPropertyType::Float4DArray;   return true;
-			if (TypeName == "Float4D")        rhs = EmptySource::EShaderPropertyType::Float4D;        return true;
-			if (TypeName == "Texture2D")      rhs = EmptySource::EShaderPropertyType::Texture2D;      return true;
-			if (TypeName == "Cubemap")        rhs = EmptySource::EShaderPropertyType::Cubemap;        return true;
-			if (TypeName == "Int")            rhs = EmptySource::EShaderPropertyType::Int;            return true;
-			if (TypeName == "IntArray")       rhs = EmptySource::EShaderPropertyType::IntArray;       return true;
+			if (TypeName == "None")           rhs = EmptySource::EShaderUniformType::None;           return true;
+			if (TypeName == "Matrix4x4Array") rhs = EmptySource::EShaderUniformType::Matrix4x4Array; return true;
+			if (TypeName == "Matrix4x4")      rhs = EmptySource::EShaderUniformType::Matrix4x4;      return true;
+			if (TypeName == "FloatArray")     rhs = EmptySource::EShaderUniformType::FloatArray;     return true;
+			if (TypeName == "Float")          rhs = EmptySource::EShaderUniformType::Float;          return true;
+			if (TypeName == "Float2DArray")   rhs = EmptySource::EShaderUniformType::Float2DArray;   return true;
+			if (TypeName == "Float2D")        rhs = EmptySource::EShaderUniformType::Float2D;        return true;
+			if (TypeName == "Float3DArray")   rhs = EmptySource::EShaderUniformType::Float3DArray;   return true;
+			if (TypeName == "Float3D")        rhs = EmptySource::EShaderUniformType::Float3D;        return true;
+			if (TypeName == "Float4DArray")   rhs = EmptySource::EShaderUniformType::Float4DArray;   return true;
+			if (TypeName == "Float4D")        rhs = EmptySource::EShaderUniformType::Float4D;        return true;
+			if (TypeName == "Texture2D")      rhs = EmptySource::EShaderUniformType::Texture2D;      return true;
+			if (TypeName == "Cubemap")        rhs = EmptySource::EShaderUniformType::Cubemap;        return true;
+			if (TypeName == "Int")            rhs = EmptySource::EShaderUniformType::Int;            return true;
+			if (TypeName == "IntArray")       rhs = EmptySource::EShaderUniformType::IntArray;       return true;
 			return true;
 		}
 	};

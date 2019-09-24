@@ -42,7 +42,7 @@ namespace EmptySource {
 			}
 
 			float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
-			(*MatIt)->SetVariables({
+			(*MatIt)->SetParameters({
 				{ "_ViewPosition",        { EyeTransform.Position }, SPFlags_IsInternal },
 				{ "_ProjectionMatrix",    { ViewProjection }, SPFlags_IsInternal },
 				{ "_ViewMatrix",          { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },

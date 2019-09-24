@@ -28,7 +28,7 @@ namespace EmptySource {
 		Down
 	};
 
-	enum class EShaderPropertyType {
+	enum class EShaderUniformType {
 		None = 0,
 		Matrix4x4Array,
 		Matrix4x4,

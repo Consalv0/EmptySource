@@ -246,6 +246,7 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderParameters.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderResource.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\TextureResource.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\TextFormatting.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderResource.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\TextureResource.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
@@ -334,4 +336,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 

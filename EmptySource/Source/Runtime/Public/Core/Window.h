@@ -69,7 +69,7 @@ namespace EmptySource {
 		virtual GraphicContext * GetContext() const = 0;
 
 		//* Creates a Window with a Name, Width and Height
-		static Window * Create(const WindowProperties& Properties = WindowProperties());
+		static Window * Create(const WindowProperties& Parameters = WindowProperties());
 	};
 
 }

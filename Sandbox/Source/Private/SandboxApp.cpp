@@ -521,7 +521,7 @@ protected:
 						int i = 0;
 						if (KeyValue.IsInternal()) continue;
 						switch (KeyValue.Value.GetType()) {
-						case EShaderPropertyType::Matrix4x4Array:
+						case EShaderUniformType::Matrix4x4Array:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Matrix4x4Array) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -534,7 +534,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Matrix4x4:
+						case EShaderUniformType::Matrix4x4:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
 							if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
 								ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Mat0", (float *)&KeyValue.Value.Mat4x4[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -545,7 +545,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::FloatArray:
+						case EShaderUniformType::FloatArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.FloatArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -555,12 +555,12 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float:
+						case EShaderUniformType::Float:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1); ImGui::DragFloat(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float, .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float2DArray:
+						case EShaderUniformType::Float2DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Float2DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -570,12 +570,12 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float2D:
+						case EShaderUniformType::Float2D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1); ImGui::DragFloat2(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float2D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float3DArray:
+						case EShaderUniformType::Float3DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Float3DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -589,7 +589,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float3D:
+						case EShaderUniformType::Float3D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1);
 							if (KeyValue.IsColor())
@@ -598,7 +598,7 @@ protected:
 								ImGui::DragFloat3(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float3D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float4DArray:
+						case EShaderUniformType::Float4DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Float4DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -612,7 +612,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Float4D:
+						case EShaderUniformType::Float4D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1);
 							if (KeyValue.IsColor())
@@ -621,7 +621,7 @@ protected:
 								ImGui::DragFloat4(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float4D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::IntArray:
+						case EShaderUniformType::IntArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.IntArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -631,13 +631,13 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Int:
+						case EShaderUniformType::Int:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1); ImGui::DragInt(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Int, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::Cubemap:
-						case EShaderPropertyType::Texture2D:
+						case EShaderUniformType::Cubemap:
+						case EShaderUniformType::Texture2D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							i = KeyValue.Value.Texture ? 0 : -1;
 							if (i == 0) {
@@ -658,7 +658,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderPropertyType::None:
+						case EShaderUniformType::None:
 						default:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s[%d]", KeyValue.Name.c_str(), (int)KeyValue.Value.GetType()); ImGui::NextColumn();
 							ImGui::NextColumn();
@@ -1144,7 +1144,7 @@ protected:
 		// 	}
 
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
-		RenderCubemapMaterial->SetVariables({
+		RenderCubemapMaterial->SetParameters({
 			{ "_Skybox", { ETextureDimension::Cubemap, CubemapTexture } },
 			{ "_Lod", { float( SkyRoughnessTemp ) } }
 		});
@@ -1289,7 +1289,7 @@ protected:
 		// --- Activate corresponding render state
 
 		float FontScale = (FontSize / TextGenerator.GlyphHeight);
-		RenderTextMaterial->SetVariables({
+		RenderTextMaterial->SetParameters({
 			{ "_MainTextureSize", { FontMap->GetSize().FloatVector3() }, SPFlags_None },
 			{ "_ProjectionMatrix", { Matrix4x4::Orthographic(
 				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),

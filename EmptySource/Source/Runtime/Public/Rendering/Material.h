@@ -11,29 +11,29 @@ namespace EmptySource {
 	public:
 		MaterialLayout() {}
 
-		MaterialLayout(const TArrayInitializer<ShaderProperty> Properties) : MaterialVariables(Properties) { }
+		MaterialLayout(const TArrayInitializer<ShaderParameters> Parameters) : MaterialVariables(Parameters) { }
 
-		const TArray<ShaderProperty>& GetVariables() const { return MaterialVariables; };
+		const TArray<ShaderParameters>& GetVariables() const { return MaterialVariables; };
 
-		ShaderProperty & GetVariable(const NString & Name) const { Find(Name); };
+		ShaderParameters & GetVariable(const NString & Name) const { Find(Name); };
 
-		void SetVariable(const ShaderProperty& Variable);
+		void SetParameter(const ShaderParameters& Variable);
 
-		void AddVariable(const ShaderProperty& Property);
+		void AddParameter(const ShaderParameters& Property);
 
-		TArray<ShaderProperty>::const_iterator Find(const NString & Name) const;
+		TArray<ShaderParameters>::const_iterator Find(const NString & Name) const;
 
-		TArray<ShaderProperty>::iterator Find(const NString & Name);
+		TArray<ShaderParameters>::iterator Find(const NString & Name);
 
 		void Clear() { MaterialVariables.clear(); };
 
-		TArray<ShaderProperty>::iterator begin() { return MaterialVariables.begin(); }
-		TArray<ShaderProperty>::iterator end() { return MaterialVariables.end(); }
-		TArray<ShaderProperty>::const_iterator begin() const { return MaterialVariables.begin(); }
-		TArray<ShaderProperty>::const_iterator end() const { return MaterialVariables.end(); }
+		TArray<ShaderParameters>::iterator begin() { return MaterialVariables.begin(); }
+		TArray<ShaderParameters>::iterator end() { return MaterialVariables.end(); }
+		TArray<ShaderParameters>::const_iterator begin() const { return MaterialVariables.begin(); }
+		TArray<ShaderParameters>::const_iterator end() const { return MaterialVariables.end(); }
 
 	private:
-		TArray<ShaderProperty> MaterialVariables;
+		TArray<ShaderParameters> MaterialVariables;
 	};
 
 	class Material {
@@ -81,11 +81,11 @@ namespace EmptySource {
 		//* Pass Cubemap array
 		void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) const;
 
-		inline MaterialLayout& GetVariables() { return VariableLayout; };
+		inline MaterialLayout& GetVariables() { return ParameterLayout; };
 
-		void SetVariables(const TArray<ShaderProperty>& NewLayout);
+		void SetParameters(const TArray<ShaderParameters>& NewLayout);
 
-		void SetProperties(const TArray<ShaderProperty>& NewLayout);
+		void AddParameters(const TArray<ShaderParameters>& NewLayout);
 
 		//* Use shader program, asign uniform and render mode
 		void Use() const;
@@ -95,7 +95,7 @@ namespace EmptySource {
 	private:
 		IName Name;
 		RShaderPtr Shader;
-		MaterialLayout VariableLayout;
+		MaterialLayout ParameterLayout;
 	};
 
 	typedef std::shared_ptr<Material> MaterialPtr;

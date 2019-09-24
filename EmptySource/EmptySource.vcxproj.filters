@@ -135,6 +135,9 @@
     <ClInclude Include="Source\Runtime\Public\Components\Component.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
@@ -327,6 +330,9 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\RenderScene.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderStage.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -384,7 +390,13 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderParameters.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderResource.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\TextureResource.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h">
@@ -401,15 +413,6 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\RenderScene.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h">
-      <Filter>Runtime\Public\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ShaderResource.h">
-      <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -445,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp">
       <Filter>Runtime\Private\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp">
+      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp">
       <Filter>Runtime\Private\Components</Filter>
@@ -536,6 +542,9 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\RenderScene.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderStage.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
@@ -584,7 +593,13 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderResource.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\TextureResource.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp">
@@ -595,15 +610,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\RenderScene.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp">
-      <Filter>Runtime\Private\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ShaderResource.cpp">
-      <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

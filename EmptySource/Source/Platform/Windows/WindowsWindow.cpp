@@ -140,12 +140,12 @@ namespace EmptySource {
 		Context->Initialize();
 	}
 
-	WindowsWindow::WindowsWindow(const WindowProperties & Properties) {
+	WindowsWindow::WindowsWindow(const WindowProperties & Parameters) {
 		Context = NULL;
 		WindowHandle = NULL;
-		Width = Properties.Width;
-		Height = Properties.Height;
-		Name = Properties.Name;
+		Width = Parameters.Width;
+		Height = Parameters.Height;
+		Name = Parameters.Name;
 		Mode = WM_Windowed;
 		Initialize();
 	}
@@ -241,8 +241,8 @@ namespace EmptySource {
 		return Context.get();
 	}
 
-	Window * Window::Create(const WindowProperties& Properties) {
-		return new WindowsWindow(Properties);
+	Window * Window::Create(const WindowProperties& Parameters) {
+		return new WindowsWindow(Parameters);
 	}
 
 }

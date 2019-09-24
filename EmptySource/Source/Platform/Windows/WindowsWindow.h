@@ -38,7 +38,7 @@ namespace EmptySource {
 
 	public:
 		
-		WindowsWindow(const WindowProperties & Properties = WindowProperties());
+		WindowsWindow(const WindowProperties & Parameters = WindowProperties());
 
 		virtual ~WindowsWindow();
 

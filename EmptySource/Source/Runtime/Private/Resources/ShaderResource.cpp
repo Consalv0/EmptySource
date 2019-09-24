@@ -53,16 +53,16 @@ namespace EmptySource {
 		Load();
 	}
 
-	void RShader::SetProperties(const TArrayInitializer<ShaderProperty> & InProperties) {
-		Properties = InProperties;
+	void RShader::SetParameters(const TArrayInitializer<ShaderParameters> & InProperties) {
+		Parameters = InProperties;
 	}
 
-	void RShader::SetProperties(const TArray<ShaderProperty>& InProperties) {
-		Properties = InProperties;
+	void RShader::SetParameters(const TArray<ShaderParameters>& InProperties) {
+		Parameters = InProperties;
 	}
 
 	RShader::RShader(const IName & Name, const WString & Origin, const NString& Source)
-		: ResourceHolder(Name, Origin), Properties(), SourceCode(Source), Stages() {
+		: ResourceHolder(Name, Origin), Parameters(), SourceCode(Source), Stages() {
 	}
 
 	bool RShader::LoadFromShaderSource(const NString & FileInfo) {
@@ -100,7 +100,7 @@ namespace EmptySource {
 		ShaderPointer = ShaderProgram::Create(Stages);
 
 		if (ParametersNode.IsDefined()) {
-			TArray<ShaderProperty> Parameters;
+			TArray<ShaderParameters> Parameters;
 			for (auto & Uniform : ParametersNode) {
 				NString UniformName = Uniform["Uniform"].as<NString>();
 				NString TypeName = Uniform["Type"].as<NString>();
@@ -108,34 +108,34 @@ namespace EmptySource {
 				if (Uniform["IsColor"]) {
 					Flags |= Uniform["IsColor"].as<bool>() ? SPFlags_IsColor : SPFlags_None;
 				}
-				if (TypeName == "None")           Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(), Flags);
-				else if (TypeName == "Matrix4x4Array") Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Matrix4x4>()), Flags);
-				else if (TypeName == "Matrix4x4")      Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Matrix4x4()), Flags);
-				else if (TypeName == "FloatArray")     Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<float>()), Flags);
-				else if (TypeName == "Float")          Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Uniform["DefaultValue"].as<float>()), Flags);
-				else if (TypeName == "Float2DArray")   Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector2>()), Flags);
-				else if (TypeName == "Float2D")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector2(
+				if (TypeName == "None")           Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(), Flags);
+				else if (TypeName == "Matrix4x4Array") Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(TArray<Matrix4x4>()), Flags);
+				else if (TypeName == "Matrix4x4")      Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(Matrix4x4()), Flags);
+				else if (TypeName == "FloatArray")     Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(TArray<float>()), Flags);
+				else if (TypeName == "Float")          Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(Uniform["DefaultValue"].as<float>()), Flags);
+				else if (TypeName == "Float2DArray")   Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(TArray<Vector2>()), Flags);
+				else if (TypeName == "Float2D")        Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(Vector2(
 					Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>())
 				), Flags);
-				else if (TypeName == "Float3DArray")   Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector3>()), Flags);
-				else if (TypeName == "Float3D")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector3(
+				else if (TypeName == "Float3DArray")   Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(TArray<Vector3>()), Flags);
+				else if (TypeName == "Float3D")        Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(Vector3(
 					Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>())
 				), Flags);
-				else if (TypeName == "Float4DArray")   Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector4>()), Flags);
-				else if (TypeName == "Float4D")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector4(
+				else if (TypeName == "Float4DArray")   Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(TArray<Vector4>()), Flags);
+				else if (TypeName == "Float4D")        Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(Vector4(
 					Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>(),
 					Uniform["DefaultValue"][3].as<float>())
 				), Flags);
-				else if (TypeName == "Texture2D")      Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Texture2D,
+				else if (TypeName == "Texture2D")      Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(ETextureDimension::Texture2D,
 					TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Uniform["DefaultValue"].as<NString>()))
 				), Flags);
-				else if (TypeName == "Cubemap")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Cubemap,
+				else if (TypeName == "Cubemap")        Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(ETextureDimension::Cubemap,
 					NULL), Flags);
-				else if (TypeName == "IntArray")       Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<int>()), Flags);
-				else if (TypeName == "Int")            Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(0), Flags);
+				else if (TypeName == "IntArray")       Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(TArray<int>()), Flags);
+				else if (TypeName == "Int")            Parameters.emplace_back(UniformName, ShaderParameters::PropertyValue(0), Flags);
 			}
 
-			SetProperties(Parameters);
+			SetParameters(Parameters);
 			return true;
 		}
 
