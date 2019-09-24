@@ -22,7 +22,7 @@ namespace EmptySource {
 		CullMode = CM_CounterClockWise;
 	}
 
-	void Material::SetShaderProgram(const RShaderProgramPtr & InShader) {
+	void Material::SetShaderProgram(const RShaderPtr & InShader) {
 		VariableLayout.Clear();
 		if (InShader != NULL && InShader->IsValid()) {
 			Shader = InShader;
@@ -34,7 +34,7 @@ namespace EmptySource {
 		}
 	}
 
-	RShaderProgramPtr Material::GetShaderProgram() const {
+	RShaderPtr Material::GetShaderProgram() const {
 		return Shader;
 	}
 
@@ -43,61 +43,61 @@ namespace EmptySource {
 	}
 
 	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetAttribMatrix4x4Array(AttributeName, Count, Data, Buffer);
 	}
 
 	void Material::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetMatrix4x4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetInt1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat2Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat3Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetTexture2D(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetTexture2D(UniformName, Text, Position);
 	}
 
 	void Material::SetTextureCubemap(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetTexture2D(UniformName, Text, Position);
 	}
 
 	void Material::SetVariables(const TArray<ShaderProperty>& NewLayout) {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			for (auto& Layout : NewLayout) {
 				if (Program->GetProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
@@ -107,7 +107,7 @@ namespace EmptySource {
 	}
 
 	void Material::SetProperties(const TArray<ShaderProperty>& NewLayout) {
-		RShaderProgramPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			for (auto& Layout : NewLayout) {
 				if (Program->GetProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {

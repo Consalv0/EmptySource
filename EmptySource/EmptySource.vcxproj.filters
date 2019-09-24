@@ -384,9 +384,6 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderParameters.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ShaderProgram.h">
-      <Filter>Runtime\Public\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
@@ -410,6 +407,9 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h">
       <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderResource.h">
+      <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -584,9 +584,6 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\ShaderProgram.cpp">
-      <Filter>Runtime\Private\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
@@ -604,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp">
       <Filter>Runtime\Private\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderResource.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

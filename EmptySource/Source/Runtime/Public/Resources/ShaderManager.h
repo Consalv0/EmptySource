@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resources/ResourceManager.h"
-#include "Resources/ShaderProgram.h"
+#include "Resources/ShaderResource.h"
 #include "Resources/ShaderParameters.h"
 
 namespace EmptySource {
@@ -10,13 +10,13 @@ namespace EmptySource {
 	public:
 		using ShaderStageCode = std::pair<EShaderStageType, NString>;
 
-		RShaderProgramPtr GetProgram(const IName& Name) const;
+		RShaderPtr GetProgram(const IName& Name) const;
 
-		RShaderProgramPtr GetProgram(const size_t & UID) const;
+		RShaderPtr GetProgram(const size_t & UID) const;
 
 		void FreeShaderProgram(const IName& Name);
 
-		void AddShaderProgram(RShaderProgramPtr& Shader);
+		void AddShaderProgram(RShaderPtr& Shader);
 
 		TArray<IName> GetResourceShaderNames() const;
 
@@ -24,7 +24,7 @@ namespace EmptySource {
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
-		RShaderProgramPtr CreateProgram(const WString& Name, const WString & Origin, const NString& Source = "");
+		RShaderPtr CreateProgram(const WString& Name, const WString & Origin, const NString& Source = "");
 
 		static ShaderManager& GetInstance();
 
@@ -37,7 +37,7 @@ namespace EmptySource {
 
 		TDictionary<size_t, IName> ShaderNameList;
 
-		TDictionary<size_t, RShaderProgramPtr> ShaderProgramList;
+		TDictionary<size_t, RShaderPtr> ShaderProgramList;
 	};
 
 }

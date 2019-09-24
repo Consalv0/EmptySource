@@ -3,7 +3,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderingBuffers.h"
 
-#include "Resources/ShaderProgram.h"
+#include "Resources/ShaderResource.h"
 
 namespace EmptySource {
 
@@ -47,10 +47,10 @@ namespace EmptySource {
 		Material(const IName & Name);
 
 		//* Set material shader
-		void SetShaderProgram(const RShaderProgramPtr & Value);
+		void SetShaderProgram(const RShaderPtr & Value);
 
 		//* Get material shader
-		RShaderProgramPtr GetShaderProgram() const;
+		RShaderPtr GetShaderProgram() const;
 
 		const IName & GetName() const;
 
@@ -94,7 +94,7 @@ namespace EmptySource {
 
 	private:
 		IName Name;
-		RShaderProgramPtr Shader;
+		RShaderPtr Shader;
 		MaterialLayout VariableLayout;
 	};
 

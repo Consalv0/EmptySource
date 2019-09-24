@@ -420,7 +420,7 @@ protected:
 					return true;
 				}, &NarrowShaderNameList, (int)NarrowShaderNameList.size());
 			
-				RShaderProgramPtr SelectedShader = ShaderManager::GetInstance().GetProgram(ShaderNameList[Selection]);
+				RShaderPtr SelectedShader = ShaderManager::GetInstance().GetProgram(ShaderNameList[Selection]);
 				if (SelectedShader) {
 					ImGui::Text("Selected Shader: %s", NarrowShaderNameList[Selection].c_str());
 					if (ImGui::Button("Reload Shader")) {
@@ -875,14 +875,14 @@ protected:
 		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Hololooo.wav"), 0.255F, false, true);
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
-		RShaderProgramPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
-		RShaderProgramPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
-		RShaderProgramPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
-		RShaderProgramPtr UnlitShader         = ShaderMng.GetProgram(L"UnLitShader");
-		RShaderProgramPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
-		RShaderProgramPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
-		RShaderProgramPtr RenderTextShader    = ShaderMng.GetProgram(L"RenderTextShader");
-		RShaderProgramPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
+		RShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
+		RShaderPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
+		RShaderPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
+		RShaderPtr UnlitShader         = ShaderMng.GetProgram(L"UnLitShader");
+		RShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
+		RShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
+		RShaderPtr RenderTextShader    = ShaderMng.GetProgram(L"RenderTextShader");
+		RShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
 
 		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
 

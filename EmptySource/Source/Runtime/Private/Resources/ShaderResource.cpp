@@ -1,18 +1,18 @@
 
 #include "CoreMinimal.h"
 #include "Resources/ShaderManager.h"
-#include "Resources/ShaderProgram.h"
+#include "Resources/ShaderResource.h"
 #include "Resources/TextureManager.h"
 
 #include <yaml-cpp/yaml.h>
 
 namespace EmptySource {
 
-	bool RShaderProgram::IsValid() {
+	bool RShader::IsValid() {
 		return LoadState == LS_Loaded && ShaderPointer->IsValid();
 	}
 
-	void RShaderProgram::Load() {
+	void RShader::Load() {
 		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
 
 		LoadState = LS_Loading;
@@ -25,7 +25,7 @@ namespace EmptySource {
 					LoadState = LS_Unloaded;
 					return;
 				}
-				if (!ShaderFile->ReadNarrowStream(&Source)) {
+				if (!ShaderFile->ReadNarrowStream(&SourceCode)) {
 					ShaderFile->Close();
 					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
 					LoadState = LS_Unloaded;
@@ -33,10 +33,10 @@ namespace EmptySource {
 				}
 			}
 		}
-		LoadState = LoadFromShaderSource(Source) ? LS_Loaded : LS_Unloaded;
+		LoadState = LoadFromShaderSource(SourceCode) ? LS_Loaded : LS_Unloaded;
 	}
 
-	void RShaderProgram::Unload() {
+	void RShader::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
@@ -48,24 +48,24 @@ namespace EmptySource {
 		LoadState = LS_Unloaded;
 	}
 
-	void RShaderProgram::Reload() {
+	void RShader::Reload() {
 		Unload();
 		Load();
 	}
 
-	void RShaderProgram::SetProperties(const TArrayInitializer<ShaderProperty> & InProperties) {
+	void RShader::SetProperties(const TArrayInitializer<ShaderProperty> & InProperties) {
 		Properties = InProperties;
 	}
 
-	void RShaderProgram::SetProperties(const TArray<ShaderProperty>& InProperties) {
+	void RShader::SetProperties(const TArray<ShaderProperty>& InProperties) {
 		Properties = InProperties;
 	}
 
-	RShaderProgram::RShaderProgram(const IName & Name, const WString & Origin, const NString& Source)
-		: ResourceHolder(Name, Origin), Properties(), Source(Source), Stages() {
+	RShader::RShader(const IName & Name, const WString & Origin, const NString& Source)
+		: ResourceHolder(Name, Origin), Properties(), SourceCode(Source), Stages() {
 	}
 
-	bool RShaderProgram::LoadFromShaderSource(const NString & FileInfo) {
+	bool RShader::LoadFromShaderSource(const NString & FileInfo) {
 		YAML::Node BaseNode; {
 			try {
 				BaseNode = YAML::Load(FileInfo.c_str());
@@ -142,7 +142,7 @@ namespace EmptySource {
 		return false;
 	}
 
-	RShaderProgram::~RShaderProgram() {
+	RShader::~RShader() {
 		Unload();
 	}
 

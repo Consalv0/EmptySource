@@ -58,11 +58,11 @@ namespace YAML {
 
 namespace EmptySource {
 
-	RShaderProgramPtr ShaderManager::GetProgram(const IName & Name) const {
+	RShaderPtr ShaderManager::GetProgram(const IName & Name) const {
 		return GetProgram(Name.GetID());
 	}
 
-	RShaderProgramPtr ShaderManager::GetProgram(const size_t & UID) const {
+	RShaderPtr ShaderManager::GetProgram(const size_t & UID) const {
 		auto Resource = ShaderProgramList.find(UID);
 		if (Resource != ShaderProgramList.end()) {
 			return Resource->second;
@@ -77,7 +77,7 @@ namespace EmptySource {
 		ShaderProgramList.erase(UID);
 	}
 
-	void ShaderManager::AddShaderProgram(RShaderProgramPtr & Shader) {
+	void ShaderManager::AddShaderProgram(RShaderPtr & Shader) {
 		size_t UID = Shader->GetName().GetID();
 		ShaderNameList.insert({ UID, Shader->GetName() });
 		ShaderProgramList.insert({ UID, Shader });
@@ -152,10 +152,10 @@ namespace EmptySource {
 		return Stages;
 	}
 
-	RShaderProgramPtr ShaderManager::CreateProgram(const WString & Name, const WString & Origin, const NString& Source) {
-		RShaderProgramPtr Shader = GetProgram(Name);
+	RShaderPtr ShaderManager::CreateProgram(const WString & Name, const WString & Origin, const NString& Source) {
+		RShaderPtr Shader = GetProgram(Name);
 		if (Shader == NULL) {
-			Shader = RShaderProgramPtr(new RShaderProgram(Name, Origin, ""));
+			Shader = RShaderPtr(new RShader(Name, Origin, ""));
 			AddShaderProgram(Shader);
 		}
 		return Shader;

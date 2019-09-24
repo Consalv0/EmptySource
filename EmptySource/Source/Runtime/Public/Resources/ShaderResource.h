@@ -7,11 +7,11 @@
 
 namespace EmptySource {
 
-	typedef std::shared_ptr<class RShaderProgram> RShaderProgramPtr;
+	typedef std::shared_ptr<class RShader> RShaderPtr;
 
-	class RShaderProgram : public ResourceHolder {
+	class RShader : public ResourceHolder {
 	public:
-		~RShaderProgram();
+		~RShader();
 
 		virtual bool IsValid() override;
 
@@ -40,12 +40,12 @@ namespace EmptySource {
 		//* Set the shader properties
 		void SetProperties(const TArray<ShaderProperty> & Properties);
 
-		inline const NString& GetSourceCode() const { return Source; }
+		inline const NString& GetSourceCode() const { return SourceCode; }
 
 	protected:
 		friend class ShaderManager;
 
-		RShaderProgram(const IName & Name, const WString & Origin, const NString& Source);
+		RShader(const IName & Name, const WString & Origin, const NString& Source);
 
 		bool LoadFromShaderSource(const NString & Source);
 
@@ -53,7 +53,7 @@ namespace EmptySource {
 		ShaderProgram * ShaderPointer;
 		TArray<ShaderStage *> Stages;
 
-		NString Source;
+		NString SourceCode;
 
 		TArray<ShaderProperty> Properties;
 	};

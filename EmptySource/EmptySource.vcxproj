@@ -244,7 +244,7 @@
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ShaderParameters.h" />
-    <ClInclude Include="Source\Runtime\Public\Resources\ShaderProgram.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\ShaderResource.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\TextureManager.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\Hasher.h" />
     <ClInclude Include="Source\Runtime\Public\Utility\LogFreeType.h" />
@@ -312,7 +312,7 @@
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceHolder.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ResourceManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ShaderManager.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Resources\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\ShaderResource.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\TextureManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TextFormatting.cpp" />
     <ClCompile Include="Source\Runtime\Private\Utility\TexturePacking.cpp" />

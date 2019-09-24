@@ -1,7 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/Rendering.h"
-#include "Resources/ShaderProgram.h"
+#include "Resources/ShaderResource.h"
 #include "Rendering/Texture.h"
 #include "Rendering/RenderTarget.h"
 #include "Rendering/RenderingAPI.h"
