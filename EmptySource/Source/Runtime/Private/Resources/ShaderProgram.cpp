@@ -1,61 +1,13 @@
 
 #include "CoreMinimal.h"
+#include "Resources/ShaderManager.h"
 #include "Resources/ShaderProgram.h"
+#include "Resources/TextureManager.h"
 
 #include <yaml-cpp/yaml.h>
 
 namespace EmptySource {
 
-	bool RShaderStage::IsValid() {
-		return LoadState == LS_Loaded && StagePointer->IsValid();
-	}
-	
-	void RShaderStage::Load() {
-		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
-
-		LoadState = LS_Loading;
-		{
-			FileStream * ShaderCode = FileManager::GetFile(Origin);
-			if (ShaderCode == NULL) {
-				LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
-				return;
-			}
-			if (!ShaderCode->ReadNarrowStream(&SourceCode)) {
-				ShaderCode->Close();
-				LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
-				return;
-			}
-
-			ShaderCode->Close();
-			if (!SourceCode.empty())
-				StagePointer = ShaderStage::CreateFromText(SourceCode, StageType);
-		}
-		LoadState = StagePointer != NULL ? LS_Loaded : LS_Unloaded;
-	}
-
-	void RShaderStage::Unload() {
-		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
-
-		LoadState = LS_Unloading;
-		delete StagePointer;
-		StagePointer = NULL;
-		LoadState = LS_Unloaded;
-	}
-
-	void RShaderStage::Reload() {
-		Unload();
-		Load();
-	}
-
-	RShaderStage::RShaderStage(const IName & Name, const WString & Origin, EShaderStageType Type, const NString & Code)
-		: ResourceHolder(Name, Origin), StagePointer(NULL), SourceCode(Code), StageType(Type) {
-	}
-
-	RShaderStage::~RShaderStage() {
-		Unload();
-	}
-
-	// Shader Program
 	bool RShaderProgram::IsValid() {
 		return LoadState == LS_Loaded && ShaderPointer->IsValid();
 	}
@@ -65,36 +17,39 @@ namespace EmptySource {
 
 		LoadState = LS_Loading;
 		{
-			TArray<ShaderStage *> Stages;
-			if (VertexShader != NULL && VertexShader->IsValid())
-				Stages.push_back(VertexShader->GetShaderStage());
-			if (PixelShader != NULL && PixelShader->IsValid())
-				Stages.push_back(PixelShader->GetShaderStage());
-			if (GeometryShader != NULL && GeometryShader->IsValid())
-				Stages.push_back(GeometryShader->GetShaderStage());
-			if (ComputeShader != NULL && ComputeShader->IsValid())
-				Stages.push_back(ComputeShader->GetShaderStage());
-
-			ShaderPointer = ShaderProgram::Create(Stages);
+			LOG_CORE_DEBUG(L"Loading Shader {}...", Name.GetDisplayName().c_str());
+			if (!Origin.empty()) {
+				FileStream * ShaderFile = FileManager::GetFile(Origin);
+				if (ShaderFile == NULL) {
+					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+					LoadState = LS_Unloaded;
+					return;
+				}
+				if (!ShaderFile->ReadNarrowStream(&Source)) {
+					ShaderFile->Close();
+					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+					LoadState = LS_Unloaded;
+					return;
+				}
+			}
 		}
-		LoadState = ShaderPointer != NULL ? LS_Loaded : LS_Unloaded;
+		LoadState = LoadFromShaderSource(Source) ? LS_Loaded : LS_Unloaded;
 	}
 
 	void RShaderProgram::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
+		for (auto& Stage : Stages)
+			delete Stage;
 		delete ShaderPointer;
 		ShaderPointer = NULL;
+		Stages.clear();
 		LoadState = LS_Unloaded;
 	}
 
 	void RShaderProgram::Reload() {
 		Unload();
-		if (VertexShader)   VertexShader->Load();
-		if (PixelShader)    PixelShader->Load();
-		if (GeometryShader) GeometryShader->Load();
-		if (ComputeShader)  ComputeShader->Load();
 		Load();
 	}
 
@@ -106,103 +61,88 @@ namespace EmptySource {
 		Properties = InProperties;
 	}
 
-	RShaderProgram::RShaderProgram(const IName & Name, const WString & Origin, TArray<RShaderStagePtr>& Stages) 
-		: ResourceHolder(Name, Origin), Properties() {
-		for (RShaderStagePtr & Stage : Stages) {
-			switch (Stage->GetShaderType()) {
-				case ST_Vertex:   VertexShader   = Stage; break;
-				case ST_Pixel:    PixelShader    = Stage; break;
-				case ST_Geometry: GeometryShader = Stage; break;
-				case ST_Compute:  ComputeShader  = Stage; break;
-				default: break;
+	RShaderProgram::RShaderProgram(const IName & Name, const WString & Origin, const NString& Source)
+		: ResourceHolder(Name, Origin), Properties(), Source(Source), Stages() {
+	}
+
+	bool RShaderProgram::LoadFromShaderSource(const NString & FileInfo) {
+		YAML::Node BaseNode; {
+			try {
+				BaseNode = YAML::Load(FileInfo.c_str());
+			} catch (...) {
+				return false;
 			}
 		}
+
+		///// TODO: This may be retrieved from the renderer in the future
+		YAML::Node CodeNode = BaseNode["GLSL"];
+
+		YAML::Node NameNode = BaseNode["Name"];
+		YAML::Node ParametersNode = BaseNode["Parameters"];
+		YAML::Node StagesNode = CodeNode["Stages"];
+
+		WString ShaderName = L"ShaderProgram";
+		if (NameNode.IsDefined()) ShaderName = Text::NarrowToWide(NameNode.as<NString>());
+
+		if (CodeNode.IsDefined()) {
+			if (StagesNode.IsDefined()) {
+				for (YAML::iterator Iterator = StagesNode.begin(); Iterator != StagesNode.end(); ++Iterator) {
+					const YAML::Node& Stage = *Iterator;
+					NString Type = Stage["StageType"].as<NString>();
+
+					if (Stage["Code"].IsDefined()) {
+						Stages.push_back(ShaderStage::CreateFromText("#version 410\n" + Stage["Code"].as<NString>(), ShaderManager::StringToStageType(Type)));
+					}
+				}
+			}
+		}
+		ShaderPointer = ShaderProgram::Create(Stages);
+
+		if (ParametersNode.IsDefined()) {
+			TArray<ShaderProperty> Parameters;
+			for (auto & Uniform : ParametersNode) {
+				NString UniformName = Uniform["Uniform"].as<NString>();
+				NString TypeName = Uniform["Type"].as<NString>();
+				int Flags = SPFlags_None;
+				if (Uniform["IsColor"]) {
+					Flags |= Uniform["IsColor"].as<bool>() ? SPFlags_IsColor : SPFlags_None;
+				}
+				if (TypeName == "None")           Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(), Flags);
+				else if (TypeName == "Matrix4x4Array") Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Matrix4x4>()), Flags);
+				else if (TypeName == "Matrix4x4")      Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Matrix4x4()), Flags);
+				else if (TypeName == "FloatArray")     Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<float>()), Flags);
+				else if (TypeName == "Float")          Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Uniform["DefaultValue"].as<float>()), Flags);
+				else if (TypeName == "Float2DArray")   Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector2>()), Flags);
+				else if (TypeName == "Float2D")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector2(
+					Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>())
+				), Flags);
+				else if (TypeName == "Float3DArray")   Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector3>()), Flags);
+				else if (TypeName == "Float3D")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector3(
+					Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>())
+				), Flags);
+				else if (TypeName == "Float4DArray")   Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<Vector4>()), Flags);
+				else if (TypeName == "Float4D")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(Vector4(
+					Uniform["DefaultValue"][0].as<float>(), Uniform["DefaultValue"][1].as<float>(), Uniform["DefaultValue"][2].as<float>(),
+					Uniform["DefaultValue"][3].as<float>())
+				), Flags);
+				else if (TypeName == "Texture2D")      Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Texture2D,
+					TextureManager::GetInstance().GetTexture(Text::NarrowToWide(Uniform["DefaultValue"].as<NString>()))
+				), Flags);
+				else if (TypeName == "Cubemap")        Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(ETextureDimension::Cubemap,
+					NULL), Flags);
+				else if (TypeName == "IntArray")       Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(TArray<int>()), Flags);
+				else if (TypeName == "Int")            Parameters.emplace_back(UniformName, ShaderProperty::PropertyValue(0), Flags);
+			}
+
+			SetProperties(Parameters);
+			return true;
+		}
+
+		return false;
 	}
 
 	RShaderProgram::~RShaderProgram() {
 		Unload();
-	}
-
-	ResourceShaderData::ResourceShaderData(const WString& FilePath, size_t UID) : Origin(FilePath) {
-		FileStream * ResourcesFile = ResourceManager::GetResourcesFile(FilePath);
-		YAML::Node BaseNode;
-		{
-			NString FileInfo;
-			if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
-				return;
-			BaseNode = YAML::Load(FileInfo.c_str());
-		}
-
-		YAML::Node ResourcesNode = BaseNode["Resources"];
-
-		int FileNodePos = -1;
-		if (ResourcesNode.IsDefined()) {
-			for (size_t i = 0; i < ResourcesNode.size(); i++) {
-				if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == UID) {
-					FileNodePos = (int)i;
-					break;
-				}
-			}
-			if (FileNodePos < 0)
-				return;
-		}
-		else return;
-
-		YAML::Node ShaderProgramNode = ResourcesNode[FileNodePos]["ShaderProgram"];
-		Name = ShaderProgramNode["Name"].IsDefined() ? Text::NarrowToWide(ShaderProgramNode["Name"].as<NString>()) : L"";
-		// VertexShader = ShaderProgramNode["VertexShader"].IsDefined() ?
-		// 	ResourceManager::GetInstance().CreateResource<ResourceHolderShaderStage>(
-		// 		ResourceShaderStageData(ResourceFile, ShaderProgramNode["VertexShader"].as<size_t>())) : NULL;
-		// FragmentShader = ShaderProgramNode["FragmentShader"].IsDefined() ?
-		// 	ResourceManager::GetInstance().CreateResource<ResourceHolderShaderStage>(
-		// 		ResourceShaderStageData(ResourceFile, ShaderProgramNode["FragmentShader"].as<size_t>())) : NULL;
-		// ComputeShader = ShaderProgramNode["ComputeShader"].IsDefined() ?
-		// 	ResourceManager::GetInstance().CreateResource<ResourceHolderShaderStage>(
-		// 		ResourceShaderStageData(ResourceFile, ShaderProgramNode["ComputeShader"].as<size_t>())) : NULL;
-		// GeometryShader = ShaderProgramNode["GeometryShader"].IsDefined() ?
-		// 	ResourceManager::GetInstance().CreateResource<ResourceHolderShaderStage>(
-		// 		ResourceShaderStageData(ResourceFile, ShaderProgramNode["GeometryShader"].as<size_t>())) : NULL;
-
-	}
-
-	ResourceShaderStageData::ResourceShaderStageData(const WString & FilePath, size_t UID) : Origin(FilePath) {
-		FileStream * ResourcesFile = ResourceManager::GetResourcesFile(FilePath);
-		YAML::Node BaseNode;
-		{
-			NString FileInfo;
-			if (ResourcesFile == NULL || !ResourcesFile->ReadNarrowStream(&FileInfo))
-				return;
-			BaseNode = YAML::Load(FileInfo.c_str());
-		}
-
-		YAML::Node ResourcesNode = BaseNode["Resources"];
-
-		int FileNodePos = -1;
-		if (ResourcesNode.IsDefined()) {
-			for (size_t i = 0; i < ResourcesNode.size(); i++) {
-				if (ResourcesNode[i]["GUID"].IsDefined() && ResourcesNode[i]["GUID"].as<size_t>() == UID) {
-					FileNodePos = (int)i;
-					break;
-				}
-			}
-			if (FileNodePos < 0)
-				return;
-		}
-		else return;
-
-		YAML::Node ShaderStageNode = ResourcesNode[FileNodePos]["ShaderStage"];
-		this->FilePath = ShaderStageNode["FilePath"].IsDefined() ? Text::NarrowToWide(ShaderStageNode["FilePath"].as<NString>()) : L"";
-		NString Type = ShaderStageNode["Type"].IsDefined() ? ShaderStageNode["Type"].as<NString>() : "Vertex";
-
-		if (Type == "Vertex")
-			ShaderType = ST_Vertex;
-		else if (Type == "Pixel")
-			ShaderType = ST_Pixel;
-		else if (Type == "Geometry")
-			ShaderType = ST_Geometry;
-		else if (Type == "Compute")
-			ShaderType = ST_Compute;
-
 	}
 
 }

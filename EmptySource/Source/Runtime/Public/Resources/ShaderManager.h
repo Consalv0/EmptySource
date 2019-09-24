@@ -7,44 +7,37 @@
 namespace EmptySource {
 
 	class ShaderManager : public ResourceManager {
-
 	public:
+		using ShaderStageCode = std::pair<EShaderStageType, NString>;
+
 		RShaderProgramPtr GetProgram(const IName& Name) const;
 
 		RShaderProgramPtr GetProgram(const size_t & UID) const;
 
-		RShaderStagePtr GetStage(const IName& Name) const;
-
-		RShaderStagePtr GetStage(const size_t & UID) const;
-
 		void FreeShaderProgram(const IName& Name);
-
-		void FreeShaderStage(const IName& Name);
 
 		void AddShaderProgram(RShaderProgramPtr& Shader);
 
-		void AddShaderStage(const IName & Name, RShaderStagePtr& Stage);
-
 		TArray<IName> GetResourceShaderNames() const;
-
-		TArray<IName> GetResourceShaderStageNames() const;
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Shader; };
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
-		RShaderStagePtr LoadStage(const WString & Name, const WString & Origin, EShaderStageType Type);
-
-		RShaderProgramPtr LoadProgram(const WString & Name, const WString & Origin, TArray<RShaderStagePtr> & Stages);
+		RShaderProgramPtr CreateProgram(const WString& Name, const WString & Origin, const NString& Source = "");
 
 		static ShaderManager& GetInstance();
 
+		static NString StageTypeToString(const EShaderStageType& Type);
+
+		static EShaderStageType StringToStageType(const NString& Type);
+
 	private:
+		TArray<ShaderStageCode> GetStagesCodeFromSource(const NString& Source);
+
 		TDictionary<size_t, IName> ShaderNameList;
-		TDictionary<size_t, IName> ShaderStageNameList;
 
 		TDictionary<size_t, RShaderProgramPtr> ShaderProgramList;
-		TDictionary<size_t, RShaderStagePtr> ShaderStageList;
 	};
 
 }

@@ -180,6 +180,7 @@ protected:
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
+		ShaderMng.CreateProgram(L"PBRShader", L"Resources/Shaders/PBR.shader");
 
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnAAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnARoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
@@ -407,11 +408,8 @@ protected:
 		ImGui::Begin("Shaders", 0, ImVec2(250, 300)); 
 		{
 			TArray<IName> ShaderNameList = ShaderManager::GetInstance().GetResourceShaderNames();
-			TArray<IName> ShaderStagesNameList = ShaderManager::GetInstance().GetResourceShaderStageNames();
 
 			if (ImGui::Button("Reload Shaders")) {
-				for (int i = 0; i < ShaderStagesNameList.size(); ++i)
-					ShaderManager::GetInstance().GetStage(ShaderStagesNameList[i])->Unload();
 				for (int i = 0; i < ShaderNameList.size(); ++i)
 					ShaderManager::GetInstance().GetProgram(ShaderNameList[i])->Reload();
 			}

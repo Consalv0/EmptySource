@@ -51,8 +51,8 @@ namespace EmptySource {
 	}
 
 	OpenGLShaderStage::~OpenGLShaderStage() {
-		LOG_CORE_DEBUG(L"Deleting shader stage '{:d}'...", ShaderObject);
-		glDeleteProgram(ShaderObject);
+		LOG_CORE_INFO(L"Deleting shader stage '{:d}'...", ShaderObject);
+		glDeleteShader(ShaderObject);
 	}
 
 	// Shader Program
@@ -67,7 +67,7 @@ namespace EmptySource {
 
 		// Link the shader program
 		ProgramObject = glCreateProgram();
-		LOG_CORE_DEBUG(L"Linking shader program '{}'...", ProgramObject);
+		LOG_CORE_INFO(L"Linking shader program '{}'...", ProgramObject);
 
 		for (auto & Stage : ShaderStages) {
 			if (Stage != NULL && Stage->IsValid())
@@ -88,7 +88,7 @@ namespace EmptySource {
 	}
 
 	OpenGLShaderProgram::~OpenGLShaderProgram() {
-		LOG_CORE_DEBUG(L"Deleting shader program '{}'...", ProgramObject);
+		LOG_CORE_INFO(L"Deleting shader program '{}'...", ProgramObject);
 		glDeleteProgram(ProgramObject);
 	}
 

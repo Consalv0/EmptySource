@@ -1,216 +1,37 @@
 Resources:
-  - GUID: 13768600653438824142
-    ShaderStage:
-      FilePath: Resources/Shaders/EquirectangularToCubemap.vertex.glsl
-      Type: Vertex
-  - GUID: 9724844382453382494
-    ShaderStage:
-      FilePath: Resources/Shaders/EquirectangularToCubemap.fragment.glsl
-      Type: Pixel
-  - GUID: 14487276356520426687
-    ShaderStage:
-      FilePath: Resources/Shaders/HDRClamping.fragment.glsl
-      Type: Pixel
-  - GUID: 16658501045142873423
-    ShaderStage:
-      FilePath: Resources/Shaders/Base.vertex.glsl
-      Type: Vertex
-  - GUID: 15459148748882429814
-    ShaderStage:
-      FilePath: Resources/Shaders/Voxelizer.vertex.glsl
-      Type: Vertex
-  - GUID: 15491773793180885008
-    ShaderStage:
-      FilePath: Resources/Shaders/Passthrough.vertex.glsl
-      Type: Vertex
-  - GUID: 1168590647783747496
-    ShaderStage:
-      FilePath: Resources/Shaders/BRDF.fragment.glsl
-      Type: Pixel
-  - GUID: 9154606323356647483
-    ShaderStage:
-      FilePath: Resources/Shaders/IntegrateBRDF.fragment.glsl
-      Type: Pixel
-  - GUID: 4750013093861987399
-    ShaderStage:
-      FilePath: Resources/Shaders/RenderTexture.fragment.glsl
-      Type: Pixel
-  - GUID: 16113507823090325981
-    ShaderStage:
-      FilePath: Resources/Shaders/RenderText.fragment.glsl
-      Type: Pixel
-  - GUID: 9467077380870312549
-    ShaderStage:
-      FilePath: Resources/Shaders/RenderCubemap.fragment.glsl
-      Type: Pixel
-  - GUID: 2988000627463272952
-    ShaderStage:
-      FilePath: Resources/Shaders/Unlit.fragment.glsl
-      Type: Pixel
-  - GUID: 11373371197195901944
-    ShaderStage:
-      FilePath: Resources/Shaders/Clouds.fragment.glsl
-      Type: Pixel
-  - GUID: 837329568064093199
-    ShaderStage:
-      FilePath: Resources/Shaders/CloudsDisplacement.vertex.glsl
-      Type: Vertex
-  - GUID: 11528219194579939156
-    ShaderStage:
-      FilePath: Resources/Shaders/Voxelizer.geometry.glsl
-      Type: Geometry
   - GUID: 1065292994571088177
     ShaderProgram:
       Name: EquirectangularToCubemap
-      VertexShader: 13768600653438824142
-      PixelShader: 9724844382453382494
-      Properties:
-        - Uniform: _EquirectangularMap
-          Type: Texture2D
-          DefaultValue: "BlackTexture"
-        - Uniform: _Roughness
-          Type: Float
-          DefaultValue: 0.0
+      OriginFile: Resources/Shaders/EquirectangularToCubemap.shader
   - GUID: 13659627102453736913
     ShaderProgram:
       Name: HDRClampingShader
-      VertexShader: 15491773793180885008
-      PixelShader: 14487276356520426687
-      Properties:
-        - Uniform: _EquirectangularMap
-          Type: Texture2D
-          DefaultValue: "BlackTexture"
-        - Uniform: _LodLevel
-          Type: Float
-          DefaultValue: 0.0
+      OriginFile: Resources/Shaders/HDRClamping.shader
   - GUID: 16680565041064288702
     ShaderProgram:
-      Name: BRDFShader
-      VertexShader: 16658501045142873423
-      PixelShader: 1168590647783747496
-      Properties:
-        - Uniform: _Material.Metalness
-          Type: Float
-          DefaultValue: 1.0
-        - Uniform: _Material.Roughness
-          Type: Float
-          DefaultValue: 1.0
-        - Uniform: _Material.Color
-          Type: Float4D
-          DefaultValue: [ 1, 1, 1, 1 ]
-          IsColor: true
-        - Uniform: _MainTexture
-          Type: Texture2D
-          DefaultValue: "WhiteTexture"
-        - Uniform: _NormalTexture
-          Type: Texture2D
-          DefaultValue: "NormalTexture"
-        - Uniform: _RoughnessTexture
-          Type: Texture2D
-          DefaultValue: "WhiteTexture"
-        - Uniform: _MetallicTexture
-          Type: Texture2D
-          DefaultValue: "BlackTexture"
-        - Uniform: _BRDFLUT
-          Type: Texture2D
-          DefaultValue: "BlackTexture"
-        - Uniform: _EnviromentMap
-          Type: Cubemap
-          DefaultValue: {}
-        - Uniform: _EnviromentMapLods
-          Type: Float
-          DefaultValue: 0.0
+      Name: PBRShader
+      OriginFile: Resources/Shaders/PBR.shader
   - GUID: 9336688078605051222
     ShaderProgram:
       Name: UnLitShader
-      VertexShader: 16658501045142873423
-      PixelShader: 2988000627463272952
-      Properties:
-        - Uniform: _Material.Color
-          Type: Float4D
-          DefaultValue: [ 1, 1, 1, 1 ]
-          IsColor: true
-        - Uniform: _MainTexture
-          Type: Texture2D
-          DefaultValue: "WhiteTexture"
+      OriginFile: Resources/Shaders/UnLit.shader
   - GUID: 13529331485394247641
     ShaderProgram:
       Name: RenderTextureShader
-      VertexShader: 15491773793180885008
-      PixelShader: 4750013093861987399
+      OriginFile: Resources/Shaders/RenderTexture.shader
   - GUID: 7125355921710917221
     ShaderProgram:
       Name: IntegrateBRDFShader
-      VertexShader: 15491773793180885008
-      PixelShader: 9154606323356647483
+      OriginFile: Resources/Shaders/IntegrateBRDF.shader
   - GUID: 17535125667370803355
     ShaderProgram:
       Name: RenderTextShader
-      VertexShader: 15491773793180885008
-      PixelShader: 16113507823090325981
+      OriginFile: Resources/Shaders/RenderText.shader
   - GUID: 739022771965855291
     ShaderProgram:
       Name: RenderCubemapShader
-      VertexShader: 16658501045142873423
-      PixelShader: 9467077380870312549
-      Properties:
-        - Uniform: _Gamma
-          Type: Float
-          DefaultValue: 3.0
+      OriginFile: Resources/Shaders/RenderCubemap.shader
   - GUID: 10653516802362644238
     ShaderProgram:
       Name: CloudsShader
-      VertexShader: 837329568064093199
-      PixelShader: 11373371197195901944
-      Properties:
-        - Uniform: _EnviromentMap
-          Type: Cubemap
-          DefaultValue: {}
-        - Uniform: _EnviromentMapLods
-          Type: Float
-          DefaultValue: 0.0
-        - Uniform: _FlowMap
-          Type: Texture2D
-          DefaultValue: "NormalTexture"
-        - Uniform: _FlowContribution
-          Type: Float
-          DefaultValue: 10.0
-        - Uniform: _Scale
-          Type: Float
-          DefaultValue: 0.025
-        - Uniform: _Speed
-          Type: Float3D
-          DefaultValue: [5.0, 0.0, 1.0]
-          IsColor: false
-        - Uniform: _BaseScale
-          Type: Float
-          DefaultValue: 0.01
-        - Uniform: _BaseSpeed
-          Type: Float3D
-          DefaultValue: [1.6, 0.0, 0.5]
-          IsColor: false
-        - Uniform: _BaseStrength
-          Type: Float
-          DefaultValue: 0.888
-        - Uniform: _OffsetScale
-          Type: Float
-          DefaultValue: -27.5
-        - Uniform: _ColorValley
-          Type: Float4D
-          DefaultValue: [0.5, 0.7, 0.95, 0.0]
-          IsColor: true
-        - Uniform: _ColorPeak
-          Type: Float4D
-          DefaultValue: [0.99, 1.0, 1.0, 1.0]
-          IsColor: true
-        - Uniform: _NoiseRemaping
-          Type: Float4D
-          DefaultValue: [0.98, -0.24, 3.0, -0.28]
-          IsColor: false
-        - Uniform: _NoiseEdge
-          Type: Float2D
-          DefaultValue: [-0.65, 1.475]
-          IsColor: true
-        - Uniform: _NoisePower
-          Type: Float
-          DefaultValue: 1.31516
+      OriginFile: Resources/Shaders/Clouds.shader

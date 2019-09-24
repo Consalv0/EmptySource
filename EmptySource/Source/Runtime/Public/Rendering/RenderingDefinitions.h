@@ -62,6 +62,7 @@ namespace EmptySource {
 	};
 
 	enum EShaderStageType {
+		ST_Unknown,
 		ST_Vertex,
 		ST_Geometry,
 		ST_Pixel,
