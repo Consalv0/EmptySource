@@ -56,7 +56,6 @@ namespace EmptySource {
 	}
 
 	// Shader Program
-
 	OpenGLShaderProgram::OpenGLShaderProgram(TArray<ShaderStage *> ShaderStages) 
 		: Locations()
 	{
