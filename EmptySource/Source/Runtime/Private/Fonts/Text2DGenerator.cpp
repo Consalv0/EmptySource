@@ -90,7 +90,7 @@ namespace EmptySource {
 			if (CursorPivot.y < Box.yMin)
 				break;
 
-			Glyph->GetQuadMesh(CursorPivot, PixelRange, ScaleFactor, TextVerticesEnd);
+			Glyph->GetQuadMesh(CursorPivot, PixelRange, ScaleFactor, 1.F, TextVerticesEnd);
 			TextFacesEnd->x = VertexCount;
 			TextFacesEnd->y = VertexCount + 1;
 			(TextFacesEnd++)->z = VertexCount + 2;

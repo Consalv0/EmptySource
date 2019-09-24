@@ -410,12 +410,12 @@ namespace EmptySource {
 			EquirectangularToCubemapMaterial->SetMatrix4x4Array("_ViewMatrix", View.second.PointerToValue());
 		
 			MeshPrimitives::Cube.SetUpBuffers();
-			MeshPrimitives::Cube.BindVertexArray();
+			MeshPrimitives::Cube.BindSubdivisionVertexArray(0);
 			EquirectangularToCubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 			Renderer->BindCubemapFace(shared_from_this(), View.first);
 			Renderer->Clear();
 		
-			MeshPrimitives::Cube.DrawElement();
+			MeshPrimitives::Cube.DrawSubdivisionInstanciated(1, 0);
 		}
 		if (bGenerateMipMaps) GenerateMipMaps();
 		Unbind();
@@ -466,13 +466,13 @@ namespace EmptySource {
 			for (auto View : CaptureViews) {
 				EquirectangularToCubemapMaterial->SetMatrix4x4Array("_ViewMatrix", View.second.PointerToValue());
 
-				MeshPrimitives::Cube.BindVertexArray();
+				MeshPrimitives::Cube.BindSubdivisionVertexArray(0);
 				EquirectangularToCubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
 		
 				Renderer->BindCubemapFace(shared_from_this(), View.first, Lod);
 				Renderer->Clear();
 		
-				MeshPrimitives::Cube.DrawElement();
+				MeshPrimitives::Cube.DrawSubdivisionInstanciated(1, 0);
 				if (!Renderer->CheckStatus()) return false;
 			}
 		}

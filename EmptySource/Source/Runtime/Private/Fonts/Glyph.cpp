@@ -58,7 +58,7 @@ namespace EmptySource {
 		SDFGenerator::FromShape(SDFResterized, VectorShape, PixelRange / Math::Min(Scale.x, Scale.y), Scale, Translate);
 	}
 
-	void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, MeshVertex * Quad) {
+	void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, const Vector4& Color, MeshVertex * Quad) {
 		float XPos = Pivot.x + Bearing.x * Scale;
 		float YPos = Pivot.y - (SDFResterized.GetHeight() - Bearing.y) * Scale;
 		float XPosWidth = XPos + (SDFResterized.GetWidth() + PixelRange) * Scale;
@@ -66,15 +66,19 @@ namespace EmptySource {
 
 		Quad[0].Position.x = XPosWidth; Quad[0].Position.y = YPos;
 		Quad[0].UV0.u = UV.xMax; Quad[0].UV0.v = UV.yMin;
+		Quad[0].Color = 1.F;
 
 		Quad[1].Position.x = XPos;      Quad[1].Position.y = YPosHeight;
 		Quad[1].UV0.u = UV.xMin; Quad[1].UV0.v = UV.yMax;
+		Quad[1].Color = 1.F;
 
 		Quad[2].Position.x = XPosWidth; Quad[2].Position.y = YPosHeight;
 		Quad[2].UV0.u = UV.xMax; Quad[2].UV0.v = UV.yMax;
+		Quad[2].Color = 1.F;
 
 		Quad[3].Position.x = XPos;      Quad[3].Position.y = YPos;
 		Quad[3].UV0.u = UV.xMin; Quad[3].UV0.v = UV.yMin;
+		Quad[3].Color = 1.F;
 	}
 
 	FontGlyph & FontGlyph::operator=(const FontGlyph & Other) {

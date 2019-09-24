@@ -29,19 +29,16 @@ namespace EmptySource {
 	};
 
 	Mesh::Mesh() {
-		VertexArrayObject = NULL;
 		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data = MeshData();
 	}
 
 	Mesh::Mesh(const MeshData & OtherData) {
-		VertexArrayObject = NULL;
 		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data = OtherData;
 	}
 
 	Mesh::Mesh(MeshData * OtherData) {
-		VertexArrayObject = NULL;
 		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data.Swap(*OtherData);
 	}
@@ -52,11 +49,6 @@ namespace EmptySource {
 
 	void Mesh::CopyMeshData(const MeshData & NewData) {
 		Clear(); Data = NewData;
-	}
-
-	void Mesh::BindVertexArray() const {
-		ES_CORE_ASSERT(VertexArrayObject != NULL, "Model buffers are empty, use SetUpBuffers first");
-		VertexArrayObject->Bind();
 	}
 
 	void Mesh::BindSubdivisionVertexArray(int MaterialIndex) const {
@@ -77,10 +69,6 @@ namespace EmptySource {
 		return MeshSubdivisions[MaterialIndex];
 	}
 
-	void Mesh::DrawInstanciated(int Count) const {
-		Rendering::DrawIndexed(VertexArrayObject, Count);
-	}
-
 	void Mesh::DrawSubdivisionInstanciated(int Count, int MaterialIndex) const {
 		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
 		if (Subdivision == Data.MaterialSubdivisions.end()) return;
@@ -89,16 +77,9 @@ namespace EmptySource {
 		Rendering::DrawIndexed(MeshSubdivisions[MaterialIndex], Count);
 	}
 
-	void Mesh::DrawElement() const {
-		Rendering::DrawIndexed(VertexArrayObject);
-	}
-
 	bool Mesh::SetUpBuffers() {
 
 		if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
-		if (VertexArrayObject != NULL && VertexArrayObject->GetIndexBuffer()->GetSize() > 0) return true;
-
-		VertexArrayObject = VertexArray::Create();
 
 		static BufferLayout DafultLayout = {
 			{ EShaderDataType::Float3, "_iVertexPosition" },
@@ -114,34 +95,30 @@ namespace EmptySource {
 		VertexBufferPointer = VertexBuffer::Create((float *)&Data.Vertices[0], (unsigned int)(Data.Vertices.size() * sizeof(MeshVertex)), UM_Static);
 		VertexBufferPointer->SetLayout(DafultLayout);
 
-		for (int ElementBufferCount = 0; ElementBufferCount <= Data.MaterialSubdivisions.size(); ElementBufferCount++) {
-			if (ElementBufferCount == 0) {
-				IndexBufferPtr IndexBufferObjectPointer = NULL;
-				IndexBufferObjectPointer = IndexBuffer::Create((unsigned int *)&Data.Faces[0], (unsigned int)Data.Faces.size() * 3, UM_Static);
-				VertexArrayObject->AddVertexBuffer(VertexBufferPointer);
-				VertexArrayObject->AddIndexBuffer(IndexBufferObjectPointer);
-				VertexArrayObject->Unbind();
-			} else {
-				VertexArrayPtr VertexArrayPointer = NULL;
-				VertexArrayPointer = VertexArray::Create();
-				IndexBufferPtr IndexBufferPointer = NULL;
-				IndexBufferPointer = IndexBuffer::Create(
-					(unsigned int *)&Data.MaterialSubdivisions[ElementBufferCount - 1][0],
-					(unsigned int)Data.MaterialSubdivisions[ElementBufferCount - 1].size() * 3, UM_Static
-				);
-				VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
-				VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
-				VertexArrayPointer->Unbind();
-				
-				MeshSubdivisions.push_back(VertexArrayPointer);
-			}
+		if (Data.MaterialSubdivisions.size() <= 0) {
+			Data.Materials.emplace(0, "default");
+			Data.MaterialSubdivisions.emplace(0, Data.Faces);
+		}
+
+		for (int ElementBufferCount = 0; ElementBufferCount < Data.MaterialSubdivisions.size(); ElementBufferCount++) {
+			VertexArrayPtr VertexArrayPointer = NULL;
+			VertexArrayPointer = VertexArray::Create();
+			IndexBufferPtr IndexBufferPointer = NULL;
+			IndexBufferPointer = IndexBuffer::Create(
+				(unsigned int *)&Data.MaterialSubdivisions[ElementBufferCount][0],
+				(unsigned int)Data.MaterialSubdivisions[ElementBufferCount].size() * 3, UM_Static
+			);
+			VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
+			VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
+			VertexArrayPointer->Unbind();
+			
+			MeshSubdivisions.push_back(VertexArrayPointer);
 		}
 
 		return true;
 	}
 
 	void Mesh::ClearBuffers() {
-		VertexArrayObject.reset();
 		MeshSubdivisions.clear();
 	}
 

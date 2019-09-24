@@ -82,7 +82,7 @@ private:
 	Material UnlitMaterial = Material(L"UnlitMaterial");
 	Material UnlitMaterialWire = Material(L"UnlitMaterialWire");
 	Material RenderTextureMaterial = Material(L"RenderTextureMaterial");
-	Material RenderTextMaterial = Material(L"RenderTextMaterial");
+	MaterialPtr RenderTextMaterial = std::make_shared<Material>(L"RenderTextMaterial");
 	MaterialPtr RenderCubemapMaterial = std::make_shared<Material>(L"RenderCubemapMaterial");
 	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
 	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
@@ -142,7 +142,7 @@ protected:
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
-			MeshPrimitives::Quad.BindVertexArray();
+			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			HDRClampingMaterial.SetAttribMatrix4x4Array(
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
@@ -150,7 +150,7 @@ protected:
 
 			Renderer->BindTexture2D(EquirectangularTextureHDR);
 			Renderer->Clear();
-			MeshPrimitives::Quad.DrawInstanciated(1);
+			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			EquirectangularTextureHDR->GenerateMipMaps();
 		}
 
@@ -318,7 +318,7 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 
 				Renderer->Bind();
-				MeshPrimitives::Quad.BindVertexArray();
+				MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetAttribMatrix4x4Array(
 					"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
@@ -326,7 +326,7 @@ protected:
 
 				Renderer->BindTexture2D(TextureSample);
 				Renderer->Clear();
-				MeshPrimitives::Quad.DrawInstanciated(1);
+				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			}
 			if (bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap) {
 				RenderTargetPtr Renderer = RenderTarget::Create();
@@ -346,7 +346,7 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 
 				Renderer->Bind();
-				MeshPrimitives::Quad.BindVertexArray();
+				MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetAttribMatrix4x4Array(
 					"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
@@ -354,7 +354,7 @@ protected:
 
 				Renderer->BindTexture2D(TextureSample);
 				Renderer->Clear();
-				MeshPrimitives::Quad.DrawInstanciated(1);
+				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			}
 		}
 
@@ -408,10 +408,29 @@ protected:
 		ImGui::Begin("Shaders", 0, ImVec2(250, 300)); 
 		{
 			TArray<IName> ShaderNameList = ShaderManager::GetInstance().GetResourceShaderNames();
+			TArray<NString> NarrowShaderNameList(ShaderNameList.size());
+			for (int i = 0; i < ShaderNameList.size(); ++i)
+				NarrowShaderNameList[i] = (ShaderNameList)[i].GetNarrowDisplayName();
 
-			if (ImGui::Button("Reload Shaders")) {
-				for (int i = 0; i < ShaderNameList.size(); ++i)
-					ShaderManager::GetInstance().GetProgram(ShaderNameList[i])->Reload();
+			if (ShaderNameList.size() > 0) {
+				static int Selection = 0;
+				ImGui::ListBox("Shader List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
+					TArray<NString>* Items = (TArray<NString> *)Data;
+					if (outText) *outText = (*Items)[indx].c_str();
+					return true;
+				}, &NarrowShaderNameList, (int)NarrowShaderNameList.size());
+			
+				RShaderProgramPtr SelectedShader = ShaderManager::GetInstance().GetProgram(ShaderNameList[Selection]);
+				if (SelectedShader) {
+					ImGui::Text("Selected Shader: %s", NarrowShaderNameList[Selection].c_str());
+					if (ImGui::Button("Reload Shader")) {
+						SelectedShader->Reload();
+					}
+					ImGui::Text("Shader Code:");
+					ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+					ImGui::TextUnformatted(SelectedShader->GetSourceCode().c_str());
+					ImGui::EndChild();
+				}
 			}
 		}
 		ImGui::End();
@@ -500,7 +519,7 @@ protected:
 
 					for (auto & KeyValue : SelectedMaterial->GetVariables()) {
 						int i = 0;
-						if (KeyValue.bInternal) continue;
+						if (KeyValue.IsInternal()) continue;
 						switch (KeyValue.Value.GetType()) {
 						case EShaderPropertyType::Matrix4x4Array:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
@@ -561,7 +580,7 @@ protected:
 							for (auto& Value : KeyValue.Value.Float3DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
 									ImGui::PushItemWidth(-1);
-									if (KeyValue.bColor)
+									if (KeyValue.IsColor())
 										ImGui::ColorEdit3("##Float3DAC", &Value[0], ImGuiColorEditFlags_Float);
 									else
 										ImGui::DragFloat3("##Float3DA", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -573,7 +592,7 @@ protected:
 						case EShaderPropertyType::Float3D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1);
-							if (KeyValue.bColor)
+							if (KeyValue.IsColor())
 								ImGui::ColorEdit3(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float3D[0], ImGuiColorEditFlags_Float);
 							else
 								ImGui::DragFloat3(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float3D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -584,7 +603,7 @@ protected:
 							for (auto& Value : KeyValue.Value.Float4DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
 									ImGui::PushItemWidth(-1);
-									if (KeyValue.bColor)
+									if (KeyValue.IsColor())
 										ImGui::ColorEdit4("##Float4DAC", &Value[0], ImGuiColorEditFlags_Float);
 									else
 										ImGui::DragFloat4("##Float4DA", &Value[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -596,7 +615,7 @@ protected:
 						case EShaderPropertyType::Float4D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1);
-							if (KeyValue.bColor)
+							if (KeyValue.IsColor())
 								ImGui::ColorEdit4(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float4D[0], ImGuiColorEditFlags_Float);
 							else
 								ImGui::DragFloat4(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float4D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -896,9 +915,10 @@ protected:
 		RenderTextureMaterial.CullMode = CM_None;
 		RenderTextureMaterial.SetShaderProgram(RenderTextureShader);
 
-		RenderTextMaterial.DepthFunction = DF_Always;
-		RenderTextMaterial.CullMode = CM_None;
-		RenderTextMaterial.SetShaderProgram(RenderTextShader);
+		RenderTextMaterial->DepthFunction = DF_Always;
+		RenderTextMaterial->CullMode = CM_None;
+		RenderTextMaterial->SetShaderProgram(RenderTextShader);
+		MaterialManager::GetInstance().AddMaterial(RenderTextMaterial);
 
 		RenderCubemapMaterial->CullMode = CM_None;
 		RenderCubemapMaterial->SetShaderProgram(RenderCubemapShader);
@@ -920,6 +940,8 @@ protected:
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
 		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
+		MeshManager::GetInstance().AddMesh(L"Quad", std::make_shared<Mesh>(Mesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))));
+		MeshManager::GetInstance().GetMesh(L"Quad")->SetUpBuffers();
 
 		Texture2DPtr RenderedTexture = Texture2D::Create(
 			L"RenderedTexture",
@@ -938,7 +960,7 @@ protected:
 			IntegrateBRDFMaterial.Use();
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 
-			MeshPrimitives::Quad.BindVertexArray();
+			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			IntegrateBRDFMaterial.SetAttribMatrix4x4Array(
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
@@ -946,7 +968,7 @@ protected:
 
 			Renderer->BindTexture2D(BRDFLut);
 			Renderer->Clear();
-			MeshPrimitives::Quad.DrawInstanciated(1);
+			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 		}
 		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
@@ -1265,19 +1287,19 @@ protected:
 
 		Rendering::SetViewport(Box2D(0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight()));
 		// --- Activate corresponding render state
-		RenderTextMaterial.Use();
-		RenderTextMaterial.SetFloat2Array("_MainTextureSize", FontMap->GetSize().FloatVector3().PointerToValue());
-		RenderTextMaterial.SetMatrix4x4Array("_ProjectionMatrix",
-			Matrix4x4::Orthographic(
-				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),
-				0.F, (float)Application::GetInstance()->GetWindow().GetHeight()
-			).PointerToValue()
-		);
 
 		float FontScale = (FontSize / TextGenerator.GlyphHeight);
-		RenderTextMaterial.SetTexture2D("_MainTexture", FontMap, 0);
-		RenderTextMaterial.SetFloat1Array("_TextSize", &FontScale);
-		RenderTextMaterial.SetFloat1Array("_TextBold", &FontBoldness);
+		RenderTextMaterial->SetVariables({
+			{ "_MainTextureSize", { FontMap->GetSize().FloatVector3() }, SPFlags_None },
+			{ "_ProjectionMatrix", { Matrix4x4::Orthographic(
+				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),
+				0.F, (float)Application::GetInstance()->GetWindow().GetHeight()
+			) }, SPFlags_None },
+			{ "_MainTexture", { ETextureDimension::Texture2D, FontMap }, SPFlags_None},
+			{ "_TextSize", { FontScale }, SPFlags_None },
+			{ "_TextBold", { FontBoldness }, SPFlags_None }
+		});
+		RenderTextMaterial->Use();
 
 		double TimeCount = 0;
 		int TotalCharacterSize = 0;
@@ -1297,9 +1319,9 @@ protected:
 		}
 		DynamicMesh.SwapMeshData(TextMeshData);
 		if (DynamicMesh.SetUpBuffers()) {
-			DynamicMesh.BindVertexArray();
-			RenderTextMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
-			DynamicMesh.DrawElement();
+			DynamicMesh.BindSubdivisionVertexArray(0);
+			RenderTextMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
+			DynamicMesh.DrawSubdivisionInstanciated(1, 0);
 		}
 
 		RenderingText[2] = Text::Formatted(

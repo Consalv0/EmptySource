@@ -67,23 +67,14 @@ namespace EmptySource {
 		//* Copy all contents of the mesh for new data
 		void CopyMeshData(const MeshData & Data);
 
-		//* Create or Bind Vertex Array Object
-		void BindVertexArray() const;
-
 		//* Bind Element Subdivision Array Object
 		void BindSubdivisionVertexArray(int MaterialIndex) const;
 
 		//* Get VertexArray in Mesh
 		VertexArrayPtr GetSubdivisionVertexArray(int MaterialIndex) const;
 
-		//* Draw mesh using instanciated Element Buffer
-		void DrawInstanciated(int Count) const;
-
 		//* Draw mesh using instanciated Element Buffer unsing material subdivision
 		void DrawSubdivisionInstanciated(int Count, int MaterialIndex) const;
-
-		//* Draw mesh using Element Buffer
-		void DrawElement() const;
 
 		//* Clear the mesh entirely
 		void Clear();
@@ -95,7 +86,6 @@ namespace EmptySource {
 		bool SetUpBuffers();
 
 	private:
-		VertexArrayPtr VertexArrayObject;
 		TArray<VertexArrayPtr> MeshSubdivisions;
 		MeshData Data;
 	};

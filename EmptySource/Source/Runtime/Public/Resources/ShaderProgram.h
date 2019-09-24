@@ -40,6 +40,8 @@ namespace EmptySource {
 		//* Set the shader properties
 		void SetProperties(const TArray<ShaderProperty> & Properties);
 
+		inline const NString& GetSourceCode() const { return Source; }
+
 	protected:
 		friend class ShaderManager;
 

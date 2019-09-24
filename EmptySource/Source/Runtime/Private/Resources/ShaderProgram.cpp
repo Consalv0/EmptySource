@@ -91,7 +91,8 @@ namespace EmptySource {
 					NString Type = Stage["StageType"].as<NString>();
 
 					if (Stage["Code"].IsDefined()) {
-						Stages.push_back(ShaderStage::CreateFromText("#version 410\n" + Stage["Code"].as<NString>(), ShaderManager::StringToStageType(Type)));
+						NString Code = fmt::format("#version {}\n#line {}\n", "410", Stage["Code"].Mark().line) + Stage["Code"].as<NString>();
+						Stages.push_back(ShaderStage::CreateFromText(Code, ShaderManager::StringToStageType(Type)));
 					}
 				}
 			}

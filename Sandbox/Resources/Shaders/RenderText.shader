@@ -1,5 +1,19 @@
 Name: "RenderTextShader"
 Parameters:
+  - Uniform: _MainTexture
+    Type: Texture2D
+    DefaultValue: "WhiteTexture"
+  - Uniform: _MainTextureSize
+    Type: Float2D
+    DefaultValue: [1.0, 1.0]
+  - Uniform: _ProjectionMatrix
+    Type: Matrix4x4
+  - Uniform: _TextSize
+    Type: Float
+    DefaultValue: 0.2
+  - Uniform: _TextBold
+    Type: Float
+    DefaultValue: 0.55
 GLSL:
   Stages:
     - StageType: Vertex
@@ -36,7 +50,7 @@ GLSL:
           vVertex.Position = _iModelMatrix * vVertex.Position;
         }
     - StageType: Pixel
-      Code: |
+      Code: |-
         uniform sampler2D _MainTexture;
         uniform vec2 _MainTextureSize;
 
@@ -62,7 +76,7 @@ GLSL:
             return Contour(texture(_MainTexture, UV).r, Width);
         }
 
-        void main(){
+        void main() {
           float Smoothing = 1 / _TextSize;
           float Distance = texture(_MainTexture, vVertex.UV0).r;
           float Width = fwidth(Distance) * 0.93 + Smoothing * 0.07;
@@ -80,5 +94,5 @@ GLSL:
 
           Alpha = (Alpha + 0.5 * Sum) / 1.8;
           // Alpha = smoothstep(_TextBold - Smoothing, _TextBold + Smoothing, Distance);
-          FragColor = vec4(1, 1, 1, Alpha);
+          FragColor = vec4(vVertex.Color.rgb, Alpha);
         } 
