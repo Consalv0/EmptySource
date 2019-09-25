@@ -84,16 +84,16 @@ namespace EmptySource {
 			Program->GetProgram()->SetFloat4Array(UniformName, Data, Count);
 	}
 
-	void Material::SetTexture2D(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
+	void Material::SetTexture2D(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
 		RShaderPtr Program = GetShaderProgram();
-		if (Program != NULL && Program->IsValid())
-			Program->GetProgram()->SetTexture2D(UniformName, Text, Position);
+		if (Program != NULL && Program->IsValid() && Text->GetDimension() == ETextureDimension::Texture2D)
+			Program->GetProgram()->SetTexture2D(UniformName, (Texture2D  *)Text->GetTexture(), Position);
 	}
 
-	void Material::SetTextureCubemap(const NChar * UniformName, TexturePtr Text, const unsigned int & Position) const {
+	void Material::SetTextureCubemap(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
 		RShaderPtr Program = GetShaderProgram();
-		if (Program != NULL && Program->IsValid())
-			Program->GetProgram()->SetTexture2D(UniformName, Text, Position);
+		if (Program != NULL && Program->IsValid() && Text->GetDimension() == ETextureDimension::Cubemap)
+			Program->GetProgram()->SetTextureCubemap(UniformName, (Cubemap *)Text->GetTexture(), Position);
 	}
 
 	void Material::SetParameters(const TArray<ShaderParameters>& NewLayout) {

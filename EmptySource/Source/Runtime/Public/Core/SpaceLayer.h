@@ -72,8 +72,12 @@ namespace EmptySource {
 		//* Dictionary that contains all the Objects in this Space
 		TDictionary<size_t, OObject*> ObjectsIn;
 
+		TDictionary<size_t, OObject*> ObjectsOut;
+
 		//* Add object in this space
 		void AddObject(OObject* Object);
+
+		void DeleteOutObjects();
 	};
 
 	template<typename T>

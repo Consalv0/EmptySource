@@ -38,6 +38,7 @@ namespace EmptySource {
 	}
 
 	void SpaceLayer::OnUpdate(Timestamp Stamp) {
+		DeleteOutObjects();
 		TArray<GGameObject *> GameObjects;
 		GetAllObjects<GGameObject>(GameObjects);
 		for (auto & GameObject : GameObjects)
@@ -67,6 +68,7 @@ namespace EmptySource {
 
 	SpaceLayer::~SpaceLayer() {
 		DeleteAllObjects();
+		DeleteOutObjects();
 		AllSpaces.erase(Name.GetInstanceID());
 		LOG_CORE_DEBUG(L"Space {} deleted", Name.GetInstanceName().c_str());
 	}
@@ -99,8 +101,8 @@ namespace EmptySource {
 
 	void SpaceLayer::DeleteObject(OObject * Object) {
 		Object->OnDelete();
-		ObjectsIn.erase(Object->Name.GetInstanceID());
-		delete Object;
+		ObjectsIn[Object->Name.GetInstanceID()] = NULL;
+		ObjectsOut.emplace(Object->Name.GetInstanceID(), Object);
 	}
 
 	void SpaceLayer::AddObject(OObject * Object) {
@@ -108,6 +110,16 @@ namespace EmptySource {
 		ObjectsIn.insert(std::pair<const size_t, OObject*>(Object->Name.GetInstanceID(), Object));
 		if (bAttached) Object->OnAttach();
 		Object->OnAwake();
+	}
+
+	void SpaceLayer::DeleteOutObjects() {
+		for (auto & Iterator : ObjectsOut) {
+			ObjectsIn.erase(Iterator.second->GetName().GetInstanceID());
+			Iterator.second->OnDelete();
+			delete Iterator.second;
+		}
+
+		ObjectsOut.clear();
 	}
 
 }

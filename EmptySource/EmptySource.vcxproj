@@ -218,7 +218,7 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
-    <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\PixelMap.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Mesh.h" />
@@ -292,7 +292,7 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Rendering\PixelMap.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp" />
@@ -336,4 +336,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

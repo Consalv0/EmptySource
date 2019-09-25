@@ -3,7 +3,7 @@
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"
 #include "Fonts/Shape2D.h"
-#include "Rendering/Bitmap.h"
+#include "Rendering/PixelMap.h"
 
 namespace EmptySource {
 
@@ -29,9 +29,9 @@ namespace EmptySource {
 		static void GenerateDistanceTransform();
 
 	public:
-		static void FromShape(Bitmap<FloatRed> &Output, const Shape2D &Shape, double Range, const Vector2 &Scale, const Vector2 &Translate);
+		static void FromShape(PixelMap &Output, const Shape2D &Shape, double Range, const Vector2 &Scale, const Vector2 &Translate);
 
-		static void FromBitmap(Bitmap<FloatRed> &Output, Bitmap<FloatRed> &Input, float MaxInside, float MaxOutside);
+		static void FromBitmap(PixelMap &Output, PixelMap &Input, float MaxInside, float MaxOutside);
 	};
 
 }

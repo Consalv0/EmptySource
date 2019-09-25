@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include "Fonts/Font.h"
 #include "Rendering/Mesh.h"
-#include "Rendering/Bitmap.h"
+#include "Rendering/PixelMap.h"
 
 namespace EmptySource {
 
@@ -40,7 +40,7 @@ namespace EmptySource {
 
 		//* Prepare Texture Data
 		//* The UV of the glyph quads are calculated here
-		bool GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas);
+		bool GenerateGlyphAtlas(PixelMap & Atlas);
 
 	private:
 

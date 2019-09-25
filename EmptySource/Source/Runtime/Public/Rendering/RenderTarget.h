@@ -11,20 +11,19 @@ namespace EmptySource {
 
 	class RenderTarget {
 	public:
-
 		virtual ~RenderTarget() = default;
 
 		//* Get the dimension of the texture
 		virtual inline ETextureDimension GetDimension() const = 0;
 
 		//* All future functions will modify this texture
-		virtual void BindTexture2D(const TexturePtr & Texture, int Lod = 0, int TextureAttachment = 0) = 0;
+		virtual void BindTexture2D(Texture2D * Texture, int Lod = 0, int TextureAttachment = 0) = 0;
 
 		//* All future functions will modify this texture
-		virtual void BindCubemapFace(const TexturePtr & Texture, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
+		virtual void BindCubemapFace(Cubemap * Texture, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
 
 		//* Returns empty if no texture
-		virtual TexturePtr GetBindedTexture() const = 0;
+		virtual Texture * GetBindedTexture() const = 0;
 
 		//* Get the renderbuffer object
 		virtual void * GetNativeObject() const = 0;

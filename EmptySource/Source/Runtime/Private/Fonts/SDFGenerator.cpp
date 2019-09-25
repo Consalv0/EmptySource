@@ -189,7 +189,7 @@ namespace EmptySource {
 		}
 	}
 
-	void SDFGenerator::FromBitmap(Bitmap<FloatRed>& Output, Bitmap<FloatRed>& Input, float MaxInside, float MaxOutside) {
+	void SDFGenerator::FromBitmap(PixelMap& Output, PixelMap& Input, float MaxInside, float MaxOutside) {
 		Width = Input.GetWidth();
 		Height = Input.GetHeight();
 
@@ -203,7 +203,7 @@ namespace EmptySource {
 		if (MaxInside > 0.F) {
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
-					PixelAt(x, y)->Alpha = 1.F - Output(x, y).R;
+					PixelAt(x, y)->Alpha = 1.F - *PixelMapUtility::GetFloatPixelAt(Output, x, y, 0);
 				}
 			}
 			ComputeEdgeGradients();
@@ -212,14 +212,14 @@ namespace EmptySource {
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
 					float Alpha = Math::Clamp01(PixelAt(x, y)->Distance * Scale);
-					Output(x, y).R = Alpha;
+					*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) = Alpha;
 				}
 			}
 		}
 		if (MaxOutside > 0.F) {
 			for (y = 0; y < Height; y++) {
 				for (x = 0; x < Width; x++) {
-					PixelAt(x, y)->Alpha = Output(x, y).R;
+					PixelAt(x, y)->Alpha = *PixelMapUtility::GetFloatPixelAt(Output, x, y, 0);
 				}
 			}
 			ComputeEdgeGradients();
@@ -228,9 +228,9 @@ namespace EmptySource {
 			if (MaxInside > 0.F) {
 				for (y = 0; y < Height; y++) {
 					for (x = 0; x < Width; x++) {
-						float Alpha = 0.5f + (Output(x, y).R -
+						float Alpha = 0.5f + (*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) -
 							Math::Clamp01(PixelAt(x, y)->Distance * Scale)) * 0.5f;
-						Output(x, y).R = Alpha;
+							*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) = Alpha;
 					}
 				}
 			}
@@ -238,7 +238,7 @@ namespace EmptySource {
 				for (y = 0; y < Height; y++) {
 					for (x = 0; x < Width; x++) {
 						float Alpha = Math::Clamp01(1.F - PixelAt(x, y)->Distance * Scale);
-						Output(x, y).R = Alpha;
+						*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) = Alpha;
 					}
 				}
 			}
@@ -247,7 +247,7 @@ namespace EmptySource {
 		delete[] Pixels;
 	}
 
-	void SDFGenerator::FromShape(Bitmap<FloatRed>& Output, const Shape2D & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
+	void SDFGenerator::FromShape(PixelMap& Output, const Shape2D & Shape, double Range, const Vector2 & Scale, const Vector2 & Translate) {
 		int ContourCount = (int)Shape.Contours.size();
 		int OutWidth = Output.GetWidth(), OutHeight = Output.GetHeight();
 		int * Windings = new int[ContourCount];
@@ -301,7 +301,7 @@ namespace EmptySource {
 						if (Windings[i] != Winding && fabs(ContourSD[i]) < fabs(SignedDist))
 							SignedDist = ContourSD[i];
 
-					Output(x, Row).R = float(SignedDist / Range + .5F);
+					*PixelMapUtility::GetFloatPixelAt(Output, x, Row, 0) = float(SignedDist / Range + .5F);
 				}
 			}
 			delete[] ContourSD;

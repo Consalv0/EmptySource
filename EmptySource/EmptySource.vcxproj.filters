@@ -312,9 +312,6 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\Bitmap.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -413,6 +410,9 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\PixelMap.h">
+      <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -530,9 +530,6 @@
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp">
       <Filter>Runtime\Private\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\Bitmap.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
@@ -610,6 +607,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\PixelMap.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

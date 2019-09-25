@@ -1,8 +1,10 @@
 
 #include "CoreMinimal.h"
-#include "Utility/TexturePacking.h"
-#include "Rendering/Bitmap.h"
+
+#include "Rendering/RenderingDefinitions.h"
+#include "Rendering/PixelMap.h"
 #include "Rendering/Texture.h"
+#include "Utility/TexturePacking.h"
 
 namespace EmptySource {
 
@@ -22,8 +24,8 @@ namespace EmptySource {
 			if (this->Element != NULL) return NULL;
 
 			// --- If We're too small, return
-			if (Element.GetWidth() > (int)BBox.GetWidth() ||
-				Element.GetHeight() > (int)BBox.GetHeight())
+			if ((int)Element.GetWidth() > (int)BBox.GetWidth() ||
+				(int)Element.GetHeight() > (int)BBox.GetHeight())
 				return NULL;
 
 			// --- Removed: resolved the stuck subdivision
@@ -94,8 +96,7 @@ namespace EmptySource {
 		return { false, BoundingBox2D(), (T*)(NULL) };
 	}
 
-	template class TexturePacking<Bitmap<FloatRed>>;
-	template class TexturePacking<Bitmap<UCharRed>>;
+	template class TexturePacking<PixelMap>;
 	template class TexturePacking<Texture2D>;
 
 }

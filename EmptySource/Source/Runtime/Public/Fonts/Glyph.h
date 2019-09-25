@@ -6,7 +6,7 @@
 #include "Math/Box2D.h"
 #include "Fonts/Shape2D.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Rendering/Bitmap.h"
+#include "Rendering/PixelMap.h"
 
 namespace EmptySource {
 
@@ -19,7 +19,7 @@ namespace EmptySource {
 		float Advance;
 		Box2D UV;
 		Shape2D VectorShape;
-		Bitmap<FloatRed> SDFResterized;
+		PixelMap SDFResterized;
 		bool bUndefined;
 
 		FontGlyph();

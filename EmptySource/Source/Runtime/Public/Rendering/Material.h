@@ -76,10 +76,10 @@ namespace EmptySource {
 		void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) const;
 
 		//* Pass Texture 2D array
-		void SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) const;
+		void SetTexture2D(const NChar * UniformName, RTexturePtr Tex, const unsigned int& Position) const;
 
 		//* Pass Cubemap array
-		void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) const;
+		void SetTextureCubemap(const NChar * UniformName, RTexturePtr Tex, const unsigned int& Position) const;
 
 		inline MaterialLayout& GetVariables() { return ParameterLayout; };
 

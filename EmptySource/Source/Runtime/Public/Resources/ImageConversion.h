@@ -2,14 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Files/FileManager.h"
-#include "Rendering/Bitmap.h"
+#include "Rendering/PixelMap.h"
 
 namespace EmptySource {
 
 	class ImageConversion {
 	public:
-		template<typename T>
-		static bool LoadFromFile(Bitmap<T> & RefBitmap, FileStream * File, bool FlipVertically = true);
+		static bool LoadFromFile(PixelMap & RefBitmap, FileStream * File, EColorFormat Format, bool FlipVertically = true);
 
 		static int GetChannelCount(FileStream * File);
 
@@ -17,7 +16,7 @@ namespace EmptySource {
 
 		static EColorFormat GetColorFormat(FileStream * File);
 
-		static bool EncodeToFile(const Bitmap<FloatRed> & RefBitmap, FileStream * File);
+		static bool EncodeToFile(const PixelMap & RefBitmap, FileStream * File);
 	};
 
 }

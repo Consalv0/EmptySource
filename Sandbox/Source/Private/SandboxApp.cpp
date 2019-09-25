@@ -60,7 +60,7 @@ class SandboxLayer : public Layer {
 private:
 	Font FontFace;
 	Text2DGenerator TextGenerator;
-	Bitmap<UCharRed> FontAtlas;
+	PixelMap FontAtlas;
 
 	// --- Perpective matrix (ProjectionMatrix)
 	VertexBufferPtr ModelMatrixBuffer;
@@ -106,9 +106,9 @@ private:
 	Mesh DynamicMesh;
 	Point2 TextPivot;
 
-	Texture2DPtr EquirectangularTextureHDR;
-	Texture2DPtr FontMap;
-	CubemapPtr CubemapTexture;
+	RTexturePtr EquirectangularTextureHDR;
+	RTexturePtr FontMap;
+	RTexturePtr CubemapTexture;
 
 	Transform TestArrowTransform;
 	Vector3 TestArrowDirection = 0;
@@ -120,10 +120,10 @@ private:
 protected:
 
 	void SetSceneSkybox(const WString & Path) {
-		Bitmap<FloatRGB> Equirectangular;
-		ImageConversion::LoadFromFile(Equirectangular, FileManager::GetFile(Path));
+		PixelMap Equirectangular;
+		ImageConversion::LoadFromFile(Equirectangular, FileManager::GetFile(Path), CF_RGB32F);
 
-		Texture2DPtr EquirectangularTexture = Texture2D::Create(L"EquirectangularTexture",
+		Texture * EquirectangularTexture = Texture2D::Create(L"EquirectangularTexture",
 			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
 			CF_RGB32F, FM_MinMagLinear, SAM_Repeat, CF_RGB32F,
 			Equirectangular.PointerToValue()
@@ -181,7 +181,7 @@ protected:
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderMng.CreateProgram(L"PBRShader", L"Resources/Shaders/PBR.shader");
-
+		
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnAAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnARoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/CulumnANormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_normal.tga");
@@ -297,7 +297,7 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		TexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(TextureNameList[CurrentTexture]);
+		RTexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(TextureNameList[Math::Clamp((unsigned long long)CurrentTexture, 0ull, TextureNameList.size() -1)]);
 		if (SelectedTexture) {
 			int bCubemap;
 			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
@@ -814,9 +814,13 @@ protected:
 			if (SelectedTexture) {
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
+				if (ImGui::Button("Delete")) {
+					TextureManager::GetInstance().FreeTexture(SelectedTexture->GetName().GetDisplayName());
+					SelectedTexture = NULL;
+				}
 			}
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
 
 			ImGui::Columns(1);
 			ImGui::Separator();
@@ -836,7 +840,7 @@ protected:
 				if (SelectedTexture->GetDimension() == ETextureDimension::Texture2D) {
 					ImageSize.x = Math::Min(
 						ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
-						* std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio()
+						* dynamic_cast<Texture2D *>(SelectedTexture)->GetAspectRatio()
 					);
 					ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
 					ImageSize.y = ImageSize.x / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio();
@@ -1325,7 +1329,7 @@ protected:
 		}
 
 		RenderingText[2] = Text::Formatted(
-			L"└> ElementsIntersected(%d), RayHits(%d)",
+			L"└> ElementsIntersected(%d), RayHits(%d) ゥ⌃└Áñbcdëfgü",
 			ElementsIntersected.size(),
 			0 // TotalHitCount
 		);

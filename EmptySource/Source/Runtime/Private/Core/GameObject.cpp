@@ -79,7 +79,8 @@ namespace EmptySource {
 	}
 
 	void GGameObject::AttachComponent(CComponent * Component) {
-		ComponentsIn.insert(std::pair<const size_t, CComponent*>(Component->Name.GetInstanceID(), Component));
+		ES_CORE_ASSERT(ComponentsIn.find(Component->Name.GetInstanceID()) == ComponentsIn.end(), L"Trying to insert deleted or already existing component");
+		ComponentsIn.emplace(Component->Name.GetInstanceID(), Component);
 		Component->SpaceIn = SpaceIn;
 		if (IsAttached()) Component->OnAttach();
 		Component->OnAwake();
@@ -87,12 +88,13 @@ namespace EmptySource {
 
 	void GGameObject::DetachComponent(CComponent * Component) {
 		Component->OnDetach();
-		ComponentsIn.erase(Component->Name.GetInstanceID());
+		ComponentsIn[Component->Name.GetInstanceID()] = NULL;
 		ComponentsOut.emplace(Component->Name.GetInstanceID(), Component);
 	}
 
 	void GGameObject::DeleteOutComponents() {
 		for (auto & Iterator : ComponentsOut) {
+			ComponentsIn.erase(Iterator.second->GetName().GetInstanceID());
 			Iterator.second->OnDelete();
 			delete Iterator.second;
 		}
@@ -101,8 +103,9 @@ namespace EmptySource {
 	}
 
 	void GGameObject::DeatachAllComponents() {
-		for (TDictionary<size_t, CComponent*>::iterator Iterator = ComponentsIn.begin(); Iterator != ComponentsIn.end(); Iterator++)
+		for (TDictionary<size_t, CComponent*>::iterator Iterator = ComponentsIn.begin(); Iterator != ComponentsIn.end(); Iterator++) {
 			DetachComponent(Iterator->second);
+		}
 	}
 
 	void GGameObject::OnRender() {

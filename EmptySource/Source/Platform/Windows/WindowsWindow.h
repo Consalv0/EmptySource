@@ -57,7 +57,7 @@ namespace EmptySource {
 		// bool GetKeyDown(unsigned int Key);
 
 		//* Sets the window icon
-		void SetIcon(class Bitmap<UCharRGBA> * Icon);
+		void SetIcon(class PixelMap * Icon);
 
 		//* Window update events
 		virtual void EndFrame() override;

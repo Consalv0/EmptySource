@@ -16,7 +16,7 @@ namespace EmptySource {
 		bUndefined = true;
 		UV = { 0, 0, 0, 0 };
 		VectorShape = Shape2D();
-		SDFResterized = Bitmap<FloatRed>();
+		SDFResterized = PixelMap();
 	}
 
 	FontGlyph::FontGlyph(const FontGlyph & Other) :
@@ -29,7 +29,7 @@ namespace EmptySource {
 
 	void FontGlyph::GenerateSDF(float PixelRange) {
 		IntVector2 Size = { (int)Width, (int)Height };
-		SDFResterized = Bitmap<FloatRed>(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4);
+		SDFResterized = PixelMap(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4, 1, CF_Red32F);
 		Vector2 Translate(-(float)Bearing.x, Height - (float)Bearing.y);
 		Vector2 Scale = 1;
 		Translate += PixelRange;
@@ -60,9 +60,9 @@ namespace EmptySource {
 
 	void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, const Vector4& Color, MeshVertex * Quad) {
 		float XPos = Pivot.x + Bearing.x * Scale;
-		float YPos = Pivot.y - (SDFResterized.GetHeight() - Bearing.y) * Scale;
-		float XPosWidth = XPos + (SDFResterized.GetWidth() + PixelRange) * Scale;
-		float YPosHeight = YPos + (SDFResterized.GetHeight() + PixelRange) * Scale;
+		float YPos = Pivot.y - ((int)SDFResterized.GetHeight() - Bearing.y) * Scale;
+		float XPosWidth = XPos + ((int)SDFResterized.GetWidth() + PixelRange) * Scale;
+		float YPosHeight = YPos + ((int)SDFResterized.GetHeight() + PixelRange) * Scale;
 
 		Quad[0].Position.x = XPosWidth; Quad[0].Position.y = YPos;
 		Quad[0].UV0.u = UV.xMax; Quad[0].UV0.v = UV.yMin;

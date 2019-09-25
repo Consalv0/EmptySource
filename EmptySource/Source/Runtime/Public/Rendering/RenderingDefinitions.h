@@ -109,6 +109,8 @@ namespace EmptySource {
 
 	enum EColorFormat {
 		CF_Red,
+		CF_Red16F,
+		CF_Red32F,
 		CF_RG,
 		CF_RG16F,
 		CF_RGB,

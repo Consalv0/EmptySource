@@ -7,12 +7,12 @@
 
 namespace EmptySource {
 
-	TexturePtr TextureManager::GetTexture(const WString & Name) const {
+	RTexturePtr TextureManager::GetTexture(const WString & Name) const {
 		size_t UID = WStringToHash(Name);
 		return GetTexture(UID);
 	}
 
-	TexturePtr TextureManager::GetTexture(const size_t & UID) const {
+	RTexturePtr TextureManager::GetTexture(const size_t & UID) const {
 		auto Resource = TextureList.find(UID);
 		if (Resource != TextureList.end()) {
 			return Resource->second;
@@ -27,7 +27,7 @@ namespace EmptySource {
 		TextureList.erase(UID);
 	}
 
-	void TextureManager::AddTexture(const WString& Name, TexturePtr Tex) {
+	void TextureManager::AddTexture(const WString& Name, RTexturePtr Tex) {
 		size_t UID = WStringToHash(Name);
 		TextureNameList.insert({ UID, Name });
 		TextureList.insert({ UID, Tex });
@@ -97,48 +97,17 @@ namespace EmptySource {
 		const WString& Name, EColorFormat ColorFormat, EFilterMode FilterMode,
 		ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath) {
 
-		EColorFormat InColorFormat = ImageConversion::GetColorFormat(FileManager::GetFile(FilePath));
-		Texture2DPtr LoadedTexture = NULL;
-		switch (InColorFormat) {
-		case EmptySource::CF_Red: {
-			Bitmap<UCharRed> Bitmap;
-			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		} break;
-		case EmptySource::CF_RG: {
-			Bitmap<UCharRG> Bitmap;
-			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		} break;
-		case EmptySource::CF_RGB: {
-			Bitmap<UCharRGB> Bitmap;
-			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		} break;
-		case EmptySource::CF_RGBA: {
-			Bitmap<UCharRGBA> Bitmap;
-			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		} break;
-		case EmptySource::CF_RGBA32F: {
-			Bitmap<FloatRGBA> Bitmap;
-			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		} break;
-		case EmptySource::CF_RGB32F: {
-			Bitmap<FloatRGB> Bitmap;
-			ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), bFlipVertically);
-			LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		} break;
-		default:
-			ES_CORE_ASSERT(true, "Color format not implemented");
-			break;
-		}
-
-		if (LoadedTexture) {
-			if (bGenMipMaps) LoadedTexture->GenerateMipMaps();
-			AddTexture(Name, LoadedTexture);
-		}
+		// LOG_CORE_DEBUG(L"Loading Texture2D {}...", FileManager::GetFile(FilePath)->GetFileName().c_str());
+		// EColorFormat InColorFormat = ImageConversion::GetColorFormat(FileManager::GetFile(FilePath));
+		// RTexturePtr LoadedTexture = NULL;
+		// PixelMap Bitmap;
+		// ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), InColorFormat, bFlipVertically);
+		// LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
+		// 
+		// if (LoadedTexture) {
+		// 	if (bGenMipMaps) LoadedTexture->GenerateMipMaps();
+		// 	AddTexture(Name, LoadedTexture);
+		// }
 	}
 
 	TextureManager & TextureManager::GetInstance() {

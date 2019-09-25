@@ -15,77 +15,35 @@
 
 namespace EmptySource {
 
-	template<typename T>
-	struct LoadFromFile {
-		static T * Load(FILE *File, int *Width, int *Height, int *Comp, int Channels) = 0;
-	};
-
-	template<>
-	struct LoadFromFile<unsigned char> {
-		static unsigned char * Load(FILE *File, int *Width, int *Height, int *Comp, int Channels) {
-			return stbi_load_from_file(File, Width, Height, Comp, Channels);
-		}
-	};
-
-	template<>
-	struct LoadFromFile<float> {
-		static float * Load(FILE *File, int *Width, int *Height, int *Comp, int Channels) {
-			return stbi_loadf_from_file(File, Width, Height, Comp, Channels);
-		}
-	};
-
-	template<typename T>
-	bool _LoadBitmap(Bitmap<T>& RefBitmap, FileStream * File, bool FlipVertically = true) {
+	bool ImageConversion::LoadFromFile(PixelMap& RefBitmap, FileStream * File, EColorFormat Format, bool FlipVertically) {
 		if (File == NULL) return false;
 		int Width, Height, Comp;
 		stbi_set_flip_vertically_on_load(FlipVertically);
 		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
-		auto * Image = LoadFromFile<typename T::Range>::Load(FILEFile, &Width, &Height, &Comp, T::Channels);
+		void * Image = NULL; 
+		if (PixelMapUtility::ColorFormatIsFloat(Format))
+			Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, PixelMapUtility::PixelChannels(Format));
+		else
+			Image = stbi_load_from_file(FILEFile, &Width, &Height, &Comp, PixelMapUtility::PixelChannels(Format));
 		fclose(FILEFile);
 		if (Image == NULL) {
 			LOG_CORE_ERROR(L"Texture '{0}' coldn´t be loaded", File->GetFileName().c_str());
 			return false;
 		}
-		RefBitmap = Bitmap<T>(Width, Height);
-		memmove(&RefBitmap[0], &Image[0], Width * Height * sizeof(T));
+		RefBitmap = PixelMap(Width, Height, 1, Format);
+		memcpy((void *)RefBitmap.PointerToValue(), Image, Width * Height * PixelMapUtility::PixelSize(Format));
+		stbi_image_free(Image);
 		return true;
-	}
-
-	template<>
-	bool ImageConversion::LoadFromFile(Bitmap<UCharRGBA>& RefBitmap, FileStream * File, bool FlipVertically) {
-		return _LoadBitmap<UCharRGBA>(RefBitmap, File, FlipVertically);
-	}
-
-	template<>
-	bool ImageConversion::LoadFromFile(Bitmap<UCharRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
-		return _LoadBitmap<UCharRGB>(RefBitmap, File, FlipVertically);
-	}
-
-	template<>
-	bool ImageConversion::LoadFromFile(Bitmap<UCharRG>& RefBitmap, FileStream * File, bool FlipVertically) {
-		return _LoadBitmap<UCharRG>(RefBitmap, File, FlipVertically);
-	}
-
-	template<>
-	bool ImageConversion::LoadFromFile(Bitmap<UCharRed>& RefBitmap, FileStream * File, bool FlipVertically) {
-		return _LoadBitmap<UCharRed>(RefBitmap, File, FlipVertically);
-	}
-
-	template<>
-	bool ImageConversion::LoadFromFile(Bitmap<FloatRGB>& RefBitmap, FileStream * File, bool FlipVertically) {
-		return _LoadBitmap<FloatRGB>(RefBitmap, File, FlipVertically);
-	}
-
-	template<>
-	bool ImageConversion::LoadFromFile(Bitmap<FloatRGBA>& RefBitmap, FileStream * File, bool FlipVertically) {
-		return _LoadBitmap<FloatRGBA>(RefBitmap, File, FlipVertically);
 	}
 
 	int ImageConversion::GetChannelCount(FileStream * File) {
 		if (File == NULL) return 0;
-		int Width, Height, Comp;
+		int Width, Height, Comp = 0;
 		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
-		stbi_info_from_file(FILEFile, &Width, &Height, &Comp);
+		if (FILEFile) {
+			stbi_info_from_file(FILEFile, &Width, &Height, &Comp);
+			fclose(FILEFile);
+		}
 		return Comp;
 	}
 
@@ -116,7 +74,7 @@ namespace EmptySource {
 		return InputColorFormat;
 	}
 
-	bool ImageConversion::EncodeToFile(const Bitmap<FloatRed>& RefBitmap, FileStream * File) {
+	bool ImageConversion::EncodeToFile(const PixelMap& RefBitmap, FileStream * File) {
 		// TArray<unsigned char> Pixels(RefBitmap.GetWidth() * RefBitmap.GetHeight());
 		// TArray<unsigned char>::iterator it = Pixels.begin();
 		// for (int y = RefBitmap.GetHeight() - 1; y >= 0; --y)

@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Core/Application.h"
 #include "Rendering/RenderingDefinitions.h"
-#include "Rendering/Bitmap.h"
+#include "Rendering/PixelMap.h"
 
 #include "Utility/TextFormatting.h"
 
@@ -185,7 +185,8 @@ namespace EmptySource {
 		return Vector2(float(MouseX), float(MouseY));
 	}
 
-	void WindowsWindow::SetIcon(Bitmap<UCharRGBA>* Icon) {
+	void WindowsWindow::SetIcon(PixelMap* Icon) {
+		if (Icon->GetColorFormat() != CF_RGBA) return;
 		SDL_Surface * Surface = SDL_CreateRGBSurfaceFrom(
 			(void*)Icon->PointerToValue(),
 			Icon->GetWidth(), Icon->GetHeight(),

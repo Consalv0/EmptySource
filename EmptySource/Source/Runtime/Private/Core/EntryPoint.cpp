@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 #ifdef ES_PLATFORM_WINDOWS
 	_setmode(_fileno(stdout), _O_U8TEXT);
 #endif
-	
+
 	EmptySource::Log::Initialize();
 	EmptySource::Application::GetInstance()->Run();
 

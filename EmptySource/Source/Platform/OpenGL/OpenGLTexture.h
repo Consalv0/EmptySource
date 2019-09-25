@@ -122,16 +122,13 @@ namespace EmptySource {
 
 		virtual inline EColorFormat GetColorFormat() const override { return ColorFormat; }
 
-		virtual bool ConvertFromCube(const CubeFaceTextures<UCharRGB>& Textures, bool GenerateMipMaps) override;
+		// virtual bool ConvertFromCube(const CubeFaceTextures& Textures, bool GenerateMipMaps) override;
 
-		virtual bool ConvertFromHDRCube(const CubeFaceTextures<FloatRGB>& Textures, bool GenerateMipMaps) override;
+		// virtual bool ConvertFromEquirectangular(RTexturePtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) override;
 
-		virtual bool ConvertFromEquirectangular(Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) override;
-
-		virtual bool ConvertFromHDREquirectangular(Texture2DPtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) override;
+		// virtual bool ConvertFromHDREquirectangular(RTexturePtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps) override;
 
 	private:
-
 		unsigned int Size;
 
 		bool bValid;

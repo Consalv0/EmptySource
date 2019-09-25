@@ -91,9 +91,9 @@ namespace EmptySource {
 				break;
 
 			Glyph->GetQuadMesh(CursorPivot, PixelRange, ScaleFactor, 1.F, TextVerticesEnd);
-			TextFacesEnd->x = VertexCount;
+			TextFacesEnd->z = VertexCount;
 			TextFacesEnd->y = VertexCount + 1;
-			(TextFacesEnd++)->z = VertexCount + 2;
+			(TextFacesEnd++)->x = VertexCount + 2;
 			TextFacesEnd->x = VertexCount + 3;
 			TextFacesEnd->y = VertexCount;
 			(TextFacesEnd++)->z = VertexCount + 1;
@@ -153,15 +153,15 @@ namespace EmptySource {
 		LoadedCharacters.clear();
 	}
 
-	bool Text2DGenerator::GenerateGlyphAtlas(Bitmap<UCharRed> & Atlas) {
+	bool Text2DGenerator::GenerateGlyphAtlas(PixelMap & Atlas) {
 		int Value = 0;
 		int AtlasSizeSqr = AtlasSize * AtlasSize;
-		Atlas = Bitmap<UCharRed>(AtlasSize, AtlasSize);
+		Atlas = PixelMap(AtlasSize, AtlasSize, 1, CF_Red);
 
 		// ---- Clear Bitmap
-		Atlas.PerPixelOperator([](EmptySource::UCharRed & Pixel) { Pixel.R = 0; });
+		PixelMapUtility::PerPixelOperator(Atlas, [](unsigned char * Pixel, const unsigned char & Channels) { *Pixel = 0; });
 
-		TexturePacking<Bitmap<FloatRed>> TextureAtlas;
+		TexturePacking<PixelMap> TextureAtlas;
 		TextureAtlas.CreateTexture({ AtlasSize, AtlasSize });
 		size_t Count = 0;
 		TArray<FontGlyph *> GlyphArray = TArray<FontGlyph * >(LoadedCharacters.size());
@@ -182,7 +182,7 @@ namespace EmptySource {
 			if (Character->bUndefined)
 				continue;
 
-			TexturePacking<Bitmap<FloatRed>>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
+			TexturePacking<PixelMap>::ReturnElement ResultNode = TextureAtlas.Insert(Character->SDFResterized);
 			if (!ResultNode.bValid || ResultNode.Element == NULL) {
 				LOG_CORE_ERROR(L"Error writting texture of {0:c}({1:d})", Character->UnicodeValue, Character->UnicodeValue);
 				continue;
@@ -197,15 +197,15 @@ namespace EmptySource {
 			int IndexPos = int(ResultNode.BBox.xMin + ResultNode.BBox.yMin * AtlasSize);
 
 			// --- Render current character in the current position
-			for (int i = 0; i < Character->SDFResterized.GetHeight(); ++i) {
-				for (int j = 0; j < Character->SDFResterized.GetWidth(); ++j) {
+			for (unsigned int i = 0; i < Character->SDFResterized.GetHeight(); ++i) {
+				for (unsigned int j = 0; j < Character->SDFResterized.GetWidth(); ++j) {
 					if (IndexPos < AtlasSizeSqr && IndexPos >= 0) {
-						Value = Math::Clamp(int(Character->SDFResterized[i * Character->SDFResterized.GetWidth() + j].R * 0x100), 0xff);
-						Atlas[IndexPos].R = Value;
+						Value = Math::Clamp(int(*PixelMapUtility::GetFloatPixelAt(Character->SDFResterized, i * Character->SDFResterized.GetWidth() + j) * 0x100), 0xff);
+						*PixelMapUtility::GetCharPixelAt(Atlas, IndexPos) = Value;
 					}
 					IndexPos++;
 				}
-				IndexPos += -Character->SDFResterized.GetWidth() + AtlasSize;
+				IndexPos += -(int)Character->SDFResterized.GetWidth() + AtlasSize;
 			}
 		}
 
