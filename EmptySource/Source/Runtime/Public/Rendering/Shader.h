@@ -58,11 +58,8 @@ namespace EmptySource {
 		//* Pass four float vector value array
 		virtual void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
 
-		//* Pass Texture 2D array
-		virtual void SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) = 0;
-
-		//* Pass Cubemap array
-		virtual void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) = 0;
+		//* Pass Texture
+		virtual void SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int& Position) = 0;
 		
 		//* Get the shader object
 		virtual void * GetShaderObject() const = 0;

@@ -8,7 +8,7 @@
 
 namespace EmptySource {
 
-	bool RShader::IsValid() {
+	bool RShader::IsValid() const {
 		return LoadState == LS_Loaded && ShaderPointer->IsValid();
 	}
 

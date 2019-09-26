@@ -1,19 +1,19 @@
 #pragma once
 
 #include "Resources/ResourceManager.h"
-#include "Rendering/Texture.h"
+#include "Resources/TextureResource.h"
 
 namespace EmptySource {
 
 	class TextureManager : public ResourceManager {
 	public:
-		TexturePtr GetTexture(const WString& Name) const;
+		RTexturePtr GetTexture(const IName& Name) const;
 
-		TexturePtr GetTexture(const size_t & UID) const;
+		RTexturePtr GetTexture(const size_t & UID) const;
 
-		void FreeTexture(const WString& Name);
+		void FreeTexture(const IName& Name);
 
-		void AddTexture(const WString& Name, TexturePtr Texture);
+		void AddTexture(RTexturePtr Texture);
 		
 		TArray<WString> GetResourceNames() const;
 
@@ -21,19 +21,25 @@ namespace EmptySource {
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
+		RTexturePtr CreateTexture2D(const WString& Name, const WString & Origin,
+			EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size = 0);
+
+		RTexturePtr CreateCubemap(const WString& Name, const WString & Origin,
+			EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size = 0);
+
 		void TextureManager::LoadImageFromFile(
 			const WString& Name, EColorFormat ColorFormat, EFilterMode FilterMode,
-			ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath
+			ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath, bool bConservePixels = false
 		);
 
 		static TextureManager& GetInstance();
 
-		inline TDictionary<size_t, TexturePtr>::iterator begin() { return TextureList.begin(); }
-		inline TDictionary<size_t, TexturePtr>::iterator end() { return TextureList.end(); }
+		inline TDictionary<size_t, RTexturePtr>::iterator begin() { return TextureList.begin(); }
+		inline TDictionary<size_t, RTexturePtr>::iterator end() { return TextureList.end(); }
 
 	private:
 		TDictionary<size_t, WString> TextureNameList;
-		TDictionary<size_t, TexturePtr> TextureList;
+		TDictionary<size_t, RTexturePtr> TextureList;
 
 	};
 

@@ -64,10 +64,7 @@ namespace EmptySource {
 		virtual void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) override;
 
 		//* Pass Texture 2D array
-		virtual void SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) override;
-
-		//* Pass Cubemap array
-		virtual void SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int& Position) override;
+		virtual void SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int& Position) override;
 
 		//* Get the shader object
 		virtual void * GetShaderObject() const override { return (void *)(unsigned long long)ProgramObject; }

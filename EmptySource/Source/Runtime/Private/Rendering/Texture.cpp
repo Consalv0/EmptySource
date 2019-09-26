@@ -13,12 +13,12 @@
 namespace EmptySource {
 	
 	Texture2D * EmptySource::Texture2D::Create(
-		const WString& Name, const IntVector2 & Size, const EColorFormat ColorFormat, const EFilterMode & FilterMode,
+		const IntVector2 & Size, const EColorFormat ColorFormat, const EFilterMode & FilterMode,
 		const ESamplerAddressMode & AddressMode) 
 	{
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLTexture2D(Name, Size, ColorFormat, FilterMode, AddressMode);
+			return new OpenGLTexture2D(Size, ColorFormat, FilterMode, AddressMode);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create texture 2D!");
@@ -27,12 +27,12 @@ namespace EmptySource {
 	}
 	
 	Texture2D * EmptySource::Texture2D::Create(
-		const WString& Name, const IntVector2 & Size, const EColorFormat ColorFormat, const EFilterMode & FilterMode,
+		const IntVector2 & Size, const EColorFormat ColorFormat, const EFilterMode & FilterMode,
 		const ESamplerAddressMode & AddressMode, const EColorFormat InputFormat, const void * BufferData)
 	{
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLTexture2D(Name, Size, ColorFormat, FilterMode, AddressMode, InputFormat, BufferData);
+			return new OpenGLTexture2D(Size, ColorFormat, FilterMode, AddressMode, InputFormat, BufferData);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create texture 2D!");
@@ -41,11 +41,11 @@ namespace EmptySource {
 	}
 
 	Cubemap * EmptySource::Cubemap::Create(
-		const WString& Name, const unsigned int & Size, const EColorFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
+		const unsigned int & Size, const EColorFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
 	{
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLCubemap(Name, Size, Format, Filter, AddressMode);
+			return new OpenGLCubemap(Size, Format, Filter, AddressMode);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create texture 2D!");

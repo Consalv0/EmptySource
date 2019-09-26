@@ -192,15 +192,7 @@ namespace EmptySource {
 		glUniform4fv(UniformLocation, Count, Data);
 	}
 
-	void OpenGLShaderProgram::SetTexture2D(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) {
-		if (!IsValid() || Tex == NULL) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
-		glUniform1i(UniformLocation, Position);
-		glActiveTexture(GL_TEXTURE0 + Position);
-		Tex->Bind();
-	}
-
-	void OpenGLShaderProgram::SetTextureCubemap(const NChar * UniformName, TexturePtr Tex, const unsigned int & Position) {
+	void OpenGLShaderProgram::SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int & Position) {
 		if (!IsValid() || Tex == NULL) return;
 		unsigned int UniformLocation = GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);

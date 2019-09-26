@@ -3,7 +3,6 @@
 
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/PixelMap.h"
-#include "Rendering/Texture.h"
 #include "Utility/TexturePacking.h"
 
 namespace EmptySource {
@@ -97,6 +96,5 @@ namespace EmptySource {
 	}
 
 	template class TexturePacking<PixelMap>;
-	template class TexturePacking<Texture2D>;
 
 }

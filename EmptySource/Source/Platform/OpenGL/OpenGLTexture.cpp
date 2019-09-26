@@ -87,12 +87,10 @@ namespace EmptySource {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(
-		const WString& Name,
 		const IntVector2 & Size,
 		const EColorFormat Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & Address)
-		: Size(Size), ColorFormat(Format), MipMapCount(1), TextureObject(0), Name(Name)
 	{
 
 		glGenTextures(1, &TextureObject);
@@ -103,24 +101,23 @@ namespace EmptySource {
 
 		{
 			glTexImage2D(
-				GL_TEXTURE_2D, 0, GetOpenGLTextureColorFormat(ColorFormat), Size.x, Size.y, 0,
+				GL_TEXTURE_2D, 0, GetOpenGLTextureColorFormat(Format), Size.x, Size.y, 0,
 				GL_RGBA, GL_FLOAT, NULL
 			);
 			Unbind();
 		}
 
-		bValid = TextureObject != GL_FALSE && GetSize().MagnitudeSquared() > 0;
+		bValid = TextureObject != GL_FALSE && Size.MagnitudeSquared() > 0;
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(
-		const WString& Name,
 		const IntVector2 & Size,
 		const EColorFormat Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & Address,
 		const EColorFormat InputFormat,
 		const void * BufferData) 
-		: Size(Size), ColorFormat(Format), MipMapCount(1), Name(Name) {
+	{
 		glGenTextures(1, &TextureObject);
 		bValid = TextureObject != GL_FALSE;
 		Bind();
@@ -129,13 +126,13 @@ namespace EmptySource {
 
 		{
 			glTexImage2D(
-				GL_TEXTURE_2D, 0, GetOpenGLTextureColorFormat(ColorFormat), Size.x, Size.y, 0,
+				GL_TEXTURE_2D, 0, GetOpenGLTextureColorFormat(Format), Size.x, Size.y, 0,
 				GetOpenGLTextureColorFormatInput(InputFormat), GetOpenGLTextureInputType(InputFormat), BufferData
 			);
 			Unbind();
 		}
 		
-		bValid = TextureObject != GL_FALSE && GetSize().MagnitudeSquared() > 0;
+		bValid = TextureObject != GL_FALSE && Size.MagnitudeSquared() > 0;
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D() {
@@ -143,11 +140,10 @@ namespace EmptySource {
 		glDeleteTextures(1, &TextureObject);
 	}
 
-	void OpenGLTexture2D::GenerateMipMaps() {
+	void OpenGLTexture2D::GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) {
 		if (IsValid()) {
-			MipMapCount = (int)log2f((float)GetWidth());
 			Bind();
-			SetFilterMode(FilterMode);
+			SetFilterMode(FilterMode, true);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			Unbind();
 		}
@@ -166,32 +162,28 @@ namespace EmptySource {
 		return bValid;
 	}
 
-	void OpenGLTexture2D::SetFilterMode(const EFilterMode & Mode) {
-		FilterMode = Mode;
-
+	void OpenGLTexture2D::SetFilterMode(const EFilterMode & Mode, bool MipMaps) {
 		switch (Mode) {
 		case FM_MinMagLinear:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 			break;
 		case FM_MinMagNearest:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
 			break;
 		case FM_MinLinearMagNearest:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 			break;
 		case FM_MinNearestMagLinear:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
 			break;
 		}
 	}
 
 	void OpenGLTexture2D::SetSamplerAddressMode(const ESamplerAddressMode & Mode) {
-		AddressMode = Mode;
-
 		switch (Mode) {
 		case SAM_Repeat:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -215,19 +207,15 @@ namespace EmptySource {
 	// Cubemap
 
 	OpenGLCubemap::OpenGLCubemap(
-		const WString& Name,
 		const int & WidthSize,
 		const EColorFormat & Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & SamplerAddress)
-	: Name(Name) {
-		Size = WidthSize;
-		ColorFormat = Format;
-		MipMapCount = 1;
+	{
 		bValid = false;
 
 		if (WidthSize <= 0) {
-			LOG_CORE_ERROR(L"One or more texture with incorrect size in cubemap with size {:d}", Size);
+			LOG_CORE_ERROR(L"One or more texture with incorrect size in cubemap with size {:d}", WidthSize);
 			return;
 		}
 
@@ -236,9 +224,17 @@ namespace EmptySource {
 		Bind();
 		SetFilterMode(Filter);
 		SetSamplerAddressMode(SamplerAddress);
-		Unbind();
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			Unbind(); 
+		}
 
-		bValid = TextureObject != GL_FALSE && Size > 0;
+		bValid = TextureObject != GL_FALSE && WidthSize > 0;
 	}
 
 	OpenGLCubemap::~OpenGLCubemap() {
@@ -259,42 +255,37 @@ namespace EmptySource {
 		return bValid;
 	}
 
-	void OpenGLCubemap::GenerateMipMaps() {
+	void OpenGLCubemap::GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) {
 		if (IsValid()) {
-			MipMapCount = (int)log2f((float)GetSize().x);
 			Bind();
-			SetFilterMode(FilterMode);
+			SetFilterMode(FilterMode, true);
 			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 			Unbind();
 		}
 	}
 
-	void OpenGLCubemap::SetFilterMode(const EFilterMode & Mode) {
-		FilterMode = Mode;
-
+	void OpenGLCubemap::SetFilterMode(const EFilterMode & Mode, bool MipMaps) {
 		switch (Mode) {
 		case FM_MinMagLinear:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 			break;
 		case FM_MinMagNearest:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
 			break;
 		case FM_MinLinearMagNearest:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 			break;
 		case FM_MinNearestMagLinear:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMapCount > 1 ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, MipMaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST);
 			break;
 		}
 	}
 
 	void OpenGLCubemap::SetSamplerAddressMode(const ESamplerAddressMode & Mode) {
-		AddressMode = Mode;
-
 		switch (Mode) {
 		case SAM_Repeat:
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);

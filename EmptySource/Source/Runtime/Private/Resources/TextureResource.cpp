@@ -4,13 +4,17 @@
 #include "Resources/TextureManager.h"
 #include "Resources/ImageConversion.h"
 
+#include "Rendering/RenderTarget.h"
+#include "Rendering/MeshPrimitives.h"
+#include "Rendering/Material.h"
+
 namespace EmptySource {
 	
 	RTexture::~RTexture() {
 		Unload();
 	}
 
-	bool RTexture::IsValid() {
+	bool RTexture::IsValid() const {
 		return LoadState == LS_Loaded && TexturePointer->IsValid();
 	}
 
@@ -19,39 +23,56 @@ namespace EmptySource {
 
 		LoadState = LS_Loading;
 		{
-			LOG_CORE_DEBUG(L"Loading Shader {}...", Name.GetDisplayName().c_str());
+			LOG_CORE_DEBUG(L"Loading Texture '{}'...", Name.GetDisplayName().c_str());
 			if (!Origin.empty()) {
 				FileStream * ShaderFile = FileManager::GetFile(Origin);
 				if (ShaderFile == NULL) {
-					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+					LOG_CORE_ERROR(L"Error reading file for texture: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
 				}
 				
 				if (!ImageConversion::LoadFromFile(Pixels, ShaderFile, ColorFormat)) {
 					ShaderFile->Close();
-					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+					LOG_CORE_ERROR(L"Error reading file for texture: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
 				}
 				else {
-					Dimensions = Pixels.GetDimensions();
-					switch (Dimension) {
-					case ETextureDimension::Texture2D:
-						Texture2D::Create(Name.GetDisplayName(), Pixels.GetDimensions(), ColorFormat, FilterMode, AddressMode, ColorFormat, Pixels.PointerToValue());
-					case ETextureDimension::Cubemap:
-					case ETextureDimension::Texture1D:
-					case ETextureDimension::Texture3D:
-					default:
-						break;
-					}
+					Size = Pixels.GetSize();
 				}
 			}
+
+			switch (Dimension) {
+			case ETextureDimension::Texture2D:
+				if (Pixels.IsEmpty())
+					TexturePointer = Texture2D::Create(Size, ColorFormat, FilterMode, AddressMode);
+				else
+					TexturePointer = Texture2D::Create(Size, ColorFormat, FilterMode, AddressMode,
+						ColorFormat, Pixels.PointerToValue());
+				break;
+			case ETextureDimension::Cubemap:
+				TexturePointer = Cubemap::Create(Size.x, ColorFormat, FilterMode, AddressMode);
+				Size = { Size.x, Size.x, 6 };
+				break;
+			case ETextureDimension::Texture1D:
+			case ETextureDimension::Texture3D:
+			default:
+				break;
+			}
 		}
-		LoadState = !Pixels.IsEmpty() ? LS_Loaded : LS_Unloaded;
+		LoadState = TexturePointer != NULL ? LS_Loaded : LS_Unloaded;
 	}
 
 	void RTexture::Unload() {
+		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
+
+		LoadState = LS_Unloading;
+		delete TexturePointer;
+		TexturePointer = NULL;
+		Pixels = PixelMap();
+		MipMapCount = 0;
+		LoadState = LS_Unloaded;
 	}
 
 	void RTexture::Reload() {
@@ -59,15 +80,96 @@ namespace EmptySource {
 		Load();
 	}
 
+	unsigned int RTexture::GetMipMapCount() const {
+		if (IsValid())
+			return MipMapCount;
+		return 0;
+	}
+
+	void RTexture::GenerateMipMaps() {
+		if (IsValid() && MipMapCount <= 1) { 
+			MipMapCount = (unsigned int)log2f((float)Size.x);
+			TexturePointer->GenerateMipMaps(FilterMode, GetMipMapCount()); 
+		}
+	}
+
+	void RTexture::SetSize(const IntVector3 & NewSize) {
+		if (LoadState == LS_Unloaded) {
+			Size = NewSize;
+		}
+	}
+
+	void RTexture::SetPixelData(const PixelMap & Data) {
+		if (LoadState == LS_Unloaded && Origin.empty()) {
+			ColorFormat = Data.GetColorFormat();
+			Size = Data.GetSize();
+			Pixels = Data;
+		}
+	}
+
+	void RTexture::ClearPixelData() {
+		Pixels = PixelMap();
+	}
+
 	float RTexture::GetAspectRatio() const {
 		return (float)Size.x / (float)Size.y;
 	}
 
+	bool RTexture::RenderHDREquirectangular(RTexturePtr Equirectangular, Material * CubemapMaterial, bool bGenerateMipMaps) {
+		if (!IsValid() || Dimension != ETextureDimension::Cubemap) return false;
+		if (bGenerateMipMaps) GenerateMipMaps();
+		
+		static const Matrix4x4 CaptureProjection = Matrix4x4::Perspective(90.F * MathConstants::DegreeToRad, 1.F, 0.1F, 10.F);
+		static const std::pair<ECubemapFace, Matrix4x4> CaptureViews[] = {
+		   { ECubemapFace::Right, Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 1.F,  0.F,  0.F), Vector3(0.F, -1.F,  0.F)) },
+		   { ECubemapFace::Left,  Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3(-1.F,  0.F,  0.F), Vector3(0.F, -1.F,  0.F)) },
+		   { ECubemapFace::Up,    Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F, -1.F,  0.F), Vector3(0.F,  0.F, -1.F)) },
+		   { ECubemapFace::Down,  Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F,  1.F,  0.F), Vector3(0.F,  0.F,  1.F)) },
+		   { ECubemapFace::Back,  Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F,  0.F,  1.F), Vector3(0.F, -1.F,  0.F)) },
+		   { ECubemapFace::Front, Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F,  0.F, -1.F), Vector3(0.F, -1.F,  0.F)) }
+		};
+		
+		VertexBufferPtr ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
+		RenderTargetPtr Renderer = RenderTarget::Create();
+		
+		// --- Convert HDR equirectangular environment map to cubemap equivalent
+		CubemapMaterial->Use();
+		CubemapMaterial->SetTexture2D("_EquirectangularMap", Equirectangular, 0);
+		CubemapMaterial->SetMatrix4x4Array("_ProjectionMatrix", CaptureProjection.PointerToValue());
+		
+		const unsigned int MaxMipLevels = (unsigned int)GetMipMapCount();
+		for (unsigned int Lod = 0; Lod <= MaxMipLevels; ++Lod) {
+		
+			float Roughness = (float)Lod / (float)(MaxMipLevels);
+			CubemapMaterial->SetFloat1Array("_Roughness", &Roughness);
+		
+			Renderer->Bind();
+		
+			for (auto View : CaptureViews) {
+				CubemapMaterial->SetMatrix4x4Array("_ViewMatrix", View.second.PointerToValue());
+		
+				MeshPrimitives::Cube.BindSubdivisionVertexArray(0);
+				CubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
+		
+				Renderer->BindCubemapFace((Cubemap *)TexturePointer, Size.x, View.first, Lod);
+				Renderer->Clear();
+		
+				MeshPrimitives::Cube.DrawSubdivisionInstanciated(1, 0);
+				if (!Renderer->CheckStatus()) return false;
+			}
+		}
+		
+		TexturePointer->Unbind();
+		return true;
+	}
+
 	RTexture::RTexture(
 		const IName & Name, const WString & Origin,
-		ETextureDimension Dimension, EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode
+		ETextureDimension Dimension, EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3& Size
 	) 
-		: ResourceHolder(Name, Origin), Dimension(Dimension), FilterMode(FilterMode), AddressMode(AddressMode), ColorFormat(Format) {
+		: ResourceHolder(Name, Origin), Dimension(Dimension), FilterMode(FilterMode), AddressMode(AddressMode), ColorFormat(Format), Size(Size) {
+		TexturePointer = NULL;
+		MipMapCount = 1;
 	}
 
 }

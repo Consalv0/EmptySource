@@ -25,6 +25,7 @@ namespace EmptySource {
 	PixelMap & PixelMap::operator=(const PixelMap & Other) {
 		if (Data) {
 			delete[] Data;
+			Data = NULL;
 		}
 		Width = Other.Width, Height = Other.Height; Depth = Other.Depth;
 		PixelFormat = Other.PixelFormat;
@@ -42,6 +43,9 @@ namespace EmptySource {
 	}
 
 	void PixelMapUtility::CreateData(int Width, int Height, int Depth, EColorFormat PixelFormat, void *& Data) {
+		if (Width * Height * Depth == 0) {
+			Data = NULL; return;
+		}
 		switch (PixelFormat) {
 		case CF_Red:     Data = new UCharRed[Width * Height * Depth]; break;
 		case CF_Red16F:  Data = new FloatRed[Width * Height * Depth]; break;

@@ -87,13 +87,13 @@ namespace EmptySource {
 	void Material::SetTexture2D(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid() && Text->GetDimension() == ETextureDimension::Texture2D)
-			Program->GetProgram()->SetTexture2D(UniformName, (Texture2D  *)Text->GetTexture(), Position);
+			Program->GetProgram()->SetTexture(UniformName, Text->GetNativeTexture(), Position);
 	}
 
 	void Material::SetTextureCubemap(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid() && Text->GetDimension() == ETextureDimension::Cubemap)
-			Program->GetProgram()->SetTextureCubemap(UniformName, (Cubemap *)Text->GetTexture(), Position);
+			Program->GetProgram()->SetTexture(UniformName, Text->GetNativeTexture(), Position);
 	}
 
 	void Material::SetParameters(const TArray<ShaderParameters>& NewLayout) {

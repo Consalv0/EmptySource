@@ -24,13 +24,13 @@ namespace EmptySource {
 		//* Returns the GL Object of this texture
 		virtual void * GetNativeObject() const override;
 
-		virtual TexturePtr GetBindedTexture() const override;
+		virtual Texture * GetBindedTexture() const override;
 
 		//* All future functions will modify this texture
-		virtual void BindTexture2D(const TexturePtr & Texture, int Lod = 0, int TextureAttachment = 0) override;
+		virtual void BindTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) override;
 
 		//* All future functions will modify this texture
-		virtual void BindCubemapFace(const TexturePtr & Texture, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) override;
+		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) override;
 
 		virtual void ReleaseTexture() override;
 
@@ -53,7 +53,7 @@ namespace EmptySource {
 
 		ETextureDimension Dimension;
 
-		TexturePtr RenderingTexture;
+		Texture * RenderingTexture;
 
 		unsigned int FramebufferObject;
 

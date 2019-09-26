@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Rendering/RenderingDefinitions.h"
-#include "Rendering/Texture.h"
+#include "Resources/TextureResource.h"
 
 namespace EmptySource {
 
@@ -24,7 +24,7 @@ namespace EmptySource {
 				Vector3 Float3D;
 				Vector4 Float4D;
 				int Int;
-				TexturePtr Texture;
+				RTexturePtr Texture;
 				TArray<Matrix4x4> Matrix4x4Array;
 				TArray<float> FloatArray;
 				TArray<Vector2> Float2DArray;
@@ -47,7 +47,7 @@ namespace EmptySource {
 			PropertyValue(const Vector4 & Float4D)                  : Type(EShaderUniformType::Float4D), Float4D(Float4D) { }
 			PropertyValue(const int & Int)                          : Type(EShaderUniformType::Int), Int(Int) { }
 			PropertyValue(ETextureDimension Type,
-				const TexturePtr& Text)                             : Type(Type == ETextureDimension::Cubemap ? EShaderUniformType::Cubemap :
+				const RTexturePtr& Text)                            : Type(Type == ETextureDimension::Cubemap ? EShaderUniformType::Cubemap :
 				                                                           EShaderUniformType::Texture2D), Texture(Text) { }
 			~PropertyValue() {}
 

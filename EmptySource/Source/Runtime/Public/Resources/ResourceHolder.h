@@ -10,7 +10,7 @@ namespace EmptySource {
 	public:
 		virtual ~ResourceHolder() = default;
 
-		virtual bool IsValid() = 0;
+		virtual bool IsValid() const = 0;
 
 		virtual void Load() = 0;
 

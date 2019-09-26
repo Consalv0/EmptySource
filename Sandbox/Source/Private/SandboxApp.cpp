@@ -120,25 +120,21 @@ private:
 protected:
 
 	void SetSceneSkybox(const WString & Path) {
-		PixelMap Equirectangular;
-		ImageConversion::LoadFromFile(Equirectangular, FileManager::GetFile(Path), CF_RGB32F);
 
-		Texture * EquirectangularTexture = Texture2D::Create(L"EquirectangularTexture",
-			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()),
-			CF_RGB32F, FM_MinMagLinear, SAM_Repeat, CF_RGB32F,
-			Equirectangular.PointerToValue()
+		RTexturePtr EquirectangularTexture = TextureManager::GetInstance().CreateTexture2D(
+			L"EquirectangularTexture_" + FileManager::GetFile(Path)->GetFileName(), Path, CF_RGB32F, FM_MinMagLinear, SAM_Repeat
+		); 
+		EquirectangularTexture->Load();
+
+		EquirectangularTextureHDR = TextureManager::GetInstance().CreateTexture2D(
+			L"EquirectangularTextureHDR_" + FileManager::GetFile(Path)->GetFileName(), L"", CF_RGB32F, FM_MinMagLinear, SAM_Repeat,
+			EquirectangularTexture->GetSize()
 		);
-		EquirectangularTextureHDR = Texture2D::Create(L"EquirectangularTextureHDR",
-			IntVector2(Equirectangular.GetWidth(), Equirectangular.GetHeight()), CF_RGB32F, FM_MinMagLinear, SAM_Repeat
-		);
-		if (TextureManager::GetInstance().GetTexture(L"EquirectangularTextureHDR") != NULL) {
-			TextureManager::GetInstance().FreeTexture(L"EquirectangularTextureHDR");
-		}
-		TextureManager::GetInstance().AddTexture(L"EquirectangularTextureHDR", EquirectangularTextureHDR);
+		EquirectangularTextureHDR->Load();
 
 		{
 			RenderTargetPtr Renderer = RenderTarget::Create();
-			EquirectangularTextureHDR->Bind();
+			EquirectangularTextureHDR->GetNativeTexture()->Bind();
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
@@ -148,7 +144,7 @@ protected:
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 			);
 
-			Renderer->BindTexture2D(EquirectangularTextureHDR);
+			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetNativeTexture(), EquirectangularTextureHDR->GetSize());
 			Renderer->Clear();
 			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			EquirectangularTextureHDR->GenerateMipMaps();
@@ -159,12 +155,12 @@ protected:
 		EquirectangularToCubemapMaterial.CullMode = CM_None;
 		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
 
-		CubemapTexture = Cubemap::Create(L"CubemapTexture", Equirectangular.GetHeight() / 2, CF_RGB16F, FM_MinMagLinear, SAM_Clamp);
-		CubemapTexture->ConvertFromHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
-		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") != NULL) {
-			TextureManager::GetInstance().FreeTexture(L"CubemapTexture");
+		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") == NULL) {
+			CubemapTexture = TextureManager::GetInstance().CreateCubemap(L"CubemapTexture", L"",
+				CF_RGB16F, FM_MinMagLinear, SAM_Clamp, EquirectangularTexture->GetSize().y / 2);
 		}
-		TextureManager::GetInstance().AddTexture(L"CubemapTexture", CubemapTexture);
+		CubemapTexture->Load();
+		CubemapTexture->RenderHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
 	}
 
 	virtual void OnAttach() override {
@@ -217,59 +213,60 @@ protected:
 		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_normal.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VaseHangAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_diffuse.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/VaseHangRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseHangNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VasePlantAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VasePlantRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VasePlantNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/DetailsAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/DetailsRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/DetailsMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_metallic.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/DetailsNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CurtainBlueAlbedoTexture",  CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Blue_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CurtainGreenAlbedoTexture", CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Green_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CurtainRedAlbedoTexture",   CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CurtainRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CurtainMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_metallic.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CurtainNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/LionAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Albedo.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/LionNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/LionRoughnessTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Roughness.tga");
-		TextureMng.LoadImageFromFile(L"EscafandraMV1971AlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_BaseColor.png");
-		TextureMng.LoadImageFromFile(L"EscafandraMV1971MetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Metallic.png");
-		TextureMng.LoadImageFromFile(L"EscafandraMV1971RoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Roughness.png");
-		TextureMng.LoadImageFromFile(L"EscafandraMV1971NormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Normal.png");
-		TextureMng.LoadImageFromFile(L"PirateBarrelAlbedoTexture",        CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Color.png");
-		TextureMng.LoadImageFromFile(L"PirateBarrelMetallicTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Metal.png");
-		TextureMng.LoadImageFromFile(L"PirateBarrelRoughnessTexture",     CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.png");
-		TextureMng.LoadImageFromFile(L"PirateBarrelNormalTexture",        CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Normal.png");
-		TextureMng.LoadImageFromFile(L"FlamerGunAlbedoTexture",           CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_albedo.jpg");
-		TextureMng.LoadImageFromFile(L"FlamerGunMetallicTexture",         CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg");
-		TextureMng.LoadImageFromFile(L"FlamerGunRoughnessTexture",        CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg");
-		TextureMng.LoadImageFromFile(L"FlamerGunNormalTexture",           CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg");
-		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_COL.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileMetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_MET.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_RGH.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/CeilingTileNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_NRM.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_COL.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_MET.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_RGH.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/DoorPanelNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_NRM.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/GroundTileAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_COL.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/GroundTileMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_MET.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/GroundTileRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_RGH.tga");
-		TextureMng.LoadImageFromFile(L"SiFi/GroundTileNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_NRM.tga");
-		TextureMng.LoadImageFromFile(L"PonyCarExteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_d_orange.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarExteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_s.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarExteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_g.jpg");
-		TextureMng.LoadImageFromFile(L"PonyCarExteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_n.jpg");
-		TextureMng.LoadImageFromFile(L"PonyCarInteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_d_black.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarInteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_s.jpeg");
-		TextureMng.LoadImageFromFile(L"PonyCarInteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_g.jpg");
-		TextureMng.LoadImageFromFile(L"PonyCarInteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_n.jpg");
+		// TextureMng.LoadImageFromFile(L"Sponza/VaseHangNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_normal.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/VasePlantAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_diffuse.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/VasePlantRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_roughness.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/VasePlantNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_normal.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/DetailsAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_diffuse.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/DetailsRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_roughness.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/DetailsMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_metallic.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/DetailsNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_normal.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/CurtainBlueAlbedoTexture",  CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Blue_diffuse.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/CurtainGreenAlbedoTexture", CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Green_diffuse.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/CurtainRedAlbedoTexture",   CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_diffuse.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/CurtainRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_roughness.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/CurtainMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_metallic.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/CurtainNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_normal.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/LionAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Albedo.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/LionNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Normal.tga");
+		// TextureMng.LoadImageFromFile(L"Sponza/LionRoughnessTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Roughness.tga");
+		// TextureMng.LoadImageFromFile(L"EscafandraMV1971AlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_BaseColor.png");
+		// TextureMng.LoadImageFromFile(L"EscafandraMV1971MetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Metallic.png");
+		// TextureMng.LoadImageFromFile(L"EscafandraMV1971RoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Roughness.png");
+		// TextureMng.LoadImageFromFile(L"EscafandraMV1971NormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Normal.png");
+		// TextureMng.LoadImageFromFile(L"PirateBarrelAlbedoTexture",        CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Color.png");
+		// TextureMng.LoadImageFromFile(L"PirateBarrelMetallicTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Metal.png");
+		// TextureMng.LoadImageFromFile(L"PirateBarrelRoughnessTexture",     CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.png");
+		// TextureMng.LoadImageFromFile(L"PirateBarrelNormalTexture",        CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Normal.png");
+		// TextureMng.LoadImageFromFile(L"FlamerGunAlbedoTexture",           CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_albedo.jpg");
+		// TextureMng.LoadImageFromFile(L"FlamerGunMetallicTexture",         CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg");
+		// TextureMng.LoadImageFromFile(L"FlamerGunRoughnessTexture",        CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg");
+		// TextureMng.LoadImageFromFile(L"FlamerGunNormalTexture",           CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg");
+		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_COL.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileMetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_MET.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_RGH.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_NRM.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_COL.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_MET.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_RGH.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_NRM.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_COL.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_MET.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_RGH.tga");
+		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_NRM.tga");
+		// TextureMng.LoadImageFromFile(L"PonyCarExteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_d_orange.jpeg");
+		// TextureMng.LoadImageFromFile(L"PonyCarExteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_s.jpeg");
+		// TextureMng.LoadImageFromFile(L"PonyCarExteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_g.jpg");
+		// TextureMng.LoadImageFromFile(L"PonyCarExteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_n.jpg");
+		// TextureMng.LoadImageFromFile(L"PonyCarInteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_d_black.jpeg");
+		// TextureMng.LoadImageFromFile(L"PonyCarInteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_s.jpeg");
+		// TextureMng.LoadImageFromFile(L"PonyCarInteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_g.jpg");
+		// TextureMng.LoadImageFromFile(L"PonyCarInteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_n.jpg");
 	}
 
 	virtual void OnImGuiRender() override {
-		static TexturePtr TextureSample = Texture2D::Create(L"TextureSample", IntVector2(1024, 1024), CF_RGBA, FM_MinMagLinear, SAM_Repeat);
+		static RTexturePtr TextureSample = TextureManager::GetInstance().CreateTexture2D(L"TextureSample", L"", CF_RGBA, FM_MinMagLinear, SAM_Repeat, IntVector2(1024, 1024));
+		TextureSample->Load();
 
 		TArray<WString> TextureNameList = TextureManager::GetInstance().GetResourceNames();
 		TArray<NString> NarrowTextureNameList(TextureNameList.size());
@@ -297,8 +294,10 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 
-		RTexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(TextureNameList[Math::Clamp((unsigned long long)CurrentTexture, 0ull, TextureNameList.size() -1)]);
-		if (SelectedTexture) {
+		RTexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(
+			TextureNameList[Math::Clamp((unsigned long long)CurrentTexture, 0ull, TextureNameList.size() -1)]
+		);
+		if (SelectedTexture && SelectedTexture->GetLoadState() == LS_Loaded) {
 			int bCubemap;
 			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
 				RenderTargetPtr Renderer = RenderTarget::Create();
@@ -311,7 +310,7 @@ protected:
 				);
 				RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 				RenderTextureMaterial.SetInt1Array("_IsCubemap", &bCubemap);
-				SelectedTexture->Bind();
+				SelectedTexture->GetNativeTexture()->Bind();
 				RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
 				RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", SelectedTexture, 1);
 				float LODLevel = SampleLevel * (float)SelectedTexture->GetMipMapCount();
@@ -324,7 +323,7 @@ protected:
 					"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 				);
 
-				Renderer->BindTexture2D(TextureSample);
+				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
 				Renderer->Clear();
 				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			}
@@ -334,12 +333,12 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
 				RenderTextureMaterial.SetFloat4Array("_ColorFilter",
-					Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
-					.PointerToValue()
+					Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F,
+						ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F).PointerToValue()
 				);
 				RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 				RenderTextureMaterial.SetInt1Array("_IsCubemap", &bCubemap);
-				SelectedTexture->Bind();
+				SelectedTexture->GetNativeTexture()->Bind();
 				RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
 				RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", SelectedTexture, 1);
 				float LODLevel = SampleLevel * (float)SelectedTexture->GetMipMapCount();
@@ -352,7 +351,7 @@ protected:
 					"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 				);
 
-				Renderer->BindTexture2D(TextureSample);
+				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
 				Renderer->Clear();
 				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			}
@@ -801,56 +800,69 @@ protected:
 		ImGui::Begin("Textures");
 		{
 			ImGuiIO& IO = ImGui::GetIO();
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-			ImGui::Columns(2);
-			ImGui::Separator();
-
-			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Texture"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, [](void * Data, int indx, const char ** outText) -> bool {
-				TArray<NString>* Items = (TArray<NString> *)Data;
-				if (outText) *outText = (*Items)[indx].c_str();
-				return true;
-			}, &NarrowTextureNameList, (int)NarrowTextureNameList.size()); ImGui::NextColumn();
 			if (SelectedTexture) {
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+				ImGui::Columns(2);
+				ImGui::Separator();
+
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Texture"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::Combo("##Texture", &CurrentTexture, [](void * Data, int indx, const char ** outText) -> bool {
+					TArray<NString>* Items = (TArray<NString> *)Data;
+					if (outText) *outText = (*Items)[indx].c_str();
+					return true;
+				}, &NarrowTextureNameList, (int)NarrowTextureNameList.size()); ImGui::NextColumn();
+
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
+
+				ImGui::Columns(1);
+				ImGui::Separator();
+				ImGui::PopStyleVar();
+
 				if (ImGui::Button("Delete")) {
 					TextureManager::GetInstance().FreeTexture(SelectedTexture->GetName().GetDisplayName());
 					SelectedTexture = NULL;
 				}
+				if (SelectedTexture->GetLoadState() == LS_Loaded) {
+					ImGui::SameLine();
+					if (ImGui::Button("Reload")) 
+						SelectedTexture->Reload();
+					ImGui::SameLine();
+					if (ImGui::Button("Unload")) SelectedTexture->Unload();
+				} else if (SelectedTexture->GetLoadState() == LS_Unloaded) {
+					ImGui::SameLine();
+					if (ImGui::Button("Load")) SelectedTexture->Load();
+				}
 			}
-
-			ImGui::Columns(1);
 			ImGui::Separator();
-			ImGui::PopStyleVar();
 
-			ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
-			ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
-			ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
-			ImGui::ColorButton("GreenFilter##RefColor", ImColor(0.F, ColorFilter[1] ? 1.F : 0.F, 0.F, 1.F));
-			ImGui::SameLine(); ImGui::Checkbox("##BlueFilter", &ColorFilter[2]); ImGui::SameLine();
-			ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
-			ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
-			ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
-			if (SelectedTexture) {
+			if (SelectedTexture && SelectedTexture->GetLoadState() == LS_Loaded) {
+				ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
+				ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
+				ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
+				ImGui::ColorButton("GreenFilter##RefColor", ImColor(0.F, ColorFilter[1] ? 1.F : 0.F, 0.F, 1.F));
+				ImGui::SameLine(); ImGui::Checkbox("##BlueFilter", &ColorFilter[2]); ImGui::SameLine();
+				ImGui::ColorButton("BlueFilter##RefColor", ImColor(0.F, 0.F, ColorFilter[2] ? 1.F : 0.F, 1.F));
+				ImGui::SameLine(); ImGui::Checkbox("##AlphaFilter", &ColorFilter[3]); ImGui::SameLine();
+				ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
 				ImVec2 ImageSize;
 				ImVec2 MPos = ImGui::GetCursorScreenPos();
 				if (SelectedTexture->GetDimension() == ETextureDimension::Texture2D) {
 					ImageSize.x = Math::Min(
 						ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
-						* dynamic_cast<Texture2D *>(SelectedTexture)->GetAspectRatio()
+						* SelectedTexture->GetAspectRatio()
 					);
 					ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
-					ImageSize.y = ImageSize.x / std::dynamic_pointer_cast<Texture2D>(SelectedTexture)->GetAspectRatio();
+					ImageSize.y = ImageSize.x / SelectedTexture->GetAspectRatio();
 				}
 				else {
 					ImageSize.x = Math::Min(ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY()) * 2.F);
 					ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
 					ImageSize.y = ImageSize.x / 2.F;
 				}
-				ImGui::Image((void *)TextureSample->GetTextureObject(), ImageSize);
+				ImGui::Image((void *)TextureSample->GetNativeTexture()->GetTextureObject(), ImageSize);
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					float RegionSize = 32.0f;
@@ -862,7 +874,8 @@ protected:
 					ImGui::Text("Max: (%.2f, %.2f)", RegionX + RegionSize, RegionY + RegionSize);
 					ImVec2 UV0 = ImVec2((RegionX) / ImageSize.x, (RegionY) / ImageSize.y);
 					ImVec2 UV1 = ImVec2((RegionX + RegionSize) / ImageSize.x, (RegionY + RegionSize) / ImageSize.y);
-					ImGui::Image((void *)TextureSample->GetTextureObject(), ImVec2(140.F, 140.F), UV0, UV1, ImVec4(1.F, 1.F, 1.F, 1.F), ImVec4(1.F, 1.F, 1.F, .5F));
+					ImGui::Image((void *)TextureSample->GetNativeTexture()->GetTextureObject(),
+						ImVec2(140.F, 140.F), UV0, UV1, ImVec4(1.F, 1.F, 1.F, 1.F), ImVec4(1.F, 1.F, 1.F, .5F));
 					ImGui::EndTooltip();
 				}
 			}
@@ -880,12 +893,12 @@ protected:
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		RShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
-		RShaderPtr HDRClampingShader   = ShaderMng.GetProgram(L"HDRClampingShader");
-		RShaderPtr BRDFShader          = ShaderMng.GetProgram(L"BRDFShader");
-		RShaderPtr UnlitShader         = ShaderMng.GetProgram(L"UnLitShader");
+		RShaderPtr HDRClampingShader = ShaderMng.GetProgram(L"HDRClampingShader");
+		RShaderPtr BRDFShader = ShaderMng.GetProgram(L"BRDFShader");
+		RShaderPtr UnlitShader = ShaderMng.GetProgram(L"UnLitShader");
 		RShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
 		RShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
-		RShaderPtr RenderTextShader    = ShaderMng.GetProgram(L"RenderTextShader");
+		RShaderPtr RenderTextShader = ShaderMng.GetProgram(L"RenderTextShader");
 		RShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
 
 		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
@@ -898,15 +911,15 @@ protected:
 
 		TextGenerator.PrepareCharacters(0ul, 255ul);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
-		FontMap = Texture2D::Create(
-			L"FontMap",
-			IntVector2(TextGenerator.AtlasSize),
-			CF_Red,
-			FM_MinMagLinear,
-			SAM_Border,
-			CF_Red,
-			FontAtlas.PointerToValue()
-		);
+		if (FontMap == NULL) {
+			FontMap = TextureManager::GetInstance().CreateTexture2D(
+				L"FontMap", L"", CF_Red, FM_MinMagLinear, SAM_Border, IntVector2(TextGenerator.AtlasSize)
+			);
+		} else {
+			FontMap->Unload();
+		}
+		FontMap->SetPixelData(FontAtlas);
+		FontMap->Load();
 		FontMap->GenerateMipMaps();
 
 		UnlitMaterial.SetShaderProgram(UnlitShader);
@@ -947,18 +960,13 @@ protected:
 		MeshManager::GetInstance().AddMesh(L"Quad", std::make_shared<Mesh>(Mesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))));
 		MeshManager::GetInstance().GetMesh(L"Quad")->SetUpBuffers();
 
-		Texture2DPtr RenderedTexture = Texture2D::Create(
-			L"RenderedTexture",
-			IntVector2(
-				Application::GetInstance()->GetWindow().GetWidth(),
-				Application::GetInstance()->GetWindow().GetHeight())
-			/ 2, CF_RGBA32F, FM_MinLinearMagNearest, SAM_Repeat
-		);
-
 		///////// Create Matrices Buffer //////////////
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 
-		Texture2DPtr BRDFLut = Texture2D::Create(L"BRDFLut", IntVector2(512), CF_RG16F, FM_MinMagLinear, SAM_Clamp);
+		RTexturePtr BRDFLut = TextureManager::GetInstance().CreateTexture2D(
+			L"BRDFLut", L"", CF_RG16F, FM_MinMagLinear, SAM_Clamp, { 512, 512 }
+		);
+		BRDFLut->Load();
 		{
 			RenderTargetPtr Renderer = RenderTarget::Create();
 			IntegrateBRDFMaterial.Use();
@@ -970,11 +978,10 @@ protected:
 				"_iModelMatrix", 1, QuadPosition.PointerToValue(), ModelMatrixBuffer
 			);
 
-			Renderer->BindTexture2D(BRDFLut);
+			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetNativeTexture(), BRDFLut->GetSize());
 			Renderer->Clear();
 			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 		}
-		TextureManager::GetInstance().AddTexture(L"BRDFLut", BRDFLut);
 
 		SetSceneSkybox(L"Resources/Textures/Arches_E_PineTree_3k.hdr");
 
@@ -1061,20 +1068,12 @@ protected:
 		// }
 
 		for (int i = 0; i < TextCount; i++) {
-			if (TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
+			if (FontMap != NULL && TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
-				TextureManager::GetInstance().FreeTexture(L"FontMap");
-				FontMap = Texture2D::Create(
-					L"FontMap",
-					IntVector2(TextGenerator.AtlasSize),
-					CF_Red,
-					FM_MinMagLinear,
-					SAM_Border,
-					CF_Red,
-					FontAtlas.PointerToValue()
-				);
+				FontMap->Unload();
+				FontMap->SetPixelData(FontAtlas);
+				FontMap->Load();
 				FontMap->GenerateMipMaps();
-				TextureManager::GetInstance().AddTexture(L"FontMap", FontMap);
 			}
 		}
 

@@ -7,9 +7,8 @@
 
 namespace EmptySource {
 
-	RTexturePtr TextureManager::GetTexture(const WString & Name) const {
-		size_t UID = WStringToHash(Name);
-		return GetTexture(UID);
+	RTexturePtr TextureManager::GetTexture(const IName & Name) const {
+		return GetTexture(Name.GetID());
 	}
 
 	RTexturePtr TextureManager::GetTexture(const size_t & UID) const {
@@ -21,16 +20,16 @@ namespace EmptySource {
 		return NULL;
 	}
 
-	void TextureManager::FreeTexture(const WString & Name) {
-		size_t UID = WStringToHash(Name);
-		TextureNameList.erase(UID);
-		TextureList.erase(UID);
+	void TextureManager::FreeTexture(const IName & Name) {
+		size_t ID = Name.GetID();
+		TextureNameList.erase(ID);
+		TextureList.erase(ID);
 	}
 
-	void TextureManager::AddTexture(const WString& Name, RTexturePtr Tex) {
-		size_t UID = WStringToHash(Name);
-		TextureNameList.insert({ UID, Name });
-		TextureList.insert({ UID, Tex });
+	void TextureManager::AddTexture(RTexturePtr Tex) {
+		size_t ID = Tex->GetName().GetID();
+		TextureNameList.insert({ ID, Tex->GetName().GetDisplayName() });
+		TextureList.insert({ ID, Tex });
 	}
 
 	TArray<WString> TextureManager::GetResourceNames() const {
@@ -92,22 +91,38 @@ namespace EmptySource {
 		}
 		else return;
 	}
+	
+	RTexturePtr TextureManager::CreateTexture2D(const WString & Name, const WString & Origin,
+		EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size) {
+		RTexturePtr Texture = GetTexture(Name);
+		if (Texture == NULL) {
+			Texture = RTexturePtr(new RTexture(Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.x, Size.y, 1)));
+			AddTexture(Texture);
+		}
+		return Texture;
+	}
+	
+	RTexturePtr TextureManager::CreateCubemap(const WString & Name, const WString & Origin,
+		EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size) {
+		RTexturePtr Texture = GetTexture(Name);
+		if (Texture == NULL) {
+			Texture = RTexturePtr(new RTexture(Name, Origin, ETextureDimension::Cubemap, Format, FilterMode, AddressMode, IntVector3(Size, Size, 6)));
+			AddTexture(Texture);
+		}
+		return Texture;
+	}
 
 	void TextureManager::LoadImageFromFile(
 		const WString& Name, EColorFormat ColorFormat, EFilterMode FilterMode,
-		ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath) {
+		ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath, bool bConservePixels) {
 
-		// LOG_CORE_DEBUG(L"Loading Texture2D {}...", FileManager::GetFile(FilePath)->GetFileName().c_str());
-		// EColorFormat InColorFormat = ImageConversion::GetColorFormat(FileManager::GetFile(FilePath));
-		// RTexturePtr LoadedTexture = NULL;
-		// PixelMap Bitmap;
-		// ImageConversion::LoadFromFile(Bitmap, FileManager::GetFile(FilePath), InColorFormat, bFlipVertically);
-		// LoadedTexture = Texture2D::Create(Name, Bitmap.GetSize(), ColorFormat, FilterMode, AddressMode, InColorFormat, Bitmap.PointerToValue());
-		// 
-		// if (LoadedTexture) {
-		// 	if (bGenMipMaps) LoadedTexture->GenerateMipMaps();
-		// 	AddTexture(Name, LoadedTexture);
-		// }
+		RTexturePtr LoadedTexture = CreateTexture2D(Name, FilePath, ColorFormat, FilterMode, AddressMode);
+		
+		if (LoadedTexture) {
+			LoadedTexture->Load();
+			if (!bConservePixels) LoadedTexture->ClearPixelData();
+			if (LoadedTexture->IsValid() && bGenMipMaps) LoadedTexture->GenerateMipMaps();
+		}
 	}
 
 	TextureManager & TextureManager::GetInstance() {

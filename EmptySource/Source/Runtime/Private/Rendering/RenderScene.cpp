@@ -41,7 +41,10 @@ namespace EmptySource {
 				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
 			}
 
-			float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
+			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
+			float CubemapTextureMipmaps = 0.F;
+			if (EnviromentCubemap)
+				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
 			(*MatIt)->SetParameters({
 				{ "_ViewPosition",        { EyeTransform.Position }, SPFlags_IsInternal },
 				{ "_ProjectionMatrix",    { ViewProjection }, SPFlags_IsInternal },
@@ -54,7 +57,7 @@ namespace EmptySource {
 				{ "_Lights[1].Intencity", { Lights[1].Intensity }, SPFlags_IsInternal },
 				{ "_GlobalTime",          { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal },
 				{ "_BRDFLUT",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BRDFLut") }, SPFlags_IsInternal },
-				{ "_EnviromentMap",       { ETextureDimension::Cubemap, TextureManager::GetInstance().GetTexture(L"CubemapTexture") }, SPFlags_IsInternal },
+				{ "_EnviromentMap",       { ETextureDimension::Cubemap, EnviromentCubemap }, SPFlags_IsInternal },
 				{ "_EnviromentMapLods",   { CubemapTextureMipmaps }, SPFlags_IsInternal }
 				});
 			(*MatIt)->Use();

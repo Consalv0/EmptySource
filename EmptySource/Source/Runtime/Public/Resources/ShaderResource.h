@@ -13,7 +13,7 @@ namespace EmptySource {
 	public:
 		~RShader();
 
-		virtual bool IsValid() override;
+		virtual bool IsValid() const override;
 
 		virtual void Load() override;
 

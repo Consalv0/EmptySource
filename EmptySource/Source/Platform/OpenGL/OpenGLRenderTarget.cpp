@@ -71,13 +71,13 @@ namespace EmptySource {
 		return 0;
 	}
 
-	TexturePtr OpenGLRenderTarget::GetBindedTexture() const {
+	Texture * OpenGLRenderTarget::GetBindedTexture() const {
 		return RenderingTexture;
 	}
 
-	void OpenGLRenderTarget::BindTexture2D(const TexturePtr & Texture, int Lod, int TextureAttachment) {
+	void OpenGLRenderTarget::BindTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
 		RenderingTexture = Texture;
-		Size = RenderingTexture->GetSize();
+		Size = InSize;
 		if (!IsValid()) return;
 		Bind();
 
@@ -92,13 +92,13 @@ namespace EmptySource {
 		glViewport(0, 0, Size.x, Size.y);
 	}
 
-	void OpenGLRenderTarget::BindCubemapFace(const TexturePtr & Texture, ECubemapFace Face, int Lod, int TextureAttachment) {
+	void OpenGLRenderTarget::BindCubemapFace(Cubemap * Texture, const int & InSize, ECubemapFace Face, int Lod, int TextureAttachment) {
 		RenderingTexture = Texture;
-		Size = RenderingTexture->GetSize();
+		Size = InSize;
 		if (!IsValid()) return;
 		Bind();
 
-		unsigned int LodWidth = (unsigned int)(Texture->GetSize().x) >> Lod;
+		unsigned int LodWidth = (unsigned int)(InSize) >> Lod;
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, LodWidth, LodWidth);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 		
@@ -109,7 +109,7 @@ namespace EmptySource {
 	}
 
 	void OpenGLRenderTarget::ReleaseTexture() {
-		RenderingTexture.reset();
+		RenderingTexture = NULL;
 	}
 
 	void OpenGLRenderTarget::Resize(const IntVector3 & NewSize) {

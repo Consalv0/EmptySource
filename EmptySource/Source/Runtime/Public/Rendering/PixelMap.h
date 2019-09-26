@@ -19,7 +19,7 @@ namespace EmptySource {
 		//* Depth in pixels.
 		inline unsigned int GetDepth() const { return Depth; };
 
-		inline IntVector3 GetDimensions() const { return { (int)Width, (int)Height, (int)Depth }; }
+		inline IntVector3 GetSize() const { return { (int)Width, (int)Height, (int)Depth }; }
 
 		inline bool IsEmpty() const { return Data == NULL; };
 
