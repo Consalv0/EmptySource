@@ -22,13 +22,13 @@ namespace EmptySource {
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
 		RTexturePtr CreateTexture2D(const WString& Name, const WString & Origin,
-			EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size = 0);
+			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size = 0, bool bGenMipMapsOnLoad = false);
 
 		RTexturePtr CreateCubemap(const WString& Name, const WString & Origin,
-			EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size = 0);
+			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size = 0);
 
 		void TextureManager::LoadImageFromFile(
-			const WString& Name, EColorFormat ColorFormat, EFilterMode FilterMode,
+			const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
 			ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath, bool bConservePixels = false
 		);
 

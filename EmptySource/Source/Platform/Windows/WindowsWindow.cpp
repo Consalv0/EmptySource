@@ -186,7 +186,7 @@ namespace EmptySource {
 	}
 
 	void WindowsWindow::SetIcon(PixelMap* Icon) {
-		if (Icon->GetColorFormat() != CF_RGBA) return;
+		if (Icon->GetColorFormat() != PF_RGBA8) return;
 		SDL_Surface * Surface = SDL_CreateRGBSurfaceFrom(
 			(void*)Icon->PointerToValue(),
 			Icon->GetWidth(), Icon->GetHeight(),

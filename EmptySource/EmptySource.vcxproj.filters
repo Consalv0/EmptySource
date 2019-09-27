@@ -414,6 +414,9 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\PixelMap.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLDefinitions.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -610,6 +613,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\PixelMap.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLDefinitions.cpp">
+      <Filter>Platform\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

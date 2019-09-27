@@ -13,7 +13,7 @@
 namespace EmptySource {
 	
 	Texture2D * EmptySource::Texture2D::Create(
-		const IntVector2 & Size, const EColorFormat ColorFormat, const EFilterMode & FilterMode,
+		const IntVector2 & Size, const EPixelFormat ColorFormat, const EFilterMode & FilterMode,
 		const ESamplerAddressMode & AddressMode) 
 	{
 		switch (Rendering::GetAPI()) {
@@ -27,8 +27,8 @@ namespace EmptySource {
 	}
 	
 	Texture2D * EmptySource::Texture2D::Create(
-		const IntVector2 & Size, const EColorFormat ColorFormat, const EFilterMode & FilterMode,
-		const ESamplerAddressMode & AddressMode, const EColorFormat InputFormat, const void * BufferData)
+		const IntVector2 & Size, const EPixelFormat ColorFormat, const EFilterMode & FilterMode,
+		const ESamplerAddressMode & AddressMode, const EPixelFormat InputFormat, const void * BufferData)
 	{
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
@@ -41,7 +41,7 @@ namespace EmptySource {
 	}
 
 	Cubemap * EmptySource::Cubemap::Create(
-		const unsigned int & Size, const EColorFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
+		const unsigned int & Size, const EPixelFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
 	{
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:

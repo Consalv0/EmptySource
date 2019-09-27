@@ -193,11 +193,11 @@ namespace EmptySource {
 	}
 
 	void OpenGLShaderProgram::SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int & Position) {
-		if (!IsValid() || Tex == NULL) return;
+		if (!IsValid()) return;
 		unsigned int UniformLocation = GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
-		Tex->Bind();
+		if (Tex != NULL) Tex->Bind();
 	}
 
 }

@@ -13,6 +13,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/MathUtility.h"
 
+#include "Platform/OpenGL/OpenGLDefinitions.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLRenderTarget.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
@@ -22,73 +23,10 @@
 #include "glad/glad.h"
 
 namespace EmptySource {
-	
-	unsigned int GetOpenGLTextureColorFormat(const EColorFormat & CF) {
-		switch (CF) {
-			case CF_Red: return GL_RED;
-			case CF_Red16F: return GL_R16F;
-			case CF_Red32F: return GL_R32F;
-			case CF_RG: return GL_RG;
-			case CF_RGB:return GL_RGB;
-			case CF_RGBA: return GL_RGBA;
-			case CF_RG16F: return GL_RG16F;
-			case CF_RGB16F: return GL_RGB16F;
-			case CF_RGBA16F: return GL_RGBA16F;
-			case CF_RGBA32F: return GL_RGBA32F;
-			case CF_RGB32F: return GL_RGB32F;
-			default:
-				LOG_CORE_WARN(L"Color not implemented, using RGBA");
-				return GL_RGBA;
-		}
-	}
-
-	unsigned int GetOpenGLTextureColorFormatInput(const EColorFormat & CF) {
-		switch (CF) {
-			case CF_Red:
-			case CF_Red16F:
-			case CF_Red32F:
-				return GL_RED;
-			case CF_RG16F:
-			case CF_RG:
-				return GL_RG;
-			case CF_RGB32F:
-			case CF_RGB16F:
-			case CF_RGB:
-				return GL_RGB;
-			case CF_RGBA32F:
-			case CF_RGBA16F:
-			case CF_RGBA:
-				return GL_RGBA;
-			default:
-				LOG_CORE_WARN(L"Color not implemented, using RGBA");
-				return GL_RGBA;
-		}
-	}
-
-	unsigned int GetOpenGLTextureInputType(const EColorFormat & CF) {
-		switch (CF) {
-			case CF_Red:
-			case CF_RG:
-			case CF_RGB:
-			case CF_RGBA:
-				return GL_UNSIGNED_BYTE;
-			case CF_Red16F:
-			case CF_Red32F:
-			case CF_RG16F:
-			case CF_RGB16F:
-			case CF_RGBA16F:
-			case CF_RGBA32F:
-			case CF_RGB32F:
-				return GL_FLOAT;
-			default:
-				LOG_CORE_WARN(L"Color not implemented, using unsigned byte");
-				return GL_UNSIGNED_BYTE;
-		}
-	}
 
 	OpenGLTexture2D::OpenGLTexture2D(
 		const IntVector2 & Size,
-		const EColorFormat Format,
+		const EPixelFormat Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & Address)
 	{
@@ -101,7 +39,7 @@ namespace EmptySource {
 
 		{
 			glTexImage2D(
-				GL_TEXTURE_2D, 0, GetOpenGLTextureColorFormat(Format), Size.x, Size.y, 0,
+				GL_TEXTURE_2D, 0, OpenGLPixelFormatInfo[Format].InternalFormat, Size.x, Size.y, 0,
 				GL_RGBA, GL_FLOAT, NULL
 			);
 			Unbind();
@@ -112,10 +50,10 @@ namespace EmptySource {
 
 	OpenGLTexture2D::OpenGLTexture2D(
 		const IntVector2 & Size,
-		const EColorFormat Format,
+		const EPixelFormat Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & Address,
-		const EColorFormat InputFormat,
+		const EPixelFormat InputFormat,
 		const void * BufferData) 
 	{
 		glGenTextures(1, &TextureObject);
@@ -126,8 +64,8 @@ namespace EmptySource {
 
 		{
 			glTexImage2D(
-				GL_TEXTURE_2D, 0, GetOpenGLTextureColorFormat(Format), Size.x, Size.y, 0,
-				GetOpenGLTextureColorFormatInput(InputFormat), GetOpenGLTextureInputType(InputFormat), BufferData
+				GL_TEXTURE_2D, 0, OpenGLPixelFormatInfo[Format].InternalFormat, Size.x, Size.y, 0,
+				OpenGLPixelFormatInfo[InputFormat].InputFormat, OpenGLPixelFormatInfo[InputFormat].BlockType, BufferData
 			);
 			Unbind();
 		}
@@ -208,7 +146,7 @@ namespace EmptySource {
 
 	OpenGLCubemap::OpenGLCubemap(
 		const int & WidthSize,
-		const EColorFormat & Format,
+		const EPixelFormat & Format,
 		const EFilterMode & Filter,
 		const ESamplerAddressMode & SamplerAddress)
 	{
@@ -225,12 +163,12 @@ namespace EmptySource {
 		SetFilterMode(Filter);
 		SetSamplerAddressMode(SamplerAddress);
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GetOpenGLTextureColorFormat(Format), WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, OpenGLPixelFormatInfo[Format].InternalFormat, WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, OpenGLPixelFormatInfo[Format].InternalFormat, WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, OpenGLPixelFormatInfo[Format].InternalFormat, WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, OpenGLPixelFormatInfo[Format].InternalFormat, WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, OpenGLPixelFormatInfo[Format].InternalFormat, WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, OpenGLPixelFormatInfo[Format].InternalFormat, WidthSize, WidthSize, 0, GL_RGB, GL_UNSIGNED_INT, NULL);
 			Unbind(); 
 		}
 

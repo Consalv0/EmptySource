@@ -8,13 +8,13 @@ namespace EmptySource {
 
 	class ImageConversion {
 	public:
-		static bool LoadFromFile(PixelMap & RefBitmap, FileStream * File, EColorFormat Format, bool FlipVertically = true);
+		static bool LoadFromFile(PixelMap & RefBitmap, FileStream * File, EPixelFormat Format, bool FlipVertically = true);
 
 		static int GetChannelCount(FileStream * File);
 
 		static bool IsHDR(FileStream * File);
 
-		static EColorFormat GetColorFormat(FileStream * File);
+		static EPixelFormat GetColorFormat(FileStream * File);
 
 		static bool EncodeToFile(const PixelMap & RefBitmap, FileStream * File);
 	};

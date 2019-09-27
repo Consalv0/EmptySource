@@ -156,7 +156,7 @@ namespace EmptySource {
 	bool Text2DGenerator::GenerateGlyphAtlas(PixelMap & Atlas) {
 		int Value = 0;
 		int AtlasSizeSqr = AtlasSize * AtlasSize;
-		Atlas = PixelMap(AtlasSize, AtlasSize, 1, CF_Red);
+		Atlas = PixelMap(AtlasSize, AtlasSize, 1, PF_R8);
 
 		// ---- Clear Bitmap
 		PixelMapUtility::PerPixelOperator(Atlas, [](unsigned char * Pixel, const unsigned char & Channels) { *Pixel = 0; });

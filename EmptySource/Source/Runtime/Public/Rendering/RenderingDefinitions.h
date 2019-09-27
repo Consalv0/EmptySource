@@ -1,11 +1,12 @@
 #pragma once
 
 namespace EmptySource {
-
+	
 	typedef struct UCharRed  { typedef unsigned char Range; static constexpr unsigned char Channels = 1; Range R; } UCharRed;
 	typedef struct UCharRG   { typedef unsigned char Range; static constexpr unsigned char Channels = 2; Range R; Range G; } UCharRG;
 	typedef struct UCharRGB  { typedef unsigned char Range; static constexpr unsigned char Channels = 3; Range R; Range G; Range B; } UCharRGB;
 	typedef struct UCharRGBA { typedef unsigned char Range; static constexpr unsigned char Channels = 4; Range R; Range G; Range B; Range A; } UCharRGBA;
+	typedef struct UShortRG  { typedef unsigned char Range; static constexpr unsigned char Channels = 2; Range R; Range G; } UShortRG;
 	typedef struct FloatRed  { typedef float Range; static constexpr unsigned char Channels = 1; Range R; } FloatRed;
 	typedef struct FloatRG   { typedef float Range; static constexpr unsigned char Channels = 2; Range R; Range G; } FloatRG;
 	typedef struct FloatRGB  { typedef float Range; static constexpr unsigned char Channels = 3; Range R; Range G; Range B; } FloatRGB;
@@ -107,18 +108,21 @@ namespace EmptySource {
 		CM_CounterClockWise
 	};
 
-	enum EColorFormat {
-		CF_Red,
-		CF_Red16F,
-		CF_Red32F,
-		CF_RG,
-		CF_RG16F,
-		CF_RGB,
-		CF_RGB16F,
-		CF_RGB32F,
-		CF_RGBA,
-		CF_RGBA16F,
-		CF_RGBA32F
+	enum EPixelFormat {
+		PF_Unknown,
+		PF_R8,
+		PF_R32F,
+		PF_RG8,
+		PF_RG32F,
+		PF_RG16F,
+		PF_RGB8,
+		PF_RGB32F,
+		PF_RGBA8,
+		PF_RGBA16_UShort,
+		PF_RGBA32F,
+		PF_DepthStencil,
+		PF_ShadowDepth,
+		PF_MAX = PF_ShadowDepth + 1,
 	};
 
 	enum ESamplerAddressMode {
@@ -146,5 +150,19 @@ namespace EmptySource {
 		DM_Lines,
 		DM_Triangles
 	};
+
+	struct PixelFormatInfo {
+		const WChar*    Name;
+		int             Size,
+		                Channels;
+		// Platform specific token
+		unsigned int    PlatformFormat;
+		// Is supported on the current platform
+		bool            Supported;
+		EPixelFormat    PixelFormat;
+	};
+
+	// Maps members of EPixelFormat to a PixelFormatInfo describing the platform specific format.
+	extern const PixelFormatInfo PixelFormats[PF_MAX];
 
 }

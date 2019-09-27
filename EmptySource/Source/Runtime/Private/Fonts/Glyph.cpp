@@ -29,7 +29,7 @@ namespace EmptySource {
 
 	void FontGlyph::GenerateSDF(float PixelRange) {
 		IntVector2 Size = { (int)Width, (int)Height };
-		SDFResterized = PixelMap(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4, 1, CF_Red32F);
+		SDFResterized = PixelMap(Size.x + (int)PixelRange * 4, Size.y + (int)PixelRange * 4, 1, PF_R32F);
 		Vector2 Translate(-(float)Bearing.x, Height - (float)Bearing.y);
 		Vector2 Scale = 1;
 		Translate += PixelRange;

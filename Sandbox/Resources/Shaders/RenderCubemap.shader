@@ -20,6 +20,7 @@ GLSL:
     
         out struct Matrices {
           mat4 Model;
+          mat4 ModelWithoutPosition;
           mat4 WorldNormal;
         } Matrix;
     
@@ -34,6 +35,10 @@ GLSL:
     
         void main() {
         	Matrix.Model = _iModelMatrix;
+          Matrix.ModelWithoutPosition = _iModelMatrix;
+          Matrix.ModelWithoutPosition[3][0] = 0.0;
+          Matrix.ModelWithoutPosition[3][1] = 0.0;
+          Matrix.ModelWithoutPosition[3][2] = 0.0;
         	Matrix.WorldNormal = transpose(inverse(Matrix.Model));
     
          	Vertex.Position = vec4(_iVertexPosition, 1.0);
@@ -44,9 +49,9 @@ GLSL:
         	Vertex.UV0 = _iVertexUV0; 
         	Vertex.Color = _iVertexColor;
     
-          	// Now set the position in model space
-          	gl_Position = _ProjectionMatrix * _ViewMatrix * Matrix.Model * Vertex.Position;
-          	Vertex.Position = Matrix.Model * Vertex.Position;
+          // Now set the position in model space
+          gl_Position = _ProjectionMatrix * _ViewMatrix * Matrix.Model * Vertex.Position;
+          Vertex.Position = Matrix.ModelWithoutPosition * Vertex.Position;
         }
     - StageType: Pixel
       Code: |
@@ -59,6 +64,7 @@ GLSL:
 
         in struct Matrices {
           mat4 Model;
+          mat4 ModelWithoutPosition;
           mat4 WorldNormal;
         } Matrix;
 

@@ -23,17 +23,16 @@ namespace EmptySource {
 
 		LoadState = LS_Loading;
 		{
-			LOG_CORE_DEBUG(L"Loading Texture '{}'...", Name.GetDisplayName().c_str());
+			// LOG_CORE_DEBUG(L"Loading Texture '{}'...", Name.GetDisplayName().c_str());
 			if (!Origin.empty()) {
-				FileStream * ShaderFile = FileManager::GetFile(Origin);
-				if (ShaderFile == NULL) {
+				FileStream * TextureFile = FileManager::GetFile(Origin);
+				if (TextureFile == NULL) {
 					LOG_CORE_ERROR(L"Error reading file for texture: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
 				}
 				
-				if (!ImageConversion::LoadFromFile(Pixels, ShaderFile, ColorFormat)) {
-					ShaderFile->Close();
+				if (!ImageConversion::LoadFromFile(Pixels, TextureFile, ColorFormat)) {
 					LOG_CORE_ERROR(L"Error reading file for texture: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
@@ -41,6 +40,7 @@ namespace EmptySource {
 				else {
 					Size = Pixels.GetSize();
 				}
+				TextureFile->Close();
 			}
 
 			switch (Dimension) {
@@ -49,7 +49,7 @@ namespace EmptySource {
 					TexturePointer = Texture2D::Create(Size, ColorFormat, FilterMode, AddressMode);
 				else
 					TexturePointer = Texture2D::Create(Size, ColorFormat, FilterMode, AddressMode,
-						ColorFormat, Pixels.PointerToValue());
+						Pixels.GetColorFormat(), Pixels.PointerToValue());
 				break;
 			case ETextureDimension::Cubemap:
 				TexturePointer = Cubemap::Create(Size.x, ColorFormat, FilterMode, AddressMode);
@@ -62,6 +62,7 @@ namespace EmptySource {
 			}
 		}
 		LoadState = TexturePointer != NULL ? LS_Loaded : LS_Unloaded;
+		if (bBuildMipMapsOnLoad) GenerateMipMaps();
 	}
 
 	void RTexture::Unload() {
@@ -91,6 +92,10 @@ namespace EmptySource {
 			MipMapCount = (unsigned int)log2f((float)Size.x);
 			TexturePointer->GenerateMipMaps(FilterMode, GetMipMapCount()); 
 		}
+	}
+
+	void RTexture::SetGenerateMipMapsOnLoad(bool Option) {
+		bBuildMipMapsOnLoad = Option;
 	}
 
 	void RTexture::SetSize(const IntVector3 & NewSize) {
@@ -165,11 +170,11 @@ namespace EmptySource {
 
 	RTexture::RTexture(
 		const IName & Name, const WString & Origin,
-		ETextureDimension Dimension, EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3& Size
+		ETextureDimension Dimension, EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3& Size, bool MipMapsOnLoad
 	) 
 		: ResourceHolder(Name, Origin), Dimension(Dimension), FilterMode(FilterMode), AddressMode(AddressMode), ColorFormat(Format), Size(Size) {
 		TexturePointer = NULL;
-		MipMapCount = 1;
+		MipMapCount = 1; bBuildMipMapsOnLoad = MipMapsOnLoad;
 	}
 
 }

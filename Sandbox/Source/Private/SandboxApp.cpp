@@ -122,12 +122,12 @@ protected:
 	void SetSceneSkybox(const WString & Path) {
 
 		RTexturePtr EquirectangularTexture = TextureManager::GetInstance().CreateTexture2D(
-			L"EquirectangularTexture_" + FileManager::GetFile(Path)->GetFileName(), Path, CF_RGB32F, FM_MinMagLinear, SAM_Repeat
+			L"EquirectangularTexture_" + FileManager::GetFile(Path)->GetFileName(), Path, PF_RGB32F, FM_MinMagLinear, SAM_Repeat
 		); 
 		EquirectangularTexture->Load();
 
 		EquirectangularTextureHDR = TextureManager::GetInstance().CreateTexture2D(
-			L"EquirectangularTextureHDR_" + FileManager::GetFile(Path)->GetFileName(), L"", CF_RGB32F, FM_MinMagLinear, SAM_Repeat,
+			L"EquirectangularTextureHDR_" + FileManager::GetFile(Path)->GetFileName(), L"", PF_RGB32F, FM_MinMagLinear, SAM_Repeat,
 			EquirectangularTexture->GetSize()
 		);
 		EquirectangularTextureHDR->Load();
@@ -157,7 +157,7 @@ protected:
 
 		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") == NULL) {
 			CubemapTexture = TextureManager::GetInstance().CreateCubemap(L"CubemapTexture", L"",
-				CF_RGB16F, FM_MinMagLinear, SAM_Clamp, EquirectangularTexture->GetSize().y / 2);
+				PF_RGB32F, FM_MinMagLinear, SAM_Clamp, EquirectangularTexture->GetSize().y / 2);
 		}
 		CubemapTexture->Load();
 		CubemapTexture->RenderHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
@@ -169,103 +169,103 @@ protected:
 		AudioManager::GetInstance().LoadAudioFromFile(L"Hololooo.wav", L"Resources/Sounds/Hololooo.wav");
 
 		TextureManager& TextureMng = TextureManager::GetInstance();
-		TextureMng.LoadImageFromFile(L"WhiteTexture",   CF_RGB,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
-		TextureMng.LoadImageFromFile(L"BlackTexture",   CF_RGB,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
-		TextureMng.LoadImageFromFile(L"NormalTexture",  CF_RGBA, FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Normal.jpg");
-		TextureMng.LoadImageFromFile(L"FlowMapTexture", CF_RGB,  FM_MinMagLinear,  SAM_Repeat, true, true, L"Resources/Textures/FlowMap.jpg");
+		TextureMng.LoadImageFromFile(L"WhiteTexture",   PF_RGB8,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
+		TextureMng.LoadImageFromFile(L"BlackTexture",   PF_RGB8,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
+		TextureMng.LoadImageFromFile(L"NormalTexture",  PF_RGBA8, FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Normal.jpg");
+		TextureMng.LoadImageFromFile(L"FlowMapTexture", PF_RGB8,  FM_MinMagLinear,  SAM_Repeat, true, true, L"Resources/Textures/FlowMap.jpg");
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderMng.CreateProgram(L"PBRShader", L"Resources/Shaders/PBR.shader");
 		
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnAAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnARoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnANormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnBAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnBRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnBNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/BricksAAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Albedo.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/BricksARoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/BricksANormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CeilingAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CeilingRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_Roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CeilingNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_Normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/FloorAlbedoTexture",        CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/FloorRoughnessTexture",     CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/FloorNormalTexture",        CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/RoofAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/RoofRoughnessTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/RoofNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ArchAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ArchRoughnessTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ArchNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ThornAlbedoTexture",        CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ThornRoughnessTexture",     CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ThornNormalTexture",        CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoughnessTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseHangAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseHangRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_roughness.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/VaseHangNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_normal.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/VasePlantAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_diffuse.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/VasePlantRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_roughness.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/VasePlantNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VasePlant_normal.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/DetailsAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_diffuse.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/DetailsRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_roughness.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/DetailsMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_metallic.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/DetailsNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Details_normal.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/CurtainBlueAlbedoTexture",  CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Blue_diffuse.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/CurtainGreenAlbedoTexture", CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Green_diffuse.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/CurtainRedAlbedoTexture",   CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_diffuse.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/CurtainRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_roughness.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/CurtainMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_metallic.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/CurtainNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_normal.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/LionAlbedoTexture",         CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Albedo.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/LionNormalTexture",         CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Normal.tga");
-		// TextureMng.LoadImageFromFile(L"Sponza/LionRoughnessTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Lion_Roughness.tga");
-		// TextureMng.LoadImageFromFile(L"EscafandraMV1971AlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_BaseColor.png");
-		// TextureMng.LoadImageFromFile(L"EscafandraMV1971MetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Metallic.png");
-		// TextureMng.LoadImageFromFile(L"EscafandraMV1971RoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Roughness.png");
-		// TextureMng.LoadImageFromFile(L"EscafandraMV1971NormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/EscafandraMV1971_Normal.png");
-		// TextureMng.LoadImageFromFile(L"PirateBarrelAlbedoTexture",        CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Color.png");
-		// TextureMng.LoadImageFromFile(L"PirateBarrelMetallicTexture",      CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Metal.png");
-		// TextureMng.LoadImageFromFile(L"PirateBarrelRoughnessTexture",     CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.png");
-		// TextureMng.LoadImageFromFile(L"PirateBarrelNormalTexture",        CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/PirateProps_Barrel_Texture_Normal.png");
-		// TextureMng.LoadImageFromFile(L"FlamerGunAlbedoTexture",           CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_albedo.jpg");
-		// TextureMng.LoadImageFromFile(L"FlamerGunMetallicTexture",         CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg");
-		// TextureMng.LoadImageFromFile(L"FlamerGunRoughnessTexture",        CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg");
-		// TextureMng.LoadImageFromFile(L"FlamerGunNormalTexture",           CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg");
-		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileAlbedoTexture",    CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_COL.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileMetallicTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_MET.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileRoughnessTexture", CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_RGH.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/CeilingTileNormalTexture",    CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_CeilingTile_NRM.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelAlbedoTexture",      CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_COL.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelMetallicTexture",    CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_MET.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelRoughnessTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_RGH.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/DoorPanelNormalTexture",      CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_DoorPanel_NRM.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_COL.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_MET.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_RGH.tga");
-		// TextureMng.LoadImageFromFile(L"SiFi/GroundTileNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SiFi/T_GroundTile_NRM.tga");
-		// TextureMng.LoadImageFromFile(L"PonyCarExteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_d_orange.jpeg");
-		// TextureMng.LoadImageFromFile(L"PonyCarExteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_s.jpeg");
-		// TextureMng.LoadImageFromFile(L"PonyCarExteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_g.jpg");
-		// TextureMng.LoadImageFromFile(L"PonyCarExteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Body_dDo_n.jpg");
-		// TextureMng.LoadImageFromFile(L"PonyCarInteriorAlbedoTexture",     CF_RGBA, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_d_black.jpeg");
-		// TextureMng.LoadImageFromFile(L"PonyCarInteriorMetallicTexture",   CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_s.jpeg");
-		// TextureMng.LoadImageFromFile(L"PonyCarInteriorRoughnessTexture",  CF_Red,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_g.jpg");
-		// TextureMng.LoadImageFromFile(L"PonyCarInteriorNormalTexture",     CF_RGB,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Interior_dDo_n.jpg");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnBAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnBRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnBNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnCAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnCNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CulumnCRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/BricksAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Albedo.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/BricksARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/BricksANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CeilingAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CeilingRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_Roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/CeilingNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_Normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/FloorAlbedoTexture",        PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/FloorRoughnessTexture",     PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/FloorNormalTexture",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/RoofAlbedoTexture",         PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/RoofRoughnessTexture",      PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/RoofNormalTexture",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ArchAlbedoTexture",         PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ArchRoughnessTexture",      PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ArchNormalTexture",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ThornAlbedoTexture",        PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ThornRoughnessTexture",     PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ThornNormalTexture",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseAlbedoTexture",         PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoughnessTexture",      PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseNormalTexture",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundAlbedoTexture",    PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundRoughnessTexture", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundNormalTexture",    PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseHangAlbedoTexture",     PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/VaseHangRoughnessTexture",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_roughness.tga");
+		TextureMng.CreateTexture2D(L"Sponza/VaseHangNormalTexture",     L"Resources/Textures/SponzaPBR/VaseHanging_normal.tga",           PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/VasePlantAlbedoTexture",    L"Resources/Textures/SponzaPBR/VasePlant_diffuse.tga",            PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/VasePlantRoughnessTexture", L"Resources/Textures/SponzaPBR/VasePlant_roughness.tga",          PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/VasePlantNormalTexture",    L"Resources/Textures/SponzaPBR/VasePlant_normal.tga",             PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/DetailsAlbedoTexture",      L"Resources/Textures/SponzaPBR/Sponza_Details_diffuse.tga",       PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/DetailsRoughnessTexture",   L"Resources/Textures/SponzaPBR/Sponza_Details_roughness.tga",     PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/DetailsMetallicTexture",    L"Resources/Textures/SponzaPBR/Sponza_Details_metallic.tga",      PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/DetailsNormalTexture",      L"Resources/Textures/SponzaPBR/Sponza_Details_normal.tga",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/CurtainBlueAlbedoTexture",  L"Resources/Textures/SponzaPBR/Sponza_Curtain_Blue_diffuse.tga",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/CurtainGreenAlbedoTexture", L"Resources/Textures/SponzaPBR/Sponza_Curtain_Green_diffuse.tga", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/CurtainRedAlbedoTexture",   L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_diffuse.tga",   PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/CurtainRoughnessTexture",   L"Resources/Textures/SponzaPBR/Sponza_Curtain_roughness.tga",     PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/CurtainMetallicTexture",    L"Resources/Textures/SponzaPBR/Sponza_Curtain_metallic.tga",      PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/CurtainNormalTexture",      L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_normal.tga",    PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/LionAlbedoTexture",         L"Resources/Textures/SponzaPBR/Lion_Albedo.tga",                  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/LionNormalTexture",         L"Resources/Textures/SponzaPBR/Lion_Normal.tga",                  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"Sponza/LionRoughnessTexture",      L"Resources/Textures/SponzaPBR/Lion_Roughness.tga",               PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EscafandraMV1971AlbedoTexture",    L"Resources/Textures/EscafandraMV1971_BaseColor.png",             PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EscafandraMV1971MetallicTexture",  L"Resources/Textures/EscafandraMV1971_Metallic.png",              PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EscafandraMV1971RoughnessTexture", L"Resources/Textures/EscafandraMV1971_Roughness.png",             PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EscafandraMV1971NormalTexture",    L"Resources/Textures/EscafandraMV1971_Normal.png",                PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PirateBarrelAlbedoTexture",        L"Resources/Textures/PirateProps_Barrel_Texture_Color.png",       PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PirateBarrelMetallicTexture",      L"Resources/Textures/PirateProps_Barrel_Texture_Metal.png",       PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PirateBarrelRoughnessTexture",     L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.png",   PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PirateBarrelNormalTexture",        L"Resources/Textures/PirateProps_Barrel_Texture_Normal.png",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"FlamerGunAlbedoTexture",           L"Resources/Textures/Flamer_DefaultMaterial_albedo.jpg",          PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"FlamerGunMetallicTexture",         L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg",        PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"FlamerGunRoughnessTexture",        L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg",       PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"FlamerGunNormalTexture",           L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/CeilingTileAlbedoTexture",    L"Resources/Textures/SiFi/T_CeilingTile_COL.tga",                 PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/CeilingTileMetallicTexture",  L"Resources/Textures/SiFi/T_CeilingTile_MET.tga",                 PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/CeilingTileRoughnessTexture", L"Resources/Textures/SiFi/T_CeilingTile_RGH.tga",                 PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/CeilingTileNormalTexture",    L"Resources/Textures/SiFi/T_CeilingTile_NRM.tga",                 PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/DoorPanelAlbedoTexture",      L"Resources/Textures/SiFi/T_DoorPanel_COL.tga",                   PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/DoorPanelMetallicTexture",    L"Resources/Textures/SiFi/T_DoorPanel_MET.tga",                   PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/DoorPanelRoughnessTexture",   L"Resources/Textures/SiFi/T_DoorPanel_RGH.tga",                   PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/DoorPanelNormalTexture",      L"Resources/Textures/SiFi/T_DoorPanel_NRM.tga",                   PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/GroundTileAlbedoTexture",     L"Resources/Textures/SiFi/T_GroundTile_COL.tga",                  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/GroundTileMetallicTexture",   L"Resources/Textures/SiFi/T_GroundTile_MET.tga",                  PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/GroundTileRoughnessTexture",  L"Resources/Textures/SiFi/T_GroundTile_RGH.tga",                  PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"SiFi/GroundTileNormalTexture",     L"Resources/Textures/SiFi/T_GroundTile_NRM.tga",                  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarExteriorAlbedoTexture",     L"Resources/Textures/Body_dDo_d_orange.jpeg",                     PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarExteriorMetallicTexture",   L"Resources/Textures/Body_dDo_s.jpeg",                            PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarExteriorRoughnessTexture",  L"Resources/Textures/Body_dDo_g.jpg",                             PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarExteriorNormalTexture",     L"Resources/Textures/Body_dDo_n.jpg",                             PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarInteriorAlbedoTexture",     L"Resources/Textures/Interior_dDo_d_black.jpeg",                  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarInteriorMetallicTexture",   L"Resources/Textures/Interior_dDo_s.jpeg",                        PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarInteriorRoughnessTexture",  L"Resources/Textures/Interior_dDo_g.jpg",                         PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"PonyCarInteriorNormalTexture",     L"Resources/Textures/Interior_dDo_n.jpg",                         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
 	}
 
 	virtual void OnImGuiRender() override {
-		static RTexturePtr TextureSample = TextureManager::GetInstance().CreateTexture2D(L"TextureSample", L"", CF_RGBA, FM_MinMagLinear, SAM_Repeat, IntVector2(1024, 1024));
+		static RTexturePtr TextureSample = TextureManager::GetInstance().CreateTexture2D(L"TextureSample", L"", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, IntVector2(1024, 1024));
 		TextureSample->Load();
 
 		TArray<WString> TextureNameList = TextureManager::GetInstance().GetResourceNames();
@@ -284,7 +284,8 @@ protected:
 			"Resources/Textures/OutdoorResidentialRiverwalkAfternoon.hdr",
 			"Resources/Textures/spruit_sunrise_2k.hdr",
 			"Resources/Textures/studio_small_03_2k.hdr",
-			"Resources/Textures/tucker_wreck_2k.hdr"
+			"Resources/Textures/tucker_wreck_2k.hdr",
+			"Resources/Textures/OpenfootageNET_field_low.hdr"
 		};
 
 		static int CurrentTexture = 0;
@@ -327,7 +328,7 @@ protected:
 				Renderer->Clear();
 				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			}
-			if (bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap) {
+			if (bCubemap) {
 				RenderTargetPtr Renderer = RenderTarget::Create();
 				RenderTextureMaterial.Use();
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
@@ -913,7 +914,7 @@ protected:
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 		if (FontMap == NULL) {
 			FontMap = TextureManager::GetInstance().CreateTexture2D(
-				L"FontMap", L"", CF_Red, FM_MinMagLinear, SAM_Border, IntVector2(TextGenerator.AtlasSize)
+				L"FontMap", L"", PF_R8, FM_MinMagLinear, SAM_Border, IntVector2(TextGenerator.AtlasSize)
 			);
 		} else {
 			FontMap->Unload();
@@ -964,7 +965,7 @@ protected:
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 
 		RTexturePtr BRDFLut = TextureManager::GetInstance().CreateTexture2D(
-			L"BRDFLut", L"", CF_RG16F, FM_MinMagLinear, SAM_Clamp, { 512, 512 }
+			L"BRDFLut", L"", PF_RG16F, FM_MinMagLinear, SAM_Clamp, { 512, 512 }
 		);
 		BRDFLut->Load();
 		{

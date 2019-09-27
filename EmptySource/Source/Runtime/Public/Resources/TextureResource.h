@@ -34,6 +34,8 @@ namespace EmptySource {
 
 		void GenerateMipMaps();
 
+		void SetGenerateMipMapsOnLoad(bool Option);
+
 		inline IntVector3 GetSize() const { return Size; }
 
 		// Change the size of the texture, this will only be aplied if the texture is not loaded
@@ -60,7 +62,7 @@ namespace EmptySource {
 
 		RTexture(
 			const IName & Name, const WString & Origin, ETextureDimension Dimension,
-			EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3 & Size = 0
+			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3 & Size = 0, bool MipMapsOnLoad = false
 		);
 
 	private:
@@ -76,9 +78,11 @@ namespace EmptySource {
 
 		ESamplerAddressMode AddressMode;
 
-		EColorFormat ColorFormat;
+		EPixelFormat ColorFormat;
 
 		unsigned int MipMapCount;
+
+		bool bBuildMipMapsOnLoad;
 	};
 
 }

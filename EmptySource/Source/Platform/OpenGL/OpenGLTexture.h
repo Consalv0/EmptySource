@@ -2,23 +2,17 @@
 
 namespace EmptySource {
 
-	static unsigned int GetOpenGLTextureColorFormat(const EColorFormat & CF);
-	
-	static unsigned int GetOpenGLTextureColorFormatInput(const EColorFormat & CF);
-
-	static unsigned int GetOpenGLTextureInputType(const EColorFormat & CF);
-
 	class OpenGLTexture2D : public Texture2D {
 	public:
 		OpenGLTexture2D(
-			const IntVector2& Size, const EColorFormat ColorFormat,
+			const IntVector2& Size, const EPixelFormat ColorFormat,
 			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode
 		);
 
 		OpenGLTexture2D(
-			const IntVector2& Size, const EColorFormat ColorFormat,
+			const IntVector2& Size, const EPixelFormat ColorFormat,
 			const EFilterMode& FilterMode, const ESamplerAddressMode& AddressMode,
-			const EColorFormat InputFormat, const void* BufferData
+			const EPixelFormat InputFormat, const void* BufferData
 		);
 
 		virtual ~OpenGLTexture2D() override;
@@ -53,7 +47,7 @@ namespace EmptySource {
 	public:
 		OpenGLCubemap(
 			const int & WidthSize,
-			const EColorFormat & Format,
+			const EPixelFormat & Format,
 			const EFilterMode & Filter,
 			const ESamplerAddressMode & SamplerAddress
 		);

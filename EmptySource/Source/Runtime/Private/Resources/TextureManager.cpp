@@ -93,35 +93,39 @@ namespace EmptySource {
 	}
 	
 	RTexturePtr TextureManager::CreateTexture2D(const WString & Name, const WString & Origin,
-		EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size) {
+		EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size, bool GenMipMapsOnLoad) {
 		RTexturePtr Texture = GetTexture(Name);
 		if (Texture == NULL) {
-			Texture = RTexturePtr(new RTexture(Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.x, Size.y, 1)));
+			Texture = RTexturePtr(new RTexture(
+				Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.x, Size.y, 1), GenMipMapsOnLoad
+			));
 			AddTexture(Texture);
 		}
 		return Texture;
 	}
 	
 	RTexturePtr TextureManager::CreateCubemap(const WString & Name, const WString & Origin,
-		EColorFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size) {
+		EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size) {
 		RTexturePtr Texture = GetTexture(Name);
 		if (Texture == NULL) {
-			Texture = RTexturePtr(new RTexture(Name, Origin, ETextureDimension::Cubemap, Format, FilterMode, AddressMode, IntVector3(Size, Size, 6)));
+			Texture = RTexturePtr(new RTexture(
+				Name, Origin, ETextureDimension::Cubemap, Format, FilterMode, AddressMode, IntVector3(Size, Size, 6)
+			));
 			AddTexture(Texture);
 		}
 		return Texture;
 	}
 
 	void TextureManager::LoadImageFromFile(
-		const WString& Name, EColorFormat ColorFormat, EFilterMode FilterMode,
+		const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
 		ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath, bool bConservePixels) {
 
 		RTexturePtr LoadedTexture = CreateTexture2D(Name, FilePath, ColorFormat, FilterMode, AddressMode);
 		
 		if (LoadedTexture) {
+			LoadedTexture->SetGenerateMipMapsOnLoad(bGenMipMaps);
 			LoadedTexture->Load();
 			if (!bConservePixels) LoadedTexture->ClearPixelData();
-			if (LoadedTexture->IsValid() && bGenMipMaps) LoadedTexture->GenerateMipMaps();
 		}
 	}
 

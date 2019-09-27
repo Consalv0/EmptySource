@@ -6,20 +6,36 @@
 namespace EmptySource {
 
 	PixelMap::PixelMap()
-		: Width(0), Height(0), Depth(0), PixelFormat(EColorFormat::CF_Red), Data(NULL) {
+		: Width(0), Height(0), Depth(0), PixelFormat(PF_Unknown), Data(NULL) {
 	}
 
-	PixelMap::PixelMap(int Width, int Height, int Depth, EColorFormat PixelFormat)
-		: Width(Width), Height(Height), Depth(Depth), PixelFormat(PixelFormat) {
+	PixelMap::PixelMap(int Width, int Height, int Depth, EPixelFormat PixelFormat)
+		: Width(Width), Height(Height), Depth(Depth), PixelFormat(PixelFormat), Data(NULL) {
 		PixelMapUtility::CreateData(Width, Height, Depth, PixelFormat, Data);
 	}
 
+	PixelMap::PixelMap(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& InData)
+		: Width(Width), Height(Height), Depth(Depth), PixelFormat(PixelFormat), Data(NULL) {
+		PixelMapUtility::CreateData(Width, Height, Depth, PixelFormat, Data, InData);
+	}
+
 	PixelMap::PixelMap(const PixelMap & Other)
-		: Width(Other.Width), Height(Other.Height), Depth(Other.Depth), PixelFormat(Other.PixelFormat) {
+		: Width(Other.Width), Height(Other.Height), Depth(Other.Depth), PixelFormat(Other.PixelFormat), Data(NULL) {
+		PixelMapUtility::CreateData(Width, Height, Depth, PixelFormat, Data, Other.Data);
+	}
+
+	void PixelMap::SetData(int InWidth, int InHeight, int InDepth, EPixelFormat InPixelFormat, void *& InData) {
+		if (Data) {
+			delete[] Data;
+			Data = NULL;
+		}
+		Width = InWidth, Height = InHeight; Depth = InDepth;
+		PixelFormat = InPixelFormat;
+		PixelMapUtility::CreateData(Width, Height, Depth, PixelFormat, Data, InData);
 	}
 
 	size_t PixelMap::GetMemorySize() const {
-		return Width * Height * Depth * PixelMapUtility::PixelSize(PixelFormat);
+		return Width * Height * Depth * PixelFormats[PixelFormat].Size;
 	}
 
 	PixelMap & PixelMap::operator=(const PixelMap & Other) {
@@ -29,8 +45,7 @@ namespace EmptySource {
 		}
 		Width = Other.Width, Height = Other.Height; Depth = Other.Depth;
 		PixelFormat = Other.PixelFormat;
-		PixelMapUtility::CreateData(Width, Height, Depth, PixelFormat, Data);
-		memcpy(Data, Other.Data, Width * Height * PixelMapUtility::PixelSize(PixelFormat));
+		PixelMapUtility::CreateData(Width, Height, Depth, PixelFormat, Data, Other.Data);
 		return *this;
 	}
 
@@ -42,142 +57,109 @@ namespace EmptySource {
 		delete[] Data;
 	}
 
-	void PixelMapUtility::CreateData(int Width, int Height, int Depth, EColorFormat PixelFormat, void *& Data) {
-		if (Width * Height * Depth == 0) {
-			Data = NULL; return;
+	void PixelMapUtility::CreateData(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& Data) {
+		if (Data != NULL) return;
+		const size_t Size = Width * Height * Depth * (size_t)PixelFormats[PixelFormat].Size;
+		if (Size == 0) {
+			Data = NULL;
+			return;
 		}
-		switch (PixelFormat) {
-		case CF_Red:     Data = new UCharRed[Width * Height * Depth]; break;
-		case CF_Red16F:  Data = new FloatRed[Width * Height * Depth]; break;
-		case CF_Red32F:  Data = new FloatRed[Width * Height * Depth]; break;
-		case CF_RG:      Data = new UCharRG[Width * Height * Depth]; break;
-		case CF_RG16F:   Data = new FloatRG[Width * Height * Depth]; break;
-		case CF_RGB:     Data = new UCharRGB[Width * Height * Depth]; break;
-		case CF_RGB16F:  Data = new FloatRGB[Width * Height * Depth]; break;
-		case CF_RGB32F:  Data = new FloatRGB[Width * Height * Depth]; break;
-		case CF_RGBA:    Data = new UCharRGBA[Width * Height * Depth]; break;
-		case CF_RGBA16F: Data = new FloatRGBA[Width * Height * Depth]; break;
-		case CF_RGBA32F: Data = new FloatRGBA[Width * Height * Depth]; break;
-		}
+		if (FormatIsFloat(PixelFormat))
+			Data = new float[Size];
+		else if (FormatIsShort(PixelFormat))
+			Data = new unsigned short[Size];
+		else
+			Data = new unsigned char[Size];
 	}
 
-	unsigned int PixelMapUtility::PixelSize(const EColorFormat & Format) {
-		switch (Format) {
-		case CF_Red:     return sizeof(UCharRed);
-		case CF_Red16F:  return sizeof(FloatRed);
-		case CF_Red32F:  return sizeof(FloatRed);
-		case CF_RG:      return sizeof(UCharRG);
-		case CF_RG16F:   return sizeof(FloatRG);
-		case CF_RGB:     return sizeof(UCharRGB);
-		case CF_RGB16F:  return sizeof(FloatRGB);
-		case CF_RGB32F:  return sizeof(FloatRGB);
-		case CF_RGBA:    return sizeof(UCharRGBA);
-		case CF_RGBA16F: return sizeof(FloatRGBA);
-		case CF_RGBA32F: return sizeof(FloatRGBA);
-		default:
-			return 0;
-		}
-	}
-
-	unsigned int PixelMapUtility::PixelSize(const PixelMap & Map) {
-		return PixelSize(Map.PixelFormat);
-	}
-
-	unsigned int PixelMapUtility::PixelChannels(const EColorFormat & Format) {
-		switch (Format) {
-		case CF_Red:     return 1u;
-		case CF_Red16F:  return 1u;
-		case CF_Red32F:  return 1u;
-		case CF_RG:      return 2u;
-		case CF_RG16F:   return 2u;
-		case CF_RGB:     return 3u;
-		case CF_RGB16F:  return 3u;
-		case CF_RGB32F:  return 3u;
-		case CF_RGBA:    return 4u;
-		case CF_RGBA16F: return 4u;
-		case CF_RGBA32F: return 4u;
-		}
-		return 0;
+	void PixelMapUtility::CreateData(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& Target, void * Data) {
+		CreateData(Width, Height, Depth, PixelFormat, Target);
+		if (Target == NULL || Data == NULL) return;
+		memcpy(Target, Data, Width * Height * Depth * (size_t)PixelFormats[PixelFormat].Size);
 	}
 
 	void PixelMapUtility::FlipVertically(PixelMap & Map) {
 		switch (Map.PixelFormat) {
-			case CF_Red:     _FlipVertically<UCharRed> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_Red16F:  _FlipVertically<FloatRed> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_Red32F:  _FlipVertically<FloatRed> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RG:      _FlipVertically<UCharRG>  (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RG16F:   _FlipVertically<FloatRG>  (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RGB:     _FlipVertically<UCharRGB> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RGB16F:  _FlipVertically<FloatRGB> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RGB32F:  _FlipVertically<FloatRGB> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RGBA:    _FlipVertically<UCharRGBA>(Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RGBA16F: _FlipVertically<FloatRGBA>(Map.Width, Map.Height, Map.Depth, Map.Data); break;
-			case CF_RGBA32F: _FlipVertically<FloatRGBA>(Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_R8:      _FlipVertically<UCharRed> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_R32F:    _FlipVertically<FloatRed> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_RG8:     _FlipVertically<UCharRG>  (Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_RG32F:   _FlipVertically<FloatRG>  (Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_RGB8:    _FlipVertically<UCharRGB> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_RGB32F:  _FlipVertically<FloatRGB> (Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_RGBA8:   _FlipVertically<UCharRGBA>(Map.Width, Map.Height, Map.Depth, Map.Data); break;
+			case PF_RGBA32F: _FlipVertically<FloatRGBA>(Map.Width, Map.Height, Map.Depth, Map.Data); break;
 		}
 	}
 
 	unsigned char * PixelMapUtility::GetCharPixelAt(PixelMap & Map, const unsigned int & X, const unsigned int & Y, const unsigned int & Z) {
+		const int Channels = PixelFormats[Map.PixelFormat].Channels;
 		return &((unsigned char *)Map.Data)[
-			Z * Map.Width * Map.Height * PixelChannels(Map.PixelFormat) +
-			Y * Map.Width * PixelChannels(Map.PixelFormat) +
-			X * PixelChannels(Map.PixelFormat)
+			Z * Map.Width * Map.Height * Channels +
+			Y * Map.Width * Channels +
+			X * Channels
 		];
 	}
 
 	float * PixelMapUtility::GetFloatPixelAt(PixelMap & Map, const unsigned int & X, const unsigned int & Y, const unsigned int & Z) {
+		const int Channels = PixelFormats[Map.PixelFormat].Channels;
 		return &((float *)Map.Data)[
-			Z * Map.Width * Map.Height * PixelChannels(Map.PixelFormat) +
-			Y * Map.Width * PixelChannels(Map.PixelFormat) + 
-			X * PixelChannels(Map.PixelFormat)
+			Z * Map.Width * Map.Height * Channels +
+			Y * Map.Width * Channels +
+			X * Channels
 		];
 	}
 
 	unsigned char * PixelMapUtility::GetCharPixelAt(PixelMap & Map, const size_t & Index) {
-		return &((unsigned char *)Map.Data)[Index * PixelChannels(Map.PixelFormat)];
+		return &((unsigned char *)Map.Data)[Index * PixelFormats[Map.PixelFormat].Channels];
 	}
 
 	float * PixelMapUtility::GetFloatPixelAt(PixelMap & Map, const size_t & Index) {
-		return &((float *)Map.Data)[Index * PixelChannels(Map.PixelFormat)];
+		return &((float *)Map.Data)[Index * PixelFormats[Map.PixelFormat].Channels];
 	}
 
 	void PixelMapUtility::PerPixelOperator(PixelMap & Map, std::function<void(unsigned char *, const unsigned char &)> const & Function) {
-		const unsigned char & Count = PixelChannels(Map.PixelFormat);
+		const unsigned char & Channels = (unsigned char)PixelFormats[Map.PixelFormat].Channels;
 		for (unsigned int z = 0; z < Map.Depth; ++z) {
 			for (unsigned int y = 0; y < Map.Height; ++y) {
 				for (unsigned int x = 0; x < Map.Width; ++x) {
-					Function(GetCharPixelAt(Map, x, y, z), Count);
+					Function(GetCharPixelAt(Map, x, y, z), Channels);
 				}
 			}
 		}
 	}
 
 	void PixelMapUtility::PerPixelOperator(PixelMap & Map, std::function<void(float *, const unsigned char &)> const & Function) {
-		const unsigned char & Count = PixelChannels(Map.PixelFormat);
+		const unsigned char & Channels = (unsigned char)PixelFormats[Map.PixelFormat].Channels;
 		for (unsigned int z = 0; z < Map.Depth; ++z) {
 			for (unsigned int y = 0; y < Map.Height; ++y) {
 				for (unsigned int x = 0; x < Map.Width; ++x) {
-					Function(GetFloatPixelAt(Map, x, y, z), Count);
+					Function(GetFloatPixelAt(Map, x, y, z), Channels);
 				}
 			}
 		}
 	}
 
-	bool PixelMapUtility::ColorFormatIsFloat(EColorFormat Format) {
+	bool PixelMapUtility::FormatIsFloat(EPixelFormat Format) {
 		switch (Format) {
-			case CF_Red16F:
-			case CF_Red32F:
-			case CF_RG16F:
-			case CF_RGB16F:
-			case CF_RGB32F:
-			case CF_RGBA16F:
-			case CF_RGBA32F:
-				return true;
-			case CF_Red:
-			case CF_RG:
-			case CF_RGB:
-			case CF_RGBA:
-			default:
-				return false;
+		case PF_R32F:
+		case PF_RG32F:
+		case PF_RG16F:
+		case PF_RGB32F:
+		case PF_RGBA32F:
+		case PF_DepthStencil:
+		case PF_ShadowDepth:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	bool PixelMapUtility::FormatIsShort(EPixelFormat Format) {
+		switch (Format) {
+		case PF_RGBA16_UShort:
+			return true;
+		default:
+			return false;
 		}
 	}
 

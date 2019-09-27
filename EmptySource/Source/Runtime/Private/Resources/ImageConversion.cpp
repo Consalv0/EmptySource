@@ -15,23 +15,22 @@
 
 namespace EmptySource {
 
-	bool ImageConversion::LoadFromFile(PixelMap& RefBitmap, FileStream * File, EColorFormat Format, bool FlipVertically) {
+	bool ImageConversion::LoadFromFile(PixelMap& RefBitmap, FileStream * File, EPixelFormat Format, bool FlipVertically) {
 		if (File == NULL) return false;
 		int Width, Height, Comp;
 		stbi_set_flip_vertically_on_load(FlipVertically);
 		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
 		void * Image = NULL; 
-		if (PixelMapUtility::ColorFormatIsFloat(Format))
-			Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, PixelMapUtility::PixelChannels(Format));
+		if (PixelMapUtility::FormatIsFloat(Format))
+			Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, PixelFormats[Format].Channels);
 		else
-			Image = stbi_load_from_file(FILEFile, &Width, &Height, &Comp, PixelMapUtility::PixelChannels(Format));
+			Image = stbi_load_from_file(FILEFile, &Width, &Height, &Comp, PixelFormats[Format].Channels);
 		fclose(FILEFile);
 		if (Image == NULL) {
 			LOG_CORE_ERROR(L"Texture '{0}' coldn´t be loaded", File->GetFileName().c_str());
 			return false;
 		}
-		RefBitmap = PixelMap(Width, Height, 1, Format);
-		memcpy((void *)RefBitmap.PointerToValue(), Image, Width * Height * PixelMapUtility::PixelSize(Format));
+		RefBitmap.SetData(Width, Height, 1, Format, Image);
 		stbi_image_free(Image);
 		return true;
 	}
@@ -52,23 +51,23 @@ namespace EmptySource {
 		return stbi_is_hdr(Text::WideToNarrow(File->GetPath()).c_str());
 	}
 
-	EColorFormat ImageConversion::GetColorFormat(FileStream * File) {
-		EColorFormat InputColorFormat = EColorFormat::CF_RGBA;
+	EPixelFormat ImageConversion::GetColorFormat(FileStream * File) {
+		EPixelFormat InputColorFormat = EPixelFormat::PF_Unknown;
 		bool IsFloat32 = ImageConversion::IsHDR(File);
 
 		switch (ImageConversion::GetChannelCount(File)) {
 		case 1:
-			if (IsFloat32) { ES_CORE_ASSERT(true, "Color format not supported"); }
-			else InputColorFormat = EColorFormat::CF_Red;
+			if (IsFloat32) InputColorFormat = EPixelFormat::PF_R32F;
+			else InputColorFormat = EPixelFormat::PF_R8;
 		case 2:
-			if (IsFloat32) { ES_CORE_ASSERT(true, "Color format not supported"); }
-			else InputColorFormat = EColorFormat::CF_RG;
+			if (IsFloat32) InputColorFormat = EPixelFormat::PF_RG32F;
+			else InputColorFormat = EPixelFormat::PF_RG8;
 		case 3:
-			if (IsFloat32) InputColorFormat = EColorFormat::CF_RGB32F;
-			else InputColorFormat = EColorFormat::CF_RGB;
+			if (IsFloat32) InputColorFormat = EPixelFormat::PF_RGB32F;
+			else InputColorFormat = EPixelFormat::PF_RGB8;
 		case 4:
-			if (IsFloat32) InputColorFormat = EColorFormat::CF_RGBA32F;
-			else InputColorFormat = EColorFormat::CF_RGBA;
+			if (IsFloat32) InputColorFormat = EPixelFormat::PF_RGBA32F;
+			else InputColorFormat = EPixelFormat::PF_RGBA8;
 		}
 
 		return InputColorFormat;

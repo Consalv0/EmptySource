@@ -25,12 +25,13 @@ namespace EmptySource {
 					LoadState = LS_Unloaded;
 					return;
 				}
+				SourceCode.clear();
 				if (!ShaderFile->ReadNarrowStream(&SourceCode)) {
-					ShaderFile->Close();
 					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
 				}
+				ShaderFile->Close();
 			}
 		}
 		LoadState = LoadFromShaderSource(SourceCode) ? LS_Loaded : LS_Unloaded;

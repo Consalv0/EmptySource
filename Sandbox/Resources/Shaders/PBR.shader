@@ -159,16 +159,16 @@ GLSL:
       
           float NDotV = clamp(abs( dot( Normal, EyeDirection ) ) + 0.01, 0.0, 1.0);
       
-          vec3 F0 = vec3(0.2); 
+          vec3 F0 = vec3(0.4); 
           F0 = mix(F0, DiffuseColor, Metalness);
           vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
           vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
-          vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2.0));
-               // Irradiance = sqrt(pow(Irradiance, vec3(1.0/2.2)));
+          vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 1.0));
+               Irradiance = pow(Irradiance, vec3(1.0/2.2));
           vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3.0)));
       
           vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
-          vec3 Color = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI * Irradiance + Specular);
+          vec3 Color = ((1.0 - Metalness) * DiffuseColor * Irradiance + Specular);
       
           return Color;
         }
@@ -225,7 +225,7 @@ GLSL:
           Sum = pow(Sum, vec3(1.0/Gamma));
         
           vec3 Intensity = vec3(dot(Sum, vec3(0.2125, 0.7154, 0.0721)));
-          Sum = mix(Intensity, Sum, 1.45);
+          Sum = mix(Intensity, Sum, 1.2);
         
           FragColor = vec4(Sum, Vertex.Color.a * Diffuse.a * _Material.Color.a);
         

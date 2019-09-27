@@ -6,9 +6,13 @@ namespace EmptySource {
 	public:
 		PixelMap();
 
-		PixelMap(int Width, int Height, int Depth, EColorFormat PixelFormat);
+		PixelMap(int Width, int Height, int Depth, EPixelFormat PixelFormat);
+
+		PixelMap(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& Data);
 		
 		PixelMap(const PixelMap &Other);
+
+		void SetData(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& InData);
 
 		//* Width in pixels. 
 		inline unsigned int GetWidth() const { return Width; };
@@ -25,7 +29,7 @@ namespace EmptySource {
 
 		size_t GetMemorySize() const;
 
-		inline EColorFormat GetColorFormat() const { return PixelFormat; };
+		inline EPixelFormat GetColorFormat() const { return PixelFormat; };
 
 		PixelMap & operator=(const PixelMap & Other);
 		
@@ -37,19 +41,15 @@ namespace EmptySource {
 		friend class PixelMapUtility;
 
 		void * Data;
-		EColorFormat PixelFormat;
+		EPixelFormat PixelFormat;
 		unsigned int Width, Height, Depth;
 	};
 
 	class PixelMapUtility {
 	public:
-		static void CreateData(int Width, int Height, int Depth, EColorFormat PixelFormat, void *& Data);
+		static void CreateData(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& Data);
 
-		static unsigned int PixelSize(const EColorFormat & Format);
-
-		static unsigned int PixelSize(const PixelMap & Map);
-
-		static unsigned int PixelChannels(const EColorFormat & Format);
+		static void CreateData(int Width, int Height, int Depth, EPixelFormat PixelFormat, void *& Target, void * Data);
 
 		//* Flips the pixels vertically
 		static void FlipVertically(PixelMap & Map);
@@ -66,7 +66,9 @@ namespace EmptySource {
 
 		static void PerPixelOperator(PixelMap & Map, std::function<void(unsigned char *, const unsigned char & Channels)> const& Function);
 
-		static bool ColorFormatIsFloat(EColorFormat Format);
+		static bool FormatIsFloat(EPixelFormat Format);
+
+		static bool FormatIsShort(EPixelFormat Format);
 
 	private:
 		template<typename T>

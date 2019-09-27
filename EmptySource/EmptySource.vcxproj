@@ -147,6 +147,7 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLDefinitions.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTarget.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLTexture.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTarget.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLDefinitions.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />

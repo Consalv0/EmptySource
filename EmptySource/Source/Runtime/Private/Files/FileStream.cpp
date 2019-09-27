@@ -26,7 +26,7 @@ namespace EmptySource {
 #endif
 
 		Path = FilePath;
-		Open();
+		Close();
 
 		if (!IsValid())
 			LOG_CORE_ERROR(L"File '{}' is not valid or do not exist", FilePath);

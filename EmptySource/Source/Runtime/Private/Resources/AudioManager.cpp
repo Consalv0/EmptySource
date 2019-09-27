@@ -37,9 +37,6 @@ namespace EmptySource {
 		Uint8 * SampleBuffer;
 
 		FileStream * SampleFile = FileManager::GetFile(FilePath);
-		if (SampleFile != NULL) {
-			SampleFile->Close();
-		}
 
 		if (SampleFile == NULL || SDL_LoadWAV(Text::WideToNarrow(SampleFile->GetPath()).c_str(), &SampleSpecs, &SampleBuffer, &BufferLength) == NULL) {
 			LOG_ERROR("Couldn't not open the sound file or is invalid");
