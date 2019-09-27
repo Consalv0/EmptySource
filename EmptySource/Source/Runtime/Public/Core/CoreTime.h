@@ -43,6 +43,8 @@ namespace EmptySource {
 		using Second = Duration<1000000, float>;
 		using Minute = Duration<166666667, float>;
 
+		static unsigned long long MaxDeltaMicro;
+
 	private:
 		friend class Application;
 

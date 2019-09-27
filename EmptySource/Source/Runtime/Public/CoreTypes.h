@@ -22,7 +22,7 @@ namespace EmptySource {
 	using TList = std::list<T>;
 
 	template<class K, class T>
-	using TDictionary = tsl::robin_map<K, T>;
+	using TDictionary = std::unordered_map<K, T>; // tsl::robin_map<K, T>;
 
 }
 

@@ -15,12 +15,22 @@ namespace EmptySource {
 
 	unsigned int Time::TickCount = 0;
 	unsigned long long Time::TickBuffer[MaxTickSamples];
-	unsigned long long Time::TickAverage = 30;
+	unsigned long long Time::TickAverage = 30; 
+	
+	unsigned long long Time::MaxDeltaMicro = Time::Second::GetSizeInMicro() / 30;
 
 	void Time::Tick() {
-		LastDeltaMicro = GetEpochTimeMicro() - LastUpdateMicro;
-		LastUpdateMicro = GetEpochTimeMicro();
+		unsigned long long TickTime = GetEpochTimeMicro();
+		LastDeltaMicro = TickTime - LastUpdateMicro;
 
+		if (LastDeltaMicro < MaxDeltaMicro) {
+			unsigned long long Delta = MaxDeltaMicro - LastDeltaMicro;
+			std::this_thread::sleep_for(std::chrono::microseconds(Delta - 1000));
+		}
+
+		LastUpdateMicro = GetEpochTimeMicro();
+		LastDeltaMicro += LastUpdateMicro - TickTime;
+		
 		TickBuffer[TickCount] = LastDeltaMicro;
 
 		TickAverage = 0;

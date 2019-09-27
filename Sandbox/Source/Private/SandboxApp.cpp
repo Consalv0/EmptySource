@@ -679,6 +679,8 @@ protected:
 			ImGui::Columns(2);
 			ImGui::Separator();
 
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxFrameRate"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &Time::MaxDeltaMicro, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
@@ -826,16 +828,18 @@ protected:
 					TextureManager::GetInstance().FreeTexture(SelectedTexture->GetName().GetDisplayName());
 					SelectedTexture = NULL;
 				}
-				if (SelectedTexture->GetLoadState() == LS_Loaded) {
-					ImGui::SameLine();
-					if (ImGui::Button("Reload")) 
-						SelectedTexture->Reload();
-					ImGui::SameLine();
-					if (ImGui::Button("Unload")) SelectedTexture->Unload();
-				} else if (SelectedTexture->GetLoadState() == LS_Unloaded) {
-					ImGui::SameLine();
-					if (ImGui::Button("Load")) SelectedTexture->Load();
-				}
+
+				if (SelectedTexture)
+					if (SelectedTexture->GetLoadState() == LS_Loaded) {
+						ImGui::SameLine();
+						if (ImGui::Button("Reload")) 
+							SelectedTexture->Reload();
+						ImGui::SameLine();
+						if (ImGui::Button("Unload")) SelectedTexture->Unload();
+					} else if (SelectedTexture->GetLoadState() == LS_Unloaded) {
+						ImGui::SameLine();
+						if (ImGui::Button("Load")) SelectedTexture->Load();
+					}
 			}
 			ImGui::Separator();
 

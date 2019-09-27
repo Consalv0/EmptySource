@@ -134,31 +134,24 @@ namespace EmptySource {
 	void Application::UpdateLoop() {
 		if (!bInitialized) return;
 
-		double RenderTimeSum = 0.0;
-		const double MaxFramerate = 1.0 / 80.0;
-
 		do {
-			MeshParser::UpdateStatus();
 			Time::Tick();
 
+			MeshParser::UpdateStatus();
+			
 			for (Layer * LayerIt : AppLayerStack)
 				LayerIt->OnUpdate(Time::GetTimeStamp());
 
-			RenderTimeSum += Time::GetDeltaTime<Time::Second>();
-			if (RenderTimeSum > MaxFramerate) {
-				RenderTimeSum = 0.0;
+			GetRenderPipeline().BeginFrame();
+			for (Layer* LayerPointer : AppLayerStack)
+				LayerPointer->OnRender();
 
-				GetRenderPipeline().BeginFrame();
-				for (Layer* LayerPointer : AppLayerStack)
-					LayerPointer->OnRender();
+			ImGuiLayerInstance->Begin();
+			for (Layer* LayerPointer : AppLayerStack)
+				LayerPointer->OnImGuiRender();
+			ImGuiLayerInstance->End();
 
-				ImGuiLayerInstance->Begin();
-				for (Layer* LayerPointer : AppLayerStack)
-					LayerPointer->OnImGuiRender();
-				ImGuiLayerInstance->End();
-
-				GetRenderPipeline().EndOfFrame();
-			}
+			GetRenderPipeline().EndOfFrame();
 
 		} while (
 			bRunning == true
