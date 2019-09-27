@@ -3,7 +3,7 @@
 #include "Core/GameObject.h"
 #include "..\..\Public\Core\GameObject.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	GGameObject::GGameObject() : OObject(L"GameObject"), Parent(NULL) {
 		LocalTransform = Transform();

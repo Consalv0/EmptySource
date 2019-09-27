@@ -3,7 +3,7 @@
 #include "Resources/ResourceManager.h"
 #include "Rendering/Material.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class MaterialManager : public ResourceManager {
 	public:

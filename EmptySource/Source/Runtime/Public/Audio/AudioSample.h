@@ -2,7 +2,7 @@
 
 #include "CoreTypes.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	enum class EAudioFormat {
 		NotSupported, Float32

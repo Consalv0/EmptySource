@@ -8,7 +8,7 @@
 #include "Rendering/MeshPrimitives.h"
 #include "Rendering/Material.h"
 
-namespace EmptySource {
+namespace ESource {
 	
 	RTexture::~RTexture() {
 		Unload();

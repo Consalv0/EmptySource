@@ -5,7 +5,7 @@
 #include "Rendering/Mesh.h"
 #include "Rendering/PixelMap.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct Text2DGenerator {
 	private:

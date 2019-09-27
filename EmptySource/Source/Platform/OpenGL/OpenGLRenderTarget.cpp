@@ -18,7 +18,7 @@
 
 #include "glad/glad.h"
 
-namespace EmptySource {
+namespace ESource {
 	
 	unsigned int GetOpenGLCubemapFace(const ECubemapFace & CF) {
 		switch (CF) {

@@ -3,7 +3,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/PixelMap.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	PixelMap::PixelMap()
 		: Width(0), Height(0), Depth(0), PixelFormat(PF_Unknown), Data(NULL) {

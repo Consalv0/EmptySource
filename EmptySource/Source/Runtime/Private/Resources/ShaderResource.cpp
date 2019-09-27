@@ -6,7 +6,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	bool RShader::IsValid() const {
 		return LoadState == LS_Loaded && ShaderPointer->IsValid();

@@ -5,7 +5,7 @@
 
 #include "glad/glad.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	const PixelFormatInfo PixelFormats[PF_MAX] = {
 		// Name               Size  Channels  PlatformFormat         Supported   EPixelFormat

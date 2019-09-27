@@ -4,7 +4,7 @@
 #include "Core/Name.h"
 #include "Resources/ResourceManager.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class ResourceHolder {
 	public:

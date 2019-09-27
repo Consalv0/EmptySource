@@ -3,7 +3,7 @@
 #include "Math/CoreMath.h"
 #include "Utility/TextFormatting.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace Text {
 		inline WString FormatMath(const IntVector2& Value) {

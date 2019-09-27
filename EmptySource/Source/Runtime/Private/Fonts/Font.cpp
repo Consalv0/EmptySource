@@ -10,7 +10,7 @@
 #include "Files/FileStream.h"
 #include "Fonts/Font.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FT_LibraryRec_ * Font::FreeTypeLibrary = NULL;
 

@@ -13,7 +13,7 @@
 
 #include <SDL.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
 		WindowsWindow& Data = *(WindowsWindow*)UserData;

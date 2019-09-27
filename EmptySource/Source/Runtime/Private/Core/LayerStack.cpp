@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Core/LayerStack.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	LayerStack::LayerStack() {
 	}

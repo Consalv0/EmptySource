@@ -6,13 +6,13 @@
 
 #include "../Public/CameraMovement.h"
 
-using namespace EmptySource;
+using namespace ESource;
 
-CCameraMovement::CCameraMovement(EmptySource::GGameObject & GameObject)
+CCameraMovement::CCameraMovement(ESource::GGameObject & GameObject)
 	: CComponent(L"CameraMovement", GameObject) {
 }
 
-void CCameraMovement::OnInputEvent(EmptySource::InputEvent & InEvent) {
+void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
 	EventDispatcher<InputEvent> Dispatcher(InEvent);
 	Dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent & Event) {
 		CursorPosition = Event.GetMousePosition();
@@ -25,7 +25,7 @@ void CCameraMovement::OnInputEvent(EmptySource::InputEvent & InEvent) {
 	});
 }
 
-void CCameraMovement::OnUpdate(const EmptySource::Timestamp & DeltaTime) {
+void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	if (Input::IsMouseButtonDown(3)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
 		CameraRotation = Quaternion::EulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.y, -Input::GetMouseX() - -LastCursorPosition.x));

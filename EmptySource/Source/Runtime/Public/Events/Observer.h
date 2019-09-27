@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include <functional>
 
-namespace EmptySource {
+namespace ESource {
 
 	struct Observer {
 	public:

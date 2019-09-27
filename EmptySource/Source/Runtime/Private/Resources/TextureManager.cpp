@@ -5,7 +5,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	RTexturePtr TextureManager::GetTexture(const IName & Name) const {
 		return GetTexture(Name.GetID());

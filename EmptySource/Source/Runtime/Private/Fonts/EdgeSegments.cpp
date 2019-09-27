@@ -22,7 +22,7 @@
 #include "Fonts/EdgeSegments.h"
 #include "Math/MathUtility.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	SignedDistance::SignedDistance() : Distance(-MathConstants::BigNumber), Dot(1) { }
 

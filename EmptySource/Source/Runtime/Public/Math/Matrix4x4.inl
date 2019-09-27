@@ -7,7 +7,7 @@
 #include "Math/Quaternion.h"
 #include "Math/Matrix4x4.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FORCEINLINE Matrix4x4::Matrix4x4() {
 		m0[0] = 1; m0[1] = 0; m0[2] = 0; m0[3] = 0;

@@ -4,7 +4,7 @@
 #include "Files/FileManager.h"
 #include "Rendering/PixelMap.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class ImageConversion {
 	public:

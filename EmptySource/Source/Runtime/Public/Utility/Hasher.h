@@ -2,7 +2,7 @@
 
 #include "CoreTypes.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	inline void HashCombine(std::size_t& seed) { }
 
@@ -62,7 +62,7 @@ namespace std {\
     template<> struct hash<type> {\
         std::size_t operator()(const type &t) const {\
             std::size_t ret = 0;\
-            EmptySource::HashCombine(ret, __VA_ARGS__);\
+            ESource::HashCombine(ret, __VA_ARGS__);\
             return ret;\
         }\
     };\

@@ -23,7 +23,7 @@
 #include "Math/Box2D.h"
 #include "Fonts/EdgeHolder.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	// A single closed contour of a shape.
 	class Shape2DContour {

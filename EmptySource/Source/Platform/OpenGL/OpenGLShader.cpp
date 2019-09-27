@@ -11,7 +11,7 @@
 
 #include "glad/glad.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	OpenGLShaderStage::OpenGLShaderStage(const NString & Code, EShaderStageType Type) : StageType(Type) {
 		bValid = false;

@@ -5,7 +5,7 @@
 
 #include "Utility/TextFormatting.h"
 
-namespace EmptySource {
+namespace ESource {
 	TDictionary<size_t, SpaceLayer*> SpaceLayer::AllSpaces = TDictionary<size_t, SpaceLayer*>();
 
 	SpaceLayer::SpaceLayer(const IName& InName, unsigned int Level) : Layer(InName, Level) {

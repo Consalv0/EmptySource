@@ -5,7 +5,7 @@
 #include "Rendering/Mesh.h"
 #include "Resources/ResourceManager.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct MeshManager : public ResourceManager {
 	public:

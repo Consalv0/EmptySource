@@ -5,7 +5,7 @@
 
 #include "Resources/ShaderResource.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class MaterialLayout {
 	public:

@@ -3,7 +3,7 @@
 #include "Core/GameObject.h"
 #include "Components/Component.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	CComponent::CComponent(GGameObject & GameObject) : OObject(L"Component"), Holder(GameObject) {
 	}

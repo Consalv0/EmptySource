@@ -3,7 +3,7 @@
 #include "Rendering/Mesh.h"
 #include "Math/Vector3.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace MeshPrimitives {
 		extern Mesh Cube;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace EmptySource {
+namespace ESource {
 
 	struct OpenGLInputTextureFormatInfo {
 		unsigned int    InternalFormat,

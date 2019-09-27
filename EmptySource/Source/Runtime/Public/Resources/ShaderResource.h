@@ -5,7 +5,7 @@
 #include "Resources/ShaderParameters.h"
 #include "Rendering/Shader.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	typedef std::shared_ptr<class RShader> RShaderPtr;
 

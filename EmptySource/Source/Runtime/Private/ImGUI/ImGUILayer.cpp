@@ -10,7 +10,7 @@
 #include <SDL.h>
 #include <GLAD/glad.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	ImGuiLayer::ImGuiLayer()
 		: Layer(L"ImGuiLayer", 1000) {

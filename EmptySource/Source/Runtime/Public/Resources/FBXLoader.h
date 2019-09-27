@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Files/FileManager.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class FBXLoader {
 	private:

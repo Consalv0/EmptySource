@@ -9,7 +9,7 @@
 
 #include "Rendering/Rendering.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	ShaderStage * ShaderStage::CreateFromText(const NString & Code, EShaderStageType Type) {
 		switch (Rendering::GetAPI()) {

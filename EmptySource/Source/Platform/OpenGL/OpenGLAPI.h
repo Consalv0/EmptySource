@@ -1,6 +1,6 @@
 #pragma once
 
-namespace EmptySource {
+namespace ESource {
 
 	class OpenGLAPI : public RenderingAPI {
 	public:

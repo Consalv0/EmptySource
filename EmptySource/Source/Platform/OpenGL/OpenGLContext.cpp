@@ -12,7 +12,7 @@
 #include <SDL_opengl.h>
 
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace Debug {
 

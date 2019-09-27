@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include <algorithm>
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace Text {
 

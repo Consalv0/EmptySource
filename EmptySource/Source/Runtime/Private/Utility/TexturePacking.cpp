@@ -5,7 +5,7 @@
 #include "Rendering/PixelMap.h"
 #include "Utility/TexturePacking.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	template<typename T>
 	typename TexturePacking<T>::Node * TexturePacking<T>::Node::Insert(const T & Element) {

@@ -11,7 +11,7 @@
 
 #include "Utility/TextFormattingMath.h"
 
-namespace EmptySource {
+namespace ESource {
 	
 	RenderStage::RenderStage(const IName & Name, RenderPipeline * Pipeline) 
 		: Name(Name), Scene(), Pipeline(Pipeline) {

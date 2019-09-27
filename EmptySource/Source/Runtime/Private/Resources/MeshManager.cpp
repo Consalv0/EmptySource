@@ -6,7 +6,7 @@
 #include <future>
 #include <thread>
 
-namespace EmptySource {
+namespace ESource {
 
 	MeshPtr MeshManager::GetMesh(const WString & Name) const {
 		size_t UID = WStringToHash(Name);

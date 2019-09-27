@@ -5,7 +5,7 @@
 #include "Fonts/Text2DGenerator.h"
 #include "Fonts/SDFGenerator.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	void Text2DGenerator::PrepareCharacters(const WChar * Characters, const size_t & Count) {
 		TextFont->SetGlyphHeight(GlyphHeight);

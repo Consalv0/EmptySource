@@ -13,7 +13,7 @@
 
 #include "Rendering/Rendering.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	RenderTargetPtr RenderTarget::Create() {
 		switch (Rendering::GetAPI()) {

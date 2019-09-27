@@ -4,7 +4,7 @@
 
 struct SDL_Window;
 
-namespace EmptySource {
+namespace ESource {
 
 	class OpenGLContext : public GraphicContext {
 	private:

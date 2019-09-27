@@ -3,7 +3,7 @@
 #include <math.h>
 #include <algorithm>
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace MathConstants {
 		static constexpr float Pi = 3.1415926535897932F;

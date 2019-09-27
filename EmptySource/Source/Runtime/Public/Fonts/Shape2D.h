@@ -25,7 +25,7 @@
 #include "Math/Box2D.h"
 #include "Fonts/Shape2DContour.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	// Vector shape representation.
 	class Shape2D {

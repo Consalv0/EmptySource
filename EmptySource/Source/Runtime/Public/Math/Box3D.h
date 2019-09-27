@@ -4,7 +4,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/Vector3.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct Box3D {
 	public:

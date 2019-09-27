@@ -3,7 +3,7 @@
 #include "Resources/ResourceManager.h"
 #include "Audio/AudioSample.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class AudioManager : public ResourceManager {
 	public:

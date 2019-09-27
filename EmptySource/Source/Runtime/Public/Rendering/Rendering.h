@@ -5,7 +5,7 @@
 #include "Rendering/Shader.h"
 #include "Rendering/RenderingAPI.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class Rendering {
 	public:

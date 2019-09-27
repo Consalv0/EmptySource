@@ -10,7 +10,7 @@
 
 #include "glad/glad.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	// Vertex Buffer //
 

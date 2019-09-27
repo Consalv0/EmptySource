@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include "Audio/AudioSample.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class AudioDevice {
 	public:

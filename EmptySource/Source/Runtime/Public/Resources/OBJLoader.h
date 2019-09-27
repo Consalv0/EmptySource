@@ -4,7 +4,7 @@
 #include "Files/FileManager.h"
 #include "Utility/Hasher.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class OBJLoader {
 	private:
@@ -68,7 +68,7 @@ namespace EmptySource {
 
 }
 
-MAKE_HASHABLE(EmptySource::Vector2, t.x, t.y)
-MAKE_HASHABLE(EmptySource::Vector3, t.x, t.y, t.z)
-MAKE_HASHABLE(EmptySource::Vector4, t.x, t.y, t.z, t.w)
-MAKE_HASHABLE(EmptySource::MeshVertex, t.Position, t.Normal, t.Tangent, t.UV0, t.UV1, t.Color)
+MAKE_HASHABLE(ESource::Vector2, t.x, t.y)
+MAKE_HASHABLE(ESource::Vector3, t.x, t.y, t.z)
+MAKE_HASHABLE(ESource::Vector4, t.x, t.y, t.z, t.w)
+MAKE_HASHABLE(ESource::MeshVertex, t.Position, t.Normal, t.Tangent, t.UV0, t.UV1, t.Color)

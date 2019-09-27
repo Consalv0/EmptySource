@@ -10,7 +10,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	RenderPipeline::RenderPipeline() :
 		RenderScale(1.F), RenderStages() {

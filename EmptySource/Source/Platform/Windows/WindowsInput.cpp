@@ -6,7 +6,7 @@
 
 #include <SDL.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	Input * Input::Instance = new WindowsInput();
 

@@ -5,7 +5,7 @@
 #include "Fonts/Shape2D.h"
 #include "Rendering/PixelMap.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class SDFGenerator {
 	private:

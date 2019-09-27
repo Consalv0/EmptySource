@@ -5,7 +5,7 @@
 
 #include <functional>
 
-namespace EmptySource {
+namespace ESource {
 
 	template<typename ...Args>
 	struct Task {

@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Core/Object.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	OObject::OObject() : Name(L"Object") {
 		bAttached = false;

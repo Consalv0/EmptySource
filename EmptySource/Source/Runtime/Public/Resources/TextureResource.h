@@ -4,7 +4,7 @@
 #include "Resources/ResourceHolder.h"
 #include "Rendering/Texture.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	typedef std::shared_ptr<class RTexture> RTexturePtr;
 

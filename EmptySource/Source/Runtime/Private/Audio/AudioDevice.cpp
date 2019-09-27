@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <SDL_audio.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	AudioDevice::AudioDevice() : PlayInfoList() {
 		Volume = 1.F;

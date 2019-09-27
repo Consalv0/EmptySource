@@ -27,7 +27,7 @@
 #define MSDFGEN_CUBIC_SEARCH_STARTS 4
 #define MSDFGEN_CUBIC_SEARCH_STEPS 4
 
-namespace EmptySource {
+namespace ESource {
 
 	// Edge color specifies which color channels an edge belongs to.
 	enum EdgeColor {

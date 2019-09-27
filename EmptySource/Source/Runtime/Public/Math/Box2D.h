@@ -3,7 +3,7 @@
 #include "Math/MathUtility.h"
 #include "Math/Vector2.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct Box2D {
 	public:

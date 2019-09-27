@@ -11,7 +11,7 @@
 
 #include "Components/ComponentRenderable.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Renderer", GameObject), ActiveMesh() {
 	}

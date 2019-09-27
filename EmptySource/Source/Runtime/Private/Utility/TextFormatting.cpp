@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Utility/TextFormatting.h"
 
-namespace EmptySource::Text {
+namespace ESource::Text {
 
 	NString WideToNarrow(const WChar *From) {
 		if (From == NULL)

@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Audio/AudioSample.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	AudioSample::AudioSample(unsigned char * Buffer, unsigned int SampleSize, unsigned int BufferLength, unsigned int Frecuency, unsigned int ChannelCount) 
 		: SampleSize(SampleSize), BufferLength(BufferLength), Frecuency(Frecuency), ChannelCount(ChannelCount), Format(EAudioFormat::Float32)

@@ -2,7 +2,7 @@
 
 #include "Rendering/Rendering.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct MeshVertex {
 		Vector3 Position;

@@ -23,15 +23,15 @@ extern "C" {
 #include <fcntl.h>
 #endif
 
-extern EmptySource::Application * EmptySource::CreateApplication();
+extern ESource::Application * ESource::CreateApplication();
 
 int main(int argc, char **argv) {
 #ifdef ES_PLATFORM_WINDOWS
 	_setmode(_fileno(stdout), _O_U8TEXT);
 #endif
 
-	EmptySource::Log::Initialize();
-	EmptySource::Application::GetInstance()->Run();
+	ESource::Log::Initialize();
+	ESource::Application::GetInstance()->Run();
 
 #ifdef ES_DEBUG
 	_getch();

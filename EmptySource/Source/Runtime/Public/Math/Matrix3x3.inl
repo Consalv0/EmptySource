@@ -6,7 +6,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/Matrix3x3.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FORCEINLINE Matrix3x3::Matrix3x3() {
 		m0[0] = 1; m0[1] = 0; m0[2] = 0;

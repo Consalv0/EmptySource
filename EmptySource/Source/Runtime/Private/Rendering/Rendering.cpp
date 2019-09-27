@@ -5,7 +5,7 @@
 #include "Platform/OpenGL/OpenGLAPI.h"
 
 
-namespace EmptySource {
+namespace ESource {
 
 	RenderingAPI * Rendering::RendererAppInterface = new OpenGLAPI();
 

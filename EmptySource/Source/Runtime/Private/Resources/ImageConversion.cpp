@@ -13,7 +13,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	bool ImageConversion::LoadFromFile(PixelMap& RefBitmap, FileStream * File, EPixelFormat Format, bool FlipVertically) {
 		if (File == NULL) return false;

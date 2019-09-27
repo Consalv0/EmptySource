@@ -1,6 +1,6 @@
 #pragma once
 
-namespace EmptySource {
+namespace ESource {
 
 	class OpenGLVertexBuffer : public VertexBuffer {
 	public:

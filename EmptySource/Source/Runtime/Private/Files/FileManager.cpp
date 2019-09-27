@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <stdlib.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	FileList FileManager::Files = FileList();
 

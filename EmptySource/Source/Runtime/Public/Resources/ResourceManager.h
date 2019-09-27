@@ -2,7 +2,7 @@
 
 #include "Files/FileManager.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	enum EResourceLoadState {
 		LS_Loaded, LS_Loading, LS_Unloaded, LS_Unloading

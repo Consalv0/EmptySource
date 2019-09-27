@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace EmptySource {
+namespace ESource {
 
 	struct FileStream {
 	private:

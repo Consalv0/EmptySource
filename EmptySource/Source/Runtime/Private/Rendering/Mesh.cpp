@@ -3,7 +3,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/Mesh.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	MeshVertex::MeshVertex(const Vector3 & P, const Vector3 & N, const Vector2 & UV) :
 		Position(P), Normal(N), Tangent(), UV0(UV), UV1(UV), Color() {

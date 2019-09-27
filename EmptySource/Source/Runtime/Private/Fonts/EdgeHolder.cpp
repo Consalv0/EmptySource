@@ -21,7 +21,7 @@
 #include "CoreMinimal.h"
 #include "Fonts/EdgeHolder.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	EdgeHolder::EdgeHolder()
 		: edgeSegment(NULL) { }

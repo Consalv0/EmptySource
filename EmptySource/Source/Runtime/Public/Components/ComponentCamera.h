@@ -2,7 +2,7 @@
 
 #include "Components/Component.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class CCamera : public CComponent {
 		IMPLEMENT_COMPONENT(CCamera)

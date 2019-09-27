@@ -5,7 +5,7 @@
 #include "Rendering/Mesh.h"
 #include "Rendering/Material.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class RenderPipeline {
 	protected:

@@ -5,7 +5,7 @@
 #include "Events/InputEvent.h"
 #include "Core/CoreTime.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class Layer {
 	public:

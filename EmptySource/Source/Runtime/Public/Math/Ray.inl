@@ -1,7 +1,7 @@
 
 #include "Math/Ray.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FORCEINLINE Ray::Ray() {
 		Origin = Direction = Vector3();

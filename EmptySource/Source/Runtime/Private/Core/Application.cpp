@@ -34,7 +34,7 @@
 
 #include <SDL.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	Mesh MeshPrimitives::Cube;
 	Mesh MeshPrimitives::Quad;

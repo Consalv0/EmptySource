@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Events/Observer.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	void Observer::Call() const
 	{

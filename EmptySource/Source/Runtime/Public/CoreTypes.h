@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace EmptySource {
+namespace ESource {
 
 	typedef char			NChar;
 	typedef wchar_t			WChar;
@@ -33,7 +33,7 @@ namespace EmptySource {
 #define HOST_DEVICE
 #endif
 
-#ifdef __APPLE__
+#ifdef ES_PLATFORM_APPLE
 #define FORCEINLINE inline
 #else
 #define FORCEINLINE __forceinline

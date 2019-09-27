@@ -2,7 +2,7 @@
 
 #include "Core/Layer.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class LayerStack {
 	public:

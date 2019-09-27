@@ -14,7 +14,7 @@
 #include "../Public/CameraMovement.h"
 #include "../External/IMGUI/imgui.h"
 
-using namespace EmptySource;
+using namespace ESource;
 
 void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &NarrowMaterialNameList,
 	TArray<IName> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<WString> &MeshNameList, SandboxSpaceLayer * AppLayer)
@@ -238,5 +238,5 @@ void SandboxSpaceLayer::OnImGuiRender() {
 	ImGui::End();
 }
 
-SandboxSpaceLayer::SandboxSpaceLayer(const EmptySource::WString & Name, unsigned int Level) : SpaceLayer(Name, Level) {
+SandboxSpaceLayer::SandboxSpaceLayer(const ESource::WString & Name, unsigned int Level) : SpaceLayer(Name, Level) {
 }

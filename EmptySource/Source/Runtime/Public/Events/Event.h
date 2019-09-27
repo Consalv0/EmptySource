@@ -8,7 +8,7 @@
 
 #define IMPLEMENT_EVENT_CATEGORY(Category) virtual unsigned int GetCategoryFlags() const override { return Category; }
 
-namespace EmptySource {
+namespace ESource {
 
 	class Event {
 	public:

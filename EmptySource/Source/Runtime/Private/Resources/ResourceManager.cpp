@@ -4,7 +4,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace EmptySource {
+namespace ESource {
 	
 	FileStream * ResourceManager::GetResourcesFile(const WString & ResourceFilePath) {
 		FileStream * ResourceFile = FileManager::GetFile(ResourceFilePath);

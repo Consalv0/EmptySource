@@ -11,7 +11,7 @@
 
 #include "Components/ComponentCamera.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	CCamera::CCamera(GGameObject & GameObject) 
 		: CComponent(L"Camera", GameObject), ApertureAngle(60.F), CullingPlanes(0.03F, 1000.F) {

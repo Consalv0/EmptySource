@@ -4,7 +4,7 @@
 #include "Resources/ShaderResource.h"
 #include "Resources/ShaderParameters.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class ShaderManager : public ResourceManager {
 	public:

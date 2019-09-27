@@ -2,7 +2,7 @@
 
 #include "Events/Event.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	enum class EWindowEventType {
 		WindowClose,

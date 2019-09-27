@@ -6,7 +6,7 @@
 
 #include "Utility/TextFormatting.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FbxManager * FBXLoader::gSdkManager = NULL;
 

@@ -12,7 +12,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	class Log {
 	public:
@@ -28,15 +28,15 @@ namespace EmptySource {
 }
 
 // Core log macros
-#define LOG_CORE_DEBUG(...)    ::EmptySource::Log::GetCoreLogger()->debug(__VA_ARGS__)
-#define LOG_CORE_INFO(...)     ::EmptySource::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define LOG_CORE_WARN(...)     ::EmptySource::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define LOG_CORE_ERROR(...)    ::EmptySource::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define LOG_CORE_CRITICAL(...) ::EmptySource::Log::GetCoreLogger()->critical(__VA_ARGS__)
+#define LOG_CORE_DEBUG(...)    ::ESource::Log::GetCoreLogger()->debug(__VA_ARGS__)
+#define LOG_CORE_INFO(...)     ::ESource::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define LOG_CORE_WARN(...)     ::ESource::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define LOG_CORE_ERROR(...)    ::ESource::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define LOG_CORE_CRITICAL(...) ::ESource::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
 // Client log macros
-#define LOG_DEBUG(...)         ::EmptySource::Log::GetClientLogger()->debug(__VA_ARGS__)
-#define LOG_INFO(...)          ::EmptySource::Log::GetClientLogger()->info(__VA_ARGS__)
-#define LOG_WARN(...)          ::EmptySource::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define LOG_ERROR(...)         ::EmptySource::Log::GetClientLogger()->error(__VA_ARGS__)
-#define LOG_CRITICAL(...)      ::EmptySource::Log::GetClientLogger()->critical(__VA_ARGS__)
+#define LOG_DEBUG(...)         ::ESource::Log::GetClientLogger()->debug(__VA_ARGS__)
+#define LOG_INFO(...)          ::ESource::Log::GetClientLogger()->info(__VA_ARGS__)
+#define LOG_WARN(...)          ::ESource::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define LOG_ERROR(...)         ::ESource::Log::GetClientLogger()->error(__VA_ARGS__)
+#define LOG_CRITICAL(...)      ::ESource::Log::GetClientLogger()->critical(__VA_ARGS__)

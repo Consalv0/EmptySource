@@ -21,7 +21,7 @@
 #include "CoreMinimal.h"
 #include "Fonts/Shape2D.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	Shape2D::Shape2D() : bInverseYAxis(false) { }
 

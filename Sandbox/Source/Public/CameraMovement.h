@@ -2,23 +2,23 @@
 
 #include "Components/Component.h"
 
-class CCameraMovement : public EmptySource::CComponent {
+class CCameraMovement : public ESource::CComponent {
 	IMPLEMENT_COMPONENT(CCameraMovement)
 public:
-	EmptySource::Quaternion CameraRotation;
-	EmptySource::Quaternion LastCameraRotation;
-	EmptySource::Vector2 CursorPosition;
-	EmptySource::Vector2 LastCursorPosition;
+	ESource::Quaternion CameraRotation;
+	ESource::Quaternion LastCameraRotation;
+	ESource::Vector2 CursorPosition;
+	ESource::Vector2 LastCursorPosition;
 	float ViewSpeed = 3;
 
 protected:
-	typedef EmptySource::CComponent Supper;
+	typedef ESource::CComponent Supper;
 
-	CCameraMovement(EmptySource::GGameObject & GameObject);
+	CCameraMovement(ESource::GGameObject & GameObject);
 
-	virtual void OnInputEvent(EmptySource::InputEvent & InEvent) override;
+	virtual void OnInputEvent(ESource::InputEvent & InEvent) override;
 
-	virtual void OnUpdate(const EmptySource::Timestamp & DeltaTime) override;
+	virtual void OnUpdate(const ESource::Timestamp & DeltaTime) override;
 
 	virtual void OnDelete() override;
 };

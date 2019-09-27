@@ -3,12 +3,12 @@
 #include "Core/Object.h"
 
 #define IMPLEMENT_COMPONENT(Name) public: \
-inline virtual EmptySource::WString GetObjectName() override { return L#Name;} \
-static EmptySource::WString GetStaticObjectName() { return L#Name;} \
+inline virtual ESource::WString GetObjectName() override { return L#Name;} \
+static ESource::WString GetStaticObjectName() { return L#Name;} \
 protected: \
-friend class EmptySource::GGameObject; friend class EmptySource::SpaceLayer; 
+friend class ESource::GGameObject; friend class ESource::SpaceLayer; 
 
-namespace EmptySource {
+namespace ESource {
 
 	class GGameObject;
 

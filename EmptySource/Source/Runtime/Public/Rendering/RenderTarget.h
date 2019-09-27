@@ -5,7 +5,7 @@
 #include "Math/IntVector2.h"
 #include "Math/Box2D.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	typedef std::shared_ptr<class RenderTarget> RenderTargetPtr;
 

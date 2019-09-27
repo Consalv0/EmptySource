@@ -5,7 +5,7 @@
 #include "Fonts/SDFGenerator.h"
 #include "Fonts/Glyph.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FontGlyph::FontGlyph() {
 		UnicodeValue = 0;

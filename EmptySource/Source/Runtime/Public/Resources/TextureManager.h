@@ -3,7 +3,7 @@
 #include "Resources/ResourceManager.h"
 #include "Resources/TextureResource.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class TextureManager : public ResourceManager {
 	public:

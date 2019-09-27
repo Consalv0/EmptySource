@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Core/Transform.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	Transform::Transform() : Position(), Rotation(), Scale(1.F) {
 	}

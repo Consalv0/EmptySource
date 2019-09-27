@@ -3,7 +3,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Fonts/SDFGenerator.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	int SDFGenerator::Width = 0, SDFGenerator::Height = 0;
 	SDFGenerator::Pixel * SDFGenerator::Pixels = NULL;

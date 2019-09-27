@@ -6,7 +6,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/GraphicContext.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	enum EWindowMode {
 		WM_Windowed = 0,
@@ -23,7 +23,7 @@ namespace EmptySource {
 		unsigned int Height;
 
 		WindowProperties(
-			const WString& Title = L"EmptySource",
+			const WString& Title = L"ESource",
 			unsigned int Width = 1280,
 			unsigned int Height = 720)
 			: Name(Title), Width(Width), Height(Height) {

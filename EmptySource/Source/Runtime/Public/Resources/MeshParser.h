@@ -7,7 +7,7 @@
 #include <queue>
 #include <future>
 
-namespace EmptySource {
+namespace ESource {
 
 	class MeshParser {
 	public:

@@ -1,12 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Core/EmptySource.h"
-#include "Core/CoreTime.h"
-#include "Core/Window.h"
 #include "Core/SpaceLayer.h"
-#include "Core/GameObject.h"
-#include "Core/Transform.h"
-#include "Core/Input.h"
 
 #include "Math/CoreMath.h"
 #include "Math/Physics.h"
@@ -54,7 +49,7 @@
 
 #include "../Public/SandboxSpaceLayer.h"
 
-using namespace EmptySource;
+using namespace ESource;
 
 class SandboxLayer : public Layer {
 private:
@@ -1376,6 +1371,6 @@ public:
 	}
 };
 
-EmptySource::Application * EmptySource::CreateApplication() {
+ESource::Application * ESource::CreateApplication() {
 	return new SandboxApplication();
 }

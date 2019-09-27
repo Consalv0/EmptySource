@@ -3,7 +3,7 @@
 #include "Events/Event.h"
 #include "Math/CoreMath.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	enum class EInputEventType {
 		KeyPressed,

@@ -3,7 +3,7 @@
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	std::shared_ptr<spdlog::logger> Log::CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::ClientLogger;

@@ -6,7 +6,7 @@
 #include <nvml.h>
 #endif
 
-namespace EmptySource {
+namespace ESource {
 
 	WindowsDeviceFunctions::WindowsDeviceFunctions() {
 #ifdef ES_PLATFORM_NVML

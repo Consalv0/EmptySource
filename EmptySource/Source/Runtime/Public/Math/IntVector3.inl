@@ -8,7 +8,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FORCEINLINE IntVector3::IntVector3()
 		: x(0), y(0), z(0) {

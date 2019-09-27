@@ -7,7 +7,7 @@
 #include "Math/Vector4.h"
 #include "Math/Vector2.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FORCEINLINE Vector2::Vector2()
 		: x(0), y(0) {

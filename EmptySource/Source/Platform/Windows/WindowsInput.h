@@ -2,7 +2,7 @@
 
 #include "Core/Input.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class WindowsInput : public Input {
 	protected:

@@ -6,7 +6,7 @@
 #include <chrono>
 #include <ctime>
 
-namespace EmptySource {
+namespace ESource {
 
 	unsigned long long Time::LastUpdateMicro = GetEpochTimeMicro();
 	unsigned long long Time::LastDeltaMicro = 0;

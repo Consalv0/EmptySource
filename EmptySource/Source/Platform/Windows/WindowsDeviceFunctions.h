@@ -2,7 +2,7 @@
 
 #include "Platform/DeviceFunctions.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class WindowsDeviceFunctions : public DeviceFunctions {
 	public:

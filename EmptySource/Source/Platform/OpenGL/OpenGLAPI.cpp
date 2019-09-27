@@ -12,14 +12,14 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	unsigned int OpenGLAPI::UsageModeToDrawBaseType(EUsageMode Mode) {
 		switch (Mode) {
-			case EmptySource::UM_Default:    return GL_STATIC_DRAW;
-			case EmptySource::UM_Static:     return GL_STATIC_DRAW;
-			case EmptySource::UM_Dynamic:    return GL_DYNAMIC_DRAW;
-			case EmptySource::UM_Inmutable:  return GL_STREAM_DRAW;
+			case ESource::UM_Default:    return GL_STATIC_DRAW;
+			case ESource::UM_Static:     return GL_STATIC_DRAW;
+			case ESource::UM_Dynamic:    return GL_DYNAMIC_DRAW;
+			case ESource::UM_Inmutable:  return GL_STREAM_DRAW;
 		}
 
 		ES_CORE_ASSERT(true, "Unknown OpenGL EUsageMode!");
@@ -50,17 +50,17 @@ namespace EmptySource {
 
 	unsigned int OpenGLAPI::BlendFactorToBaseType(EBlendFactor Factor) {
 		switch (Factor) {
-		case EmptySource::BF_Zero:				return GL_ZERO;
-		case EmptySource::BF_One:				return GL_ONE;
-		case EmptySource::BF_SrcAlpha:			return GL_SRC_ALPHA;
-		case EmptySource::BF_SrcColor:			return GL_SRC_COLOR;
-		case EmptySource::BF_DstAlpha:			return GL_DST_ALPHA;
-		case EmptySource::BF_DstColor:			return GL_DST_COLOR;
-		case EmptySource::BF_OneMinusSrcAlpha:	return GL_ONE_MINUS_SRC_ALPHA;
-		case EmptySource::BF_OneMinusSrcColor:	return GL_ONE_MINUS_SRC_COLOR;
-		case EmptySource::BF_OneMinusDstAlpha:	return GL_ONE_MINUS_DST_ALPHA;
-		case EmptySource::BF_OneMinusDstColor:	return GL_ONE_MINUS_DST_COLOR;
-		case EmptySource::BF_None:
+		case ESource::BF_Zero:				return GL_ZERO;
+		case ESource::BF_One:				return GL_ONE;
+		case ESource::BF_SrcAlpha:			return GL_SRC_ALPHA;
+		case ESource::BF_SrcColor:			return GL_SRC_COLOR;
+		case ESource::BF_DstAlpha:			return GL_DST_ALPHA;
+		case ESource::BF_DstColor:			return GL_DST_COLOR;
+		case ESource::BF_OneMinusSrcAlpha:	return GL_ONE_MINUS_SRC_ALPHA;
+		case ESource::BF_OneMinusSrcColor:	return GL_ONE_MINUS_SRC_COLOR;
+		case ESource::BF_OneMinusDstAlpha:	return GL_ONE_MINUS_DST_ALPHA;
+		case ESource::BF_OneMinusDstColor:	return GL_ONE_MINUS_DST_COLOR;
+		case ESource::BF_None:
 		default:
 			return GL_NONE;
 		}

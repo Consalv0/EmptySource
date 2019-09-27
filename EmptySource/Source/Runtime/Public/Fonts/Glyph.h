@@ -8,7 +8,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/PixelMap.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct FontGlyph {
 	public:

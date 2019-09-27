@@ -9,7 +9,7 @@
 #include "Math/Matrix3x3.h"
 #include "Math/Quaternion.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	FORCEINLINE Quaternion::Quaternion()
 		:w(1), x(0), y(0), z(0)

@@ -22,7 +22,7 @@
 
 #include "Fonts/EdgeSegments.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	/// Container for a single edge of dynamic type.
 	class EdgeHolder {

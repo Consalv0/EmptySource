@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include "Files/FileStream.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	typedef TArray<FileStream*> FileList;
 

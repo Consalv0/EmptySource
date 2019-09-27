@@ -4,7 +4,7 @@
 #include "Utility/TextFormatting.h"
 #include "..\..\Public\Core\Name.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	TDictionary<size_t, WString> IName::NamesTable = TDictionary<size_t, WString>();
 	TDictionary<size_t, size_t> IName::NameCountTable = TDictionary<size_t, size_t>();

@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 #include "Resources/MaterialManager.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	MaterialPtr MaterialManager::GetMaterial(const IName & Name) const {
 		return GetMaterial(Name.GetID());

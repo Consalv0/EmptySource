@@ -2,7 +2,7 @@
 
 #include "Rendering/RenderTarget.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	static unsigned int GetOpenGLCubemapFace(const ECubemapFace & CF);
 

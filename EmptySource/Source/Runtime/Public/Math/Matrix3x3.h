@@ -1,6 +1,6 @@
 #pragma once
 
-namespace EmptySource {
+namespace ESource {
 
 	struct Vector3;
 	struct Matrix4x4;

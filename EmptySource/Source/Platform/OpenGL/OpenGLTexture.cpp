@@ -22,7 +22,7 @@
 
 #include "glad/glad.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	OpenGLTexture2D::OpenGLTexture2D(
 		const IntVector2 & Size,

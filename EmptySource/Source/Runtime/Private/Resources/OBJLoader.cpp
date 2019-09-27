@@ -17,7 +17,7 @@
 #endif
 #endif
 
-namespace EmptySource {
+namespace ESource {
 
 	// Original crack_atof version is at http://crackprogramming.blogspot.sg/2012/10/implement-atof.html
 	// But it cannot convert floating point with high +/- exponent.

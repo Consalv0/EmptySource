@@ -22,7 +22,7 @@
 #include "Fonts/Shape2DContour.h"
 #include "Math/MathUtility.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	void Shape2DContour::AddEdge(const EdgeHolder &Edge) {
 		Edges.push_back(Edge);

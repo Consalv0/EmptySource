@@ -1,6 +1,6 @@
 #pragma once
 
-namespace EmptySource {
+namespace ESource {
 
 	unsigned int ShaderDataTypeSize(EShaderDataType Type);
 

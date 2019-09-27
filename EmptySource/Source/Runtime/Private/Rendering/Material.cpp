@@ -11,7 +11,7 @@
 #include "Rendering/Material.h"
 #include "Rendering/Rendering.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	Material::Material(const IName & Name) : Name(Name) {
 		Shader = NULL;
@@ -134,35 +134,35 @@ namespace EmptySource {
 			unsigned int i = 0;
 			for (auto& Uniform : ParameterLayout) {
 				switch (Uniform.Value.GetType()) {
-				case EmptySource::EShaderUniformType::Matrix4x4Array:
+				case ESource::EShaderUniformType::Matrix4x4Array:
 					SetMatrix4x4Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Matrix4x4Array.size()); break;
-				case EmptySource::EShaderUniformType::Matrix4x4:
+				case ESource::EShaderUniformType::Matrix4x4:
 					SetMatrix4x4Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
-				case EmptySource::EShaderUniformType::FloatArray:
+				case ESource::EShaderUniformType::FloatArray:
 					SetFloat1Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.FloatArray.size()); break;
-				case EmptySource::EShaderUniformType::Float:
+				case ESource::EShaderUniformType::Float:
 					SetFloat1Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
-				case EmptySource::EShaderUniformType::Float2DArray:
+				case ESource::EShaderUniformType::Float2DArray:
 					SetFloat2Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Float2DArray.size()); break;
-				case EmptySource::EShaderUniformType::Float2D:
+				case ESource::EShaderUniformType::Float2D:
 					SetFloat2Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
-				case EmptySource::EShaderUniformType::Float3DArray:
+				case ESource::EShaderUniformType::Float3DArray:
 					SetFloat3Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Float3DArray.size()); break;
-				case EmptySource::EShaderUniformType::Float3D:
+				case ESource::EShaderUniformType::Float3D:
 					SetFloat3Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
-				case EmptySource::EShaderUniformType::Float4DArray:
+				case ESource::EShaderUniformType::Float4DArray:
 					SetFloat3Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), (int)Uniform.Value.Float3DArray.size()); break;
-				case EmptySource::EShaderUniformType::Float4D:
+				case ESource::EShaderUniformType::Float4D:
 					SetFloat4Array(Uniform.Name.c_str(), (float *)Uniform.Value.PointerToValue(), 1); break;
-				case EmptySource::EShaderUniformType::IntArray:
+				case ESource::EShaderUniformType::IntArray:
 					SetInt1Array(Uniform.Name.c_str(), (int *)Uniform.Value.PointerToValue(), (int)Uniform.Value.IntArray.size()); break;
-				case EmptySource::EShaderUniformType::Int:
+				case ESource::EShaderUniformType::Int:
 					SetInt1Array(Uniform.Name.c_str(), (int *)Uniform.Value.PointerToValue(), 1); break;
-				case EmptySource::EShaderUniformType::Texture2D:
+				case ESource::EShaderUniformType::Texture2D:
 					SetTexture2D(Uniform.Name.c_str(), Uniform.Value.Texture, i); i++; break;
-				case EmptySource::EShaderUniformType::Cubemap:
+				case ESource::EShaderUniformType::Cubemap:
 					SetTextureCubemap(Uniform.Name.c_str(), Uniform.Value.Texture, i); i++; break;
-				case EmptySource::EShaderUniformType::None:
+				case ESource::EShaderUniformType::None:
 				default:
 					break;
 				}

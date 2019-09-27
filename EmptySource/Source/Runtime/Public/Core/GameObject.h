@@ -4,7 +4,7 @@
 #include "Core/Transform.h"
 #include "Components/Component.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	//* Basic class for any object that contains components and a spatial representation
 	class GGameObject : public OObject {

@@ -10,9 +10,9 @@
 
 #include "Rendering/Rendering.h"
 
-namespace EmptySource {
+namespace ESource {
 	
-	Texture2D * EmptySource::Texture2D::Create(
+	Texture2D * ESource::Texture2D::Create(
 		const IntVector2 & Size, const EPixelFormat ColorFormat, const EFilterMode & FilterMode,
 		const ESamplerAddressMode & AddressMode) 
 	{
@@ -26,7 +26,7 @@ namespace EmptySource {
 		}
 	}
 	
-	Texture2D * EmptySource::Texture2D::Create(
+	Texture2D * ESource::Texture2D::Create(
 		const IntVector2 & Size, const EPixelFormat ColorFormat, const EFilterMode & FilterMode,
 		const ESamplerAddressMode & AddressMode, const EPixelFormat InputFormat, const void * BufferData)
 	{
@@ -40,7 +40,7 @@ namespace EmptySource {
 		}
 	}
 
-	Cubemap * EmptySource::Cubemap::Create(
+	Cubemap * ESource::Cubemap::Create(
 		const unsigned int & Size, const EPixelFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
 	{
 		switch (Rendering::GetAPI()) {

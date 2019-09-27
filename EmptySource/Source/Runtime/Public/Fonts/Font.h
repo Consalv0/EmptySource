@@ -2,7 +2,7 @@
 
 #include "Fonts/Glyph.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct FT_Context {
 		Point2 position;

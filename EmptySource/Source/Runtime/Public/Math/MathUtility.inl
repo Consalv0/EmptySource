@@ -1,7 +1,7 @@
 
 #include "Math/MathUtility.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace MathEquations {
 		int SolveQuadratic(float x[2], float a, float b, float c) {

@@ -5,7 +5,7 @@
 #include <yaml-cpp/yaml.h>
 #include <SDL_audio.h>
 
-namespace EmptySource {
+namespace ESource {
 
 	AudioSamplePtr AudioManager::GetAudioSample(const WString & Name) const {
 		size_t UID = WStringToHash(Name);

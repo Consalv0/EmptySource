@@ -6,7 +6,7 @@
 #include "Events/WindowEvent.h"
 #include "Events/InputEvent.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class ImGuiLayer : public Layer {
 	public:

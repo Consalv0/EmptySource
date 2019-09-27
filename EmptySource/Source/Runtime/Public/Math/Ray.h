@@ -3,7 +3,7 @@
 #include "Math/MathUtility.h"
 #include "Math/Vector3.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct RayHit {
 	public:

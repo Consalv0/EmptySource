@@ -9,7 +9,7 @@
 
 #include "Rendering/Rendering.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	RenderingAPI::API RenderingAPI::AppInterface = RenderingAPI::API::OpenGL;
 

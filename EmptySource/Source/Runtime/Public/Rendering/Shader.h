@@ -4,7 +4,7 @@
 #include "Rendering/RenderingBuffers.h"
 #include "Rendering/Texture.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class ShaderStage {
 	public:

@@ -8,7 +8,7 @@
 #include <future>
 #include <thread>
 
-namespace EmptySource {
+namespace ESource {
 
 	bool MeshParser::_TaskRunning;
 	std::queue<MeshParser::Task*> MeshParser::PendingTasks = std::queue<Task*>();

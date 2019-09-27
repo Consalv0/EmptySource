@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include "Core/Layer.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class OObject;
 

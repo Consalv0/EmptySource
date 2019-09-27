@@ -6,7 +6,7 @@
 #include "Math/MathUtility.h"
 #include "Math/IntVector2.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class WindowsWindow : public Window {
 	public:

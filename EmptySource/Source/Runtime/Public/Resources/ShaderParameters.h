@@ -3,7 +3,7 @@
 #include "Rendering/RenderingDefinitions.h"
 #include "Resources/TextureResource.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	enum ShaderPropertyFlags {
 		SPFlags_None = 0x0,

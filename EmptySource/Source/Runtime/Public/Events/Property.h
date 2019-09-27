@@ -3,7 +3,7 @@
 #include "CoreTypes.h"
 #include "Events/Observer.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	template <typename T>
 	struct Property {

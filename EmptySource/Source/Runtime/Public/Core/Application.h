@@ -4,7 +4,7 @@
 #include "Core/LayerStack.h"
 #include "Audio/AudioDevice.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class Application {
 

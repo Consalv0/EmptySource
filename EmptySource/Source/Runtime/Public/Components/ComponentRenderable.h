@@ -3,7 +3,7 @@
 #include "Components/Component.h"
 #include "Events/Observer.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class CRenderable : public CComponent {
 		IMPLEMENT_COMPONENT(CRenderable)

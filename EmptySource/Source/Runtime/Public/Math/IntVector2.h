@@ -2,7 +2,7 @@
 
 #include "CoreTypes.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	struct Vector2;
 	struct Vector3;

@@ -3,7 +3,7 @@
 #include "Math/Ray.h"
 #include "Math/Box3D.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	namespace Physics {
 		inline static bool RaycastAxisAlignedBox(const Ray & CastedRay, const Box3D & AABox);

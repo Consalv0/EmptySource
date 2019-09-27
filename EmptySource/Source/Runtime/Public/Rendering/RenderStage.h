@@ -7,7 +7,7 @@
 #include "Rendering/Mesh.h"
 #include "Rendering/RenderScene.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	class RenderStage {
 	public:

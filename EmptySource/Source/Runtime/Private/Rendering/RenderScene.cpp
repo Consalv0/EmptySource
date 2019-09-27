@@ -8,7 +8,7 @@
 
 #include "Resources/TextureManager.h"
 
-namespace EmptySource {
+namespace ESource {
 
 	RenderScene::RenderScene() {
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
