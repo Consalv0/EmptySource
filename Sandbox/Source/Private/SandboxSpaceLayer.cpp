@@ -171,16 +171,18 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 						}
 					}
 
-					ImGui::Text("%s[%d]", Renderable->GetMesh()->GetMeshData().Materials.at(Iterator->first).c_str(), Iterator->first);
-					ImGui::SameLine(); ImGui::PushItemWidth(-1);
-					if (ImGui::Combo(("##Material" + std::to_string(Iterator->first)).c_str(), &CurrentMaterialIndex,
-						[](void * Data, int indx, const char ** outText) -> bool {
-						TArray<NString>* Items = (TArray<NString> *)Data;
-						if (outText) *outText = (*Items)[indx].c_str();
-						return true;
-					}, &NarrowMaterialNameList, (int)NarrowMaterialNameList.size())) {
-						if (CurrentMaterialIndex >= 0 && CurrentMaterialIndex < MaterialNameList.size())
-							Renderable->SetMaterialAt(Iterator->first, MaterialManager::GetInstance().GetMaterial(MaterialNameList[CurrentMaterialIndex]));
+					if (Renderable->GetMesh()) {
+						ImGui::Text("%s[%d]", Renderable->GetMesh()->GetMeshData().Materials.at(Iterator->first).c_str(), Iterator->first);
+						ImGui::SameLine(); ImGui::PushItemWidth(-1);
+						if (ImGui::Combo(("##Material" + std::to_string(Iterator->first)).c_str(), &CurrentMaterialIndex,
+							[](void * Data, int indx, const char ** outText) -> bool {
+							TArray<NString>* Items = (TArray<NString> *)Data;
+							if (outText) *outText = (*Items)[indx].c_str();
+							return true;
+						}, &NarrowMaterialNameList, (int)NarrowMaterialNameList.size())) {
+							if (CurrentMaterialIndex >= 0 && CurrentMaterialIndex < MaterialNameList.size())
+								Renderable->SetMaterialAt(Iterator->first, MaterialManager::GetInstance().GetMaterial(MaterialNameList[CurrentMaterialIndex]));
+						}
 					}
 				}
 				ImGui::TreePop();
@@ -196,6 +198,11 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(0.F, Quaternion(), 1.F));
 	Camera->CreateComponent<CCamera>();
 	Camera->CreateComponent<CCameraMovement>();
+	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
+	SkyBox->AttachTo(Camera);
+	auto Renderable = SkyBox->CreateComponent<CRenderable>();
+	Renderable->SetMesh(MeshManager::GetInstance().GetMesh(L"pSphere1"));
+	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Cubemap"));
 }
 
 void SandboxSpaceLayer::OnRender() {

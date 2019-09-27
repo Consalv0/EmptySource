@@ -155,8 +155,6 @@ namespace ESource {
 		const WChar*    Name;
 		int             Size,
 		                Channels;
-		// Platform specific token
-		unsigned int    PlatformFormat;
 		// Is supported on the current platform
 		bool            Supported;
 		EPixelFormat    PixelFormat;

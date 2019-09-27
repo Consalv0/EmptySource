@@ -617,5 +617,8 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLDefinitions.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsDefinitions.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

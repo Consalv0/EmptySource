@@ -262,6 +262,7 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLDefinitions.cpp" />
+    <ClCompile Include="Source\Platform\Windows\WindowsDefinitions.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Source\Platform\Windows\WindowsWindow.cpp" />

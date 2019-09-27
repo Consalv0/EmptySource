@@ -6,6 +6,8 @@ namespace ESource {
 		unsigned int    InternalFormat,
 			            InputFormat,
 			            BlockType;
+		// Is supported on the current platform
+		bool            Supported;
 		EPixelFormat    PixelFormat;
 	};
 

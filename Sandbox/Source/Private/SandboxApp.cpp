@@ -156,6 +156,7 @@ protected:
 		}
 		CubemapTexture->Load();
 		CubemapTexture->RenderHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
+		EquirectangularTextureHDR->Unload();
 	}
 
 	virtual void OnAttach() override {

@@ -23,7 +23,7 @@ namespace ESource {
 
 		LoadState = LS_Loading;
 		{
-			// LOG_CORE_DEBUG(L"Loading Texture '{}'...", Name.GetDisplayName().c_str());
+			LOG_CORE_DEBUG(L"Loading Texture '{}'...", Name.GetDisplayName().c_str());
 			if (!Origin.empty()) {
 				FileStream * TextureFile = FileManager::GetFile(Origin);
 				if (TextureFile == NULL) {
