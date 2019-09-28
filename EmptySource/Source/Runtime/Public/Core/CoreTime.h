@@ -43,7 +43,10 @@ namespace ESource {
 		using Second = Duration<1000000, float>;
 		using Minute = Duration<166666667, float>;
 
-		static unsigned long long MaxDeltaMicro;
+		static unsigned long long MaxUpdateDeltaMicro;
+		static unsigned long long MaxRenderDeltaMicro;
+
+		static bool SkippingRender() { return bSkipRender; };
 
 	private:
 		friend class Application;
@@ -65,6 +68,9 @@ namespace ESource {
 		static unsigned long long TickAverage;
 		static const unsigned int MaxTickSamples = 25;
 		static unsigned long long TickBuffer[MaxTickSamples];
+		
+		static unsigned long long RenderDeltaTimeSum;
+		static bool bSkipRender;
 
 		static unsigned long long Time::GetEpochTimeMicro();
 

@@ -16,20 +16,30 @@ namespace ESource {
 	unsigned int Time::TickCount = 0;
 	unsigned long long Time::TickBuffer[MaxTickSamples];
 	unsigned long long Time::TickAverage = 30; 
-	
-	unsigned long long Time::MaxDeltaMicro = Time::Second::GetSizeInMicro() / 30;
+
+	unsigned long long Time::MaxUpdateDeltaMicro = Time::Second::GetSizeInMicro() / 60;
+	unsigned long long Time::MaxRenderDeltaMicro = Time::Second::GetSizeInMicro() / 50;
+
+	bool Time::bSkipRender = false;
+	unsigned long long Time::RenderDeltaTimeSum = 0;
 
 	void Time::Tick() {
 		unsigned long long TickTime = GetEpochTimeMicro();
 		LastDeltaMicro = TickTime - LastUpdateMicro;
 
-		if (LastDeltaMicro < MaxDeltaMicro) {
-			unsigned long long Delta = MaxDeltaMicro - LastDeltaMicro;
+		if (LastDeltaMicro < MaxUpdateDeltaMicro) {
+			unsigned long long Delta = MaxUpdateDeltaMicro - LastDeltaMicro;
 			std::this_thread::sleep_for(std::chrono::microseconds(Delta - 1000));
 		}
 
 		LastUpdateMicro = GetEpochTimeMicro();
 		LastDeltaMicro += LastUpdateMicro - TickTime;
+
+		RenderDeltaTimeSum += LastDeltaMicro;
+		bSkipRender = RenderDeltaTimeSum < MaxRenderDeltaMicro;
+		if (!bSkipRender) {
+			RenderDeltaTimeSum = 0;
+		}
 		
 		TickBuffer[TickCount] = LastDeltaMicro;
 
