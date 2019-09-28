@@ -18,7 +18,7 @@ namespace ESource {
 	}
 
 	void CCamera::OnRender() {
-		Application::GetInstance()->GetRenderPipeline().SetEyeTransform(GetGameObject().LocalTransform);
+		Application::GetInstance()->GetRenderPipeline().SetEyeTransform(GetGameObject().GetWorldTransform());
 		Application::GetInstance()->GetRenderPipeline().SetProjectionMatrix(
 			Matrix4x4::Perspective(
 			ApertureAngle * MathConstants::DegreeToRad,
@@ -28,12 +28,12 @@ namespace ESource {
 	}
 
 	bool CCamera::Initialize() {
-		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Initalized", Name.GetDisplayName(), Name.GetInstanceID());
+		LOG_CORE_DEBUG(L"Camera '{0}'[{1:d}] Initalized", Name.GetDisplayName(), Name.GetInstanceID());
 		return true;
 	}
 
 	void CCamera::OnDelete() {
-		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
+		LOG_CORE_DEBUG(L"Camera '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
 
 }

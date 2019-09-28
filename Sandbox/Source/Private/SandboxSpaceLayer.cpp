@@ -9,6 +9,7 @@
 
 #include "Components/ComponentRenderable.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentLight.h"
 
 #include "../Public/SandboxSpaceLayer.h"
 #include "../Public/CameraMovement.h"
@@ -120,6 +121,42 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::TreePop();
 			}
 		}
+		CLight * Light = GameObject->GetFirstComponent<CLight>();
+		if (Light != NULL) {
+			bool TreeNode = ImGui::TreeNode(Light->GetName().GetNarrowInstanceName().c_str());
+			if (ImGui::BeginPopupContextItem("Camera Movement Edit")) {
+				if (ImGui::Button("Delete")) {
+					GameObject->DestroyComponent(Light);
+				}
+				ImGui::EndPopup();
+			}
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("CCameraMovement", &Light, sizeof(Light));
+				ImGui::Text("Moving %s", Light->GetName().GetNarrowInstanceName().c_str());
+				ImGui::EndDragDropSource();
+			}
+			if (TreeNode) {
+				ImGui::Columns(2);
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+				ImGui::Separator();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Color"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##LightColor", &Light->Color[0]); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Intensity"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##LightIntensity", &Light->Intensity); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Cast Shadow"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::Checkbox("##LightCastShadow", &Light->bCastShadow); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Shadow Bias"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##LightShadowBias", &Light->ShadowMapBias); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Aperture Angle"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Angle", &Light->ApertureAngle, 1.0F, 0.F, 360.F, "%.2F"); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Culling Planes"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Culling", &Light->CullingPlanes[0], 1.0F, 0.1F, 99999.F, "%.2F"); ImGui::NextColumn();
+				ImGui::PopStyleVar();
+				ImGui::Columns(1);
+				ImGui::PopItemWidth();
+				ImGui::TreePop();
+			}
+		}
 		CRenderable * Renderable = GameObject->GetFirstComponent<CRenderable>();
 		if (Renderable == NULL && ImGui::Button("Create Renderer")) {
 			Renderable = GameObject->CreateComponent<CRenderable>();
@@ -203,6 +240,8 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->SetMesh(MeshManager::GetInstance().GetMesh(L"pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Cubemap"));
+	auto Light0 = CreateObject<GGameObject>(L"Light", Transform(0.F, Quaternion(), 1.F));
+	Light0->CreateComponent<CLight>();
 }
 
 void SandboxSpaceLayer::OnRender() {

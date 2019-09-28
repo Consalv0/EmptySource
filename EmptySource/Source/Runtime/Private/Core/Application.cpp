@@ -142,16 +142,18 @@ namespace ESource {
 			for (Layer * LayerIt : AppLayerStack)
 				LayerIt->OnUpdate(Time::GetTimeStamp());
 
-			GetRenderPipeline().BeginFrame();
-			for (Layer* LayerPointer : AppLayerStack)
-				LayerPointer->OnRender();
+			if (!Time::bSkipRender) {
+				GetRenderPipeline().BeginFrame();
+				for (Layer* LayerPointer : AppLayerStack)
+					LayerPointer->OnRender();
 
-			ImGuiLayerInstance->Begin();
-			for (Layer* LayerPointer : AppLayerStack)
-				LayerPointer->OnImGuiRender();
-			ImGuiLayerInstance->End();
+				ImGuiLayerInstance->Begin();
+				for (Layer* LayerPointer : AppLayerStack)
+					LayerPointer->OnImGuiRender();
+				ImGuiLayerInstance->End();
 
-			GetRenderPipeline().EndOfFrame();
+				GetRenderPipeline().EndOfFrame();
+			}
 
 		} while (
 			bRunning == true

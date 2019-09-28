@@ -161,6 +161,7 @@
     <ClInclude Include="Source\Runtime\Public\Audio\AudioSample.h" />
     <ClInclude Include="Source\Runtime\Public\Components\Component.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentLight.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h" />
     <ClInclude Include="Source\Runtime\Public\Core.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Application.h" />
@@ -269,6 +270,7 @@
     <ClCompile Include="Source\Runtime\Private\Audio\AudioDevice.cpp" />
     <ClCompile Include="Source\Runtime\Private\Audio\AudioSample.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentLight.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Component.cpp" />

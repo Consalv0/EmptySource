@@ -11,7 +11,7 @@ namespace ESource {
 		SPFlags_IsColor = 1 << 1
 	};
 
-	struct ShaderParameters {
+	struct ShaderParameter {
 		NString Name;
 		unsigned int Flags;
 
@@ -105,11 +105,11 @@ namespace ESource {
 			EShaderUniformType Type;
 		} Value;
 
-		ShaderParameters(const NString & Name, const ShaderParameters::PropertyValue & Value, int SPFalgs = 0)
+		ShaderParameter(const NString & Name, const ShaderParameter::PropertyValue & Value, int SPFalgs = 0)
 			: Name(Name), Value(Value), Flags(SPFalgs) {
 		};
 
-		ShaderParameters(const ShaderParameters& Other) {
+		ShaderParameter(const ShaderParameter& Other) {
 			Value = Other.Value;
 			Name = Other.Name;
 			Flags = Other.Flags;
@@ -119,14 +119,14 @@ namespace ESource {
 
 		inline bool IsInternal() const { return Flags & SPFlags_IsInternal; }
 
-		ShaderParameters& operator=(const ShaderParameters & Other) {
+		ShaderParameter& operator=(const ShaderParameter & Other) {
 			Value = Other.Value;
 			Name = Other.Name;
 			Flags = Other.Flags;
 			return *this;
 		}
 
-		ShaderParameters& operator=(const ShaderParameters::PropertyValue & Other) {
+		ShaderParameter& operator=(const ShaderParameter::PropertyValue & Other) {
 			Value = Other;
 			return *this;
 		}

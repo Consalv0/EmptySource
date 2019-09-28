@@ -80,7 +80,7 @@ GLSL:
           
           vec3 Intensity = vec3(dot(Color.rgb, vec3(0.2125, 0.7154, 0.0721)));
           Color.rgb = mix(Intensity, Color.rgb, 1.45);
-        
+          
           Color *= _ColorFilter;
           if (_Monochrome > 0) {
             float ColorLength = length(Color.rgb);

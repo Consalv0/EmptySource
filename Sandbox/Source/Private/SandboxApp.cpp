@@ -676,7 +676,9 @@ protected:
 			ImGui::Separator();
 
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxFrameRate"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &Time::MaxDeltaMicro, 1.F); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &Time::MaxUpdateDeltaMicro, 1.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxRenderFrameRate"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxRenderFrameRate", ImGuiDataType_U64, &Time::MaxRenderDeltaMicro, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
@@ -684,22 +686,6 @@ protected:
 				SetSceneSkybox(Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
 			} ImGui::NextColumn();
 			ImGui::PushItemWidth(0);
-
-			RenderStage * ActiveStage = Application::GetInstance()->GetRenderPipeline().GetActiveStage();
-			if (ActiveStage != NULL) {
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Position"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[0].Position", &ActiveStage->Scene.Lights[0].Position[0]); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Color"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[0].Color", &ActiveStage->Scene.Lights[0].Color[0]); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[0].Intensity"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[0].Intensity", &ActiveStage->Scene.Lights[0].Intensity); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Position"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Light[1].Position", &ActiveStage->Scene.Lights[1].Position[0]); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Color"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##Light[1].Color", &ActiveStage->Scene.Lights[1].Color[0]); ImGui::NextColumn();
-				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Light[1].Intensity"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Light[1].Intensity", &ActiveStage->Scene.Lights[1].Intensity); ImGui::NextColumn();
-			}
 
 			ImGui::Columns(1);
 			ImGui::Separator();
@@ -814,7 +800,7 @@ protected:
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("LOD Level"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##LOD Level", &SampleLevel, 0.0F, 1.0F, "%.3f"); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 1.0F, 4.0F, "%.3f"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Gamma, 0.01F, 4.0F, "%.3f"); ImGui::NextColumn();
 
 				ImGui::Columns(1);
 				ImGui::Separator();

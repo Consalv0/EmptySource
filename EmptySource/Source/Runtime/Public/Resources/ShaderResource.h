@@ -32,13 +32,13 @@ namespace ESource {
 		static inline EResourceType GetType() { return EResourceType::RT_Shader; };
 
 		//* Get the chader properties
-		const TArray<ShaderParameters> & GetParameters() const { return Parameters; }
+		const TArray<ShaderParameter> & GetParameters() const { return Parameters; }
 
 		//* Set the shader properties
-		void SetParameters(const TArrayInitializer<ShaderParameters> & Parameters);
+		void SetParameters(const TArrayInitializer<ShaderParameter> & Parameters);
 
 		//* Set the shader properties
-		void SetParameters(const TArray<ShaderParameters> & Parameters);
+		void SetParameters(const TArray<ShaderParameter> & Parameters);
 
 		inline const NString& GetSourceCode() const { return SourceCode; }
 
@@ -55,7 +55,7 @@ namespace ESource {
 
 		NString SourceCode;
 
-		TArray<ShaderParameters> Parameters;
+		TArray<ShaderParameter> Parameters;
 	};
 
 }

@@ -12,6 +12,8 @@ namespace ESource {
 
 		void Render();
 
+		void RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader);
+
 		void Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Matrix4x4& Matrix);
 
 		VertexBufferPtr ModelMatrixBuffer;
@@ -21,9 +23,12 @@ namespace ESource {
 		Matrix4x4 ViewProjection;
 
 		struct Light {
-			Point3 Position;
+			Transform Transformation;
 			Vector3 Color;
 			float Intensity;
+			Matrix4x4 ProjectionMatrix;
+			RTexturePtr ShadowMap;
+			float ShadowBias;
 		} Lights[2];
 
 		TDictionary<size_t, MaterialPtr> RenderElementsMaterials;

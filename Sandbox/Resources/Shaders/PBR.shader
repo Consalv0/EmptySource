@@ -42,10 +42,10 @@ GLSL:
         layout(location = 4) in vec2 _iVertexUV1;
         layout(location = 5) in vec4 _iVertexColor;
         layout(location = 6) in mat4 _iModelMatrix;
-    
+
         uniform mat4 _ProjectionMatrix;
         uniform mat4 _ViewMatrix;
-    
+
         out struct Matrices {
           mat4 Model;
           mat4 WorldNormal;
@@ -53,12 +53,22 @@ GLSL:
     
         out struct VertexData {
           vec4 Position;
+          vec4 LightSpacePosition[2];
           vec3 NormalDirection;
           vec3 TangentDirection;
           vec3 BitangentDirection;
           vec2 UV0;
           vec4 Color;
         } Vertex;
+
+        uniform struct LightInfo {
+        	vec3 Position;        // Light Position in camera coords.
+          vec3 Color;           // Light Color
+        	float Intencity;      // Light Intensity
+          mat4 ViewMatrix;
+          mat4 ProjectionMatrix;
+          sampler2D ShadowMap;
+        } _Lights[2];
     
         void main() {
         	Matrix.Model = _iModelMatrix;
@@ -71,11 +81,16 @@ GLSL:
         	Vertex.BitangentDirection = cross(Vertex.NormalDirection, Vertex.TangentDirection);
         	Vertex.UV0 = _iVertexUV0; 
         	Vertex.Color = _iVertexColor;
-    
-          	// Now set the position in model space
-          	gl_Position = _ProjectionMatrix * _ViewMatrix * Matrix.Model * Vertex.Position;
-          	Vertex.Position = Matrix.Model * Vertex.Position;
+
+          Vertex.Position = Matrix.Model * Vertex.Position;
+          gl_Position = _ProjectionMatrix * _ViewMatrix * Vertex.Position;
+
+          for (int i = 0; i < 2; i++) {
+            Vertex.LightSpacePosition[i] =_Lights[i].ProjectionMatrix * _Lights[i].ViewMatrix * Vertex.Position;
+          }
+
         }
+
     - StageType: Pixel
       Code: |
         const float PI = 3.1415926535;
@@ -97,6 +112,9 @@ GLSL:
         	vec3 Position;        // Light Position in camera coords.
           vec3 Color;           // Light Color
         	float Intencity;      // Light Intensity
+          mat4 ViewMatrix;
+          mat4 ProjectionMatrix;
+          sampler2D ShadowMap;
         } _Lights[2];
         
         uniform struct MaterialInfo {
@@ -104,7 +122,7 @@ GLSL:
           float Metalness;     // Metallic (0) or dielectric (1)
           vec4 Color;          // Diffuse color for dielectrics, f0 for metallic
         } _Material;
-        
+
         in struct Matrices {
           mat4 Model;
           mat4 WorldNormal;
@@ -112,6 +130,7 @@ GLSL:
         
         in struct VertexData {
           vec4 Position;
+          vec4 LightSpacePosition[2];
           vec3 NormalDirection;
           vec3 TangentDirection;
           vec3 BitangentDirection;
@@ -150,6 +169,21 @@ GLSL:
       
           float Attenuation = 1.0 / ( max(SquaredDistance, 0.001) );
           return Attenuation;
+        }
+        
+        float ShadowCalculation(int LightIndex) {
+          // perform perspective divide
+          vec3 projCoords = Vertex.LightSpacePosition[LightIndex].xyz / Vertex.LightSpacePosition[LightIndex].w;
+          // transform to [0,1] range
+          projCoords = projCoords * 0.5 + 0.5;
+          // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+          float closestDepth = texture(_Lights[LightIndex].ShadowMap, projCoords.xy).r; 
+          // get depth of current fragment from light's perspective
+          float currentDepth = projCoords.z - 0.00001;
+          // check whether current frag pos is in shadow
+          float shadow = step(currentDepth, closestDepth);
+
+          return shadow * step(projCoords.z, 1.0);
         }
       
         // Enviroment Light
@@ -197,11 +231,12 @@ GLSL:
       
           float NormalDistribution = TrowbridgeReitzNormalDistribution(NDotH, Roughness);
           float GeometricShadow = GeometrySmithSchlickGGX(NDotL, NDotV, Roughness);
+          float ShadowMapTest = ShadowCalculation(LightIndex);
           vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
       
           vec3 Specular = NormalDistribution * GeometricShadow * LightColor * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
-          vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * LightColor * NDotL;
-      
+          vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * ShadowMapTest * LightColor * NDotL;
+
           return SurfaceColor;
         }
       

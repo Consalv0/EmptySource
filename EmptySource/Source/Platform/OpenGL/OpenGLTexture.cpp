@@ -40,7 +40,7 @@ namespace ESource {
 		{
 			glTexImage2D(
 				GL_TEXTURE_2D, 0, OpenGLPixelFormatInfo[Format].InternalFormat, Size.x, Size.y, 0,
-				GL_RGBA, GL_FLOAT, NULL
+				OpenGLPixelFormatInfo[Format].InputFormat, OpenGLPixelFormatInfo[Format].BlockType, NULL
 			);
 			Unbind();
 		}

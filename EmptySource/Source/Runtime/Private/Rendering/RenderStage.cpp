@@ -7,6 +7,7 @@
 #include "Rendering/Material.h"
 #include "Rendering/Mesh.h"
 
+#include "Resources/ShaderManager.h"
 #include "Resources/TextureManager.h"
 
 #include "Utility/TextFormattingMath.h"
@@ -22,10 +23,23 @@ namespace ESource {
 		Scene.Submit(Mat, VertexArray, Matrix);
 	}
 
-	void RenderStage::SubmitLight(unsigned int Index, const Point3 & Position, const Vector3 & Color, const float & Intensity) {
-		Scene.Lights[Index].Position = Position;
+	void RenderStage::SubmitPointLight(unsigned int Index, const Transform & Transformation, const Vector3 & Color, const float & Intensity) {
+		Scene.Lights[Index].Transformation = Transformation;
 		Scene.Lights[Index].Color = Color;
 		Scene.Lights[Index].Intensity = Intensity;
+	}
+
+	void RenderStage::SubmitDirectionalLight(unsigned int Index, const Transform & Transformation, const Vector3 & Color, const float & Intensity, const Matrix4x4 & Projection) {
+		Scene.Lights[Index].Transformation = Transformation;
+		Scene.Lights[Index].Color = Color;
+		Scene.Lights[Index].Intensity = Intensity;
+		Scene.Lights[Index].ProjectionMatrix = Projection;
+		Scene.Lights[Index].ShadowMap = NULL;
+	}
+
+	void RenderStage::SubmitDirectionalShadowMap(unsigned int Index, const RTexturePtr & Texture, const float & Bias) {
+		Scene.Lights[Index].ShadowMap = Texture;
+		Scene.Lights[Index].ShadowBias = Bias;
 	}
 
 	void RenderStage::SetEyeTransform(const Transform & EyeTransform) {
@@ -37,6 +51,7 @@ namespace ESource {
 	}
 
 	void RenderStage::End() {
+		Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 		Scene.Render();
 	}
 

@@ -75,6 +75,19 @@ namespace ESource {
 		return RenderingTexture;
 	}
 
+	void OpenGLRenderTarget::BindDepthTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
+		RenderingTexture = Texture;
+		Size = InSize;
+		if (!IsValid()) return;
+		Bind();
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetTextureObject(), 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+
+		glViewport(0, 0, Size.x, Size.y);
+	}
+
 	void OpenGLRenderTarget::BindTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
 		RenderingTexture = Texture;
 		Size = InSize;

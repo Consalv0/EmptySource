@@ -86,7 +86,7 @@ namespace ESource {
 
 	void Material::SetTexture2D(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
 		RShaderPtr Program = GetShaderProgram();
-		if (Program != NULL && Program->IsValid())
+		if (Program != NULL && Program->IsValid() && Text != NULL)
 			if (Text->GetDimension() == ETextureDimension::Texture2D)
 				Program->GetProgram()->SetTexture(UniformName, Text->GetNativeTexture(), Position);
 			else
@@ -102,7 +102,7 @@ namespace ESource {
 				Program->GetProgram()->SetTexture(UniformName, NULL, Position);
 	}
 
-	void Material::SetParameters(const TArray<ShaderParameters>& NewLayout) {
+	void Material::SetParameters(const TArray<ShaderParameter>& NewLayout) {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			for (auto& Layout : NewLayout) {
@@ -112,7 +112,7 @@ namespace ESource {
 			}
 	}
 
-	void Material::AddParameters(const TArray<ShaderParameters>& NewLayout) {
+	void Material::AddParameters(const TArray<ShaderParameter>& NewLayout) {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			for (auto& Layout : NewLayout) {
@@ -174,7 +174,13 @@ namespace ESource {
 		return RenderPriority > Other.RenderPriority;
 	}
 
-	void MaterialLayout::SetParameter(const ShaderParameters & Variable) {
+	ShaderParameter * MaterialLayout::GetVariable(const NString & Name) {
+		TArray<ShaderParameter>::iterator Finded = Find(Name);
+		if (Finded == end()) return NULL;
+		return &*Finded;
+	}
+
+	void MaterialLayout::SetParameter(const ShaderParameter & Variable) {
 		auto Iterator = Find(Variable.Name);
 		if (Iterator == end())
 			MaterialVariables.push_back(Variable);
@@ -182,18 +188,18 @@ namespace ESource {
 			(*Iterator) = Variable.Value;
 	}
 
-	void MaterialLayout::AddParameter(const ShaderParameters & Property) {
+	void MaterialLayout::AddParameter(const ShaderParameter & Property) {
 		auto Iterator = Find(Property.Name);
 		if (Iterator == end())
 			MaterialVariables.push_back(Property);
 	}
 
-	TArray<ShaderParameters>::const_iterator MaterialLayout::Find(const NString & Name) const {
-		return std::find_if(begin(), end(), [&Name](const ShaderParameters& Var) { return Var.Name == Name; });
+	TArray<ShaderParameter>::const_iterator MaterialLayout::Find(const NString & Name) const {
+		return std::find_if(begin(), end(), [&Name](const ShaderParameter& Var) { return Var.Name == Name; });
 	}
 
-	TArray<ShaderParameters>::iterator MaterialLayout::Find(const NString & Name) {
-		return std::find_if(begin(), end(), [&Name](const ShaderParameters& Var) { return Var.Name == Name; });
+	TArray<ShaderParameter>::iterator MaterialLayout::Find(const NString & Name) {
+		return std::find_if(begin(), end(), [&Name](const ShaderParameter& Var) { return Var.Name == Name; });
 	}
 
 }

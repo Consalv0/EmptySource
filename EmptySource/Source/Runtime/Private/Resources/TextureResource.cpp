@@ -164,7 +164,6 @@ namespace ESource {
 			}
 		}
 		
-		TexturePointer->Unbind();
 		return true;
 	}
 

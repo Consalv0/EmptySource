@@ -27,6 +27,9 @@ namespace ESource {
 		virtual Texture * GetBindedTexture() const override;
 
 		//* All future functions will modify this texture
+		virtual void BindDepthTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) override;
+
+		//* All future functions will modify this texture
 		virtual void BindTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) override;
 
 		//* All future functions will modify this texture

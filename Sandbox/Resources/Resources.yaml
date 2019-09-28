@@ -35,3 +35,7 @@ Resources:
     ShaderProgram:
       Name: CloudsShader
       OriginFile: Resources/Shaders/Clouds.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: DepthTestShader
+      OriginFile: Resources/Shaders/DepthTest.shader

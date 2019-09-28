@@ -11,29 +11,29 @@ namespace ESource {
 	public:
 		MaterialLayout() {}
 
-		MaterialLayout(const TArrayInitializer<ShaderParameters> Parameters) : MaterialVariables(Parameters) { }
+		MaterialLayout(const TArrayInitializer<ShaderParameter> Parameters) : MaterialVariables(Parameters) { }
 
-		const TArray<ShaderParameters>& GetVariables() const { return MaterialVariables; };
+		const TArray<ShaderParameter>& GetVariables() const { return MaterialVariables; };
 
-		ShaderParameters & GetVariable(const NString & Name) const { Find(Name); };
+		ShaderParameter * GetVariable(const NString & Name);
 
-		void SetParameter(const ShaderParameters& Variable);
+		void SetParameter(const ShaderParameter& Variable);
 
-		void AddParameter(const ShaderParameters& Property);
+		void AddParameter(const ShaderParameter& Property);
 
-		TArray<ShaderParameters>::const_iterator Find(const NString & Name) const;
+		TArray<ShaderParameter>::const_iterator Find(const NString & Name) const;
 
-		TArray<ShaderParameters>::iterator Find(const NString & Name);
+		TArray<ShaderParameter>::iterator Find(const NString & Name);
 
 		void Clear() { MaterialVariables.clear(); };
 
-		TArray<ShaderParameters>::iterator begin() { return MaterialVariables.begin(); }
-		TArray<ShaderParameters>::iterator end() { return MaterialVariables.end(); }
-		TArray<ShaderParameters>::const_iterator begin() const { return MaterialVariables.begin(); }
-		TArray<ShaderParameters>::const_iterator end() const { return MaterialVariables.end(); }
+		TArray<ShaderParameter>::iterator begin() { return MaterialVariables.begin(); }
+		TArray<ShaderParameter>::iterator end() { return MaterialVariables.end(); }
+		TArray<ShaderParameter>::const_iterator begin() const { return MaterialVariables.begin(); }
+		TArray<ShaderParameter>::const_iterator end() const { return MaterialVariables.end(); }
 
 	private:
-		TArray<ShaderParameters> MaterialVariables;
+		TArray<ShaderParameter> MaterialVariables;
 	};
 
 	class Material {
@@ -83,9 +83,9 @@ namespace ESource {
 
 		inline MaterialLayout& GetVariables() { return ParameterLayout; };
 
-		void SetParameters(const TArray<ShaderParameters>& NewLayout);
+		void SetParameters(const TArray<ShaderParameter>& NewLayout);
 
-		void AddParameters(const TArray<ShaderParameters>& NewLayout);
+		void AddParameters(const TArray<ShaderParameter>& NewLayout);
 
 		//* Use shader program, asign uniform and render mode
 		void Use() const;
