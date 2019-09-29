@@ -65,6 +65,10 @@ namespace ESource {
 		if (bBuildMipMapsOnLoad) GenerateMipMaps();
 	}
 
+	void RTexture::LoadAsync() {
+		ES_CORE_ASSERT(true, L"Not implemented");
+	}
+
 	void RTexture::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 

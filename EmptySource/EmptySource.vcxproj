@@ -241,6 +241,7 @@
     <ClInclude Include="Source\Runtime\Public\Resources\MaterialManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshManager.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\MeshParser.h" />
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshResource.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceHolder.h" />
     <ClInclude Include="Source\Runtime\Public\Resources\ResourceManager.h" />

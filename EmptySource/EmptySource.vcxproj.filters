@@ -420,6 +420,9 @@
     <ClInclude Include="Source\Runtime\Public\Components\ComponentLight.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshResource.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">

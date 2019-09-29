@@ -14,6 +14,8 @@ namespace ESource {
 
 		virtual void Load() = 0;
 
+		virtual void LoadAsync() = 0;
+
 		virtual void Unload() = 0;
 
 		virtual void Reload() = 0;

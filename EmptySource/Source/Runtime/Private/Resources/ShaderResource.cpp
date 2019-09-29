@@ -37,6 +37,10 @@ namespace ESource {
 		LoadState = LoadFromShaderSource(SourceCode) ? LS_Loaded : LS_Unloaded;
 	}
 
+	void RShader::LoadAsync() {
+		ES_CORE_ASSERT(true, L"Not implemented")
+	}
+
 	void RShader::Unload() {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 

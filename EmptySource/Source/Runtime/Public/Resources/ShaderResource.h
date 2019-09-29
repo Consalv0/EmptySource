@@ -17,6 +17,8 @@ namespace ESource {
 
 		virtual void Load() override;
 
+		virtual void LoadAsync() override;
+
 		virtual void Unload() override;
 
 		virtual void Reload() override;
