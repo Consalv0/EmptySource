@@ -19,6 +19,7 @@ namespace ESource {
 	void RenderScene::Clear() {
 		RenderElementsMaterials.clear();
 		RenderElementsByMaterialID.clear();
+		LightCount = -1;
 	}
 
 	void RenderScene::Render() {
@@ -58,14 +59,20 @@ namespace ESource {
 				{ "_Lights[0].ProjectionMatrix",  { Lights[0].ProjectionMatrix }, SPFlags_IsInternal},
 				{ "_Lights[0].ViewMatrix",        { Lights[0].Transformation.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_Lights[0].Color",             { Lights[0].Color }, SPFlags_IsInternal | SPFlags_IsColor },
+				{ "_Lights[0].Direction",         { Lights[0].Direction }, SPFlags_IsInternal },
 				{ "_Lights[0].Intencity",         { Lights[0].Intensity }, SPFlags_IsInternal },
-				{ "_Lights[0].ShadowMap",         { ETextureDimension::Texture2D, Lights[0].ShadowMap }, SPFlags_IsInternal },
+				{ "_Lights[0].ShadowMap",         { ETextureDimension::Texture2D, 
+					Lights[0].CastShadow ? Lights[0].ShadowMap : TextureManager::GetInstance().GetTexture(L"WhiteTexture")}, SPFlags_IsInternal },
+				{ "_Lights[0].ShadowBias",        { Lights[0].ShadowBias }, SPFlags_IsInternal },
 				{ "_Lights[1].Position",          { Lights[1].Transformation.Position }, SPFlags_IsInternal },
 				{ "_Lights[1].ProjectionMatrix",  { Lights[1].ProjectionMatrix }, SPFlags_IsInternal },
 				{ "_Lights[1].ViewMatrix",        { Lights[1].Transformation.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_Lights[1].Color",             { Lights[1].Color }, SPFlags_IsInternal | SPFlags_IsColor },
+				{ "_Lights[1].Direction",         { Lights[1].Direction }, SPFlags_IsInternal },
 				{ "_Lights[1].Intencity",         { Lights[1].Intensity }, SPFlags_IsInternal },
-				{ "_Lights[1].ShadowMap",         { ETextureDimension::Texture2D, Lights[1].ShadowMap }, SPFlags_IsInternal },
+				{ "_Lights[1].ShadowMap",         { ETextureDimension::Texture2D,
+					Lights[1].CastShadow ? Lights[1].ShadowMap : TextureManager::GetInstance().GetTexture(L"WhiteTexture")}, SPFlags_IsInternal },
+				{ "_Lights[1].ShadowBias",        { Lights[1].ShadowBias }, SPFlags_IsInternal },
 				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal },
 				{ "_BRDFLUT",                     { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BRDFLut") }, SPFlags_IsInternal },
 				{ "_EnviromentMap",               { ETextureDimension::Cubemap, EnviromentCubemap }, SPFlags_IsInternal },
@@ -84,7 +91,7 @@ namespace ESource {
 	}
 
 	void RenderScene::RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader) {
-		if (Lights[LightIndex].ShadowMap == NULL || !Shader->IsValid()) return;
+		if (!Lights[LightIndex].CastShadow || Lights[LightIndex].ShadowMap == NULL || !Shader->IsValid()) return;
 		Lights[LightIndex].ShadowMap->Load();
 		if (Lights[LightIndex].ShadowMap->GetLoadState() != LS_Loaded) return;
 		RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
@@ -115,6 +122,7 @@ namespace ESource {
 
 		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
 		for (; MatIt != Materials.end(); ++MatIt) {
+			if ((*MatIt)->bWriteDepth == false) continue;
 			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
 
 			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;

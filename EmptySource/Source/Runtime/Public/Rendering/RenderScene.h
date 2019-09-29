@@ -22,11 +22,15 @@ namespace ESource {
 
 		Matrix4x4 ViewProjection;
 
+		int LightCount;
+
 		struct Light {
 			Transform Transformation;
 			Vector3 Color;
+			Vector3 Direction;
 			float Intensity;
 			Matrix4x4 ProjectionMatrix;
+			bool CastShadow;
 			RTexturePtr ShadowMap;
 			float ShadowBias;
 		} Lights[2];

@@ -47,12 +47,12 @@ namespace ESource {
 		ActiveStage->SubmitVertexArray(Model->GetSubdivisionVertexArray(Subdivision), Mat, Matrix);
 	}
 
-	void RenderPipeline::SubmitDirectionalLight(unsigned int Index, const Transform & Position, const Vector3 & Color, const float & Intensity, const Matrix4x4 & Projection) {
-		ActiveStage->SubmitDirectionalLight(Index, Position, Color, Intensity, Projection);
+	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {
+		ActiveStage->SubmitSpotLight(Position, Color, Direction, Intensity, Projection);
 	}
 
-	void RenderPipeline::SubmitDirectionalShadowMap(unsigned int Index, const RTexturePtr & ShadowMap, const float & Bias) {
-		ActiveStage->SubmitDirectionalShadowMap(Index, ShadowMap, Bias);
+	void RenderPipeline::SubmitSpotShadowMap(const RTexturePtr & ShadowMap, const float & Bias) {
+		ActiveStage->SubmitSpotShadowMap(ShadowMap, Bias);
 	}
 
 	void RenderPipeline::SetEyeTransform(const Transform & EyeTransform) {

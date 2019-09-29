@@ -87,22 +87,24 @@ GLSL:
             vec3 RightDir = cross(UpDir, N);
                  UpDir    = cross(N, RightDir);
 
-            float SampleDelta = 0.025;
+            float SampleDelta = 0.08;
             float SampleCount = 0.0;
             for(float Phi = 0.0; Phi < 2.0 * PI; Phi += SampleDelta) {
-                for(float Theta = 0.0; Theta < 0.5 * PI; Theta += SampleDelta) {
-                    float CosTheta = cos(Theta);
-                    float SinTheta = sin(Theta);
-                    // Spherical to cartesian (in tangent space)
-                    vec3 TangentSample = vec3(SinTheta * cos(Phi),  SinTheta * sin(Phi), CosTheta);
-                    // Tangent space to world
-                    vec3 SampleVector = TangentSample.x * RightDir + TangentSample.y * UpDir + TangentSample.z * N; 
-
-                    Irradiance += clamp(texture(_EquirectangularMap, SampleSphericalMap(SampleVector)).rgb, 0, 10000) * dot(N, SampleVector);
-                    SampleCount++;
-                }
+              float CosPhi = cos(Phi);
+              float SinPhi = sin(Phi);
+              for(float Theta = 0.0; Theta < 0.5 * PI; Theta += SampleDelta) {
+                  float CosTheta = cos(Theta);
+                  float SinTheta = sin(Theta);
+                  // Spherical to cartesian
+                  vec3 TangentSample = vec3(SinTheta * CosPhi,  SinTheta * SinPhi, CosTheta);
+                  // tangent space to world
+                  vec3 SampleVector = TangentSample.x * RightDir + TangentSample.y * UpDir + TangentSample.z * N;
+                  Irradiance += clamp(texture(_EquirectangularMap, SampleSphericalMap(SampleVector)).rgb, 0, 10000) * dot(N, SampleVector);
+                  SampleCount++;
+              }
             }
             Irradiance = PI * Irradiance / SampleCount;
 
             FragColor = vec4(clamp(texture(_EquirectangularMap, vVertex.UV0).rgb, 0, 10000), 1);
+            // FragColor = vec4(Irradiance, 1.0);
         }

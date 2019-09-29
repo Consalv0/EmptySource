@@ -28,11 +28,11 @@ namespace ESource {
 
 		virtual void SubmitVertexArray(const VertexArrayPtr & VertexArray, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
-		virtual void SubmitPointLight(unsigned int Index, const Transform & Transformation, const Vector3 & Color, const float & Intensity);
+		virtual void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity);
 
-		virtual void SubmitDirectionalLight(unsigned int Index, const Transform & Transformation, const Vector3 & Color, const float & Intensity, const Matrix4x4 & Projection);
+		virtual void SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection);
 
-		virtual void SubmitDirectionalShadowMap(unsigned int Index, const RTexturePtr & Texture, const float & Bias);
+		virtual void SubmitSpotShadowMap(const RTexturePtr & Texture, const float & Bias);
 
 		virtual void SetEyeTransform(const Transform & EyeTransform);
 

@@ -23,23 +23,32 @@ namespace ESource {
 		Scene.Submit(Mat, VertexArray, Matrix);
 	}
 
-	void RenderStage::SubmitPointLight(unsigned int Index, const Transform & Transformation, const Vector3 & Color, const float & Intensity) {
-		Scene.Lights[Index].Transformation = Transformation;
-		Scene.Lights[Index].Color = Color;
-		Scene.Lights[Index].Intensity = Intensity;
+	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity) {
+		Scene.LightCount++;
+		Scene.Lights[Scene.LightCount].Transformation = Transformation;
+		Scene.Lights[Scene.LightCount].Color = Color;
+		Scene.Lights[Scene.LightCount].Direction = 0.F;
+		Scene.Lights[Scene.LightCount].Intensity = Intensity;
+		Scene.Lights[Scene.LightCount].CastShadow = false;
+		Scene.Lights[Scene.LightCount].ShadowMap = NULL;
 	}
 
-	void RenderStage::SubmitDirectionalLight(unsigned int Index, const Transform & Transformation, const Vector3 & Color, const float & Intensity, const Matrix4x4 & Projection) {
-		Scene.Lights[Index].Transformation = Transformation;
-		Scene.Lights[Index].Color = Color;
-		Scene.Lights[Index].Intensity = Intensity;
-		Scene.Lights[Index].ProjectionMatrix = Projection;
-		Scene.Lights[Index].ShadowMap = NULL;
+	void RenderStage::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {
+		Scene.LightCount++;
+		Scene.Lights[Scene.LightCount].Transformation = Transformation;
+		Scene.Lights[Scene.LightCount].Color = Color;
+		Scene.Lights[Scene.LightCount].Direction = Direction;
+		Scene.Lights[Scene.LightCount].Intensity = Intensity;
+		Scene.Lights[Scene.LightCount].ProjectionMatrix = Projection;
+		Scene.Lights[Scene.LightCount].ShadowMap = NULL;
+		Scene.Lights[Scene.LightCount].CastShadow = false;
 	}
 
-	void RenderStage::SubmitDirectionalShadowMap(unsigned int Index, const RTexturePtr & Texture, const float & Bias) {
-		Scene.Lights[Index].ShadowMap = Texture;
-		Scene.Lights[Index].ShadowBias = Bias;
+	void RenderStage::SubmitSpotShadowMap(const RTexturePtr & Texture, const float & Bias) {
+		if (Scene.LightCount < 0) return;
+		Scene.Lights[Scene.LightCount].ShadowMap = Texture;
+		Scene.Lights[Scene.LightCount].ShadowBias = Bias;
+		Scene.Lights[Scene.LightCount].CastShadow = true;
 	}
 
 	void RenderStage::SetEyeTransform(const Transform & EyeTransform) {
@@ -52,6 +61,7 @@ namespace ESource {
 
 	void RenderStage::End() {
 		Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
+		Scene.RenderLightMap(1, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 		Scene.Render();
 	}
 

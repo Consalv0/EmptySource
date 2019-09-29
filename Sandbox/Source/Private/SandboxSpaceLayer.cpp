@@ -93,10 +93,10 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 			if (TreeNode) {
 				ImGui::TextUnformatted("Aperture Angle");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
-				ImGui::DragFloat("##Angle", &Camera->ApertureAngle, 1.0F, 0.F, 360.F, "%.2F");
+				ImGui::DragFloat("##Angle", &Camera->ApertureAngle, 1.0F, 0.F, 180.F, "%.3F");
 				ImGui::TextUnformatted("Culling Planes");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
-				ImGui::DragFloat2("##Angle", &Camera->CullingPlanes[0], 1.0F, 0.1F, 99999.F, "%.2F");
+				ImGui::DragFloat2("##Culling", &Camera->CullingPlanes[0], 0.1F, 0.001F, 99999.F, "%.5F");
 				ImGui::TreePop();
 			}
 		}
@@ -146,11 +146,11 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Cast Shadow"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::Checkbox("##LightCastShadow", &Light->bCastShadow); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Shadow Bias"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat("##LightShadowBias", &Light->ShadowMapBias); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##LightShadowBias", &Light->ShadowMapBias, 0.01F, 0.001F, 0.1F, "%.5F"); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Aperture Angle"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Angle", &Light->ApertureAngle, 1.0F, 0.F, 360.F, "%.2F"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Angle", &Light->ApertureAngle, 1.0F, 0.F, 180.F, "%.3F"); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Culling Planes"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Culling", &Light->CullingPlanes[0], 1.0F, 0.1F, 99999.F, "%.2F"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Culling", &Light->CullingPlanes[0], 0.1F, 0.001F, 99999.F, "%.5F"); ImGui::NextColumn();
 				ImGui::PopStyleVar();
 				ImGui::Columns(1);
 				ImGui::PopItemWidth();
@@ -240,8 +240,10 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->SetMesh(MeshManager::GetInstance().GetMesh(L"pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Cubemap"));
-	auto Light0 = CreateObject<GGameObject>(L"Light", Transform(0.F, Quaternion(), 1.F));
+	auto Light0 = CreateObject<GGameObject>(L"Light", Transform({ -9.5F, 22.5F, -6.5F }, Quaternion::EulerAngles({50.F, 50.F, -180.F}), 1.F));
 	Light0->CreateComponent<CLight>();
+	auto Light1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
+	Light1->CreateComponent<CLight>();
 }
 
 void SandboxSpaceLayer::OnRender() {

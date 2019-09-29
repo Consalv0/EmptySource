@@ -13,8 +13,8 @@ namespace ESource {
 
 	CLight::CLight(GGameObject & GameObject)
 		: CComponent(L"CLight", GameObject), Color(0.9F, 1.0F, 1.0F), Intensity(20.F),
-		bCastShadow(false), ShadowMapBias(0.5F), ShadowMap(NULL), ShadowMapSize(512),
-		ApertureAngle(60.F), CullingPlanes(0.01F, 1000.F) {
+		bCastShadow(false), ShadowMapBias(0.001F), ShadowMap(NULL), ShadowMapSize(1024),
+		ApertureAngle(120.F), CullingPlanes(0.3F, 1000.F) {
 	}
 
 	void CLight::SetShadowMapSize(int Size) {
@@ -29,15 +29,18 @@ namespace ESource {
 
 	void CLight::OnRender() {
 		RenderPipeline & AppRenderPipeline = Application::GetInstance()->GetRenderPipeline();
-		AppRenderPipeline.SubmitDirectionalLight(0, GetGameObject().GetWorldTransform(), Color, Intensity,
+		AppRenderPipeline.SubmitSpotLight(GetGameObject().GetWorldTransform(), Color, GetGameObject().GetWorldTransform().Forward(), Intensity,
 			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.x, CullingPlanes.y)
 		);
 		if (bCastShadow) {
 			if (ShadowMap == NULL)
 				ShadowMap = TextureManager::GetInstance().CreateTexture2D(
-					GetName().GetInstanceName() + L"_ShadowMap", L"", PF_ShadowDepth, FM_MinMagNearest, SAM_Border, ShadowMapSize
+					GetName().GetInstanceName() + L"_ShadowMap", L"", PF_ShadowDepth, FM_MinMagNearest, SAM_Clamp, ShadowMapSize
 				);
-			AppRenderPipeline.SubmitDirectionalShadowMap(0, ShadowMap, ShadowMapBias);
+			AppRenderPipeline.SubmitSpotShadowMap(ShadowMap, ShadowMapBias);
+		}
+		else if (ShadowMap != NULL) {
+			ShadowMap->Unload();
 		}
 	}
 	

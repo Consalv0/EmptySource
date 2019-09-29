@@ -65,9 +65,11 @@ GLSL:
         	vec3 Position;        // Light Position in camera coords.
           vec3 Color;           // Light Color
         	float Intencity;      // Light Intensity
+          vec3 Direction;
           mat4 ViewMatrix;
           mat4 ProjectionMatrix;
           sampler2D ShadowMap;
+          float ShadowBias;
         } _Lights[2];
     
         void main() {
@@ -112,9 +114,11 @@ GLSL:
         	vec3 Position;        // Light Position in camera coords.
           vec3 Color;           // Light Color
         	float Intencity;      // Light Intensity
+          vec3 Direction;
           mat4 ViewMatrix;
           mat4 ProjectionMatrix;
           sampler2D ShadowMap;
+          float ShadowBias;
         } _Lights[2];
         
         uniform struct MaterialInfo {
@@ -171,7 +175,7 @@ GLSL:
           return Attenuation;
         }
         
-        float ShadowCalculation(int LightIndex) {
+        float ShadowCalculation(int LightIndex, float NDotL) {
           // perform perspective divide
           vec3 projCoords = Vertex.LightSpacePosition[LightIndex].xyz / Vertex.LightSpacePosition[LightIndex].w;
           // transform to [0,1] range
@@ -179,7 +183,7 @@ GLSL:
           // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
           float closestDepth = texture(_Lights[LightIndex].ShadowMap, projCoords.xy).r; 
           // get depth of current fragment from light's perspective
-          float currentDepth = projCoords.z - 0.00001;
+          float currentDepth = projCoords.z - _Lights[LightIndex].ShadowBias;
           // check whether current frag pos is in shadow
           float shadow = step(currentDepth, closestDepth);
 
@@ -196,9 +200,9 @@ GLSL:
           vec3 F0 = vec3(0.4); 
           F0 = mix(F0, DiffuseColor, Metalness);
           vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
-          vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
-          vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 1.0));
-               // Irradiance = pow(Irradiance, vec3(1.0/2.2));
+          vec2 EnviromentBRDF = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
+          vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 0.0));
+               Irradiance = pow(Irradiance, vec3(1.0/dot(vec3(1.2125, 1.7154, 1.0721), Irradiance)));
           vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3.0)));
       
           vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
@@ -207,7 +211,7 @@ GLSL:
           return Color;
         }
       
-        // Point Light Calculation
+        // Spot Light Calculation
         vec3 MicrofacetModel( int LightIndex, vec3 VertPosition, vec3 Normal, float Roughness, float Metalness, vec3 DiffuseColor ) {
           vec3 UnormalizedLightDirection = (_Lights[LightIndex].Position - VertPosition).xyz;
           float LightDistance = length(UnormalizedLightDirection);
@@ -222,7 +226,11 @@ GLSL:
           float NDotV = clamp( abs( dot( Normal, EyeDirection ) ) + 0.01, 0.0, 1.0);
           float HDotV = clamp( dot( HalfWayDirection, EyeDirection ), 0.0, 1.0 );
       
-          float Attenuation = SmoothDistanceAttenuation(UnormalizedLightDirection, _Lights[LightIndex].Intencity);
+          float SpotDirection = clamp((dot(-_Lights[LightIndex].Direction * 2.0, LightDirection) - 1.4) * 4, 0.0, 1.0);
+                // SpotDirection = TrowbridgeReitzNormalDistribution(SpotDirection, 0.6);
+          float ShadowMapTest = ShadowCalculation(LightIndex, NDotL);
+          float Attenuation = SmoothDistanceAttenuation(UnormalizedLightDirection, _Lights[LightIndex].Intencity * SpotDirection);
+                Attenuation *= ShadowMapTest;
           vec2 EnviromentBRDF  = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
           vec3 LightColor = pow(_Lights[LightIndex].Color * (_Lights[LightIndex].Intencity / vec3(8125, 10154, 7721) * SmoothDistanceAttenuation(UnormalizedLightDirection, _Lights[LightIndex].Intencity * 0.001) + 1.0), vec3(Gamma));
                LightColor = max(LightColor, vec3(0, 0, 0));
@@ -231,11 +239,10 @@ GLSL:
       
           float NormalDistribution = TrowbridgeReitzNormalDistribution(NDotH, Roughness);
           float GeometricShadow = GeometrySmithSchlickGGX(NDotL, NDotV, Roughness);
-          float ShadowMapTest = ShadowCalculation(LightIndex);
           vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
       
           vec3 Specular = NormalDistribution * GeometricShadow * LightColor * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
-          vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * ShadowMapTest * LightColor * NDotL;
+          vec3 SurfaceColor = ((vec3(1.0) - Fresnel) * (1.0 - Metalness) * DiffuseColor / PI + Specular) * Attenuation * LightColor * NDotL;
 
           return SurfaceColor;
         }

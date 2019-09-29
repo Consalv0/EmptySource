@@ -88,7 +88,7 @@ namespace ESource {
 	}
 
 	void OpenGLTexture2D::Bind() const {
-		if (!IsValid()) LOG_CORE_WARN(L"Texture 2D is not valid");
+		if (!IsValid()) LOG_CORE_WARN(L"Texture 2D is not valid {}", TextureObject);
 		glBindTexture(GL_TEXTURE_2D, TextureObject);
 	}
 

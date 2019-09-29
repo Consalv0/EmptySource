@@ -32,9 +32,9 @@ namespace ESource {
 
 		virtual void SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
-		virtual void SubmitDirectionalLight(unsigned int Index, const Transform & Position, const Vector3 & Color, const float & Intensity, const Matrix4x4 & Projection);
+		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection);
 
-		virtual void SubmitDirectionalShadowMap(unsigned int Index, const RTexturePtr & ShadowMap, const float & Bias);
+		virtual void SubmitSpotShadowMap(const RTexturePtr & ShadowMap, const float & Bias);
 
 		virtual void SetEyeTransform(const Transform & EyeTransform);
 
