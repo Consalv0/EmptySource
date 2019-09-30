@@ -13,14 +13,18 @@ namespace ESource {
 
 	void ModelManager::LoadFromFile(const WString & FilePath, bool bOptimize) {
 		FileStream * File = FileManager::GetFile(FilePath);
-		RModelPtr Model = CreateModel(File->GetFileNameWithoutExtension(), FilePath, bOptimize);
-		Model->Load();
+		if (File != NULL) {
+			RModelPtr Model = CreateModel(File->GetFileNameWithoutExtension(), FilePath, bOptimize);
+			Model->Load();
+		}
 	}
 
 	void ModelManager::LoadAsyncFromFile(const WString & FilePath, bool bOptimize) {
 		FileStream * File = FileManager::GetFile(FilePath);
-		RModelPtr Model = CreateModel(File->GetFileNameWithoutExtension(), FilePath, bOptimize);
-		Model->LoadAsync();
+		if (File != NULL) {
+			RModelPtr Model = CreateModel(File->GetFileNameWithoutExtension(), FilePath, bOptimize);
+			Model->LoadAsync();
+		}
 	}
 
 	RModelPtr ModelManager::GetModel(const IName & Name) const {

@@ -487,9 +487,9 @@ namespace ESource {
 
 #ifdef ES_DEBUG
 				LOG_CORE_DEBUG(L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
-					Text::FormatUnit(ResourceData.Meshes.back().Vertices.size(), 2),
-					Text::FormatData(sizeof(IntVector3) * ResourceData.Meshes.back().Faces.size() + sizeof(MeshVertex) * ResourceData.Meshes.back().Vertices.size(), 2),
-					ResourceData.Meshes.size(),
+					Text::FormatUnit(Info.Meshes.back().Vertices.size(), 2),
+					Text::FormatData(sizeof(IntVector3) * Info.Meshes.back().Faces.size() + sizeof(MeshVertex) * Info.Meshes.back().Vertices.size(), 2),
+					Info.Meshes.size(),
 					Text::NarrowToWide(Node->GetName())
 				);
 #endif

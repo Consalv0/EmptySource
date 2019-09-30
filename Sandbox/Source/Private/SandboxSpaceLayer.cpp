@@ -208,7 +208,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 						}
 					}
 
-					if (Renderable->GetMesh()) {
+					if (Renderable->GetMesh() && Renderable->GetMesh()->IsValid()) {
 						ImGui::Text("%s[%d]", Renderable->GetMesh()->GetVertexData().Materials.at(Iterator->first).c_str(), Iterator->first);
 						ImGui::SameLine(); ImGui::PushItemWidth(-1);
 						if (ImGui::Combo(("##Material" + std::to_string(Iterator->first)).c_str(), &CurrentMaterialIndex,
