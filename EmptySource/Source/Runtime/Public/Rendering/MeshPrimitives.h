@@ -11,7 +11,7 @@ namespace ESource {
 
 		static MeshData CreateCubeMeshData(const Vector3 & Position, const Vector3 & Size) {
 			MeshData Data;
-			Data.Name = L"Cube";
+			Data.Name = "Cube";
 			Data.Faces = {
 				{  0,  1,  2 }, {  3,  4,  5 },
 				{  6,  7,  8 },	{  9, 10, 11 },
@@ -59,7 +59,7 @@ namespace ESource {
 
 		static MeshData CreateQuadMeshData(const Vector3 & Position, const Vector3 & Size) {
 			MeshData Data;
-			Data.Name = L"Quad";
+			Data.Name = "Quad";
 			Data.Faces = {
 				{0, 1, 2}, {0, 3, 1}
 			};

@@ -63,6 +63,20 @@ namespace ESource {
 			return true;
 		}
 
+		//* Get the first element contained in the string
+		template<class T, class C>
+		inline bool GetFirstOf(const T& String, T& Residue, T& Last, const C& Elements) {
+			size_t StartPos = String.find_fisrst_of(Elements);
+
+			if (StartPos == T::npos) {
+				return false;
+			}
+
+			Last = String.substr(0, StartPos + 1);
+			Residue = String.substr(StartPos + 1);
+			return true;
+		}
+
 		template<typename ... Arguments>
 		WString Formatted(const WString& Format, Arguments ... Args) {
 			const WChar* FormatBuffer = Format.c_str();

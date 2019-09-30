@@ -29,9 +29,9 @@ namespace ESource {
 	typedef TDictionary<int, NString> MeshMaterials;
 
 	struct MeshData {
-		WString Name;
+		NString Name;
 		MeshFaces Faces;
-		TDictionary<int, MeshFaces> MaterialSubdivisions;
+		TDictionary<int, MeshFaces> Subdivisions;
 		MeshVertices Vertices;
 		MeshMaterials Materials;
 		BoundingBox3D Bounding;
@@ -39,11 +39,11 @@ namespace ESource {
 		bool hasNormals;
 		bool hasTangents;
 		bool hasVertexColor;
-		int TextureCoordsCount;
+		int  TextureCoordsCount;
 		bool hasBoundingBox;
 		bool hasWeights;
 
-		void Swap(MeshData & Other);
+		void Transfer(MeshData & Other);
 		void ComputeBounding();
 		void ComputeTangents();
 		void ComputeNormals();
@@ -52,7 +52,6 @@ namespace ESource {
 
 	class Mesh {
 	public:
-
 		Mesh();
 		//* Copy the information to the mesh, the data will be duplicated
 		Mesh(const MeshData & OtherData);
@@ -86,10 +85,9 @@ namespace ESource {
 		bool SetUpBuffers();
 
 	private:
-		TArray<VertexArrayPtr> MeshSubdivisions;
+		TArray<VertexArrayPtr> VAOSubdivisions;
+
 		MeshData Data;
 	};
-
-	typedef std::shared_ptr<Mesh> MeshPtr;
 
 }

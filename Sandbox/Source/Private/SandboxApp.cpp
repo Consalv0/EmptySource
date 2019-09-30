@@ -30,7 +30,7 @@
 #define RESOURCES_ADD_SHADERSTAGE
 #define RESOURCES_ADD_SHADERPROGRAM
 #include "Resources/ResourceManager.h"
-#include "Resources/MeshManager.h"
+#include "Resources/ModelManager.h"
 #include "Resources/MaterialManager.h"
 #include "Resources/ImageConversion.h"
 #include "Resources/ShaderManager.h"
@@ -62,7 +62,7 @@ private:
 
 	// TArray<MeshPtr> SceneModels;
 	// TArray<MeshPtr> LightModels;
-	MeshPtr SelectedMesh;
+	RMeshPtr SelectedMesh;
 	WString SelectedMeshName;
 	
 	// --- Camera rotation, position Matrix
@@ -258,6 +258,18 @@ protected:
 		TextureMng.CreateTexture2D(L"PonyCarInteriorMetallicTexture",   L"Resources/Textures/Interior_dDo_s.jpeg",                        PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
 		TextureMng.CreateTexture2D(L"PonyCarInteriorRoughnessTexture",  L"Resources/Textures/Interior_dDo_g.jpg",                         PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
 		TextureMng.CreateTexture2D(L"PonyCarInteriorNormalTexture",     L"Resources/Textures/Interior_dDo_n.jpg",                         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+	
+		ModelManager& ModelMng = ModelManager::GetInstance();
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
+		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/BigPlane.obj", true);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
+		ModelMng.CreateMesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))->Load();
 	}
 
 	virtual void OnImGuiRender() override {
@@ -356,11 +368,11 @@ protected:
 
 		ImGui::Begin("Meshes", 0, ImVec2(250, 300)); 
 		{
-			TArray<WString> MeshResourcesList = MeshManager::GetInstance().GetResourceNames();
-			if (MeshResourcesList.size() > 0) {
-				TArray<NString> NarrowMeshResourcesList(MeshResourcesList.size());
+			TArray<IName> MeshNameList = ModelManager::GetInstance().GetResourceMeshNames();
+			if (MeshNameList.size() > 0) {
+				TArray<NString> NarrowMeshResourcesList(MeshNameList.size());
 				for (int i = 0; i < NarrowMeshResourcesList.size(); ++i)
-					NarrowMeshResourcesList[i] = Text::WideToNarrow((MeshResourcesList)[i]);
+					NarrowMeshResourcesList[i] = Text::WideToNarrow((MeshNameList)[i].GetDisplayName());
 
 				static int Selection = 0;
 				ImGui::ListBox("Mesh List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
@@ -369,18 +381,18 @@ protected:
 					return true;
 				}, &NarrowMeshResourcesList, (int)NarrowMeshResourcesList.size());
 				ImGui::Text("Selected Mesh: %s", NarrowMeshResourcesList[Selection].c_str());
-				MeshPtr SelectedMesh = MeshManager::GetInstance().GetMesh(MeshResourcesList[Selection]);
-				if (SelectedMesh) {
-					ImGui::Text("Triangle count: %d", SelectedMesh->GetMeshData().Faces.size());
-					ImGui::Text("Vertices count: %d", SelectedMesh->GetMeshData().Vertices.size());
-					ImGui::Text("Tangents: %s", SelectedMesh->GetMeshData().hasTangents ? "true" : "false");
-					ImGui::Text("Normals: %s", SelectedMesh->GetMeshData().hasNormals ? "true" : "false");
-					ImGui::Text("UVs: %d", SelectedMesh->GetMeshData().TextureCoordsCount);
-					ImGui::Text("Vertex Color: %s", SelectedMesh->GetMeshData().hasVertexColor ? "true" : "false");
-					ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh->GetMeshData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
-					ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh->GetMeshData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
+				RMeshPtr SelectedMesh = ModelManager::GetInstance().GetMesh(MeshNameList[Selection]);
+				if (SelectedMesh && SelectedMesh->IsValid()) {
+					ImGui::Text("Triangle count: %d", SelectedMesh->GetVertexData().Faces.size());
+					ImGui::Text("Vertices count: %d", SelectedMesh->GetVertexData().Vertices.size());
+					ImGui::Text("Tangents: %s", SelectedMesh->GetVertexData().hasTangents ? "true" : "false");
+					ImGui::Text("Normals: %s", SelectedMesh->GetVertexData().hasNormals ? "true" : "false");
+					ImGui::Text("UVs: %d", SelectedMesh->GetVertexData().TextureCoordsCount);
+					ImGui::Text("Vertex Color: %s", SelectedMesh->GetVertexData().hasVertexColor ? "true" : "false");
+					ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh->GetVertexData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
+					ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh->GetVertexData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
 					ImGui::TextUnformatted("Materials:");
-					for (auto KeyValue : SelectedMesh->GetMeshData().Materials) {
+					for (auto KeyValue : SelectedMesh->GetVertexData().Materials) {
 						ImGui::BulletText("%s : %d", KeyValue.second.c_str(), KeyValue.first);
 					}
 				}
@@ -935,17 +947,6 @@ protected:
 		HDRClampingMaterial.DepthFunction = DF_Always;
 		HDRClampingMaterial.CullMode = CM_None;
 		HDRClampingMaterial.SetShaderProgram(HDRClampingShader);
-
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/BigPlane.obj", true);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
-		MeshManager::GetInstance().LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
-		MeshManager::GetInstance().AddMesh(L"Quad", std::make_shared<Mesh>(Mesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))));
-		MeshManager::GetInstance().GetMesh(L"Quad")->SetUpBuffers();
 
 		///////// Create Matrices Buffer //////////////
 		ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);

@@ -2,7 +2,7 @@
 
 #include "CoreTypes.h"
 #include "Core/Transform.h"
-#include "Rendering/Mesh.h"
+#include "Resources/ModelManager.h"
 #include "Rendering/Material.h"
 
 namespace ESource {
@@ -30,7 +30,7 @@ namespace ESource {
 
 		virtual void EndStage();
 
-		virtual void SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
+		virtual void SubmitMesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
 		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection);
 

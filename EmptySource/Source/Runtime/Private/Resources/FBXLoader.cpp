@@ -1,7 +1,7 @@
 ﻿
 #include "CoreMinimal.h"
 #include <fbxsdk.h>
-#include "Resources/MeshParser.h"
+#include "Resources/ModelParser.h"
 #include "Resources/FBXLoader.h"
 
 #include "Utility/TextFormatting.h"
@@ -157,15 +157,15 @@ namespace ESource {
 
 			if (PolygonVertexSize < 4) {
 				OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
-				if (OutData.MaterialSubdivisions.find(MaterialIndex) != OutData.MaterialSubdivisions.end())
-					OutData.MaterialSubdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+				if (OutData.Subdivisions.find(MaterialIndex) != OutData.Subdivisions.end())
+					OutData.Subdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
 			}
 			else {
 				OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
 				OutData.Faces.push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
-				if (OutData.MaterialSubdivisions.find(MaterialIndex) != OutData.MaterialSubdivisions.end()) {
-					OutData.MaterialSubdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
-					OutData.MaterialSubdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
+				if (OutData.Subdivisions.find(MaterialIndex) != OutData.Subdivisions.end()) {
+					OutData.Subdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+					OutData.Subdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
 				}
 			}
 
@@ -448,16 +448,16 @@ namespace ESource {
 		return false;
 	}
 
-	bool FBXLoader::Load(MeshParser::ResourceData & ResourceData) {
+	bool FBXLoader::LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options) {
 		if (gSdkManager == NULL)
 			return false;
 
 		Timestamp Timer;
 		Timer.Begin();
 
-		FbxScene* Scene = FbxScene::Create(gSdkManager, Text::WideToNarrow(ResourceData.File->GetShortPath()).c_str());
+		FbxScene* Scene = FbxScene::Create(gSdkManager, Text::WideToNarrow(Options.File->GetShortPath()).c_str());
 
-		bool bStatus = LoadScene(Scene, ResourceData.File);
+		bool bStatus = LoadScene(Scene, Options.File);
 		if (bStatus == false) return false;
 
 		FbxAxisSystem::OpenGL.ConvertScene(Scene);
@@ -476,14 +476,14 @@ namespace ESource {
 			FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
 			FbxMesh * lMesh = Node->GetMesh();
 			if (lMesh) {
-				ResourceData.Meshes.push_back(MeshData());
-				ResourceData.Meshes.back().Name = Text::NarrowToWide(lMesh->GetName());
+				Info.Meshes.push_back(MeshData());
+				Info.Meshes.back().Name = lMesh->GetName();
 				const int MaterialCount = Node->GetMaterialCount();
 				for (int MaterialIndex = 0; MaterialIndex < MaterialCount; ++MaterialIndex) {
-					ResourceData.Meshes.back().Materials.insert({ MaterialIndex, Node->GetMaterial(MaterialIndex)->GetName() });
-					ResourceData.Meshes.back().MaterialSubdivisions.insert({ MaterialIndex, MeshFaces() });
+					Info.Meshes.back().Materials.insert({ MaterialIndex, Node->GetMaterial(MaterialIndex)->GetName() });
+					Info.Meshes.back().Subdivisions.insert({ MaterialIndex, MeshFaces() });
 				}
-				ExtractVertexData(lMesh, ResourceData.Meshes.back());
+				ExtractVertexData(lMesh, Info.Meshes.back());
 
 #ifdef ES_DEBUG
 				LOG_CORE_DEBUG(L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
@@ -493,7 +493,7 @@ namespace ESource {
 					Text::NarrowToWide(Node->GetName())
 				);
 #endif
-				TotalAllocatedSize += sizeof(IntVector3) * ResourceData.Meshes.back().Faces.size() + sizeof(MeshVertex) * ResourceData.Meshes.back().Vertices.size();
+				TotalAllocatedSize += sizeof(IntVector3) * Info.Meshes.back().Faces.size() + sizeof(MeshVertex) * Info.Meshes.back().Vertices.size();
 			}
 		}
 

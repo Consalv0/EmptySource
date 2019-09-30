@@ -22,6 +22,7 @@ namespace ESource {
 
 		WString GetExtension() const;
 		WString GetFileName() const;
+		WString GetFileNameWithoutExtension() const;
 		WString GetPath() const;
 		WString GetShortPath() const;
 		std::wstringstream ReadStream() const;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Files/FileStream.h"
-#include "Resources/MeshParser.h"
+#include "Resources/ModelParser.h"
 #include "Resources/OBJLoader.h"
 
 
@@ -315,8 +315,8 @@ namespace ESource {
 		ModelData.VertexIndices.reserve(FaceCount * 4);
 	}
 
-	bool OBJLoader::Load(MeshParser::ResourceData & ResourceData) {
-		if (ResourceData.File == NULL || !ResourceData.File->IsValid()) return false;
+	bool OBJLoader::LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options) {
+		if (Options.File == NULL || !Options.File->IsValid()) return false;
 
 		ExtractedData ModelData;
 
@@ -326,7 +326,7 @@ namespace ESource {
 
 			Timer.Begin();
 			NString* MemoryText = new NString();
-			ResourceData.File->ReadNarrowStream(MemoryText);
+			Options.File->ReadNarrowStream(MemoryText);
 
 			PrepareData(MemoryText->c_str(), ModelData);
 			ParseFaces(ModelData);
@@ -365,14 +365,14 @@ namespace ESource {
 			TDictionary<MeshVertex, unsigned> VertexToIndex;
 			VertexToIndex.reserve(Data.VertexIndicesCount);
 
-			ResourceData.Meshes.push_back(MeshData());
-			MeshData* OutMesh = &ResourceData.Meshes.back();
-			OutMesh->Name = Text::NarrowToWide(Data.Name);
+			Info.Meshes.push_back(MeshData());
+			MeshData* OutMesh = &Info.Meshes.back();
+			OutMesh->Name = Data.Name;
 
 			for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
 				ObjectData::Subdivision & MaterialIndex = Data.Materials[MaterialCount];
 				OutMesh->Materials.insert({ (int)OutMesh->Materials.size(), MaterialIndex.Name });
-				OutMesh->MaterialSubdivisions.insert({ MaterialCount, MeshFaces() });
+				OutMesh->Subdivisions.insert({ MaterialCount, MeshFaces() });
 
 				int InitialCount = Count;
 				for (; Count < InitialCount + MaterialIndex.VertexIndicesCount; ++Count) {
@@ -392,7 +392,7 @@ namespace ESource {
 
 					unsigned Index = Count;
 					bool bFoundIndex = false;
-					if (ResourceData.Optimize) {
+					if (Options.Optimize) {
 						bFoundIndex = GetSimilarVertexIndex(NewVertex, VertexToIndex, Index);
 					}
 
@@ -405,13 +405,13 @@ namespace ESource {
 						OutMesh->Vertices.push_back(NewVertex);
 						unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
 						Indices[Count] = NewIndex;
-						if (ResourceData.Optimize) VertexToIndex[NewVertex] = NewIndex;
+						if (Options.Optimize) VertexToIndex[NewVertex] = NewIndex;
 						TotalUniqueVertices++;
 					}
 
 					if ((Count + 1) % 3 == 0) {
 						OutMesh->Faces.push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
-						OutMesh->MaterialSubdivisions[MaterialCount].push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+						OutMesh->Subdivisions[MaterialCount].push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
 					}
 				}
 			}

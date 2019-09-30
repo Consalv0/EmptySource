@@ -99,6 +99,9 @@
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\OpenGLDefinitions.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLRenderTarget.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
@@ -136,6 +139,9 @@
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentLight.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h">
@@ -324,6 +330,9 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\MeshPrimitives.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Rendering\PixelMap.h">
+      <Filter>Runtime\Public\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\RenderPipeline.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
@@ -366,10 +375,10 @@
     <ClInclude Include="Source\Runtime\Public\Resources\MaterialManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\MeshManager.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ModelParser.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\MeshParser.h">
+    <ClInclude Include="Source\Runtime\Public\Resources\ModelResource.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\OBJLoader.h">
@@ -411,14 +420,8 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Rendering\PixelMap.h">
-      <Filter>Runtime\Public\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Platform\OpenGL\OpenGLDefinitions.h">
-      <Filter>Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Components\ComponentLight.h">
-      <Filter>Runtime\Public\Components</Filter>
+    <ClInclude Include="Source\Runtime\Public\Resources\ModelManager.h">
+      <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\MeshResource.h">
       <Filter>Runtime\Public\Resources</Filter>
@@ -434,6 +437,9 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLDefinitions.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderTarget.cpp">
       <Filter>Platform\OpenGL</Filter>
     </ClCompile>
@@ -442,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform\Windows\WindowsDefinitions.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Windows\WindowsDeviceFunctions.cpp">
       <Filter>Platform\Windows</Filter>
@@ -459,6 +468,9 @@
       <Filter>Runtime\Private\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp">
+      <Filter>Runtime\Private\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentLight.cpp">
       <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp">
@@ -545,6 +557,9 @@
     <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Rendering\PixelMap.cpp">
+      <Filter>Runtime\Private\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\RenderPipeline.cpp">
       <Filter>Runtime\Private\Rendering</Filter>
     </ClCompile>
@@ -581,10 +596,13 @@
     <ClCompile Include="Source\Runtime\Private\Resources\MaterialManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\MeshManager.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ModelManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Resources\MeshParser.cpp">
+    <ClCompile Include="Source\Runtime\Private\Resources\ModelParser.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\ModelResource.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\OBJLoader.cpp">
@@ -617,17 +635,8 @@
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Rendering\PixelMap.cpp">
-      <Filter>Runtime\Private\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Platform\OpenGL\OpenGLDefinitions.cpp">
-      <Filter>Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Platform\Windows\WindowsDefinitions.cpp">
-      <Filter>Platform\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Components\ComponentLight.cpp">
-      <Filter>Runtime\Private\Components</Filter>
+    <ClCompile Include="Source\Runtime\Public\Resources\MeshResource.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

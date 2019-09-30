@@ -38,7 +38,7 @@ namespace ESource {
 	}
 
 	void RShader::LoadAsync() {
-		ES_CORE_ASSERT(true, L"Not implemented")
+		ES_CORE_ASSERT(true, "Not implemented")
 	}
 
 	void RShader::Unload() {

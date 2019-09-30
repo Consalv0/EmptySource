@@ -62,7 +62,7 @@ namespace ESource {
 	public:
 		/** Load mesh data from file extension Wavefront, it will return the models separated by objects, optionaly
 		  * there's a way to optimize the vertices. */
-		static bool Load(MeshParser::ResourceData & ResourceData);
+		static bool LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options);
 
 	};
 

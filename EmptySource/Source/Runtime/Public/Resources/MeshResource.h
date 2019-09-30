@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Resources/ResourceHolder.h"
+#include "Resources/ModelResource.h"
 #include "Rendering/Mesh.h"
 
 namespace ESource {
 
-	typedef std::shared_ptr<class RShader> RMeshPtr;
+	typedef std::shared_ptr<class RMesh> RMeshPtr;
 
 	class RMesh : public ResourceHolder {
-
+	public:
 		~RMesh();
 
 		virtual bool IsValid() const override;
@@ -25,17 +26,39 @@ namespace ESource {
 
 		virtual inline EResourceType GetResourceType() const override { return EResourceType::RT_Mesh; }
 
-		virtual inline size_t GetMemorySize() const override;
-
 		static inline EResourceType GetType() { return EResourceType::RT_Mesh; };
 
-	protected:
-		friend class MeshManager;
+		virtual inline size_t GetMemorySize() const override;
 
-		RMesh(const IName & Name, const WString & Origin);
+		const IName & GetModelName() const;
+
+		MeshData & GetVertexData();
+
+		//* Get VertexArray in Mesh
+		VertexArrayPtr GetSubdivisionVertexArray(int Index) const;
+
+	protected:
+		friend class ModelManager;
+
+		RMesh(const IName & Name, const WString & Origin, const IName & ModelName, MeshData & VertexData);
+
+		RMesh(const IName & Name, const WString & Origin, const IName & ModelName);
+
+		//* Clear the mesh entirely
+		void Clear();
+
+		//* Clear the GL's objects
+		void ClearBuffers();
+
+		//* Give Vertices to OpenGL **This must be done once per render**
+		bool SetUpBuffers();
 
 	private:
-		Mesh * MeshPointer;
+		TArray<VertexArrayPtr> VAOSubdivisions;
+
+		IName ModelName;
+		
+		MeshData VertexData;
 	};
 
 }

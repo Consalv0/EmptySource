@@ -62,6 +62,13 @@ namespace ESource {
 		return L"";
 	}
 
+	WString FileStream::GetFileNameWithoutExtension() const {
+		WString FileName = GetFileName();
+		WString Extension = GetExtension();
+		FileName = FileName.substr(0, FileName.size() - Extension.size() - 1);
+		return FileName;
+	}
+
 	WString FileStream::GetPath() const {
 		return Path;
 	}

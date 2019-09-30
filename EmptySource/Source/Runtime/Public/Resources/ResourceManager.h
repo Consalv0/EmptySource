@@ -9,7 +9,7 @@ namespace ESource {
 	};
 
 	enum EResourceType {
-		RT_Texture, RT_Shader, RT_Material, RT_Mesh, RT_Audio
+		RT_Texture, RT_Shader, RT_Material, RT_Mesh, RT_Model, RT_Audio
 	};
 
 	class ResourceManager {

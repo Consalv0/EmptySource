@@ -4,7 +4,7 @@
 #include "Rendering/Material.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
-#include "Resources/MeshManager.h"
+#include "Resources/ModelManager.h"
 #include "Core/GameObject.h"
 #include "Core/CoreTime.h"
 #include "Core/Application.h"
@@ -20,13 +20,13 @@ namespace ESource {
 		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
 
-	void CRenderable::SetMesh(MeshPtr Value) {
+	void CRenderable::SetMesh(RMeshPtr Value) {
 		ActiveMesh.swap(Value);
-		if (ActiveMesh) {
-			for (auto & MaterialLook : ActiveMesh->GetMeshData().Materials)
+		if (ActiveMesh != NULL) {
+			for (auto & MaterialLook : ActiveMesh->GetVertexData().Materials)
 				Materials.try_emplace(MaterialLook.first);
 			size_t MaterialSize = Materials.size();
-			for (size_t i = ActiveMesh->GetMeshData().Materials.size(); i < MaterialSize; ++i)
+			for (size_t i = ActiveMesh->GetVertexData().Materials.size(); i < MaterialSize; ++i)
 				Materials.erase((int)i);
 		}
 		else
@@ -45,7 +45,7 @@ namespace ESource {
 		return Materials;
 	}
 
-	MeshPtr CRenderable::GetMesh() const {
+	RMeshPtr CRenderable::GetMesh() const {
 		return ActiveMesh;
 	}
 

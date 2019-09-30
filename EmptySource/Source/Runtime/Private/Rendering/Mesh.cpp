@@ -29,22 +29,22 @@ namespace ESource {
 	};
 
 	Mesh::Mesh() {
-		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
+		VAOSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data = MeshData();
 	}
 
 	Mesh::Mesh(const MeshData & OtherData) {
-		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
+		VAOSubdivisions = TArray<VertexArrayPtr>(NULL);
 		Data = OtherData;
 	}
 
 	Mesh::Mesh(MeshData * OtherData) {
-		MeshSubdivisions = TArray<VertexArrayPtr>(NULL);
-		Data.Swap(*OtherData);
+		VAOSubdivisions = TArray<VertexArrayPtr>(NULL);
+		Data.Transfer(*OtherData);
 	}
 
 	void Mesh::SwapMeshData(MeshData & NewData) {
-		Clear(); Data.Swap(NewData);
+		Clear(); Data.Transfer(NewData);
 	}
 
 	void Mesh::CopyMeshData(const MeshData & NewData) {
@@ -52,33 +52,32 @@ namespace ESource {
 	}
 
 	void Mesh::BindSubdivisionVertexArray(int MaterialIndex) const {
-		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
-		if (Subdivision == Data.MaterialSubdivisions.end()) return;
-		if (MaterialIndex >= MeshSubdivisions.size() || MeshSubdivisions[MaterialIndex] == NULL) return;
+		auto Subdivision = Data.Subdivisions.find(MaterialIndex);
+		if (Subdivision == Data.Subdivisions.end()) return;
+		if (MaterialIndex >= VAOSubdivisions.size() || VAOSubdivisions[MaterialIndex] == NULL) return;
 
-		MeshSubdivisions[MaterialIndex]->Bind();
+		VAOSubdivisions[MaterialIndex]->Bind();
 
 		return;
 	}
 
 	VertexArrayPtr Mesh::GetSubdivisionVertexArray(int MaterialIndex) const {
-		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
-		if (Subdivision == Data.MaterialSubdivisions.end()) return NULL;
-		if (MaterialIndex >= MeshSubdivisions.size() || MeshSubdivisions[MaterialIndex] == NULL) return NULL;
+		auto Subdivision = Data.Subdivisions.find(MaterialIndex);
+		if (Subdivision == Data.Subdivisions.end()) return NULL;
+		if (MaterialIndex >= VAOSubdivisions.size() || VAOSubdivisions[MaterialIndex] == NULL) return NULL;
 
-		return MeshSubdivisions[MaterialIndex];
+		return VAOSubdivisions[MaterialIndex];
 	}
 
 	void Mesh::DrawSubdivisionInstanciated(int Count, int MaterialIndex) const {
-		auto Subdivision = Data.MaterialSubdivisions.find(MaterialIndex);
-		if (Subdivision == Data.MaterialSubdivisions.end()) return;
-		if (MaterialIndex >= MeshSubdivisions.size() || MeshSubdivisions[MaterialIndex] == NULL) return;
+		auto Subdivision = Data.Subdivisions.find(MaterialIndex);
+		if (Subdivision == Data.Subdivisions.end()) return;
+		if (MaterialIndex >= VAOSubdivisions.size() || VAOSubdivisions[MaterialIndex] == NULL) return;
 
-		Rendering::DrawIndexed(MeshSubdivisions[MaterialIndex], Count);
+		Rendering::DrawIndexed(VAOSubdivisions[MaterialIndex], Count);
 	}
 
 	bool Mesh::SetUpBuffers() {
-
 		if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
 
 		static BufferLayout DafultLayout = {
@@ -95,31 +94,31 @@ namespace ESource {
 		VertexBufferPointer = VertexBuffer::Create((float *)&Data.Vertices[0], (unsigned int)(Data.Vertices.size() * sizeof(MeshVertex)), UM_Static);
 		VertexBufferPointer->SetLayout(DafultLayout);
 
-		if (Data.MaterialSubdivisions.size() <= 0) {
+		if (Data.Subdivisions.size() <= 0) {
 			Data.Materials.emplace(0, "default");
-			Data.MaterialSubdivisions.emplace(0, Data.Faces);
+			Data.Subdivisions.emplace(0, Data.Faces);
 		}
 
-		for (int ElementBufferCount = 0; ElementBufferCount < Data.MaterialSubdivisions.size(); ElementBufferCount++) {
+		for (int ElementBufferCount = 0; ElementBufferCount < Data.Subdivisions.size(); ElementBufferCount++) {
 			VertexArrayPtr VertexArrayPointer = NULL;
 			VertexArrayPointer = VertexArray::Create();
 			IndexBufferPtr IndexBufferPointer = NULL;
 			IndexBufferPointer = IndexBuffer::Create(
-				(unsigned int *)&Data.MaterialSubdivisions[ElementBufferCount][0],
-				(unsigned int)Data.MaterialSubdivisions[ElementBufferCount].size() * 3, UM_Static
+				(unsigned int *)&Data.Subdivisions[ElementBufferCount][0],
+				(unsigned int)Data.Subdivisions[ElementBufferCount].size() * 3, UM_Static
 			);
 			VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
 			VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
 			VertexArrayPointer->Unbind();
 			
-			MeshSubdivisions.push_back(VertexArrayPointer);
+			VAOSubdivisions.push_back(VertexArrayPointer);
 		}
 
 		return true;
 	}
 
 	void Mesh::ClearBuffers() {
-		MeshSubdivisions.clear();
+		VAOSubdivisions.clear();
 	}
 
 	void Mesh::Clear() {
@@ -127,11 +126,11 @@ namespace ESource {
 		ClearBuffers();
 	}
 
-	void MeshData::Swap(MeshData & Other) {
+	void MeshData::Transfer(MeshData & Other) {
 		Name = Other.Name;
 		Faces.swap(Other.Faces);
 		Vertices.swap(Other.Vertices);
-		MaterialSubdivisions.swap(Other.MaterialSubdivisions);
+		Subdivisions.swap(Other.Subdivisions);
 		Materials.swap(Other.Materials);
 		Bounding = Other.Bounding;
 

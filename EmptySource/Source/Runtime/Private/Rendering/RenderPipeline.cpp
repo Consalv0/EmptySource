@@ -43,8 +43,8 @@ namespace ESource {
 		ActiveStage = NULL;
 	}
 
-	void RenderPipeline::SubmitMesh(const MeshPtr & Model, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
-		ActiveStage->SubmitVertexArray(Model->GetSubdivisionVertexArray(Subdivision), Mat, Matrix);
+	void RenderPipeline::SubmitMesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+		ActiveStage->SubmitVertexArray(ModelPointer->GetSubdivisionVertexArray(Subdivision), Mat, Matrix);
 	}
 
 	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {

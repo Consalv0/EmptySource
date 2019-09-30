@@ -8,7 +8,7 @@ namespace ESource {
 	class CRenderable : public CComponent {
 		IMPLEMENT_COMPONENT(CRenderable)
 	public:
-		virtual void SetMesh(MeshPtr Value);
+		virtual void SetMesh(RMeshPtr Value);
 
 		virtual void SetMaterials(TArray<MaterialPtr> & Materials);
 
@@ -16,7 +16,7 @@ namespace ESource {
 
 		virtual const TDictionary<int, MaterialPtr> & GetMaterials() const;
 
-		virtual MeshPtr GetMesh() const;
+		virtual RMeshPtr GetMesh() const;
 
 		virtual void OnRender() override;
 
@@ -26,7 +26,7 @@ namespace ESource {
 
 		virtual void OnDelete() override;
 
-		MeshPtr ActiveMesh;
+		RMeshPtr ActiveMesh;
 
 		TDictionary<int, MaterialPtr> Materials;
 	};

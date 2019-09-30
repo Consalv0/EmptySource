@@ -27,7 +27,7 @@
 
 #include "Files/FileManager.h"
 
-#include "Resources/MeshParser.h"
+#include "Resources/ModelParser.h"
 #include "Resources/ShaderManager.h"
 
 #include "Fonts/Font.h"
@@ -107,7 +107,7 @@ namespace ESource {
 		AudioDeviceInstance = std::make_unique<AudioDevice>();
 		DeviceFunctionsInstance = std::unique_ptr<DeviceFunctions>(DeviceFunctions::Create());
 
-		if (!MeshParser::Initialize())
+		if (!ModelParser::Initialize())
 			return;
 
 		MeshPrimitives::Initialize();
@@ -137,7 +137,7 @@ namespace ESource {
 		do {
 			Time::Tick();
 
-			MeshParser::UpdateStatus();
+			ModelParser::UpdateStatus();
 			
 			for (Layer * LayerIt : AppLayerStack)
 				LayerIt->OnUpdate(Time::GetTimeStamp());
@@ -173,7 +173,7 @@ namespace ESource {
 
 		AppLayerStack.Clear();
 
-		MeshParser::Exit();
+		ModelParser::Exit();
 
 	}
 
