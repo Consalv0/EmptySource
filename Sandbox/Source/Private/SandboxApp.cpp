@@ -78,7 +78,6 @@ private:
 	Material UnlitMaterialWire = Material(L"UnlitMaterialWire");
 	Material RenderTextureMaterial = Material(L"RenderTextureMaterial");
 	MaterialPtr RenderTextMaterial = std::make_shared<Material>(L"RenderTextMaterial");
-	MaterialPtr RenderCubemapMaterial = std::make_shared<Material>(L"RenderCubemapMaterial");
 	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
 	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
 
@@ -160,7 +159,6 @@ protected:
 	}
 
 	virtual void OnAttach() override {
-
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
 		AudioManager::GetInstance().LoadAudioFromFile(L"Hololooo.wav", L"Resources/Sounds/Hololooo.wav");
 
@@ -174,15 +172,15 @@ protected:
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderMng.CreateProgram(L"PBRShader", L"Resources/Shaders/PBR.shader");
 		
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnBAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnBRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnBNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CulumnCRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnBAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnBRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_roughness.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnBNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnCAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_diffuse.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnCNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
+		TextureMng.LoadImageFromFile(L"Sponza/ColumnCRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/BricksAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Albedo.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/BricksARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Roughness.tga");
 		TextureMng.LoadImageFromFile(L"Sponza/BricksANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Normal.tga");
@@ -264,12 +262,68 @@ protected:
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
+		ModelMng.CreateSubModelMesh(L"Sponza", L"FirstFloorArcs");
+		ModelMng.CreateSubModelMesh(L"Sponza", L"FirstFloorExterior");
+		ModelMng.CreateSubModelMesh(L"Sponza", L"UpperFloor");
+		ModelMng.CreateSubModelMesh(L"Sponza", L"SecondFloorInterior");
+		ModelMng.CreateSubModelMesh(L"Sponza", L"SecondFloorExterior");
+		ModelMng.CreateSubModelMesh(L"Sponza", L"Exterior");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/BigPlane.obj", true);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
 		ModelMng.CreateMesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))->Load();
+		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
+
+		MaterialManager& MaterialMng = MaterialManager::GetInstance();
+		MaterialMng.CreateMaterial(L"Sponza/Arcs", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchRoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/ColumnA", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnAAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnANormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnARoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/ColumnB", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnBAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnBNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnBRoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/ColumnC", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnCAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnCNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnCRoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/Bricks", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/BricksAAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/BricksANormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/BricksARoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/Details", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsRoughnessTexture") } },
+			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsMetallicTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/Floor", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/FloorAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/FloorNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/FloorRoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/Roof", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/RoofAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/RoofNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/RoofRoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"Sponza/Ceiling", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/CeilingAlbedoTexture") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/CeilingNormalTexture") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/CeilingRoughnessTexture") } },
+		});
+		MaterialMng.CreateMaterial(L"RenderCubemapMaterial", ShaderMng.GetProgram(L"RenderCubemapShader"), true, DF_Always, FM_Solid, CM_None, {} )->RenderPriority = 0;
 	}
 
 	virtual void OnImGuiRender() override {
@@ -936,10 +990,6 @@ protected:
 		RenderTextMaterial->SetShaderProgram(RenderTextShader);
 		MaterialManager::GetInstance().AddMaterial(RenderTextMaterial);
 
-		RenderCubemapMaterial->CullMode = CM_None;
-		RenderCubemapMaterial->SetShaderProgram(RenderCubemapShader);
-		MaterialManager::GetInstance().AddMaterial(RenderCubemapMaterial);
-
 		IntegrateBRDFMaterial.DepthFunction = DF_Always;
 		IntegrateBRDFMaterial.CullMode = CM_None;
 		IntegrateBRDFMaterial.SetShaderProgram(IntegrateBRDFShader);
@@ -1135,7 +1185,7 @@ protected:
 		// 	}
 
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
-		RenderCubemapMaterial->SetParameters({
+		MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial")->SetParameters({
 			{ "_Skybox", { ETextureDimension::Cubemap, CubemapTexture } },
 			{ "_Lod", { float( SkyRoughnessTemp ) } }
 		});

@@ -49,11 +49,12 @@ namespace ESource {
 				{ Transform.MultiplyPoint({-0.5F, -0.5F, -0.5F}), { 0.F,  0.F, -1.F}, { 0.F, -1.F, 0.F}, {1.F, 1.F}, {1.F, 1.F}, {1.F} }
 			};
 
-			Data.hasBoundingBox = true;
+			Data.hasBoundingBox = false;
 			Data.hasNormals = true;
 			Data.hasVertexColor = true;
 			Data.TextureCoordsCount = 1;
 			Data.ComputeTangents();
+			Data.ComputeBounding();
 			return Data;
 		}
 
@@ -72,12 +73,12 @@ namespace ESource {
 				{ Transform.MultiplyPoint({-1.F, -1.F, -0.F}), {0.F, 0.F, 1.F}, {1.F, -0.F, -0.F}, {0.F, 0.F}, {0.F, 0.F}, {1.F} }
 			};
 
-			Data.hasBoundingBox = true;
+			Data.hasBoundingBox = false;
 			Data.hasNormals = true;
 			Data.hasVertexColor = true;
 			Data.TextureCoordsCount = 1;
-			Data.ComputeBounding();
 			Data.ComputeTangents();
+			Data.ComputeBounding();
 			return Data;
 		}
 

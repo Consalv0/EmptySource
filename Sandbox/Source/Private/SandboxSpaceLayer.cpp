@@ -240,10 +240,74 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
-	auto Light0 = CreateObject<GGameObject>(L"Light", Transform({ -9.5F, 22.5F, -6.5F }, Quaternion::EulerAngles({50.F, 50.F, -180.F}), 1.F));
-	Light0->CreateComponent<CLight>();
-	auto Light1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
-	Light1->CreateComponent<CLight>();
+	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::EulerAngles({66, 56.F, 180.F}), 1.F));
+	auto Light0 = LightObj0->CreateComponent<CLight>();
+	Light0->ApertureAngle = 60.F;
+	Light0->bCastShadow = true;
+	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
+	LightObj1->CreateComponent<CLight>()->bCastShadow = true;
+
+	MaterialManager MaterialMng = MaterialManager::GetInstance();
+	ModelManager ModelMng = ModelManager::GetInstance();
+	auto Sponza = CreateObject<GGameObject>(L"Sponza", Transform());
+	{
+		auto FirstFloorArcs = CreateObject<GGameObject>(L"FirstFloorArcs");
+		FirstFloorArcs->AttachTo(Sponza);
+		auto Renderable = FirstFloorArcs->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:FirstFloorArcs"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/ColumnA"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Arcs"));
+	}
+	{
+		auto FirstFloorExterior = CreateObject<GGameObject>(L"FirstFloorExterior");
+		FirstFloorExterior->AttachTo(Sponza);
+		auto Renderable = FirstFloorExterior->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:FirstFloorExterior"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/ColumnC"));
+		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Details"));
+		Renderable->SetMaterialAt(3, MaterialMng.GetMaterial(L"Sponza/Arcs"));
+		Renderable->SetMaterialAt(4, MaterialMng.GetMaterial(L"Sponza/Floor"));
+		Renderable->SetMaterialAt(5, MaterialMng.GetMaterial(L"Sponza/Bricks"));
+		Renderable->SetMaterialAt(6, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+	}
+	{
+		auto Exterior = CreateObject<GGameObject>(L"Exterior");
+		Exterior->AttachTo(Sponza);
+		auto Renderable = Exterior->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:Exterior"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Bricks"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Roof"));
+	}
+	{
+		auto SecondFloorInterior = CreateObject<GGameObject>(L"SecondFloorInterior");
+		SecondFloorInterior->AttachTo(Sponza);
+		auto Renderable = SecondFloorInterior->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:SecondFloorInterior"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/ColumnB"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/ColumnC"));
+		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Bricks"));
+		Renderable->SetMaterialAt(3, MaterialMng.GetMaterial(L"Sponza/Arcs"));
+		Renderable->SetMaterialAt(4, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+	}
+	{
+		auto SecondFloorExterior = CreateObject<GGameObject>(L"SecondFloorExterior");
+		SecondFloorExterior->AttachTo(Sponza);
+		auto Renderable = SecondFloorExterior->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:SecondFloorExterior"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Details"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Bricks"));
+	}
+	{
+		auto UpperFloor = CreateObject<GGameObject>(L"UpperFloor");
+		UpperFloor->AttachTo(Sponza);
+		auto Renderable = UpperFloor->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:UpperFloor"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Arcs"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Bricks"));
+		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+	}
 }
 
 void SandboxSpaceLayer::OnRender() {

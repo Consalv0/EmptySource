@@ -81,8 +81,8 @@ namespace ESource {
 			(*MatIt)->Use();
 
 			for (auto& Element : VertexArrayTable) {
+				if (Element.first == NULL) continue;
 				Element.first->Bind();
-
 				float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
 				(*MatIt)->GetShaderProgram()->GetProgram()->SetAttribMatrix4x4Array("_iModelMatrix", (int)Element.second.size(), &Element.second[0], ModelMatrixBuffer);
 				Rendering::DrawIndexed(Element.first, (int)Element.second.size());
@@ -133,6 +133,7 @@ namespace ESource {
 			}
 
 			for (auto& Element : VertexArrayTable) {
+				if (Element.first == NULL) continue;
 				Element.first->Bind();
 
 				ShaderParameter * Parameter = (*MatIt)->GetVariables().GetVariable("_MainTexture");

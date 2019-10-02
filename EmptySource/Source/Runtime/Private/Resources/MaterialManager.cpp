@@ -29,6 +29,21 @@ namespace ESource {
 		MaterialList.insert({ UID, Material });
 	}
 
+	MaterialPtr MaterialManager::CreateMaterial(
+		const IName & Name, const RShaderPtr & Shader, bool WriteDepth, EDepthFunction DepthFunction,
+		ERasterizerFillMode FillMode, ECullMode CullMode, TArrayInitializer<ShaderParameter> Parameters) 
+	{
+		MaterialPtr NewMaterial = std::make_shared<Material>(Name);
+		NewMaterial->bWriteDepth = WriteDepth;
+		NewMaterial->DepthFunction = DepthFunction;
+		NewMaterial->FillMode = FillMode;
+		NewMaterial->CullMode = CullMode;
+		NewMaterial->SetShaderProgram(Shader);
+		NewMaterial->SetParameters(Parameters);
+		AddMaterial(NewMaterial);
+		return NewMaterial;
+	}
+
 	TArray<IName> MaterialManager::GetResourceNames() const {
 		TArray<IName> Names;
 		for (auto KeyValue : MaterialNameList)

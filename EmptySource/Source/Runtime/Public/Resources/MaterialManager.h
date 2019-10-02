@@ -15,6 +15,11 @@ namespace ESource {
 
 		void AddMaterial(MaterialPtr Material);
 
+		MaterialPtr CreateMaterial(
+			const IName& Name, const RShaderPtr& Shader, bool WriteDepth, EDepthFunction DepthFunction,
+			ERasterizerFillMode FilterMode, ECullMode CullMode, TArrayInitializer<ShaderParameter> Parameters
+		);
+
 		TArray<IName> GetResourceNames() const;
 
 		virtual inline EResourceType GetResourceType() const override { return RT_Material; };
