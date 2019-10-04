@@ -98,6 +98,10 @@ namespace ESource {
 		}
 	}
 
+	void RTexture::DeleteMipMaps() {
+		MipMapCount = 0;
+	}
+
 	void RTexture::SetGenerateMipMapsOnLoad(bool Option) {
 		bBuildMipMapsOnLoad = Option;
 	}

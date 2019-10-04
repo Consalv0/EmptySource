@@ -234,6 +234,10 @@ namespace ESource {
 		return Height;
 	}
 
+	IntVector2 WindowsWindow::GetSize() const {
+		return IntVector2(Width, Height);
+	}
+
 	void * WindowsWindow::GetHandle() const	{
 		return WindowHandle;
 	}

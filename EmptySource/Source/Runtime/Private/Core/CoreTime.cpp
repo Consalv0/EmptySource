@@ -17,8 +17,8 @@ namespace ESource {
 	unsigned long long Time::TickBuffer[MaxTickSamples];
 	unsigned long long Time::TickAverage = 30; 
 
-	unsigned long long Time::MaxUpdateDeltaMicro = Time::Second::GetSizeInMicro() / 60;
-	unsigned long long Time::MaxRenderDeltaMicro = Time::Second::GetSizeInMicro() / 50;
+	unsigned long long Time::MaxUpdateDeltaMicro = Time::Second::GetSizeInMicro() / 900;
+	unsigned long long Time::MaxRenderDeltaMicro = Time::Second::GetSizeInMicro() / 59;
 
 	bool Time::bSkipRender = false;
 	unsigned long long Time::RenderDeltaTimeSum = 0;

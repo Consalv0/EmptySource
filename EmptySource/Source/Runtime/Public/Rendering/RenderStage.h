@@ -6,6 +6,7 @@
 #include "Rendering/Material.h"
 #include "Rendering/Mesh.h"
 #include "Rendering/RenderScene.h"
+#include "Rendering/RenderTarget.h"
 
 namespace ESource {
 
@@ -38,8 +39,12 @@ namespace ESource {
 
 		virtual void SetProjectionMatrix(const Matrix4x4 & Projection);
 
+		virtual void SetRenderTarget(const RenderTargetPtr & InTarget);
+
 	private:
 		IName Name;
+
+		RenderTargetPtr Target;
 	};
 
 }

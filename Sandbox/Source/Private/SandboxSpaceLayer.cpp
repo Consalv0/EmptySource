@@ -140,7 +140,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 				ImGui::Separator();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Color"); ImGui::NextColumn();
-				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##LightColor", &Light->Color[0]); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::ColorEdit3("##LightColor", &Light->Color[0], ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_Float); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Intensity"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::DragFloat("##LightIntensity", &Light->Intensity); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Cast Shadow"); ImGui::NextColumn();

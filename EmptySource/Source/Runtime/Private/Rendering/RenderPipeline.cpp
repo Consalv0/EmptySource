@@ -13,7 +13,7 @@
 namespace ESource {
 
 	RenderPipeline::RenderPipeline() :
-		RenderScale(1.F), RenderStages() {
+		RenderScale(1.F), bNeedResize(true), Gamma(2.2), Exposure(1.0), RenderStages(), ScreenTarget(NULL) {
 	}
 
 	RenderPipeline::~RenderPipeline() {
@@ -22,6 +22,10 @@ namespace ESource {
 
 	void RenderPipeline::Initialize() {
 		Rendering::SetAlphaBlending(EBlendFactor::BF_SrcAlpha, EBlendFactor::BF_OneMinusSrcAlpha);
+		TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
+		ScreenTarget = RenderTarget::Create();
+		ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
+		bNeedResize = false;
 	}
 
 	void RenderPipeline::ContextInterval(int Interval) {
@@ -33,6 +37,7 @@ namespace ESource {
 		TDictionary<size_t, RenderStage *>::iterator Stage;
 		if ((Stage = RenderStages.find(StageName.GetID())) != RenderStages.end()) {
 			ActiveStage = Stage->second;
+			Stage->second->SetRenderTarget(ScreenTarget);
 			Stage->second->Begin();
 		}
 	}
@@ -63,6 +68,18 @@ namespace ESource {
 		ActiveStage->SetProjectionMatrix(Projection);
 	}
 
+	IntVector2 RenderPipeline::GetRenderSize() const {
+		IntVector2 Size = Application::GetInstance()->GetWindow().GetSize();
+		Size.x = int((float)Size.x * RenderScale);
+		Size.y = int((float)Size.y * RenderScale);
+		return Size;
+	}
+
+	void RenderPipeline::SetRenderScale(float Scale) {
+		bNeedResize = RenderScale != Scale;
+		RenderScale = Math::Clamp01(Scale);
+	}
+
 	void RenderPipeline::RemoveStage(const IName & StageName) {
 		if (RenderStages.find(StageName.GetID()) != RenderStages.end()) {
 			RenderStages.erase(StageName.GetID());
@@ -81,13 +98,21 @@ namespace ESource {
 	}
 
 	void RenderPipeline::BeginFrame() {
-		Rendering::SetDefaultRender();
-		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
-		Rendering::ClearCurrentRender(true, 0.25F, true, 1, false, 0);
+		Rendering::ClearCurrentRender(true, 0.15F, true, 1, false, 0);
+		if (bNeedResize) {
+			ScreenTarget.reset();
+			delete TextureTarget;
+			TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
+			ScreenTarget = RenderTarget::Create();
+			ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
+			ScreenTarget->Unbind();
+			bNeedResize = false;
+		}
 	}
 
 	void RenderPipeline::EndOfFrame() {
-		Application::GetInstance()->GetWindow().EndFrame();
+		Rendering::SetDefaultRender();
+		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
 	}
 
 }

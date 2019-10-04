@@ -14,6 +14,7 @@ namespace ESource {
 		{ L"PF_RG16F",         4,      2,        true,    PF_RG16F         },
 		{ L"PF_RGB8",          3,      3,        true,    PF_RGB8          },
 		{ L"PF_RGB32F",        12,     3,        true,    PF_RGB32F        },
+		{ L"PF_RGB16F",        8,      3,        true,    PF_RGB16F        },
 		{ L"PF_RGBA8",         4,      4,        true,    PF_RGBA8         },
 		{ L"PF_RGBA16_UShort", 8,      4,        true,    PF_RGBA16_UShort },
 		{ L"PF_RGBA32F",       16,     4,        true,    PF_RGBA32F       },

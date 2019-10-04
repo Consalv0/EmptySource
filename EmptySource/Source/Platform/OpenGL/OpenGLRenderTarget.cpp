@@ -39,13 +39,13 @@ namespace ESource {
 	}
 
 	OpenGLRenderTarget::OpenGLRenderTarget()
-		: RenderingTexture(NULL), Dimension(ETextureDimension::None) {
+		: RenderingTextures(), Dimension(ETextureDimension::None) {
 		glGenFramebuffers(1, &FramebufferObject);
 		glGenRenderbuffers(1, &RenderbufferObject);
 	}
 
 	OpenGLRenderTarget::~OpenGLRenderTarget() {
-		ReleaseTexture(); Unbind();
+		ReleaseTextures(); Unbind();
 		glDeleteFramebuffers(1, &FramebufferObject);
 		glDeleteRenderbuffers(1, &RenderbufferObject);
 	}
@@ -71,14 +71,15 @@ namespace ESource {
 		return 0;
 	}
 
-	Texture * OpenGLRenderTarget::GetBindedTexture() const {
-		return RenderingTexture;
+	Texture * OpenGLRenderTarget::GetBindedTexture(int Index) const {
+		if (RenderingTextures.size() < Index) return NULL;
+		return RenderingTextures[Index];
 	}
 
 	void OpenGLRenderTarget::BindDepthTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
-		RenderingTexture = Texture;
-		Size = InSize;
 		if (!IsValid()) return;
+		RenderingTextures.push_back(Texture);
+		Size = InSize;
 		Bind();
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetTextureObject(), 0);
@@ -89,15 +90,15 @@ namespace ESource {
 	}
 
 	void OpenGLRenderTarget::BindTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
-		RenderingTexture = Texture;
-		Size = InSize;
 		if (!IsValid()) return;
+		RenderingTextures.push_back(Texture);
+		Size = InSize;
 		Bind();
 
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, Size.x, Size.y);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)RenderingTexture->GetTextureObject(), Lod);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
 		// Set the list of draw buffers.
 		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
 		glDrawBuffers(1, DrawBuffers);
@@ -106,9 +107,9 @@ namespace ESource {
 	}
 
 	void OpenGLRenderTarget::BindCubemapFace(Cubemap * Texture, const int & InSize, ECubemapFace Face, int Lod, int TextureAttachment) {
-		RenderingTexture = Texture;
-		Size = InSize;
 		if (!IsValid()) return;
+		RenderingTextures.push_back(Texture);
+		Size = InSize;
 		Bind();
 
 		unsigned int LodWidth = (unsigned int)(InSize) >> Lod;
@@ -116,17 +117,13 @@ namespace ESource {
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 		
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
-			GetOpenGLCubemapFace(Face), (GLuint)(unsigned long long)RenderingTexture->GetTextureObject(), Lod);
+			GetOpenGLCubemapFace(Face), (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
 
 		glViewport(0, 0, LodWidth, LodWidth);
 	}
 
-	void OpenGLRenderTarget::ReleaseTexture() {
-		RenderingTexture = NULL;
-	}
-
-	void OpenGLRenderTarget::Resize(const IntVector3 & NewSize) {
-		Size = { Math::Min(0, NewSize.x), Math::Min(0, NewSize.y), Math::Min(0, NewSize.z) };
+	void OpenGLRenderTarget::ReleaseTextures() {
+		RenderingTextures.clear();
 	}
 
 	void OpenGLRenderTarget::Clear() const {

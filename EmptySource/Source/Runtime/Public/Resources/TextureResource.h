@@ -36,6 +36,8 @@ namespace ESource {
 
 		void GenerateMipMaps();
 
+		void DeleteMipMaps();
+
 		void SetGenerateMipMapsOnLoad(bool Option);
 
 		inline IntVector3 GetSize() const { return Size; }

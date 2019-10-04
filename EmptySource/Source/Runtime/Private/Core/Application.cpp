@@ -73,6 +73,9 @@ namespace ESource {
 	void Application::OnWindowEvent(WindowEvent & WinEvent) {
 		EventDispatcher<WindowEvent> Dispatcher(WinEvent);
 		Dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+		Dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent & Event) {
+			GetRenderPipeline().bNeedResize = true;
+		});
 
 		for (auto LayerIt = AppLayerStack.end(); LayerIt != AppLayerStack.begin(); ) {
 			(*--LayerIt)->OnWindowEvent(WinEvent);
@@ -153,6 +156,7 @@ namespace ESource {
 				ImGuiLayerInstance->End();
 
 				GetRenderPipeline().EndOfFrame();
+				GetWindow().EndFrame();
 			}
 
 		} while (

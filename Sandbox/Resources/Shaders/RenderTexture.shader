@@ -76,6 +76,7 @@ GLSL:
             Color = textureLod(_MainTexture, vVertex.UV0, _Lod);
           }
         
+          Color.rgb = vec3(1.0) - exp(-Color.rgb * 1.0);
           Color.rgb = pow(Color.rgb, vec3(1.0/_Gamma));
           
           vec3 Intensity = vec3(dot(Color.rgb, vec3(0.2125, 0.7154, 0.0721)));

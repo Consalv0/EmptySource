@@ -454,7 +454,7 @@ protected:
 		}
 		ImGui::End();
 
-		ImGui::Begin("Frame Rate Graph", 0, ImVec2(250, 300));
+		ImGui::Begin("Frame Rate History", 0);
 		{
 			static unsigned char FrameIndex = 0;
 			static float FrameRateHist[255];
@@ -463,7 +463,7 @@ protected:
 			}
 			FrameRateHist[254] = (float)Time::GetDeltaTime<Time::Mili>();
 			ImGui::PushItemWidth(-1); ImGui::PlotLines("##FrameRateHistory",
-				FrameRateHist, 255, NULL, 0, 0.F, 60.F, ImVec2(0, 120)); ImGui::NextColumn();
+				FrameRateHist, 255, NULL, 0, 0.F, 60.F, ImVec2(0, ImGui::GetWindowHeight() - ImGui::GetStyle().ItemInnerSpacing.y * 4)); ImGui::NextColumn();
 		}
 		ImGui::End();
 
@@ -745,6 +745,10 @@ protected:
 			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &Time::MaxUpdateDeltaMicro, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxRenderFrameRate"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxRenderFrameRate", ImGuiDataType_U64, &Time::MaxRenderDeltaMicro, 1.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Application::GetInstance()->GetRenderPipeline().Gamma, 0.F, 4.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Exposure"); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Exposure", &Application::GetInstance()->GetRenderPipeline().Exposure, 0.F, 10.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
@@ -1366,7 +1370,7 @@ protected:
 		}
 
 		RenderingText[2] = Text::Formatted(
-			L"└> ElementsIntersected(%d), RayHits(%d) ゥ⌃└Áñbcdëfgü",
+			L"└> ElementsIntersected(%d), RayHits(%d)",
 			ElementsIntersected.size(),
 			0 // TotalHitCount
 		);
@@ -1401,7 +1405,7 @@ public:
 
 	void OnInitialize() override {
 		PushLayer(new SandboxLayer());
-		PushLayer(new SandboxSpaceLayer(L"Main", 2001));
+		PushLayer(new SandboxSpaceLayer(L"Main", 1999));
 	}
 
 	~SandboxApplication() {

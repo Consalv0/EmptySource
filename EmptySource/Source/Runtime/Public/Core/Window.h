@@ -54,6 +54,9 @@ namespace ESource {
 		//* Get the height in pixels of the window
 		virtual unsigned int GetHeight() const = 0;
 
+		//* Get the size of the window in pixels
+		virtual IntVector2 GetSize() const = 0;
+
 		//* Set callback communication with window events
 		virtual void SetWindowEventCallback(const WindowEventCallbackFunction& Callback) = 0;
 

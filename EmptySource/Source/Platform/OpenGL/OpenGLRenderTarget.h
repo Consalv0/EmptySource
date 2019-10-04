@@ -24,7 +24,7 @@ namespace ESource {
 		//* Returns the GL Object of this texture
 		virtual void * GetNativeObject() const override;
 
-		virtual Texture * GetBindedTexture() const override;
+		virtual Texture * GetBindedTexture(int Index) const override;
 
 		//* All future functions will modify this texture
 		virtual void BindDepthTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) override;
@@ -35,10 +35,7 @@ namespace ESource {
 		//* All future functions will modify this texture
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) override;
 
-		virtual void ReleaseTexture() override;
-
-		//* Resize the render buffer and texture
-		virtual void Resize(const IntVector3 & NewSize) override;
+		virtual void ReleaseTextures() override;
 
 		//* Clear the render buffer
 		virtual void Clear() const override;
@@ -56,7 +53,7 @@ namespace ESource {
 
 		ETextureDimension Dimension;
 
-		Texture * RenderingTexture;
+		TArray<Texture *> RenderingTextures;
 
 		unsigned int FramebufferObject;
 

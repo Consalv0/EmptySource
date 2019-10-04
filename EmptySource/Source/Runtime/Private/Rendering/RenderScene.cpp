@@ -23,9 +23,6 @@ namespace ESource {
 	}
 
 	void RenderScene::Render() {
-		Rendering::SetDefaultRender();
-		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
-
 		TArray<MaterialPtr> Materials;
 		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
 			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
@@ -96,10 +93,6 @@ namespace ESource {
 		if (Lights[LightIndex].ShadowMap->GetLoadState() != LS_Loaded) return;
 		RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
-		// Shader->GetProgram()->SetTexture("_LightSpaceMatrix", Lights[LightIndex].ShadowMap->GetNativeTexture(), 0);
-		Shader->GetProgram()->Bind();
-		Shader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Lights[LightIndex].ProjectionMatrix.PointerToValue() );
-		Shader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Lights[LightIndex].Transformation.GetGLViewMatrix().PointerToValue());
 		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)Lights[LightIndex].ShadowMap->GetNativeTexture(), Lights[LightIndex].ShadowMap->GetSize());
 		ShadowRenderTarget->Clear();
 
@@ -119,6 +112,10 @@ namespace ESource {
 		}
 
 		RTexturePtr WhiteTexture = TextureManager::GetInstance().GetTexture(L"WhiteTexture");
+
+		Shader->GetProgram()->Bind();
+		Shader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Lights[LightIndex].ProjectionMatrix.PointerToValue());
+		Shader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Lights[LightIndex].Transformation.GetGLViewMatrix().PointerToValue());
 
 		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
 		for (; MatIt != Materials.end(); ++MatIt) {

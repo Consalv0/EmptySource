@@ -117,6 +117,7 @@ namespace ESource {
 		PF_RG16F,
 		PF_RGB8,
 		PF_RGB32F,
+		PF_RGB16F,
 		PF_RGBA8,
 		PF_RGBA16_UShort,
 		PF_RGBA32F,

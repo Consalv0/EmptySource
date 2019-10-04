@@ -26,13 +26,10 @@ namespace ESource {
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
 
 		//* Returns empty if no texture
-		virtual Texture * GetBindedTexture() const = 0;
+		virtual Texture * GetBindedTexture(int Index) const = 0;
 
 		//* Get the renderbuffer object
 		virtual void * GetNativeObject() const = 0;
-
-		//* Set size of render
-		virtual void Resize(const IntVector3 & NewSize) = 0;
 
 		//* Get size of render
 		virtual IntVector3 GetSize() const = 0;
@@ -50,7 +47,7 @@ namespace ESource {
 		virtual void Clear() const = 0;
 
 		//* Release the texture binded
-		virtual void ReleaseTexture() = 0;
+		virtual void ReleaseTextures() = 0;
 
 		//* Check if render target is valid
 		virtual bool IsValid() const = 0;

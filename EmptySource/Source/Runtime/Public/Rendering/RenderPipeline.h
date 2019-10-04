@@ -4,23 +4,21 @@
 #include "Core/Transform.h"
 #include "Resources/ModelManager.h"
 #include "Rendering/Material.h"
+#include "Rendering/RenderTarget.h"
 
 namespace ESource {
 
 	class RenderPipeline {
-	protected:
-		TDictionary<size_t, class RenderStage *> RenderStages;
-
 	public:
+		bool bNeedResize;
+
+		float Gamma;
+		
+		float Exposure;
+
 		RenderPipeline();
 
 		~RenderPipeline();
-
-		/* Global variables */
-		// Render Scale Target
-		float RenderScale;
-
-		RenderStage * ActiveStage;
 
 		virtual void Initialize();
 
@@ -40,18 +38,35 @@ namespace ESource {
 
 		virtual void SetProjectionMatrix(const Matrix4x4 & Projection);
 
+		virtual IntVector2 GetRenderSize() const;
+
+		//* From 0.1 to 1.0
+		virtual void SetRenderScale(float Scale);
+
 		template <typename T>
 		bool CreateStage(const IName & StageName);
 
 		virtual void RemoveStage(const IName & StageName);
 
-		virtual RenderStage * GetStage(const IName & StageName) const;
+		virtual class RenderStage * GetStage(const IName & StageName) const;
 
-		virtual RenderStage * GetActiveStage() const;
+		virtual class RenderStage * GetActiveStage() const;
 
 		virtual void BeginFrame();
 
 		virtual void EndOfFrame();
+
+	protected:
+		TDictionary<size_t, class RenderStage *> RenderStages;
+
+		RenderTargetPtr ScreenTarget;
+
+		Texture2D * TextureTarget;
+
+		// Render Scale Target
+		float RenderScale;
+
+		class RenderStage * ActiveStage;
 	};
 
 	template<typename T>

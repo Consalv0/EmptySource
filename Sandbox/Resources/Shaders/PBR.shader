@@ -263,12 +263,6 @@ GLSL:
           }
           Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);
         
-          Sum = Sum / (Sum + vec3(1.0));
-          Sum = pow(Sum, vec3(1.0/Gamma));
-        
-          vec3 Intensity = vec3(dot(Sum, vec3(0.2125, 0.7154, 0.0721)));
-          Sum = mix(Intensity, Sum, 1.2);
-        
           FragColor = vec4(Sum, Vertex.Color.a * Diffuse.a * _Material.Color.a);
         
           if (FragColor.x == 0.001) {

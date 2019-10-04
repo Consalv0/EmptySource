@@ -39,3 +39,15 @@ Resources:
     ShaderProgram:
       Name: DepthTestShader
       OriginFile: Resources/Shaders/DepthTest.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: RenderScreenTexture
+      OriginFile: Resources/Shaders/RenderScreenTexture.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingBloom
+      OriginFile: Resources/Shaders/PostProcessingBloom.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingBloomThreshold
+      OriginFile: Resources/Shaders/PostProcessingBloomThreshold.shader

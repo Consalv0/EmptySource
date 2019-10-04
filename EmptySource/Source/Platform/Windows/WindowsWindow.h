@@ -80,6 +80,9 @@ namespace ESource {
 		//* Get the height in pixels of the window
 		virtual unsigned int GetHeight() const override;
 
+		//* Get the size of the window in pixels
+		virtual IntVector2 GetSize() const override;
+
 		//* Get the platform Window pointer
 		virtual void* GetHandle() const override;
 
