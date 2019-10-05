@@ -176,18 +176,30 @@ GLSL:
         }
         
         float ShadowCalculation(int LightIndex, float NDotL) {
-          // perform perspective divide
-          vec3 projCoords = Vertex.LightSpacePosition[LightIndex].xyz / Vertex.LightSpacePosition[LightIndex].w;
-          // transform to [0,1] range
-          projCoords = projCoords * 0.5 + 0.5;
-          // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-          float closestDepth = texture(_Lights[LightIndex].ShadowMap, projCoords.xy).r; 
-          // get depth of current fragment from light's perspective
-          float currentDepth = projCoords.z - _Lights[LightIndex].ShadowBias;
-          // check whether current frag pos is in shadow
-          float shadow = step(currentDepth, closestDepth);
+          vec3 ProjCoords = Vertex.LightSpacePosition[LightIndex].xyz / Vertex.LightSpacePosition[LightIndex].w;
+          vec2 UVCoords;
+          UVCoords.x = 0.5 * ProjCoords.x + 0.5;
+          UVCoords.y = 0.5 * ProjCoords.y + 0.5;
+          float z = 0.5 * ProjCoords.z + 0.5;
 
-          return shadow * step(projCoords.z, 1.0);
+          float xOffset = 1.0/1024.0;
+          float yOffset = 1.0/1024.0;
+
+          float Factor = 0.0;
+
+          for (int y = -1 ; y <= 1 ; y++) {
+              for (int x = -1 ; x <= 1 ; x++) {
+                  vec2 Offsets = vec2(x * xOffset, y * yOffset);
+                  vec2 UVC = vec2(UVCoords + Offsets);
+                  float ClosestDepth = texture(_Lights[LightIndex].ShadowMap, UVC).r;
+                  float CurrentDepth = z - _Lights[LightIndex].ShadowBias;
+                  float Shadow = step(CurrentDepth, ClosestDepth);
+                  Shadow *= step(z, 1.0);
+                  Factor += Shadow;
+              }
+          }
+
+          return (0.5 + (Factor / 18.0));
         }
       
         // Enviroment Light

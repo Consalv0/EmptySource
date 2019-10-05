@@ -13,7 +13,7 @@
 namespace ESource {
 
 	RenderPipeline::RenderPipeline() :
-		RenderScale(1.F), bNeedResize(true), Gamma(2.2), Exposure(1.0), RenderStages(), ScreenTarget(NULL) {
+		RenderScale(1.F), bNeedResize(true), Gamma(2.2F), Exposure(1.0F), RenderStages(), ScreenTarget(NULL) {
 	}
 
 	RenderPipeline::~RenderPipeline() {
