@@ -108,7 +108,7 @@ namespace ESource {
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		///////////////////////////////////////
 
-		if (BlendFactorToBaseType(Source)) {
+		if (BlendFactorToBaseType(Source) != GL_NONE) {
 			glEnable(GL_BLEND);
 			glBlendFunc(BlendFactorToBaseType(Source), BlendFactorToBaseType(Destination));
 		}
@@ -168,6 +168,10 @@ namespace ESource {
 		case FM_Solid:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 		}
+	}
+
+	void OpenGLAPI::Flush() {
+		glFlush();
 	}
 
 }

@@ -48,6 +48,10 @@ namespace ESource {
 			RendererAppInterface->SetRasterizerFillMode(Mode);
 		}
 
+		inline static void Flush() {
+			RendererAppInterface->Flush();
+		}
+
 	private:
 
 		static RenderingAPI * RendererAppInterface;

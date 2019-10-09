@@ -1,8 +1,5 @@
-Name: "PostProcessingBloomShader"
+Name: "PostProcessingSSAOBlurShader"
 Parameters:
-  - Uniform: _MainTexture
-    Type: Texture2D
-    DefaultValue: "BlackTexture"
 GLSL:
   Stages:
     - StageType: Vertex
@@ -22,22 +19,24 @@ GLSL:
         }
     - StageType: Pixel
       Code: |
-        const float Gamma = 2.2;
-        const float Exposure = 1.0;
-
+        uniform mat4 _ProjectionMatrix;
+        
+        uniform sampler2D _SSAO;
+        
         in vec2 UV0Coords;
 
-        uniform float _Threshold;
-        uniform sampler2D _MainTexture;
-              
         out vec4 FragColor;
         
         void main() {
-          vec4 Sample = texture(_MainTexture, UV0Coords, 0);
-
-          vec3 Color = Sample.rgb;
-
-          Color = mix(vec3(0.0), Color - vec3(0.5), min(dot(Color, vec3(0.2125, 0.7154, 0.0721)) * _Threshold, 3.0));
-
-          FragColor = vec4(Color, 1.0);
+          vec2 texelSize = 1.0 / vec2(textureSize(_SSAO, 0));
+          float result = 0.0;
+          for (int x = -2; x < 2; ++x) {
+              for (int y = -2; y < 2; ++y) {
+                vec2 offset = vec2(float(x), float(y)) * texelSize;
+                result += texture(_SSAO, UV0Coords + offset).r;
+              }
+          }
+          FragColor = vec4(result / (4.0 * 4.0));
+          FragColor.a = 1.0;
         }
+      

@@ -96,7 +96,7 @@ namespace ESource {
 					NString Type = Stage["StageType"].as<NString>();
 
 					if (Stage["Code"].IsDefined()) {
-						NString Code = fmt::format("#version {}\n#line {}\n", "410", Stage["Code"].Mark().line) + Stage["Code"].as<NString>();
+						NString Code = fmt::format("#version {}\n#line {}\n", "410", Stage["Code"].Mark().line + 2) + Stage["Code"].as<NString>();
 						Stages.push_back(ShaderStage::CreateFromText(Code, ShaderManager::StringToStageType(Type)));
 					}
 				}

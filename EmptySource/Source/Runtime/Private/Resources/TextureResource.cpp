@@ -143,7 +143,7 @@ namespace ESource {
 		};
 		
 		VertexBufferPtr ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
-		RenderTargetPtr Renderer = RenderTarget::Create();
+		static RenderTargetPtr Renderer = RenderTarget::Create();
 		
 		// --- Convert HDR equirectangular environment map to cubemap equivalent
 		CubemapMaterial->Use();

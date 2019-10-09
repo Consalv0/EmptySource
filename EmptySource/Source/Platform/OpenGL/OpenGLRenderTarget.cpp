@@ -106,6 +106,27 @@ namespace ESource {
 		glViewport(0, 0, Size.x, Size.y);
 	}
 
+	void OpenGLRenderTarget::BindTextures2D(Texture2D ** Textures, const IntVector2 & InSize, int * Lods, int * TextureAttachments, unsigned int Count) {
+		if (!IsValid()) return;
+		Size = InSize;
+		Bind();
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Size.x, Size.y);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+
+		// Set the list of draw buffers.
+		TArray<GLenum> DrawBuffers = TArray<GLenum>(Count);
+		for (unsigned int i = 0; i < Count; i++) {
+			RenderingTextures.push_back(Textures[i]);
+			DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachments[i];
+			glFramebufferTexture2D(GL_FRAMEBUFFER, DrawBuffers[i], GL_TEXTURE_2D, (GLuint)(unsigned long long)Textures[i]->GetTextureObject(), Lods[i]);
+		}
+
+		glDrawBuffers(Count, &DrawBuffers[0]);
+
+		Unbind();
+	}
+
 	void OpenGLRenderTarget::BindCubemapFace(Cubemap * Texture, const int & InSize, ECubemapFace Face, int Lod, int TextureAttachment) {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);

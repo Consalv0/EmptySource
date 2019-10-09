@@ -29,6 +29,8 @@ namespace ESource {
 
 		virtual void SetRasterizerFillMode(ERasterizerFillMode Mode) override;
 
+		virtual void Flush() override;
+
 	};
 
 }

@@ -22,6 +22,9 @@ namespace ESource {
 		//* All future functions will modify this texture
 		virtual void BindTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) = 0;
 
+		//* All future functions will modify this textures
+		virtual void BindTextures2D(Texture2D ** Textures, const IntVector2 & Size, int * Lods, int * TextureAttachments, unsigned int Count) = 0;
+
 		//* All future functions will modify this texture
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
 

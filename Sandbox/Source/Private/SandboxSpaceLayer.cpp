@@ -243,6 +243,7 @@ void SandboxSpaceLayer::OnAwake() {
 	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::EulerAngles({66, 56.F, 180.F}), 1.F));
 	auto Light0 = LightObj0->CreateComponent<CLight>();
 	Light0->ApertureAngle = 60.F;
+	Light0->Intensity = 1200.F;
 	Light0->bCastShadow = true;
 	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
 	LightObj1->CreateComponent<CLight>()->bCastShadow = true;

@@ -5,6 +5,9 @@
 #include "Rendering/RenderingBuffers.h"
 #include "Rendering/RenderStage.h"
 #include "Rendering/RenderPipeline.h"
+#include "Resources/TextureManager.h"
+
+#include <random>
 
 // SDL 2.0.9
 #include <SDL.h>
@@ -25,6 +28,44 @@ namespace ESource {
 		TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
 		ScreenTarget = RenderTarget::Create();
 		ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
+		RTexturePtr GPosition = TextureManager::GetInstance().CreateTexture2D(L"GPosition", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GPosition->Load();
+		RTexturePtr GNormal   = TextureManager::GetInstance().CreateTexture2D(L"GNormal",   L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GNormal->Load();
+		RTexturePtr GAlbedo   = TextureManager::GetInstance().CreateTexture2D(L"GAlbedo",   L"", PF_RGBA8,  FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GAlbedo->Load();
+		GeometryBuffer = RenderTarget::Create();
+		Texture2D * Buffers[3] = { (Texture2D *)GPosition->GetNativeTexture(), (Texture2D *)GNormal->GetNativeTexture(), (Texture2D *)GAlbedo->GetNativeTexture() };
+		int Lods[3] = { 0, 0, 0 };
+		int Attachments[3] = { 0, 1, 2 };
+		GeometryBuffer->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 3);
+
+		std::uniform_real_distribution<float> RandomFloats(0.0F, 1.0F);
+		std::default_random_engine Generator;
+		for (unsigned int i = 0; i < 64; ++i) {
+			Vector3 Sample(RandomFloats(Generator) * 2.0F - 1.0F, RandomFloats(Generator) * 2.0F - 1.0F, RandomFloats(Generator));
+			Sample.Normalize();
+			Sample *= RandomFloats(Generator);
+			float Scale = float(i) / 64.0F;
+
+			// Scale samples s.t. they're more aligned to center of kernel
+			Scale = Math::Mix(0.1F, 1.F, Scale * Scale);
+			Sample *= Scale;
+			SSAOKernel.push_back(Sample);
+		}
+
+		TArray<Vector3> SSAONoise;
+		for (unsigned int i = 0; i < 16; i++) {
+			// Rotate around z-axis (in tangent space)
+			Vector3 Noise(RandomFloats(Generator) * 2.0F - 1.0F, RandomFloats(Generator) * 2.0F - 1.0F, 0.0F); 
+			SSAONoise.push_back(Noise);
+		}
+
+		RTexturePtr SSAONoiseTexture = TextureManager::GetInstance().CreateTexture2D(L"SSAONoise", L"", PF_RGB32F, FM_MinMagNearest, SAM_Repeat);
+		void * SSAONoiseData = (void *)&SSAONoise[0];
+		SSAONoiseTexture->SetPixelData(PixelMap(4, 4, 1, PF_RGB32F, SSAONoiseData));
+		SSAONoiseTexture->Load();
+
 		bNeedResize = false;
 	}
 
@@ -38,6 +79,7 @@ namespace ESource {
 		if ((Stage = RenderStages.find(StageName.GetID())) != RenderStages.end()) {
 			ActiveStage = Stage->second;
 			Stage->second->SetRenderTarget(ScreenTarget);
+			Stage->second->SetGeometryBuffer(GeometryBuffer);
 			Stage->second->Begin();
 		}
 	}
@@ -98,6 +140,7 @@ namespace ESource {
 	}
 
 	void RenderPipeline::BeginFrame() {
+		Rendering::Flush();
 		Rendering::ClearCurrentRender(true, 0.15F, true, 1, false, 0);
 		if (bNeedResize) {
 			ScreenTarget.reset();
@@ -106,11 +149,29 @@ namespace ESource {
 			ScreenTarget = RenderTarget::Create();
 			ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
 			ScreenTarget->Unbind();
+			RTexturePtr GPosition = TextureManager::GetInstance().CreateTexture2D(L"GPosition", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+			GPosition->Unload();
+			GPosition->SetSize(GetRenderSize());
+			GPosition->Load();
+			RTexturePtr GNormal = TextureManager::GetInstance().CreateTexture2D(L"GNormal", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+			GNormal->Unload();
+			GNormal->SetSize(GetRenderSize());
+			GNormal->Load();
+			RTexturePtr GAlbedo = TextureManager::GetInstance().CreateTexture2D(L"GAlbedo", L"", PF_RGBA8, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+			GAlbedo->Unload();
+			GAlbedo->SetSize(GetRenderSize());
+			GAlbedo->Load();
+			GeometryBuffer = RenderTarget::Create();
+			Texture2D * Buffers[3] = { (Texture2D *)GPosition->GetNativeTexture(), (Texture2D *)GNormal->GetNativeTexture(), (Texture2D *)GAlbedo->GetNativeTexture() };
+			int Lods[3] = { 0, 0, 0 };
+			int Attachments[3] = { 0, 1, 2 };
+			GeometryBuffer->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 3);
 			bNeedResize = false;
 		}
 	}
 
 	void RenderPipeline::EndOfFrame() {
+		Rendering::Flush();
 		Rendering::SetDefaultRender();
 		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
 	}

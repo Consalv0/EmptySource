@@ -26,6 +26,8 @@ namespace ESource {
 
 		virtual void SetRasterizerFillMode(ERasterizerFillMode Mode) = 0;
 
+		virtual void Flush() = 0;
+
 		inline static API GetAPI() {
 			return AppInterface;
 		};

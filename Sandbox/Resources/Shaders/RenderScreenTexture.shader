@@ -29,6 +29,7 @@ GLSL:
 
         uniform sampler2D _MainTexture;
         uniform sampler2D _BloomTexture;
+        uniform sampler2D _AOTexture;
         uniform float _Gamma;
         uniform float _Exposure;
               
@@ -37,8 +38,10 @@ GLSL:
         void main() {
           vec4 Sample = texture(_MainTexture, UV0Coords, 0);
           vec4 SampleBloom = texture(_BloomTexture, UV0Coords, 0);
+          float AmbientOcclusion = texture(_AOTexture, UV0Coords, 0).r;
 
           vec3 Color = Sample.rgb;
+          Color *= AmbientOcclusion;
 
           Color = vec3(1.0) - exp(-Color * _Exposure);
           Color = pow(Color, vec3(1.0 / _Gamma));

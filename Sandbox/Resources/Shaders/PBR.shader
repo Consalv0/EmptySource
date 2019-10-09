@@ -22,6 +22,16 @@ Parameters:
   - Uniform: _MetallicTexture
     Type: Texture2D
     DefaultValue: "BlackTexture"
+  - Uniform: _AOTexture
+    Type: Texture2D
+    DefaultValue: "WhiteTexture"
+  - Uniform: _EmissionTexture
+    Type: Texture2D
+    DefaultValue: "BlackTexture"
+  - Uniform: _EmissionColor
+    Type: Float3D
+    DefaultValue: [ 0, 0, 0 ]
+    IsColor: true
   - Uniform: _BRDFLUT
     Type: Texture2D
     DefaultValue: "BlackTexture"
@@ -106,6 +116,9 @@ GLSL:
         uniform sampler2D _NormalTexture;
         uniform sampler2D _RoughnessTexture;
         uniform sampler2D _MetallicTexture;
+        uniform sampler2D _AOTexture;
+        uniform sampler2D _EmissionTexture;
+        uniform vec3 _EmissionColor;
         uniform float _EnviromentMapLods;
         uniform samplerCube _EnviromentMap;
         uniform sampler2D   _BRDFLUT;
@@ -184,11 +197,13 @@ GLSL:
 
           float xOffset = 1.0/1024.0;
           float yOffset = 1.0/1024.0;
+          float Step = 0.5;
+          float Iterations = 0.0;
 
           float Factor = 0.0;
 
-          for (int y = -1 ; y <= 1 ; y++) {
-              for (int x = -1 ; x <= 1 ; x++) {
+          for (float y = -1 ; y <= 1 ; y += Step) {
+              for (float x = -1 ; x <= 1 ; x += Step) {
                   vec2 Offsets = vec2(x * xOffset, y * yOffset);
                   vec2 UVC = vec2(UVCoords + Offsets);
                   float ClosestDepth = texture(_Lights[LightIndex].ShadowMap, UVC).r;
@@ -196,10 +211,11 @@ GLSL:
                   float Shadow = step(CurrentDepth, ClosestDepth);
                   Shadow *= step(z, 1.0);
                   Factor += Shadow;
+                  Iterations += 1.0;
               }
           }
 
-          return (0.5 + (Factor / 18.0));
+          return Factor / Iterations / 2.0;
         }
       
         // Enviroment Light
@@ -213,8 +229,8 @@ GLSL:
           F0 = mix(F0, DiffuseColor, Metalness);
           vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
           vec2 EnviromentBRDF = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
-          vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 0.0));
-               Irradiance = pow(Irradiance, vec3(1.0/dot(vec3(1.2125, 1.7154, 1.0721), Irradiance)));
+          vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2.0));
+               //Irradiance = pow(Irradiance, vec3(1.0/dot(vec3(0.2125, 0.7154, 0.0721) * PI * 4.0, Irradiance)));
           vec3 EnviromentLight = vec3(textureLod(_EnviromentMap, WorldReflection, Roughness * (_EnviromentMapLods - 3.0)));
       
           vec3 Specular = EnviromentLight * (Fresnel * EnviromentBRDF.x + EnviromentBRDF.y);
@@ -269,12 +285,15 @@ GLSL:
           float Metalness = clamp(_Material.Metalness * texture(_MetallicTexture, Vertex.UV0).r, 0.0001, 1.0);
           vec4 Diffuse = texture(_MainTexture, Vertex.UV0);
           vec3 DiffuseColor = pow(Diffuse.rgb, vec3(Gamma)) * _Material.Color.xyz;
+          vec3 Emission = texture(_EmissionTexture, Vertex.UV0).rgb * _EmissionColor;
+          float AmbientOclussion = texture(_AOTexture, Vertex.UV0).r;
       
           for( int i = 0; i < 2; i++ ) {
             Sum += MicrofacetModel(i, Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);
           }
-          Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor);
-        
+          Sum += MicrofacetModelEnviroment(Vertex.Position.xyz, VertNormal, Roughness, Metalness, DiffuseColor) * AmbientOclussion;
+          Sum += Emission;
+
           FragColor = vec4(Sum, Vertex.Color.a * Diffuse.a * _Material.Color.a);
         
           if (FragColor.x == 0.001) {

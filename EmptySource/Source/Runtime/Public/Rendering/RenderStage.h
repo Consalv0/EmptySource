@@ -41,10 +41,13 @@ namespace ESource {
 
 		virtual void SetRenderTarget(const RenderTargetPtr & InTarget);
 
+		virtual void SetGeometryBuffer(const RenderTargetPtr & InTarget);
+
 	private:
 		IName Name;
 
 		RenderTargetPtr Target;
+		RenderTargetPtr GeometryBuffer;
 	};
 
 }

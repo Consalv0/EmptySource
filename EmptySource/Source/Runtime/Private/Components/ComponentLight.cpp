@@ -34,7 +34,7 @@ namespace ESource {
 		if (bCastShadow) {
 			if (ShadowMap == NULL)
 				ShadowMap = TextureManager::GetInstance().CreateTexture2D(
-					GetName().GetInstanceName() + L"_ShadowMap", L"", PF_ShadowDepth, FM_MinMagNearest, SAM_Clamp, ShadowMapSize
+					GetName().GetInstanceName() + L"_ShadowMap", L"", PF_ShadowDepth, FM_MinMagLinear, SAM_Clamp, ShadowMapSize
 				);
 			AppRenderPipeline.SubmitSpotShadowMap(ShadowMap, ShadowMapBias);
 		}

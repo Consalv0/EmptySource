@@ -127,7 +127,7 @@ protected:
 		EquirectangularTextureHDR->Load();
 
 		{
-			RenderTargetPtr Renderer = RenderTarget::Create();
+			static RenderTargetPtr Renderer = RenderTarget::Create();
 			EquirectangularTextureHDR->GetNativeTexture()->Bind();
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
@@ -142,6 +142,7 @@ protected:
 			Renderer->Clear();
 			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
 			EquirectangularTextureHDR->GenerateMipMaps();
+			Renderer->Unbind();
 		}
 
 		Material EquirectangularToCubemapMaterial = Material(L"EquirectangularToCubemapMaterial");
@@ -256,6 +257,10 @@ protected:
 		TextureMng.CreateTexture2D(L"PonyCarInteriorMetallicTexture",   L"Resources/Textures/Interior_dDo_s.jpeg",                        PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
 		TextureMng.CreateTexture2D(L"PonyCarInteriorRoughnessTexture",  L"Resources/Textures/Interior_dDo_g.jpg",                         PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
 		TextureMng.CreateTexture2D(L"PonyCarInteriorNormalTexture",     L"Resources/Textures/Interior_dDo_n.jpg",                         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EgyptianCatAlbedoTexture",         L"Resources/Textures/EgyptianCat/M_Cat_Statue_albedo.jpg",        PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EgyptianCatMetallicTexture",       L"Resources/Textures/EgyptianCat/M_Cat_Statue_metallic.jpg",      PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EgyptianCatRoughnessTexture",      L"Resources/Textures/EgyptianCat/M_Cat_Statue_roughness.jpg",     PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
+		TextureMng.CreateTexture2D(L"EgyptianCatNormalTexture",         L"Resources/Textures/EgyptianCat/M_Cat_Statue_normal.png",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
 	
 		ModelManager& ModelMng = ModelManager::GetInstance();
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
@@ -269,6 +274,7 @@ protected:
 		ModelMng.CreateSubModelMesh(L"Sponza", L"SecondFloorExterior");
 		ModelMng.CreateSubModelMesh(L"Sponza", L"Exterior");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/EgyptianCat.obj", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/BigPlane.obj", true);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
@@ -363,7 +369,7 @@ protected:
 		if (SelectedTexture && SelectedTexture->GetLoadState() == LS_Loaded) {
 			int bCubemap;
 			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
-				RenderTargetPtr Renderer = RenderTarget::Create();
+				static RenderTargetPtr Renderer = RenderTarget::Create();
 				RenderTextureMaterial.Use();
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -389,9 +395,10 @@ protected:
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
 				Renderer->Clear();
 				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+				Renderer->Unbind();
 			}
 			if (bCubemap) {
-				RenderTargetPtr Renderer = RenderTarget::Create();
+				static RenderTargetPtr Renderer = RenderTarget::Create();
 				RenderTextureMaterial.Use();
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -417,6 +424,7 @@ protected:
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
 				Renderer->Clear();
 				MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+				Renderer->Unbind();
 			}
 		}
 
@@ -1010,7 +1018,7 @@ protected:
 		);
 		BRDFLut->Load();
 		{
-			RenderTargetPtr Renderer = RenderTarget::Create();
+			static RenderTargetPtr Renderer = RenderTarget::Create();
 			IntegrateBRDFMaterial.Use();
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 
@@ -1023,6 +1031,7 @@ protected:
 			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetNativeTexture(), BRDFLut->GetSize());
 			Renderer->Clear();
 			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Renderer->Unbind();
 		}
 
 		SetSceneSkybox(L"Resources/Textures/Arches_E_PineTree_3k.hdr");

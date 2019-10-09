@@ -123,7 +123,6 @@ namespace ESource {
 	}
 
 	void Material::Use() const {
-		
 		Rendering::SetActiveDepthTest(bWriteDepth);
 		Rendering::SetDepthFunction(DepthFunction);
 		Rendering::SetRasterizerFillMode(FillMode);

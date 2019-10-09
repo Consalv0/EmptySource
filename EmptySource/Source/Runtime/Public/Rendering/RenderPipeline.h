@@ -16,6 +16,8 @@ namespace ESource {
 		
 		float Exposure;
 
+		TArray<Vector3> SSAOKernel;
+
 		RenderPipeline();
 
 		~RenderPipeline();
@@ -60,6 +62,8 @@ namespace ESource {
 		TDictionary<size_t, class RenderStage *> RenderStages;
 
 		RenderTargetPtr ScreenTarget;
+
+		RenderTargetPtr GeometryBuffer;
 
 		Texture2D * TextureTarget;
 

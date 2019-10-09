@@ -51,3 +51,15 @@ Resources:
     ShaderProgram:
       Name: PostProcessingBloomThreshold
       OriginFile: Resources/Shaders/PostProcessingBloomThreshold.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: GBufferPass
+      OriginFile: Resources/Shaders/GBufferPass.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingSSAO
+      OriginFile: Resources/Shaders/PostProcessingSSAO.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingSSAOBlur
+      OriginFile: Resources/Shaders/PostProcessingSSAOBlur.shader

@@ -9,6 +9,7 @@
 #include "Rendering/RenderScene.h"
 
 #include "Resources/TextureManager.h"
+#include "Resources/ShaderManager.h"
 
 namespace ESource {
 
@@ -22,7 +23,7 @@ namespace ESource {
 		LightCount = -1;
 	}
 
-	void RenderScene::Render() {
+	void RenderScene::ForwardRender() {
 		TArray<MaterialPtr> Materials;
 		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
 			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
@@ -87,11 +88,65 @@ namespace ESource {
 		}
 	}
 
+	void RenderScene::DeferredRender() {
+		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
+		if (GShader == NULL || !GShader->IsValid()) return;
+		Material GMat = Material(L"GPass");
+		GMat.SetShaderProgram(GShader);
+
+		TArray<MaterialPtr> Materials;
+		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
+			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
+			for (; MatIt != Materials.end(); ++MatIt) {
+				if (*(*MatIt) > *(RMatIt->second))
+					break;
+			}
+			Materials.emplace(MatIt, RMatIt->second);
+		}
+
+		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
+		for (; MatIt != Materials.end(); ++MatIt) {
+			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
+
+			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
+			TArray<RenderElement>::const_iterator RElementIt = RenderElements.begin();
+			for (; RElementIt != RenderElements.end(); ++RElementIt) {
+				VertexArrayTable.try_emplace(std::get<VertexArrayPtr>(*RElementIt), TArray<Matrix4x4>());
+				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
+			}
+
+			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
+			float CubemapTextureMipmaps = 0.F;
+			if (EnviromentCubemap)
+				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
+			(*MatIt)->SetParameters({
+				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
+				{ "_ProjectionMatrix",            { ViewProjection }, SPFlags_IsInternal },
+				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
+				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal }
+				});
+			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
+			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
+			GMat.DepthFunction = (*MatIt)->DepthFunction;
+			GMat.CullMode = (*MatIt)->CullMode;
+			GMat.FillMode = (*MatIt)->FillMode;
+			GMat.Use();
+
+			for (auto& Element : VertexArrayTable) {
+				if (Element.first == NULL) continue;
+				Element.first->Bind();
+				float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
+				GShader->GetProgram()->SetAttribMatrix4x4Array("_iModelMatrix", (int)Element.second.size(), &Element.second[0], ModelMatrixBuffer);
+				Rendering::DrawIndexed(Element.first, (int)Element.second.size());
+			}
+		}
+	}
+
 	void RenderScene::RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader) {
 		if (!Lights[LightIndex].CastShadow || Lights[LightIndex].ShadowMap == NULL || !Shader->IsValid()) return;
 		Lights[LightIndex].ShadowMap->Load();
 		if (Lights[LightIndex].ShadowMap->GetLoadState() != LS_Loaded) return;
-		RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
+		static RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
 		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)Lights[LightIndex].ShadowMap->GetNativeTexture(), Lights[LightIndex].ShadowMap->GetSize());
 		ShadowRenderTarget->Clear();
