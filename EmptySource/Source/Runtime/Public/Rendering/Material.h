@@ -39,6 +39,7 @@ namespace ESource {
 	class Material {
 	public:
 		bool bWriteDepth;
+		bool bTransparent;
 		unsigned int RenderPriority;
 		EDepthFunction DepthFunction;
 		ERasterizerFillMode FillMode;

@@ -12,7 +12,9 @@ namespace ESource {
 
 		void ForwardRender();
 
-		void DeferredRender();
+		void DeferredRenderOpaque();
+
+		void DeferredRenderTransparent();
 
 		void RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader);
 

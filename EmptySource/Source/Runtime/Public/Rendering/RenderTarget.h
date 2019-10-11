@@ -28,6 +28,12 @@ namespace ESource {
 		//* All future functions will modify this texture
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
 
+		//* Creates a depth buffer for depth testing
+		virtual void CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) = 0;
+
+		//* Copy the depth buffer to another render, if Null it will use the default render
+		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const Box2D & From, const Box2D & To) = 0;
+
 		//* Returns empty if no texture
 		virtual Texture * GetBindedTexture(int Index) const = 0;
 

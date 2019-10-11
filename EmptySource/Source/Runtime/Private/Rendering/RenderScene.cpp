@@ -81,14 +81,15 @@ namespace ESource {
 			for (auto& Element : VertexArrayTable) {
 				if (Element.first == NULL) continue;
 				Element.first->Bind();
-				float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
-				(*MatIt)->GetShaderProgram()->GetProgram()->SetAttribMatrix4x4Array("_iModelMatrix", (int)Element.second.size(), &Element.second[0], ModelMatrixBuffer);
-				Rendering::DrawIndexed(Element.first, (int)Element.second.size());
+				for (auto & Matrix : Element.second) {
+					(*MatIt)->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
+					Rendering::DrawIndexed(Element.first, 0);
+				}
 			}
 		}
 	}
 
-	void RenderScene::DeferredRender() {
+	void RenderScene::DeferredRenderOpaque() {
 		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
 		if (GShader == NULL || !GShader->IsValid()) return;
 		Material GMat = Material(L"GPass");
@@ -106,6 +107,7 @@ namespace ESource {
 
 		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
 		for (; MatIt != Materials.end(); ++MatIt) {
+			if ((*MatIt)->bTransparent) continue;
 			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
 
 			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
@@ -125,19 +127,92 @@ namespace ESource {
 				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal }
 				});
+			GMat.SetParameters({
+				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
+				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal },
+				{ "_EmissionTexture",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BlackTexture") }, SPFlags_IsInternal }, 
+			});
 			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
 			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
 			GMat.DepthFunction = (*MatIt)->DepthFunction;
 			GMat.CullMode = (*MatIt)->CullMode;
 			GMat.FillMode = (*MatIt)->FillMode;
+
+			if (GMat.bWriteDepth == false) continue;
+
 			GMat.Use();
 
 			for (auto& Element : VertexArrayTable) {
 				if (Element.first == NULL) continue;
 				Element.first->Bind();
-				float CubemapTextureMipmaps = (float)TextureManager::GetInstance().GetTexture(L"CubemapTexture")->GetMipMapCount();
-				GShader->GetProgram()->SetAttribMatrix4x4Array("_iModelMatrix", (int)Element.second.size(), &Element.second[0], ModelMatrixBuffer);
-				Rendering::DrawIndexed(Element.first, (int)Element.second.size());
+				for (auto & Matrix : Element.second) {
+					GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
+					Rendering::DrawIndexed(Element.first, 0);
+				}
+			}
+		}
+	}
+
+	void RenderScene::DeferredRenderTransparent() {
+		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
+		if (GShader == NULL || !GShader->IsValid()) return;
+		Material GMat = Material(L"GPass");
+		GMat.SetShaderProgram(GShader);
+
+		TArray<MaterialPtr> Materials;
+		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
+			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
+			for (; MatIt != Materials.end(); ++MatIt) {
+				if (*(*MatIt) > *(RMatIt->second))
+					break;
+			}
+			Materials.emplace(MatIt, RMatIt->second);
+		}
+
+		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
+		for (; MatIt != Materials.end(); ++MatIt) {
+			if (!(*MatIt)->bTransparent) continue;
+			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
+
+			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
+			TArray<RenderElement>::const_iterator RElementIt = RenderElements.begin();
+			for (; RElementIt != RenderElements.end(); ++RElementIt) {
+				VertexArrayTable.try_emplace(std::get<VertexArrayPtr>(*RElementIt), TArray<Matrix4x4>());
+				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
+			}
+
+			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
+			float CubemapTextureMipmaps = 0.F;
+			if (EnviromentCubemap)
+				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
+			(*MatIt)->SetParameters({
+				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
+				{ "_ProjectionMatrix",            { ViewProjection }, SPFlags_IsInternal },
+				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
+				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal }
+				});
+			GMat.SetParameters({
+				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
+				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal },
+				{ "_EmissionTexture",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BlackTexture") }, SPFlags_IsInternal },
+				});
+			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
+			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
+			GMat.DepthFunction = (*MatIt)->DepthFunction;
+			GMat.CullMode = (*MatIt)->CullMode;
+			GMat.FillMode = (*MatIt)->FillMode;
+
+			if (GMat.bWriteDepth == false) continue;
+
+			GMat.Use();
+
+			for (auto& Element : VertexArrayTable) {
+				if (Element.first == NULL) continue;
+				Element.first->Bind();
+				for (auto & Matrix : Element.second) {
+					GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
+					Rendering::DrawIndexed(Element.first, 0);
+				}
 			}
 		}
 	}
@@ -198,8 +273,10 @@ namespace ESource {
 				else {
 					Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
 				}
-				Shader->GetProgram()->SetAttribMatrix4x4Array("_iModelMatrix", (int)Element.second.size(), &Element.second[0], ModelMatrixBuffer);
-				Rendering::DrawIndexed(Element.first, (int)Element.second.size());
+				for (auto & Matrix : Element.second) {
+					Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
+					Rendering::DrawIndexed(Element.first, 0);
+				}
 			}
 		}
 

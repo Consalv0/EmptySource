@@ -16,7 +16,6 @@ GLSL:
         layout(location = 3) in vec2 _iVertexUV0;
         layout(location = 4) in vec2 _iVertexUV1;
         layout(location = 5) in vec4 _iVertexColor;
-        layout(location = 6) in mat4 _iModelMatrix;
         
         uniform mat4 _ProjectionMatrix;
         uniform mat4 _ViewMatrix;
@@ -25,7 +24,7 @@ GLSL:
         
         void main() {
             LocalPosition = _iVertexPosition;
-            gl_Position = _ProjectionMatrix * _ViewMatrix * _iModelMatrix * vec4(LocalPosition, 1.0);
+            gl_Position = _ProjectionMatrix * _ViewMatrix * vec4(LocalPosition, 1.0);
         }
     - StageType: Pixel
       Code: |

@@ -69,14 +69,6 @@ namespace ESource {
 		return VAOSubdivisions[MaterialIndex];
 	}
 
-	void Mesh::DrawSubdivisionInstanciated(int Count, int MaterialIndex) const {
-		auto Subdivision = Data.Subdivisions.find(MaterialIndex);
-		if (Subdivision == Data.Subdivisions.end()) return;
-		if (MaterialIndex >= VAOSubdivisions.size() || VAOSubdivisions[MaterialIndex] == NULL) return;
-
-		Rendering::DrawIndexed(VAOSubdivisions[MaterialIndex], Count);
-	}
-
 	bool Mesh::SetUpBuffers() {
 		if (Data.Vertices.size() <= 0 || Data.Faces.size() <= 0) return false;
 

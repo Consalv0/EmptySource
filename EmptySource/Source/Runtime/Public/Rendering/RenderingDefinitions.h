@@ -89,6 +89,7 @@ namespace ESource {
 		UM_Static,
 		UM_Dynamic,
 		UM_Inmutable,
+		UM_Draw
 	};
 
 	enum EDepthFunction {
@@ -121,6 +122,7 @@ namespace ESource {
 		PF_RGBA8,
 		PF_RGBA16_UShort,
 		PF_RGBA32F,
+		PF_DepthComponent24,
 		PF_DepthStencil,
 		PF_ShadowDepth,
 		PF_MAX = PF_ShadowDepth + 1,

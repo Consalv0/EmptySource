@@ -72,9 +72,6 @@ namespace ESource {
 		//* Get VertexArray in Mesh
 		VertexArrayPtr GetSubdivisionVertexArray(int MaterialIndex) const;
 
-		//* Draw mesh using instanciated Element Buffer unsing material subdivision
-		void DrawSubdivisionInstanciated(int Count, int MaterialIndex) const;
-
 		//* Clear the mesh entirely
 		void Clear();
 

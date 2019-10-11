@@ -244,6 +244,7 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Light0 = LightObj0->CreateComponent<CLight>();
 	Light0->ApertureAngle = 60.F;
 	Light0->Intensity = 1200.F;
+	Light0->CullingPlanes.x = 10.F;
 	Light0->bCastShadow = true;
 	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
 	LightObj1->CreateComponent<CLight>()->bCastShadow = true;

@@ -17,6 +17,7 @@ namespace ESource {
 		Shader = NULL;
 		RenderPriority = 1000;
 		bWriteDepth = true;
+		bTransparent = false;
 		DepthFunction = DF_LessEqual;
 		FillMode = FM_Solid;
 		CullMode = CM_CounterClockWise;

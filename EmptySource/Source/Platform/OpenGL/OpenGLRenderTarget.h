@@ -38,6 +38,10 @@ namespace ESource {
 		//* All future functions will modify this texture
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) override;
 
+		virtual void CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) override;
+		
+		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const Box2D & From, const Box2D & To) override;
+
 		virtual void ReleaseTextures() override;
 
 		//* Clear the render buffer

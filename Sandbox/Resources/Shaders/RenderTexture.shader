@@ -10,8 +10,8 @@ GLSL:
         layout(location = 3) in vec2 _iVertexUV0;
         layout(location = 4) in vec2 _iVertexUV1;
         layout(location = 5) in vec4 _iVertexColor;
-        layout(location = 6) in mat4 _iModelMatrix;
 
+        uniform mat4 _ModelMatrix;
         uniform mat4 _ProjectionMatrix;
 
         out struct VertexData {
@@ -32,8 +32,8 @@ GLSL:
           vVertex.Color = _iVertexColor;
 
           // Now set the position in model space
-          gl_Position = _ProjectionMatrix * _iModelMatrix * vVertex.Position;
-          vVertex.Position = _iModelMatrix * vVertex.Position;
+          gl_Position = _ProjectionMatrix * _ModelMatrix * vVertex.Position;
+          vVertex.Position = _ModelMatrix * vVertex.Position;
         }
     - StageType: Pixel
       Code: |

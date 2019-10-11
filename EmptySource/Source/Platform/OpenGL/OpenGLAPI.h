@@ -11,13 +11,17 @@ namespace ESource {
 
 		static unsigned int BlendFactorToBaseType(EBlendFactor Factor);
 
+		static unsigned int AddressModeToBaseType(ESamplerAddressMode Mode);
+
+		static unsigned int FilterModeToBaseType(EFilterMode Mode);
+
 		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) override;
 
 		virtual void SetDefaultRender() override;
 
 		virtual void SetViewport(const Box2D& Viewport) override;
 
-		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Count = 1) override;
+		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Offset = 0) override;
 
 		virtual void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) override;
 

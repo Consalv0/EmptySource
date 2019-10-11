@@ -13,8 +13,8 @@ GLSL:
         layout(location = 3) in vec2 _iVertexUV0;
         layout(location = 4) in vec2 _iVertexUV1;
         layout(location = 5) in vec4 _iVertexColor;
-        layout(location = 6) in mat4 _iModelMatrix;
-    
+
+        uniform mat4 _ModelMatrix;
         uniform mat4 _ProjectionMatrix;
         uniform mat4 _ViewMatrix;
     
@@ -34,8 +34,8 @@ GLSL:
         } Vertex;
     
         void main() {
-        	Matrix.Model = _iModelMatrix;
-          Matrix.ModelWithoutPosition = _iModelMatrix;
+        	Matrix.Model = _ModelMatrix;
+          Matrix.ModelWithoutPosition = _ModelMatrix;
           Matrix.ModelWithoutPosition[3][0] = 0.0;
           Matrix.ModelWithoutPosition[3][1] = 0.0;
           Matrix.ModelWithoutPosition[3][2] = 0.0;

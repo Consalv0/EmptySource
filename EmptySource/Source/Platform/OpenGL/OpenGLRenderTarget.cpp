@@ -12,6 +12,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/MathUtility.h"
 
+#include "Platform/OpenGL/OpenGLDefinitions.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLRenderTarget.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
@@ -41,19 +42,20 @@ namespace ESource {
 	OpenGLRenderTarget::OpenGLRenderTarget()
 		: RenderingTextures(), Dimension(ETextureDimension::None) {
 		glGenFramebuffers(1, &FramebufferObject);
-		glGenRenderbuffers(1, &RenderbufferObject);
+		RenderbufferObject = GL_NONE;
+		LOG_CORE_DEBUG(L"Render Target {} Created", FramebufferObject);
 	}
 
 	OpenGLRenderTarget::~OpenGLRenderTarget() {
 		ReleaseTextures(); Unbind();
 		glDeleteFramebuffers(1, &FramebufferObject);
-		glDeleteRenderbuffers(1, &RenderbufferObject);
+		if (RenderbufferObject != GL_NONE)
+			glDeleteRenderbuffers(1, &RenderbufferObject);
 	}
 
 	void OpenGLRenderTarget::Bind() const {
 		if (!IsValid()) LOG_CORE_ERROR(L"RenderTarget is not valid");
 		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferObject);
-		glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
 	}
 
 	void OpenGLRenderTarget::Unbind() const {
@@ -92,27 +94,19 @@ namespace ESource {
 	void OpenGLRenderTarget::BindTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
-		Size = InSize;
+		Size = IntVector3(InSize.x, InSize.y, 1);
 		Bind();
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, Size.x, Size.y);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
 		// Set the list of draw buffers.
 		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
 		glDrawBuffers(1, DrawBuffers);
-
-		glViewport(0, 0, Size.x, Size.y);
 	}
 
 	void OpenGLRenderTarget::BindTextures2D(Texture2D ** Textures, const IntVector2 & InSize, int * Lods, int * TextureAttachments, unsigned int Count) {
 		if (!IsValid()) return;
-		Size = InSize;
+		Size = IntVector3(InSize.x, InSize.y, 1);
 		Bind();
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Size.x, Size.y);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 
 		// Set the list of draw buffers.
 		TArray<GLenum> DrawBuffers = TArray<GLenum>(Count);
@@ -130,17 +124,30 @@ namespace ESource {
 	void OpenGLRenderTarget::BindCubemapFace(Cubemap * Texture, const int & InSize, ECubemapFace Face, int Lod, int TextureAttachment) {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
-		Size = InSize;
+		Size = IntVector3(InSize, InSize, 1);
 		Bind();
-
-		unsigned int LodWidth = (unsigned int)(InSize) >> Lod;
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, LodWidth, LodWidth);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 		
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
 			GetOpenGLCubemapFace(Face), (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
+	}
 
-		glViewport(0, 0, LodWidth, LodWidth);
+	void OpenGLRenderTarget::CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) {
+		Bind();
+		if (RenderbufferObject == GL_NONE) {
+			glGenRenderbuffers(1, &RenderbufferObject);
+			glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
+			glRenderbufferStorage(GL_RENDERBUFFER, OpenGLPixelFormatInfo[Format].InputFormat, Size.x, Size.y);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+		}
+		Unbind();
+	}
+
+	void OpenGLRenderTarget::TransferDepthTo(RenderTarget * Target, const EPixelFormat & Value, const EFilterMode & FilterMode, const Box2D & From, const Box2D & To) {
+		GLuint FramebufferTarget = Target == NULL ? 0 : ((OpenGLRenderTarget *)(Target))->FramebufferObject;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, FramebufferObject);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FramebufferTarget);
+		glBlitFramebuffer((int)From.xMin, (int)From.yMin, (int)From.xMax, (int)From.yMax, (int)To.xMin, (int)To.yMin, (int)To.xMax, (int)To.yMax,
+			GL_DEPTH_BUFFER_BIT, OpenGLAPI::FilterModeToBaseType(FilterMode));
 	}
 
 	void OpenGLRenderTarget::ReleaseTextures() {
@@ -152,7 +159,7 @@ namespace ESource {
 	}
 
 	bool OpenGLRenderTarget::IsValid() const {
-		return FramebufferObject != GL_FALSE && RenderbufferObject != GL_FALSE;
+		return FramebufferObject != GL_FALSE;
 	}
 
 }

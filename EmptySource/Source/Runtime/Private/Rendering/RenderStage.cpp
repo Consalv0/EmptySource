@@ -70,21 +70,35 @@ namespace ESource {
 
 	void RenderStage::End() {
 		if (Target == NULL) return;
+		Target->Bind();
+		Target->Clear();
+		Target->Unbind();
+
 		Rendering::SetAlphaBlending(BF_None, BF_None);
 		Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 		Scene.RenderLightMap(1, ShaderManager::GetInstance().GetProgram(L"DepthTestShader")); 
-		Rendering::SetViewport({ 0.F, 0.F, (float)Target->GetSize().x, (float)Target->GetSize().y });
-		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-		Target->Bind();
-		Target->Clear();
-		Scene.ForwardRender();
-		Target->Unbind();
 		Rendering::SetAlphaBlending(BF_None, BF_None);
+		Rendering::SetViewport({ 0.F, 0.F, (float)GeometryBuffer->GetSize().x, (float)GeometryBuffer->GetSize().y });
 		GeometryBuffer->Bind();
 		GeometryBuffer->Clear();
-		Scene.DeferredRender();
+		Scene.DeferredRenderOpaque();
+		Rendering::Flush();
+		GeometryBuffer->TransferDepthTo(
+			&*Target, PF_ShadowDepth, FM_MinMagNearest,
+			{ 0, 0, (float)Target->GetSize().x, (float)Target->GetSize().y }, { 0, 0, (float)GeometryBuffer->GetSize().x, (float)GeometryBuffer->GetSize().y }
+		);
+		GeometryBuffer->Bind();
+		Scene.DeferredRenderTransparent();
 		GeometryBuffer->Unbind();
 		Rendering::Flush();
+
+		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
+		Rendering::SetViewport({ 0.F, 0.F, (float)Target->GetSize().x, (float)Target->GetSize().y });
+		Target->Bind();
+		Scene.ForwardRender();
+		Rendering::Flush();
+		Target->Unbind();
+		Rendering::SetAlphaBlending(BF_None, BF_None);
 
 		RShaderPtr BloomThresholdShader = ShaderManager::GetInstance().GetProgram(L"PostProcessingBloomThreshold");
 		RShaderPtr BloomShader = ShaderManager::GetInstance().GetProgram(L"PostProcessingBloom");
@@ -97,9 +111,9 @@ namespace ESource {
 				BloomThresholdTexture->Load();
 			}
 		}
-
-		Rendering::SetViewport({ 0.F, 0.F, (float)(Application::GetInstance()->GetWindow().GetWidth() / 2), (float)(Application::GetInstance()->GetWindow().GetHeight() / 2) });
-
+		
+		Rendering::SetViewport({ 0.F, 0.F, (float)(BloomThresholdTexture->GetSize().x), (float)(BloomThresholdTexture->GetSize().y) });
+		
 		static RenderTargetPtr BloomThresholdTarget = RenderTarget::Create();
 		BloomThresholdTarget->BindTexture2D((Texture2D *)BloomThresholdTexture->GetNativeTexture(), BloomThresholdTexture->GetSize());
 		BloomThresholdTarget->Bind();
@@ -114,31 +128,31 @@ namespace ESource {
 			const float Treshold = 1.0F;
 			BloomThresholdShader->GetProgram()->SetFloat1Array("_Threshold", &Treshold);
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
 			BloomThresholdShader->GetProgram()->Unbind();
 		}
 		BloomThresholdTarget->Unbind();
 		Rendering::Flush();
 		BloomThresholdTexture->DeleteMipMaps();
 		BloomThresholdTexture->GenerateMipMaps();
-
+		
 		RTexturePtr BloomHorizontalTexture = TextureManager::GetInstance().CreateTexture2D(L"PPBloomHorizontalPass", L"", PF_RGB16F, FM_MinMagLinear, SAM_Clamp, 0);
 		if (BloomHorizontalTexture) {
-			if (BloomHorizontalTexture->GetSize() != Target->GetSize() / 2) {
+			if (BloomHorizontalTexture->GetSize() != BloomThresholdTexture->GetSize()) {
 				BloomHorizontalTexture->Unload();
-				BloomHorizontalTexture->SetSize(Target->GetSize() / 2);
+				BloomHorizontalTexture->SetSize(BloomThresholdTexture->GetSize());
 				BloomHorizontalTexture->Load();
 			}
 		}
 		RTexturePtr BloomTexture = TextureManager::GetInstance().CreateTexture2D(L"PPBloom", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, 0);
 		if (BloomTexture) {
-			if (BloomTexture->GetSize() != Target->GetSize() / 2) {
+			if (BloomTexture->GetSize() != BloomThresholdTexture->GetSize()) {
 				BloomTexture->Unload();
-				BloomTexture->SetSize(Target->GetSize() / 2);
+				BloomTexture->SetSize(BloomThresholdTexture->GetSize());
 				BloomTexture->Load();
 			}
 		}
-
+		
 		if (BloomShader && BloomShader->IsValid()) {
 			BloomShader->GetProgram()->Bind();
 		
@@ -159,7 +173,7 @@ namespace ESource {
 			BloomShader->GetProgram()->SetFloat2Array("_Direction", HorizontalDirection.PointerToValue(), 1);
 			BloomShader->GetProgram()->SetFloat2Array("_Resolution", Vector2(BloomThresholdTexture->GetSize()).PointerToValue(), 1);
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
 			BloomHorizontalBlurTarget->Unbind();
 			Rendering::Flush();
 			BloomHorizontalTexture->DeleteMipMaps();
@@ -179,7 +193,7 @@ namespace ESource {
 			BloomShader->GetProgram()->SetFloat2Array("_Resolution", Vector2(BloomHorizontalTexture->GetSize()).PointerToValue(), 1);
 			
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
 			BloomBlurTarget->Unbind();
 			BloomShader->GetProgram()->Unbind();
 			Rendering::Flush();
@@ -188,7 +202,7 @@ namespace ESource {
 
 		RShaderPtr SSAOShader = ShaderManager::GetInstance().GetProgram(L"PostProcessingSSAO");
 		RShaderPtr SSAOShaderBlur = ShaderManager::GetInstance().GetProgram(L"PostProcessingSSAOBlur");
-
+		
 		RTexturePtr SSAOTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAO", L"", PF_R8, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOTexture) {
 			if (SSAOTexture->GetSize() != Target->GetSize()) {
@@ -197,16 +211,20 @@ namespace ESource {
 				SSAOTexture->Load();
 			}
 		}
-
+		
 		RTexturePtr SSAOBlurTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAOBlur", L"", PF_R8, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOBlurTexture) {
 			if (SSAOBlurTexture->GetSize() != Target->GetSize()) {
 				SSAOBlurTexture->Unload();
-				SSAOBlurTexture->SetSize(Target->GetSize());
+				PixelMap WhiteData(Target->GetSize().x, Target->GetSize().y, 1, PF_R8);
+				PixelMapUtility::PerPixelOperator(WhiteData, [](unsigned char * Pixel, const unsigned char &) { Pixel[0] = 255; });
+				SSAOBlurTexture->SetPixelData(WhiteData);
 				SSAOBlurTexture->Load();
 			}
 		}
-
+		
+		Rendering::SetViewport({ 0.F, 0.F, (float)Target->GetSize().x, (float)Target->GetSize().y });
+		
 		static RenderTargetPtr SSAOTarget = RenderTarget::Create();
 		SSAOTarget->BindTexture2D((Texture2D *)SSAOTexture->GetNativeTexture(), SSAOTexture->GetSize());
 		SSAOTarget->Bind();
@@ -225,11 +243,11 @@ namespace ESource {
 			SSAOShader->GetProgram()->SetTexture("_GNormal", TextureManager::GetInstance().GetTexture(L"GNormal")->GetNativeTexture(), 1);
 			SSAOShader->GetProgram()->SetTexture("_NoiseTexture", TextureManager::GetInstance().GetTexture(L"SSAONoise")->GetNativeTexture(), 2);
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
 		}
 		SSAOTarget->Unbind();
 		Rendering::Flush();
-
+		
 		static RenderTargetPtr SSAOBlurTarget = RenderTarget::Create();
 		SSAOBlurTarget->BindTexture2D((Texture2D *)SSAOBlurTexture->GetNativeTexture(), SSAOBlurTexture->GetSize());
 		SSAOBlurTarget->Bind();
@@ -242,12 +260,18 @@ namespace ESource {
 			Rendering::SetCullMode(CM_None);
 			SSAOShaderBlur->GetProgram()->SetTexture("_SSAO", SSAOTexture->GetNativeTexture(), 0);
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
 		}
 		SSAOBlurTarget->Unbind();
 		Rendering::Flush();
-		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
 
+		Target->TransferDepthTo(
+			NULL, PF_ShadowDepth, FM_MinMagNearest,
+			{ 0, 0, (float)Target->GetSize().x, (float)Target->GetSize().y },
+			{ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() }
+		);
+		Rendering::SetDefaultRender();
+		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
 		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
 
 		if (RenderShader && RenderShader->IsValid()) {
@@ -264,7 +288,7 @@ namespace ESource {
 			RenderShader->GetProgram()->SetFloat1Array("_Gamma", &Pipeline->Gamma, 1);
 
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			MeshPrimitives::Quad.DrawSubdivisionInstanciated(1, 0);
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
 			RenderShader->GetProgram()->Unbind();
 		}
 	}

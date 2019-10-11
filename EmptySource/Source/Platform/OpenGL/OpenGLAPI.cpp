@@ -20,6 +20,7 @@ namespace ESource {
 			case ESource::UM_Static:     return GL_STATIC_DRAW;
 			case ESource::UM_Dynamic:    return GL_DYNAMIC_DRAW;
 			case ESource::UM_Inmutable:  return GL_STREAM_DRAW;
+			case ESource::UM_Draw:       return GL_STREAM_DRAW;
 		}
 
 		ES_CORE_ASSERT(true, "Unknown OpenGL EUsageMode!");
@@ -66,6 +67,28 @@ namespace ESource {
 		}
 	}
 
+	unsigned int OpenGLAPI::AddressModeToBaseType(ESamplerAddressMode Mode) {
+		switch (Mode) {
+		case SAM_Repeat: return GL_REPEAT;
+		case SAM_Mirror: return GL_MIRRORED_REPEAT;
+		case SAM_Clamp:  return GL_CLAMP_TO_EDGE;
+		case SAM_Border: return GL_CLAMP_TO_BORDER;
+		default:         return GL_NONE;
+		}
+	}
+
+	unsigned int OpenGLAPI::FilterModeToBaseType(EFilterMode Mode) {
+		switch (Mode) {
+		case FM_MinMagLinear:
+		case FM_MinLinearMagNearest:
+			return GL_LINEAR;
+		case FM_MinMagNearest:
+		case FM_MinNearestMagLinear:
+		default:
+			return GL_NEAREST;
+		}
+	}
+
 	void OpenGLAPI::ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) {
 		GLbitfield ClearFlags = 0;
 
@@ -93,17 +116,17 @@ namespace ESource {
 		glViewport((GLint)Viewport.GetMinPoint().x, (GLint)Viewport.GetMinPoint().y, (GLint)Viewport.GetWidth(), (GLint)Viewport.GetHeight());
 	}
 
-	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer, unsigned int Count) {
+	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer, unsigned int Offset) {
 		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
 		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
 		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
-		glDrawElementsInstanced(GL_TRIANGLES, VertexArrayPointer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr, Count);
+		glDrawElementsBaseVertex(GL_TRIANGLES, VertexArrayPointer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr, Offset);
 	}
 
 	void OpenGLAPI::SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) {
-		//////////////////////////////////////
-		//////////////////////////////////////
-		// This will be in the correct place 
+		///////////////////////////////////////
+		///////////////////////////////////////
+		// This will be in the correct place //
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		///////////////////////////////////////
@@ -124,22 +147,14 @@ namespace ESource {
 	void OpenGLAPI::SetDepthFunction(EDepthFunction Function) {
 		glEnable(GL_DEPTH_TEST);
 		switch (Function) {
-		case DF_Always:
-			glDepthFunc(GL_ALWAYS); break;
-		case DF_Equal:
-			glDepthFunc(GL_EQUAL); break;
-		case DF_Greater:
-			glDepthFunc(GL_GREATER); break;
-		case DF_GreaterEqual:
-			glDepthFunc(GL_GEQUAL); break;
-		case DF_Less:
-			glDepthFunc(GL_LESS); break;
-		case DF_LessEqual:
-			glDepthFunc(GL_LEQUAL); break;
-		case DF_Never:
-			glDepthFunc(GL_NEVER); break;
-		case DF_NotEqual:
-			glDepthFunc(GL_NOTEQUAL); break;
+		case DF_Always:       glDepthFunc(GL_ALWAYS); break;
+		case DF_Equal:        glDepthFunc(GL_EQUAL); break;
+		case DF_Greater:      glDepthFunc(GL_GREATER); break;
+		case DF_GreaterEqual: glDepthFunc(GL_GEQUAL); break;
+		case DF_Less:         glDepthFunc(GL_LESS); break;
+		case DF_LessEqual:    glDepthFunc(GL_LEQUAL); break;
+		case DF_Never:        glDepthFunc(GL_NEVER); break;
+		case DF_NotEqual:     glDepthFunc(GL_NOTEQUAL); break;
 		}
 	}
 
@@ -149,10 +164,8 @@ namespace ESource {
 		else {
 			glEnable(GL_CULL_FACE);
 			switch (Mode) {
-			case CM_ClockWise:
-				glCullFace(GL_FRONT); break;
-			case CM_CounterClockWise:
-				glCullFace(GL_BACK); break;
+			case CM_ClockWise:        glCullFace(GL_FRONT); break;
+			case CM_CounterClockWise: glCullFace(GL_BACK); break;
 			case CM_None:
 				break;
 			}
@@ -161,12 +174,9 @@ namespace ESource {
 
 	void OpenGLAPI::SetRasterizerFillMode(ERasterizerFillMode Mode) {
 		switch (Mode) {
-		case FM_Point:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); break;
-		case FM_Wireframe:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
-		case FM_Solid:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+		case FM_Point:     glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); break;
+		case FM_Wireframe: glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
+		case FM_Solid:     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 		}
 	}
 

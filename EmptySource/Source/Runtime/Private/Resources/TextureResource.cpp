@@ -8,6 +8,8 @@
 #include "Rendering/MeshPrimitives.h"
 #include "Rendering/Material.h"
 
+#include "Utility/TextFormattingMath.h"
+
 namespace ESource {
 	
 	RTexture::~RTexture() {
@@ -60,6 +62,10 @@ namespace ESource {
 			default:
 				break;
 			}
+		}
+
+		if (Size.MagnitudeSquared() == 0) {
+			LOG_CORE_CRITICAL(L"Assigned Invalid Size in Texture '{}' : {}", Name.GetDisplayName().c_str(), Text::FormatMath(Size).c_str());
 		}
 		LoadState = TexturePointer != NULL ? LS_Loaded : LS_Unloaded;
 		if (bBuildMipMapsOnLoad) GenerateMipMaps();
@@ -114,7 +120,6 @@ namespace ESource {
 
 	void RTexture::SetPixelData(const PixelMap & Data) {
 		if (LoadState == LS_Unloaded && Origin.empty()) {
-			ColorFormat = Data.GetColorFormat();
 			Size = Data.GetSize();
 			Pixels = Data;
 		}
@@ -142,7 +147,6 @@ namespace ESource {
 		   { ECubemapFace::Front, Matrix4x4::LookAt(Vector3(0.F, 0.F, 0.F), Vector3( 0.F,  0.F, -1.F), Vector3(0.F, -1.F,  0.F)) }
 		};
 		
-		VertexBufferPtr ModelMatrixBuffer = VertexBuffer::Create(NULL, 0, EUsageMode::UM_Dynamic);
 		static RenderTargetPtr Renderer = RenderTarget::Create();
 		
 		// --- Convert HDR equirectangular environment map to cubemap equivalent
@@ -162,12 +166,12 @@ namespace ESource {
 				CubemapMaterial->SetMatrix4x4Array("_ViewMatrix", View.second.PointerToValue());
 		
 				MeshPrimitives::Cube.BindSubdivisionVertexArray(0);
-				CubemapMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, Matrix4x4().PointerToValue(), ModelMatrixBuffer);
-		
+				
 				Renderer->BindCubemapFace((Cubemap *)TexturePointer, Size.x, View.first, Lod);
+				Rendering::SetViewport({ 0.F, 0.F, float(Size.x >> Lod), float(Size.x >> Lod) });
 				Renderer->Clear();
-		
-				MeshPrimitives::Cube.DrawSubdivisionInstanciated(1, 0);
+
+				Rendering::DrawIndexed(MeshPrimitives::Cube.GetSubdivisionVertexArray(0));
 				if (!Renderer->CheckStatus()) return false;
 			}
 		}

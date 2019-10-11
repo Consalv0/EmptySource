@@ -16,8 +16,8 @@ GLSL:
         layout(location = 3) in vec2 _iVertexUV0;
         layout(location = 4) in vec2 _iVertexUV1;
         layout(location = 5) in vec4 _iVertexColor;
-        layout(location = 6) in mat4 _iModelMatrix;
-    
+
+        uniform mat4 _ModelMatrix;
         uniform mat4 _ProjectionMatrix;
         uniform mat4 _ViewMatrix;
 
@@ -36,7 +36,7 @@ GLSL:
         } Vertex;
 
         void main() {
-        	Matrix.Model = _iModelMatrix;
+        	Matrix.Model = _ModelMatrix;
         	Matrix.WorldNormal = transpose(inverse(Matrix.Model));
     
          	Vertex.Position = vec4(_iVertexPosition, 1.0);

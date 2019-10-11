@@ -28,6 +28,7 @@ namespace ESource {
 		TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
 		ScreenTarget = RenderTarget::Create();
 		ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
+		ScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
 		RTexturePtr GPosition = TextureManager::GetInstance().CreateTexture2D(L"GPosition", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		GPosition->Load();
 		RTexturePtr GNormal   = TextureManager::GetInstance().CreateTexture2D(L"GNormal",   L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
@@ -39,6 +40,7 @@ namespace ESource {
 		int Lods[3] = { 0, 0, 0 };
 		int Attachments[3] = { 0, 1, 2 };
 		GeometryBuffer->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 3);
+		GeometryBuffer->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
 
 		std::uniform_real_distribution<float> RandomFloats(0.0F, 1.0F);
 		std::default_random_engine Generator;
@@ -54,16 +56,14 @@ namespace ESource {
 			SSAOKernel.push_back(Sample);
 		}
 
-		TArray<Vector3> SSAONoise;
-		for (unsigned int i = 0; i < 16; i++) {
-			// Rotate around z-axis (in tangent space)
-			Vector3 Noise(RandomFloats(Generator) * 2.0F - 1.0F, RandomFloats(Generator) * 2.0F - 1.0F, 0.0F); 
-			SSAONoise.push_back(Noise);
-		}
+		PixelMap SSAONoiseData(4, 4, 1, PF_RG32F);
+		PixelMapUtility::PerPixelOperator(SSAONoiseData, [&RandomFloats, &Generator] (float * Pixel, const unsigned char& Channels) {
+			Pixel[0] = RandomFloats(Generator) * 2.0F - 1.0F;
+			Pixel[1] = RandomFloats(Generator) * 2.0F - 1.0F;
+		});
 
-		RTexturePtr SSAONoiseTexture = TextureManager::GetInstance().CreateTexture2D(L"SSAONoise", L"", PF_RGB32F, FM_MinMagNearest, SAM_Repeat);
-		void * SSAONoiseData = (void *)&SSAONoise[0];
-		SSAONoiseTexture->SetPixelData(PixelMap(4, 4, 1, PF_RGB32F, SSAONoiseData));
+		RTexturePtr SSAONoiseTexture = TextureManager::GetInstance().CreateTexture2D(L"SSAONoise", L"", PF_RG16F, FM_MinMagNearest, SAM_Repeat);
+		SSAONoiseTexture->SetPixelData(SSAONoiseData);
 		SSAONoiseTexture->Load();
 
 		bNeedResize = false;
@@ -148,6 +148,7 @@ namespace ESource {
 			TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
 			ScreenTarget = RenderTarget::Create();
 			ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
+			ScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
 			ScreenTarget->Unbind();
 			RTexturePtr GPosition = TextureManager::GetInstance().CreateTexture2D(L"GPosition", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 			GPosition->Unload();
@@ -166,6 +167,7 @@ namespace ESource {
 			int Lods[3] = { 0, 0, 0 };
 			int Attachments[3] = { 0, 1, 2 };
 			GeometryBuffer->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 3);
+			GeometryBuffer->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
 			bNeedResize = false;
 		}
 	}
