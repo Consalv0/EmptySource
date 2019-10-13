@@ -78,17 +78,17 @@ namespace ESource {
 		return RenderingTextures[Index];
 	}
 
-	void OpenGLRenderTarget::BindDepthTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
+	void OpenGLRenderTarget::BindDepthTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod) {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
 		Size = InSize;
 		Bind();
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetTextureObject(), 0);
-		glDrawBuffer(GL_NONE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
+		if (RenderingTextures.size() <= 1) {
+			glDrawBuffer(GL_NONE);
+		}
 		glReadBuffer(GL_NONE);
-
-		glViewport(0, 0, Size.x, Size.y);
 	}
 
 	void OpenGLRenderTarget::BindTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {

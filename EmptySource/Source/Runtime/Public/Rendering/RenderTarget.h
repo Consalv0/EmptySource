@@ -17,7 +17,7 @@ namespace ESource {
 		virtual inline ETextureDimension GetDimension() const = 0;
 
 		//* All future functions will modify this texture
-		virtual void BindDepthTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0)  = 0;
+		virtual void BindDepthTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0)  = 0;
 
 		//* All future functions will modify this texture
 		virtual void BindTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) = 0;

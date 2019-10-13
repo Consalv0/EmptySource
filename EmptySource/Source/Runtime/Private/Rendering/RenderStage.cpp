@@ -203,7 +203,7 @@ namespace ESource {
 		RShaderPtr SSAOShader = ShaderManager::GetInstance().GetProgram(L"PostProcessingSSAO");
 		RShaderPtr SSAOShaderBlur = ShaderManager::GetInstance().GetProgram(L"PostProcessingSSAOBlur");
 		
-		RTexturePtr SSAOTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAO", L"", PF_R8, FM_MinMagNearest, SAM_Repeat);
+		RTexturePtr SSAOTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAO", L"", PF_R32F, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOTexture) {
 			if (SSAOTexture->GetSize() != Target->GetSize()) {
 				SSAOTexture->Unload();
@@ -235,11 +235,14 @@ namespace ESource {
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
-			// Send kernel + rotation 
-			SSAOShader->GetProgram()->SetFloat3Array("_Samples", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
+			float ExtractedTanHalfFOV = 1.F / Scene.ViewProjection[1][1];
+			float ExtractedAspectRatio = (1.F / Scene.ViewProjection[0][0]) / ExtractedTanHalfFOV;
+			SSAOShader->GetProgram()->SetFloat1Array("_AspectRatio", &ExtractedTanHalfFOV);
+			SSAOShader->GetProgram()->SetFloat1Array("_TanHalfFOV", &ExtractedAspectRatio);
+			SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
 			SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.ViewProjection.PointerToValue());
 			SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (Application::GetInstance()->GetWindow().GetSize().FloatVector2() / 4.0F).PointerToValue());
-			SSAOShader->GetProgram()->SetTexture("_GPosition", TextureManager::GetInstance().GetTexture(L"GPosition")->GetNativeTexture(), 0);
+			SSAOShader->GetProgram()->SetTexture("_GDepth", TextureManager::GetInstance().GetTexture(L"GDepth")->GetNativeTexture(), 0);
 			SSAOShader->GetProgram()->SetTexture("_GNormal", TextureManager::GetInstance().GetTexture(L"GNormal")->GetNativeTexture(), 1);
 			SSAOShader->GetProgram()->SetTexture("_NoiseTexture", TextureManager::GetInstance().GetTexture(L"SSAONoise")->GetNativeTexture(), 2);
 			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);

@@ -68,9 +68,9 @@ GLSL:
         const float PI = 3.1415926535;
         const float Gamma = 2.2;
         
-        layout (location = 0) out vec3 GPosition;
-        layout (location = 1) out vec3 GNormal;
-        layout (location = 2) out vec4 GAlbedo;
+        // layout (location = 0) out vec3 GPosition;
+        layout (location = 0) out vec3 GNormal;
+        layout (location = 1) out vec4 GAlbedo;
         
         uniform mat4 _ProjectionMatrix;
         uniform mat4 _ViewMatrix;
@@ -78,8 +78,6 @@ GLSL:
         
         uniform sampler2D _MainTexture;
         uniform sampler2D _NormalTexture;
-        uniform sampler2D _EmissionTexture;
-        uniform vec3 _EmissionColor;
         
         uniform struct MaterialInfo {
           vec4 Color;
@@ -105,11 +103,10 @@ GLSL:
           vec3 VertNormal = normalize(TBN * TangentNormal);
           vec4 Diffuse = texture(_MainTexture, Vertex.UV0);
           vec3 DiffuseColor = pow(Diffuse.rgb, vec3(Gamma)) * _Material.Color.xyz;
-          vec3 Emission = texture(_EmissionTexture, Vertex.UV0).rgb * _EmissionColor;
 
-          GPosition = Vertex.Position.rgb;
+          // GPosition = Vertex.Position.rgb;
           GNormal.rgb = VertNormal;
-          GAlbedo.rgb = DiffuseColor + Emission;
+          GAlbedo.rgb = DiffuseColor;
           GAlbedo.a = Diffuse.a;
           
           if (Diffuse.a > 0.5)

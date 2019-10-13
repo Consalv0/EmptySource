@@ -129,8 +129,7 @@ namespace ESource {
 				});
 			GMat.SetParameters({
 				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
-				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal },
-				{ "_EmissionTexture",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BlackTexture") }, SPFlags_IsInternal }, 
+				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal } 
 			});
 			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
 			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
@@ -190,12 +189,11 @@ namespace ESource {
 				{ "_ProjectionMatrix",            { ViewProjection }, SPFlags_IsInternal },
 				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal }
-				});
+			});
 			GMat.SetParameters({
 				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
-				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal },
-				{ "_EmissionTexture",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BlackTexture") }, SPFlags_IsInternal },
-				});
+				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal }
+			});
 			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
 			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
 			GMat.DepthFunction = (*MatIt)->DepthFunction;
@@ -224,6 +222,7 @@ namespace ESource {
 		static RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
 		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)Lights[LightIndex].ShadowMap->GetNativeTexture(), Lights[LightIndex].ShadowMap->GetSize());
+		Rendering::SetViewport({ 0.F, 0.F, (float)Lights[LightIndex].ShadowMap->GetSize().x, (float)Lights[LightIndex].ShadowMap->GetSize().y });
 		ShadowRenderTarget->Clear();
 
 		Rendering::SetActiveDepthTest(true);
