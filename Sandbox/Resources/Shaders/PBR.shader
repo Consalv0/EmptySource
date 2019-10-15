@@ -87,8 +87,8 @@ GLSL:
         	Matrix.WorldNormal = transpose(inverse(Matrix.Model));
     
          	Vertex.Position = vec4(_iVertexPosition, 1.0);
-         	Vertex.NormalDirection = normalize(Matrix.WorldNormal * vec4( _iVertexNormal, 1.0 )).xyz; 
-         	Vertex.TangentDirection = normalize(Matrix.WorldNormal * vec4( _iVertexTangent, 1.0 )).xyz;
+         	Vertex.NormalDirection = normalize(mat3(Matrix.WorldNormal) * _iVertexNormal); 
+         	Vertex.TangentDirection = normalize(mat3(Matrix.WorldNormal) * _iVertexTangent);
         	Vertex.TangentDirection = normalize(Vertex.TangentDirection - dot(Vertex.TangentDirection, Vertex.NormalDirection) * Vertex.NormalDirection);
         	Vertex.BitangentDirection = cross(Vertex.NormalDirection, Vertex.TangentDirection);
         	Vertex.UV0 = _iVertexUV0; 

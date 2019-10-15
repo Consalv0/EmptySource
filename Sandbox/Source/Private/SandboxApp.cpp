@@ -751,6 +751,10 @@ protected:
 			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &Time::MaxUpdateDeltaMicro, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxRenderFrameRate"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxRenderFrameRate", ImGuiDataType_U64, &Time::MaxRenderDeltaMicro, 1.F); ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Render Scale"); ImGui::NextColumn();
+			static float RenderSize = 1.F;
+			ImGui::DragFloat("##RenderScale", &RenderSize, 0.01F, 0.1F, 1.F); ImGui::SameLine();
+			if (ImGui::Button("Apply")) { Application::GetInstance()->GetRenderPipeline().SetRenderScale(RenderSize); } ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Application::GetInstance()->GetRenderPipeline().Gamma, 0.F, 4.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Exposure"); ImGui::NextColumn();

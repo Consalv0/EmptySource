@@ -12,6 +12,8 @@ namespace ESource {
 		//* Creates an importer object, and uses it to import a file into a scene.
 		static bool LoadScene(class FbxScene * Scene, const FileStream* File);
 
+		static bool LoadAnimationStack(class FbxScene * Scene, const FileStream* File);
+
 		static void ExtractVertexData(class FbxMesh * pMesh, MeshData & OutData);
 		static void ExtractTextureCoords(
 			class FbxMesh * pMesh, MeshVertex & Vertex,
@@ -41,6 +43,8 @@ namespace ESource {
 		/** Load mesh data from FBX, it will return the models separated by objects, optionaly
 		  * there's a way to optimize the vertices. */
 		static bool LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options);
+
+		static bool LoadAnimation();
 	};
 
 }

@@ -205,25 +205,25 @@ namespace ESource {
 		
 		RTexturePtr SSAOTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAO", L"", PF_R32F, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOTexture) {
-			if (SSAOTexture->GetSize() != Target->GetSize()) {
+			if (SSAOTexture->GetSize() != Target->GetSize() / IntVector3(2, 2, 1)) {
 				SSAOTexture->Unload();
-				SSAOTexture->SetSize(Target->GetSize());
+				SSAOTexture->SetSize(Target->GetSize() / IntVector3(2, 2, 1));
 				SSAOTexture->Load();
 			}
 		}
 		
 		RTexturePtr SSAOBlurTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAOBlur", L"", PF_R8, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOBlurTexture) {
-			if (SSAOBlurTexture->GetSize() != Target->GetSize()) {
+			if (SSAOBlurTexture->GetSize() != Target->GetSize() / IntVector3(2, 2, 1)) {
 				SSAOBlurTexture->Unload();
-				PixelMap WhiteData(Target->GetSize().x, Target->GetSize().y, 1, PF_R8);
+				PixelMap WhiteData(Target->GetSize().x / 2, Target->GetSize().y / 2, 1, PF_R8);
 				PixelMapUtility::PerPixelOperator(WhiteData, [](unsigned char * Pixel, const unsigned char &) { Pixel[0] = 255; });
 				SSAOBlurTexture->SetPixelData(WhiteData);
 				SSAOBlurTexture->Load();
 			}
 		}
 		
-		Rendering::SetViewport({ 0.F, 0.F, (float)Target->GetSize().x, (float)Target->GetSize().y });
+		Rendering::SetViewport({ 0.F, 0.F, (float)SSAOTexture->GetSize().x, (float)SSAOTexture->GetSize().y });
 		
 		static RenderTargetPtr SSAOTarget = RenderTarget::Create();
 		SSAOTarget->BindTexture2D((Texture2D *)SSAOTexture->GetNativeTexture(), SSAOTexture->GetSize());
@@ -235,13 +235,9 @@ namespace ESource {
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
-			float ExtractedTanHalfFOV = 1.F / Scene.ViewProjection[1][1];
-			float ExtractedAspectRatio = (1.F / Scene.ViewProjection[0][0]) / ExtractedTanHalfFOV;
-			SSAOShader->GetProgram()->SetFloat1Array("_AspectRatio", &ExtractedTanHalfFOV);
-			SSAOShader->GetProgram()->SetFloat1Array("_TanHalfFOV", &ExtractedAspectRatio);
 			SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
 			SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.ViewProjection.PointerToValue());
-			SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (Application::GetInstance()->GetWindow().GetSize().FloatVector2() / 4.0F).PointerToValue());
+			SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (SSAOTexture->GetSize().FloatVector3() / 4.0F).PointerToValue());
 			SSAOShader->GetProgram()->SetTexture("_GDepth", TextureManager::GetInstance().GetTexture(L"GDepth")->GetNativeTexture(), 0);
 			SSAOShader->GetProgram()->SetTexture("_GNormal", TextureManager::GetInstance().GetTexture(L"GNormal")->GetNativeTexture(), 1);
 			SSAOShader->GetProgram()->SetTexture("_NoiseTexture", TextureManager::GetInstance().GetTexture(L"SSAONoise")->GetNativeTexture(), 2);
