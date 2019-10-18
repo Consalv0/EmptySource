@@ -375,6 +375,12 @@
     <ClInclude Include="Source\Runtime\Public\Resources\MaterialManager.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\MeshResource.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Resources\ModelManager.h">
+      <Filter>Runtime\Public\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Resources\ModelParser.h">
       <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
@@ -419,12 +425,6 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\ModelManager.h">
-      <Filter>Runtime\Public\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Resources\MeshResource.h">
-      <Filter>Runtime\Public\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -636,7 +636,7 @@
       <Filter>Runtime\Public</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\Resources\MeshResource.cpp">
-      <Filter>Runtime\Private\Resources</Filter>
+      <Filter>Runtime\Public\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

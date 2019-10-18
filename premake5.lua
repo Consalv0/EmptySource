@@ -21,6 +21,7 @@ IncludeDir["RobinMap"] = "EmptySource/External/RobinMap/include"
 IncludeDir["SPDLOG"] = "EmptySource/External/SPDLOG/include"
 IncludeDir["STB"] = "EmptySource/External/STB"
 IncludeDir["YAML"] = "EmptySource/External/YAML/include"
+IncludeDir["Assimp"] = "EmptySource/External/Assimp/include"
 IncludeDir["IMGUI"] = "EmptySource/External/IMGUI"
 IncludeDir["NVML"] = "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\include"
 
@@ -57,6 +58,7 @@ project "EmptySource"
 		"%{prj.name}/Source",
 		"%{prj.name}/Source/Runtime",
 		"%{prj.name}/Source/Runtime/Public",
+		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.SDL2}",
 		"%{IncludeDir.SPDLOG}",
 		"%{IncludeDir.GLAD}",
@@ -65,7 +67,7 @@ project "EmptySource"
         "%{IncludeDir.STB}",
 		"%{IncludeDir.YAML}",
 		"%{IncludeDir.IMGUI}",
-		"%{IncludeDir.NVML}"
+		"%{IncludeDir.NVML}",
     }
 
     libdirs { 
@@ -136,24 +138,36 @@ project "Sandbox"
 
 	links {
         "freetype.lib",
-        "libfbxsdk-mt.lib",
+		"libfbxsdk-mt.lib",
 		"EmptySource"
     }
 
     configuration "Debug"
         libdirs { 
             "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\debug"
-        }
+		}
+		
+		links {
+			"Assimp\\Debug\\assimp-vc141-mtd.lib"
+		}
     
     configuration "Release"
         libdirs {
-            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
-        }
+			"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
+		}
+		
+		links {
+			"Assimp\\Release\\assimp-vc141-mt.lib"
+		}
 
     configuration "Shipping"
         libdirs {
             "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
         }
+		
+		links {
+			"Assimp\\Release\\assimp-vc141-mt.lib"
+		}
 
 	filter "system:windows"
 		systemversion "latest"
