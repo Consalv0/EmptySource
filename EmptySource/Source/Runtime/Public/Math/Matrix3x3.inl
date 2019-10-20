@@ -40,12 +40,12 @@ namespace ESource {
 		return Matrix3x3(GetColumn(0), GetColumn(1), GetColumn(2));
 	}
 
-	inline Vector3 Matrix3x3::GetRow(const unsigned int & i) const {
+	inline Vector3 Matrix3x3::GetRow(const unsigned char & i) const {
 		if ((i > 2)) return Vector3();
 		return ((Vector3*)this)[i];
 	}
 
-	inline Vector3 Matrix3x3::GetColumn(const unsigned int & i) const {
+	inline Vector3 Matrix3x3::GetColumn(const unsigned char & i) const {
 		switch (i) {
 			case 0: return Vector3(m0[0], m1[0], m2[0]);
 			case 1: return Vector3(m0[1], m1[1], m2[1]);
@@ -55,12 +55,12 @@ namespace ESource {
 		return Vector3();
 	}
 
-	inline Vector3 & Matrix3x3::operator[](unsigned int i) {
+	inline Vector3 & Matrix3x3::operator[](unsigned char i) {
 		ES_CORE_ASSERT(i <= 2, "Matrix3x3 index out of bounds");
 		return ((Vector3*)this)[i];
 	}
 
-	inline Vector3 const & Matrix3x3::operator[](unsigned int i) const {
+	inline Vector3 const & Matrix3x3::operator[](unsigned char i) const {
 		ES_CORE_ASSERT(i <= 2, "Matrix3x3 index out of bounds");
 		return ((Vector3*)this)[i];
 	}

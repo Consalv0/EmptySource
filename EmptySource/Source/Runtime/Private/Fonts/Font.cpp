@@ -37,7 +37,7 @@ namespace ESource {
 		FT_Done_Face(Face);
 	}
 
-	void Font::SetGlyphHeight(const unsigned int & Size) const {
+	void Font::SetGlyphHeight(const uint32_t & Size) const {
 		FT_Error Error = FT_Set_Pixel_Sizes(Face, 0, Size);
 		if (Error) {
 			LOG_CORE_ERROR(L"Couldn't set the glyph size to {0:d}, {1}", Size, WString(FT_ErrorMessage(Error)));
@@ -89,11 +89,11 @@ namespace ESource {
 			LOG_CORE_ERROR(L"Failed to load font, {}", WString(FT_ErrorMessage(Error)));
 	}
 
-	unsigned int Font::GetGlyphIndex(const unsigned long & Character) const {
+	uint32_t Font::GetGlyphIndex(const uint32_t & Character) const {
 		return FT_Get_Char_Index(Face, Character);
 	}
 
-	bool Font::GetGlyph(FontGlyph & Glyph, const unsigned int& Character) {
+	bool Font::GetGlyph(FontGlyph & Glyph, const uint32_t& Character) {
 		FT_Error Error = FT_Load_Glyph(Face, GetGlyphIndex(Character), FT_LOAD_COMPUTE_METRICS);
 		if (Error) {
 			LOG_CORE_ERROR(L"Failed to load Glyph '{0:c}', {1}", WChar(Character), WString(FT_ErrorMessage(Error)));

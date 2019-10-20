@@ -15,7 +15,7 @@
 
 namespace ESource {
 
-	unsigned int OpenGLAPI::UsageModeToDrawBaseType(EUsageMode Mode) {
+	uint32_t OpenGLAPI::UsageModeToDrawBaseType(EUsageMode Mode) {
 		switch (Mode) {
 			case ESource::UM_Default:    return GL_STATIC_DRAW;
 			case ESource::UM_Static:     return GL_STATIC_DRAW;
@@ -28,7 +28,7 @@ namespace ESource {
 		return 0;
 	}
 	
-	unsigned int OpenGLAPI::ShaderDataTypeToBaseType(EShaderDataType Type) {
+	uint32_t OpenGLAPI::ShaderDataTypeToBaseType(EShaderDataType Type) {
 		switch (Type) {
 			case EShaderDataType::Float:
 			case EShaderDataType::Float2:
@@ -50,7 +50,7 @@ namespace ESource {
 		return 0;
 	}
 
-	unsigned int OpenGLAPI::BlendFactorToBaseType(EBlendFactor Factor) {
+	uint32_t OpenGLAPI::BlendFactorToBaseType(EBlendFactor Factor) {
 		switch (Factor) {
 		case ESource::BF_Zero:				return GL_ZERO;
 		case ESource::BF_One:				return GL_ONE;
@@ -68,7 +68,7 @@ namespace ESource {
 		}
 	}
 
-	unsigned int OpenGLAPI::AddressModeToBaseType(ESamplerAddressMode Mode) {
+	uint32_t OpenGLAPI::AddressModeToBaseType(ESamplerAddressMode Mode) {
 		switch (Mode) {
 		case SAM_Repeat: return GL_REPEAT;
 		case SAM_Mirror: return GL_MIRRORED_REPEAT;
@@ -78,7 +78,7 @@ namespace ESource {
 		}
 	}
 
-	unsigned int OpenGLAPI::FilterModeToBaseType(EFilterMode Mode) {
+	uint32_t OpenGLAPI::FilterModeToBaseType(EFilterMode Mode) {
 		switch (Mode) {
 		case FM_MinMagLinear:
 		case FM_MinLinearMagNearest:
@@ -90,7 +90,7 @@ namespace ESource {
 		}
 	}
 
-	void OpenGLAPI::ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) {
+	void OpenGLAPI::ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, uint32_t Stencil) {
 		GLbitfield ClearFlags = 0;
 
 		if (bClearColor) {
@@ -113,7 +113,7 @@ namespace ESource {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void OpenGLAPI::SetViewport(const Box2D & Viewport) {
+	void OpenGLAPI::SetViewport(const IntBox2D & Viewport) {
 		glViewport((GLint)Viewport.GetMinPoint().x, (GLint)Viewport.GetMinPoint().y, (GLint)Viewport.GetWidth(), (GLint)Viewport.GetHeight());
 	}
 
@@ -128,14 +128,14 @@ namespace ESource {
 		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
 		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
 		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
-		glDrawElementsBaseVertex(GL_TRIANGLES, Offsets.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * Offsets.BaseIndex), Offsets.BaseVertex);
+		glDrawElementsBaseVertex(GL_TRIANGLES, Offsets.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * Offsets.BaseIndex), Offsets.BaseVertex);
 	}
 
 	void OpenGLAPI::SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) {
 		///////////////////////////////////////
 		///////////////////////////////////////
 		// This will be in the correct place //
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, GL_TRUE);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		///////////////////////////////////////
 

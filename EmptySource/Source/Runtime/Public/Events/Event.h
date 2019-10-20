@@ -6,14 +6,14 @@
 												 virtual EnumType GetEventType() const override { return GetStaticType(); }\
 												 virtual const WChar* GetName() const override { return L#EnumType ## "::" ## #Type; }
 
-#define IMPLEMENT_EVENT_CATEGORY(Category) virtual unsigned int GetCategoryFlags() const override { return Category; }
+#define IMPLEMENT_EVENT_CATEGORY(Category) virtual uint32_t GetCategoryFlags() const override { return Category; }
 
 namespace ESource {
 
 	class Event {
 	public:
 		virtual const WChar* GetName() const = 0;
-		virtual unsigned int GetCategoryFlags() const = 0;
+		virtual uint32_t GetCategoryFlags() const = 0;
 	};
 
 	template<typename B>

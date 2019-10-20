@@ -27,7 +27,7 @@ namespace ESource {
 		virtual void * GetTextureObject() const override { return (void *)(unsigned long long)TextureObject; };
 
 		//* Generate MipMaps using Hardware
-		virtual void GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) override;
+		virtual void GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) override;
 
 		//* Check if texture is valid
 		virtual bool IsValid() const override;
@@ -35,7 +35,7 @@ namespace ESource {
 	private:
 		bool bValid;
 
-		unsigned int TextureObject;
+		uint32_t TextureObject;
 
 		virtual void SetFilterMode(const EFilterMode& Mode, bool MipMaps = false) override;
 
@@ -64,7 +64,7 @@ namespace ESource {
 		virtual void * GetTextureObject() const override { return (void *)(unsigned long long)TextureObject; };
 
 		//* Generate MipMaps using Hardware
-		virtual void GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) override;
+		virtual void GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) override;
 
 		//* Check if texture is valid
 		virtual bool IsValid() const override;
@@ -72,7 +72,7 @@ namespace ESource {
 	private:
 		bool bValid;
 
-		unsigned int TextureObject;
+		uint32_t TextureObject;
 
 		virtual void SetSamplerAddressMode(const ESamplerAddressMode& Mode) override;
 

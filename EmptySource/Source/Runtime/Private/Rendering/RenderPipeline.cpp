@@ -45,7 +45,7 @@ namespace ESource {
 
 		std::uniform_real_distribution<float> RandomFloats(0.0F, 1.0F);
 		std::default_random_engine Generator;
-		for (unsigned int i = 0; i < 64; ++i) {
+		for (int i = 0; i < 64; ++i) {
 			Vector3 Sample(RandomFloats(Generator) * 2.0F - 1.0F, RandomFloats(Generator) * 2.0F - 1.0F, RandomFloats(Generator));
 			Sample.Normalize();
 			Sample *= RandomFloats(Generator);
@@ -180,7 +180,7 @@ namespace ESource {
 	void RenderPipeline::EndOfFrame() {
 		Rendering::Flush();
 		Rendering::SetDefaultRender();
-		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
+		Rendering::SetViewport({ 0, 0, (int)Application::GetInstance()->GetWindow().GetWidth(), (int)Application::GetInstance()->GetWindow().GetHeight() });
 	}
 
 }

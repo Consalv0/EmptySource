@@ -3,9 +3,9 @@
 namespace ESource {
 
 	struct OpenGLInputTextureFormatInfo {
-		unsigned int    InternalFormat,
-			            InputFormat,
-			            BlockType;
+		uint32_t    InternalFormat,
+			        InputFormat,
+			        BlockType;
 		// Is supported on the current platform
 		bool            Supported;
 		EPixelFormat    PixelFormat;

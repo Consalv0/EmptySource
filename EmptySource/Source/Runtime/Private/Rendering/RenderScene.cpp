@@ -150,14 +150,14 @@ namespace ESource {
 		}
 	}
 
-	void RenderScene::RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader) {
+	void RenderScene::RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader) {
 		if (!Lights[LightIndex].CastShadow || Lights[LightIndex].ShadowMap == NULL || !Shader->IsValid()) return;
 		Lights[LightIndex].ShadowMap->Load();
 		if (Lights[LightIndex].ShadowMap->GetLoadState() != LS_Loaded) return;
 		static RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
 		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)Lights[LightIndex].ShadowMap->GetNativeTexture(), Lights[LightIndex].ShadowMap->GetSize());
-		Rendering::SetViewport({ 0.F, 0.F, (float)Lights[LightIndex].ShadowMap->GetSize().x, (float)Lights[LightIndex].ShadowMap->GetSize().y });
+		Rendering::SetViewport({ 0, 0, Lights[LightIndex].ShadowMap->GetSize().x, Lights[LightIndex].ShadowMap->GetSize().y });
 		ShadowRenderTarget->Clear();
 
 		Rendering::SetActiveDepthTest(true);

@@ -22,14 +22,14 @@ namespace ESource {
 		}
 	}
 
-	void Text2DGenerator::PrepareCharacters(const unsigned long & From, const unsigned long & To) {
+	void Text2DGenerator::PrepareCharacters(const uint32_t & From, const uint32_t & To) {
 		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From + 1, (WChar)From, From, (WChar)To, To);
 		Timestamp Timer;
 		Timer.Begin();
 		TextFont->SetGlyphHeight(GlyphHeight);
 		for (unsigned long Character = From; Character <= To; Character++) {
 			FontGlyph Glyph;
-			if (TextFont->GetGlyph(Glyph, (unsigned int)Character)) {
+			if (TextFont->GetGlyph(Glyph, (uint32_t)Character)) {
 				if (!Glyph.VectorShape.Validate())
 					LOG_CORE_ERROR(L"├> The geometry of the loaded shape is invalid.");
 				Glyph.VectorShape.Normalize();
@@ -136,7 +136,7 @@ namespace ESource {
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
 			if (!IsCharacterLoaded(*Character)) {
 				Count++; FontGlyph Glyph;
-				if (TextFont->GetGlyph(Glyph, (unsigned int)*Character)) {
+				if (TextFont->GetGlyph(Glyph, (uint32_t)*Character)) {
 					if (!Glyph.VectorShape.Validate())
 						LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
 					Glyph.VectorShape.Normalize();
@@ -197,8 +197,8 @@ namespace ESource {
 			int IndexPos = int(ResultNode.BBox.xMin + ResultNode.BBox.yMin * AtlasSize);
 
 			// --- Render current character in the current position
-			for (unsigned int i = 0; i < Character->SDFResterized.GetHeight(); ++i) {
-				for (unsigned int j = 0; j < Character->SDFResterized.GetWidth(); ++j) {
+			for (uint32_t i = 0; i < Character->SDFResterized.GetHeight(); ++i) {
+				for (uint32_t j = 0; j < Character->SDFResterized.GetWidth(); ++j) {
 					if (IndexPos < AtlasSizeSqr && IndexPos >= 0) {
 						Value = Math::Clamp(int(*PixelMapUtility::GetFloatPixelAt(Character->SDFResterized, i * Character->SDFResterized.GetWidth() + j) * 0x100), 0xff);
 						*PixelMapUtility::GetCharPixelAt(Atlas, IndexPos) = Value;

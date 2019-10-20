@@ -56,8 +56,8 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE float Dot(const Quaternion& Other) const;
 		HOST_DEVICE FORCEINLINE Quaternion Cross(const Quaternion& Other) const;
 
-		HOST_DEVICE inline float & operator[](unsigned int i);
-		HOST_DEVICE inline float const& operator[](unsigned int i) const;
+		HOST_DEVICE inline float & operator[](unsigned char i);
+		HOST_DEVICE inline float const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const float* PointerToValue() const;
 
 		HOST_DEVICE FORCEINLINE bool operator==(const Quaternion& Other) const;

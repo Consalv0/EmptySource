@@ -596,6 +596,9 @@
     <ClCompile Include="Source\Runtime\Private\Resources\MaterialManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshResource.cpp">
+      <Filter>Runtime\Private\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Resources\ModelManager.cpp">
       <Filter>Runtime\Private\Resources</Filter>
     </ClCompile>
@@ -634,9 +637,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\Public\Resources\MeshResource.cpp">
-      <Filter>Runtime\Public\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

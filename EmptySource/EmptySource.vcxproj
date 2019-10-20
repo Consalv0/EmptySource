@@ -314,6 +314,7 @@
     <ClCompile Include="Source\Runtime\Private\Resources\FBXLoader.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ImageConversion.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\MaterialManager.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Resources\MeshResource.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ModelManager.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ModelParser.cpp" />
     <ClCompile Include="Source\Runtime\Private\Resources\ModelResource.cpp" />
@@ -329,7 +330,6 @@
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Public\Resources\MeshResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="External\YAML\YAML-CPP.vcxproj">

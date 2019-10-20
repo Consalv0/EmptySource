@@ -32,8 +32,8 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE static float Dot(const Vector4 &A, const Vector4 &B);
 		HOST_DEVICE FORCEINLINE static Vector4 Lerp(const Vector4& Start, const Vector4& End, float t);
 
-		HOST_DEVICE inline float & operator[](unsigned int i);
-		HOST_DEVICE inline float const& operator[](unsigned int i) const;
+		HOST_DEVICE inline float & operator[](unsigned char i);
+		HOST_DEVICE inline float const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const float* PointerToValue() const;
 
 		HOST_DEVICE FORCEINLINE bool operator==(const Vector4& Other) const;

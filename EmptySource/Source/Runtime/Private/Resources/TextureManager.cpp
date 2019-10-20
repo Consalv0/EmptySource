@@ -37,7 +37,7 @@ namespace ESource {
 		for (auto KeyValue : TextureNameList)
 			Names.push_back(KeyValue.second);
 		std::sort(Names.begin(), Names.end(), [](const WString& first, const WString& second) {
-			unsigned int i = 0;
+			size_t i = 0;
 			while ((i < first.length()) && (i < second.length())) {
 				if (tolower(first[i]) < tolower(second[i])) return true;
 				else if (tolower(first[i]) > tolower(second[i])) return false;

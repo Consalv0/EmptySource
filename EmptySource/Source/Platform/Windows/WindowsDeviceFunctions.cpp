@@ -55,7 +55,7 @@ namespace ESource {
 	}
 
 	float WindowsDeviceFunctions::GetDeviceTemperature(const int & DeviceIndex) {
-		unsigned int DeviceTemperature = 0;
+		uint32_t DeviceTemperature = 0;
 #ifdef ES_PLATFORM_NVML
 		nvmlDevice_t Device;
 		nvmlReturn_t DeviceResult;

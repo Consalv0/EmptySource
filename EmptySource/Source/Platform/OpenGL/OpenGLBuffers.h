@@ -4,7 +4,7 @@ namespace ESource {
 
 	class OpenGLVertexBuffer : public VertexBuffer {
 	public:
-		OpenGLVertexBuffer(float * Vertices, unsigned int Size, EUsageMode Usage);
+		OpenGLVertexBuffer(float * Vertices, uint32_t Size, EUsageMode Usage);
 
 		virtual ~OpenGLVertexBuffer();
 
@@ -17,7 +17,7 @@ namespace ESource {
 		virtual void * GetNativeObject() override;
 
 		//* The number of bytes in the vertex buffer
-		virtual inline unsigned int GetSize() const override { return Size; }
+		virtual inline uint32_t GetSize() const override { return Size; }
 
 		//* The usage used for the vertex buffer
 		virtual inline EUsageMode GetUsage() const override { return Usage; }
@@ -28,16 +28,16 @@ namespace ESource {
 		virtual void SetLayout(const BufferLayout& NewLayout) override { Layout = NewLayout; };
 
 	private:
-		unsigned int Size;
+		uint32_t Size;
 		EUsageMode Usage;
 		BufferLayout Layout;
-		unsigned int VertexBufferID;
+		uint32_t VertexBufferID;
 
 	};
 
 	class OpenGLIndexBuffer : public IndexBuffer {
 	public:
-		OpenGLIndexBuffer(unsigned int * Indices, unsigned int Count, EUsageMode Usage);
+		OpenGLIndexBuffer(uint32_t * Indices, uint32_t Count, EUsageMode Usage);
 
 		virtual ~OpenGLIndexBuffer();
 
@@ -50,18 +50,18 @@ namespace ESource {
 		virtual void * GetNativeObject() override;
 
 		//* The number of bytes in the index buffer
-		virtual inline unsigned int GetSize() const override { return Size; }
+		virtual inline uint32_t GetSize() const override { return Size; }
 
 		//* The usage used for the index buffer
 		virtual inline EUsageMode GetUsage() const override { return Usage; }
 
 		//* The number of indices in the index buffer
-		virtual inline unsigned int GetCount() const override { return Size / sizeof(unsigned int); }
+		virtual inline uint32_t GetCount() const override { return Size / sizeof(uint32_t); }
 
 	private:
-		unsigned int Size;
+		uint32_t Size;
 		EUsageMode Usage;
-		unsigned int IndexBufferID;
+		uint32_t IndexBufferID;
 
 	};
 
@@ -88,7 +88,7 @@ namespace ESource {
 		virtual IndexBufferPtr GetIndexBuffer() override;
 
 	private:
-		unsigned int VertexArrayID;
+		uint32_t VertexArrayID;
 		TArray<VertexBufferPtr> VertexBufferPointers;
 		IndexBufferPtr IndexBufferPointer;
 	};

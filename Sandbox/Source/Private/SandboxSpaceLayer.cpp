@@ -321,18 +321,19 @@ void SandboxSpaceLayer::OnRender() {
 	Application::GetInstance()->GetRenderPipeline().EndStage();
 }
 
-GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node) {
-	GGameObject * NGO = Space->CreateObject<GGameObject>(Text::NarrowToWide(Node->Name), Node->LocalTransform);
+GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node, GGameObject * NewObject) {
+	if (NewObject == NULL)
+		NewObject = Space->CreateObject<GGameObject>(Text::NarrowToWide(Node->Name), Node->LocalTransform);
 	if (Node->bHasMesh) {
-		auto MeshRenderer = NGO->CreateComponent<CRenderable>();
+		auto MeshRenderer = NewObject->CreateComponent<CRenderable>();
 		MeshRenderer->SetMesh(Model->GetMeshes().at(Node->MeshKey));
 		MeshRenderer->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Sponza/Bricks"));
 	}
 	for (auto & Child : Node->Children) {
-		GGameObject * ChildGO = ModelHierarchyToSpaceHierarchy(Space, Model, Child);
-		ChildGO->AttachTo(NGO);
+		GGameObject * ChildGO = ModelHierarchyToSpaceHierarchy(Space, Model, Child, NULL);
+		ChildGO->AttachTo(NewObject);
 	}
-	return NGO;
+	return NewObject;
 }
 
 void SandboxSpaceLayer::OnImGuiRender() {
@@ -366,7 +367,7 @@ void SandboxSpaceLayer::OnImGuiRender() {
 
 			if (PayloadModel->GetHierarchyParentNode() != NULL) {
 				ModelHierarchyToSpaceHierarchy(
-					this, PayloadModel, PayloadModel->GetHierarchyParentNode()
+					this, PayloadModel, PayloadModel->GetHierarchyParentNode(), CreateObject<GGameObject>(PayloadModel->GetName().GetDisplayName())
 				);
 				// TDictionary<size_t, GGameObject *> IndexGObjectMap;
 				// IndexGObjectMap.emplace(0, CreateObject<GGameObject>(PayloadModel->GetName().GetDisplayName(), PayloadModel->GetHierarchyParentNode().LocalTransform));

@@ -14,7 +14,7 @@ namespace ESource {
 
 	// Vertex Buffer //
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float * Vertices, unsigned int Size, EUsageMode Usage)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(float * Vertices, uint32_t Size, EUsageMode Usage)
 		: Size(Size), Usage(Usage), Layout()
 	{
 		glCreateBuffers(1, &VertexBufferID);
@@ -41,8 +41,8 @@ namespace ESource {
 
 	// Index Buffer //
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(unsigned int * Indices, unsigned int Count, EUsageMode Usage)
-		: Size(Count * sizeof(unsigned int)), Usage(Usage)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t * Indices, uint32_t Count, EUsageMode Usage)
+		: Size(Count * sizeof(uint32_t)), Usage(Usage)
 	{
 		glCreateBuffers(1, &IndexBufferID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
@@ -95,7 +95,7 @@ namespace ESource {
 		glBindVertexArray(VertexArrayID);
 		Buffer->Bind();
 
-		unsigned int Index = 0;
+		uint32_t Index = 0;
 		const auto& Layout = Buffer->GetLayout();
 		for (const auto& Element : Layout) {
 			glEnableVertexAttribArray(Index);

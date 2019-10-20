@@ -80,7 +80,7 @@ namespace ESource {
 		}
 
 		//* Get the next power2 of the value
-		inline unsigned int NextPow2(unsigned int x) {
+		inline int NextPow2(int x) {
 			--x;
 			x |= x >> 1;
 			x |= x >> 2;

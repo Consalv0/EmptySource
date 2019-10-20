@@ -37,7 +37,7 @@ namespace ESource {
 
 	}
 
-	void CRenderable::SetMaterialAt(unsigned int At, MaterialPtr Mat) {
+	void CRenderable::SetMaterialAt(uint32_t At, MaterialPtr Mat) {
 		Materials[At] = Mat;
 	}
 

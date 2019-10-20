@@ -31,8 +31,8 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE int Dot(const IntVector2& Other) const;
 
 		HOST_DEVICE inline Vector2 FloatVector2() const;
-		HOST_DEVICE inline int & operator[](unsigned int i);
-		HOST_DEVICE inline int const& operator[](unsigned int i) const;
+		HOST_DEVICE inline int & operator[](unsigned char i);
+		HOST_DEVICE inline int const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const int* PointerToValue() const;
 
 		HOST_DEVICE FORCEINLINE bool operator==(const IntVector2& Other);
@@ -57,6 +57,7 @@ namespace ESource {
 		HOST_DEVICE inline friend IntVector2 operator/(int Value, const IntVector2 &Vector);
 	};
 
+	typedef IntVector2 IntPoint2;
 }
 
 #include "Math/IntVector2.inl"

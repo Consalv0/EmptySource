@@ -27,7 +27,7 @@ namespace ESource {
 		
 		virtual inline EResourceType GetResourceType() const override { return EResourceType::RT_Shader; }
 
-		virtual inline size_t GetMemorySize() const override { return sizeof(unsigned int); };
+		virtual inline size_t GetMemorySize() const override { return sizeof(uint32_t); };
 
 		inline ShaderProgram * GetProgram() { return ShaderPointer; };
 

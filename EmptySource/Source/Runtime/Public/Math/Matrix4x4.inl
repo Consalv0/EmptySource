@@ -229,12 +229,12 @@ namespace ESource {
 		return Result * OneOverDeterminant;
 	}
 
-	inline Vector4 Matrix4x4::GetRow(const unsigned int & i) const {
+	inline Vector4 Matrix4x4::GetRow(const unsigned char & i) const {
 		if (i > 3) return Vector4();
 		return ((Vector4*)this)[i];
 	}
 
-	inline Vector4 Matrix4x4::GetColumn(const unsigned int & i) const {
+	inline Vector4 Matrix4x4::GetColumn(const unsigned char & i) const {
 		switch (i) {
 			case 0: return { m0[0], m1[0], m2[0], m3[0] };
 			case 1: return { m0[1], m1[1], m2[1], m3[1] };
@@ -262,12 +262,12 @@ namespace ESource {
 		return Scale;
 	}
 
-	inline Vector4 & Matrix4x4::operator[](unsigned int i) {
+	inline Vector4 & Matrix4x4::operator[](unsigned char i) {
 		ES_CORE_ASSERT(i <= 3, "Matrix4x4 index out of bounds");
 		return ((Vector4*)this)[i];
 	}
 
-	inline Vector4 const & Matrix4x4::operator[](unsigned int i) const {
+	inline Vector4 const & Matrix4x4::operator[](unsigned char i) const {
 		ES_CORE_ASSERT(i <= 3, "Matrix4x4 index out of bounds");
 		return ((Vector4*)this)[i];
 	}

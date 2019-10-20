@@ -100,12 +100,12 @@ namespace ESource {
 		return Incident - (Normal * Normal.Dot(Incident)) * 2.F;
 	}
 
-	inline float & Vector3::operator[](unsigned int i) {
+	inline float & Vector3::operator[](unsigned char i) {
 		ES_CORE_ASSERT(i <= 2, "Vector3 index out of bounds");
 		return ((float*)this)[i];
 	}
 
-	inline float const & Vector3::operator[](unsigned int i) const {
+	inline float const & Vector3::operator[](unsigned char i) const {
 		ES_CORE_ASSERT(i <= 2, "Vector3 index out of bounds");
 		return ((float*)this)[i];
 	}

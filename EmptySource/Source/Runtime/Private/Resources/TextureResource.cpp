@@ -91,7 +91,7 @@ namespace ESource {
 		Load();
 	}
 
-	unsigned int RTexture::GetMipMapCount() const {
+	uint32_t RTexture::GetMipMapCount() const {
 		if (IsValid())
 			return MipMapCount;
 		return 0;
@@ -99,7 +99,7 @@ namespace ESource {
 
 	void RTexture::GenerateMipMaps() {
 		if (IsValid() && MipMapCount <= 1) { 
-			MipMapCount = (unsigned int)log2f((float)Size.x);
+			MipMapCount = (uint32_t)log2f((float)Size.x);
 			TexturePointer->GenerateMipMaps(FilterMode, GetMipMapCount()); 
 		}
 	}
@@ -154,8 +154,8 @@ namespace ESource {
 		CubemapMaterial->SetTexture2D("_EquirectangularMap", Equirectangular, 0);
 		CubemapMaterial->SetMatrix4x4Array("_ProjectionMatrix", CaptureProjection.PointerToValue());
 		
-		const unsigned int MaxMipLevels = (unsigned int)GetMipMapCount();
-		for (unsigned int Lod = 0; Lod <= MaxMipLevels; ++Lod) {
+		const uint32_t MaxMipLevels = (uint32_t)GetMipMapCount();
+		for (uint32_t Lod = 0; Lod <= MaxMipLevels; ++Lod) {
 		
 			float Roughness = (float)Lod / (float)(MaxMipLevels);
 			CubemapMaterial->SetFloat1Array("_Roughness", &Roughness);
@@ -168,7 +168,7 @@ namespace ESource {
 				MeshPrimitives::Cube.GetVertexArray()->Bind();
 				
 				Renderer->BindCubemapFace((Cubemap *)TexturePointer, Size.x, View.first, Lod);
-				Rendering::SetViewport({ 0.F, 0.F, float(Size.x >> Lod), float(Size.x >> Lod) });
+				Rendering::SetViewport({ 0, 0, Size.x >> Lod, Size.x >> Lod });
 				Renderer->Clear();
 
 				Rendering::DrawIndexed(MeshPrimitives::Cube.GetVertexArray());

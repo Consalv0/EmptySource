@@ -32,7 +32,7 @@ namespace ESource {
 
 		inline ETextureDimension GetDimension() const { return Dimension; }
 
-		unsigned int GetMipMapCount() const;
+		uint32_t GetMipMapCount() const;
 
 		void GenerateMipMaps();
 
@@ -84,7 +84,7 @@ namespace ESource {
 
 		EPixelFormat ColorFormat;
 
-		unsigned int MipMapCount;
+		uint32_t MipMapCount;
 
 		bool bBuildMipMapsOnLoad;
 	};

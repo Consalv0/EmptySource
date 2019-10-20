@@ -21,7 +21,7 @@ namespace ESource {
 	private:
 		EShaderStageType StageType;
 
-		unsigned int ShaderObject;
+		uint32_t ShaderObject;
 
 		bool bValid;
 	};
@@ -37,10 +37,10 @@ namespace ESource {
 		virtual void Unbind() const override;
 
 		//* Get the location id of a uniform variable in this shader
-		virtual unsigned int GetUniformLocation(const NChar* LocationName) override;
+		virtual uint32_t GetUniformLocation(const NChar* LocationName) override;
 
 		//* Get the location of the attrib in this shader
-		virtual unsigned int GetAttribLocation(const NChar* LocationName) override;
+		virtual uint32_t GetAttribLocation(const NChar* LocationName) override;
 
 		//* Pass Matrix4x4 Buffer Array
 		virtual void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const VertexBufferPtr& Buffer) override;
@@ -64,7 +64,7 @@ namespace ESource {
 		virtual void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) override;
 
 		//* Pass Texture 2D array
-		virtual void SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int& Position) override;
+		virtual void SetTexture(const NChar * UniformName, Texture * Tex, const uint32_t& Position) override;
 
 		//* Get the shader object
 		virtual void * GetShaderObject() const override { return (void *)(unsigned long long)ProgramObject; }
@@ -73,10 +73,10 @@ namespace ESource {
 		virtual inline bool IsValid() const override { return bValid; };
 
 	private:
-		typedef TDictionary<NString, unsigned int> LocationMap;
+		typedef TDictionary<NString, uint32_t> LocationMap;
 		
 		//* Shader Program Object
-		unsigned int ProgramObject;
+		uint32_t ProgramObject;
 
 		bool bValid;
 

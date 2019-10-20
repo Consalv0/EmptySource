@@ -40,7 +40,7 @@ namespace ESource {
 		virtual void * GetTextureObject() const = 0;
 
 		//* Generate MipMaps using Hardware
-		virtual void GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) = 0;
+		virtual void GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) = 0;
 
 	protected:
 		virtual void SetFilterMode(const EFilterMode& Mode, bool MipMaps) = 0;
@@ -65,7 +65,7 @@ namespace ESource {
 	class Cubemap : public Texture {
 	public:
 		static Cubemap * Create(
-			const unsigned int & Size,
+			const uint32_t & Size,
 			const EPixelFormat & Format,
 			const EFilterMode & Filter,
 			const ESamplerAddressMode & AddressMode

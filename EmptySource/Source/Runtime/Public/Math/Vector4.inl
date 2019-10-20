@@ -86,12 +86,12 @@ namespace ESource {
 		);
 	}
 
-	inline float & Vector4::operator[](unsigned int i) {
+	inline float & Vector4::operator[](unsigned char i) {
 		ES_CORE_ASSERT(i <= 3, "Vector4 index out of bounds");
 		return ((float*)this)[i];
 	}
 
-	inline float const & Vector4::operator[](unsigned int i) const {
+	inline float const & Vector4::operator[](unsigned char i) const {
 		ES_CORE_ASSERT(i <= 3, "Vector4 index out of bounds");
 		return ((float*)this)[i];
 	}

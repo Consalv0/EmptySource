@@ -9,7 +9,7 @@ namespace ESource {
 
 	class Layer {
 	public:
-		Layer(const IName& Name, unsigned int Level);
+		Layer(const IName& Name, uint32_t Level);
 
 		virtual ~Layer() = default;
 
@@ -31,7 +31,7 @@ namespace ESource {
 
 		inline const IName & GetName() { return Name; }
 
-		inline unsigned int GetLayerPriority() const { return Level; }
+		inline uint32_t GetLayerPriority() const { return Level; }
 
 		inline bool operator < (const Layer& Other) const {
 			return (GetLayerPriority() < Other.GetLayerPriority());
@@ -48,7 +48,7 @@ namespace ESource {
 
 	protected:
 		const IName Name;
-		unsigned int Level;
+		uint32_t Level;
 
 	};
 

@@ -12,7 +12,7 @@ namespace ESource {
 
 		inline static RenderingAPI::API GetAPI() { return RenderingAPI::GetAPI(); };
 
-		inline static void ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) {
+		inline static void ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, uint32_t Stencil) {
 			RendererAppInterface->ClearCurrentRender(bClearColor, Color, bClearDepth, Depth, bClearStencil, Stencil);
 		}
 
@@ -20,7 +20,7 @@ namespace ESource {
 			RendererAppInterface->SetDefaultRender();
 		}
 
-		inline static void SetViewport(const Box2D& Viewport) {
+		inline static void SetViewport(const IntBox2D& Viewport) {
 			RendererAppInterface->SetViewport(Viewport);
 		}
 

@@ -12,7 +12,7 @@ namespace ESource {
 
 		virtual void SetMaterials(TArray<MaterialPtr> & Materials);
 
-		virtual void SetMaterialAt(unsigned int At, MaterialPtr Mat);
+		virtual void SetMaterialAt(uint32_t At, MaterialPtr Mat);
 
 		virtual const TDictionary<int, MaterialPtr> & GetMaterials() const;
 

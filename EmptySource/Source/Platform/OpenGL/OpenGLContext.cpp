@@ -62,7 +62,7 @@ namespace ESource {
 		SDL_GL_DeleteContext(GLContext);
 	}
 
-	OpenGLContext::OpenGLContext(SDL_Window * Handle, unsigned int Major, unsigned int Minor) {
+	OpenGLContext::OpenGLContext(SDL_Window * Handle, uint32_t Major, uint32_t Minor) {
 		GLContext = NULL;
 		WindowHandle = Handle;
 		VersionMajor = Major;

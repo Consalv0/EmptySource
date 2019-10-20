@@ -17,9 +17,9 @@ namespace ESource {
 
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
 		WindowsWindow& Data = *(WindowsWindow*)UserData;
-		static unsigned int MouseButtonPressedCount[255] = { 
-			(unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, 
-			(unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1
+		static int32_t MouseButtonPressedCount[255] = { 
+			(int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, 
+			(int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1
 		};
 		
 		if (Event->type == SDL_WINDOWEVENT) {
@@ -155,7 +155,7 @@ namespace ESource {
 		SDL_Quit();
 	}
 
-	void WindowsWindow::Resize(const unsigned int & Wth, const unsigned int & Hht) {
+	void WindowsWindow::Resize(const uint32_t & Wth, const uint32_t & Hht) {
 		if (Width != Wth || Height != Hht) {
 			Width = Wth; Height = Hht;
 			SDL_SetWindowSize((SDL_Window *)(WindowHandle), Wth, Hht);
@@ -226,11 +226,11 @@ namespace ESource {
 		return (float)Width / (float)Height;
 	}
 
-	unsigned int WindowsWindow::GetWidth() const {
+	int WindowsWindow::GetWidth() const {
 		return Width;
 	}
 
-	unsigned int WindowsWindow::GetHeight() const {
+	int WindowsWindow::GetHeight() const {
 		return Height;
 	}
 

@@ -4,7 +4,7 @@
 
 namespace ESource {
 
-	static unsigned int GetOpenGLCubemapFace(const ECubemapFace & CF);
+	static uint32_t GetOpenGLCubemapFace(const ECubemapFace & CF);
 
 	class OpenGLRenderTarget : public RenderTarget {
 	public:
@@ -33,14 +33,14 @@ namespace ESource {
 		virtual void BindTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) override;
 
 		//* All future functions will modify this textures
-		virtual void BindTextures2D(Texture2D ** Textures, const IntVector2 & Size, int * Lods, int * TextureAttachments, unsigned int Count) override;
+		virtual void BindTextures2D(Texture2D ** Textures, const IntVector2 & Size, int * Lods, int * TextureAttachments, uint32_t Count) override;
 
 		//* All future functions will modify this texture
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) override;
 
 		virtual void CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) override;
 		
-		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const Box2D & From, const Box2D & To) override;
+		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) override;
 
 		virtual void ReleaseTextures() override;
 
@@ -62,9 +62,9 @@ namespace ESource {
 
 		TArray<Texture *> RenderingTextures;
 
-		unsigned int FramebufferObject;
+		uint32_t FramebufferObject;
 
-		unsigned int RenderbufferObject;
+		uint32_t RenderbufferObject;
 	};
 
 }

@@ -13,9 +13,9 @@ namespace ESource {
 		void * GLContext;
 
 		//* OpenGL Version *.°
-		unsigned int VersionMajor;
+		uint32_t VersionMajor;
 		//* OpenGL Version °.*
-		unsigned int VersionMinor;
+		uint32_t VersionMinor;
 		
 		//* Frame Count
 		unsigned long long FrameCount;
@@ -24,7 +24,7 @@ namespace ESource {
 
 	public:
 
-		OpenGLContext(SDL_Window * Handle, unsigned int Major, unsigned int Minor);
+		OpenGLContext(SDL_Window * Handle, uint32_t Major, uint32_t Minor);
 		
 		~OpenGLContext();
 

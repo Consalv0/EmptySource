@@ -85,12 +85,12 @@ namespace ESource {
 		return Vector2((Start.x * (1.0F - t)) + (End.x * t), (Start.y * (1.0F - t)) + (End.y * t));
 	}
 
-	inline float & Vector2::operator[](unsigned int i) {
+	inline float & Vector2::operator[](unsigned char i) {
 		ES_CORE_ASSERT(i <= 1, "Vector2 index out of bounds");
 		return ((float*)this)[i];
 	}
 
-	inline float const & Vector2::operator[](unsigned int i) const {
+	inline float const & Vector2::operator[](unsigned char i) const {
 		ES_CORE_ASSERT(i <= 1, "Vector2 index out of bounds");
 		return ((float*)this)[i];
 	}

@@ -74,12 +74,12 @@ namespace ESource {
 		return &x;
 	}
 
-	inline int & IntVector3::operator[](unsigned int i) {
+	inline int & IntVector3::operator[](unsigned char i) {
 		ES_CORE_ASSERT(i <= 2, "IntVector3 index out of bounds");
 		return ((int*)this)[i];
 	}
 
-	inline int const & IntVector3::operator[](unsigned int i) const {
+	inline int const & IntVector3::operator[](unsigned char i) const {
 		ES_CORE_ASSERT(i <= 2, "IntVector3 index out of bounds");
 		return ((int*)this)[i];
 	}

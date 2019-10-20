@@ -44,14 +44,14 @@ namespace ESource {
 		InfoNode->bHasMesh = Node->mNumMeshes > 0;
 		InfoNode->MeshKey = Info.Meshes.size();
 
-		unsigned int VertexCount = 0;
-		unsigned int IndexCount = 0;
+		uint32_t VertexCount = 0;
+		uint32_t IndexCount = 0;
 
 		if (Node->mMeshes > 0) {
 			Info.Meshes.push_back(MeshData());
 			Info.Meshes.back().Name = Node->mName.C_Str();
 		}
-		for (unsigned int m = 0; m < Node->mNumMeshes; m++) {
+		for (uint32_t m = 0; m < Node->mNumMeshes; m++) {
 			aiMesh* Mesh = AssimpScene->mMeshes[Node->mMeshes[m]];
 
 			MeshData & Data = Info.Meshes.back();

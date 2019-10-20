@@ -13,7 +13,7 @@ namespace ESource {
 
 	RenderingAPI::API RenderingAPI::AppInterface = RenderingAPI::API::OpenGL;
 
-	VertexBufferPtr VertexBuffer::Create(float* Vertices, unsigned int Size, EUsageMode Usage) {
+	VertexBufferPtr VertexBuffer::Create(float* Vertices, uint32_t Size, EUsageMode Usage) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
 			return std::make_shared<OpenGLVertexBuffer>(Vertices, Size, Usage);
@@ -24,7 +24,7 @@ namespace ESource {
 		}
 	}
 
-	IndexBufferPtr IndexBuffer::Create(unsigned int* Indices, unsigned int Size, EUsageMode Usage) {
+	IndexBufferPtr IndexBuffer::Create(uint32_t* Indices, uint32_t Size, EUsageMode Usage) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
 			return std::make_shared<OpenGLIndexBuffer>(Indices, Size, Usage);
@@ -46,7 +46,7 @@ namespace ESource {
 		}
 	}
 
-	unsigned int BufferElement::GetElementCount() const {
+	uint32_t BufferElement::GetElementCount() const {
 		switch (DataType) {
 			case EShaderDataType::Float:
 			case EShaderDataType::Int:
@@ -65,11 +65,11 @@ namespace ESource {
 			case EShaderDataType::Mat4x4:  return 4 * 4;
 		}
 
-		LOG_CORE_ERROR(L"Unknown ShaderDataType: {:d}", (unsigned int)DataType);
+		LOG_CORE_ERROR(L"Unknown ShaderDataType: {:d}", (uint32_t)DataType);
 		return 0;
 	}
 
-	unsigned int ShaderDataTypeSize(EShaderDataType Type) {
+	uint32_t ShaderDataTypeSize(EShaderDataType Type) {
 		switch (Type) {
 			case EShaderDataType::Bool:     return sizeof(bool);
 			case EShaderDataType::Float:    return sizeof(float);
@@ -84,7 +84,7 @@ namespace ESource {
 			case EShaderDataType::Mat4x4:   return sizeof(float) * 4 * 4;
 		}
 
-		LOG_CORE_ERROR(L"Unknown ShaderDataType: {:d}", (unsigned int)Type);
+		LOG_CORE_ERROR(L"Unknown ShaderDataType: {:d}", (uint32_t)Type);
 		return 0;
 	}
 

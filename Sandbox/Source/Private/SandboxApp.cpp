@@ -132,7 +132,7 @@ protected:
 
 			MeshPrimitives::Quad.GetVertexArray()->Bind();
 			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetNativeTexture(), EquirectangularTextureHDR->GetSize());
-			Rendering::SetViewport({ 0.F, 0.F, (float)EquirectangularTextureHDR->GetSize().x, (float)EquirectangularTextureHDR->GetSize().y });
+			Rendering::SetViewport({ 0, 0, EquirectangularTextureHDR->GetSize().x, EquirectangularTextureHDR->GetSize().y });
 			Renderer->Clear();
 			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			EquirectangularTextureHDR->GenerateMipMaps();
@@ -390,7 +390,7 @@ protected:
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
-				Rendering::SetViewport({ 0.F, 0.F, (float)TextureSample->GetSize().x, (float)TextureSample->GetSize().y });
+				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().x, TextureSample->GetSize().y });
 				Renderer->Clear();
 				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
@@ -418,7 +418,7 @@ protected:
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
-				Rendering::SetViewport({ 0.F, 0.F, (float)TextureSample->GetSize().x, (float)TextureSample->GetSize().y });
+				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().x, TextureSample->GetSize().y });
 				Renderer->Clear();
 				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
@@ -710,7 +710,7 @@ protected:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.IntArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
-									ImGui::PushItemWidth(-1); ImGui::DragInt("##IntA", &Value, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
+									ImGui::PushItemWidth(-1); ImGui::DragInt("##IntA", &Value, 1, INT_MIN, INT_MAX);
 									ImGui::TreePop();
 								}
 							}
@@ -718,7 +718,7 @@ protected:
 							break;
 						case EShaderUniformType::Int:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
-							ImGui::PushItemWidth(-1); ImGui::DragInt(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Int, 1, (int)-MathConstants::BigNumber, (int)MathConstants::BigNumber);
+							ImGui::PushItemWidth(-1); ImGui::DragInt(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Int, 1, INT_MIN, INT_MAX);
 							ImGui::NextColumn();
 							break;
 						case EShaderUniformType::Cubemap:
@@ -993,7 +993,7 @@ protected:
 		TextGenerator.PixelRange = 1.5F;
 		TextGenerator.Pivot = 0;
 
-		TextGenerator.PrepareCharacters(0ul, 49ul);
+		TextGenerator.PrepareCharacters(0u, 49u);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 		if (FontMap == NULL) {
 			FontMap = TextureManager::GetInstance().CreateTexture2D(
@@ -1043,7 +1043,7 @@ protected:
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
 			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetNativeTexture(), BRDFLut->GetSize());
-			Rendering::SetViewport({ 0.F, 0.F, (float)BRDFLut->GetSize().x, (float)BRDFLut->GetSize().y });
+			Rendering::SetViewport({ 0, 0, BRDFLut->GetSize().x, BRDFLut->GetSize().y });
 			Renderer->Clear();
 			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			Renderer->Unbind();
@@ -1354,7 +1354,7 @@ protected:
 		// 	MeshPrimitives::Cube.DrawInstanciated(2);
 		// }
 
-		Rendering::SetViewport(Box2D(0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight()));
+		Rendering::SetViewport({ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() });
 		// --- Activate corresponding render state
 
 		float FontScale = (FontSize / TextGenerator.GlyphHeight);

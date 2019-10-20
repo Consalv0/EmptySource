@@ -22,7 +22,7 @@ namespace ESource {
 		void PrepareCharacters(const WChar* Characters, const size_t & Count);
 
 		//* Prepare Character Info
-		void PrepareCharacters(const unsigned long & From, const unsigned long & To);
+		void PrepareCharacters(const uint32_t & From, const uint32_t & To);
 
 		//* Update needed characters (returns the number of characters added)
 		int PrepareFindedCharacters(const WString & InText);

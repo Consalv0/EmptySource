@@ -43,14 +43,14 @@ namespace ESource {
 		HOST_DEVICE inline Matrix4x4 Transposed() const;
 		HOST_DEVICE inline Matrix4x4 Inversed() const;
 
-		HOST_DEVICE inline Vector4 GetRow(const unsigned int& i) const;
-		HOST_DEVICE inline Vector4 GetColumn(const unsigned int& i) const;
+		HOST_DEVICE inline Vector4 GetRow(const unsigned char& i) const;
+		HOST_DEVICE inline Vector4 GetColumn(const unsigned char& i) const;
 		HOST_DEVICE inline Vector3 ExtractScale() const;
 		HOST_DEVICE inline Vector3 ExtractTranslation() const;
 		HOST_DEVICE inline Quaternion ExtractRotation() const;
 
-		HOST_DEVICE inline Vector4 & operator[](unsigned int i);
-		HOST_DEVICE inline Vector4 const& operator[](unsigned int i) const;
+		HOST_DEVICE inline Vector4 & operator[](unsigned char i);
+		HOST_DEVICE inline Vector4 const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const float* PointerToValue(void) const;
 
 		HOST_DEVICE inline Vector3 MultiplyPoint(const Vector3& Vector) const;

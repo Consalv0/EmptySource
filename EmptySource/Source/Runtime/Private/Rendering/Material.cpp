@@ -85,7 +85,7 @@ namespace ESource {
 			Program->GetProgram()->SetFloat4Array(UniformName, Data, Count);
 	}
 
-	void Material::SetTexture2D(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
+	void Material::SetTexture2D(const NChar * UniformName, RTexturePtr Text, const uint32_t & Position) const {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid() && Text != NULL)
 			if (Text->GetDimension() == ETextureDimension::Texture2D)
@@ -94,7 +94,7 @@ namespace ESource {
 				Program->GetProgram()->SetTexture(UniformName, NULL, Position);
 	}
 
-	void Material::SetTextureCubemap(const NChar * UniformName, RTexturePtr Text, const unsigned int & Position) const {
+	void Material::SetTextureCubemap(const NChar * UniformName, RTexturePtr Text, const uint32_t & Position) const {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			if (Text->GetDimension() == ETextureDimension::Cubemap)
@@ -131,7 +131,7 @@ namespace ESource {
 
 		if (Shader && Shader->IsValid()) {
 			Shader->GetProgram()->Bind();
-			unsigned int i = 0;
+			uint32_t i = 0;
 			for (auto& Uniform : ParameterLayout) {
 				switch (Uniform.Value.GetType()) {
 				case ESource::EShaderUniformType::Matrix4x4Array:

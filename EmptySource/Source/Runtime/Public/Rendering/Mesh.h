@@ -28,10 +28,10 @@ namespace ESource {
 		Vector2 UV0, UV1;
 		Vector4 Color;
 
-		unsigned int InfluenceBones[4] = { 0, 0, 0, 0 };
+		uint32_t InfluenceBones[4] = { 0, 0, 0, 0 };
 		float Weights[4]{ 0.0F, 0.0F, 0.0F, 0.0F };
 
-		void AddBoneData(unsigned int BoneID, float Weight) {
+		void AddBoneData(uint32_t BoneID, float Weight) {
 			for (size_t i = 0; i < 4; i++) {
 				if (Weights[i] == 0.0) {
 					InfluenceBones[i] = BoneID;
@@ -51,10 +51,10 @@ namespace ESource {
 
 	struct Subdivision {
 	public:
-		unsigned int MaterialIndex;
-		unsigned int BaseVertex;
-		unsigned int BaseIndex;
-		unsigned int IndexCount;
+		uint32_t MaterialIndex;
+		uint32_t BaseVertex;
+		uint32_t BaseIndex;
+		uint32_t IndexCount;
 	};
 
 	using FaceIndex                 = IntVector3;

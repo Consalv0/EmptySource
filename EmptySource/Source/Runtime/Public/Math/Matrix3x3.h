@@ -21,11 +21,11 @@ namespace ESource {
 		HOST_DEVICE inline void Transpose();
 		HOST_DEVICE inline Matrix3x3 Transposed() const;
 
-		HOST_DEVICE inline Vector3 GetRow(const unsigned int& i) const;
-		HOST_DEVICE inline Vector3 GetColumn(const unsigned int& i) const;
+		HOST_DEVICE inline Vector3 GetRow(const unsigned char& i) const;
+		HOST_DEVICE inline Vector3 GetColumn(const unsigned char& i) const;
 
-		HOST_DEVICE inline Vector3 & operator[](unsigned int i);
-		HOST_DEVICE inline Vector3 const& operator[](unsigned int i) const;
+		HOST_DEVICE inline Vector3 & operator[](unsigned char i);
+		HOST_DEVICE inline Vector3 const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const float* PointerToValue(void) const;
 
 		HOST_DEVICE FORCEINLINE Matrix3x3 operator*(const Matrix3x3& Other) const;

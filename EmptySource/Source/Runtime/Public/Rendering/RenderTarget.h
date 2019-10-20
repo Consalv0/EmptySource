@@ -23,7 +23,7 @@ namespace ESource {
 		virtual void BindTexture2D(Texture2D * Texture, const IntVector2 & Size, int Lod = 0, int TextureAttachment = 0) = 0;
 
 		//* All future functions will modify this textures
-		virtual void BindTextures2D(Texture2D ** Textures, const IntVector2 & Size, int * Lods, int * TextureAttachments, unsigned int Count) = 0;
+		virtual void BindTextures2D(Texture2D ** Textures, const IntVector2 & Size, int * Lods, int * TextureAttachments, uint32_t Count) = 0;
 
 		//* All future functions will modify this texture
 		virtual void BindCubemapFace(Cubemap * Texture, const int & Size, ECubemapFace Face, int Lod = 0, int TextureAttachment = 0) = 0;
@@ -32,7 +32,7 @@ namespace ESource {
 		virtual void CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) = 0;
 
 		//* Copy the depth buffer to another render, if Null it will use the default render
-		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const Box2D & From, const Box2D & To) = 0;
+		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) = 0;
 
 		//* Returns empty if no texture
 		virtual Texture * GetBindedTexture(int Index) const = 0;

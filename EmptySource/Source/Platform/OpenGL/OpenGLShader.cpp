@@ -70,7 +70,7 @@ namespace ESource {
 
 		for (auto & Stage : ShaderStages) {
 			if (Stage != NULL && Stage->IsValid())
-				glAttachShader(ProgramObject, (unsigned int)(unsigned long long)Stage->GetStageObject());
+				glAttachShader(ProgramObject, (uint32_t)(unsigned long long)Stage->GetStageObject());
 		}
 
 		glLinkProgram(ProgramObject);
@@ -100,7 +100,7 @@ namespace ESource {
 		glUseProgram(0);
 	}
 
-	unsigned int OpenGLShaderProgram::GetUniformLocation(const NChar * LocationName) {
+	uint32_t OpenGLShaderProgram::GetUniformLocation(const NChar * LocationName) {
 		if (!IsValid()) return 0;
 
 		auto Find = Locations.find(LocationName);
@@ -108,7 +108,7 @@ namespace ESource {
 			return Find->second;
 		}
 
-		unsigned int Location = glGetUniformLocation(ProgramObject, LocationName);
+		uint32_t Location = glGetUniformLocation(ProgramObject, LocationName);
 		if (Location == -1) {
 			LOG_CORE_WARN("Setting variable to uniform location not present in {0} : {1}",
 				ProgramObject, LocationName);
@@ -117,7 +117,7 @@ namespace ESource {
 		return Location;
 	}
 
-	unsigned int OpenGLShaderProgram::GetAttribLocation(const NChar * LocationName) {
+	uint32_t OpenGLShaderProgram::GetAttribLocation(const NChar * LocationName) {
 		if (!IsValid()) return 0;
 
 		auto Finds = Locations.find(LocationName);
@@ -125,7 +125,7 @@ namespace ESource {
 			return Finds->second;
 		}
 
-		unsigned int Location = glGetAttribLocation(ProgramObject, LocationName);
+		uint32_t Location = glGetAttribLocation(ProgramObject, LocationName);
 		if (Location == -1) {
 			LOG_CORE_WARN("Setting variable to attribute location not present in {0} : {1}",
 				ProgramObject, LocationName);
@@ -136,7 +136,7 @@ namespace ESource {
 
 	void OpenGLShaderProgram::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) {
 		if (!IsValid()) return;
-		unsigned int AttribLocation = GetAttribLocation(AttributeName);
+		uint32_t AttribLocation = GetAttribLocation(AttributeName);
 
 		Buffer->Bind();
 		glBufferData(GL_ARRAY_BUFFER, Count * sizeof(Matrix4x4), Data, GL_STATIC_DRAW);
@@ -158,43 +158,43 @@ namespace ESource {
 
 	void OpenGLShaderProgram::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniformMatrix4fv(UniformLocation, Count, GL_FALSE, Data);
 	}
 
 	void OpenGLShaderProgram::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniform1fv(UniformLocation, Count, Data);
 	}
 
 	void OpenGLShaderProgram::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniform1iv(UniformLocation, Count, (GLint *)Data);
 	}
 
 	void OpenGLShaderProgram::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniform2fv(UniformLocation, Count, Data);
 	}
 
 	void OpenGLShaderProgram::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniform3fv(UniformLocation, Count, Data);
 	}
 
 	void OpenGLShaderProgram::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniform4fv(UniformLocation, Count, Data);
 	}
 
-	void OpenGLShaderProgram::SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int & Position) {
+	void OpenGLShaderProgram::SetTexture(const NChar * UniformName, Texture * Tex, const uint32_t & Position) {
 		if (!IsValid()) return;
-		unsigned int UniformLocation = GetUniformLocation(UniformName);
+		uint32_t UniformLocation = GetUniformLocation(UniformName);
 		glUniform1i(UniformLocation, Position);
 		glActiveTexture(GL_TEXTURE0 + Position);
 		if (Tex != NULL) Tex->Bind();

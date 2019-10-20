@@ -36,8 +36,8 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE static Vector3 Lerp(const Vector3& start, const Vector3& end, float t);
 		HOST_DEVICE FORCEINLINE static Vector3 Reflect(const Vector3& Incident, const Vector3& Normal);
 
-		HOST_DEVICE inline float & operator[](unsigned int i);
-		HOST_DEVICE inline float const& operator[](unsigned int i) const;
+		HOST_DEVICE inline float & operator[](unsigned char i);
+		HOST_DEVICE inline float const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const float* PointerToValue() const;
 
 		HOST_DEVICE FORCEINLINE bool operator==(const Vector3& Other) const;

@@ -32,10 +32,10 @@ namespace ESource {
 		virtual ~ShaderProgram() = default;
 
 		//* Get the location id of a uniform variable in this shader
-		virtual unsigned int GetUniformLocation(const NChar* LocationName) = 0;
+		virtual uint32_t GetUniformLocation(const NChar* LocationName) = 0;
 
 		//* Get the location of the attrib in this shader
-		virtual unsigned int GetAttribLocation(const NChar* LocationName) = 0;
+		virtual uint32_t GetAttribLocation(const NChar* LocationName) = 0;
 
 		//* Pass Matrix4x4 Buffer Array
 		virtual void SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void* Data, const VertexBufferPtr& Buffer) = 0;
@@ -59,7 +59,7 @@ namespace ESource {
 		virtual void SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count = 1) = 0;
 
 		//* Pass Texture
-		virtual void SetTexture(const NChar * UniformName, Texture * Tex, const unsigned int& Position) = 0;
+		virtual void SetTexture(const NChar * UniformName, Texture * Tex, const uint32_t& Position) = 0;
 		
 		//* Get the shader object
 		virtual void * GetShaderObject() const = 0;

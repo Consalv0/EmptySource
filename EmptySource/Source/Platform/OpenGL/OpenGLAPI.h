@@ -5,21 +5,21 @@ namespace ESource {
 	class OpenGLAPI : public RenderingAPI {
 	public:
 
-		static unsigned int UsageModeToDrawBaseType(EUsageMode Mode);
+		static uint32_t UsageModeToDrawBaseType(EUsageMode Mode);
 
-		static unsigned int ShaderDataTypeToBaseType(EShaderDataType Type);
+		static uint32_t ShaderDataTypeToBaseType(EShaderDataType Type);
 
-		static unsigned int BlendFactorToBaseType(EBlendFactor Factor);
+		static uint32_t BlendFactorToBaseType(EBlendFactor Factor);
 
-		static unsigned int AddressModeToBaseType(ESamplerAddressMode Mode);
+		static uint32_t AddressModeToBaseType(ESamplerAddressMode Mode);
 
-		static unsigned int FilterModeToBaseType(EFilterMode Mode);
+		static uint32_t FilterModeToBaseType(EFilterMode Mode);
 
-		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, unsigned int Stencil) override;
+		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, uint32_t Stencil) override;
 
 		virtual void SetDefaultRender() override;
 
-		virtual void SetViewport(const Box2D& Viewport) override;
+		virtual void SetViewport(const IntBox2D& Viewport) override;
 
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray) override;
 

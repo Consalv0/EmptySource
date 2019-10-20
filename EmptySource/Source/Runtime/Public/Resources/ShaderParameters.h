@@ -13,7 +13,7 @@ namespace ESource {
 
 	struct ShaderParameter {
 		NString Name;
-		unsigned int Flags;
+		uint32_t Flags;
 
 		struct PropertyValue {
 			union {

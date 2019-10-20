@@ -8,7 +8,7 @@
 namespace ESource {
 	TDictionary<size_t, SpaceLayer*> SpaceLayer::AllSpaces = TDictionary<size_t, SpaceLayer*>();
 
-	SpaceLayer::SpaceLayer(const IName& InName, unsigned int Level) : Layer(InName, Level) {
+	SpaceLayer::SpaceLayer(const IName& InName, uint32_t Level) : Layer(InName, Level) {
 		bAttached = false;
 		ObjectsIn = TDictionary<size_t, OObject*>();
 		AllSpaces.insert(std::pair<const size_t, SpaceLayer*>(Name.GetInstanceID(), this));

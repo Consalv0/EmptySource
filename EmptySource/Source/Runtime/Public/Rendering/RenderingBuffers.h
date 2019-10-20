@@ -2,13 +2,13 @@
 
 namespace ESource {
 
-	unsigned int ShaderDataTypeSize(EShaderDataType Type);
+	uint32_t ShaderDataTypeSize(EShaderDataType Type);
 
 	struct BufferElement {
 		NString Name;
 		EShaderDataType DataType;
 		unsigned long long Offset;
-		unsigned int Size;
+		uint32_t Size;
 		bool Normalized;
 
 		BufferElement() {};
@@ -17,7 +17,7 @@ namespace ESource {
 			: Name(Name), DataType(Type), Size(ShaderDataTypeSize(Type)), Offset(0), Normalized(Normalized) {
 		}
 
-		unsigned int GetElementCount() const;
+		uint32_t GetElementCount() const;
 	};
 
 	class BufferLayout {
@@ -30,7 +30,7 @@ namespace ESource {
 
 		inline const TArray<BufferElement>& GetElements() const { return ElementLayouts; };
 
-		inline unsigned int GetStride() const { return Stride; }
+		inline uint32_t GetStride() const { return Stride; }
 
 		TArray<BufferElement>::iterator begin() { return ElementLayouts.begin(); }
 		TArray<BufferElement>::iterator end() { return ElementLayouts.end(); }
@@ -39,7 +39,7 @@ namespace ESource {
 
 	private:
 		TArray<BufferElement> ElementLayouts;
-		unsigned int Stride;
+		uint32_t Stride;
 
 		void CalculateElementOffsetsAndStride() {
 			unsigned long long Offset = 0;
@@ -68,7 +68,7 @@ namespace ESource {
 		virtual void * GetNativeObject() = 0;
 
 		//* The number of bytes in the vertex buffer
-		virtual inline unsigned int GetSize() const = 0;
+		virtual inline uint32_t GetSize() const = 0;
 
 		//* The usage used for the vertex buffer
 		virtual inline EUsageMode GetUsage() const = 0;
@@ -78,7 +78,7 @@ namespace ESource {
 
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBufferPtr Create(float* Vertices, unsigned int Size, EUsageMode Usage);
+		static VertexBufferPtr Create(float* Vertices, uint32_t Size, EUsageMode Usage);
 
 	};
 
@@ -97,15 +97,15 @@ namespace ESource {
 		virtual void * GetNativeObject() = 0;
 
 		//* The number of bytes in the index buffer
-		virtual inline unsigned int GetSize() const = 0;
+		virtual inline uint32_t GetSize() const = 0;
 
 		//* The usage used for the index buffer
 		virtual inline EUsageMode GetUsage() const = 0;
 
 		//* The number of indices in the vertex buffer
-		virtual inline unsigned int GetCount() const = 0;
+		virtual inline uint32_t GetCount() const = 0;
 
-		static IndexBufferPtr Create(unsigned int* Indices, unsigned int Count, EUsageMode Usage);
+		static IndexBufferPtr Create(uint32_t* Indices, uint32_t Count, EUsageMode Usage);
 	};
 
 	typedef std::shared_ptr<class VertexArray> VertexArrayPtr;

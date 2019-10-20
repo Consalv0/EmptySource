@@ -295,11 +295,11 @@ namespace ESource {
 		return &w;
 	}
 
-	inline float & Quaternion::operator[](unsigned int i) {
+	inline float & Quaternion::operator[](unsigned char i) {
 		return (&w)[i];
 	}
 
-	inline float const & Quaternion::operator[](unsigned int i) const {
+	inline float const & Quaternion::operator[](unsigned char i) const {
 		return (&w)[i];
 	}
 

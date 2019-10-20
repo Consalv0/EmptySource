@@ -14,7 +14,7 @@ namespace ESource {
 
 		SpaceLayer() = delete;
 
-		SpaceLayer(const IName & Name, unsigned int Level);
+		SpaceLayer(const IName & Name, uint32_t Level);
 
 		// SpaceLayer(SpaceLayer& OtherSpace);
 

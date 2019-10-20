@@ -78,7 +78,7 @@ namespace ESource {
 	}
 
 	bool IName::operator<(const IName & Other) const {
-		unsigned int i = 0;
+		uint32_t i = 0;
 		while ((i < EntryName.length()) && (i < Other.EntryName.length())) {
 			if (tolower(EntryName[i]) < tolower(Other.EntryName[i])) return true;
 			else if (tolower(EntryName[i]) > tolower(Other.EntryName[i])) return false;

@@ -41,7 +41,7 @@ namespace ESource {
 	}
 
 	Cubemap * ESource::Cubemap::Create(
-		const unsigned int & Size, const EPixelFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
+		const uint32_t & Size, const EPixelFormat & Format, const EFilterMode & Filter, const ESamplerAddressMode & AddressMode)
 	{
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:

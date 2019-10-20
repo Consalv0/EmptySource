@@ -78,7 +78,7 @@ namespace ESource {
 		glDeleteTextures(1, &TextureObject);
 	}
 
-	void OpenGLTexture2D::GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) {
+	void OpenGLTexture2D::GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) {
 		if (IsValid()) {
 			Bind();
 			SetFilterMode(FilterMode, true);
@@ -193,7 +193,7 @@ namespace ESource {
 		return bValid;
 	}
 
-	void OpenGLCubemap::GenerateMipMaps(const EFilterMode & FilterMode, unsigned int Levels) {
+	void OpenGLCubemap::GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) {
 		if (IsValid()) {
 			Bind();
 			SetFilterMode(FilterMode, true);
@@ -307,8 +307,8 @@ namespace ESource {
 	// 	EquirectangularToCubemapMaterial->SetTexture2D("_EquirectangularMap", Equirectangular, 0);
 	// 	EquirectangularToCubemapMaterial->SetMatrix4x4Array("_ProjectionMatrix", CaptureProjection.PointerToValue());
 	// 	
-	// 	const unsigned int MaxMipLevels = (unsigned int)GetMipMapCount();
-	// 	for (unsigned int Lod = 0; Lod <= MaxMipLevels; ++Lod) {
+	// 	const uint32_t MaxMipLevels = (uint32_t)GetMipMapCount();
+	// 	for (uint32_t Lod = 0; Lod <= MaxMipLevels; ++Lod) {
 	// 
 	// 		float Roughness = (float)Lod / (float)(MaxMipLevels);
 	// 		EquirectangularToCubemapMaterial->SetFloat1Array("_Roughness", &Roughness);

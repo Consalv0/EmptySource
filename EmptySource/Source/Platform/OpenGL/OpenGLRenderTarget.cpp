@@ -21,7 +21,7 @@
 
 namespace ESource {
 	
-	unsigned int GetOpenGLCubemapFace(const ECubemapFace & CF) {
+	uint32_t GetOpenGLCubemapFace(const ECubemapFace & CF) {
 		switch (CF) {
 			default:
 			case ECubemapFace::Right:
@@ -103,14 +103,14 @@ namespace ESource {
 		glDrawBuffers(1, DrawBuffers);
 	}
 
-	void OpenGLRenderTarget::BindTextures2D(Texture2D ** Textures, const IntVector2 & InSize, int * Lods, int * TextureAttachments, unsigned int Count) {
+	void OpenGLRenderTarget::BindTextures2D(Texture2D ** Textures, const IntVector2 & InSize, int * Lods, int * TextureAttachments, uint32_t Count) {
 		if (!IsValid()) return;
 		Size = IntVector3(InSize.x, InSize.y, 1);
 		Bind();
 
 		// Set the list of draw buffers.
 		TArray<GLenum> DrawBuffers = TArray<GLenum>(Count);
-		for (unsigned int i = 0; i < Count; i++) {
+		for (uint32_t i = 0; i < Count; i++) {
 			RenderingTextures.push_back(Textures[i]);
 			DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachments[i];
 			glFramebufferTexture2D(GL_FRAMEBUFFER, DrawBuffers[i], GL_TEXTURE_2D, (GLuint)(unsigned long long)Textures[i]->GetTextureObject(), Lods[i]);
@@ -142,11 +142,11 @@ namespace ESource {
 		Unbind();
 	}
 
-	void OpenGLRenderTarget::TransferDepthTo(RenderTarget * Target, const EPixelFormat & Value, const EFilterMode & FilterMode, const Box2D & From, const Box2D & To) {
+	void OpenGLRenderTarget::TransferDepthTo(RenderTarget * Target, const EPixelFormat & Value, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) {
 		GLuint FramebufferTarget = Target == NULL ? 0 : ((OpenGLRenderTarget *)(Target))->FramebufferObject;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, FramebufferObject);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FramebufferTarget);
-		glBlitFramebuffer((int)From.xMin, (int)From.yMin, (int)From.xMax, (int)From.yMax, (int)To.xMin, (int)To.yMin, (int)To.xMax, (int)To.yMax,
+		glBlitFramebuffer(From.xMin, From.yMin, From.xMax, From.yMax, To.xMin, To.yMin, To.xMax, To.yMax,
 			GL_DEPTH_BUFFER_BIT, OpenGLAPI::FilterModeToBaseType(FilterMode));
 	}
 

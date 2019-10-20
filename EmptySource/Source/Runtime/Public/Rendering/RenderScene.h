@@ -16,7 +16,7 @@ namespace ESource {
 
 		void DeferredRenderTransparent();
 
-		void RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader);
+		void RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader);
 
 		void Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
 

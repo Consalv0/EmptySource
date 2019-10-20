@@ -15,7 +15,7 @@ namespace ESource {
 		MouseScrolled
 	};
 
-	enum EInputEventCategory : unsigned int {
+	enum EInputEventCategory : uint32_t {
 		None = 0u,
 		IEC_Keyboard = 1u << 0,
 		IEC_Mouse    = 1u << 1,

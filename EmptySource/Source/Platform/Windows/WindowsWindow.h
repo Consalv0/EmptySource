@@ -14,8 +14,8 @@ namespace ESource {
 
 		struct {
 			WString Name;
-			unsigned int Width;
-			unsigned int Height;
+			int Width;
+			int Height;
 			bool VSync;
 			WindowEventCallbackFunction WindowEventCallback;
 			InputEventCallbackFunction InputEventCallback;
@@ -45,7 +45,7 @@ namespace ESource {
 		inline GraphicContext & GetContext() { return *Context; };
 
 		//* Resize the size of the window
-		void Resize(const unsigned int& Width, const unsigned int& Height);
+		void Resize(const uint32_t& Width, const uint32_t& Height);
 
 		//* Rename the window title
 		void SetName(const WString & NewName);
@@ -54,7 +54,7 @@ namespace ESource {
 		struct Vector2 GetMousePosition(bool Clamp = false);
 
 		// //* Get key pressed
-		// bool GetKeyDown(unsigned int Key);
+		// bool GetKeyDown(uint32_t Key);
 
 		//* Sets the window icon
 		void SetIcon(class PixelMap * Icon);
@@ -75,10 +75,10 @@ namespace ESource {
 		virtual float GetAspectRatio() const override;
 
 		//* Get the width in pixels of the window
-		virtual unsigned int GetWidth() const override;
+		virtual int GetWidth() const override;
 
 		//* Get the height in pixels of the window
-		virtual unsigned int GetHeight() const override;
+		virtual int GetHeight() const override;
 
 		//* Get the size of the window in pixels
 		virtual IntVector2 GetSize() const override;

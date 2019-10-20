@@ -12,7 +12,7 @@ namespace ESource {
 			bool bPause;
 			bool bLoop;
 			float Volume;
-			unsigned int Pos;
+			uint32_t Pos;
 			const size_t Identifier;
 			
 			SamplePlayInfo(AudioSamplePtr Sample, float Volume, bool Loop, bool Pause, const size_t & ID) :
@@ -26,11 +26,11 @@ namespace ESource {
 
 		size_t AddSample(AudioSamplePtr Sample, float Volume, bool Loop, bool PlayOnAdd);
 
-		inline unsigned int GetFrecuency() const { return 48000; };
+		inline uint32_t GetFrecuency() const { return 48000; };
 
 		inline int GetChannelCount() const { return 2; }
 
-		inline unsigned int SampleSize() { return 4 * 8; }
+		inline uint32_t SampleSize() { return 4 * 8; }
 
 		void RemoveSample(const size_t& Identifier);
 

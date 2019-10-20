@@ -19,13 +19,13 @@ namespace ESource {
 	struct WindowProperties {
 		//* Name displayed in header window
 		WString Name;
-		unsigned int Width;
-		unsigned int Height;
+		uint32_t Width;
+		uint32_t Height;
 
 		WindowProperties(
 			const WString& Title = L"ESource",
-			unsigned int Width = 1280,
-			unsigned int Height = 720)
+			uint32_t Width = 1280,
+			uint32_t Height = 720)
 			: Name(Title), Width(Width), Height(Height) {
 		}
 
@@ -49,10 +49,10 @@ namespace ESource {
 		virtual WString GetName() const = 0;
 
 		//* Get the width in pixels of the window
-		virtual unsigned int GetWidth() const = 0;
+		virtual int GetWidth() const = 0;
 
 		//* Get the height in pixels of the window
-		virtual unsigned int GetHeight() const = 0;
+		virtual int GetHeight() const = 0;
 
 		//* Get the size of the window in pixels
 		virtual IntVector2 GetSize() const = 0;

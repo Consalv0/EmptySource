@@ -35,8 +35,8 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE Vector2 Orthonormal(bool Polarity) const;
 		HOST_DEVICE FORCEINLINE static Vector2 Lerp(const Vector2& Start, const Vector2& End, float t);
 
-		HOST_DEVICE inline float & operator[](unsigned int i);
-		HOST_DEVICE inline float const& operator[](unsigned int i) const;
+		HOST_DEVICE inline float & operator[](unsigned char i);
+		HOST_DEVICE inline float const& operator[](unsigned char i) const;
 		HOST_DEVICE inline const float* PointerToValue() const;
 
 		HOST_DEVICE FORCEINLINE bool operator==(const Vector2& Other) const;

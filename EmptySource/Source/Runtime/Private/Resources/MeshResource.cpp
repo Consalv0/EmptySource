@@ -72,13 +72,13 @@ namespace ESource {
 
 		// Give our vertices to VAO
 		VertexBufferPtr VertexBufferPointer = NULL;
-		VertexBufferPointer = VertexBuffer::Create((float *)&VertexData.StaticVertices[0], (unsigned int)(VertexData.StaticVertices.size() * sizeof(StaticVertex)), UM_Static);
+		VertexBufferPointer = VertexBuffer::Create((float *)&VertexData.StaticVertices[0], (uint32_t)(VertexData.StaticVertices.size() * sizeof(StaticVertex)), UM_Static);
 		VertexBufferPointer->SetLayout(DefaultLayout);
 
 		VertexArrayPointer = VertexArray::Create();
 		IndexBufferPtr IndexBufferPointer = IndexBuffer::Create(
-			(unsigned int *)&VertexData.Faces[0],
-			(unsigned int)VertexData.Faces.size() * 3, UM_Static
+			(uint32_t *)&VertexData.Faces[0],
+			(uint32_t)VertexData.Faces.size() * 3, UM_Static
 		);
 		VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
 		VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);

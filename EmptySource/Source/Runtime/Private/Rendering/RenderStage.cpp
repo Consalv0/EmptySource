@@ -78,14 +78,14 @@ namespace ESource {
 		Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 		Scene.RenderLightMap(1, ShaderManager::GetInstance().GetProgram(L"DepthTestShader")); 
 		Rendering::SetAlphaBlending(BF_None, BF_None);
-		Rendering::SetViewport({ 0.F, 0.F, (float)GeometryBuffer->GetSize().x, (float)GeometryBuffer->GetSize().y });
+		Rendering::SetViewport({ 0, 0, GeometryBuffer->GetSize().x, GeometryBuffer->GetSize().y });
 		GeometryBuffer->Bind();
 		GeometryBuffer->Clear();
 		Scene.DeferredRenderOpaque();
 		Rendering::Flush();
 		GeometryBuffer->TransferDepthTo(
 			&*Target, PF_ShadowDepth, FM_MinMagNearest,
-			{ 0, 0, (float)Target->GetSize().x, (float)Target->GetSize().y }, { 0, 0, (float)GeometryBuffer->GetSize().x, (float)GeometryBuffer->GetSize().y }
+			{ 0, 0, Target->GetSize().x, Target->GetSize().y }, { 0, 0, GeometryBuffer->GetSize().x, GeometryBuffer->GetSize().y }
 		);
 		GeometryBuffer->Bind();
 		Scene.DeferredRenderTransparent();
@@ -93,7 +93,7 @@ namespace ESource {
 		Rendering::Flush();
 
 		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-		Rendering::SetViewport({ 0.F, 0.F, (float)Target->GetSize().x, (float)Target->GetSize().y });
+		Rendering::SetViewport({ 0, 0, Target->GetSize().x, Target->GetSize().y });
 		Target->Bind();
 		Scene.ForwardRender();
 		Rendering::Flush();
@@ -112,7 +112,7 @@ namespace ESource {
 			}
 		}
 		
-		Rendering::SetViewport({ 0.F, 0.F, (float)(BloomThresholdTexture->GetSize().x), (float)(BloomThresholdTexture->GetSize().y) });
+		Rendering::SetViewport({ 0, 0, BloomThresholdTexture->GetSize().x, BloomThresholdTexture->GetSize().y });
 		
 		static RenderTargetPtr BloomThresholdTarget = RenderTarget::Create();
 		BloomThresholdTarget->BindTexture2D((Texture2D *)BloomThresholdTexture->GetNativeTexture(), BloomThresholdTexture->GetSize());
@@ -223,7 +223,7 @@ namespace ESource {
 			}
 		}
 		
-		Rendering::SetViewport({ 0.F, 0.F, (float)SSAOTexture->GetSize().x, (float)SSAOTexture->GetSize().y });
+		Rendering::SetViewport({ 0, 0, (int)SSAOTexture->GetSize().x, (int)SSAOTexture->GetSize().y });
 		
 		static RenderTargetPtr SSAOTarget = RenderTarget::Create();
 		SSAOTarget->BindTexture2D((Texture2D *)SSAOTexture->GetNativeTexture(), SSAOTexture->GetSize());
@@ -266,12 +266,12 @@ namespace ESource {
 
 		Target->TransferDepthTo(
 			NULL, PF_ShadowDepth, FM_MinMagNearest,
-			{ 0, 0, (float)Target->GetSize().x, (float)Target->GetSize().y },
-			{ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() }
+			{ 0, 0, Target->GetSize().x, Target->GetSize().y },
+			{ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() }
 		);
 		Rendering::SetDefaultRender();
 		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-		Rendering::SetViewport({ 0.F, 0.F, (float)Application::GetInstance()->GetWindow().GetWidth(), (float)Application::GetInstance()->GetWindow().GetHeight() });
+		Rendering::SetViewport({ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() });
 
 		if (RenderShader && RenderShader->IsValid()) {
 			RenderShader->GetProgram()->Bind();
