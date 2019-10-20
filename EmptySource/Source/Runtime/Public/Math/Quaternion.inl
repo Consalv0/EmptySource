@@ -272,6 +272,9 @@ namespace ESource {
 			Result[Yaw] = 0.F;
 		}
 
+		if (std::isinf(Result[Roll])  || std::isnan(Result[Roll]))   Result[Roll] = 0.F;
+		if (std::isinf(Result[Pitch]) || std::isnan(Result[Pitch])) Result[Pitch] = 0.F;
+		if (std::isinf(Result[Yaw])   || std::isnan(Result[Yaw]))     Result[Yaw] = 0.F;
 		return Result * MathConstants::RadToDegree;
 	}
 

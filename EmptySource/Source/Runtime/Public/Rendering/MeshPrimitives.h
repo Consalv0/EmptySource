@@ -22,7 +22,7 @@ namespace ESource {
 			};
 
 			Matrix4x4 Transform = Matrix4x4::Translation(Position) * Matrix4x4::Scaling(Size);
-			Data.Vertices = {
+			Data.StaticVertices = {
 				{ Transform.MultiplyPoint({ 0.5F, -0.5F,  0.5F}), { 0.F, -1.F,  0.F}, { 0.F,  0.F, 1.F}, {1.F, 0.F}, {1.F, 0.F}, {1.F} },
 				{ Transform.MultiplyPoint({-0.5F, -0.5F, -0.5F}), { 0.F, -1.F,  0.F}, { 0.F,  0.F, 1.F}, {0.F, 1.F}, {0.F, 1.F}, {1.F} },
 				{ Transform.MultiplyPoint({ 0.5F, -0.5F, -0.5F}), { 0.F, -1.F,  0.F}, {-0.F,  0.F, 1.F}, {0.F, 0.F}, {0.F, 0.F}, {1.F} },
@@ -52,7 +52,7 @@ namespace ESource {
 			Data.hasBoundingBox = false;
 			Data.hasNormals = true;
 			Data.hasVertexColor = true;
-			Data.TextureCoordsCount = 1;
+			Data.UVChannels = 1;
 			Data.ComputeTangents();
 			Data.ComputeBounding();
 			return Data;
@@ -66,7 +66,7 @@ namespace ESource {
 			};
 
 			Matrix4x4 Transform = Matrix4x4::Translation(Position) * Matrix4x4::Scaling(Size);
-			Data.Vertices = {
+			Data.StaticVertices = {
 				{ Transform.MultiplyPoint({ 1.F, -1.F, -0.F}), {0.F, 0.F, 1.F}, {1.F, -0.F, -0.F}, {1.F, 0.F}, {1.F, 0.F}, {1.F} },
 				{ Transform.MultiplyPoint({-1.F,  1.F,  0.F}), {0.F, 0.F, 1.F}, {1.F, -0.F, -0.F}, {0.F, 1.F}, {0.F, 1.F}, {1.F} },
 				{ Transform.MultiplyPoint({ 1.F,  1.F,  0.F}), {0.F, 0.F, 1.F}, {1.F, -0.F, -0.F}, {1.F, 1.F}, {1.F, 1.F}, {1.F} },
@@ -76,7 +76,7 @@ namespace ESource {
 			Data.hasBoundingBox = false;
 			Data.hasNormals = true;
 			Data.hasVertexColor = true;
-			Data.TextureCoordsCount = 1;
+			Data.UVChannels = 1;
 			Data.ComputeTangents();
 			Data.ComputeBounding();
 			return Data;

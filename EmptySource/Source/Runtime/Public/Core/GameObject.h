@@ -26,6 +26,8 @@ namespace ESource {
 
 		inline bool IsRoot() const { return Parent == NULL; };
 
+		Matrix4x4 GetWorldMatrix() const;
+
 		Transform GetWorldTransform() const;
 
 		template<typename T>

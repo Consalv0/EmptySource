@@ -18,6 +18,7 @@ namespace ESource {
 		Transform(const Point3 & Position, const Quaternion & Rotation, const Vector3 & Scale);
 		Transform(const Point3 & Position, const Quaternion & Rotation);
 		Transform(const Point3 & Position);
+		Transform(const Matrix4x4 & Matrix);
 
 		Vector3 Forward() const;
 		Vector3 Up() const;

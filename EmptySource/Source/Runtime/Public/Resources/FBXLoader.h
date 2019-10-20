@@ -16,23 +16,26 @@ namespace ESource {
 
 		static void ExtractVertexData(class FbxMesh * pMesh, MeshData & OutData);
 		static void ExtractTextureCoords(
-			class FbxMesh * pMesh, MeshVertex & Vertex,
+			class FbxMesh * pMesh, StaticVertex & Vertex,
 			const int & ControlPointIndex, const int & PolygonIndex, const int & PolygonVertexIndex
 		);
 		static void ExtractNormal(
-			class FbxMesh * pMesh, MeshVertex & Vertex,
+			class FbxMesh * pMesh, StaticVertex & Vertex,
 			const int & ControlPointIndex, const int & VertexIndex
 		);
 		static void ExtractVertexColor(
-			class FbxMesh * pMesh, MeshVertex & Vertex,
+			class FbxMesh * pMesh, StaticVertex & Vertex,
 			const int & ControlPointIndex, const int & VertexIndex
 		);
 		static int ExtractMaterialIndex(
 			class FbxMesh * pMesh, const int & PolygonIndex
 		);
 		static bool ExtractTangent(
-			class FbxMesh * pMesh, MeshVertex & Vertex,
+			class FbxMesh * pMesh, StaticVertex & Vertex,
 			const int & ControlPointIndex, const int & VertexIndex
+		);
+		static void ExtractNodeTransform(
+			class FbxNode * pNode, class FbxScene * pScene, Transform & Transformation
 		);
 
 	public:
@@ -44,7 +47,7 @@ namespace ESource {
 		  * there's a way to optimize the vertices. */
 		static bool LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options);
 
-		static bool LoadAnimation();
+		static bool LoadAnimation(ModelParser::AnimationInfo & Info, const ModelParser::ParsingOptions & Options);
 	};
 
 }

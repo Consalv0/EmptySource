@@ -6,7 +6,7 @@
 namespace ESource {
 
 	bool RMesh::IsValid() const {
-		return LoadState == LS_Loaded && VAOSubdivisions.size() > 0;
+		return LoadState == LS_Loaded && VertexArrayPointer != NULL;
 	}
 
 	void RMesh::Load() {
@@ -21,11 +21,11 @@ namespace ESource {
 					SetUpBuffers();
 				}
 			}
-			else if (VertexData.Vertices.size() > 0){
+			else if (VertexData.StaticVertices.size() > 0){
 				SetUpBuffers();
 			}
 		}
-		LoadState = VAOSubdivisions.size() > 0 ? LS_Loaded : LS_Unloaded;
+		LoadState = VertexArrayPointer != NULL ? LS_Loaded : LS_Unloaded;
 	}
 
 	void RMesh::LoadAsync() {
@@ -36,7 +36,7 @@ namespace ESource {
 		if (LoadState == LS_Unloaded || LoadState == LS_Unloading) return;
 
 		LoadState = LS_Unloading;
-		VAOSubdivisions.clear();
+		VertexArrayPointer = NULL;
 		VertexData.Clear();
 		LoadState = LS_Unloaded;
 	}
@@ -58,18 +58,10 @@ namespace ESource {
 		return VertexData;
 	}
 
-	VertexArrayPtr RMesh::GetSubdivisionVertexArray(int Index) const {
-		auto Subdivision = VertexData.Subdivisions.find(Index);
-		if (Subdivision == VertexData.Subdivisions.end()) return NULL;
-		if (Index >= VAOSubdivisions.size() || VAOSubdivisions[Index] == NULL) return NULL;
-
-		return VAOSubdivisions[Index];
-	}
-
 	bool RMesh::SetUpBuffers() {
-		if (VertexData.Vertices.size() <= 0 || VertexData.Faces.size() <= 0) return false;
+		if (VertexData.StaticVertices.size() <= 0 || VertexData.Faces.size() <= 0) return false;
 
-		static BufferLayout DafultLayout = {
+		static BufferLayout DefaultLayout = {
 			{ EShaderDataType::Float3, "_iVertexPosition" },
 			{ EShaderDataType::Float3, "_iVertexNormal", true },
 			{ EShaderDataType::Float3, "_iVertexTangent", true },
@@ -80,34 +72,23 @@ namespace ESource {
 
 		// Give our vertices to VAO
 		VertexBufferPtr VertexBufferPointer = NULL;
-		VertexBufferPointer = VertexBuffer::Create((float *)&VertexData.Vertices[0], (unsigned int)(VertexData.Vertices.size() * sizeof(MeshVertex)), UM_Static);
-		VertexBufferPointer->SetLayout(DafultLayout);
+		VertexBufferPointer = VertexBuffer::Create((float *)&VertexData.StaticVertices[0], (unsigned int)(VertexData.StaticVertices.size() * sizeof(StaticVertex)), UM_Static);
+		VertexBufferPointer->SetLayout(DefaultLayout);
 
-		if (VertexData.Subdivisions.size() <= 0) {
-			VertexData.Materials.emplace(0, "default");
-			VertexData.Subdivisions.emplace(0, VertexData.Faces);
-		}
-
-		for (int ElementBufferCount = 0; ElementBufferCount < VertexData.Subdivisions.size(); ElementBufferCount++) {
-			VertexArrayPtr VertexArrayPointer = NULL;
-			VertexArrayPointer = VertexArray::Create();
-			IndexBufferPtr IndexBufferPointer = NULL;
-			IndexBufferPointer = IndexBuffer::Create(
-				(unsigned int *)&VertexData.Subdivisions[ElementBufferCount][0],
-				(unsigned int)VertexData.Subdivisions[ElementBufferCount].size() * 3, UM_Static
-			);
-			VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
-			VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
-			VertexArrayPointer->Unbind();
-
-			VAOSubdivisions.push_back(VertexArrayPointer);
-		}
+		VertexArrayPointer = VertexArray::Create();
+		IndexBufferPtr IndexBufferPointer = IndexBuffer::Create(
+			(unsigned int *)&VertexData.Faces[0],
+			(unsigned int)VertexData.Faces.size() * 3, UM_Static
+		);
+		VertexArrayPointer->AddVertexBuffer(VertexBufferPointer);
+		VertexArrayPointer->AddIndexBuffer(IndexBufferPointer);
+		VertexArrayPointer->Unbind();
 
 		return true;
 	}
 
 	void RMesh::ClearBuffers() {
-		VAOSubdivisions.clear();
+		VertexArrayPointer = NULL;
 	}
 
 	void RMesh::Clear() {
@@ -116,12 +97,12 @@ namespace ESource {
 	}
 
 	RMesh::RMesh(const IName & Name, const WString & Origin, const IName & InModelName, MeshData & InVertexData)
-		: ResourceHolder(Name, Origin), ModelName(InModelName), VAOSubdivisions() {
+		: ResourceHolder(Name, Origin), ModelName(InModelName), VertexArrayPointer(NULL) {
 		VertexData.Transfer(InVertexData);
 	}
 
 	RMesh::RMesh(const IName & Name, const WString & Origin, const IName & InModelName)
-		: ResourceHolder(Name, Origin), ModelName(InModelName), VAOSubdivisions(), VertexData() {
+		: ResourceHolder(Name, Origin), ModelName(InModelName), VertexArrayPointer(NULL), VertexData() {
 	}
 
 	RMesh::~RMesh() {

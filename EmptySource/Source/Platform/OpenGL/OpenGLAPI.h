@@ -21,7 +21,9 @@ namespace ESource {
 
 		virtual void SetViewport(const Box2D& Viewport) override;
 
-		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Offset = 0) override;
+		virtual void DrawIndexed(const VertexArrayPtr& VertexArray) override;
+
+		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, const Subdivision & Offsets) override;
 
 		virtual void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) override;
 

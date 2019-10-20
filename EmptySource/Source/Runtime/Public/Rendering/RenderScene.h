@@ -6,7 +6,7 @@ namespace ESource {
 	public:
 		RenderScene();
 
-		using RenderElement = std::tuple<VertexArrayPtr, Matrix4x4>;
+		using RenderElement = std::tuple<VertexArrayPtr, Subdivision, Matrix4x4>;
 
 		void Clear();
 
@@ -18,7 +18,7 @@ namespace ESource {
 
 		void RenderLightMap(unsigned int LightIndex, RShaderPtr & Shader);
 
-		void Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Matrix4x4& Matrix);
+		void Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
 
 		VertexBufferPtr ModelMatrixBuffer;
 
@@ -38,9 +38,9 @@ namespace ESource {
 			RTexturePtr ShadowMap;
 			float ShadowBias;
 		} Lights[2];
-
-		TDictionary<size_t, MaterialPtr> RenderElementsMaterials;
-		TDictionary<size_t, TArray<RenderElement>> RenderElementsByMaterialID;
+		
+		TArray<MaterialPtr> SortedMaterials;
+		TDictionary<MaterialPtr, TDictionary<VertexArrayPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsByMaterial;
 
 	};
 

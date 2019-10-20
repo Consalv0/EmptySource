@@ -164,12 +164,12 @@ namespace ESource {
 	}
 
 	inline void Matrix4x4::Transpose() {
-		Matrix4x4 Result = Matrix4x4(Column(0), Column(1), Column(2), Column(3));
+		Matrix4x4 Result = Matrix4x4(GetColumn(0), GetColumn(1), GetColumn(2), GetColumn(3));
 		*this = Result;
 	}
 
 	inline Matrix4x4 Matrix4x4::Transposed() const {
-		return Matrix4x4(Column(0), Column(1), Column(2), Column(3));
+		return Matrix4x4(GetColumn(0), GetColumn(1), GetColumn(2), GetColumn(3));
 	}
 
 	inline Matrix4x4 Matrix4x4::Inversed() const {
@@ -221,7 +221,7 @@ namespace ESource {
 
 		// Vector4 Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
 
-		Vector4 Dot0(Row(0) * Result.Column(0));
+		Vector4 Dot0(GetRow(0) * Result.GetColumn(0));
 		float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
 
 		float OneOverDeterminant = 1.F / Dot1;
@@ -229,12 +229,12 @@ namespace ESource {
 		return Result * OneOverDeterminant;
 	}
 
-	inline Vector4 Matrix4x4::Row(const unsigned int & i) const {
+	inline Vector4 Matrix4x4::GetRow(const unsigned int & i) const {
 		if (i > 3) return Vector4();
 		return ((Vector4*)this)[i];
 	}
 
-	inline Vector4 Matrix4x4::Column(const unsigned int & i) const {
+	inline Vector4 Matrix4x4::GetColumn(const unsigned int & i) const {
 		switch (i) {
 			case 0: return { m0[0], m1[0], m2[0], m3[0] };
 			case 1: return { m0[1], m1[1], m2[1], m3[1] };
@@ -243,6 +243,23 @@ namespace ESource {
 		}
 
 		return Vector4();
+	}
+
+	inline HOST_DEVICE Vector3 Matrix4x4::ExtractTranslation() const {
+		return GetRow(3);
+	}
+
+	inline HOST_DEVICE Quaternion Matrix4x4::ExtractRotation() const {
+		return Quaternion::LookRotation(GetRow(2), GetRow(1));
+	}
+
+	inline HOST_DEVICE Vector3 Matrix4x4::ExtractScale() const {
+		Vector3 Scale(
+			GetRow(0).Magnitude(),
+			GetRow(1).Magnitude(),
+			GetRow(2).Magnitude()
+		);
+		return Scale;
 	}
 
 	inline Vector4 & Matrix4x4::operator[](unsigned int i) {
@@ -257,8 +274,8 @@ namespace ESource {
 
 	inline HOST_DEVICE Vector3 Matrix4x4::MultiplyPoint(const Vector3 & Vector) const {
 		Vector3 Result = *this * Vector;
-		Result += Column(3);
-		Result *= 1.F / Column(3).Dot(Vector4(Vector, 1.F));
+		Result += GetColumn(3);
+		Result *= 1.F / GetColumn(3).Dot(Vector4(Vector, 1.F));
 		return Result;
 	}
 
@@ -269,7 +286,7 @@ namespace ESource {
 	FORCEINLINE Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & Other) const {
 		Matrix4x4 Result = Matrix4x4();
 
-		const Vector4 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2), Col3 = Column(3);
+		const Vector4 Col0 = GetColumn(0), Col1 = GetColumn(1), Col2 = GetColumn(2), Col3 = GetColumn(3);
 
 		Result.m0[0] = Other.m0.Dot(Col0);
 		Result.m1[0] = Other.m1.Dot(Col0);
@@ -296,10 +313,10 @@ namespace ESource {
 
 	FORCEINLINE Vector4 Matrix4x4::operator*(const Vector4 & Vector) const {
 		Vector4 Result(
-			Column(0).Dot(Vector),
-			Column(1).Dot(Vector),
-			Column(2).Dot(Vector),
-			Column(3).Dot(Vector)
+			GetColumn(0).Dot(Vector),
+			GetColumn(1).Dot(Vector),
+			GetColumn(2).Dot(Vector),
+			GetColumn(3).Dot(Vector)
 		);
 
 		return Result;
@@ -308,9 +325,9 @@ namespace ESource {
 	FORCEINLINE Vector3 Matrix4x4::operator*(const Vector3 & Vector) const {
 		Vector4 const Vect = Vector4(Vector, 0.F);
 		Vector3 Result(
-			Column(0).Dot(Vect),
-			Column(1).Dot(Vect),
-			Column(2).Dot(Vect)
+			GetColumn(0).Dot(Vect),
+			GetColumn(1).Dot(Vect),
+			GetColumn(2).Dot(Vect)
 		);
 		return Result;
 	}

@@ -130,11 +130,11 @@ protected:
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
 
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
 			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetNativeTexture(), EquirectangularTextureHDR->GetSize());
 			Rendering::SetViewport({ 0.F, 0.F, (float)EquirectangularTextureHDR->GetSize().x, (float)EquirectangularTextureHDR->GetSize().y });
 			Renderer->Clear();
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			EquirectangularTextureHDR->GenerateMipMaps();
 			Renderer->Unbind();
 		}
@@ -257,6 +257,8 @@ protected:
 		TextureMng.CreateTexture2D(L"EgyptianCatNormalTexture",         L"Resources/Textures/EgyptianCat/M_Cat_Statue_normal.png",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
 	
 		ModelManager& ModelMng = ModelManager::GetInstance();
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/RobotArm.fbx", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/RobotArm2.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
@@ -273,6 +275,7 @@ protected:
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
+		
 		ModelMng.CreateMesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))->Load();
 		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
 
@@ -382,14 +385,14 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 		
 				Renderer->Bind();
-				MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
+				MeshPrimitives::Quad.GetVertexArray()->Bind();
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
 				Rendering::SetViewport({ 0.F, 0.F, (float)TextureSample->GetSize().x, (float)TextureSample->GetSize().y });
 				Renderer->Clear();
-				Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
 			}
 			if (bCubemap) {
@@ -410,47 +413,61 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 		
 				Renderer->Bind();
-				MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
+				MeshPrimitives::Quad.GetVertexArray()->Bind();
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
 				Rendering::SetViewport({ 0.F, 0.F, (float)TextureSample->GetSize().x, (float)TextureSample->GetSize().y });
 				Renderer->Clear();
-				Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
 			}
 		}
 
-		ImGui::Begin("Meshes", 0, ImVec2(250, 300)); 
+		ImGui::Begin("Model", 0, ImVec2(250, 300)); 
 		{
-			TArray<IName> MeshNameList = ModelManager::GetInstance().GetResourceMeshNames();
-			if (MeshNameList.size() > 0) {
-				TArray<NString> NarrowMeshResourcesList(MeshNameList.size());
-				for (int i = 0; i < NarrowMeshResourcesList.size(); ++i)
-					NarrowMeshResourcesList[i] = Text::WideToNarrow((MeshNameList)[i].GetDisplayName());
+			TArray<IName> ModelNameList = ModelManager::GetInstance().GetResourceModelNames();
+			if (ModelNameList.size() > 0) {
+				TArray<NString> NarrowModelResourcesList(ModelNameList.size());
+				for (int i = 0; i < NarrowModelResourcesList.size(); ++i)
+					NarrowModelResourcesList[i] = Text::WideToNarrow((ModelNameList)[i].GetDisplayName());
 
 				static int Selection = 0;
-				ImGui::ListBox("Mesh List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
+				ImGui::ListBox("Model List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
 					TArray<NString>* Items = (TArray<NString> *)Data;
 					if (outText) *outText = (*Items)[indx].c_str();
 					return true;
-				}, &NarrowMeshResourcesList, (int)NarrowMeshResourcesList.size());
-				ImGui::Text("Selected Mesh: %s", NarrowMeshResourcesList[Selection].c_str());
-				RMeshPtr SelectedMesh = ModelManager::GetInstance().GetMesh(MeshNameList[Selection]);
-				if (SelectedMesh && SelectedMesh->IsValid()) {
-					ImGui::Text("Triangle count: %d", SelectedMesh->GetVertexData().Faces.size());
-					ImGui::Text("Vertices count: %d", SelectedMesh->GetVertexData().Vertices.size());
-					ImGui::Text("Tangents: %s", SelectedMesh->GetVertexData().hasTangents ? "true" : "false");
-					ImGui::Text("Normals: %s", SelectedMesh->GetVertexData().hasNormals ? "true" : "false");
-					ImGui::Text("UVs: %d", SelectedMesh->GetVertexData().TextureCoordsCount);
-					ImGui::Text("Vertex Color: %s", SelectedMesh->GetVertexData().hasVertexColor ? "true" : "false");
-					ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh->GetVertexData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
-					ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh->GetVertexData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
-					ImGui::TextUnformatted("Materials:");
-					for (auto KeyValue : SelectedMesh->GetVertexData().Materials) {
-						ImGui::BulletText("%s : %d", KeyValue.second.c_str(), KeyValue.first);
+				}, &NarrowModelResourcesList, (int)NarrowModelResourcesList.size());
+
+				RModelPtr SelectedModel = ModelManager::GetInstance().GetModel(ModelNameList[Selection]);
+				ImGui::Selectable(NarrowModelResourcesList[Selection].c_str());
+				if (SelectedModel != NULL && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+					ImGui::SetDragDropPayload("ModelHierarchy", &*SelectedModel, sizeof(RModel));
+					ImGui::Text(NarrowModelResourcesList[Selection].c_str());
+					ImGui::EndDragDropSource();
+				}
+
+				if (SelectedModel && SelectedModel->IsValid()) {
+					ImGui::Indent();
+					for (auto & SelectedMesh : SelectedModel->GetMeshes()) {
+						if (ImGui::TreeNode(Text::WideToNarrow(SelectedMesh.second->GetName().GetDisplayName()).c_str())) {
+							ImGui::Text("Triangle count: %d", SelectedMesh.second->GetVertexData().Faces.size());
+							ImGui::Text("Vertices count: %d", SelectedMesh.second->GetVertexData().StaticVertices.size());
+							ImGui::Text("Tangents: %s", SelectedMesh.second->GetVertexData().hasTangents ? "true" : "false");
+							ImGui::Text("Normals: %s", SelectedMesh.second->GetVertexData().hasNormals ? "true" : "false");
+							ImGui::Text("UVs: %d", SelectedMesh.second->GetVertexData().UVChannels);
+							ImGui::Text("Vertex Color: %s", SelectedMesh.second->GetVertexData().hasVertexColor ? "true" : "false");
+							ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh.second->GetVertexData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
+							ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh.second->GetVertexData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
+							ImGui::TextUnformatted("Materials:");
+							for (auto & KeyValue : SelectedMesh.second->GetVertexData().MaterialsMap) {
+								ImGui::BulletText("%s : %d", KeyValue.second.c_str(), KeyValue.first);
+							}
+							ImGui::TreePop();
+						}
 					}
+					ImGui::Unindent();
 				}
 			}
 		}
@@ -774,7 +791,7 @@ protected:
 		ImGui::End();
 
 		char ProgressText[30]; 
-		ImGui::Begin("Audio Settings");
+		ImGui::Begin("Audio");
 		{
 			{
 				static TArray<float> AudioChannel1(1);
@@ -976,7 +993,7 @@ protected:
 		TextGenerator.PixelRange = 1.5F;
 		TextGenerator.Pivot = 0;
 
-		TextGenerator.PrepareCharacters(0ul, 255ul);
+		TextGenerator.PrepareCharacters(0ul, 49ul);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 		if (FontMap == NULL) {
 			FontMap = TextureManager::GetInstance().CreateTexture2D(
@@ -1021,14 +1038,14 @@ protected:
 			IntegrateBRDFMaterial.Use();
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
 			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetNativeTexture(), BRDFLut->GetSize());
 			Rendering::SetViewport({ 0.F, 0.F, (float)BRDFLut->GetSize().x, (float)BRDFLut->GetSize().y });
 			Renderer->Clear();
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			Renderer->Unbind();
 		}
 
@@ -1363,7 +1380,7 @@ protected:
 
 			TextGenerator.GenerateMesh(
 				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.y),
-				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.Vertices
+				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
 			);
 			Timer.Stop();
 			TimeCount += Timer.GetDeltaTime<Time::Mili>();
@@ -1371,9 +1388,9 @@ protected:
 		}
 		DynamicMesh.SwapMeshData(TextMeshData);
 		if (DynamicMesh.SetUpBuffers()) {
-			DynamicMesh.BindSubdivisionVertexArray(0);
+			DynamicMesh.GetVertexArray()->Bind();
 			RenderTextMaterial->SetMatrix4x4Array("_ModelMatrix", Matrix4x4().PointerToValue());
-			Rendering::DrawIndexed(DynamicMesh.GetSubdivisionVertexArray(0));
+			Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
 		}
 
 		RenderingText[2] = Text::Formatted(

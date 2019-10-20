@@ -165,13 +165,13 @@ namespace ESource {
 			for (auto View : CaptureViews) {
 				CubemapMaterial->SetMatrix4x4Array("_ViewMatrix", View.second.PointerToValue());
 		
-				MeshPrimitives::Cube.BindSubdivisionVertexArray(0);
+				MeshPrimitives::Cube.GetVertexArray()->Bind();
 				
 				Renderer->BindCubemapFace((Cubemap *)TexturePointer, Size.x, View.first, Lod);
 				Rendering::SetViewport({ 0.F, 0.F, float(Size.x >> Lod), float(Size.x >> Lod) });
 				Renderer->Clear();
 
-				Rendering::DrawIndexed(MeshPrimitives::Cube.GetSubdivisionVertexArray(0));
+				Rendering::DrawIndexed(MeshPrimitives::Cube.GetVertexArray());
 				if (!Renderer->CheckStatus()) return false;
 			}
 		}

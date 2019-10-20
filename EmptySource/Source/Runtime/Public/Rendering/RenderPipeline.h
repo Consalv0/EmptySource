@@ -30,7 +30,7 @@ namespace ESource {
 
 		virtual void EndStage();
 
-		virtual void SubmitMesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
+		virtual void SubmitSubmesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
 		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection);
 

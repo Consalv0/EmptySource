@@ -3,7 +3,9 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2016, assimp team
+Copyright (c) 2006-2019, assimp team
+
+
 
 All rights reserved.
 
@@ -12,18 +14,18 @@ with or without modification, are permitted provided that the following
 conditions are met:
 
 * Redistributions of source code must retain the above
-  copyright notice, this list of conditions and the
-  following disclaimer.
+copyright notice, this list of conditions and the
+following disclaimer.
 
 * Redistributions in binary form must reproduce the above
-  copyright notice, this list of conditions and the
-  following disclaimer in the documentation and/or other
-  materials provided with the distribution.
+copyright notice, this list of conditions and the
+following disclaimer in the documentation and/or other
+materials provided with the distribution.
 
 * Neither the name of the assimp team, nor the names of its
-  contributors may be used to endorse or promote products
-  derived from this software without specific prior
-  written permission of the assimp team.
+contributors may be used to endorse or promote products
+derived from this software without specific prior
+written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -40,47 +42,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #pragma once
+#ifndef AI_AABB_H_INC
+#define AI_AABB_H_INC
 
-/** @file  MathFunctions.h
-*  @brief Implementation of math utility functions.
- *
-*/
+#include <assimp/vector3.h>
 
-#include <limits>
+struct aiAABB {
+    C_STRUCT aiVector3D mMin;
+    C_STRUCT aiVector3D mMax;
 
-namespace Assimp {
-namespace Math {
+#ifdef __cplusplus
 
-// TODO: use binary GCD for unsigned integers ....
-template < typename IntegerType >
-inline
-IntegerType gcd( IntegerType a, IntegerType b ) {
-	const IntegerType zero = (IntegerType)0;
-	while ( true ) {
-		if ( a == zero )
-			return b;
-		b %= a;
+    aiAABB()
+    : mMin()
+    , mMax() {
+        // empty
+    }
 
-		if ( b == zero )
-			return a;
-		a %= b;
-	}
-}
+    aiAABB(const aiVector3D &min, const aiVector3D &max )
+    : mMin(min)
+    , mMax(max) {
+        // empty
+    }
 
-template < typename IntegerType >
-inline
-IntegerType lcm( IntegerType a, IntegerType b ) {
-	const IntegerType t = gcd (a,b);
-	if (!t)
-        return t;
-	return a / t * b;
-}
+    ~aiAABB() {
+        // empty
+    }
 
-template<class T>
-inline
-T getEpsilon() {
-    return std::numeric_limits<T>::epsilon();
-}
+#endif 
+};
 
-}
-}
+
+#endif

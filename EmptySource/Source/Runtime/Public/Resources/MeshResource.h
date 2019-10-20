@@ -35,7 +35,7 @@ namespace ESource {
 		MeshData & GetVertexData();
 
 		//* Get VertexArray in Mesh
-		VertexArrayPtr GetSubdivisionVertexArray(int Index) const;
+		VertexArrayPtr GetVertexArray() const { return VertexArrayPointer; };
 
 	protected:
 		friend class ModelManager;
@@ -54,7 +54,7 @@ namespace ESource {
 		bool SetUpBuffers();
 
 	private:
-		TArray<VertexArrayPtr> VAOSubdivisions;
+		VertexArrayPtr VertexArrayPointer;
 
 		IName ModelName;
 		

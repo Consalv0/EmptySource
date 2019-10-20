@@ -28,7 +28,7 @@ namespace ESource {
 
 		void GenerateSDF(float PixelRange);
 
-		void GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, const Vector4& Color, struct MeshVertex * Quad);
+		void GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, const Vector4& Color, struct StaticVertex * Quad);
 
 		FontGlyph & operator=(const FontGlyph & Other);
 	};

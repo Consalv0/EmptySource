@@ -99,8 +99,8 @@ namespace ESource {
 		return Sign * (IntPart + FractionPart) * ExponentPart;
 	}
 
-	bool OBJLoader::GetSimilarVertexIndex(const MeshVertex & Vertex, TDictionary<MeshVertex, unsigned>& VertexToIndex, unsigned & Result) {
-		TDictionary<MeshVertex, unsigned>::iterator it = VertexToIndex.find(Vertex);
+	bool OBJLoader::GetSimilarVertexIndex(const StaticVertex & Vertex, TDictionary<StaticVertex, unsigned>& VertexToIndex, unsigned & Result) {
+		TDictionary<StaticVertex, unsigned>::iterator it = VertexToIndex.find(Vertex);
 		if (it == VertexToIndex.end()) {
 			return false;
 		}
@@ -356,27 +356,33 @@ namespace ESource {
 		size_t TotalAllocatedSize = 0;
 		size_t TotalUniqueVertices = 0;
 
+		// Info.ModelNodes.push_back(ModelNode("ParentNode"));
 		Timestamp Timer;
 		Timer.Begin();
 		for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
 			ObjectData & Data = ModelData.Objects[ObjectCount];
 			if (Data.VertexIndicesCount == 0) continue;
 
-			TDictionary<MeshVertex, unsigned> VertexToIndex;
+			TDictionary<StaticVertex, unsigned> VertexToIndex;
 			VertexToIndex.reserve(Data.VertexIndicesCount);
 
+			// Info.ModelNodes[0].ChildrenIndices.push_back(Info.ModelNodes.size());
+			// Info.ModelNodes.push_back(ModelNode(Data.Name));
+			// Info.ModelNodes.back().ParentIndex = 0;
+			// Info.ModelNodes.back().bHasMesh = true;
+			// Info.ModelNodes.back().MeshKey = Info.Meshes.size();
 			Info.Meshes.push_back(MeshData());
 			MeshData* OutMesh = &Info.Meshes.back();
 			OutMesh->Name = Data.Name;
 
 			for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
 				ObjectData::Subdivision & MaterialIndex = Data.Materials[MaterialCount];
-				OutMesh->Materials.insert({ (int)OutMesh->Materials.size(), MaterialIndex.Name });
-				OutMesh->Subdivisions.insert({ MaterialCount, MeshFaces() });
+				OutMesh->MaterialsMap.insert({ (int)OutMesh->MaterialsMap.size(), MaterialIndex.Name });
+				// OutMesh->Subdivisions.insert({ MaterialCount, MeshFaces() });
 
 				int InitialCount = Count;
 				for (; Count < InitialCount + MaterialIndex.VertexIndicesCount; ++Count) {
-					MeshVertex NewVertex = {
+					StaticVertex NewVertex = {
 						ModelData.VertexIndices[Count][0] >= 0 ?
 							ModelData.ListPositions[ModelData.VertexIndices[Count][0] - 1] : 0,
 						ModelData.VertexIndices[Count][2] >= 0 ?
@@ -402,8 +408,8 @@ namespace ESource {
 					}
 					else {
 						// --- If not, it needs to be added in the output data.
-						OutMesh->Vertices.push_back(NewVertex);
-						unsigned NewIndex = (unsigned)OutMesh->Vertices.size() - 1;
+						OutMesh->StaticVertices.push_back(NewVertex);
+						unsigned NewIndex = (unsigned)OutMesh->StaticVertices.size() - 1;
 						Indices[Count] = NewIndex;
 						if (Options.Optimize) VertexToIndex[NewVertex] = NewIndex;
 						TotalUniqueVertices++;
@@ -411,12 +417,12 @@ namespace ESource {
 
 					if ((Count + 1) % 3 == 0) {
 						OutMesh->Faces.push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
-						OutMesh->Subdivisions[MaterialCount].push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+						// OutMesh->Subdivisions[MaterialCount].push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
 					}
 				}
 			}
 
-			if (ModelData.VertexIndices[Count - 1][1] >= 0) OutMesh->TextureCoordsCount = 1;
+			if (ModelData.VertexIndices[Count - 1][1] >= 0) OutMesh->UVChannels = 1;
 			if (ModelData.VertexIndices[Count - 1][2] >= 0) OutMesh->hasNormals = true;
 			OutMesh->ComputeTangents();
 			OutMesh->Bounding = Data.Bounding;
@@ -426,13 +432,13 @@ namespace ESource {
 			LOG_CORE_DEBUG(
 				L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
 				Text::FormatUnit(Data.VertexIndicesCount, 2),
-				Text::FormatData(sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size(), 2),
+				Text::FormatData(sizeof(FaceIndex) * OutMesh->Faces.size() + sizeof(StaticVertex) * OutMesh->StaticVertices.size(), 2),
 				Info.Meshes.size(),
 				Text::NarrowToWide(OutMesh->Name)
 			);
 #endif // ES_DEBUG
 
-			TotalAllocatedSize += sizeof(IntVector3) * OutMesh->Faces.size() + sizeof(MeshVertex) * OutMesh->Vertices.size();
+			TotalAllocatedSize += sizeof(FaceIndex) * OutMesh->Faces.size() + sizeof(StaticVertex) * OutMesh->StaticVertices.size();
 		}
 
 		ModelData.ListNormals.clear();

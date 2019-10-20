@@ -27,14 +27,27 @@ namespace ESource {
 				ModelParser::ModelDataInfo Info;
 				ModelParser::ParsingOptions Options = { ModelFile, bOptimizeOnLoad };
 				ModelParser::Load(Info, Options);
+				ParentNode = Info.ParentNode;
+
+				TArray<ModelNode *> UnknownMeshKeyNodes = GetTraversalNodes([](ModelNode * Node) -> bool { return Node->bHasMesh; });
+				size_t CurrentMeshIndex = 0;
 
 				for (TArray<MeshData>::iterator Data = Info.Meshes.begin(); Data != Info.Meshes.end(); ++Data) {
 					auto LoadedMesh = ModelManager::GetInstance().CreateSubModelMesh(Name, *Data);
+					TArray<ModelNode *>::iterator NodeIt = UnknownMeshKeyNodes.begin();
+					while (NodeIt != UnknownMeshKeyNodes.end()) {
+						if ((*NodeIt)->MeshKey == CurrentMeshIndex) {
+							(*NodeIt)->MeshKey = LoadedMesh->GetName().GetID();
+							NodeIt = UnknownMeshKeyNodes.erase(NodeIt);
+						}
+						else ++NodeIt;
+					}
 					Meshes.emplace(LoadedMesh->GetName().GetID(), LoadedMesh);
-					for (auto & Mat : Data->Materials) {
+					for (auto & Mat : Data->MaterialsMap) {
 						DefaultMaterials.try_emplace(Mat.second, Material(Text::NarrowToWide(Mat.second)));
 					}
 					LoadedMesh->Load();
+					CurrentMeshIndex++;
 				}
 			}
 		}
@@ -57,13 +70,27 @@ namespace ESource {
 
 				ModelParser::ParsingOptions Options = { ModelFile, bOptimizeOnLoad };
 				ModelParser::LoadAsync(Options, [this](ModelParser::ModelDataInfo & Info) {
+					ParentNode = Info.ParentNode;
+					TArray<ModelNode *> UnknownMeshKeyNodes = GetTraversalNodes([](ModelNode * Node) -> bool { return Node->bHasMesh; });
+					size_t CurrentMeshIndex = 0;
+
 					for (TArray<MeshData>::iterator Data = Info.Meshes.begin(); Data != Info.Meshes.end(); ++Data) {
 						auto LoadedMesh = ModelManager::GetInstance().CreateSubModelMesh(Name, *Data);
+						TArray<ModelNode *>::iterator NodeIt = UnknownMeshKeyNodes.begin();
+						while (NodeIt != UnknownMeshKeyNodes.end()) {
+							if ((*NodeIt)->MeshKey == CurrentMeshIndex) {
+								(*NodeIt)->MeshKey = LoadedMesh->GetName().GetID();
+								NodeIt = UnknownMeshKeyNodes.erase(NodeIt);
+							} 
+							else ++NodeIt;
+						}
 						Meshes.emplace(LoadedMesh->GetName().GetID(), LoadedMesh);
-						for (auto & Mat : Data->Materials) {
+						for (auto & Mat : Data->MaterialsMap) {
 							DefaultMaterials.try_emplace(Mat.second, Material(Text::NarrowToWide(Mat.second)));
 						}
+
 						LoadedMesh->Load();
+						CurrentMeshIndex++;
 					}
 
 					LoadState = Meshes.size() > 0 ? LS_Loaded : LS_Unloaded;
@@ -90,8 +117,22 @@ namespace ESource {
 		return size_t();
 	}
 
+	TArray<ModelNode*> RModel::GetTraversalNodes(const std::function<bool(ModelNode*&)>& ComparisionFunction) {
+		TArray<ModelNode*> Vector;
+		GetTraversalNodes(&ParentNode, Vector, ComparisionFunction);
+		return Vector;
+	}
+
+	void RModel::GetTraversalNodes(ModelNode * Node, TArray<ModelNode*>& Vector, const std::function<bool(ModelNode*&)>& ComparisionFunction) {
+		if (ComparisionFunction(Node))
+			Vector.push_back(Node);
+		for (auto & Child : Node->Children) {
+			GetTraversalNodes(Child, Vector, ComparisionFunction);
+		}
+	}
+
 	RModel::RModel(const IName & Name, const WString & Origin, bool bOptimize) 
-		: ResourceHolder(Name, Origin), Meshes(), DefaultMaterials(), bOptimizeOnLoad(bOptimize) {
+		: ResourceHolder(Name, Origin), Meshes(), DefaultMaterials(), bOptimizeOnLoad(bOptimize), ParentNode("ParentNode") {
 	}
 
 	RModel::~RModel() {

@@ -56,7 +56,7 @@ namespace ESource {
 
 		int VertexCount = (int)InitialVerticesSize;
 		IntVector3 * TextFacesEnd = &Faces->at(InitialFacesSize);
-		MeshVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
+		StaticVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
 
 		Vector2 CursorPivot = { Box.xMin, Box.yMax };
 

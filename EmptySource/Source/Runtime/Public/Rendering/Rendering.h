@@ -24,8 +24,12 @@ namespace ESource {
 			RendererAppInterface->SetViewport(Viewport);
 		}
 
-		inline static void DrawIndexed(const VertexArrayPtr& VertexArray, unsigned int Offset = 0) {
-			RendererAppInterface->DrawIndexed(VertexArray, Offset);
+		inline static void DrawIndexed(const VertexArrayPtr& VertexArray, const Subdivision & Offsets) {
+			RendererAppInterface->DrawIndexed(VertexArray, Offsets);
+		}
+
+		inline static void DrawIndexed(const VertexArrayPtr& VertexArray) {
+			RendererAppInterface->DrawIndexed(VertexArray);
 		}
 
 		inline static void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) {

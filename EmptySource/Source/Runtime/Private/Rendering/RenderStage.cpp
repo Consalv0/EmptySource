@@ -19,9 +19,9 @@ namespace ESource {
 		: Name(Name), Scene(), Pipeline(Pipeline) {
 	}
 
-	void RenderStage::SubmitVertexArray(const VertexArrayPtr & VertexArray, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+	void RenderStage::SubmitVertexArray(const VertexArrayPtr & VertexArray, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
-		Scene.Submit(Mat, VertexArray, Matrix);
+		Scene.Submit(Mat, VertexArray, MeshSubdivision, Matrix);
 	}
 
 	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity) {
@@ -127,8 +127,8 @@ namespace ESource {
 			BloomThresholdShader->GetProgram()->SetTexture("_MainTexture", Target->GetBindedTexture(0), 0);
 			const float Treshold = 1.0F;
 			BloomThresholdShader->GetProgram()->SetFloat1Array("_Threshold", &Treshold);
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			BloomThresholdShader->GetProgram()->Unbind();
 		}
 		BloomThresholdTarget->Unbind();
@@ -172,8 +172,8 @@ namespace ESource {
 			BloomShader->GetProgram()->SetFloat1Array("_Radius", &Radius[0], 1);
 			BloomShader->GetProgram()->SetFloat2Array("_Direction", HorizontalDirection.PointerToValue(), 1);
 			BloomShader->GetProgram()->SetFloat2Array("_Resolution", Vector2(BloomThresholdTexture->GetSize()).PointerToValue(), 1);
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			BloomHorizontalBlurTarget->Unbind();
 			Rendering::Flush();
 			BloomHorizontalTexture->DeleteMipMaps();
@@ -191,9 +191,9 @@ namespace ESource {
 			BloomShader->GetProgram()->SetFloat1Array("_Radius", &Radius[1], 1);
 			BloomShader->GetProgram()->SetFloat2Array("_Direction", VerticalDirection.PointerToValue(), 1);
 			BloomShader->GetProgram()->SetFloat2Array("_Resolution", Vector2(BloomHorizontalTexture->GetSize()).PointerToValue(), 1);
-			
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			BloomBlurTarget->Unbind();
 			BloomShader->GetProgram()->Unbind();
 			Rendering::Flush();
@@ -241,8 +241,8 @@ namespace ESource {
 			SSAOShader->GetProgram()->SetTexture("_GDepth", TextureManager::GetInstance().GetTexture(L"GDepth")->GetNativeTexture(), 0);
 			SSAOShader->GetProgram()->SetTexture("_GNormal", TextureManager::GetInstance().GetTexture(L"GNormal")->GetNativeTexture(), 1);
 			SSAOShader->GetProgram()->SetTexture("_NoiseTexture", TextureManager::GetInstance().GetTexture(L"SSAONoise")->GetNativeTexture(), 2);
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 		}
 		SSAOTarget->Unbind();
 		Rendering::Flush();
@@ -258,8 +258,8 @@ namespace ESource {
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
 			SSAOShaderBlur->GetProgram()->SetTexture("_SSAO", SSAOTexture->GetNativeTexture(), 0);
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 		}
 		SSAOBlurTarget->Unbind();
 		Rendering::Flush();
@@ -286,8 +286,8 @@ namespace ESource {
 			RenderShader->GetProgram()->SetFloat1Array("_Exposure", &Pipeline->Exposure, 1);
 			RenderShader->GetProgram()->SetFloat1Array("_Gamma", &Pipeline->Gamma, 1);
 
-			MeshPrimitives::Quad.BindSubdivisionVertexArray(0);
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetSubdivisionVertexArray(0));
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			RenderShader->GetProgram()->Unbind();
 		}
 	}

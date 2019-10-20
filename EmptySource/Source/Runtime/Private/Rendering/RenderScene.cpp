@@ -18,38 +18,18 @@ namespace ESource {
 	}
 
 	void RenderScene::Clear() {
-		RenderElementsMaterials.clear();
-		RenderElementsByMaterialID.clear();
+		RenderElementsByMaterial.clear();
+		SortedMaterials.clear();
 		LightCount = -1;
 	}
 
 	void RenderScene::ForwardRender() {
-		TArray<MaterialPtr> Materials;
-		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
-			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-			for (; MatIt != Materials.end(); ++MatIt) {
-				if (*(*MatIt) > *(RMatIt->second))
-					break;
-			}
-			Materials.emplace(MatIt, RMatIt->second);
-		}
-
-		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-		for (; MatIt != Materials.end(); ++MatIt) {
-			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
-
-			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
-			TArray<RenderElement>::const_iterator RElementIt = RenderElements.begin();
-			for (; RElementIt != RenderElements.end(); ++RElementIt) {
-				VertexArrayTable.try_emplace(std::get<VertexArrayPtr>(*RElementIt), TArray<Matrix4x4>());
-				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
-			}
-
+		for (auto & MatIt : SortedMaterials) {
 			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
 			float CubemapTextureMipmaps = 0.F;
 			if (EnviromentCubemap)
 				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
-			(*MatIt)->SetParameters({
+			MatIt->SetParameters({
 				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
 				{ "_ProjectionMatrix",            { ViewProjection }, SPFlags_IsInternal },
 				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
@@ -76,14 +56,13 @@ namespace ESource {
 				{ "_EnviromentMap",               { ETextureDimension::Cubemap, EnviromentCubemap }, SPFlags_IsInternal },
 				{ "_EnviromentMapLods",           { CubemapTextureMipmaps }, SPFlags_IsInternal }
 				});
-			(*MatIt)->Use();
+			MatIt->Use();
 
-			for (auto& Element : VertexArrayTable) {
-				if (Element.first == NULL) continue;
+			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->Bind();
-				for (auto & Matrix : Element.second) {
-					(*MatIt)->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
-					Rendering::DrawIndexed(Element.first, 0);
+				for (auto & SubdivisionInstance : Element.second) {
+					MatIt->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
+					Rendering::DrawIndexed(Element.first, std::get<Subdivision>(SubdivisionInstance));
 				}
 			}
 		}
@@ -95,33 +74,12 @@ namespace ESource {
 		Material GMat = Material(L"GPass");
 		GMat.SetShaderProgram(GShader);
 
-		TArray<MaterialPtr> Materials;
-		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
-			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-			for (; MatIt != Materials.end(); ++MatIt) {
-				if (*(*MatIt) > *(RMatIt->second))
-					break;
-			}
-			Materials.emplace(MatIt, RMatIt->second);
-		}
-
-		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-		for (; MatIt != Materials.end(); ++MatIt) {
-			if ((*MatIt)->bTransparent) continue;
-			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
-
-			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
-			TArray<RenderElement>::const_iterator RElementIt = RenderElements.begin();
-			for (; RElementIt != RenderElements.end(); ++RElementIt) {
-				VertexArrayTable.try_emplace(std::get<VertexArrayPtr>(*RElementIt), TArray<Matrix4x4>());
-				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
-			}
-
+		for (auto & MatIt : SortedMaterials) {
 			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
 			float CubemapTextureMipmaps = 0.F;
 			if (EnviromentCubemap)
 				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
-			(*MatIt)->SetParameters({
+			MatIt->SetParameters({
 				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
 				{ "_ProjectionMatrix",            { ViewProjection }, SPFlags_IsInternal },
 				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
@@ -131,22 +89,21 @@ namespace ESource {
 				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
 				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal } 
 			});
-			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
-			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
-			GMat.DepthFunction = (*MatIt)->DepthFunction;
-			GMat.CullMode = (*MatIt)->CullMode;
-			GMat.FillMode = (*MatIt)->FillMode;
+			GMat.SetParameters(MatIt->GetVariables().GetVariables());
+			GMat.bWriteDepth = MatIt->bWriteDepth;
+			GMat.DepthFunction = MatIt->DepthFunction;
+			GMat.CullMode = MatIt->CullMode;
+			GMat.FillMode = MatIt->FillMode;
 
 			if (GMat.bWriteDepth == false) continue;
 
 			GMat.Use();
 
-			for (auto& Element : VertexArrayTable) {
-				if (Element.first == NULL) continue;
+			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->Bind();
-				for (auto & Matrix : Element.second) {
-					GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
-					Rendering::DrawIndexed(Element.first, 0);
+				for (auto & SubdivisionInstance : Element.second) {
+					GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
+					Rendering::DrawIndexed(Element.first, std::get<Subdivision>(SubdivisionInstance));
 				}
 			}
 		}
@@ -158,33 +115,12 @@ namespace ESource {
 		Material GMat = Material(L"GPass");
 		GMat.SetShaderProgram(GShader);
 
-		TArray<MaterialPtr> Materials;
-		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
-			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-			for (; MatIt != Materials.end(); ++MatIt) {
-				if (*(*MatIt) > *(RMatIt->second))
-					break;
-			}
-			Materials.emplace(MatIt, RMatIt->second);
-		}
-
-		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-		for (; MatIt != Materials.end(); ++MatIt) {
-			if (!(*MatIt)->bTransparent) continue;
-			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
-
-			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
-			TArray<RenderElement>::const_iterator RElementIt = RenderElements.begin();
-			for (; RElementIt != RenderElements.end(); ++RElementIt) {
-				VertexArrayTable.try_emplace(std::get<VertexArrayPtr>(*RElementIt), TArray<Matrix4x4>());
-				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
-			}
-
+		for (auto & MatIt : SortedMaterials) {
 			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
 			float CubemapTextureMipmaps = 0.F;
 			if (EnviromentCubemap)
 				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
-			(*MatIt)->SetParameters({
+			MatIt->SetParameters({
 				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
 				{ "_ProjectionMatrix",            { ViewProjection }, SPFlags_IsInternal },
 				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
@@ -194,22 +130,21 @@ namespace ESource {
 				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
 				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal }
 			});
-			GMat.SetParameters((*MatIt)->GetVariables().GetVariables());
-			GMat.bWriteDepth = (*MatIt)->bWriteDepth;
-			GMat.DepthFunction = (*MatIt)->DepthFunction;
-			GMat.CullMode = (*MatIt)->CullMode;
-			GMat.FillMode = (*MatIt)->FillMode;
+			GMat.SetParameters(MatIt->GetVariables().GetVariables());
+			GMat.bWriteDepth = MatIt->bWriteDepth;
+			GMat.DepthFunction = MatIt->DepthFunction;
+			GMat.CullMode = MatIt->CullMode;
+			GMat.FillMode = MatIt->FillMode;
 
 			if (GMat.bWriteDepth == false) continue;
 
 			GMat.Use();
 
-			for (auto& Element : VertexArrayTable) {
-				if (Element.first == NULL) continue;
+			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->Bind();
-				for (auto & Matrix : Element.second) {
-					GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
-					Rendering::DrawIndexed(Element.first, 0);
+				for (auto & SubdivisionInstance : Element.second) {
+					GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
+					Rendering::DrawIndexed(Element.first, std::get<Subdivision>(SubdivisionInstance));
 				}
 			}
 		}
@@ -230,51 +165,30 @@ namespace ESource {
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
 
-		TArray<MaterialPtr> Materials;
-		for (TDictionary<size_t, MaterialPtr>::const_iterator RMatIt = RenderElementsMaterials.begin(); RMatIt != RenderElementsMaterials.end(); ++RMatIt) {
-			TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-			for (; MatIt != Materials.end(); ++MatIt) {
-				if (*(*MatIt) > *(RMatIt->second))
-					break;
-			}
-			Materials.emplace(MatIt, RMatIt->second);
-		}
-
 		RTexturePtr WhiteTexture = TextureManager::GetInstance().GetTexture(L"WhiteTexture");
 
 		Shader->GetProgram()->Bind();
 		Shader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Lights[LightIndex].ProjectionMatrix.PointerToValue());
 		Shader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Lights[LightIndex].Transformation.GetGLViewMatrix().PointerToValue());
 
-		TArray<MaterialPtr>::const_iterator MatIt = Materials.begin();
-		for (; MatIt != Materials.end(); ++MatIt) {
-			if ((*MatIt)->bWriteDepth == false) continue;
-			TArray<RenderElement> & RenderElements = RenderElementsByMaterialID[(*MatIt)->GetName().GetInstanceID()];
+		for (auto & MatIt : SortedMaterials) {
 
-			TDictionary<VertexArrayPtr, TArray<Matrix4x4>> VertexArrayTable;
-			TArray<RenderElement>::const_iterator RElementIt = RenderElements.begin();
-			for (; RElementIt != RenderElements.end(); ++RElementIt) {
-				VertexArrayTable.try_emplace(std::get<VertexArrayPtr>(*RElementIt), TArray<Matrix4x4>());
-				VertexArrayTable[std::get<VertexArrayPtr>(*RElementIt)].push_back(std::get<Matrix4x4>(*RElementIt));
+			ShaderParameter * Parameter = MatIt->GetVariables().GetVariable("_MainTexture");
+			if (Parameter && Parameter->Value.Texture) {
+				Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetNativeTexture(), 0);
+			}
+			else if (WhiteTexture) {
+				Shader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetNativeTexture(), 0);
+			}
+			else {
+				Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
 			}
 
-			for (auto& Element : VertexArrayTable) {
-				if (Element.first == NULL) continue;
+			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->Bind();
-
-				ShaderParameter * Parameter = (*MatIt)->GetVariables().GetVariable("_MainTexture");
-				if (Parameter && Parameter->Value.Texture) {
-					Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetNativeTexture(), 0);
-				}
-				else if (WhiteTexture) {
-					Shader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetNativeTexture(), 0);
-				}
-				else {
-					Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
-				}
-				for (auto & Matrix : Element.second) {
-					Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", Matrix[0].PointerToValue());
-					Rendering::DrawIndexed(Element.first, 0);
+				for (auto & SubdivisionInstance : Element.second) {
+					Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
+					Rendering::DrawIndexed(Element.first, std::get<Subdivision>(SubdivisionInstance));
 				}
 			}
 		}
@@ -285,12 +199,25 @@ namespace ESource {
 		ShadowRenderTarget->Unbind();
 	}
 
-	void RenderScene::Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Matrix4x4 & Matrix) {
-		size_t InstanceID = Mat->GetName().GetInstanceID();
-		if (RenderElementsMaterials.try_emplace(InstanceID, Mat).second) {
-			RenderElementsByMaterialID.emplace(InstanceID, TArray<RenderElement>());
+	void RenderScene::Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix) {
+		if (Mat == NULL || VertexArray == NULL) return;
+		RenderElementsByMaterial[Mat][VertexArray].push_back(std::make_tuple(MeshSubdivision, Matrix));
+		bool Inserted = false;
+		for (TArray<MaterialPtr>::const_iterator MatIt = SortedMaterials.begin(); MatIt != SortedMaterials.end(); ++MatIt) {
+			if (Mat == *MatIt) {
+				Inserted = true;
+				break;
+			}
+			if (*(*MatIt) > *Mat) {
+				SortedMaterials.emplace(MatIt, Mat);
+				Inserted = true;
+				break;
+			}
 		}
-		RenderElementsByMaterialID[InstanceID].push_back({ VertexArray, Matrix });
+
+		if (!Inserted) {
+			SortedMaterials.push_back(Mat);
+		}
 	}
 
 }

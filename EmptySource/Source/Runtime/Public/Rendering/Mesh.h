@@ -4,44 +4,82 @@
 
 namespace ESource {
 
-	struct MeshVertex {
+	struct StaticVertex {
 		Vector3 Position;
 		Vector3 Normal;
 		Vector3 Tangent;
 		Vector2 UV0, UV1;
 		Vector4 Color;
 
-		MeshVertex() = default;
-		MeshVertex(const MeshVertex& Other) = default;
-		MeshVertex(MeshVertex&& Other) = default;
-		MeshVertex(const Vector3& P, const Vector3& N, const Vector2& UV);
-		MeshVertex(const Vector3& P, const Vector3& N, const Vector3& T, const Vector2& UV0, const Vector2& UV1, const Vector4& C);
-		MeshVertex& operator=(const MeshVertex& other) = default;
-		bool operator<(const MeshVertex That) const;
-		bool operator==(const MeshVertex &Other) const;
+		StaticVertex() = default;
+		StaticVertex(const StaticVertex& Other) = default;
+		StaticVertex(StaticVertex&& Other) = default;
+		StaticVertex(const Vector3& P, const Vector3& N, const Vector2& UV);
+		StaticVertex(const Vector3& P, const Vector3& N, const Vector3& T, const Vector2& UV0, const Vector2& UV1, const Vector4& C);
+		StaticVertex& operator=(const StaticVertex& other) = default;
+		bool operator<(const StaticVertex That) const;
+		bool operator==(const StaticVertex &Other) const;
 	};
 
-	typedef TArray<IntVector3> MeshFaces;
-	typedef TArray<Vector3>    MeshVector3D;
-	typedef TArray<Vector2>    MeshUVs;
-	typedef TArray<Vector4>    MeshColors;
-	typedef TArray<MeshVertex> MeshVertices;
+	struct SkinVertex {
+		Vector3 Position;
+		Vector3 Normal;
+		Vector3 Tangent;
+		Vector2 UV0, UV1;
+		Vector4 Color;
+
+		unsigned int InfluenceBones[4] = { 0, 0, 0, 0 };
+		float Weights[4]{ 0.0F, 0.0F, 0.0F, 0.0F };
+
+		void AddBoneData(unsigned int BoneID, float Weight) {
+			for (size_t i = 0; i < 4; i++) {
+				if (Weights[i] == 0.0) {
+					InfluenceBones[i] = BoneID;
+					Weights[i] = Weight;
+					return;
+				}
+			}
+			LOG_CORE_WARN("Vertex has more than four bones/weights affecting it, extra data will be discarded (BoneID={0}, Weight={1})", BoneID, Weight);
+		}
+
+		SkinVertex() = default;
+		SkinVertex(const SkinVertex& Other) = default;
+		SkinVertex(SkinVertex&& Other) = default;
+		SkinVertex(const StaticVertex& Other);
+		SkinVertex& operator=(const SkinVertex& Other) = default;
+	};
+
+	struct Subdivision {
+	public:
+		unsigned int MaterialIndex;
+		unsigned int BaseVertex;
+		unsigned int BaseIndex;
+		unsigned int IndexCount;
+	};
+
+	using FaceIndex                 = IntVector3;
+	typedef TArray<FaceIndex>         MeshFaces;
+	typedef TArray<Vector3>           MeshVector3D;
+	typedef TArray<Vector2>           MeshUVs;
+	typedef TArray<Vector4>           MeshColors;
+	typedef TArray<StaticVertex>      MeshVertices;
 	typedef TDictionary<int, NString> MeshMaterials;
 
 	struct MeshData {
 		NString Name;
-		MeshFaces Faces;
-		TDictionary<int, MeshFaces> Subdivisions;
-		MeshVertices Vertices;
-		MeshMaterials Materials;
+		TArray<FaceIndex> Faces;
+		TDictionary<int, Subdivision> SubdivisionsMap;
+		TDictionary<int, NString> MaterialsMap;
+		TArray<StaticVertex> StaticVertices;
+		TArray<SkinVertex> SkinVertices;
 		BoundingBox3D Bounding;
 
 		bool hasNormals;
 		bool hasTangents;
 		bool hasVertexColor;
-		int  TextureCoordsCount;
+		int  UVChannels;
 		bool hasBoundingBox;
-		bool hasWeights;
+		bool hasBones;
 
 		void Transfer(MeshData & Other);
 		void ComputeBounding();
@@ -66,11 +104,8 @@ namespace ESource {
 		//* Copy all contents of the mesh for new data
 		void CopyMeshData(const MeshData & Data);
 
-		//* Bind Element Subdivision Array Object
-		void BindSubdivisionVertexArray(int MaterialIndex) const;
-
 		//* Get VertexArray in Mesh
-		VertexArrayPtr GetSubdivisionVertexArray(int MaterialIndex) const;
+		VertexArrayPtr GetVertexArray() const { return VertexArrayPointer; };
 
 		//* Clear the mesh entirely
 		void Clear();
@@ -82,7 +117,7 @@ namespace ESource {
 		bool SetUpBuffers();
 
 	private:
-		TArray<VertexArrayPtr> VAOSubdivisions;
+		VertexArrayPtr VertexArrayPointer;
 
 		MeshData Data;
 	};

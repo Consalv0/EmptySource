@@ -58,7 +58,7 @@ namespace ESource {
 		SDFGenerator::FromShape(SDFResterized, VectorShape, PixelRange / Math::Min(Scale.x, Scale.y), Scale, Translate);
 	}
 
-	void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, const Vector4& Color, MeshVertex * Quad) {
+	void FontGlyph::GetQuadMesh(Vector2 Pivot, const float& PixelRange, const float& Scale, const Vector4& Color, StaticVertex * Quad) {
 		float XPos = Pivot.x + Bearing.x * Scale;
 		float YPos = Pivot.y - ((int)SDFResterized.GetHeight() - Bearing.y) * Scale;
 		float XPosWidth = XPos + ((int)SDFResterized.GetWidth() + PixelRange) * Scale;

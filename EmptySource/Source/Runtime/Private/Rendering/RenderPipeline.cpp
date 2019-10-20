@@ -91,8 +91,12 @@ namespace ESource {
 		ActiveStage = NULL;
 	}
 
-	void RenderPipeline::SubmitMesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
-		ActiveStage->SubmitVertexArray(ModelPointer->GetSubdivisionVertexArray(Subdivision), Mat, Matrix);
+	void RenderPipeline::SubmitSubmesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+		if (ModelPointer == NULL || !ModelPointer->IsValid()) return;
+		if (ModelPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == ModelPointer->GetVertexData().SubdivisionsMap.end()) {
+			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", ModelPointer->GetName().GetDisplayName(), Subdivision); return;
+		}
+		ActiveStage->SubmitVertexArray(ModelPointer->GetVertexArray(), ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix);
 	}
 
 	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {

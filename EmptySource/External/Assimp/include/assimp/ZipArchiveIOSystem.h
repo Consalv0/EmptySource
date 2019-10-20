@@ -3,7 +3,9 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2016, assimp team
+Copyright (c) 2006-2019, assimp team
+
+
 
 All rights reserved.
 
@@ -39,48 +41,47 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-#pragma once
-
-/** @file  MathFunctions.h
-*  @brief Implementation of math utility functions.
- *
+/** @file ZipArchiveIOSystem.h
+ *  @brief Implementation of IOSystem to read a ZIP file from another IOSystem
 */
 
-#include <limits>
+#ifndef AI_ZIPARCHIVEIOSYSTEM_H_INC
+#define AI_ZIPARCHIVEIOSYSTEM_H_INC
+
+#include <assimp/IOStream.hpp>
+#include <assimp/IOSystem.hpp>
 
 namespace Assimp {
-namespace Math {
+    class ZipArchiveIOSystem : public IOSystem {
+    public:
+        //! Open a Zip using the proffered IOSystem
+        ZipArchiveIOSystem(IOSystem* pIOHandler, const char *pFilename, const char* pMode = "r");
+        ZipArchiveIOSystem(IOSystem* pIOHandler, const std::string& rFilename, const char* pMode = "r");
+        virtual ~ZipArchiveIOSystem();
+        bool Exists(const char* pFilename) const override;
+        char getOsSeparator() const override;
+        IOStream* Open(const char* pFilename, const char* pMode = "rb") override;
+        void Close(IOStream* pFile) override;
 
-// TODO: use binary GCD for unsigned integers ....
-template < typename IntegerType >
-inline
-IntegerType gcd( IntegerType a, IntegerType b ) {
-	const IntegerType zero = (IntegerType)0;
-	while ( true ) {
-		if ( a == zero )
-			return b;
-		b %= a;
+        // Specific to ZIP
+        //! The file was opened and is a ZIP
+        bool isOpen() const;
 
-		if ( b == zero )
-			return a;
-		a %= b;
-	}
-}
+        //! Get the list of all files with their simplified paths
+        //! Intended for use within Assimp library boundaries
+        void getFileList(std::vector<std::string>& rFileList) const;
 
-template < typename IntegerType >
-inline
-IntegerType lcm( IntegerType a, IntegerType b ) {
-	const IntegerType t = gcd (a,b);
-	if (!t)
-        return t;
-	return a / t * b;
-}
+        //! Get the list of all files with extension (must be lowercase)
+        //! Intended for use within Assimp library boundaries
+        void getFileListExtension(std::vector<std::string>& rFileList, const std::string& extension) const;
 
-template<class T>
-inline
-T getEpsilon() {
-    return std::numeric_limits<T>::epsilon();
-}
+        static bool isZipArchive(IOSystem* pIOHandler, const char *pFilename);
+        static bool isZipArchive(IOSystem* pIOHandler, const std::string& rFilename);
 
-}
-}
+    private:
+        class Implement;
+        Implement *pImpl = nullptr;
+    };
+} // Namespace Assimp
+
+#endif // AI_ZIPARCHIVEIOSYSTEM_H_INC

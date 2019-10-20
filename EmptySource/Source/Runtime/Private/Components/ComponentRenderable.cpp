@@ -23,10 +23,10 @@ namespace ESource {
 	void CRenderable::SetMesh(RMeshPtr Value) {
 		ActiveMesh.swap(Value);
 		if (ActiveMesh != NULL) {
-			for (auto & MaterialLook : ActiveMesh->GetVertexData().Materials)
+			for (auto & MaterialLook : ActiveMesh->GetVertexData().MaterialsMap)
 				Materials.try_emplace(MaterialLook.first);
 			size_t MaterialSize = Materials.size();
-			for (size_t i = ActiveMesh->GetVertexData().Materials.size(); i < MaterialSize; ++i)
+			for (size_t i = ActiveMesh->GetVertexData().MaterialsMap.size(); i < MaterialSize; ++i)
 				Materials.erase((int)i);
 		}
 		else
@@ -53,10 +53,10 @@ namespace ESource {
 		if (ActiveMesh == NULL) return;
 
 		RenderPipeline & Pipeline = Application::GetInstance()->GetRenderPipeline();
-		Matrix4x4 GameObjectLWMatrix = GetGameObject().GetWorldTransform().GetLocalToWorldMatrix();
+		Matrix4x4 GameObjectLWMatrix = GetGameObject().GetWorldMatrix();
 		for (auto& ItMaterial : Materials) {
 			if (ItMaterial.second)
-				Pipeline.SubmitMesh(ActiveMesh, ItMaterial.first, ItMaterial.second, GameObjectLWMatrix);
+				Pipeline.SubmitSubmesh(ActiveMesh, ItMaterial.first, ItMaterial.second, GameObjectLWMatrix);
 		}
 	}
 

@@ -73,9 +73,13 @@ namespace ESource {
 		return false;
 	}
 
+	Matrix4x4 GGameObject::GetWorldMatrix() const {
+		if (Parent == NULL) return LocalTransform.GetLocalToWorldMatrix();
+		return Parent->GetWorldMatrix() * LocalTransform.GetLocalToWorldMatrix();
+	}
+
 	Transform GGameObject::GetWorldTransform() const {
-		if (Parent == NULL) return LocalTransform;
-		return LocalTransform * Parent->GetWorldTransform();
+		return Transform(GetWorldMatrix());
 	}
 
 	void GGameObject::AttachComponent(CComponent * Component) {

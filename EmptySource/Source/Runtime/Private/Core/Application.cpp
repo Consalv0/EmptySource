@@ -39,8 +39,8 @@ namespace ESource {
 	Mesh MeshPrimitives::Cube;
 	Mesh MeshPrimitives::Quad;
 
-	// int FindBoundingBox(int N, MeshVertex * Vertices);
-	// int VoxelizeToTexture3D(Texture3D * Texture, int N, MeshVertex * Vertices);
+	// int FindBoundingBox(int N, StaticVertex * Vertices);
+	// int VoxelizeToTexture3D(Texture3D * Texture, int N, StaticVertex * Vertices);
 	// int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
 	// const void * GetRandomArray(IntVector2 Dimension);
 

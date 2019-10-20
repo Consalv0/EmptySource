@@ -19,7 +19,7 @@ namespace ESource {
 	}
 
 	FORCEINLINE Matrix3x3::Matrix3x3(const Matrix4x4 & Matrix) {
-		Matrix3x3(Matrix.Row(0), Matrix.Row(1), Matrix.Row(2));
+		Matrix3x3(Matrix.GetRow(0), Matrix.GetRow(1), Matrix.GetRow(2));
 	}
 
 	FORCEINLINE Matrix3x3::Matrix3x3(const Vector3 & Row0, const Vector3 & Row1, const Vector3 & Row2) {
@@ -33,19 +33,19 @@ namespace ESource {
 	}
 
 	inline void Matrix3x3::Transpose() {
-		*this = Matrix3x3(Column(0), Column(1), Column(2));
+		*this = Matrix3x3(GetColumn(0), GetColumn(1), GetColumn(2));
 	}
 
 	inline Matrix3x3 Matrix3x3::Transposed() const {
-		return Matrix3x3(Column(0), Column(1), Column(2));
+		return Matrix3x3(GetColumn(0), GetColumn(1), GetColumn(2));
 	}
 
-	inline Vector3 Matrix3x3::Row(const unsigned int & i) const {
+	inline Vector3 Matrix3x3::GetRow(const unsigned int & i) const {
 		if ((i > 2)) return Vector3();
 		return ((Vector3*)this)[i];
 	}
 
-	inline Vector3 Matrix3x3::Column(const unsigned int & i) const {
+	inline Vector3 Matrix3x3::GetColumn(const unsigned int & i) const {
 		switch (i) {
 			case 0: return Vector3(m0[0], m1[0], m2[0]);
 			case 1: return Vector3(m0[1], m1[1], m2[1]);
@@ -67,7 +67,7 @@ namespace ESource {
 
 	FORCEINLINE Matrix3x3 Matrix3x3::operator*(const Matrix3x3& Other) const {
 		Matrix3x3 Result = Matrix3x3();
-		const Vector3 Col0 = Column(0), Col1 = Column(1), Col2 = Column(2);
+		const Vector3 Col0 = GetColumn(0), Col1 = GetColumn(1), Col2 = GetColumn(2);
 
 		Result.m0[0] = Other.m0.Dot(Col0);
 		Result.m1[0] = Other.m1.Dot(Col0);
@@ -86,9 +86,9 @@ namespace ESource {
 
 	FORCEINLINE Vector3 Matrix3x3::operator*(const Vector3& Vector) const {
 		Vector3 result(
-			Column(0).Dot(Vector),
-			Column(1).Dot(Vector),
-			Column(2).Dot(Vector)
+			GetColumn(0).Dot(Vector),
+			GetColumn(1).Dot(Vector),
+			GetColumn(2).Dot(Vector)
 		);
 
 		return result;

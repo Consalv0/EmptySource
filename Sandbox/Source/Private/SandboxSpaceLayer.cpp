@@ -48,6 +48,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 			}
 			Text[0] = '\0';
 		}
+
 		ImGui::Columns(2);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 		ImGui::Separator();
@@ -208,8 +209,10 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 						}
 					}
 
-					if (Renderable->GetMesh() && Renderable->GetMesh()->IsValid()) {
-						ImGui::Text("%s[%d]", Renderable->GetMesh()->GetVertexData().Materials.at(Iterator->first).c_str(), Iterator->first);
+					if (Renderable->GetMesh() && Renderable->GetMesh()->IsValid() && 
+						Renderable->GetMesh()->GetVertexData().MaterialsMap.find(Iterator->first) != Renderable->GetMesh()->GetVertexData().MaterialsMap.end())
+					{
+						ImGui::Text("%s[%d]", Renderable->GetMesh()->GetVertexData().MaterialsMap.at(Iterator->first).c_str(), Iterator->first);
 						ImGui::SameLine(); ImGui::PushItemWidth(-1);
 						if (ImGui::Combo(("##Material" + std::to_string(Iterator->first)).c_str(), &CurrentMaterialIndex,
 							[](void * Data, int indx, const char ** outText) -> bool {
@@ -318,6 +321,20 @@ void SandboxSpaceLayer::OnRender() {
 	Application::GetInstance()->GetRenderPipeline().EndStage();
 }
 
+GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node) {
+	GGameObject * NGO = Space->CreateObject<GGameObject>(Text::NarrowToWide(Node->Name), Node->LocalTransform);
+	if (Node->bHasMesh) {
+		auto MeshRenderer = NGO->CreateComponent<CRenderable>();
+		MeshRenderer->SetMesh(Model->GetMeshes().at(Node->MeshKey));
+		MeshRenderer->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Sponza/Bricks"));
+	}
+	for (auto & Child : Node->Children) {
+		GGameObject * ChildGO = ModelHierarchyToSpaceHierarchy(Space, Model, Child);
+		ChildGO->AttachTo(NGO);
+	}
+	return NGO;
+}
+
 void SandboxSpaceLayer::OnImGuiRender() {
 	ImGui::Begin("Sandbox Space");
 
@@ -339,6 +356,39 @@ void SandboxSpaceLayer::OnImGuiRender() {
 			CreateObject<GGameObject>(Text::NarrowToWide(NString(Text)), Transform(0.F, Quaternion(), 1.F));
 		}
 		Text[0] = '\0';
+	}
+
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("ModelHierarchy")) {
+			ES_ASSERT(Payload->DataSize == sizeof(RModel), "DragDropData is empty");
+			RModel * PayloadModel = *(RModel**)Payload;
+			LOG_CORE_WARN(L"Payload Model {}", PayloadModel->GetName().GetDisplayName());
+
+			if (PayloadModel->GetHierarchyParentNode() != NULL) {
+				ModelHierarchyToSpaceHierarchy(
+					this, PayloadModel, PayloadModel->GetHierarchyParentNode()
+				);
+				// TDictionary<size_t, GGameObject *> IndexGObjectMap;
+				// IndexGObjectMap.emplace(0, CreateObject<GGameObject>(PayloadModel->GetName().GetDisplayName(), PayloadModel->GetHierarchyParentNode().LocalTransform));
+				// size_t CurrentNodeIndex = 0;
+				// while (CurrentNodeIndex < Nodes.size()) {
+				// 	const ModelNode & Node = Nodes[CurrentNodeIndex];
+				// 	for (auto & ChildIndex : Node.ChildrenIndices) {
+				// 		const ModelNode & ChildNode = Nodes[ChildIndex];
+				// 		GGameObject * ObjectNode = CreateObject<GGameObject>(Text::NarrowToWide(ChildNode.Name), ChildNode.LocalTransform);
+				// 		if (ChildNode.bHasMesh) {
+				// 			auto MeshRenderer = ObjectNode->CreateComponent<CRenderable>();
+				// 			MeshRenderer->SetMesh(PayloadModel->GetMeshes().at(ChildNode.MeshKey));
+				// 			MeshRenderer->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Sponza/Bricks"));
+				// 		}
+				// 		ObjectNode->AttachTo(IndexGObjectMap.at(CurrentNodeIndex));
+				// 		IndexGObjectMap.emplace(ChildIndex, ObjectNode);
+				// 	}
+				// 	CurrentNodeIndex++;
+				// }
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 	ImGui::Separator();
 

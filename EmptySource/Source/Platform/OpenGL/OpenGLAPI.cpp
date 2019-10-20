@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderingBuffers.h"
+#include "Rendering/Mesh.h"
 
 #include "Rendering/RenderingAPI.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
@@ -116,11 +117,18 @@ namespace ESource {
 		glViewport((GLint)Viewport.GetMinPoint().x, (GLint)Viewport.GetMinPoint().y, (GLint)Viewport.GetWidth(), (GLint)Viewport.GetHeight());
 	}
 
-	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer, unsigned int Offset) {
+	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer) {
 		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
 		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
 		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
-		glDrawElementsBaseVertex(GL_TRIANGLES, VertexArrayPointer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr, Offset);
+		glDrawElements(GL_TRIANGLES, VertexArrayPointer->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer, const Subdivision & Offsets) {
+		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
+		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
+		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
+		glDrawElementsBaseVertex(GL_TRIANGLES, Offsets.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * Offsets.BaseIndex), Offsets.BaseVertex);
 	}
 
 	void OpenGLAPI::SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) {

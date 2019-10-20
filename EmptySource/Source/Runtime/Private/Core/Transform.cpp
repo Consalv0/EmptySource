@@ -19,6 +19,12 @@ namespace ESource {
 		Position(Position), Rotation(), Scale(1.F) {
 	}
 
+	Transform::Transform(const Matrix4x4 & Matrix) {
+		Position = Matrix.ExtractTranslation();
+		Rotation = Matrix.ExtractRotation();
+		Scale = Matrix.ExtractScale();
+	}
+
 	Matrix4x4 Transform::GetWorldToLocalMatrix() const {
 		return GetLocalToWorldMatrix().Inversed();
 	}
