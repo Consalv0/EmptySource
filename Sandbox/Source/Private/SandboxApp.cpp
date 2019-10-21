@@ -448,7 +448,26 @@ protected:
 					ImGui::EndDragDropSource();
 				}
 
+				if (SelectedModel != NULL) {
+					ImGui::BulletText("AnimationTracks:");
+					ImGui::Indent();
+					ImGui::Columns(3);
+					ImGui::TextUnformatted("Name"); ImGui::NextColumn();
+					ImGui::TextUnformatted("Duration"); ImGui::NextColumn();
+					ImGui::TextUnformatted("Ticks/Seconds"); ImGui::NextColumn();
+					ImGui::Separator();
+					for (auto & AnimIt : SelectedModel->GetAnimations()) {
+						ImGui::Text("%s", AnimIt.Name.c_str()); ImGui::NextColumn();
+						ImGui::Text("%f", AnimIt.Duration); ImGui::NextColumn();
+						ImGui::Text("%f", AnimIt.TicksPerSecond); ImGui::NextColumn();
+					}
+					ImGui::Columns(1);
+					ImGui::Unindent();
+					ImGui::Separator();
+				}
+
 				if (SelectedModel && SelectedModel->IsValid()) {
+					ImGui::BulletText("Meshes:");
 					ImGui::Indent();
 					for (auto & SelectedMesh : SelectedModel->GetMeshes()) {
 						if (ImGui::TreeNode(Text::WideToNarrow(SelectedMesh.second->GetName().GetDisplayName()).c_str())) {

@@ -2,7 +2,6 @@
 #include "CoreMinimal.h"
 #include "Resources/ModelResource.h"
 #include "Resources/ModelManager.h"
-
 #include "Resources/ModelParser.h"
 
 namespace ESource {
@@ -27,6 +26,7 @@ namespace ESource {
 				ModelParser::ModelDataInfo Info;
 				ModelParser::ParsingOptions Options = { ModelFile, bOptimizeOnLoad };
 				ModelParser::Load(Info, Options);
+				Animations.swap(Info.Animations);
 				ParentNode = Info.ParentNode;
 
 				TArray<ModelNode *> UnknownMeshKeyNodes = GetTraversalNodes([](ModelNode * Node) -> bool { return Node->bHasMesh; });
@@ -71,6 +71,7 @@ namespace ESource {
 				ModelParser::ParsingOptions Options = { ModelFile, bOptimizeOnLoad };
 				ModelParser::LoadAsync(Options, [this](ModelParser::ModelDataInfo & Info) {
 					ParentNode = Info.ParentNode;
+					Animations.swap(Info.Animations);
 					TArray<ModelNode *> UnknownMeshKeyNodes = GetTraversalNodes([](ModelNode * Node) -> bool { return Node->bHasMesh; });
 					size_t CurrentMeshIndex = 0;
 

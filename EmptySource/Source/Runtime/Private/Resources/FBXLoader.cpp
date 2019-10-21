@@ -627,33 +627,4 @@ namespace ESource {
 		return bStatus;
 	}
 
-	bool FBXLoader::LoadAnimation(ModelParser::AnimationInfo & Info, const ModelParser::ParsingOptions & Options) {
-		if (gSdkManager == NULL)
-			return false;
-
-		Timestamp Timer;
-		Timer.Begin();
-
-		FbxScene* Scene = FbxScene::Create(gSdkManager, Text::WideToNarrow(Options.File->GetShortPath()).c_str());
-
-		bool bStatus = LoadAnimationStack(Scene, Options.File);
-		if (bStatus == false) return false;
-
-		FbxAxisSystem::OpenGL.ConvertScene(Scene);
-		FbxSystemUnit::m.ConvertScene(Scene);
-
-		// FbxGeometryConverter GeomConverter(gSdkManager);
-		// GeomConverter.Triangulate(Scene, true);
-		const int NodeCount = Scene->GetSrcObjectCount<FbxNode>();
-
-		Timer.Stop();
-		LOG_CORE_INFO(L"├> Readed and parsed in {:0.3f}ms", Timer.GetDeltaTime<Time::Mili>());
-
-		Timer.Begin();
-
-		Timer.Stop();
-
-		return bStatus;
-	}
-
 }

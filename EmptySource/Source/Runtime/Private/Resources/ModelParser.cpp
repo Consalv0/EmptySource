@@ -1,6 +1,7 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/Mesh.h"
+#include "Rendering/Animation.h"
 #include "Resources/ModelParser.h"
 #include "Resources/OBJLoader.h"
 #include "Resources/FBXLoader.h"
@@ -30,7 +31,7 @@ namespace ESource {
 		);
 	}
 
-	void TraverseNodes(const aiScene * AssimpScene, aiNode* Node, ModelParser::ModelDataInfo & Info, ModelNode * InfoNode, int Level = 0) {
+	void FillNodeInfo(const aiScene * AssimpScene, aiNode* Node, ModelParser::ModelDataInfo & Info, ModelNode * InfoNode, int Level = 0) {
 #ifdef ES_DEBUG
 		NString IndentText;
 		for (int i = 0; i < Level; i++)
@@ -98,7 +99,7 @@ namespace ESource {
 					Vertex.Color = 1.0F;
 
 				Data.StaticVertices.push_back(Vertex);
-				if (Info.bAnimated)
+				if (Info.bHasAnimations)
 					Data.SkinVertices.push_back(Vertex);
 			}
 
@@ -111,7 +112,7 @@ namespace ESource {
 
 		for (uint32_t i = 0; i < Node->mNumChildren; i++) {
 			aiNode* Child = Node->mChildren[i];
-			TraverseNodes(AssimpScene, Child, Info, InfoNode, Level + 1);
+			FillNodeInfo(AssimpScene, Child, Info, InfoNode, Level + 1);
 		}
 	}
 
@@ -143,9 +144,42 @@ namespace ESource {
 		const aiScene* AssimpScene = Importer->ReadFile(Text::WideToNarrow(Options.File->GetPath()), MeshImportFlags);
 		if (Info.bSuccess = !AssimpScene) return false;
 
-		Info.bAnimated = AssimpScene->mAnimations != NULL;
+		Info.bHasAnimations = AssimpScene->HasAnimations();
 
-		TraverseNodes(AssimpScene, AssimpScene->mRootNode, Info, NULL);
+		FillNodeInfo(AssimpScene, AssimpScene->mRootNode, Info, NULL);
+
+		if (Info.bHasAnimations) {
+			for (unsigned int a = 0; a < AssimpScene->mNumAnimations; ++a) {
+				Info.Animations.push_back(AnimationTrack());
+				AnimationTrack & Animation = Info.Animations.back();
+				aiAnimation * Anim = AssimpScene->mAnimations[a];
+				Animation.Name = Anim->mName.C_Str();
+				Animation.Duration = Anim->mDuration;
+				Animation.TicksPerSecond = Anim->mTicksPerSecond;
+
+				for (unsigned int n = 0; n < Anim->mNumChannels; ++n) {
+					aiNodeAnim * AnimNode = Anim->mChannels[n];
+					Animation.AnimationNodes.push_back(AnimationTrackNode(Animation, Text::NarrowToWide(AnimNode->mNodeName.C_Str())));
+					AnimationTrackNode & AnimationNode = Animation.AnimationNodes.back();
+					AnimationNode.Positions.reserve(AnimNode->mNumPositionKeys);
+					for (unsigned int i = 0; i < AnimNode->mNumPositionKeys; i++) {
+						aiVectorKey & Key = AnimNode->mPositionKeys[i];
+						AnimationNode.Positions.emplace_back(AnimationNode, Key.mTime, Key.mValue.x, Key.mValue.y, Key.mValue.z);
+					}
+					AnimationNode.Rotations.reserve(AnimNode->mNumRotationKeys);
+					for (unsigned int i = 0; i < AnimNode->mNumRotationKeys; i++) {
+						aiQuatKey & Key = AnimNode->mRotationKeys[i];
+						AnimationNode.Rotations.emplace_back(AnimationNode, Key.mTime, Key.mValue.w, Key.mValue.x, Key.mValue.y, Key.mValue.z);
+					}
+					AnimationNode.Scalings.reserve(AnimNode->mNumScalingKeys);
+					for (unsigned int i = 0; i < AnimNode->mNumScalingKeys; i++) {
+						aiVectorKey & Key = AnimNode->mScalingKeys[i];
+						AnimationNode.Scalings.emplace_back(AnimationNode, Key.mTime, Key.mValue.x, Key.mValue.y, Key.mValue.z);
+					}
+
+				}
+			}
+		}
 		// const WString Extension = Options.File->GetExtension();
 		// if (Text::CompareIgnoreCase(Extension, WString(L"FBX"))) {
 		// 	return FBXLoader::LoadModel(Info, Options);
@@ -243,7 +277,7 @@ namespace ESource {
 		ParentNode = Other.ParentNode;
 		Meshes.swap(Other.Meshes);
 		bSuccess = Other.bSuccess;
-		bAnimated = Other.bAnimated;
+		bHasAnimations = Other.bHasAnimations;
 	}
 
 	ModelParser::Task::Task(const ParsingOptions & Options, FinishTaskFunction FinishFunction, FutureTask Future) :

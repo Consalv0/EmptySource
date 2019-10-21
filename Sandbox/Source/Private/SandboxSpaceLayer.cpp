@@ -21,6 +21,15 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 	TArray<IName> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<IName> &MeshNameList, SandboxSpaceLayer * AppLayer)
 {
 	bool TreeNode = ImGui::TreeNode(GameObject->GetName().GetNarrowInstanceName().c_str());
+	if (ImGui::BeginPopupContextItem(GameObject->GetName().GetNarrowInstanceName().c_str())) {
+		if (ImGui::Button("Delete")) {
+			AppLayer->DeleteObject(GameObject);
+			ImGui::EndPopup();
+			if (TreeNode) ImGui::TreePop();
+			return;
+		}
+		ImGui::EndPopup();
+	}
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 		ImGui::SetDragDropPayload("GGameObject", &GameObject, sizeof(GGameObject));
 		ImGui::Text("Moving %s", GameObject->GetName().GetNarrowInstanceName().c_str());

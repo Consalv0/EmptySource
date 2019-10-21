@@ -2,6 +2,7 @@
 
 #include "Resources/ResourceHolder.h"
 #include "Resources/ModelResource.h"
+
 #include "Rendering/Mesh.h"
 
 namespace ESource {

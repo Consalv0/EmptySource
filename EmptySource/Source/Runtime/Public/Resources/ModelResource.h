@@ -5,6 +5,8 @@
 #include "Resources/MeshResource.h"
 #include "Core/Transform.h"
 
+#include "Rendering/Animation.h"
+
 namespace ESource {
 
 	struct ModelNode {
@@ -51,7 +53,6 @@ namespace ESource {
 
 	class RModel : public ResourceHolder {
 	public:
-
 		bool bOptimizeOnLoad;
 
 		~RModel();
@@ -80,6 +81,8 @@ namespace ESource {
 
 		const TDictionary<size_t, RMeshPtr> & GetMeshes() const { return Meshes; };
 
+		const TArray<AnimationTrack> & GetAnimations() const { return Animations; };
+
 	protected:
 		friend class ModelManager;
 
@@ -91,6 +94,8 @@ namespace ESource {
 		TDictionary<size_t, RMeshPtr> Meshes;
 
 		TDictionary<NString, Material> DefaultMaterials;
+
+		TArray<AnimationTrack> Animations;
 
 		ModelNode ParentNode;
 	};

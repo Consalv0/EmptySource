@@ -2,6 +2,7 @@
 
 #include "Files/FileManager.h"
 #include "Core/Transform.h"
+#include "Rendering/Animation.h"
 #include "Resources/ModelResource.h"
 
 #include <queue>
@@ -19,28 +20,17 @@ namespace ESource {
 		struct ModelDataInfo {
 			TArray<MeshData> Meshes;
 			ModelNode ParentNode;
+			TArray<AnimationTrack> Animations;
 
 			//* The model data has been succesfully loaded
 			bool bSuccess;
-			bool bAnimated;
+			bool bHasAnimations;
 
 			void Transfer(ModelDataInfo & Other);
 
 			ModelDataInfo();
 			
 			ModelDataInfo(const ModelDataInfo & Other) = delete;
-		};
-
-		struct AnimationInfo {
-			struct AnimationNode {
-				NString Name;
-				TArray<Vector3> Positions;
-				TArray<Quaternion> Rotations;
-				TArray<Vector3> Scalings;
-			};
-			double Duration;
-			double TicksPerSecond;
-			TArray<AnimationNode> Channels;
 		};
 
 	private:
