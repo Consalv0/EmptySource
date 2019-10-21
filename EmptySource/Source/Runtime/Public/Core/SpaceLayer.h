@@ -83,7 +83,7 @@ namespace ESource {
 	template<typename T>
 	T * SpaceLayer::GetFirstObject() {
 		for (auto & Iterator : ObjectsIn) {
-			if (Iterator.second->GetObjectName() == T::GetStaticObjectName())
+			if (Iterator.second && Iterator.second->GetObjectName() == T::GetStaticObjectName())
 				return dynamic_cast<T *>(Iterator.second);
 		}
 		return NULL;
@@ -92,7 +92,7 @@ namespace ESource {
 	template<typename T>
 	void SpaceLayer::GetAllObjects(TArray<T*>& List) {
 		for (auto & Iterator : ObjectsIn) {
-			if (Iterator.second->GetObjectName() == T::GetStaticObjectName())
+			if (Iterator.second && Iterator.second->GetObjectName() == T::GetStaticObjectName())
 				List.push_back(dynamic_cast<T *>(Iterator.second));
 		}
 	}

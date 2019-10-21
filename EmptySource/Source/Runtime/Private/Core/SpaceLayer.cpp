@@ -95,7 +95,8 @@ namespace ESource {
 
 	void SpaceLayer::DeleteAllObjects() {
 		for (TDictionary<size_t, OObject*>::iterator Iterator = ObjectsIn.begin(); Iterator != ObjectsIn.end(); Iterator++) {
-			DeleteObject(Iterator->second);
+			if (Iterator->second)
+				DeleteObject(Iterator->second);
 		}
 	}
 
@@ -115,7 +116,6 @@ namespace ESource {
 	void SpaceLayer::DeleteOutObjects() {
 		for (auto & Iterator : ObjectsOut) {
 			ObjectsIn.erase(Iterator.second->GetName().GetInstanceID());
-			Iterator.second->OnDelete();
 			delete Iterator.second;
 		}
 

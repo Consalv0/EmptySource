@@ -220,6 +220,7 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
+    <ClInclude Include="Source\Runtime\Public\Rendering\Animation.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Mesh.h" />

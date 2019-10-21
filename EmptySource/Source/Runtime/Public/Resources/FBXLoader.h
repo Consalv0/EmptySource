@@ -46,8 +46,6 @@ namespace ESource {
 		/** Load mesh data from FBX, it will return the models separated by objects, optionaly
 		  * there's a way to optimize the vertices. */
 		static bool LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options);
-
-		static bool LoadAnimation(ModelParser::AnimationInfo & Info, const ModelParser::ParsingOptions & Options);
 	};
 
 }

@@ -108,7 +108,8 @@ namespace ESource {
 
 	void GGameObject::DeatachAllComponents() {
 		for (TDictionary<size_t, CComponent*>::iterator Iterator = ComponentsIn.begin(); Iterator != ComponentsIn.end(); Iterator++) {
-			DetachComponent(Iterator->second);
+			if (Iterator->second)
+				DetachComponent(Iterator->second);
 		}
 	}
 
@@ -141,6 +142,11 @@ namespace ESource {
 	void GGameObject::OnDelete() {
 		DeatachAllComponents();
 		DeleteOutComponents();
+		TArray<GGameObject *> SChildren = Children;
+		for (auto & Child : SChildren) {
+			SpaceIn->DeleteObject(Child);
+		}
+		DeatachFromParent();
 	}
 
 }
