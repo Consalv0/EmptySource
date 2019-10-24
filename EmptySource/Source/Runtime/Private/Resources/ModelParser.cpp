@@ -139,15 +139,36 @@ namespace ESource {
 		}
 	};
 
-	bool ModelParser::RecognizeFileExtensionAndLoad(ModelDataInfo & Info, const ParsingOptions & Options) {
+	bool FindNodeLevel(const NString & Name, const ModelNode * Node, int & Level) {
+		if (Node->Name == Name)
+			return true;
+		for (auto & Child : Node->Children) {
+			bool Find = FindNodeLevel(Name, Child, ++Level);
+			if (Find) {
+				return true;
+			}
+		}
+		Level--;
+		return false;
+	}
+	
+	void GetAnimationLevels(ModelParser::ModelDataInfo & Info) {
+		for (AnimationTrack & Track : Info.Animations) {
+			for (AnimationTrackNode & NodeA : Track.AnimationNodes) {
+				FindNodeLevel(NodeA.Name.GetNarrowDisplayName(), &Info.ParentNode, NodeA.NodeLevel);
+			}
+		}
+	}
+
+	bool LoadWithAssimp(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options) {
 		auto Importer = std::make_unique<Assimp::Importer>();
 		const aiScene* AssimpScene = Importer->ReadFile(Text::WideToNarrow(Options.File->GetPath()), MeshImportFlags);
 		if (Info.bSuccess = !AssimpScene) return false;
-
+		
 		Info.bHasAnimations = AssimpScene->HasAnimations();
-
+		
 		FillNodeInfo(AssimpScene, AssimpScene->mRootNode, Info, NULL);
-
+		
 		if (Info.bHasAnimations) {
 			for (unsigned int a = 0; a < AssimpScene->mNumAnimations; ++a) {
 				Info.Animations.push_back(AnimationTrack());
@@ -156,7 +177,7 @@ namespace ESource {
 				Animation.Name = Anim->mName.C_Str();
 				Animation.Duration = Anim->mDuration;
 				Animation.TicksPerSecond = Anim->mTicksPerSecond;
-
+		
 				for (unsigned int n = 0; n < Anim->mNumChannels; ++n) {
 					aiNodeAnim * AnimNode = Anim->mChannels[n];
 					Animation.AnimationNodes.push_back(AnimationTrackNode(Animation, Text::NarrowToWide(AnimNode->mNodeName.C_Str())));
@@ -176,19 +197,27 @@ namespace ESource {
 						aiVectorKey & Key = AnimNode->mScalingKeys[i];
 						AnimationNode.Scalings.emplace_back(AnimationNode, Key.mTime, Key.mValue.x, Key.mValue.y, Key.mValue.z);
 					}
-
+		
 				}
 			}
+		
+			GetAnimationLevels(Info);
+		
 		}
-		// const WString Extension = Options.File->GetExtension();
-		// if (Text::CompareIgnoreCase(Extension, WString(L"FBX"))) {
-		// 	return FBXLoader::LoadModel(Info, Options);
-		// }
-		// if (Text::CompareIgnoreCase(Extension, WString(L"OBJ"))) {
-		// 	return OBJLoader::LoadModel(Info, Options);
-		// }
 
-		return false;
+		return true;
+	}
+
+	bool ModelParser::RecognizeFileExtensionAndLoad(ModelDataInfo & Info, const ParsingOptions & Options) {
+		const WString Extension = Options.File->GetExtension();
+		if (Text::CompareIgnoreCase(Extension, WString(L"FBX"))) {
+			// return FBXLoader::LoadModel(Info, Options);
+		}
+		if (Text::CompareIgnoreCase(Extension, WString(L"OBJ"))) {
+			return OBJLoader::LoadModel(Info, Options);
+		}
+
+		return LoadWithAssimp(Info, Options);;
 	}
 
 	bool ModelParser::Initialize() {

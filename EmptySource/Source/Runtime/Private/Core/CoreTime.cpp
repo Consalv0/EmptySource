@@ -53,7 +53,7 @@ namespace ESource {
 	}
 
 	Timestamp Time::GetTimeStamp() {
-		return Timestamp(LastUpdateMicro, Time::GetEpochTimeMicro());
+		return Timestamp(LastUpdateMicro, LastUpdateMicro + LastDeltaMicro);
 	}
 
 	unsigned long long Time::GetEpochTimeMicro() {

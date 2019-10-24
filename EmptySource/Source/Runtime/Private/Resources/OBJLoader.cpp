@@ -356,7 +356,7 @@ namespace ESource {
 		size_t TotalAllocatedSize = 0;
 		size_t TotalUniqueVertices = 0;
 
-		// Info.ModelNodes.push_back(ModelNode("ParentNode"));
+		Info.ParentNode = ModelNode("ParentNode");
 		Timestamp Timer;
 		Timer.Begin();
 		for (int ObjectCount = 0; ObjectCount < ModelData.Objects.size(); ++ObjectCount) {
@@ -366,19 +366,19 @@ namespace ESource {
 			TDictionary<StaticVertex, unsigned> VertexToIndex;
 			VertexToIndex.reserve(Data.VertexIndicesCount);
 
-			// Info.ModelNodes[0].ChildrenIndices.push_back(Info.ModelNodes.size());
-			// Info.ModelNodes.push_back(ModelNode(Data.Name));
-			// Info.ModelNodes.back().ParentIndex = 0;
-			// Info.ModelNodes.back().bHasMesh = true;
-			// Info.ModelNodes.back().MeshKey = Info.Meshes.size();
+			Info.ParentNode.Children.push_back(new ModelNode(Data.Name));
+			Info.ParentNode.Children.back()->Parent = &Info.ParentNode;
+			Info.ParentNode.Children.back()->bHasMesh = true;
+			Info.ParentNode.Children.back()->MeshKey = Info.Meshes.size();
 			Info.Meshes.push_back(MeshData());
 			MeshData* OutMesh = &Info.Meshes.back();
 			OutMesh->Name = Data.Name;
 
+			uint32_t IndexCount = 0;
 			for (int MaterialCount = 0; MaterialCount < Data.Materials.size(); ++MaterialCount) {
 				ObjectData::Subdivision & MaterialIndex = Data.Materials[MaterialCount];
-				OutMesh->MaterialsMap.insert({ (int)OutMesh->MaterialsMap.size(), MaterialIndex.Name });
-				// OutMesh->Subdivisions.insert({ MaterialCount, MeshFaces() });
+				OutMesh->MaterialsMap.emplace((int)OutMesh->MaterialsMap.size(), MaterialIndex.Name);
+				OutMesh->SubdivisionsMap.emplace(MaterialCount, Subdivision({ (uint32_t)MaterialCount, 0, IndexCount, 0 }));
 
 				int InitialCount = Count;
 				for (; Count < InitialCount + MaterialIndex.VertexIndicesCount; ++Count) {
@@ -417,7 +417,8 @@ namespace ESource {
 
 					if ((Count + 1) % 3 == 0) {
 						OutMesh->Faces.push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
-						// OutMesh->Subdivisions[MaterialCount].push_back({ Indices[Count - 2], Indices[Count - 1], Indices[Count] });
+						OutMesh->SubdivisionsMap[MaterialCount].IndexCount += 3;
+						IndexCount += 3;
 					}
 				}
 			}

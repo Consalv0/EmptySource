@@ -429,6 +429,9 @@
     <ClInclude Include="Source\Runtime\Public\Rendering\Animation.h">
       <Filter>Runtime\Public\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentAnimable.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -640,6 +643,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentAnimable.cpp">
+      <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

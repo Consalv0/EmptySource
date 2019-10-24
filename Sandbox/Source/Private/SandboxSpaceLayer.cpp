@@ -10,6 +10,7 @@
 #include "Components/ComponentRenderable.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "Components/ComponentAnimable.h"
 
 #include "../Public/SandboxSpaceLayer.h"
 #include "../Public/CameraMovement.h"
@@ -68,9 +69,14 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 
 		Vector3 EulerFrameRotation = GameObject->LocalTransform.Rotation.ToEulerAngles();
 		ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Rotation"); ImGui::NextColumn();
-		ImGui::PushItemWidth(-1); if (ImGui::DragFloat3("##Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
+		ImGui::PushItemWidth(-1); 
+		ImGui::BeginGroup();
+		ImGui::PushID("##Rotation");
+		if (ImGui::DragFloat3("##Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
 			GameObject->LocalTransform.Rotation = Quaternion::EulerAngles(EulerFrameRotation);
 		} ImGui::NextColumn();
+		ImGui::PopID();
+		ImGui::EndGroup();
 
 		ImGui::AlignTextToFramePadding(); ImGui::Text("Scale"); ImGui::NextColumn();
 		ImGui::PushItemWidth(-1); ImGui::DragFloat3("##Scale", &GameObject->LocalTransform.Scale[0], .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -134,14 +140,14 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 		CLight * Light = GameObject->GetFirstComponent<CLight>();
 		if (Light != NULL) {
 			bool TreeNode = ImGui::TreeNode(Light->GetName().GetNarrowInstanceName().c_str());
-			if (ImGui::BeginPopupContextItem("Camera Movement Edit")) {
+			if (ImGui::BeginPopupContextItem("Light Edit")) {
 				if (ImGui::Button("Delete")) {
 					GameObject->DestroyComponent(Light);
 				}
 				ImGui::EndPopup();
 			}
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-				ImGui::SetDragDropPayload("CCameraMovement", &Light, sizeof(Light));
+				ImGui::SetDragDropPayload("CLight", &Light, sizeof(Light));
 				ImGui::Text("Moving %s", Light->GetName().GetNarrowInstanceName().c_str());
 				ImGui::EndDragDropSource();
 			}
@@ -161,6 +167,38 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Angle", &Light->ApertureAngle, 1.0F, 0.F, 180.F, "%.3F"); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Culling Planes"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Culling", &Light->CullingPlanes[0], 0.1F, 0.001F, 99999.F, "%.5F"); ImGui::NextColumn();
+				ImGui::PopStyleVar();
+				ImGui::Columns(1);
+				ImGui::PopItemWidth();
+				ImGui::TreePop();
+			}
+		}
+		CAnimable * Animable = GameObject->GetFirstComponent<CAnimable>();
+		if (Animable != NULL) {
+			bool TreeNode = ImGui::TreeNode(Animable->GetName().GetNarrowInstanceName().c_str());
+			if (ImGui::BeginPopupContextItem("Animable Edit")) {
+				if (ImGui::Button("Delete")) {
+					GameObject->DestroyComponent(Animable);
+				}
+				ImGui::EndPopup();
+			}
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("CAnimable", &Animable, sizeof(Animable));
+				ImGui::Text("Moving %s", Animable->GetName().GetNarrowInstanceName().c_str());
+				ImGui::EndDragDropSource();
+			}
+			if (TreeNode) {
+				ImGui::Columns(2);
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+				ImGui::Separator();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Track Name"); ImGui::NextColumn();
+				if (Animable->Track != NULL) {
+					ImGui::PushItemWidth(-1); ImGui::TextUnformatted(Animable->Track->Name.c_str());
+				} ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Animation Speed"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragScalar("##Speed", ImGuiDataType_Double, &Animable->AnimationSpeed, 0.025F); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Current Animation Time"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::DragScalar("##CurrentTime", ImGuiDataType_Double, &Animable->CurrentAnimationTime, 0.01F); ImGui::NextColumn();
 				ImGui::PopStyleVar();
 				ImGui::Columns(1);
 				ImGui::PopItemWidth();
@@ -333,6 +371,7 @@ void SandboxSpaceLayer::OnRender() {
 GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node, GGameObject * NewObject) {
 	if (NewObject == NULL)
 		NewObject = Space->CreateObject<GGameObject>(Text::NarrowToWide(Node->Name), Node->LocalTransform);
+
 	if (Node->bHasMesh) {
 		auto MeshRenderer = NewObject->CreateComponent<CRenderable>();
 		MeshRenderer->SetMesh(Model->GetMeshes().at(Node->MeshKey));
@@ -375,9 +414,14 @@ void SandboxSpaceLayer::OnImGuiRender() {
 			LOG_CORE_WARN(L"Payload Model {}", PayloadModel->GetName().GetDisplayName());
 
 			if (PayloadModel->GetHierarchyParentNode() != NULL) {
-				ModelHierarchyToSpaceHierarchy(
+				GGameObject * NewGO = ModelHierarchyToSpaceHierarchy(
 					this, PayloadModel, PayloadModel->GetHierarchyParentNode(), CreateObject<GGameObject>(PayloadModel->GetName().GetDisplayName())
 				);
+
+				if (PayloadModel->GetAnimations().size() > 0) {
+					CAnimable * Animable = NewGO->CreateComponent<CAnimable>();
+					Animable->Track = &PayloadModel->GetAnimations()[0];
+				}
 				// TDictionary<size_t, GGameObject *> IndexGObjectMap;
 				// IndexGObjectMap.emplace(0, CreateObject<GGameObject>(PayloadModel->GetName().GetDisplayName(), PayloadModel->GetHierarchyParentNode().LocalTransform));
 				// size_t CurrentNodeIndex = 0;

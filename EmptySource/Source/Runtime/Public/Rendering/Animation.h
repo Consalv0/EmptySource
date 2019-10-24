@@ -25,7 +25,10 @@ namespace ESource {
 		TArray<QuaternionKey> Rotations;
 		TArray<Vector3Key> Scalings;
 
-		AnimationTrackNode(AnimationTrack & Track, const IName & Name) : ParentTrack(&Track), Name(Name), Positions(), Rotations(), Scalings() {};
+		int NodeLevel;
+
+		AnimationTrackNode(AnimationTrack & Track, const IName & Name) 
+			: ParentTrack(&Track), Name(Name), NodeLevel(0), Positions(), Rotations(), Scalings() {};
 	};
 
 	// Copy of the structure of assimp, but with the math classes of the engine. Thanks Assimp!

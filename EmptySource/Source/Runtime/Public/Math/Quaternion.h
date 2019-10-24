@@ -9,9 +9,9 @@ namespace ESource {
 	struct Matrix3x3;
 
 	enum AngleAxes {
-		Pitch = 0, // up - down
-		Yaw = 1,   // left - right
-		Roll = 2   // fall over
+		Pitch = 0, // X left - right
+		Yaw = 1,   // Y up - down
+		Roll = 2   // Z forward - backward
 	};
 
 	struct Quaternion {
@@ -33,6 +33,8 @@ namespace ESource {
 		//* Ctreate quaternion from two basis vectors
 		HOST_DEVICE static FORCEINLINE Quaternion LookRotation(Vector3 const& Forward, Vector3 const& Up);
 		HOST_DEVICE static FORCEINLINE Quaternion FromMatrix(Matrix3x3 const & Matrix);
+
+		HOST_DEVICE static void Interpolate(Quaternion& Out, const Quaternion& Start, const Quaternion& End, float Factor);
 
 		HOST_DEVICE inline float Magnitude() const;
 		HOST_DEVICE inline float MagnitudeSquared() const;

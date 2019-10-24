@@ -62,13 +62,13 @@ namespace ESource {
 		}
 		else {
 			Point2 Previous = Edges[Edges.size() - 1]->PointAt(0);
-			for (TArray<EdgeHolder>::const_iterator edge = Edges.begin(); edge != Edges.end(); ++edge) {
-				Point2 Current = (*edge)->PointAt(0);
+			for (TArray<EdgeHolder>::const_iterator Edge = Edges.begin(); Edge != Edges.end(); ++Edge) {
+				Point2 Current = (*Edge)->PointAt(0);
 				Total += MathEquations::Shoelace2(Previous, Current);
 				Previous = Current;
 			}
 		}
-		return Math::Sign(Total);
+		return Math::Sign((int)Total);
 	}
 
 }

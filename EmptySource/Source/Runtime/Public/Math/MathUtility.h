@@ -33,39 +33,46 @@ namespace ESource {
 	namespace Math {
 		//* Returns the smaller of the arguments.
 		template <typename T>
-		inline T Min(const T & A, const T & B);
+		inline T Min(const T A, const T B);
 
 		//* Returns the larger of the arguments.
 		template <typename T>
-		inline T Max(const T & A, const T & B);
+		inline T Max(const T A, const T B);
 
 		//* Returns the middle out of three values
 		template <typename T, typename S>
-		inline T Median(const T& A, const T& B, const S& Alpha);
+		inline T Median(const T A, const T B, const S Alpha);
 
 		//* Returns the weighted average of a and b.
 		template <typename T, typename S>
-		inline T Mix(const T& A, const T& B, const S& Weight);
+		inline T Mix(const T A, const T B, const S Weight);
+
+		//* Get the absolute value
+		template <typename T>
+		inline T Abs(const T Value);
 
 		//* Returns 1 for positive values, -1 for negative values, and 0 for zero.
 		template <typename T>
-		inline int Sign(const T& Value);
+		inline T Sign(const T Value);
 
 		/// Returns 1 for non-negative values and -1 for negative values.
 		template <typename T>
-		inline int NonZeroSign(const T & Value);
+		inline T NonZeroSign(const T Value);
+
+		template <typename T>
+		inline T Square(const T Value);
 
 		//* Clamps the number to the interval from 0 to b.
 		template <typename T>
-		inline T Clamp(const T& Value, const T & A);
+		inline T Clamp(const T Value, const T A);
 
 		//* Clamp the value in the defined range 
 		template <typename T>
-		inline T Clamp(const T& Value, const T& A, const T& B);
+		inline T Clamp(const T Value, const T A, const T B);
 
 		//* Clamp the value in range of [0, 1] 
 		template <typename T>
-		inline T Clamp01(const T& Value);
+		inline T Clamp01(const T Value);
 
 		//* Get the angle in degrees in range of [0, 360)
 		inline float ClampAngle(float Degrees);
@@ -75,6 +82,9 @@ namespace ESource {
 
 		//* Fast pow to ten
 		inline float Pow10(int Number);
+
+		//* Error consideration
+		inline float Atan2(float y, float x);
 	}
 
 }

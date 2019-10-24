@@ -259,6 +259,7 @@ protected:
 		ModelManager& ModelMng = ModelManager::GetInstance();
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/RobotArm.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/RobotArm2.fbx", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/TestTurret.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);

@@ -187,6 +187,18 @@ namespace ESource {
 		OutData.hasNormals = pMesh->GetElementNormalCount() != 0;
 		OutData.hasVertexColor = pMesh->GetElementVertexColorCount() != 0;
 
+		TArray<int> VertexIndexCountByMaterial = TArray<int>(OutData.MaterialsMap.size());
+		TArray<int> FaceIndexCountByMaterial = TArray<int>(OutData.MaterialsMap.size());
+
+		FbxDouble3 Translation = pMesh->GetNode()->GeometricTranslation.Get();
+		FbxDouble3 Rotation = pMesh->GetNode()->GeometricRotation.Get();
+		FbxDouble3 Scaling = pMesh->GetNode()->GeometricScaling.Get();
+
+		Matrix4x4 GeometricTransform =
+			Matrix4x4::Scaling({ (float)Scaling[0], (float)Scaling[1], (float)Scaling[2] }) *
+			Matrix4x4::Rotation({ (float)Rotation[0], (float)Rotation[1], (float)Rotation[2] }) *
+			Matrix4x4::Translation({ (float)Translation[0], (float)Translation[1], (float)Translation[2] });
+
 		int VertexIndex = 0;
 		for (PolygonIndex = 0; PolygonIndex < PolygonCount; ++PolygonIndex) {
 
@@ -200,6 +212,7 @@ namespace ESource {
 				Vertex.Position.x = (float)ControlPoints[ControlPointIndex][0];
 				Vertex.Position.y = (float)ControlPoints[ControlPointIndex][1];
 				Vertex.Position.z = (float)ControlPoints[ControlPointIndex][2];
+				Vertex.Position = GeometricTransform * Vector4(Vertex.Position, 1.F);
 
 				OutData.Bounding.Add(Vertex.Position);
 
@@ -212,28 +225,38 @@ namespace ESource {
 				OutData.StaticVertices.push_back(Vertex);
 			}
 			MaterialIndex = ExtractMaterialIndex(pMesh, PolygonIndex);
+			if (OutData.SubdivisionsMap.find(MaterialIndex + 1) != OutData.SubdivisionsMap.end()) {
+				VertexIndexCountByMaterial[MaterialIndex + 1] += PolygonVertexSize;
+				FaceIndexCountByMaterial[MaterialIndex + 1] += PolygonVertexSize < 4 ? 3 : 6;
+			}
 
 			if (PolygonVertexSize < 4) {
 				OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
-				// if (OutData.Subdivisions.find(MaterialIndex) != OutData.Subdivisions.end())
-					// OutData.Subdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
+				if (OutData.SubdivisionsMap.find(MaterialIndex) != OutData.SubdivisionsMap.end()) {
+					OutData.SubdivisionsMap[MaterialIndex].IndexCount += 3;
+				}
 			}
 			else {
 				OutData.Faces.push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
 				OutData.Faces.push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
-				// if (OutData.Subdivisions.find(MaterialIndex) != OutData.Subdivisions.end()) {
-				// 	OutData.Subdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 3, VertexIndex - 2, VertexIndex - 1));
-				// 	OutData.Subdivisions[MaterialIndex].push_back(IntVector3(VertexIndex - 4, VertexIndex - 3, VertexIndex - 1));
-				// }
+				if (OutData.SubdivisionsMap.find(MaterialIndex) != OutData.SubdivisionsMap.end()) {
+					OutData.SubdivisionsMap[MaterialIndex].IndexCount += 6;
+				}
 			}
 
 			if (PolygonVertexSize > 4 && !bWarned) {
 				bWarned = true;
-				LOG_CORE_WARN(L"The model has n-gons, this may lead to unwanted geometry");
+				LOG_CORE_WARN(L"The model has n-gons, this may lead to incorrect geometry");
 			}
 		}
 
 		OutData.ComputeTangents();
+		
+		for (auto & SubdivisionIt : OutData.SubdivisionsMap) {
+			SubdivisionIt.second.MaterialIndex = SubdivisionIt.first;
+			SubdivisionIt.second.BaseVertex = VertexIndexCountByMaterial[SubdivisionIt.first];
+			SubdivisionIt.second.BaseIndex = FaceIndexCountByMaterial[SubdivisionIt.first];
+		}
 	}
 
 	void FBXLoader::ExtractTextureCoords(
@@ -507,36 +530,34 @@ namespace ESource {
 	}
 
 	void FBXLoader::ExtractNodeTransform(FbxNode * pNode, class FbxScene * pScene, Transform & Transformation) {
-		// FBX Doxumentation ---- T * Roff * Rp * Rpre * R * Rpost - 1 * Rp - 1 * Soff * Sp * S * Sp - 1;
-		FbxVector4 DScaling = { 1.0, 1.0, 1.0, 1.0 };
-		FbxVector4 DZero = { 0.0, 0.0, 0.0, 1.0 };
-		FbxAMatrix OS = FbxAMatrix(DZero, DZero, pNode->GeometricScaling.Get());
-		FbxAMatrix OR = FbxAMatrix(DZero, pNode->GeometricRotation.Get(), DScaling);
-		FbxAMatrix OT = FbxAMatrix(pNode->GeometricTranslation.Get(), DZero, DScaling);
-		FbxAMatrix S  = FbxAMatrix(DZero, DZero, pNode->LclScaling.Get());
-		FbxAMatrix R  = FbxAMatrix(DZero, pNode->LclRotation.Get(), DScaling);
-		FbxAMatrix T  = FbxAMatrix(pNode->LclTranslation.Get(), DZero, DScaling);
+		FbxEuler::EOrder NodeRotationOrder;
+		pNode->GetRotationOrder(FbxNode::EPivotSet::eSourcePivot, NodeRotationOrder);
+		FbxAMatrix LocalTransform = pNode->EvaluateLocalTransform();
+		FbxAMatrix PreRotation;
+		PreRotation.SetR(pNode->GetPreRotation(FbxNode::EPivotSet::eSourcePivot), NodeRotationOrder);
+		FbxAMatrix PostRotation;
+		PostRotation.SetR(pNode->GetPostRotation(FbxNode::EPivotSet::eSourcePivot), NodeRotationOrder);
 
-		FbxAMatrix ResultSRT = T * R * S * OT * OR * OS;
+		FbxAMatrix ResultTransform = PostRotation * LocalTransform * PreRotation;
 
-		FbxDouble3 RScaling = ResultSRT.GetS();
-		FbxDouble3 RRotation = ResultSRT.GetR();
-		FbxDouble3 RTranslation = ResultSRT.GetT();
+		FbxDouble3 RTranslation = ResultTransform.GetT();
+		FbxDouble3 RRotation = ResultTransform.GetR();
+		FbxDouble3 RScaling = ResultTransform.GetS();
 
-
-		// FbxAMatrix GMatrix = pNode->EvaluateGlobalTransform();
-		// FbxAMatrix GIMatrix = GMatrix.Inverse();
-		// FbxVector4 RotationA = pNode->LclRotation.Get();
-		// FbxVector4 RotationB = GMatrix.GetR();
-		// FbxVector4 RotationC = pNode->GetPreRotation(FbxNode::eSourcePivot);
-		// FbxDouble3 Rotation = (
-		// 	FbxAMatrix(FbxVector4(), RotationA, FbxVector4({ 1.0, 1.0, 1.0, 1.0 })) * FbxAMatrix(FbxVector4(), RotationC, FbxVector4({ 1.0, 1.0, 1.0, 1.0 }))
-		// ).GetR();
-		// FbxVector4 ScaleA = (pNode->GetParent() == NULL || pNode->GetParent()->GetParent() == NULL) ? GMatrix.GetS() : FbxVector4(1.0, 1.0, 1.0);
-		// FbxDouble3 Scale = (FbxVector4)pNode->LclScaling.Get() / ScaleA;
-		// FbxDouble3 TranslationA = GMatrix.GetT();
-		// FbxDouble3 TranslationB = pNode->LclTranslation.Get();
-		// FbxDouble3 TranslationC = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+		FbxAMatrix GMatrix = pNode->EvaluateGlobalTransform();
+		FbxAMatrix GIMatrix = GMatrix.Inverse();
+		FbxVector4 RotationA = pNode->LclRotation.Get();
+		FbxVector4 RotationB = GMatrix.GetR();
+		FbxVector4 RotationC = pNode->GetPreRotation(FbxNode::eSourcePivot);
+		FbxVector4 RotationD = pNode->GetPostRotation(FbxNode::eSourcePivot);
+		FbxDouble3 Rotation = (
+			FbxAMatrix(FbxVector4(), RotationA, FbxVector4({ 1.0, 1.0, 1.0, 1.0 })) * FbxAMatrix(FbxVector4(), RotationC, FbxVector4({ 1.0, 1.0, 1.0, 1.0 }))
+		).GetR();
+		FbxVector4 ScaleA = (pNode->GetParent() == NULL || pNode->GetParent()->GetParent() == NULL) ? GMatrix.GetS() : FbxVector4(1.0, 1.0, 1.0);
+		FbxDouble3 Scale = (FbxVector4)pNode->LclScaling.Get() / ScaleA;
+		FbxDouble3 TranslationA = GMatrix.GetT();
+		FbxDouble3 TranslationB = pNode->LclTranslation.Get();
+		FbxDouble3 TranslationC = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
 
 		Transformation.Position[0] = (float)RTranslation[0];
 		Transformation.Position[1] = (float)RTranslation[1];
@@ -549,6 +570,37 @@ namespace ESource {
 		Transformation.Scale[0] = (float)RScaling[0];
 		Transformation.Scale[1] = (float)RScaling[1];
 		Transformation.Scale[2] = (float)RScaling[2];
+	}
+
+	void SetUpNode(FbxNode * pNode) {
+		FbxVector4 lZero(0, 0, 0);
+		
+		// Activate pivot converting
+		pNode->SetPivotState(FbxNode::eSourcePivot, FbxNode::ePivotActive);
+		pNode->SetPivotState(FbxNode::eDestinationPivot, FbxNode::ePivotActive);
+		
+		// We want to set all these to 0 and bake them into the transforms.
+		pNode->SetPostRotation(FbxNode::eDestinationPivot, lZero);
+		pNode->SetPreRotation(FbxNode::eDestinationPivot, lZero);
+		pNode->SetRotationOffset(FbxNode::eDestinationPivot, lZero);
+		pNode->SetScalingOffset(FbxNode::eDestinationPivot, lZero);
+		pNode->SetRotationPivot(FbxNode::eDestinationPivot, lZero);
+		pNode->SetScalingPivot(FbxNode::eDestinationPivot, lZero);
+		
+		// This is to import in a system that supports rotation order.
+		// If rotation order is not supported, do this instead:
+		// pNode->SetRotationOrder(FbxNode::eDestinationPivot, FbxNode::eEulerXYZ);
+		FbxEuler::EOrder lRotationOrder;
+		pNode->GetRotationOrder(FbxNode::eSourcePivot, lRotationOrder);
+		pNode->SetRotationOrder(FbxNode::eDestinationPivot, lRotationOrder);
+		
+		// Similarly, this is the case where geometric transforms are supported by the system.
+		// If geometric transforms are not supported, set them to zero instead of
+		// the source’s geometric transforms.
+		// Geometric transform = local transform, not inherited by children.
+		pNode->SetGeometricTranslation(FbxNode::eDestinationPivot, pNode->GetGeometricTranslation(FbxNode::eSourcePivot));
+		pNode->SetGeometricRotation(FbxNode::eDestinationPivot, pNode->GetGeometricRotation(FbxNode::eSourcePivot));
+		pNode->SetGeometricScaling(FbxNode::eDestinationPivot, pNode->GetGeometricScaling(FbxNode::eSourcePivot));
 	}
 
 	bool FBXLoader::LoadModel(ModelParser::ModelDataInfo & Info, const ModelParser::ParsingOptions & Options) {
@@ -573,12 +625,22 @@ namespace ESource {
 		// GeomConverter.Triangulate(Scene, true);
 		const int NodeCount = Scene->GetSrcObjectCount<FbxNode>();
 		size_t TotalAllocatedSize = 0;
-		TDictionary<FbxUInt64, size_t> NodeMap;
+		TDictionary<FbxUInt64, size_t> FBXNodeMap;
+		TArray<ModelNode *> NodeMap;
 		for (int NodeIndex = 0; NodeIndex < NodeCount; NodeIndex++) {
 			FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
-			// NodeMap.emplace(Node->GetUniqueID(), Info.ModelNodes.size());
-			// Info.ModelNodes.push_back(ModelNode(Node->GetName()));
+			SetUpNode(Node);
+			FBXNodeMap.emplace(Node->GetUniqueID(), NodeMap.size());
+			if (NodeIndex == 0) {
+				NodeMap.emplace_back(&Info.ParentNode);
+				Info.ParentNode.Name = Node->GetName();
+			}
+			else {
+				NodeMap.emplace_back(new ModelNode(Node->GetName()));
+			}
 		}
+
+		Scene->GetRootNode()->ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, 30.0);
 
 		Timer.Stop();
 		LOG_CORE_INFO(L"├> Readed and parsed in {:0.3f}ms", Timer.GetDeltaTime<Time::Mili>());
@@ -587,38 +649,38 @@ namespace ESource {
 		for (int NodeIndex = 0; NodeIndex < NodeCount; NodeIndex++) {
 			FbxNode * Node = Scene->GetSrcObject<FbxNode>(NodeIndex);
 			FbxMesh * lMesh = Node->GetMesh();
-			// ModelNode& CurrentSceneNode = Info.ModelNodes[NodeMap[Node->GetUniqueID()]];
-			// ExtractNodeTransform(Node, Scene, CurrentSceneNode.LocalTransform);
-			// if (Node->GetParent() != NULL)
-			// 	CurrentSceneNode.ParentIndex = NodeMap[Node->GetParent()->GetUniqueID()];
-			// int ChildCount = Node->GetChildCount();
-			// for (int ChildIndex = 0; ChildIndex < ChildCount; ++ChildIndex) {
-			// 	CurrentSceneNode.ChildrenIndices.push_back(NodeMap[Node->GetChild(ChildIndex)->GetUniqueID()]);
-			// }
-			// if (lMesh) {
-			// 	CurrentSceneNode.bHasMesh = true;
-			// 	CurrentSceneNode.MeshKey = Info.Meshes.size();
-			// 	Info.Meshes.push_back(MeshData());
-			// 	MeshData & CurrentMeshData = Info.Meshes.back();
-			// 	CurrentMeshData.Name = lMesh->GetName();
-			// 	if (CurrentMeshData.Name.size() == 0) CurrentMeshData.Name = CurrentSceneNode.Name;
-			// 	const int MaterialCount = Node->GetMaterialCount();
-			// 	for (int MaterialIndex = 0; MaterialIndex < MaterialCount; ++MaterialIndex) {
-			// 		// CurrentMeshData.Materials.insert({ MaterialIndex, Node->GetMaterial(MaterialIndex)->GetName() });
-			// 		// CurrentMeshData.Subdivisions.insert({ MaterialIndex, MeshFaces() });
-			// 	}
-			// 	ExtractVertexData(lMesh, CurrentMeshData);
-			// 
-#ifdef ES_DE// BUG
-			// 	LOG_CORE_DEBUG(L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
-			// 		Text::FormatUnit(CurrentMeshData.StaticVertices.size(), 2),
-			// 		Text::FormatData(sizeof(IntVector3) * CurrentMeshData.Faces.size() + sizeof(StaticVertex) * CurrentMeshData.StaticVertices.size(), 2),
-			// 		Info.Meshes.size(),
-			// 		Text::NarrowToWide(CurrentSceneNode.Name)
-			// 	);
-#endif		// 
-			// 	TotalAllocatedSize += sizeof(IntVector3) * CurrentMeshData.Faces.size() + sizeof(StaticVertex) * CurrentMeshData.StaticVertices.size();
-			// }
+			ModelNode * CurrentSceneNode = NodeMap[FBXNodeMap[Node->GetUniqueID()]];
+			ExtractNodeTransform(Node, Scene, CurrentSceneNode->LocalTransform);
+			if (Node->GetParent() != NULL)
+				CurrentSceneNode->Parent = NodeMap[FBXNodeMap[Node->GetParent()->GetUniqueID()]];
+			int ChildCount = Node->GetChildCount();
+			for (int ChildIndex = 0; ChildIndex < ChildCount; ++ChildIndex) {
+				CurrentSceneNode->Children.push_back(NodeMap[FBXNodeMap[Node->GetChild(ChildIndex)->GetUniqueID()]]);
+			}
+			if (lMesh) {
+				CurrentSceneNode->bHasMesh = true;
+				CurrentSceneNode->MeshKey = Info.Meshes.size();
+				Info.Meshes.push_back(MeshData());
+				MeshData & CurrentMeshData = Info.Meshes.back();
+				CurrentMeshData.Name = lMesh->GetName();
+				if (CurrentMeshData.Name.size() == 0) CurrentMeshData.Name = CurrentSceneNode->Name;
+				const int MaterialCount = Node->GetMaterialCount();
+				for (int MaterialIndex = 0; MaterialIndex < MaterialCount; ++MaterialIndex) {
+					CurrentMeshData.MaterialsMap.emplace(MaterialIndex, Node->GetMaterial(MaterialIndex)->GetName());
+					CurrentMeshData.SubdivisionsMap.emplace(MaterialIndex, Subdivision());
+				}
+				ExtractVertexData(lMesh, CurrentMeshData);
+			
+#ifdef ES_DEBUG
+				LOG_CORE_DEBUG(L"├> Parsed {0}	vertices in {1}	at [{2:d}]'{3}'",
+					Text::FormatUnit(CurrentMeshData.StaticVertices.size(), 2),
+					Text::FormatData(sizeof(IntVector3) * CurrentMeshData.Faces.size() + sizeof(StaticVertex) * CurrentMeshData.StaticVertices.size(), 2),
+					Info.Meshes.size(),
+					Text::NarrowToWide(CurrentSceneNode->Name)
+				);
+#endif		
+				TotalAllocatedSize += sizeof(IntVector3) * CurrentMeshData.Faces.size() + sizeof(StaticVertex) * CurrentMeshData.StaticVertices.size();
+			}
 		}
 
 		Timer.Stop();

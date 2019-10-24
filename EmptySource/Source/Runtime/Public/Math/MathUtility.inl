@@ -75,8 +75,8 @@ namespace ESource {
 
 	namespace Math {
 		//* The number is power of 2
-		inline int IsPow2(const int& x) {
-			return ((x&(x - 1)) == 0);
+		inline int IsPow2(const int A) {
+			return ((A & (A - 1)) == 0);
 		}
 
 		//* Get the next power2 of the value
@@ -92,47 +92,57 @@ namespace ESource {
 	}
 
 	template <typename T>
-	T Math::Min(const T & A, const T & B) {
+	T Math::Min(const T A, const T B) {
 		return B < A ? B : A;
 	}
 
 	template <typename T>
-	T Math::Max(const T & A, const T & B) {
+	T Math::Max(const T A, const T B) {
 		return A < B ? B : A;
 	}
 
 	template <typename T, typename S>
-	T Math::Median(const T& A, const T& B, const S& Alpha) {
+	T Math::Median(const T A, const T B, const S Alpha) {
 		return Max(Min(A, B), Min(Max(A, B), Alpha));
 	}
 
 	template <typename T, typename S>
-	T Math::Mix(const T& A, const T& B, const S& Weight) {
+	T Math::Mix(const T A, const T B, const S Weight) {
 		return T((S(1) - Weight) * A + Weight * B);
 	}
 
 	template<typename T>
-	int Math::Sign(const T& Value) {
-		return (0.F < Value) - (Value < 0.F);
+	T Math::Abs(const T Value) {
+		return fabs(Value);
 	}
 
 	template<typename T>
-	int Math::NonZeroSign(const T & Value) {
-		return 2 * (Value > T(0)) - 1;
+	T Math::Sign(const T Value) {
+		return (T(0) < Value) - (Value < T(0));
+	}
+
+	template<typename T>
+	T Math::NonZeroSign(const T Value) {
+		return T(2) * (Value > T(0)) - T(1);
+	}
+
+	template<typename T>
+	T Math::Square(const T Value) {
+		return Value * Value;
 	}
 
 	template <typename T>
-	T Math::Clamp(const T& Value, const T & A) {
+	T Math::Clamp(const T Value, const T A) {
 		return Value >= T(0) && Value <= A ? Value : T(Value > T(0)) * A;
 	}
 
 	template <typename T>
-	T Math::Clamp(const T & Value, const T & A, const T & B) {
+	T Math::Clamp(const T Value, const T A, const T B) {
 		return Value >= A && Value <= B ? Value : Value < A ? A : B;
 	}
 
 	template <typename T>
-	T Math::Clamp01(const T & Value) {
+	T Math::Clamp01(const T Value) {
 		return Value >= T(0) && Value <= T(1) ? Value : Value < T(0) ? T(0) : T(1);
 	}
 
@@ -174,6 +184,46 @@ namespace ESource {
 			Number >>= 1;
 		}
 		return Ret;
+	}
+
+	// Referenced from UE4 implementation
+	float Math::Atan2(float y, float x) {
+		const float absX = Math::Abs(x);
+		const float absY = Math::Abs(y);
+		const bool yAbsBigger = (absY > absX);
+		float t0 = yAbsBigger ? absY : absX; // Max(absY, absX)
+		float t1 = yAbsBigger ? absX : absY; // Min(absX, absY)
+
+		if (t0 == 0.F)
+			return 0.F;
+
+		float t3 = t1 / t0;
+		float t4 = t3 * t3;
+
+		static const float c[7] = {
+			+7.2128853633444123e-03F,
+			-3.5059680836411644e-02F,
+			+8.1675882859940430e-02F,
+			-1.3374657325451267e-01F,
+			+1.9856563505717162e-01F,
+			-3.3324998579202170e-01F,
+			+1.0F
+		};
+
+		t0 = c[0];
+		t0 = t0 * t4 + c[1];
+		t0 = t0 * t4 + c[2];
+		t0 = t0 * t4 + c[3];
+		t0 = t0 * t4 + c[4];
+		t0 = t0 * t4 + c[5];
+		t0 = t0 * t4 + c[6];
+		t3 = t0 * t3;
+
+		t3 = yAbsBigger ? (0.5F * MathConstants::Pi) - t3 : t3;
+		t3 = (x < 0.0F) ? MathConstants::Pi - t3 : t3;
+		t3 = (y < 0.0F) ? -t3 : t3;
+
+		return t3;
 	}
 
 }

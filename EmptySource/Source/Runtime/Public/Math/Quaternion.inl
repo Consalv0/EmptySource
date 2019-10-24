@@ -28,27 +28,24 @@ namespace ESource {
 	{ }
 
 	inline Quaternion Quaternion::EulerAngles(Vector3 const & EulerAngles) {
-		float Scale = MathConstants::DegreeToRad * 0.5F;
-		float HalfRoll  =  EulerAngles[Roll] * Scale;
+		const float Scale = MathConstants::DegreeToRad * 0.5F;
+		float HalfRoll = EulerAngles[Roll] * Scale;
 		float HalfPitch = EulerAngles[Pitch] * Scale;
-		float HalfYaw   =   EulerAngles[Yaw] * Scale;
+		float HalfYaw = EulerAngles[Yaw] * Scale;
 
-		float SinRoll  = std::sin(HalfRoll);
-		float CosRoll  = std::cos(HalfRoll);
-		float SinPitch = std::sin(HalfPitch);
-		float CosPitch = std::cos(HalfPitch);
-		float SinYaw   = std::sin(HalfYaw);
-		float CosYaw   = std::cos(HalfYaw);
+		float SR = std::sin(HalfRoll);
+		float CR = std::cos(HalfRoll);
+		float SP = std::sin(HalfPitch);
+		float CP = std::cos(HalfPitch);
+		float SY = std::sin(HalfYaw);
+		float CY = std::cos(HalfYaw);
 
-		float CosYawPitch = CosYaw * CosPitch;
-		float SinYawPitch = SinYaw * SinPitch;
-
-		Quaternion Result;
-		Result.x = (CosYaw * SinPitch * CosRoll) + (SinYaw * CosPitch * SinRoll);
-		Result.y = (SinYaw * CosPitch * CosRoll) - (CosYaw * SinPitch * SinRoll);
-		Result.z = (CosYawPitch * SinRoll) - (SinYawPitch * CosRoll);
-		Result.w = (CosYawPitch * CosRoll) + (SinYawPitch * SinRoll);
-		return Result;
+		Quaternion EulerToQuat;
+		EulerToQuat.x = (CY * SP * CR) + (SY * CP * SR);
+		EulerToQuat.y = (SY * CP * CR) - (CY * SP * SR);
+		EulerToQuat.z = (CY * CP * SR) - (SY * SP * CR);
+		EulerToQuat.w = (CY * CP * CR) + (SY * SP * SR);
+		return EulerToQuat;
 	}
 
 	FORCEINLINE Quaternion Quaternion::FromToRotation(Vector3 const & From, Vector3 const & To) {
@@ -130,6 +127,40 @@ namespace ESource {
 		);
 	}
 
+	inline void Quaternion::Interpolate(Quaternion & Out, const Quaternion & Start, const Quaternion & End, float Factor) {
+		float CosTheta = Start.x * End.x + Start.y * End.y + Start.z * End.z + Start.w * End.w;
+
+		// Adjust signs (if necessary)
+		Quaternion AdjEnd = End;
+		if (CosTheta < 0.F) {
+			CosTheta = -CosTheta;
+			AdjEnd.x = -AdjEnd.x;   // Reverse all signs
+			AdjEnd.y = -AdjEnd.y;
+			AdjEnd.z = -AdjEnd.z;
+			AdjEnd.w = -AdjEnd.w;
+		}
+
+		// Calculate coefficients
+		float sclp, sclq;
+		if ((1.F - CosTheta) > 0.0001F) {
+			// Standard case (slerp)
+			float omega = std::acos(CosTheta); // extract theta from dot product's cos theta
+			float sinom = std::sin(omega);
+			sclp = std::sin((1.F - Factor) * omega) / sinom;
+			sclq = std::sin(Factor * omega) / sinom;
+		}
+		else {
+			// Very close, do linear interp (because it's faster)
+			sclp = 1.F - Factor;
+			sclq = Factor;
+		}
+
+		Out.x = sclp * Start.x + sclq * AdjEnd.x;
+		Out.y = sclp * Start.y + sclq * AdjEnd.y;
+		Out.z = sclp * Start.z + sclq * AdjEnd.z;
+		Out.w = sclp * Start.w + sclq * AdjEnd.w;
+	}
+
 	inline float Quaternion::Magnitude() const {
 		return sqrtf(x * x + y * y + z * z + w * w);
 	}
@@ -199,13 +230,11 @@ namespace ESource {
 	inline float Quaternion::GetPitch() const {
 		float Pitch;
 		const float SingularityTest = x * y + z * w;
-		if (std::abs(SingularityTest) > 0.499F) {
+		if (Math::Abs(SingularityTest) > 0.499995F) {
 			return 0.F;
 		}
 		else {
-			const float sqx = x * x;
-			const float sqz = z * z;
-			Pitch = atan2((2 * x * w) - (2 * y * z), 1 - (2 * sqx) - (2 * sqz));
+			Pitch = Math::Atan2((2.F * x * w) - (2.F * y * z), 1.F - (2.F * Math::Square(x)) - (2.F * Math::Square(z)));
 		}
 		return Pitch * MathConstants::RadToDegree;
 	}
@@ -213,16 +242,16 @@ namespace ESource {
 	inline float Quaternion::GetYaw() const {
 		float Yaw;
 		const float SingularityTest = x * y + z * w;
-		if (SingularityTest > 0.499F) {
-			Yaw = 2 * atan2(x, w);
+		if (SingularityTest > 0.499995F) {
+			Yaw = 2.F * Math::Atan2(x, w);
 		}
-		else if (SingularityTest < -0.499F) {
-			Yaw = -2 * atan2(x, w);
+		else if (SingularityTest < -0.49999F) {
+			Yaw = -2.F * Math::Atan2(x, w);
 		}
 		else {
 			const float sqy = y * y;
 			const float sqz = z * z;
-			Yaw = atan2((2 * y * w) - (2 * x * z), 1 - (2 * sqy) - (2 * sqz));
+			Yaw = Math::Atan2((2.F * y * w) - (2.F * x * z), 1.F - (2.F * sqy) - (2.F * sqz));
 		}
 		return Yaw * MathConstants::RadToDegree;
 	}
@@ -230,14 +259,14 @@ namespace ESource {
 	inline float Quaternion::GetRoll() const {
 		float Roll;
 		const float SingularityTest = x * y + z * w;
-		if (SingularityTest > 0.499F) {
+		if (SingularityTest > 0.499995F) {
 			Roll = MathConstants::HalfPi;
 		}
-		else if (SingularityTest < -0.499F) {
+		else if (SingularityTest < -0.499995F) {
 			Roll = -MathConstants::HalfPi;
 		}
 		else {
-			Roll = asin(2 * SingularityTest);
+			Roll = asin(2.F * SingularityTest);
 		}
 		return Roll * MathConstants::RadToDegree;
 	}
@@ -251,31 +280,26 @@ namespace ESource {
 	}
 
 	inline Vector3 Quaternion::ToEulerAngles() const {
-		float xx(x * x);
-		float yy(y * y);
-		float zz(z * z);
-		float xy(x * y);
-		float zw(z * w);
-		float zx(z * x);
-		float yw(y * w);
-		float yz(y * z);
-		float xw(x * w);
+		Vector3 EulerFromQuat;
 
-		Vector3 Result;
-		Result[Pitch] = std::asin(2.F * (xw - yz));
-		double Test = std::cos((double)Result[Pitch]);
+		float PitchY = std::asin(2.F * (x * w - y * z));
+		float Test = std::cos(PitchY);
 		if (Test > MathConstants::TendencyZero) {
-			Result[Roll] = std::atan2(2.F * (xy + zw), 1.F - (2.F * (zz + xx)));
-			Result[Yaw]  = std::atan2(2.F * (zx + yw), 1.F - (2.F * (yy + xx)));
-		} else {
-			Result[Roll] = std::atan2(-2.F * (xy - zw), 1.F - (2.F * (yy + zz)));
-			Result[Yaw] = 0.F;
+			EulerFromQuat[Roll]  = Math::Atan2(2.F * (x * y + z * w), 1.F - (2.F * (Math::Square(z) + Math::Square(x)))) * MathConstants::RadToDegree;
+			EulerFromQuat[Pitch] = PitchY * MathConstants::RadToDegree;
+			EulerFromQuat[Yaw]   = Math::Atan2(2.F * (z * x + y * w), 1.F - (2.F * (Math::Square(y) + Math::Square(x)))) * MathConstants::RadToDegree;
+		}
+		else {
+			EulerFromQuat[Roll]  = Math::Atan2(-2.F * (x * y - z * w), 1.F - (2.F * (Math::Square(y) + Math::Square(z)))) * MathConstants::RadToDegree;
+			EulerFromQuat[Pitch] = PitchY * MathConstants::RadToDegree;
+			EulerFromQuat[Yaw]   = 0.F;
 		}
 
-		if (std::isinf(Result[Roll])  || std::isnan(Result[Roll]))   Result[Roll] = 0.F;
-		if (std::isinf(Result[Pitch]) || std::isnan(Result[Pitch])) Result[Pitch] = 0.F;
-		if (std::isinf(Result[Yaw])   || std::isnan(Result[Yaw]))     Result[Yaw] = 0.F;
-		return Result * MathConstants::RadToDegree;
+		if (std::isinf(EulerFromQuat[Roll])  || std::isnan(EulerFromQuat[Roll]))   EulerFromQuat[Roll] = 0.F;
+		if (std::isinf(EulerFromQuat[Pitch]) || std::isnan(EulerFromQuat[Pitch])) EulerFromQuat[Pitch] = 0.F;
+		if (std::isinf(EulerFromQuat[Yaw])   || std::isnan(EulerFromQuat[Yaw]))     EulerFromQuat[Yaw] = 0.F;
+
+		return EulerFromQuat;
 	}
 
 	FORCEINLINE float Quaternion::Dot(const Quaternion & Other) const {
