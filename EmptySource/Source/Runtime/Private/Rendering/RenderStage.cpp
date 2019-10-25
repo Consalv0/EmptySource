@@ -78,14 +78,14 @@ namespace ESource {
 		Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 		Scene.RenderLightMap(1, ShaderManager::GetInstance().GetProgram(L"DepthTestShader")); 
 		Rendering::SetAlphaBlending(BF_None, BF_None);
-		Rendering::SetViewport({ 0, 0, GeometryBuffer->GetSize().x, GeometryBuffer->GetSize().y });
+		Rendering::SetViewport(GeometryBuffer->GetViewport());
 		GeometryBuffer->Bind();
 		GeometryBuffer->Clear();
 		Scene.DeferredRenderOpaque();
 		Rendering::Flush();
 		GeometryBuffer->TransferDepthTo(
 			&*Target, PF_ShadowDepth, FM_MinMagNearest,
-			{ 0, 0, Target->GetSize().x, Target->GetSize().y }, { 0, 0, GeometryBuffer->GetSize().x, GeometryBuffer->GetSize().y }
+			Target->GetViewport(), GeometryBuffer->GetViewport()
 		);
 		GeometryBuffer->Bind();
 		Scene.DeferredRenderTransparent();
@@ -93,7 +93,7 @@ namespace ESource {
 		Rendering::Flush();
 
 		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-		Rendering::SetViewport({ 0, 0, Target->GetSize().x, Target->GetSize().y });
+		Rendering::SetViewport(Target->GetViewport());
 		Target->Bind();
 		Scene.ForwardRender();
 		Rendering::Flush();
@@ -205,18 +205,18 @@ namespace ESource {
 		
 		RTexturePtr SSAOTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAO", L"", PF_R32F, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOTexture) {
-			if (SSAOTexture->GetSize() != Target->GetSize() / IntVector3(2, 2, 1)) {
+			if (SSAOTexture->GetSize() != Target->GetSize()) {
 				SSAOTexture->Unload();
-				SSAOTexture->SetSize(Target->GetSize() / IntVector3(2, 2, 1));
+				SSAOTexture->SetSize(Target->GetSize());
 				SSAOTexture->Load();
 			}
 		}
 		
 		RTexturePtr SSAOBlurTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAOBlur", L"", PF_R8, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOBlurTexture) {
-			if (SSAOBlurTexture->GetSize() != Target->GetSize() / IntVector3(2, 2, 1)) {
+			if (SSAOBlurTexture->GetSize() != Target->GetSize()) {
 				SSAOBlurTexture->Unload();
-				PixelMap WhiteData(Target->GetSize().x / 2, Target->GetSize().y / 2, 1, PF_R8);
+				PixelMap WhiteData(Target->GetSize().x, Target->GetSize().y, 1, PF_R8);
 				PixelMapUtility::PerPixelOperator(WhiteData, [](unsigned char * Pixel, const unsigned char &) { Pixel[0] = 255; });
 				SSAOBlurTexture->SetPixelData(WhiteData);
 				SSAOBlurTexture->Load();
@@ -267,11 +267,11 @@ namespace ESource {
 		Target->TransferDepthTo(
 			NULL, PF_ShadowDepth, FM_MinMagNearest,
 			{ 0, 0, Target->GetSize().x, Target->GetSize().y },
-			{ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() }
+			{ Application::GetInstance()->GetWindow().GetViewport() }
 		);
 		Rendering::SetDefaultRender();
 		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-		Rendering::SetViewport({ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() });
+		Rendering::SetViewport(Application::GetInstance()->GetWindow().GetViewport());
 
 		if (RenderShader && RenderShader->IsValid()) {
 			RenderShader->GetProgram()->Bind();

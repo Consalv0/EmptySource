@@ -157,10 +157,23 @@ protected:
 		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
 		AudioManager::GetInstance().LoadAudioFromFile(L"Hololooo.wav", L"Resources/Sounds/Hololooo.wav");
 
+		PixelMap WhiteMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
+		PixelMapUtility::PerPixelOperator(WhiteMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 255; Value[1] = 255; Value[2] = 255; });
+		PixelMap BlackMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
+		PixelMapUtility::PerPixelOperator(BlackMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 0; Value[1] = 0; Value[2] = 0; });
+		PixelMap NormlMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
+		PixelMapUtility::PerPixelOperator(NormlMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 128; Value[1] = 128; Value[2] = 255; });
+
 		TextureManager& TextureMng = TextureManager::GetInstance();
-		TextureMng.LoadImageFromFile(L"WhiteTexture",   PF_RGB8,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/White.jpg");
-		TextureMng.LoadImageFromFile(L"BlackTexture",   PF_RGB8,  FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Black.jpg");
-		TextureMng.LoadImageFromFile(L"NormalTexture",  PF_RGBA8, FM_MinMagNearest, SAM_Repeat, true, true, L"Resources/Textures/Normal.jpg");
+		auto & WhiteTexture = TextureMng.CreateTexture2D(L"WhiteTexture", L"", PF_RGB8,  FM_MinMagNearest, SAM_Repeat);
+		WhiteTexture->SetPixelData(WhiteMap);
+		WhiteTexture->Load();
+		auto & BlackTexture = TextureMng.CreateTexture2D(L"BlackTexture", L"", PF_RGB8,  FM_MinMagNearest, SAM_Repeat);
+		BlackTexture->SetPixelData(BlackMap);
+		BlackTexture->Load();
+		auto & NormalTexture = TextureMng.CreateTexture2D(L"NormalTexture", L"", PF_RGB8, FM_MinMagNearest, SAM_Repeat);
+		NormalTexture->SetPixelData(NormlMap);
+		NormalTexture->Load();
 		TextureMng.LoadImageFromFile(L"FlowMapTexture", PF_RGB8,  FM_MinMagLinear,  SAM_Repeat, true, true, L"Resources/Textures/FlowMap.jpg");
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
@@ -1091,6 +1104,10 @@ protected:
 		// 
 		// ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
 		// // ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
+
+		if (Input::IsKeyDown(SDL_SCANCODE_BACKSPACE)) {
+			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
+		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
 			MaterialMetalness -= 1.F * Time::GetDeltaTime<Time::Second>();

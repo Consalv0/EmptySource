@@ -47,6 +47,7 @@ namespace ESource {
 	Application::Application() {
 		bInitialized = false;
 		bRunning = false;
+		bRenderImGui = false;
 	}
 
 	void Application::Run() {
@@ -150,10 +151,12 @@ namespace ESource {
 				for (Layer* LayerPointer : AppLayerStack)
 					LayerPointer->OnRender();
 
-				ImGuiLayerInstance->Begin();
-				for (Layer* LayerPointer : AppLayerStack)
-					LayerPointer->OnImGuiRender();
-				ImGuiLayerInstance->End();
+					ImGuiLayerInstance->Begin();
+				if (bRenderImGui) {
+					for (Layer* LayerPointer : AppLayerStack)
+						LayerPointer->OnImGuiRender();
+				}
+					ImGuiLayerInstance->End();
 
 				GetRenderPipeline().EndOfFrame();
 				GetWindow().EndFrame();

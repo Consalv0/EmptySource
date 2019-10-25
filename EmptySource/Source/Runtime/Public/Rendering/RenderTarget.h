@@ -43,6 +43,9 @@ namespace ESource {
 		//* Get size of render
 		virtual IntVector3 GetSize() const = 0;
 
+		//* Get the viewport for this renderer
+		virtual IntBox2D GetViewport() const = 0;
+
 		//* Checks the framebuffer status
 		virtual bool CheckStatus() const = 0;
 

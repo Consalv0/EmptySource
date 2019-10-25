@@ -25,6 +25,7 @@ GLSL:
         }
     - StageType: Pixel
       Code: |
+        const int SAMPLE_COUNT = 16;		
         const int KERNEL_SIZE = 64;
         uniform mat4 _ProjectionMatrix;
         
@@ -67,7 +68,7 @@ GLSL:
 
           float Occlusion = 0.0;
 
-          for (int i = 0 ; i < KERNEL_SIZE ; i++) {
+          for (int i = 0 ; i < SAMPLE_COUNT ; i++) {
               vec3 SamplePos = TBN * _Kernel[i];
                    SamplePos = Position + SamplePos * Radius;
               vec4 Offset = vec4(SamplePos, 1.0);

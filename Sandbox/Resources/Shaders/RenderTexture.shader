@@ -75,8 +75,7 @@ GLSL:
           } else {
             Color = textureLod(_MainTexture, vVertex.UV0, _Lod);
           }
-        
-          Color.rgb = vec3(1.0) - exp(-Color.rgb * 1.0);
+          
           Color.rgb = pow(Color.rgb, vec3(1.0/_Gamma));
           
           Color *= _ColorFilter;

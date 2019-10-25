@@ -9,7 +9,6 @@ namespace ESource {
 	class Application {
 
 	public:
-
 		static Application * GetInstance();
 
 		class RenderPipeline & GetRenderPipeline();
@@ -35,13 +34,16 @@ namespace ESource {
 		//* The application is running
 		bool IsRunning() { return bRunning; }
 
+		bool GetRenderImGui() const { return bRenderImGui; }
+
+		void SetRenderImGui(bool Option) { bRenderImGui = Option; };
+
 		//* Entry point of the application
 		void Run();
 
 		virtual ~Application() = default;
 
 	protected:
-
 		std::unique_ptr<Window> WindowInstance;
 
 		std::unique_ptr<DeviceFunctions> DeviceFunctionsInstance;
@@ -58,6 +60,8 @@ namespace ESource {
 		bool bInitialized;
 
 		bool bRunning;
+
+		bool bRenderImGui;
 
 		LayerStack AppLayerStack;
 

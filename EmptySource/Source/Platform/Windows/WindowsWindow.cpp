@@ -238,6 +238,10 @@ namespace ESource {
 		return IntVector2(Width, Height);
 	}
 
+	IntBox2D WindowsWindow::GetViewport() const {
+		return IntBox2D(0, 0, Width, Height);
+	}
+
 	void * WindowsWindow::GetHandle() const	{
 		return WindowHandle;
 	}

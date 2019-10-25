@@ -41,7 +41,7 @@ GLSL:
           float AmbientOcclusion = texture(_AOTexture, UV0Coords, 0).r;
 
           vec3 Color = Sample.rgb;
-          Color *= AmbientOcclusion;
+          Color *= pow(AmbientOcclusion, 5.0);
 
           Color = vec3(1.0) - exp(-Color * _Exposure);
           Color = pow(Color, vec3(1.0 / _Gamma));
