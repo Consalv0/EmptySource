@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YAML-CPP", "EmptySource\Ext
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EmptySource", "EmptySource\EmptySource.vcxproj", "{A5F129C6-11A7-A2BB-9A9B-9C92065099BF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Showroom", "Showroom\Showroom.vcxproj", "{43694A66-2F36-A571-584F-9319447BDAFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -50,6 +52,12 @@ Global
 		{A5F129C6-11A7-A2BB-9A9B-9C92065099BF}.Release|x64.Build.0 = Release|x64
 		{A5F129C6-11A7-A2BB-9A9B-9C92065099BF}.Shipping|x64.ActiveCfg = Shipping|x64
 		{A5F129C6-11A7-A2BB-9A9B-9C92065099BF}.Shipping|x64.Build.0 = Shipping|x64
+		{43694A66-2F36-A571-584F-9319447BDAFF}.Debug|x64.ActiveCfg = Debug|x64
+		{43694A66-2F36-A571-584F-9319447BDAFF}.Debug|x64.Build.0 = Debug|x64
+		{43694A66-2F36-A571-584F-9319447BDAFF}.Release|x64.ActiveCfg = Release|x64
+		{43694A66-2F36-A571-584F-9319447BDAFF}.Release|x64.Build.0 = Release|x64
+		{43694A66-2F36-A571-584F-9319447BDAFF}.Shipping|x64.ActiveCfg = Shipping|x64
+		{43694A66-2F36-A571-584F-9319447BDAFF}.Shipping|x64.Build.0 = Shipping|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

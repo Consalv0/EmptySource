@@ -1,0 +1,65 @@
+Resources:
+  - GUID: 1065292994571088177
+    ShaderProgram:
+      Name: EquirectangularToCubemap
+      OriginFile: Resources/Shaders/EquirectangularToCubemap.shader
+  - GUID: 13659627102453736913
+    ShaderProgram:
+      Name: HDRClampingShader
+      OriginFile: Resources/Shaders/HDRClamping.shader
+  - GUID: 16680565041064288702
+    ShaderProgram:
+      Name: PBRShader
+      OriginFile: Resources/Shaders/PBR.shader
+  - GUID: 9336688078605051222
+    ShaderProgram:
+      Name: UnLitShader
+      OriginFile: Resources/Shaders/UnLit.shader
+  - GUID: 13529331485394247641
+    ShaderProgram:
+      Name: RenderTextureShader
+      OriginFile: Resources/Shaders/RenderTexture.shader
+  - GUID: 7125355921710917221
+    ShaderProgram:
+      Name: IntegrateBRDFShader
+      OriginFile: Resources/Shaders/IntegrateBRDF.shader
+  - GUID: 17535125667370803355
+    ShaderProgram:
+      Name: RenderTextShader
+      OriginFile: Resources/Shaders/RenderText.shader
+  - GUID: 739022771965855291
+    ShaderProgram:
+      Name: RenderCubemapShader
+      OriginFile: Resources/Shaders/RenderCubemap.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: CloudsShader
+      OriginFile: Resources/Shaders/Clouds.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: DepthTestShader
+      OriginFile: Resources/Shaders/DepthTest.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: RenderScreenTexture
+      OriginFile: Resources/Shaders/RenderScreenTexture.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingBloom
+      OriginFile: Resources/Shaders/PostProcessingBloom.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingBloomThreshold
+      OriginFile: Resources/Shaders/PostProcessingBloomThreshold.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: GBufferPass
+      OriginFile: Resources/Shaders/GBufferPass.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingSSAO
+      OriginFile: Resources/Shaders/PostProcessingSSAO.shader
+  - GUID: 10653516802362644238
+    ShaderProgram:
+      Name: PostProcessingSSAOBlur
+      OriginFile: Resources/Shaders/PostProcessingSSAOBlur.shader

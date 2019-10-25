@@ -200,3 +200,96 @@ project "Sandbox"
 		defines "ES_SHIPPING"
 		runtime "Release"
 		optimize "on"
+
+project "Showroom"
+	location "Showroom"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("%{prj.name}/Build/" .. outputdir)
+	objdir ("%{prj.name}/BinObjs/" .. outputdir)
+
+	files {
+		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Source/**.cpp"
+	}
+
+	includedirs {
+		"EmptySource/Source",
+		"EmptySource/Source/Runtime",
+		"EmptySource/Source/Runtime/Public",
+        "%{IncludeDir.RobinMap}",
+		"%{IncludeDir.SPDLOG}",
+		"%{IncludeDir.GLAD}"
+	}
+
+    libdirs { 
+        "EmptySource/Libraries"
+    }
+
+	links {
+        "freetype.lib",
+		"libfbxsdk-mt.lib",
+		"EmptySource"
+    }
+
+    configuration "Debug"
+        libdirs { 
+            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\debug"
+		}
+		
+		links {
+			"Assimp\\Debug\\assimp-vc141-mtd.lib"
+		}
+    
+    configuration "Release"
+        libdirs {
+			"C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
+		}
+		
+		links {
+			"Assimp\\Release\\assimp-vc141-mt.lib"
+		}
+
+    configuration "Shipping"
+        libdirs {
+            "C:\\Program Files\\Autodesk\\FBX\\FBX SDK\\2019.0\\lib\\vs2015\\x64\\release"
+        }
+		
+		links {
+			"Assimp\\Release\\assimp-vc141-mt.lib"
+		}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines {
+            "ES_PLATFORM_WINDOWS"
+		}
+
+		libdirs {
+			"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v10.0\\lib\\x64"
+		}
+
+		links {
+			"nvml.lib",
+		}
+
+	filter "configurations:Debug"
+		defines { 
+			"ES_DEBUG", "ES_ENABLE_ASSERTS"
+		}
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "ES_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Shipping"
+		defines "ES_SHIPPING"
+		runtime "Release"
+		optimize "on"
