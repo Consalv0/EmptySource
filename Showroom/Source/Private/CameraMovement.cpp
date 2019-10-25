@@ -31,26 +31,24 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		CameraRotation = Quaternion::EulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.y, -Input::GetMouseX() - -LastCursorPosition.x));
 	}
 
+	Vector3 MovementDirection = Vector3();
 	if (Input::IsKeyDown(26)) {
-		Vector3 Forward = CameraRotation * Vector3(0, 0, ViewSpeed);
-		GetGameObject().LocalTransform.Position += Forward * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(225) ? !Input::IsKeyDown(224) ? 1.F : .1F : 4.F);
+		MovementDirection += CameraRotation * Vector3(0, 0, 1.F);
 	}
 	if (Input::IsKeyDown(4)) {
-		Vector3 Right = CameraRotation * Vector3(ViewSpeed, 0, 0);
-		GetGameObject().LocalTransform.Position += Right * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(225) ? !Input::IsKeyDown(224) ? 1.F : .1F : 4.F);
+		MovementDirection += CameraRotation * Vector3(1.F, 0, 0);
 	}
 	if (Input::IsKeyDown(22)) {
-		Vector3 Back = CameraRotation * Vector3(0, 0, -ViewSpeed);
-		GetGameObject().LocalTransform.Position += Back * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(225) ? !Input::IsKeyDown(224) ? 1.F : .1F : 4.F);
+		MovementDirection += CameraRotation * Vector3(0, 0, -1.F);
 	}
 	if (Input::IsKeyDown(7)) {
-		Vector3 Left = CameraRotation * Vector3(-ViewSpeed, 0, 0);
-		GetGameObject().LocalTransform.Position += Left * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(225) ? !Input::IsKeyDown(224) ? 1.F : .1F : 4.F);
+		MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
 	}
+
+	MovementDirection.y = 0.F;
+	MovementDirection.Normalize();
+	GetGameObject().LocalTransform.Position += MovementDirection * ViewSpeed * Time::GetDeltaTime<Time::Second>() *
+		(!Input::IsKeyDown(225) ? !Input::IsKeyDown(224) ? 1.F : .1F : 4.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
 }

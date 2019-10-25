@@ -283,6 +283,7 @@ namespace ESource {
 			RenderShader->GetProgram()->SetTexture("_MainTexture", Target->GetBindedTexture(0), 0);
 			RenderShader->GetProgram()->SetTexture("_BloomTexture", BloomTexture->GetNativeTexture(), 1);
 			RenderShader->GetProgram()->SetTexture("_AOTexture", SSAOBlurTexture->GetNativeTexture(), 2);
+			RenderShader->GetProgram()->SetTexture("_DepthTexture", TextureManager::GetInstance().GetTexture(L"GDepth")->GetNativeTexture(), 3);
 			RenderShader->GetProgram()->SetFloat1Array("_Exposure", &Pipeline->Exposure, 1);
 			RenderShader->GetProgram()->SetFloat1Array("_Gamma", &Pipeline->Gamma, 1);
 

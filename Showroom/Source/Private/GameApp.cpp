@@ -47,48 +47,23 @@
 #include "../External/IMGUI/imgui.h"
 #include "../External/SDL2/include/SDL_keycode.h"
 
-#include "../Public/SandboxSpaceLayer.h"
+#include "../Public/GameSpaceLayer.h"
 
 using namespace ESource;
 
-class SandboxLayer : public Layer {
+class GameLayer : public Layer {
 private:
 	Font FontFace;
 	Text2DGenerator TextGenerator;
 	PixelMap FontAtlas;
 
-	// TArray<MeshPtr> SceneModels;
-	// TArray<MeshPtr> LightModels;
-	RMeshPtr SelectedMesh;
-	WString SelectedMeshName;
-	
-	// --- Camera rotation, position Matrix
-	float ViewSpeed = 3;
-	Vector3 ViewOrientation;
-	Matrix4x4 ViewMatrix; 
-	Quaternion CameraRotation;
-	Quaternion LastCameraRotation;
-	Vector2 LastCursorPosition;
-	Vector2 CursorPosition;
+	float SkyboxRoughness = 1.F;
 
-	Material UnlitMaterial = Material(L"UnlitMaterial");
-	Material UnlitMaterialWire = Material(L"UnlitMaterialWire");
 	Material RenderTextureMaterial = Material(L"RenderTextureMaterial");
+	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
 	MaterialPtr RenderTextMaterial = std::make_shared<Material>(L"RenderTextMaterial");
 	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
-	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
 
-	float SkyboxRoughness = 1.F;
-	float MaterialMetalness = 1.F;
-	float MaterialRoughness = 1.F;
-	float LightIntencity = 20.F;
-
-	TArray<Transform> Transforms; 
-	Matrix4x4 TransformMat;
-	Matrix4x4 InverseTransform; 
-	Vector3 CameraRayDirection;
-	
-	TArray<int> ElementsIntersected;
 	float MultiuseValue = 1;
 	static const int TextCount = 4;
 	float FontSize = 14;
@@ -101,24 +76,19 @@ private:
 	RTexturePtr FontMap;
 	RTexturePtr CubemapTexture;
 
-	Transform TestArrowTransform;
-	Vector3 TestArrowDirection = 0;
-	float TestSphereVelocity = .5F;
-
-	bool bRandomArray = false;
-	const void* curandomStateArray = 0;
-
 protected:
 
 	void SetSceneSkybox(const WString & Path) {
+		auto File = FileManager::GetFile(Path);
+		if (File == NULL) return;
 
 		RTexturePtr EquirectangularTexture = TextureManager::GetInstance().CreateTexture2D(
-			L"EquirectangularTexture_" + FileManager::GetFile(Path)->GetFileName(), Path, PF_RGB32F, FM_MinMagLinear, SAM_Repeat
+			L"EquirectangularTexture_" + File->GetFileName(), Path, PF_RGB32F, FM_MinMagLinear, SAM_Repeat
 		); 
 		EquirectangularTexture->Load();
 
 		EquirectangularTextureHDR = TextureManager::GetInstance().CreateTexture2D(
-			L"EquirectangularTextureHDR_" + FileManager::GetFile(Path)->GetFileName(), L"", PF_RGB32F, FM_MinMagLinear, SAM_Repeat,
+			L"EquirectangularTextureHDR_" + File->GetFileName(), L"", PF_RGB32F, FM_MinMagLinear, SAM_Repeat,
 			EquirectangularTexture->GetSize()
 		);
 		EquirectangularTextureHDR->Load();
@@ -174,171 +144,75 @@ protected:
 		auto & NormalTexture = TextureMng.CreateTexture2D(L"NormalTexture", L"", PF_RGB8, FM_MinMagNearest, SAM_Repeat);
 		NormalTexture->SetPixelData(NormlMap);
 		NormalTexture->Load();
-		TextureMng.LoadImageFromFile(L"FlowMapTexture", PF_RGB8,  FM_MinMagLinear,  SAM_Repeat, true, true, L"Resources/Textures/FlowMap.jpg");
+
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_A.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_R.jpg");
+
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_A.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_R.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_M.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_AO.jpg");
+		
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_AO.png");
+
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_A.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_N.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_R.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_M.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_AO.jpg");
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderMng.CreateProgram(L"PBRShader", L"Resources/Shaders/PBR.shader");
 		
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_a_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnBAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnBRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnBNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_b_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnCAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnCNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ColumnCRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Column_c_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/BricksAAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Albedo.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/BricksARoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/BricksANormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Bricks_a_Normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CeilingAlbedoTexture",      PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CeilingRoughnessTexture",   PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_Roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/CeilingNormalTexture",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Ceiling_Normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/FloorAlbedoTexture",        PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/FloorRoughnessTexture",     PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/FloorNormalTexture",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Floor_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/RoofAlbedoTexture",         PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/RoofRoughnessTexture",      PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/RoofNormalTexture",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Roof_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ArchAlbedoTexture",         PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ArchRoughnessTexture",      PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ArchNormalTexture",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Arch_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ThornAlbedoTexture",        PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ThornRoughnessTexture",     PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/ThornNormalTexture",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Sponza_Thorn_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseAlbedoTexture",         PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoughnessTexture",      PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseNormalTexture",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/Vase_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundAlbedoTexture",    PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundRoughnessTexture", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_roughness.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseRoundNormalTexture",    PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseRound_normal.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseHangAlbedoTexture",     PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_diffuse.tga");
-		TextureMng.LoadImageFromFile(L"Sponza/VaseHangRoughnessTexture",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/SponzaPBR/VaseHanging_roughness.tga");
-		TextureMng.CreateTexture2D(L"Sponza/VaseHangNormalTexture",     L"Resources/Textures/SponzaPBR/VaseHanging_normal.tga",           PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/VasePlantAlbedoTexture",    L"Resources/Textures/SponzaPBR/VasePlant_diffuse.tga",            PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/VasePlantRoughnessTexture", L"Resources/Textures/SponzaPBR/VasePlant_roughness.tga",          PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/VasePlantNormalTexture",    L"Resources/Textures/SponzaPBR/VasePlant_normal.tga",             PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/DetailsAlbedoTexture",      L"Resources/Textures/SponzaPBR/Sponza_Details_diffuse.tga",       PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/DetailsRoughnessTexture",   L"Resources/Textures/SponzaPBR/Sponza_Details_roughness.tga",     PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/DetailsMetallicTexture",    L"Resources/Textures/SponzaPBR/Sponza_Details_metallic.tga",      PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/DetailsNormalTexture",      L"Resources/Textures/SponzaPBR/Sponza_Details_normal.tga",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/CurtainBlueAlbedoTexture",  L"Resources/Textures/SponzaPBR/Sponza_Curtain_Blue_diffuse.tga",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/CurtainGreenAlbedoTexture", L"Resources/Textures/SponzaPBR/Sponza_Curtain_Green_diffuse.tga", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/CurtainRedAlbedoTexture",   L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_diffuse.tga",   PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/CurtainRoughnessTexture",   L"Resources/Textures/SponzaPBR/Sponza_Curtain_roughness.tga",     PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/CurtainMetallicTexture",    L"Resources/Textures/SponzaPBR/Sponza_Curtain_metallic.tga",      PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/CurtainNormalTexture",      L"Resources/Textures/SponzaPBR/Sponza_Curtain_Red_normal.tga",    PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/LionAlbedoTexture",         L"Resources/Textures/SponzaPBR/Lion_Albedo.tga",                  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/LionNormalTexture",         L"Resources/Textures/SponzaPBR/Lion_Normal.tga",                  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"Sponza/LionRoughnessTexture",      L"Resources/Textures/SponzaPBR/Lion_Roughness.tga",               PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EscafandraMV1971AlbedoTexture",    L"Resources/Textures/EscafandraMV1971_BaseColor.png",             PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EscafandraMV1971MetallicTexture",  L"Resources/Textures/EscafandraMV1971_Metallic.png",              PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EscafandraMV1971RoughnessTexture", L"Resources/Textures/EscafandraMV1971_Roughness.png",             PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EscafandraMV1971NormalTexture",    L"Resources/Textures/EscafandraMV1971_Normal.png",                PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PirateBarrelAlbedoTexture",        L"Resources/Textures/PirateProps_Barrel_Texture_Color.png",       PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PirateBarrelMetallicTexture",      L"Resources/Textures/PirateProps_Barrel_Texture_Metal.png",       PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PirateBarrelRoughnessTexture",     L"Resources/Textures/PirateProps_Barrel_Texture_Roughness.png",   PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PirateBarrelNormalTexture",        L"Resources/Textures/PirateProps_Barrel_Texture_Normal.png",      PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"FlamerGunAlbedoTexture",           L"Resources/Textures/Flamer_DefaultMaterial_albedo.jpg",          PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"FlamerGunMetallicTexture",         L"Resources/Textures/Flamer_DefaultMaterial_metallic.jpg",        PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"FlamerGunRoughnessTexture",        L"Resources/Textures/Flamer_DefaultMaterial_roughness.jpg",       PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"FlamerGunNormalTexture",           L"Resources/Textures/Flamer_DefaultMaterial_normal.jpeg",         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/CeilingTileAlbedoTexture",    L"Resources/Textures/SiFi/T_CeilingTile_COL.tga",                 PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/CeilingTileMetallicTexture",  L"Resources/Textures/SiFi/T_CeilingTile_MET.tga",                 PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/CeilingTileRoughnessTexture", L"Resources/Textures/SiFi/T_CeilingTile_RGH.tga",                 PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/CeilingTileNormalTexture",    L"Resources/Textures/SiFi/T_CeilingTile_NRM.tga",                 PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/DoorPanelAlbedoTexture",      L"Resources/Textures/SiFi/T_DoorPanel_COL.tga",                   PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/DoorPanelMetallicTexture",    L"Resources/Textures/SiFi/T_DoorPanel_MET.tga",                   PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/DoorPanelRoughnessTexture",   L"Resources/Textures/SiFi/T_DoorPanel_RGH.tga",                   PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/DoorPanelNormalTexture",      L"Resources/Textures/SiFi/T_DoorPanel_NRM.tga",                   PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/GroundTileAlbedoTexture",     L"Resources/Textures/SiFi/T_GroundTile_COL.tga",                  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/GroundTileMetallicTexture",   L"Resources/Textures/SiFi/T_GroundTile_MET.tga",                  PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/GroundTileRoughnessTexture",  L"Resources/Textures/SiFi/T_GroundTile_RGH.tga",                  PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"SiFi/GroundTileNormalTexture",     L"Resources/Textures/SiFi/T_GroundTile_NRM.tga",                  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarExteriorAlbedoTexture",     L"Resources/Textures/Body_dDo_d_orange.jpeg",                     PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarExteriorMetallicTexture",   L"Resources/Textures/Body_dDo_s.jpeg",                            PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarExteriorRoughnessTexture",  L"Resources/Textures/Body_dDo_g.jpg",                             PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarExteriorNormalTexture",     L"Resources/Textures/Body_dDo_n.jpg",                             PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarInteriorAlbedoTexture",     L"Resources/Textures/Interior_dDo_d_black.jpeg",                  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarInteriorMetallicTexture",   L"Resources/Textures/Interior_dDo_s.jpeg",                        PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarInteriorRoughnessTexture",  L"Resources/Textures/Interior_dDo_g.jpg",                         PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"PonyCarInteriorNormalTexture",     L"Resources/Textures/Interior_dDo_n.jpg",                         PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EgyptianCatAlbedoTexture",         L"Resources/Textures/EgyptianCat/M_Cat_Statue_albedo.jpg",        PF_RGBA8, FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EgyptianCatMetallicTexture",       L"Resources/Textures/EgyptianCat/M_Cat_Statue_metallic.jpg",      PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EgyptianCatRoughnessTexture",      L"Resources/Textures/EgyptianCat/M_Cat_Statue_roughness.jpg",     PF_R8,    FM_MinMagLinear, SAM_Repeat, 0, true);
-		TextureMng.CreateTexture2D(L"EgyptianCatNormalTexture",         L"Resources/Textures/EgyptianCat/M_Cat_Statue_normal.png",        PF_RGB8,  FM_MinMagLinear, SAM_Repeat, 0, true);
-	
 		ModelManager& ModelMng = ModelManager::GetInstance();
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/RobotArm.fbx", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/RobotArm2.fbx", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/TestTurret.fbx", false);
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/Arrow.fbx", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sponza.obj", true);
-		ModelMng.CreateSubModelMesh(L"Sponza", L"FirstFloorArcs");
-		ModelMng.CreateSubModelMesh(L"Sponza", L"FirstFloorExterior");
-		ModelMng.CreateSubModelMesh(L"Sponza", L"UpperFloor");
-		ModelMng.CreateSubModelMesh(L"Sponza", L"SecondFloorInterior");
-		ModelMng.CreateSubModelMesh(L"Sponza", L"SecondFloorExterior");
-		ModelMng.CreateSubModelMesh(L"Sponza", L"Exterior");
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/Flamer.obj", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/EgyptianCat.obj", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/BigPlane.obj", true);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/PonyCartoon.fbx", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/PirateProps_Barrels.obj", false);
-		ModelMng.LoadAsyncFromFile(L"Resources/Models/Sci_Fi_Tile_Set.obj", false);
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/TileDesertSends.obj", true);
+		ModelMng.CreateSubModelMesh(L"TileDesertSends", L"TileDesertSends");
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/EgyptianCat.obj", true);
+		ModelMng.CreateSubModelMesh(L"EgyptianCat", L"Cat_Statue_CatStatue");
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/FalloutCar.fbx", true);
+		ModelMng.CreateSubModelMesh(L"FalloutCar", L"default");
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/Backpack.dae", true);
+		ModelMng.CreateSubModelMesh(L"Backpack", L"Cylinder025");
 		
 		ModelMng.CreateMesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))->Load();
 		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
-
+		
 		MaterialManager& MaterialMng = MaterialManager::GetInstance();
-		MaterialMng.CreateMaterial(L"Sponza/Arcs", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchRoughnessTexture") } },
+		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_R") } },
 		});
-		MaterialMng.CreateMaterial(L"Sponza/ColumnA", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnAAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnANormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnARoughnessTexture") } },
+		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_A") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_N") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_R") } },
+			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_M") } },
+			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_AO") } },
 		});
-		MaterialMng.CreateMaterial(L"Sponza/ColumnB", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnBAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnBNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnBRoughnessTexture") } },
+		MaterialMng.CreateMaterial(L"Objects/FalloutCar", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_A") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_N") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_R") } },
+			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_M") } },
+			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_AO") } },
 		});
-		MaterialMng.CreateMaterial(L"Sponza/ColumnC", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnCAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnCNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ColumnCRoughnessTexture") } },
-		});
-		MaterialMng.CreateMaterial(L"Sponza/Bricks", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/BricksAAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/BricksANormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/BricksARoughnessTexture") } },
-		});
-		MaterialMng.CreateMaterial(L"Sponza/Details", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsRoughnessTexture") } },
-			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/DetailsMetallicTexture") } },
-		});
-		MaterialMng.CreateMaterial(L"Sponza/Floor", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/FloorAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/FloorNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/FloorRoughnessTexture") } },
-		});
-		MaterialMng.CreateMaterial(L"Sponza/Roof", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/RoofAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/RoofNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/RoofRoughnessTexture") } },
-		});
-		MaterialMng.CreateMaterial(L"Sponza/Ceiling", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/CeilingAlbedoTexture") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/CeilingNormalTexture") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/CeilingRoughnessTexture") } },
+		MaterialMng.CreateMaterial(L"Objects/Backpack", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_A") } },
+			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_N") } },
+			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_R") } },
+			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_M") } },
+			{ "_AOTexture",          { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_AO") } },
+			{ "_Material.Roughness", { 1.9F } }
 		});
 		MaterialPtr SkyMaterial = MaterialMng.CreateMaterial(L"RenderCubemapMaterial", ShaderMng.GetProgram(L"RenderCubemapShader"), true, DF_Always, FM_Solid, CM_None, {});
 		SkyMaterial->RenderPriority = 1;
@@ -382,7 +256,7 @@ protected:
 		if (SelectedTexture && SelectedTexture->GetLoadState() == LS_Loaded) {
 			int bCubemap;
 			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
-				static RenderTargetPtr Renderer = RenderTarget::Create();
+				static RenderTargetPtr Renderer = RenderTarget::Create(); 
 				RenderTextureMaterial.Use();
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -1039,12 +913,6 @@ protected:
 		FontMap->Load();
 		FontMap->GenerateMipMaps();
 
-		UnlitMaterial.SetShaderProgram(UnlitShader);
-
-		UnlitMaterialWire.SetShaderProgram(UnlitShader);
-		UnlitMaterialWire.FillMode = FM_Wireframe;
-		UnlitMaterialWire.CullMode = CM_None;
-
 		RenderTextureMaterial.DepthFunction = DF_Always;
 		RenderTextureMaterial.CullMode = CM_None;
 		RenderTextureMaterial.SetShaderProgram(RenderTextureShader);
@@ -1084,52 +952,14 @@ protected:
 
 		SetSceneSkybox(L"Resources/Textures/Arches_E_PineTree_3k.hdr");
 
-		Transforms.push_back(Transform());
-
 		Application::GetInstance()->GetRenderPipeline().Initialize();
 		Application::GetInstance()->GetRenderPipeline().ContextInterval(0);
 	}
 
 	virtual void OnUpdate(Timestamp Stamp) override {
 
-		// CameraRayDirection = {
-		// 	(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,
-		// 	1.F - (2.F * Input::GetMouseY()) / Application::GetInstance()->GetWindow().GetHeight(),
-		// 	-1.F,
-		// };
-		// CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
-		// CameraRayDirection.z = -1.F;
-		// CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
-		// CameraRayDirection.Normalize();
-		// 
-		// ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
-		// // ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
-
 		if (Input::IsKeyDown(SDL_SCANCODE_BACKSPACE)) {
 			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
-		}
-
-		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
-			MaterialMetalness -= 1.F * Time::GetDeltaTime<Time::Second>();
-			MaterialMetalness = Math::Clamp01(MaterialMetalness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_M)) {
-			MaterialMetalness += 1.F * Time::GetDeltaTime<Time::Second>();
-			MaterialMetalness = Math::Clamp01(MaterialMetalness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_E)) {
-			MaterialRoughness -= 0.5F * Time::GetDeltaTime<Time::Second>();
-			MaterialRoughness = Math::Clamp01(MaterialRoughness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_R)) {
-			MaterialRoughness += 0.5F * Time::GetDeltaTime<Time::Second>();
-			MaterialRoughness = Math::Clamp01(MaterialRoughness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_L)) {
-			LightIntencity += LightIntencity * Time::GetDeltaTime<Time::Second>();
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_K)) {
-			LightIntencity -= LightIntencity * Time::GetDeltaTime<Time::Second>();
 		}
 
 		if (Input::IsKeyDown(SDL_SCANCODE_RIGHT)) {
@@ -1164,12 +994,6 @@ protected:
 			}
 		}
 
-		// if (Input::IsKeyDown(SDL_SCANCODE_SPACE)) {
-		// 	TestArrowTransform.Position = EyePosition;
-		// 	TestArrowDirection = CameraRayDirection;
-		// 	TestArrowTransform.Rotation = Quaternion::LookRotation(CameraRayDirection, Vector3(0, 1, 0));
-		// }
-
 		for (int i = 0; i < TextCount; i++) {
 			if (FontMap != NULL && TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
@@ -1179,220 +1003,19 @@ protected:
 				FontMap->GenerateMipMaps();
 			}
 		}
-
-		// Transforms[0].Rotation = Quaternion::AxisAngle(Vector3(0, 1, 0).Normalized(), Time::GetDeltaTime() * 0.04F) * Transforms[0].Rotation;
-		TransformMat = Transforms[0].GetLocalToWorldMatrix();
-		InverseTransform = Transforms[0].GetWorldToLocalMatrix();
-
-		TestArrowTransform.Scale = 0.1F;
-		TestArrowTransform.Position += TestArrowDirection * TestSphereVelocity * Time::GetDeltaTime<Time::Second>();
 	}
 
 	virtual void OnRender() override {
 		Timestamp Timer;
 
-		// --- Run the device part of the program
-		if (!bRandomArray) {
-			// curandomStateArray = GetRandomArray(RenderedTexture.GetDimension());
-			bRandomArray = true;
-		}
-		bool bTestResult = false;
-
-		// Ray TestRayArrow(TestArrowTransform.Position, TestArrowDirection);
-		// if (SceneModels.size() > 100)
-		// 	for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-		// 		BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
-		// 		TArray<RayHit> Hits;
-		// 
-		// 		if (Physics::RaycastAxisAlignedBox(TestRayArrow, ModelSpaceAABox)) {
-		// 			RayHit Hit;
-		// 			Ray ModelSpaceCameraRay(
-		// 				InverseTransform.MultiplyPoint(TestArrowTransform.Position),
-		// 				InverseTransform.MultiplyVector(TestArrowDirection)
-		// 			);
-		// 			for (MeshFaces::const_iterator Face = SceneModels[MeshCount]->GetMeshData().Faces.begin(); Face != SceneModels[MeshCount]->GetMeshData().Faces.end(); ++Face) {
-		// 				if (Physics::RaycastTriangle(
-		// 					Hit, ModelSpaceCameraRay,
-		// 					SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[0]].Position,
-		// 					SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[1]].Position,
-		// 					SceneModels[MeshCount]->GetMeshData().Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
-		// 				)) {
-		// 					Hit.TriangleIndex = int(Face - SceneModels[MeshCount]->GetMeshData().Faces.begin());
-		// 					Hits.push_back(Hit);
-		// 				}
-		// 			}
-		// 
-		// 			std::sort(Hits.begin(), Hits.end());
-		// 
-		// 			if (Hits.size() > 0 && Hits[0].bHit) {
-		// 				Vector3 ArrowClosestContactPoint = TestArrowTransform.Position;
-		// 				Vector3 ClosestContactPoint = TestRayArrow.PointAt(Hits[0].Stamp);
-		// 
-		// 				if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
-		// 				{
-		// 					const IntVector3 & Face = SceneModels[MeshCount]->GetMeshData().Faces[Hits[0].TriangleIndex];
-		// 					const Vector3 & N0 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[0]].Normal;
-		// 					const Vector3 & N1 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[1]].Normal;
-		// 					const Vector3 & N2 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[2]].Normal;
-		// 					Vector3 InterpolatedNormal =
-		// 						N0 * Hits[0].BaricenterCoordinates[0] +
-		// 						N1 * Hits[0].BaricenterCoordinates[1] +
-		// 						N2 * Hits[0].BaricenterCoordinates[2];
-		// 
-		// 					Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-		// 					Hits[0].Normal.Normalize();
-		// 					Vector3 ReflectedDirection = Vector3::Reflect(TestArrowDirection, Hits[0].Normal);
-		// 					TestArrowDirection = ReflectedDirection.Normalized();
-		// 					TestArrowTransform.Rotation = Quaternion::LookRotation(ReflectedDirection, Vector3(0, 1, 0));
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-
-		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTexture->GetMipMapCount() - 4);
+		uint32_t CubemapTextureMipMapCount = CubemapTexture ? CubemapTexture->GetMipMapCount() : 0;
+		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTextureMipMapCount - 4);
 		MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial")->SetParameters({
 			{ "_Skybox", { ETextureDimension::Cubemap, CubemapTexture } },
 			{ "_Lod", { float( SkyRoughnessTemp ) } }
 		});
-		
-		float CubemapTextureMipmaps = (float)CubemapTexture->GetMipMapCount();
-
-		// size_t TotalHitCount = 0;
-		// Ray CameraRay(EyePosition, CameraRayDirection);
-		// for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-		// 	const MeshData & ModelData = SceneModels[MeshCount]->GetMeshData();
-		// 	BoundingBox3D ModelSpaceAABox = ModelData.Bounding.Transform(TransformMat);
-		// 	TArray<RayHit> Hits;
-		// 
-		// 	if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
-		// 		RayHit Hit;
-		// 		Ray ModelSpaceCameraRay(
-		// 			InverseTransform.MultiplyPoint(EyePosition),
-		// 			InverseTransform.MultiplyVector(CameraRayDirection)
-		// 		);
-		// 		for (MeshFaces::const_iterator Face = ModelData.Faces.begin(); Face != ModelData.Faces.end(); ++Face) {
-		// 			if (Physics::RaycastTriangle(
-		// 				Hit, ModelSpaceCameraRay,
-		// 				ModelData.Vertices[(*Face)[0]].Position,
-		// 				ModelData.Vertices[(*Face)[1]].Position,
-		// 				ModelData.Vertices[(*Face)[2]].Position, BaseMaterial.CullMode != CM_CounterClockWise
-		// 			)) {
-		// 				Hit.TriangleIndex = int(Face - ModelData.Faces.begin());
-		// 				Hits.push_back(Hit);
-		// 			}
-		// 		}
-		// 
-		// 		std::sort(Hits.begin(), Hits.end());
-		// 		TotalHitCount += Hits.size();
-		// 
-		// 		if (Hits.size() > 0 && Hits[0].bHit) {
-		// 			if (LightModels.size() > 0) {
-		// 				LightModels[0]->SetUpBuffers();
-		// 				LightModels[0]->BindVertexArray();
-		// 
-		// 				IntVector3 Face = ModelData.Faces[Hits[0].TriangleIndex];
-		// 				const Vector3 & N0 = ModelData.Vertices[Face[0]].Normal;
-		// 				const Vector3 & N1 = ModelData.Vertices[Face[1]].Normal;
-		// 				const Vector3 & N2 = ModelData.Vertices[Face[2]].Normal;
-		// 				Vector3 InterpolatedNormal =
-		// 					N0 * Hits[0].BaricenterCoordinates[0] +
-		// 					N1 * Hits[0].BaricenterCoordinates[1] +
-		// 					N2 * Hits[0].BaricenterCoordinates[2];
-		// 
-		// 				Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-		// 				Hits[0].Normal.Normalize();
-		// 				Vector3 ReflectedCameraDir = Vector3::Reflect(CameraRayDirection, Hits[0].Normal);
-		// 				Matrix4x4 HitMatrix[2] = {
-		// 					Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
-		// 					Matrix4x4::Rotation(Quaternion::LookRotation(ReflectedCameraDir, Vector3(0, 1, 0))) *
-		// 					Matrix4x4::Scaling(0.1F),
-		// 					Matrix4x4::Translation(CameraRay.PointAt(Hits[0].Stamp)) *
-		// 					Matrix4x4::Rotation(Quaternion::LookRotation(Hits[0].Normal, Vector3(0, 1, 0))) *
-		// 					Matrix4x4::Scaling(0.07F)
-		// 				};
-		// 				BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &HitMatrix[0], ModelMatrixBuffer);
-		// 
-		// 				LightModels[0]->DrawInstanciated(2);
-		// 				TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
-		// 				VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
-		// 			}
-		// 		}
-		// 	}
-		// 
-		// 	SceneModels[MeshCount]->SetUpBuffers();
-		// 	SceneModels[MeshCount]->BindVertexArray();
-		// 
-		// 	BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
-		// 	SceneModels[MeshCount]->DrawInstanciated(1);
-		// 
-		// 	TriangleCount += ModelData.Faces.size() * 1;
-		// 	VerticesCount += ModelData.Vertices.size() * 1;
-		// }
-
-		// SelectedMesh = MeshManager::GetInstance().GetMesh(SelectedMeshName);
-		// if (SelectedMesh) {
-		// 	SelectedMesh->BindVertexArray();
-		// 	
-		// 	BaseMaterial->SetAttribMatrix4x4Array("_iModelMatrix", 1, &TransformMat, ModelMatrixBuffer);
-		// 	SelectedMesh->DrawInstanciated(1);
-		// }
-
-		// 
-		// if (LightModels.size() > 0) {
-		// 	LightModels[0]->SetUpBuffers();
-		// 	LightModels[0]->BindVertexArray();
-		// 
-		// 	Matrix4x4 ModelMatrix = TestArrowTransform.GetLocalToWorldMatrix();
-		// 	BaseMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 1, &ModelMatrix, ModelMatrixBuffer);
-		// 
-		// 	LightModels[0]->DrawInstanciated(1);
-		// 	TriangleCount += LightModels[0]->GetMeshData().Faces.size() * 1;
-		// 	VerticesCount += LightModels[0]->GetMeshData().Vertices.size() * 1;
-		// }
-
-		ElementsIntersected.clear();
-		// TArray<Matrix4x4> BBoxTransforms;
-		// for (int MeshCount = (int)MeshSelector; MeshCount >= 0 && MeshCount < (int)SceneModels.size(); ++MeshCount) {
-		// 	BoundingBox3D ModelSpaceAABox = SceneModels[MeshCount]->GetMeshData().Bounding.Transform(TransformMat);
-		// 	if (Physics::RaycastAxisAlignedBox(CameraRay, ModelSpaceAABox)) {
-		// 		ElementsIntersected.push_back(MeshCount);
-		// 		BBoxTransforms.push_back(Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()));
-		// 	}
-		// }
-		// if (BBoxTransforms.size() > 0) {
-		// 	UnlitMaterialWire.Use();
-		// 
-		// 	UnlitMaterialWire.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-		// 	UnlitMaterialWire.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		// 	UnlitMaterialWire.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-		// 	UnlitMaterialWire.SetFloat4Array("_Material.Color", Vector4(.7F, .2F, .07F, .3F).PointerToValue());
-		// 
-		// 	MeshPrimitives::Cube.BindVertexArray();
-		// 	UnlitMaterialWire.SetAttribMatrix4x4Array("_iModelMatrix", (int)BBoxTransforms.size(), &BBoxTransforms[0], ModelMatrixBuffer);
-		// 	MeshPrimitives::Cube.DrawInstanciated((int)BBoxTransforms.size());
-		// }
-		// 
-		// UnlitMaterial.Use();
-		// 
-		// UnlitMaterial.SetMatrix4x4Array("_ProjectionMatrix", ProjectionMatrix.PointerToValue());
-		// UnlitMaterial.SetMatrix4x4Array("_ViewMatrix", ViewMatrix.PointerToValue());
-		// UnlitMaterial.SetFloat3Array("_ViewPosition", EyePosition.PointerToValue());
-		// UnlitMaterial.SetFloat4Array("_Material.Color", (Vector4(1.F, 1.F, .9F, 1.F) * LightIntencity).PointerToValue());
-		// 
-		// if (LightModels.size() > 0) {
-		// 	MeshPrimitives::Cube.BindVertexArray();
-		// 
-		// 	TArray<Matrix4x4> LightPositions;
-		// 	LightPositions.push_back(Matrix4x4::Translation(LightPosition0) * Matrix4x4::Scaling(0.1F));
-		// 	LightPositions.push_back(Matrix4x4::Translation(LightPosition1) * Matrix4x4::Scaling(0.1F));
-		// 
-		// 	UnlitMaterial.SetAttribMatrix4x4Array("_iModelMatrix", 2, &LightPositions[0], ModelMatrixBuffer);
-		// 
-		// 	MeshPrimitives::Cube.DrawInstanciated(2);
-		// }
 
 		Rendering::SetViewport({ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() });
-		// --- Activate corresponding render state
 
 		float FontScale = (FontSize / TextGenerator.GlyphHeight);
 		RenderTextMaterial->SetParameters({
@@ -1430,21 +1053,13 @@ protected:
 			Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
 		}
 
-		RenderingText[2] = Text::Formatted(
-			L"└> ElementsIntersected(%d), RayHits(%d)",
-			ElementsIntersected.size(),
-			0 // TotalHitCount
-		);
-
 		RenderingText[0] = Text::Formatted(
-			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), DeltaCursor(%ls)",
+			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms)",
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
 			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
 			1.F / Time::GetAverageDelta<Time::Second>(),
-			Time::GetDeltaTime<Time::Mili>(),
-			LightIntencity / 10000.F + 1.F,
-			Text::FormatMath(Vector3(LastCursorPosition.y - Input::GetMouseY(), -LastCursorPosition.x - -Input::GetMouseX())).c_str()
+			Time::GetDeltaTime<Time::Mili>()
 		);
 
 		if (Input::IsKeyDown(SDL_SCANCODE_ESCAPE)) {
@@ -1457,23 +1072,23 @@ protected:
 
 public:
 	
-	SandboxLayer() : Layer(L"SandboxApp", 2000) {}
+	GameLayer() : Layer(L"SandboxApp", 2000) {}
 };
 
-class SandboxApplication : public Application {
+class GameApplication : public Application {
 public:
-	SandboxApplication() : Application() { }
+	GameApplication() : Application() { }
 
 	void OnInitialize() override {
-		PushLayer(new SandboxLayer());
-		PushLayer(new SandboxSpaceLayer(L"Main", 1999));
+		PushLayer(new GameLayer());
+		PushLayer(new GameSpaceLayer(L"Main", 1999));
 	}
 
-	~SandboxApplication() {
+	~GameApplication() {
 
 	}
 };
 
 ESource::Application * ESource::CreateApplication() {
-	return new SandboxApplication();
+	return new GameApplication();
 }

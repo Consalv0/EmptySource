@@ -12,14 +12,15 @@
 #include "Components/ComponentLight.h"
 #include "Components/ComponentAnimable.h"
 
-#include "../Public/SandboxSpaceLayer.h"
+#include "../Public/GameSpaceLayer.h"
 #include "../Public/CameraMovement.h"
+#include "../Public/FollowTarget.h"
 #include "../External/IMGUI/imgui.h"
 
 using namespace ESource;
 
 void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &NarrowMaterialNameList,
-	TArray<IName> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<IName> &MeshNameList, SandboxSpaceLayer * AppLayer)
+	TArray<IName> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<IName> &MeshNameList, GameSpaceLayer * AppLayer)
 {
 	bool TreeNode = ImGui::TreeNode(GameObject->GetName().GetNarrowInstanceName().c_str());
 	if (ImGui::BeginPopupContextItem(GameObject->GetName().GetNarrowInstanceName().c_str())) {
@@ -279,10 +280,10 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 	}
 }
 
-void SandboxSpaceLayer::OnAwake() {
+void GameSpaceLayer::OnAwake() {
 	Super::OnAwake();
 	Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"MainStage");
-	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(0.F, Quaternion(), 1.F));
+	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
 	Camera->CreateComponent<CCamera>();
 	Camera->CreateComponent<CCameraMovement>();
 	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
@@ -290,79 +291,68 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
-	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::EulerAngles({66, 56.F, 180.F}), 1.F));
+	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::EulerAngles({85.F, 0.F, 0.F}), 1.F));
 	auto Light0 = LightObj0->CreateComponent<CLight>();
-	Light0->ApertureAngle = 60.F;
-	Light0->Intensity = 1200.F;
-	Light0->CullingPlanes.x = 10.F;
+	Light0->ApertureAngle = 123.F;
+	Light0->Intensity = 2200.F;
+	Light0->CullingPlanes.x = 15.F;
+	Light0->Color = Vector3(1.F, 0.982F, 0.9F);
 	Light0->bCastShadow = true;
-	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
-	LightObj1->CreateComponent<CLight>()->bCastShadow = true;
+	Light0->SetShadowMapSize(2048);
+	auto FollowLight0 = LightObj0->CreateComponent<CFollowTarget>();
+	FollowLight0->Target = Camera;
+	FollowLight0->FixedPositionAxisY = true;
+	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, -0.5F, 0.F }, Quaternion(), 1.F));
+	auto Light1 = LightObj1->CreateComponent<CLight>();
+	Light1->bCastShadow = false;
+	Light1->Color = Vector3(1.F, 0.982F, 0.9F);
 
 	MaterialManager MaterialMng = MaterialManager::GetInstance();
 	ModelManager ModelMng = ModelManager::GetInstance();
-	auto Sponza = CreateObject<GGameObject>(L"Sponza", Transform());
+	auto Ground = CreateObject<GGameObject>(L"Ground", Transform());
 	{
-		auto FirstFloorArcs = CreateObject<GGameObject>(L"FirstFloorArcs");
-		FirstFloorArcs->AttachTo(Sponza);
-		auto Renderable = FirstFloorArcs->CreateComponent<CRenderable>();
-		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:FirstFloorArcs"));
-		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/ColumnA"));
-		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Arcs"));
+		CFollowTarget * Follow = Ground->CreateComponent<CFollowTarget>();
+		Follow->Target = Camera;
+		Follow->FixedPositionAxisY = true;
+		Follow->ModuleMovement = 6.F;
+		auto TileDesert = ModelMng.GetMesh(L"TileDesertSends:TileDesertSends");
+		const int GridSize = 32;
+		for (int i = 0; i < GridSize; i++) {
+			for (int j = 0; j < GridSize; j++) {
+				auto Tile = CreateObject<GGameObject>(L"Tile");
+				Tile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
+				Tile->AttachTo(Ground);
+				auto Renderable = Tile->CreateComponent<CRenderable>();
+				Renderable->SetMesh(TileDesert);
+				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
+			}
+		}
 	}
+
+	auto EgyptianCat = CreateObject<GGameObject>(L"EgyptianCat", Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::EulerAngles({18.F, -16.F, 34.F}), 1.F));
 	{
-		auto FirstFloorExterior = CreateObject<GGameObject>(L"FirstFloorExterior");
-		FirstFloorExterior->AttachTo(Sponza);
-		auto Renderable = FirstFloorExterior->CreateComponent<CRenderable>();
-		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:FirstFloorExterior"));
-		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
-		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/ColumnC"));
-		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Details"));
-		Renderable->SetMaterialAt(3, MaterialMng.GetMaterial(L"Sponza/Arcs"));
-		Renderable->SetMaterialAt(4, MaterialMng.GetMaterial(L"Sponza/Floor"));
-		Renderable->SetMaterialAt(5, MaterialMng.GetMaterial(L"Sponza/Bricks"));
-		Renderable->SetMaterialAt(6, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+		auto Renderable = EgyptianCat->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/EgyptianCat"));
 	}
+
+	auto FalloutCar = CreateObject<GGameObject>(L"FalloutCar", Transform(Vector3(10.F, -0.56F, 8.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 1.F));
 	{
-		auto Exterior = CreateObject<GGameObject>(L"Exterior");
-		Exterior->AttachTo(Sponza);
-		auto Renderable = Exterior->CreateComponent<CRenderable>();
-		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:Exterior"));
-		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Bricks"));
-		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Roof"));
+		auto Renderable = FalloutCar->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FalloutCar"));
 	}
+
+	auto Backpack = CreateObject<GGameObject>(L"Backpack", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
 	{
-		auto SecondFloorInterior = CreateObject<GGameObject>(L"SecondFloorInterior");
-		SecondFloorInterior->AttachTo(Sponza);
-		auto Renderable = SecondFloorInterior->CreateComponent<CRenderable>();
-		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:SecondFloorInterior"));
-		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/ColumnB"));
-		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/ColumnC"));
-		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Bricks"));
-		Renderable->SetMaterialAt(3, MaterialMng.GetMaterial(L"Sponza/Arcs"));
-		Renderable->SetMaterialAt(4, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
+		auto Renderable = Backpack->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/Backpack"));
 	}
-	{
-		auto SecondFloorExterior = CreateObject<GGameObject>(L"SecondFloorExterior");
-		SecondFloorExterior->AttachTo(Sponza);
-		auto Renderable = SecondFloorExterior->CreateComponent<CRenderable>();
-		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:SecondFloorExterior"));
-		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Details"));
-		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
-		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Bricks"));
-	}
-	{
-		auto UpperFloor = CreateObject<GGameObject>(L"UpperFloor");
-		UpperFloor->AttachTo(Sponza);
-		auto Renderable = UpperFloor->CreateComponent<CRenderable>();
-		Renderable->SetMesh(ModelMng.GetMesh(L"Sponza:UpperFloor"));
-		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Sponza/Arcs"));
-		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Sponza/Bricks"));
-		Renderable->SetMaterialAt(2, MaterialMng.GetMaterial(L"Sponza/Ceiling"));
-	}
+
 }
 
-void SandboxSpaceLayer::OnRender() {
+void GameSpaceLayer::OnRender() {
 	Application::GetInstance()->GetRenderPipeline().BeginStage(L"MainStage");
 	Super::OnRender();
 	Application::GetInstance()->GetRenderPipeline().EndStage();
@@ -384,7 +374,7 @@ GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model
 	return NewObject;
 }
 
-void SandboxSpaceLayer::OnImGuiRender() {
+void GameSpaceLayer::OnImGuiRender() {
 	ImGui::Begin("Sandbox Space");
 
 	TArray<IName> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
@@ -456,5 +446,5 @@ void SandboxSpaceLayer::OnImGuiRender() {
 	ImGui::End();
 }
 
-SandboxSpaceLayer::SandboxSpaceLayer(const ESource::WString & Name, unsigned int Level) : SpaceLayer(Name, Level) {
+GameSpaceLayer::GameSpaceLayer(const ESource::WString & Name, unsigned int Level) : SpaceLayer(Name, Level) {
 }

@@ -12,7 +12,10 @@
     <ClInclude Include="Source\Public\CameraMovement.h">
       <Filter>Public</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\GameLayer.h">
+    <ClInclude Include="Source\Public\FollowTarget.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\GameSpaceLayer.h">
       <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>
@@ -20,10 +23,13 @@
     <ClCompile Include="Source\Private\CameraMovement.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\FollowTarget.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Private\GameApp.cpp">
       <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\GameLayer.cpp">
+    <ClCompile Include="Source\Private\GameSpaceLayer.cpp">
       <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>
