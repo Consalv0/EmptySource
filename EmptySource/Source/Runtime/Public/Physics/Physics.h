@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Ray.h"
+#include "Physics/Ray.h"
 #include "Math/Box3D.h"
 
 namespace ESource {

@@ -4,7 +4,6 @@
 #include "Core/SpaceLayer.h"
 
 #include "Math/CoreMath.h"
-#include "Math/Physics.h"
 
 #include "Utility/TextFormattingMath.h"
 #if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
@@ -39,10 +38,10 @@
 
 #include "Components/ComponentRenderable.h"
 
+#include "Physics/PhysicsWorld.h"
+
 #include "Fonts/Font.h"
 #include "Fonts/Text2DGenerator.h"
-
-#include "Events/Property.h"
 
 #include "../External/IMGUI/imgui.h"
 #include "../External/SDL2/include/SDL_keycode.h"

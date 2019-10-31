@@ -7,7 +7,6 @@
 #include "Core/Input.h"
 
 #include "Math/CoreMath.h"
-#include "Math/Physics.h"
 
 #include "Utility/TextFormattingMath.h"
 #if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
@@ -30,6 +29,8 @@
 #include "Resources/ModelParser.h"
 #include "Resources/ShaderManager.h"
 
+#include "Physics/PhysicsWorld.h"
+
 #include "Fonts/Font.h"
 
 #include <SDL.h>
@@ -38,11 +39,6 @@ namespace ESource {
 
 	Mesh MeshPrimitives::Cube;
 	Mesh MeshPrimitives::Quad;
-
-	// int FindBoundingBox(int N, StaticVertex * Vertices);
-	// int VoxelizeToTexture3D(Texture3D * Texture, int N, StaticVertex * Vertices);
-	// int RTRenderToTexture2D(Texture2D * Texture, std::vector<Vector4> * Spheres, const void * dRandState);
-	// const void * GetRandomArray(IntVector2 Dimension);
 
 	Application::Application() {
 		bInitialized = false;
@@ -110,6 +106,7 @@ namespace ESource {
 #endif
 		AudioDeviceInstance = std::make_unique<AudioDevice>();
 		DeviceFunctionsInstance = std::unique_ptr<DeviceFunctions>(DeviceFunctions::Create());
+		PhysicsWorldInstance = std::make_unique<PhysicsWorld>();
 
 		if (!ModelParser::Initialize())
 			return;

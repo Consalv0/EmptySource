@@ -40,6 +40,9 @@
     <Filter Include="Runtime\Private\ImGui">
       <UniqueIdentifier>{9DB4196A-0921-D564-D214-6DC23E40F7CC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Runtime\Private\Physics">
+      <UniqueIdentifier>{A5EB0E6A-1123-5701-1A2D-BB2486E37DFA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Runtime\Private\Rendering">
       <UniqueIdentifier>{408AADDB-AC4C-E165-F5FC-6FF261FEB943}</UniqueIdentifier>
     </Filter>
@@ -75,6 +78,9 @@
     </Filter>
     <Filter Include="Runtime\Public\Math">
       <UniqueIdentifier>{90FF6F11-FC60-4D1F-85CE-93D1F12E84DE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime\Public\Physics">
+      <UniqueIdentifier>{C9B6D7D2-B5B0-0025-9E1D-97358AB66691}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime\Public\Rendering">
       <UniqueIdentifier>{64AED599-50D3-241A-791E-0AAA65A22338}</UniqueIdentifier>
@@ -145,6 +151,9 @@
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Components\ComponentLight.h">
+      <Filter>Runtime\Public\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentPhysicBody.h">
       <Filter>Runtime\Public\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h">
@@ -288,19 +297,10 @@
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Math\Physics.h">
-      <Filter>Runtime\Public\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.inl">
-      <Filter>Runtime\Public\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Math\Ray.h">
-      <Filter>Runtime\Public\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Math\Ray.inl">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Vector2.h">
@@ -320,6 +320,18 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl">
       <Filter>Runtime\Public\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Physics\Physics.h">
+      <Filter>Runtime\Public\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Physics\PhysicsWorld.h">
+      <Filter>Runtime\Public\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Physics\Ray.h">
+      <Filter>Runtime\Public\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Physics\Ray.inl">
+      <Filter>Runtime\Public\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Rendering\Animation.h">
       <Filter>Runtime\Public\Rendering</Filter>
@@ -482,6 +494,9 @@
     <ClCompile Include="Source\Runtime\Private\Components\ComponentLight.cpp">
       <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentPhysicBody.cpp">
+      <Filter>Runtime\Private\Components</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp">
       <Filter>Runtime\Private\Components</Filter>
     </ClCompile>
@@ -559,6 +574,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp">
       <Filter>Runtime\Private\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Physics\PhysicsWorld.cpp">
+      <Filter>Runtime\Private\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp">
       <Filter>Runtime\Private\Rendering</Filter>

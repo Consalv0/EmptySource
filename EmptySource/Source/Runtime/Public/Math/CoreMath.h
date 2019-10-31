@@ -12,6 +12,5 @@
 #include "Math/Matrix3x3.h"
 #include "Math/Matrix4x4.h"
 
-#include "Math/Ray.h"
 #include "Math/Box2D.h"
 #include "Math/Box3D.h"

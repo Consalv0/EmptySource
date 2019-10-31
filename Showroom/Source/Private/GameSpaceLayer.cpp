@@ -11,6 +11,7 @@
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
 #include "Components/ComponentAnimable.h"
+#include "Components/ComponentPhysicBody.h"
 
 #include "../Public/GameSpaceLayer.h"
 #include "../Public/CameraMovement.h"
@@ -309,8 +310,8 @@ void GameSpaceLayer::OnAwake() {
 
 	MaterialManager MaterialMng = MaterialManager::GetInstance();
 	ModelManager ModelMng = ModelManager::GetInstance();
-	auto Ground = CreateObject<GGameObject>(L"Ground", Transform());
 	{
+		auto Ground = CreateObject<GGameObject>(L"Ground", Transform());
 		CFollowTarget * Follow = Ground->CreateComponent<CFollowTarget>();
 		Follow->Target = Camera;
 		Follow->FixedPositionAxisY = true;
@@ -322,6 +323,8 @@ void GameSpaceLayer::OnAwake() {
 				auto Tile = CreateObject<GGameObject>(L"Tile");
 				Tile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
 				Tile->AttachTo(Ground);
+				auto PhysicsBody = Tile->CreateComponent<CPhysicBody>();
+				PhysicsBody->SetMesh(TileDesert);
 				auto Renderable = Tile->CreateComponent<CRenderable>();
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
@@ -329,22 +332,28 @@ void GameSpaceLayer::OnAwake() {
 		}
 	}
 
-	auto EgyptianCat = CreateObject<GGameObject>(L"EgyptianCat", Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::EulerAngles({18.F, -16.F, 34.F}), 1.F));
 	{
+		auto EgyptianCat = CreateObject<GGameObject>(L"EgyptianCat", Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::EulerAngles({18.F, -16.F, 34.F}), 1.F));
+		auto PhysicsBody = EgyptianCat->CreateComponent<CPhysicBody>();
+		PhysicsBody->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		auto Renderable = EgyptianCat->CreateComponent<CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/EgyptianCat"));
 	}
 
-	auto FalloutCar = CreateObject<GGameObject>(L"FalloutCar", Transform(Vector3(10.F, -0.56F, 8.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 1.F));
 	{
+		auto FalloutCar = CreateObject<GGameObject>(L"FalloutCar", Transform(Vector3(10.F, -0.56F, 8.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 1.F));
+		auto PhysicsBody = FalloutCar->CreateComponent<CPhysicBody>();
+		PhysicsBody->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		auto Renderable = FalloutCar->CreateComponent<CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FalloutCar"));
 	}
 
-	auto Backpack = CreateObject<GGameObject>(L"Backpack", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
 	{
+		auto Backpack = CreateObject<GGameObject>(L"Backpack", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
+		auto PhysicsBody = Backpack->CreateComponent<CPhysicBody>();
+		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		auto Renderable = Backpack->CreateComponent<CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/Backpack"));

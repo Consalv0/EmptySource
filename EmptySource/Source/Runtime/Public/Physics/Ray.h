@@ -11,6 +11,7 @@ namespace ESource {
 		float Stamp;
 		Vector3 Normal;
 		Vector3 BaricenterCoordinates;
+		class CPhysicBody * PhysicBody;
 		int TriangleIndex;
 
 		HOST_DEVICE FORCEINLINE RayHit() {
@@ -23,6 +24,7 @@ namespace ESource {
 			Normal = 0;
 			BaricenterCoordinates = 0;
 			TriangleIndex = -1;
+			PhysicBody = NULL;
 		}
 
 		HOST_DEVICE inline bool operator < (const RayHit& Other) const {
@@ -47,4 +49,4 @@ namespace ESource {
 
 }
 
-#include "Math/Ray.inl"
+#include "Physics/Ray.inl"

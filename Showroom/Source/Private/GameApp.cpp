@@ -4,7 +4,7 @@
 #include "Core/SpaceLayer.h"
 
 #include "Math/CoreMath.h"
-#include "Math/Physics.h"
+#include "Physics/Physics.h"
 
 #include "Utility/TextFormattingMath.h"
 #if defined(ES_PLATFORM_WINDOWS) & defined(ES_PLATFORM_CUDA)
@@ -38,6 +38,8 @@
 #include "Resources/AudioManager.h"
 
 #include "Components/ComponentRenderable.h"
+
+#include "Physics/PhysicsWorld.h"
 
 #include "Fonts/Font.h"
 #include "Fonts/Text2DGenerator.h"
@@ -169,17 +171,20 @@ protected:
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
-		ShaderMng.CreateProgram(L"PBRShader", L"Resources/Shaders/PBR.shader");
+		ShaderMng.CreateProgram(L"CookTorranceShader", L"Resources/Shaders/CookTorrance.shader");
 		
 		ModelManager& ModelMng = ModelManager::GetInstance();
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
+		// https://sketchfab.com/3d-models/eastern-substances-6eae4e979bc447c99af70284bfc4065a
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/TileDesertSends.obj", true);
 		ModelMng.CreateSubModelMesh(L"TileDesertSends", L"TileDesertSends");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/EgyptianCat.obj", true);
 		ModelMng.CreateSubModelMesh(L"EgyptianCat", L"Cat_Statue_CatStatue");
+		// https://sketchfab.com/3d-models/fallout-car-2-cf54e5b166644fc7ade7bbaac502a04f
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/FalloutCar.fbx", true);
 		ModelMng.CreateSubModelMesh(L"FalloutCar", L"default");
+		// https://sketchfab.com/3d-models/a-backpack-for-an-adventure-2ad86321197a49feb54b7726743d7fd0
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Backpack.dae", true);
 		ModelMng.CreateSubModelMesh(L"Backpack", L"Cylinder025");
 		
@@ -187,26 +192,29 @@ protected:
 		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
 		
 		MaterialManager& MaterialMng = MaterialManager::GetInstance();
-		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+		MaterialMng.CreateMaterial(L"DebugMaterial", ShaderMng.GetProgram(L"UnLitShader"), true, DF_LessEqual, FM_Wireframe, CM_None, {
+			{ "_Material.Color", { Vector4(1.F, 0.F, 1.F, 1.F) } }
+		});
+		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_R") } },
 		});
-		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_R") } },
 			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_M") } },
 			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_AO") } },
 		});
-		MaterialMng.CreateMaterial(L"Objects/FalloutCar", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+		MaterialMng.CreateMaterial(L"Objects/FalloutCar", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_R") } },
 			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_M") } },
 			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_AO") } },
 		});
-		MaterialMng.CreateMaterial(L"Objects/Backpack", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+		MaterialMng.CreateMaterial(L"Objects/Backpack", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_A") } },
 			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_N") } },
 			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_R") } },

@@ -22,12 +22,10 @@ namespace ESource {
 	}
 
 	bool CAnimable::Initialize() {
-		LOG_CORE_DEBUG(L"Animable '{0}'[{1:d}] Initalized", Name.GetDisplayName(), Name.GetInstanceID());
 		return true;
 	}
 
 	void CAnimable::OnDelete() {
-		LOG_CORE_DEBUG(L"Animable '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
 
 	size_t FindPosition(double AnimationTime, const AnimationTrackNode * NodeAnim) {

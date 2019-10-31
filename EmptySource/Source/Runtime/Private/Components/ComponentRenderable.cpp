@@ -13,11 +13,10 @@
 
 namespace ESource {
 
-	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Renderer", GameObject), ActiveMesh() {
+	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Rendererable", GameObject), ActiveMesh() {
 	}
 
 	void CRenderable::OnDelete() {
-		LOG_CORE_DEBUG(L"Renderer '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
 
 	void CRenderable::SetMesh(RMeshPtr Value) {

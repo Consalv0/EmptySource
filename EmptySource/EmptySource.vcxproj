@@ -163,6 +163,7 @@
     <ClInclude Include="Source\Runtime\Public\Components\ComponentAnimable.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentCamera.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentLight.h" />
+    <ClInclude Include="Source\Runtime\Public\Components\ComponentPhysicBody.h" />
     <ClInclude Include="Source\Runtime\Public\Components\ComponentRenderable.h" />
     <ClInclude Include="Source\Runtime\Public\Core.h" />
     <ClInclude Include="Source\Runtime\Public\Core\Application.h" />
@@ -210,17 +211,18 @@
     <ClInclude Include="Source\Runtime\Public\Math\Matrix3x3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl" />
-    <ClInclude Include="Source\Runtime\Public\Math\Physics.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.inl" />
-    <ClInclude Include="Source\Runtime\Public\Math\Ray.h" />
-    <ClInclude Include="Source\Runtime\Public\Math\Ray.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector2.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector2.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector3.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
+    <ClInclude Include="Source\Runtime\Public\Physics\Physics.h" />
+    <ClInclude Include="Source\Runtime\Public\Physics\PhysicsWorld.h" />
+    <ClInclude Include="Source\Runtime\Public\Physics\Ray.h" />
+    <ClInclude Include="Source\Runtime\Public\Physics\Ray.inl" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Animation.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\GraphicContext.h" />
     <ClInclude Include="Source\Runtime\Public\Rendering\Material.h" />
@@ -276,6 +278,7 @@
     <ClCompile Include="Source\Runtime\Private\Components\ComponentAnimable.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentCamera.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentLight.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Components\ComponentPhysicBody.cpp" />
     <ClCompile Include="Source\Runtime\Private\Components\ComponentRenderable.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Application.cpp" />
     <ClCompile Include="Source\Runtime\Private\Core\Component.cpp" />
@@ -302,6 +305,7 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\PixelMap.cpp" />

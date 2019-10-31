@@ -1,5 +1,5 @@
 
-#include "Math/Ray.h"
+#include "Physics/Ray.h"
 
 namespace ESource {
 
@@ -11,8 +11,8 @@ namespace ESource {
 		: Origin(Origin), Direction(Direction)
 	{ }
 
-	inline Vector3 Ray::PointAt(float t) const {
-		return Origin + (Direction * t);
+	inline Vector3 Ray::PointAt(float Time) const {
+		return Origin + (Direction * Time);
 	}
 
 }

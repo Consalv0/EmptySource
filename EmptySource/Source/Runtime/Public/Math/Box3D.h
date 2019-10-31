@@ -23,14 +23,14 @@ namespace ESource {
 		{ }
 
 		inline Box3D Transform(const Matrix4x4 & Transformation) const {
-			Vector3 MinN = Transformation * (Vector3(xMin, yMin, zMin));
-			Vector3 MaxN = Transformation * (Vector3(xMax, yMax, zMax));
-			Vector3 MinZ = Transformation * (Vector3(xMin, yMin, zMax));
-			Vector3 MaxZ = Transformation * (Vector3(xMax, yMax, zMin));
-			Vector3 MinY = Transformation * (Vector3(xMin, yMax, zMin));
-			Vector3 MaxY = Transformation * (Vector3(xMax, yMin, zMax));
-			Vector3 MinX = Transformation * (Vector3(xMax, yMin, zMin));
-			Vector3 MaxX = Transformation * (Vector3(xMin, yMax, zMax));
+			Vector3 MinN = Transformation.MultiplyPoint(Vector3(xMin, yMin, zMin));
+			Vector3 MaxN = Transformation.MultiplyPoint(Vector3(xMax, yMax, zMax));
+			Vector3 MinZ = Transformation.MultiplyPoint(Vector3(xMin, yMin, zMax));
+			Vector3 MaxZ = Transformation.MultiplyPoint(Vector3(xMax, yMax, zMin));
+			Vector3 MinY = Transformation.MultiplyPoint(Vector3(xMin, yMax, zMin));
+			Vector3 MaxY = Transformation.MultiplyPoint(Vector3(xMax, yMin, zMax));
+			Vector3 MinX = Transformation.MultiplyPoint(Vector3(xMax, yMin, zMin));
+			Vector3 MaxX = Transformation.MultiplyPoint(Vector3(xMin, yMax, zMax));
 
 			Box3D Value;
 			Value.Add(MinN); Value.Add(MaxN);

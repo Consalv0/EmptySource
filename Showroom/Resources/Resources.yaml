@@ -9,8 +9,8 @@ Resources:
       OriginFile: Resources/Shaders/HDRClamping.shader
   - GUID: 16680565041064288702
     ShaderProgram:
-      Name: PBRShader
-      OriginFile: Resources/Shaders/PBR.shader
+      Name: CookTorranceShader
+      OriginFile: Resources/Shaders/CookTorrance.shader
   - GUID: 9336688078605051222
     ShaderProgram:
       Name: UnLitShader

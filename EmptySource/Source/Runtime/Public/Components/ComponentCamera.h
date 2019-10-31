@@ -9,6 +9,8 @@ namespace ESource {
 	public:
 		virtual void OnRender() override;
 
+		Matrix4x4 GetProjectionMatrix() const;
+
 		float ApertureAngle;
 
 		Vector2 CullingPlanes;

@@ -45,13 +45,6 @@ GLSL:
           vec3 Color = Sample.rgb;
           Color *= pow(AmbientOcclusion, 5.0);
 
-          Color = vec3(1.0) - exp(-Color * _Exposure);
-          Color = pow(Color, vec3(1.0 / _Gamma));
-          Color = clamp(Color, vec3(0.0), vec3(1.0));
-
-          vec3 ColorIntensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
-          Color = mix(ColorIntensity, Color, 1.25);
-
           vec3 BloomColor = SampleBloom.rgb;
           BloomColor = vec3(1.0) - exp(-BloomColor * _Exposure);
           BloomColor = clamp(BloomColor, vec3(0.0), vec3(1.0));
@@ -60,7 +53,14 @@ GLSL:
           BloomColor = mix(BloomIntensity, BloomColor, 1 / 1.25);
 
           Color = Color + BloomColor * 0.5;
-          Color = mix(Color, vec3(0.95, 0.85, 0.8), clamp(pow(Fog, 1.0 / 0.006) * 1.15, 0.0, 1.0));
+          Color = mix(Color, vec3(0.97, 0.82, 0.49) * _Gamma, clamp(pow(Fog, 1.0 / 0.004) * 0.9, 0.0, 1.0));
+
+          Color = vec3(1.0) - exp(-Color * _Exposure);
+          Color = pow(Color, vec3(1.0 / _Gamma));
+          Color = clamp(Color, vec3(0.0), vec3(1.0));
+
+          vec3 ColorIntensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
+          Color = mix(ColorIntensity, Color, 1.25);
 
           FragColor = vec4(Color, Sample.a * SampleBloom.a);
         }

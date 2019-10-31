@@ -21,6 +21,9 @@ namespace ESource {
 				{ 12, 22, 13 },	{ 15, 23, 16 }
 			};
 
+			Data.MaterialsMap.emplace(0, "default");
+			Data.SubdivisionsMap.emplace(0, Subdivision({ 0, 0, 0, 12 * 3 }));
+
 			Matrix4x4 Transform = Matrix4x4::Translation(Position) * Matrix4x4::Scaling(Size);
 			Data.StaticVertices = {
 				{ Transform.MultiplyPoint({ 0.5F, -0.5F,  0.5F}), { 0.F, -1.F,  0.F}, { 0.F,  0.F, 1.F}, {1.F, 0.F}, {1.F, 0.F}, {1.F} },
@@ -64,6 +67,9 @@ namespace ESource {
 			Data.Faces = {
 				{0, 1, 2}, {0, 3, 1}
 			};
+
+			Data.MaterialsMap.emplace(0, "default");
+			Data.SubdivisionsMap.emplace(0, Subdivision({ 0, 0, 0, 2 * 3 }));
 
 			Matrix4x4 Transform = Matrix4x4::Translation(Position) * Matrix4x4::Scaling(Size);
 			Data.StaticVertices = {

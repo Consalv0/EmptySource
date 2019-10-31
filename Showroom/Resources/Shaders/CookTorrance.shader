@@ -1,4 +1,4 @@
-Name: "PBRShader"
+Name: "CookTorranceShader"
 Parameters:
   - Uniform: _Material.Metalness
     Type: Float
@@ -156,10 +156,6 @@ GLSL:
         } Vertex;
         
         out vec4 FragColor;
-        
-        vec3 FresnelSchlick(float CosTheta, vec3 F0) {
-          return F0 + (1.0 - F0) * pow(1.0 - CosTheta, 5.0);
-        }
       
         vec3 FresnelSchlickRoughness(float CosTheta, vec3 F0, float Roughness) {
           return F0 + (max(vec3(1.0 - Roughness), F0) - F0) * pow(1.0 - CosTheta, 5.0);
@@ -177,8 +173,9 @@ GLSL:
       
         float TrowbridgeReitzNormalDistribution(float NdotH, float Roughness){
           float RoughnessSqr = Roughness * Roughness;
-          float Distribution = NdotH*NdotH * (RoughnessSqr - 1.0) + 1.0;
-          return RoughnessSqr / (PI * Distribution*Distribution);
+          float NdotHSqr = NdotH * NdotH;
+          float Distribution = NdotHSqr * (RoughnessSqr - 1.0) + 1.0;
+          return RoughnessSqr / (PI * Distribution * Distribution);
         }
       
         float SmoothDistanceAttenuation (vec3 UnormalizedLightVector, float AttenuationRadius) {
@@ -225,9 +222,13 @@ GLSL:
       
           float NDotV = clamp(abs( dot( Normal, EyeDirection ) ) + 0.01, 0.0, 1.0);
       
-          vec3 F0 = vec3(0.4); 
+          // F0 - base reflectivity of a surface, a.k.a. surface reflection at zero incidence
+          // or how much the surface reflects if looking directly at it
+          vec3 F0 = vec3(0.04); // 0.04 is a commonly used constant for dielectrics
           F0 = mix(F0, DiffuseColor, Metalness);
+
           vec3 Fresnel = FresnelSchlickRoughness(NDotV, F0, Roughness);
+
           vec2 EnviromentBRDF = texture(_BRDFLUT, vec2(NDotV, Roughness)).rg;
           vec3 Irradiance = vec3(textureLod(_EnviromentMap, Normal, _EnviromentMapLods - 2.0));
                //Irradiance = pow(Irradiance, vec3(1.0/dot(vec3(0.2125, 0.7154, 0.0721) * PI * 4.0, Irradiance)));

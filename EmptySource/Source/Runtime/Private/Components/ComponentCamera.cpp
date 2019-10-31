@@ -12,27 +12,28 @@
 
 namespace ESource {
 
-	CCamera::CCamera(GGameObject & GameObject) 
+	Matrix4x4 CCamera::GetProjectionMatrix() const {
+		return Matrix4x4::Perspective(
+			ApertureAngle * MathConstants::DegreeToRad,
+			Application::GetInstance()->GetWindow().GetAspectRatio(),
+			CullingPlanes.x, CullingPlanes.y
+		);
+	}
+	
+	CCamera::CCamera(GGameObject & GameObject)
 		: CComponent(L"Camera", GameObject), ApertureAngle(60.F), CullingPlanes(0.03F, 1000.F) {
 	}
 
 	void CCamera::OnRender() {
 		Application::GetInstance()->GetRenderPipeline().SetEyeTransform(GetGameObject().GetWorldTransform());
-		Application::GetInstance()->GetRenderPipeline().SetProjectionMatrix(
-			Matrix4x4::Perspective(
-			ApertureAngle * MathConstants::DegreeToRad,
-			Application::GetInstance()->GetWindow().GetAspectRatio(),
-			CullingPlanes.x, CullingPlanes.y
-		));
+		Application::GetInstance()->GetRenderPipeline().SetProjectionMatrix(GetProjectionMatrix());
 	}
 
 	bool CCamera::Initialize() {
-		LOG_CORE_DEBUG(L"Camera '{0}'[{1:d}] Initalized", Name.GetDisplayName(), Name.GetInstanceID());
 		return true;
 	}
 
 	void CCamera::OnDelete() {
-		LOG_CORE_DEBUG(L"Camera '{0}'[{1:d}] Destroyed", Name.GetDisplayName(), Name.GetInstanceID());
 	}
 
 }

@@ -1,8 +1,17 @@
 
 #include "CoreMinimal.h"
+#include "Core/Application.h"
 #include "Core/GameObject.h"
 #include "Core/Transform.h"
 #include "Core/Input.h"
+
+#include "Resources/ModelResource.h"
+
+#include "Components/ComponentCamera.h"
+#include "Components/ComponentPhysicBody.h"
+
+#include "Physics/PhysicsWorld.h"
+#include "Physics/Ray.h"
 
 #include "../Public/CameraMovement.h"
 
@@ -32,6 +41,7 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	}
 
 	Vector3 MovementDirection = Vector3();
+
 	if (Input::IsKeyDown(26)) {
 		MovementDirection += CameraRotation * Vector3(0, 0, 1.F);
 	}
@@ -51,6 +61,24 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		(!Input::IsKeyDown(225) ? !Input::IsKeyDown(224) ? 1.F : .1F : 4.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
+
+	if (Input::IsKeyDown(21)) {
+		TArray<RayHit> Hits;
+		Vector3 CameraRayDirection = {
+			(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,
+			1.F - (2.F * Input::GetMouseY()) / Application::GetInstance()->GetWindow().GetHeight(),
+			-1.F,
+		};
+		CameraRayDirection = GetGameObject().GetFirstComponent<CCamera>()->GetProjectionMatrix().Inversed() * CameraRayDirection;
+		CameraRayDirection.z = -1.F;
+		CameraRayDirection = GetGameObject().LocalTransform.GetGLViewMatrix().Inversed() * CameraRayDirection;
+		CameraRayDirection.Normalize();
+		Ray CameraRay(GetGameObject().GetWorldTransform().Position, CameraRayDirection);
+		Application::GetInstance()->GetPhysicsWorld().RayCast(CameraRay, Hits);
+		for (auto & Hit : Hits) {
+			LOG_CORE_DEBUG(L"Hit with: {}", Hit.PhysicBody->GetGameObject().GetName().GetInstanceName().c_str());
+		}
+	}
 }
 
 void CCameraMovement::OnDelete() { }

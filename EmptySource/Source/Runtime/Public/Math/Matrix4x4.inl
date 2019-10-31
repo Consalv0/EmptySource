@@ -273,10 +273,7 @@ namespace ESource {
 	}
 
 	inline HOST_DEVICE Vector3 Matrix4x4::MultiplyPoint(const Vector3 & Vector) const {
-		Vector3 Result = *this * Vector;
-		Result += GetColumn(3);
-		Result *= 1.F / GetColumn(3).Dot(Vector4(Vector, 1.F));
-		return Result;
+		return *this * Vector4(Vector, 1.F);
 	}
 
 	inline Vector3 Matrix4x4::MultiplyVector(const Vector3 & Vector) const {

@@ -28,6 +28,9 @@ namespace ESource {
 		//* Application Audio Output
 		inline AudioDevice & GetAudioDevice() { return *AudioDeviceInstance; }
 
+		//* Application Physics World
+		inline class PhysicsWorld & GetPhysicsWorld() { return *PhysicsWorldInstance; }
+
 		//* Call this to close the application
 		inline void ShouldClose() { bRunning = false; };
 
@@ -49,6 +52,8 @@ namespace ESource {
 		std::unique_ptr<DeviceFunctions> DeviceFunctionsInstance;
 
 		std::unique_ptr<AudioDevice> AudioDeviceInstance;
+
+		std::unique_ptr<PhysicsWorld> PhysicsWorldInstance;
 
 		class ImGuiLayer * ImGuiLayerInstance;
 
