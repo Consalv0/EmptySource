@@ -48,7 +48,7 @@ namespace ESource {
 						Hit, ModelSpaceCameraRay,
 						ModelData->StaticVertices[(*Face)[0]].Position,
 						ModelData->StaticVertices[(*Face)[1]].Position,
-						ModelData->StaticVertices[(*Face)[2]].Position, true
+						ModelData->StaticVertices[(*Face)[2]].Position, PhysicsBody->bDoubleSided
 					)) {
 						Hit.TriangleIndex = int(Face - ModelData->Faces.begin());
 						Hit.PhysicBody = PhysicsBody;

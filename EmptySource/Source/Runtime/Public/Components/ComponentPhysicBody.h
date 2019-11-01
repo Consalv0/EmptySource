@@ -11,6 +11,8 @@ namespace ESource {
 
 		struct MeshData * GetMeshData();
 
+		bool bDoubleSided;
+
 	protected:
 		RMeshPtr ActiveMesh;
 		
