@@ -18,6 +18,7 @@ namespace ESource {
 		RenderPriority = 1000;
 		bWriteDepth = true;
 		bTransparent = false;
+		bCastShadows = true;
 		DepthFunction = DF_LessEqual;
 		FillMode = FM_Solid;
 		CullMode = CM_CounterClockWise;

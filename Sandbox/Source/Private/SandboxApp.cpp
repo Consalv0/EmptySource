@@ -78,9 +78,6 @@ private:
 	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
 
 	float SkyboxRoughness = 1.F;
-	float MaterialMetalness = 1.F;
-	float MaterialRoughness = 1.F;
-	float LightIntencity = 20.F;
 
 	TArray<Transform> Transforms; 
 	Matrix4x4 TransformMat;
@@ -1104,60 +1101,37 @@ protected:
 		// ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
 		// // ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
 
-		if (Input::IsKeyDown(SDL_SCANCODE_BACKSPACE)) {
+		if (Input::IsKeyDown(Scancode::Backspace)) {
 			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_N)) {
-			MaterialMetalness -= 1.F * Time::GetDeltaTime<Time::Second>();
-			MaterialMetalness = Math::Clamp01(MaterialMetalness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_M)) {
-			MaterialMetalness += 1.F * Time::GetDeltaTime<Time::Second>();
-			MaterialMetalness = Math::Clamp01(MaterialMetalness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_E)) {
-			MaterialRoughness -= 0.5F * Time::GetDeltaTime<Time::Second>();
-			MaterialRoughness = Math::Clamp01(MaterialRoughness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_R)) {
-			MaterialRoughness += 0.5F * Time::GetDeltaTime<Time::Second>();
-			MaterialRoughness = Math::Clamp01(MaterialRoughness);
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_L)) {
-			LightIntencity += LightIntencity * Time::GetDeltaTime<Time::Second>();
-		}
-		if (Input::IsKeyDown(SDL_SCANCODE_K)) {
-			LightIntencity -= LightIntencity * Time::GetDeltaTime<Time::Second>();
-		}
-
-		if (Input::IsKeyDown(SDL_SCANCODE_RIGHT)) {
+		if (Input::IsKeyDown(Scancode::Right)) {
 			MultiuseValue += Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
-		if (Input::IsKeyDown(SDL_SCANCODE_LEFT)) {
+		if (Input::IsKeyDown(Scancode::Left)) {
 			MultiuseValue -= Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
-			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
+		if (Input::IsKeyDown(Scancode::LSHIFT)) {
+			if (Input::IsKeyDown(Scancode::I)) {
 				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 
-			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
+			if (Input::IsKeyDown(Scancode::K)) {
 				FontSize -= Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 		}
 		else {
-			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
+			if (Input::IsKeyDown(Scancode::I)) {
 				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 
-			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
+			if (Input::IsKeyDown(Scancode::K)) {
 				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_V)) {
+		if (Input::IsKeyDown(Scancode::V)) {
 			for (int i = 0; i < 10; i++) {
 				RenderingText[1] += (unsigned long)(rand() % 0x3fff);
 			}
@@ -1436,17 +1410,16 @@ protected:
 		);
 
 		RenderingText[0] = Text::Formatted(
-			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), LightIntensity(%.3f), DeltaCursor(%ls)",
+			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms), DeltaCursor(%ls)",
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
 			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
 			1.F / Time::GetAverageDelta<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>(),
-			LightIntencity / 10000.F + 1.F,
 			Text::FormatMath(Vector3(LastCursorPosition.y - Input::GetMouseY(), -LastCursorPosition.x - -Input::GetMouseX())).c_str()
 		);
 
-		if (Input::IsKeyDown(SDL_SCANCODE_ESCAPE)) {
+		if (Input::IsKeyDown(Scancode::Escape)) {
 			Application::GetInstance()->ShouldClose();
 		}
 

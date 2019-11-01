@@ -60,10 +60,18 @@ namespace ESource {
 		void SetIcon(class PixelMap * Icon);
 
 		//* Window update events
+		virtual void BeginFrame() override;
+
+		//* Window frame events
 		virtual void EndFrame() override;
+
+		//* Get the total frames renderized
+		uint64_t GetFrameCount() const override;
 
 		//* Terminates this window
 		void Terminate();
+
+		void CheckInputState();
 
 		//* Returns true if window has been created
 		virtual bool IsRunning() override;

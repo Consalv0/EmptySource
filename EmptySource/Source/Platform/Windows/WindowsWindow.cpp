@@ -6,6 +6,7 @@
 
 #include "Utility/TextFormatting.h"
 
+#include "Platform/Windows/WindowsInput.h"
 #include "Platform/Windows/WindowsWindow.h"
 
 /// Remove this in the furture
@@ -16,6 +17,8 @@
 namespace ESource {
 
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
+		auto & KeyState = WindowsInput::GetInputInstance()->InputKeyState[(Scancode)Event->key.keysym.scancode];
+		auto & MouseState = WindowsInput::GetInputInstance()->MouseButtonState[(MouseButton)Event->button.button];
 		WindowsWindow& Data = *(WindowsWindow*)UserData;
 		static int32_t MouseButtonPressedCount[255] = { 
 			(int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, 
@@ -51,6 +54,12 @@ namespace ESource {
 		}
 
 		case SDL_KEYDOWN: {
+			if (Event->key.repeat == 0)
+				KeyState.State = ButtonState_Pressed | ButtonState_Typed;
+			else
+				KeyState.State = ButtonState_Typed;
+			KeyState.TypeRepeticions = Event->key.repeat;
+
 			KeyPressedEvent InEvent(
 				Event->key.keysym.scancode,
 				(SDL_GetModState() & KMOD_SHIFT) != 0,
@@ -64,6 +73,10 @@ namespace ESource {
 		}
 
 		case SDL_KEYUP: {
+			KeyState.State = ButtonState_Released;
+			KeyState.FramePressed = 0;
+			KeyState.TypeRepeticions = 0;
+
 			KeyReleasedEvent InEvent(
 				Event->key.keysym.scancode,
 				(SDL_GetModState() & KMOD_SHIFT) != 0,
@@ -82,6 +95,9 @@ namespace ESource {
 		}
 
 		case SDL_MOUSEBUTTONDOWN: {
+			MouseState.State = ButtonState_Pressed;
+			MouseState.Clicks = Event->button.clicks;
+
 			MouseButtonPressedCount[Event->button.button]++;
 			MouseButtonPressedEvent InEvent(Event->button.button, Event->button.clicks == 2, MouseButtonPressedCount[Event->button.button]);
 			Data.InputEventCallback(InEvent);
@@ -89,6 +105,10 @@ namespace ESource {
 		}
 
 		case SDL_MOUSEBUTTONUP: {
+			MouseState.State = ButtonState_Released;
+			MouseState.FramePressed = 0;
+			MouseState.Clicks = 0;
+
 			MouseButtonPressedCount[Event->button.button] = -1;
 			MouseButtonReleasedEvent InEvent(Event->button.button);
 			Data.InputEventCallback(InEvent);
@@ -197,8 +217,16 @@ namespace ESource {
 		SDL_FreeSurface(Surface);
 	}
 
+	void WindowsWindow::BeginFrame() {
+		CheckInputState();
+	}
+
 	void WindowsWindow::EndFrame() {
 		Context->SwapBuffers();
+	}
+
+	uint64_t WindowsWindow::GetFrameCount() const {
+		return Context->GetFrameCount();
 	}
 
 	void WindowsWindow::Terminate() {
@@ -211,6 +239,22 @@ namespace ESource {
 			SDL_DelEventWatch(OnSDLEvent, (void *)this);
 			Context.reset(NULL);
 			// SDL_DelEventWatch(OnResizeWindow, this);
+		}
+	}
+
+	void WindowsWindow::CheckInputState() {
+		auto InputInstance = WindowsInput::GetInputInstance();
+		for (auto & KeyStateIt : InputInstance->InputKeyState) {
+			if (KeyStateIt.second.State & ButtonState_Pressed) {
+				KeyStateIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
+			}
+			KeyStateIt.second.State &= ~(ButtonState_Pressed | ButtonState_Released | ButtonState_Typed);
+		}
+		for (auto & MouseButtonIt : InputInstance->MouseButtonState) {
+			if (MouseButtonIt.second.State & ButtonState_Pressed) {
+				MouseButtonIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
+			}
+			MouseButtonIt.second.State &= ~(ButtonState_Pressed | ButtonState_Released);
 		}
 	}
 

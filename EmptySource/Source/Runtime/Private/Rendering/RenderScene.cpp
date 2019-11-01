@@ -172,7 +172,7 @@ namespace ESource {
 		Shader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Lights[LightIndex].Transformation.GetGLViewMatrix().PointerToValue());
 
 		for (auto & MatIt : SortedMaterials) {
-
+			if (!MatIt->bCastShadows) continue;
 			ShaderParameter * Parameter = MatIt->GetVariables().GetVariable("_MainTexture");
 			if (Parameter && Parameter->Value.Texture) {
 				Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetNativeTexture(), 0);

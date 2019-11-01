@@ -42,6 +42,9 @@ namespace ESource {
 		//* Returns true if window has been created
 		virtual bool IsRunning() = 0;
 
+		//* Begin of frame functions
+		virtual void BeginFrame() = 0;
+
 		//* End of frame functions
 		virtual void EndFrame() = 0;
 
@@ -59,6 +62,9 @@ namespace ESource {
 
 		//* Get the size of the window in pixels
 		virtual IntBox2D GetViewport() const = 0;
+
+		//* Get the total frames renderized
+		virtual uint64_t GetFrameCount() const = 0;
 
 		//* Set callback communication with window events
 		virtual void SetWindowEventCallback(const WindowEventCallbackFunction& Callback) = 0;

@@ -18,7 +18,7 @@ namespace ESource {
 		uint32_t VersionMinor;
 		
 		//* Frame Count
-		unsigned long long FrameCount;
+		uint64_t FrameCount;
 
 		SDL_Window * WindowHandle;
 
@@ -30,7 +30,7 @@ namespace ESource {
 
 		virtual bool CreateContext();
 
-		unsigned long long inline GetFrameCount() { return FrameCount; };
+		uint64_t inline GetFrameCount() const override { return FrameCount; };
 
 		virtual bool IsValid() override;
 

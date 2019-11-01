@@ -444,6 +444,9 @@
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Events\KeyCodes.h">
+      <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">

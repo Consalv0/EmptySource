@@ -192,9 +192,9 @@ protected:
 		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
 		
 		MaterialManager& MaterialMng = MaterialManager::GetInstance();
-		MaterialMng.CreateMaterial(L"DebugMaterial", ShaderMng.GetProgram(L"UnLitShader"), true, DF_LessEqual, FM_Wireframe, CM_None, {
-			{ "_Material.Color", { Vector4(1.F, 0.F, 1.F, 1.F) } }
-		});
+		// MaterialMng.CreateMaterial(L"DebugMaterial", ShaderMng.GetProgram(L"UnLitShader"), true, DF_LessEqual, FM_Wireframe, CM_None, {
+		// 	{ "_Material.Color", { Vector4(1.F, 0.F, 1.F, 1.F) } }
+		// })->bCastShadows = false;
 		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
@@ -492,6 +492,10 @@ protected:
 
 					ImGui::AlignTextToFramePadding(); ImGui::Text("Render Priority"); ImGui::NextColumn();
 					ImGui::PushItemWidth(-1); ImGui::DragScalar("##RPriority", ImGuiDataType_U32, &SelectedMaterial->RenderPriority, 100.F);
+					ImGui::NextColumn();
+
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Cast Shadows"); ImGui::NextColumn();
+					ImGui::PushItemWidth(-1); ImGui::Checkbox("##bCastShadows", &SelectedMaterial->bCastShadows);
 					ImGui::NextColumn();
 
 					ImGui::AlignTextToFramePadding(); ImGui::Text("Write Depth"); ImGui::NextColumn();
@@ -966,37 +970,37 @@ protected:
 
 	virtual void OnUpdate(Timestamp Stamp) override {
 
-		if (Input::IsKeyDown(SDL_SCANCODE_BACKSPACE)) {
+		if (Input::IsKeyDown(Scancode::Escape)) {
 			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_RIGHT)) {
+		if (Input::IsKeyDown(Scancode::Right)) {
 			MultiuseValue += Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
-		if (Input::IsKeyDown(SDL_SCANCODE_LEFT)) {
+		if (Input::IsKeyDown(Scancode::Left)) {
 			MultiuseValue -= Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_LSHIFT)) {
-			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
+		if (Input::IsKeyDown(Scancode::LSHIFT)) {
+			if (Input::IsKeyDown(Scancode::I)) {
 				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 
-			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
+			if (Input::IsKeyDown(Scancode::K)) {
 				FontSize -= Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 		}
 		else {
-			if (Input::IsKeyDown(SDL_SCANCODE_I)) {
+			if (Input::IsKeyDown(Scancode::I)) {
 				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 
-			if (Input::IsKeyDown(SDL_SCANCODE_K)) {
+			if (Input::IsKeyDown(Scancode::K)) {
 				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 		}
 
-		if (Input::IsKeyDown(SDL_SCANCODE_V)) {
+		if (Input::IsKeyDown(Scancode::V)) {
 			for (int i = 0; i < 10; i++) {
 				RenderingText[1] += (unsigned long)(rand() % 0x3fff);
 			}
@@ -1070,7 +1074,7 @@ protected:
 			Time::GetDeltaTime<Time::Mili>()
 		);
 
-		if (Input::IsKeyDown(SDL_SCANCODE_ESCAPE)) {
+		if (Input::IsKeyDown(Scancode::Escape)) {
 			Application::GetInstance()->ShouldClose();
 		}
 

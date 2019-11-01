@@ -183,6 +183,7 @@
     <ClInclude Include="Source\Runtime\Public\CoreTypes.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Event.h" />
     <ClInclude Include="Source\Runtime\Public\Events\InputEvent.h" />
+    <ClInclude Include="Source\Runtime\Public\Events\KeyCodes.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Observer.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Property.h" />
     <ClInclude Include="Source\Runtime\Public\Events\Task.h" />

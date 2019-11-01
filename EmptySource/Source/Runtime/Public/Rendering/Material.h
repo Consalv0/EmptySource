@@ -40,6 +40,7 @@ namespace ESource {
 	public:
 		bool bWriteDepth;
 		bool bTransparent;
+		bool bCastShadows;
 		uint32_t RenderPriority;
 		EDepthFunction DepthFunction;
 		ERasterizerFillMode FillMode;

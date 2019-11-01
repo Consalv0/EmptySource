@@ -10,14 +10,18 @@ namespace ESource {
 
 	Input * Input::Instance = new WindowsInput();
 
-	bool WindowsInput::IsKeyDownNative(int KeyCode) {
-		const Uint8 * Keys = SDL_GetKeyboardState(NULL);
-		return Keys[KeyCode];
+	WindowsInput * WindowsInput::GetInputInstance() {
+		return static_cast<WindowsInput *>(Input::Instance);
 	}
 
-	bool WindowsInput::IsMouseButtonDownNative(int Button) {
-		const Uint32 Flag = SDL_GetMouseState(NULL, NULL);
-		return Flag & SDL_BUTTON(Button);
+	bool WindowsInput::IsKeyStateNative(Scancode KeyCode, int State) {
+		if (State == ButtonState_Down) return InputKeyState[KeyCode].FramePressed;
+		return InputKeyState[KeyCode].State & State;
+	}
+
+	bool WindowsInput::IsMouseStateNative(MouseButton Button, int State) {
+		if (State == ButtonState_Down) return MouseButtonState[Button].FramePressed;
+		return MouseButtonState[Button].State & State;
 	}
 
 	Vector2 WindowsInput::GetMousePositionNative(bool Clamp) {

@@ -144,16 +144,17 @@ namespace ESource {
 				LayerIt->OnUpdate(Time::GetTimeStamp());
 
 			if (!Time::bSkipRender) {
+				GetWindow().BeginFrame();
 				GetRenderPipeline().BeginFrame();
 				for (Layer* LayerPointer : AppLayerStack)
 					LayerPointer->OnRender();
 
-					ImGuiLayerInstance->Begin();
+				ImGuiLayerInstance->Begin();
 				if (bRenderImGui) {
 					for (Layer* LayerPointer : AppLayerStack)
 						LayerPointer->OnImGuiRender();
 				}
-					ImGuiLayerInstance->End();
+				ImGuiLayerInstance->End();
 
 				GetRenderPipeline().EndOfFrame();
 				GetWindow().EndFrame();

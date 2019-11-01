@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Events/KeyCodes.h"
 #include "Math/MathUtility.h"
 #include "Math/Vector2.h"
 
@@ -7,9 +8,17 @@ namespace ESource {
 
 	class Input {
 	public:
-		inline static bool IsKeyDown(int KeyCode) { return Instance->IsKeyDownNative(KeyCode); }
+		inline static bool IsKeyDown(Scancode Code) { return Instance->IsKeyStateNative(Code, ButtonState_Down); }
 
-		inline static bool IsMouseButtonDown(int Button) { return Instance->IsMouseButtonDownNative(Button); }
+		inline static bool IsKeyPressed(Scancode Code) { return Instance->IsKeyStateNative(Code, ButtonState_Pressed); }
+
+		inline static bool IsKeyReleased(Scancode Code) { return Instance->IsKeyStateNative(Code, ButtonState_Released); }
+
+		inline static bool IsMouseDown(MouseButton Button) { return Instance->IsMouseStateNative(Button, ButtonState_Down); }
+
+		inline static bool IsMousePressed(MouseButton Button) { return Instance->IsMouseStateNative(Button, ButtonState_Pressed); }
+
+		inline static bool IsMouseReleased(MouseButton Button) { return Instance->IsMouseStateNative(Button, ButtonState_Released); }
 		
 		inline static Vector2 GetMousePosition(bool Clamp = false) { return Instance->GetMousePositionNative(Clamp); }
 		
@@ -18,9 +27,9 @@ namespace ESource {
 		inline static float GetMouseY(bool Clamp = false) { return Instance->GetMouseYNative(Clamp); }
 	
 	protected:
-		virtual bool IsKeyDownNative(int KeyCode) = 0;
+		virtual bool IsKeyStateNative(Scancode KeyCode, int State) = 0;
 
-		virtual bool IsMouseButtonDownNative(int Button) = 0;
+		virtual bool IsMouseStateNative(MouseButton Button, int State) = 0;
 		
 		virtual Vector2 GetMousePositionNative(bool Clamp) = 0;
 		
@@ -28,8 +37,6 @@ namespace ESource {
 		
 		virtual float GetMouseYNative(bool Clamp) = 0;
 
-	private:
-		
 		static Input * Instance;
 	};
 }
