@@ -8,6 +8,16 @@
 
 namespace ESource {
 
+	enum GBuffers : int {
+		GB_Depth     = 0,
+		GB_Normal    = 1,
+		GB_Albedo    = 2,
+		GB_Metallic  = 3,
+		GB_Roughness = 4,
+		GB_Velocity  = 5,
+		GB_MAX       = 6
+	};
+
 	class RenderPipeline {
 	public:
 		bool bNeedResize;
@@ -45,6 +55,10 @@ namespace ESource {
 		//* From 0.1 to 1.0
 		virtual void SetRenderScale(float Scale);
 
+		virtual RTexturePtr GetGBufferTexture(GBuffers Buffer) const;
+
+		virtual RTexturePtr GetMainScreenColorTexture() const;
+
 		template <typename T>
 		bool CreateStage(const IName & StageName);
 
@@ -61,11 +75,13 @@ namespace ESource {
 	protected:
 		TDictionary<size_t, class RenderStage *> RenderStages;
 
-		RenderTargetPtr ScreenTarget;
+		RenderTargetPtr MainScreenTarget;
 
-		RenderTargetPtr GeometryBuffer;
+		RenderTargetPtr GeometryBufferTarget;
 
-		Texture2D * TextureTarget;
+		RTexturePtr MainScreenColorTexture;
+
+		RTexturePtr GeometryBufferTextures[GB_MAX];
 
 		// Render Scale Target
 		float RenderScale;

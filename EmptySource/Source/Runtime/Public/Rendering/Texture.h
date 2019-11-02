@@ -37,7 +37,7 @@ namespace ESource {
 		virtual bool IsValid() const = 0;
 
 		//* Returns the GL Object of this texture
-		virtual void * GetTextureObject() const = 0;
+		virtual void * GetNativeTexture() const = 0;
 
 		//* Generate MipMaps using Hardware
 		virtual void GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) = 0;

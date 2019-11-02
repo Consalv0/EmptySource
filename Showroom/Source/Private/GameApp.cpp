@@ -66,7 +66,6 @@ private:
 	MaterialPtr RenderTextMaterial = std::make_shared<Material>(L"RenderTextMaterial");
 	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
 
-	float MultiuseValue = 1;
 	static const int TextCount = 4;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
@@ -97,13 +96,13 @@ protected:
 
 		{
 			static RenderTargetPtr Renderer = RenderTarget::Create();
-			EquirectangularTextureHDR->GetNativeTexture()->Bind();
+			EquirectangularTextureHDR->GetTexture()->Bind();
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
 
 			MeshPrimitives::Quad.GetVertexArray()->Bind();
-			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetNativeTexture(), EquirectangularTextureHDR->GetSize());
+			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetTexture(), EquirectangularTextureHDR->GetSize());
 			Rendering::SetViewport({ 0, 0, EquirectangularTextureHDR->GetSize().x, EquirectangularTextureHDR->GetSize().y });
 			Renderer->Clear();
 			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
@@ -274,7 +273,7 @@ protected:
 				);
 				RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 				RenderTextureMaterial.SetInt1Array("_IsCubemap", &bCubemap);
-				SelectedTexture->GetNativeTexture()->Bind();
+				SelectedTexture->GetTexture()->Bind();
 				RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
 				RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", SelectedTexture, 1);
 				float LODLevel = SampleLevel * (float)SelectedTexture->GetMipMapCount();
@@ -285,7 +284,7 @@ protected:
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
-				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
+				Renderer->BindTexture2D((Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
 				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().x, TextureSample->GetSize().y });
 				Renderer->Clear();
 				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
@@ -302,7 +301,7 @@ protected:
 				);
 				RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 				RenderTextureMaterial.SetInt1Array("_IsCubemap", &bCubemap);
-				SelectedTexture->GetNativeTexture()->Bind();
+				SelectedTexture->GetTexture()->Bind();
 				RenderTextureMaterial.SetTexture2D("_MainTexture", SelectedTexture, 0);
 				RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", SelectedTexture, 1);
 				float LODLevel = SampleLevel * (float)SelectedTexture->GetMipMapCount();
@@ -313,7 +312,7 @@ protected:
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
-				Renderer->BindTexture2D((Texture2D *)TextureSample->GetNativeTexture(), TextureSample->GetSize());
+				Renderer->BindTexture2D((Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
 				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().x, TextureSample->GetSize().y });
 				Renderer->Clear();
 				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
@@ -865,7 +864,7 @@ protected:
 					ImageSize.x -= ImGui::GetStyle().ItemSpacing.y * 4.0F;
 					ImageSize.y = ImageSize.x / 2.F;
 				}
-				ImGui::Image((void *)TextureSample->GetNativeTexture()->GetTextureObject(), ImageSize);
+				ImGui::Image((void *)TextureSample->GetTexture()->GetNativeTexture(), ImageSize);
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					float RegionSize = 32.0f;
@@ -877,7 +876,7 @@ protected:
 					ImGui::Text("Max: (%.2f, %.2f)", RegionX + RegionSize, RegionY + RegionSize);
 					ImVec2 UV0 = ImVec2((RegionX) / ImageSize.x, (RegionY) / ImageSize.y);
 					ImVec2 UV1 = ImVec2((RegionX + RegionSize) / ImageSize.x, (RegionY + RegionSize) / ImageSize.y);
-					ImGui::Image((void *)TextureSample->GetNativeTexture()->GetTextureObject(),
+					ImGui::Image((void *)TextureSample->GetTexture()->GetNativeTexture(),
 						ImVec2(140.F, 140.F), UV0, UV1, ImVec4(1.F, 1.F, 1.F, 1.F), ImVec4(1.F, 1.F, 1.F, .5F));
 					ImGui::EndTooltip();
 				}
@@ -955,7 +954,7 @@ protected:
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
-			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetNativeTexture(), BRDFLut->GetSize());
+			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetTexture(), BRDFLut->GetSize());
 			Rendering::SetViewport({ 0, 0, BRDFLut->GetSize().x, BRDFLut->GetSize().y });
 			Renderer->Clear();
 			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
@@ -970,18 +969,11 @@ protected:
 
 	virtual void OnUpdate(Timestamp Stamp) override {
 
-		if (Input::IsKeyDown(Scancode::Escape)) {
+		if (Input::IsKeyPressed(Scancode::Backspace)) {
 			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
 		}
 
-		if (Input::IsKeyDown(Scancode::Right)) {
-			MultiuseValue += Time::GetDeltaTime<Time::Second>() * MultiuseValue;
-		}
-		if (Input::IsKeyDown(Scancode::Left)) {
-			MultiuseValue -= Time::GetDeltaTime<Time::Second>() * MultiuseValue;
-		}
-
-		if (Input::IsKeyDown(Scancode::LSHIFT)) {
+		if (Input::IsKeyDown(Scancode::LeftShift)) {
 			if (Input::IsKeyDown(Scancode::I)) {
 				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
 			}

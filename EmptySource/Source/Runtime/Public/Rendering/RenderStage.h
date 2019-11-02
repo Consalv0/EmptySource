@@ -47,7 +47,7 @@ namespace ESource {
 		IName Name;
 
 		RenderTargetPtr Target;
-		RenderTargetPtr GeometryBuffer;
+		RenderTargetPtr GeometryBufferTarget;
 	};
 
 }

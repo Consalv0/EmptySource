@@ -27,7 +27,9 @@ GLSL:
       Code: |
         const int SAMPLE_COUNT = 16;		
         const int KERNEL_SIZE = 64;
+        
         uniform mat4 _ProjectionMatrix;
+        uniform mat4 _ViewMatrix;
         
         uniform sampler2D _GDepth;
         uniform sampler2D _GNormal;
@@ -59,7 +61,7 @@ GLSL:
           float ViewY = ViewRay.y * ViewZ / _ProjectionMatrix[1][1];
 
           vec3 Position = vec3(ViewX, ViewY, -ViewZ);
-          vec3 Normal = normalize(texture(_GNormal, UV0Coords).rgb);
+          vec3 Normal = mat3(_ViewMatrix) * normalize(texture(_GNormal, UV0Coords).rgb);
           vec3 RandomVec = normalize(texture(_NoiseTexture, UV0Coords * _NoiseScale).xyz);
           // create TBN change-of-basis matrix: from tangent-space to view-space
           vec3 Tangent = normalize(RandomVec - Normal * dot(RandomVec, Normal));

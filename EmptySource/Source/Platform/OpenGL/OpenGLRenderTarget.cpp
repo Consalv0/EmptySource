@@ -84,7 +84,7 @@ namespace ESource {
 		Size = InSize;
 		Bind();
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
 		if (RenderingTextures.size() <= 1) {
 			glDrawBuffer(GL_NONE);
 		}
@@ -97,7 +97,7 @@ namespace ESource {
 		Size = IntVector3(InSize.x, InSize.y, 1);
 		Bind();
 
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
 		// Set the list of draw buffers.
 		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachment };
 		glDrawBuffers(1, DrawBuffers);
@@ -113,7 +113,7 @@ namespace ESource {
 		for (uint32_t i = 0; i < Count; i++) {
 			RenderingTextures.push_back(Textures[i]);
 			DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + (GLenum)TextureAttachments[i];
-			glFramebufferTexture2D(GL_FRAMEBUFFER, DrawBuffers[i], GL_TEXTURE_2D, (GLuint)(unsigned long long)Textures[i]->GetTextureObject(), Lods[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, DrawBuffers[i], GL_TEXTURE_2D, (GLuint)(unsigned long long)Textures[i]->GetNativeTexture(), Lods[i]);
 		}
 
 		glDrawBuffers(Count, &DrawBuffers[0]);
@@ -128,7 +128,7 @@ namespace ESource {
 		Bind();
 		
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
-			GetOpenGLCubemapFace(Face), (GLuint)(unsigned long long)Texture->GetTextureObject(), Lod);
+			GetOpenGLCubemapFace(Face), (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
 	}
 
 	void OpenGLRenderTarget::CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) {

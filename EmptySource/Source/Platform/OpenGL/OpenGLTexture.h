@@ -24,7 +24,7 @@ namespace ESource {
 		virtual void Unbind() const override;
 
 		//* Returns the GL Object of this texture
-		virtual void * GetTextureObject() const override { return (void *)(unsigned long long)TextureObject; };
+		virtual void * GetNativeTexture() const override { return (void *)(unsigned long long)TextureObject; };
 
 		//* Generate MipMaps using Hardware
 		virtual void GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) override;
@@ -61,7 +61,7 @@ namespace ESource {
 		virtual void Unbind() const override;
 
 		//* Returns the GL Object of this texture
-		virtual void * GetTextureObject() const override { return (void *)(unsigned long long)TextureObject; };
+		virtual void * GetNativeTexture() const override { return (void *)(unsigned long long)TextureObject; };
 
 		//* Generate MipMaps using Hardware
 		virtual void GenerateMipMaps(const EFilterMode & FilterMode, uint32_t Levels) override;

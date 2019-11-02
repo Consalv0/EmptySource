@@ -128,7 +128,9 @@ namespace ESource {
 			});
 			GMat.SetParameters({
 				{ "_MainTexture",                 { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
-				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal }
+				{ "_NormalTexture",               { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"NormalTexture") }, SPFlags_IsInternal },
+				{ "_RoughnessTexture",            { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"WhiteTexture") }, SPFlags_IsInternal },
+				{ "_MetallicTexture",             { ETextureDimension::Texture2D, TextureManager::GetInstance().GetTexture(L"BlackTexture") }, SPFlags_IsInternal },
 			});
 			GMat.SetParameters(MatIt->GetVariables().GetVariables());
 			GMat.bWriteDepth = MatIt->bWriteDepth;
@@ -156,7 +158,7 @@ namespace ESource {
 		if (Lights[LightIndex].ShadowMap->GetLoadState() != LS_Loaded) return;
 		static RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
-		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)Lights[LightIndex].ShadowMap->GetNativeTexture(), Lights[LightIndex].ShadowMap->GetSize());
+		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)Lights[LightIndex].ShadowMap->GetTexture(), Lights[LightIndex].ShadowMap->GetSize());
 		Rendering::SetViewport({ 0, 0, Lights[LightIndex].ShadowMap->GetSize().x, Lights[LightIndex].ShadowMap->GetSize().y });
 		ShadowRenderTarget->Clear();
 
@@ -175,10 +177,10 @@ namespace ESource {
 			if (!MatIt->bCastShadows) continue;
 			ShaderParameter * Parameter = MatIt->GetVariables().GetVariable("_MainTexture");
 			if (Parameter && Parameter->Value.Texture) {
-				Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetNativeTexture(), 0);
+				Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetTexture(), 0);
 			}
 			else if (WhiteTexture) {
-				Shader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetNativeTexture(), 0);
+				Shader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetTexture(), 0);
 			}
 			else {
 				Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);

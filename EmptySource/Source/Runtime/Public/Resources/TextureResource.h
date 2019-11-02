@@ -28,7 +28,7 @@ namespace ESource {
 
 		virtual inline size_t GetMemorySize() const override { return Pixels.GetMemorySize(); };
 
-		inline Texture * GetNativeTexture() { return TexturePointer; };
+		inline Texture * GetTexture() { return TexturePointer; };
 
 		inline ETextureDimension GetDimension() const { return Dimension; }
 
@@ -52,10 +52,6 @@ namespace ESource {
 		void ClearPixelData();
 
 		float GetAspectRatio() const;
-
-		// bool FromCube(const CubeFaceTextures& Textures, bool GenerateMipMaps);
-
-		// bool FromEquirectangular(RTexturePtr Equirectangular, Material * EquirectangularToCubemapMaterial, bool GenerateMipMaps);
 
 		bool RenderHDREquirectangular(RTexturePtr Equirectangular, class Material * CubemapMaterial, bool GenerateMipMaps);
 

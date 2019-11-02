@@ -16,7 +16,7 @@
 namespace ESource {
 
 	RenderPipeline::RenderPipeline() :
-		RenderScale(1.F), bNeedResize(true), Gamma(2.2F), Exposure(1.0F), RenderStages(), ScreenTarget(NULL) {
+		RenderScale(1.F), bNeedResize(true), Gamma(2.2F), Exposure(1.0F), RenderStages(), MainScreenTarget(NULL) {
 	}
 
 	RenderPipeline::~RenderPipeline() {
@@ -25,23 +25,37 @@ namespace ESource {
 
 	void RenderPipeline::Initialize() {
 		Rendering::SetAlphaBlending(EBlendFactor::BF_SrcAlpha, EBlendFactor::BF_OneMinusSrcAlpha);
-		TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
-		ScreenTarget = RenderTarget::Create();
-		ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
-		ScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
-		RTexturePtr GDepth    = TextureManager::GetInstance().CreateTexture2D(L"GDepth",  L"", PF_DepthComponent24, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GDepth->Load();
-		RTexturePtr GNormal   = TextureManager::GetInstance().CreateTexture2D(L"GNormal", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GNormal->Load();
-		RTexturePtr GAlbedo   = TextureManager::GetInstance().CreateTexture2D(L"GAlbedo", L"", PF_RGBA8,  FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GAlbedo->Load();
-		GeometryBuffer = RenderTarget::Create();
-		Texture2D * Buffers[2] = { (Texture2D *)GNormal->GetNativeTexture(), (Texture2D *)GAlbedo->GetNativeTexture() };
-		int Lods[2] = { 0, 0 };
-		int Attachments[2] = { 0, 1 };
-		GeometryBuffer->BindDepthTexture2D((Texture2D *)GDepth->GetNativeTexture(), GetRenderSize(), 0);
-		GeometryBuffer->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 2);
-		// GeometryBuffer->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
+		auto & TextureMng = TextureManager::GetInstance();
+		MainScreenColorTexture = TextureMng.CreateTexture2D(L"MainScreenColor",   L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		MainScreenColorTexture->Load();
+		GeometryBufferTextures[GB_Depth    ] = TextureMng.CreateTexture2D(L"GBDepth",     L"", PF_DepthComponent24, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Normal   ] = TextureMng.CreateTexture2D(L"GBNormal",    L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Albedo   ] = TextureMng.CreateTexture2D(L"GBAlbedo",    L"", PF_RGBA8,  FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Metallic ] = TextureMng.CreateTexture2D(L"GBMetallic",  L"", PF_R8,     FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Roughness] = TextureMng.CreateTexture2D(L"GBRoughness", L"", PF_R8,     FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Velocity ] = TextureMng.CreateTexture2D(L"GBVelocity",  L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Depth    ]->Load();
+		GeometryBufferTextures[GB_Normal   ]->Load();
+		GeometryBufferTextures[GB_Albedo   ]->Load();
+		GeometryBufferTextures[GB_Metallic ]->Load();
+		GeometryBufferTextures[GB_Roughness]->Load();
+		GeometryBufferTextures[GB_Velocity ]->Load();
+
+		MainScreenTarget = RenderTarget::Create();
+		MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), GetRenderSize());
+		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
+
+		GeometryBufferTarget = RenderTarget::Create();
+		Texture2D * Buffers[4] = { 
+			(Texture2D *)GeometryBufferTextures[GB_Normal]->GetTexture(),
+			(Texture2D *)GeometryBufferTextures[GB_Albedo]->GetTexture(),
+			(Texture2D *)GeometryBufferTextures[GB_Metallic]->GetTexture(),
+			(Texture2D *)GeometryBufferTextures[GB_Roughness]->GetTexture(),
+		};
+		int Lods[4] = { 0, 0, 0, 0 };
+		int Attachments[4] = { 0, 1, 2, 3 };
+		GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), GetRenderSize(), 0);
+		GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 4);
 
 		std::uniform_real_distribution<float> RandomFloats(0.0F, 1.0F);
 		std::default_random_engine Generator;
@@ -79,8 +93,8 @@ namespace ESource {
 		TDictionary<size_t, RenderStage *>::iterator Stage;
 		if ((Stage = RenderStages.find(StageName.GetID())) != RenderStages.end()) {
 			ActiveStage = Stage->second;
-			Stage->second->SetRenderTarget(ScreenTarget);
-			Stage->second->SetGeometryBuffer(GeometryBuffer);
+			Stage->second->SetRenderTarget(MainScreenTarget);
+			Stage->second->SetGeometryBuffer(GeometryBufferTarget);
 			Stage->second->Begin();
 		}
 	}
@@ -127,6 +141,14 @@ namespace ESource {
 		RenderScale = Math::Clamp01(Scale);
 	}
 
+	RTexturePtr RenderPipeline::GetGBufferTexture(GBuffers Buffer) const {
+		return GeometryBufferTextures[Buffer];
+	}
+
+	RTexturePtr RenderPipeline::GetMainScreenColorTexture() const {
+		return MainScreenColorTexture;
+	}
+
 	void RenderPipeline::RemoveStage(const IName & StageName) {
 		if (RenderStages.find(StageName.GetID()) != RenderStages.end()) {
 			RenderStages.erase(StageName.GetID());
@@ -148,31 +170,32 @@ namespace ESource {
 		Rendering::Flush();
 		Rendering::ClearCurrentRender(true, 0.15F, true, 1, false, 0);
 		if (bNeedResize) {
-			ScreenTarget.reset();
-			delete TextureTarget;
-			TextureTarget = Texture2D::Create(GetRenderSize(), PF_RGB32F, FM_MinMagNearest, SAM_Clamp);
-			ScreenTarget = RenderTarget::Create();
-			ScreenTarget->BindTexture2D(TextureTarget, GetRenderSize());
-			ScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
-			ScreenTarget->Unbind();
-			RTexturePtr GDepth = TextureManager::GetInstance().CreateTexture2D(L"GDepth", L"", PF_DepthComponent24, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-			GDepth->Unload();
-			GDepth->SetSize(GetRenderSize());
-			GDepth->Load();
-			RTexturePtr GNormal = TextureManager::GetInstance().CreateTexture2D(L"GNormal", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-			GNormal->Unload();
-			GNormal->SetSize(GetRenderSize());
-			GNormal->Load();
-			RTexturePtr GAlbedo = TextureManager::GetInstance().CreateTexture2D(L"GAlbedo", L"", PF_RGBA8, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-			GAlbedo->Unload();
-			GAlbedo->SetSize(GetRenderSize());
-			GAlbedo->Load();
-			GeometryBuffer = RenderTarget::Create();
-			Texture2D * Buffers[2] = { (Texture2D *)GNormal->GetNativeTexture(), (Texture2D *)GAlbedo->GetNativeTexture() };
-			int Lods[2] = { 0, 0 };
-			int Attachments[2] = { 0, 1 };
-			GeometryBuffer->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 2);
-			GeometryBuffer->BindDepthTexture2D((Texture2D *)GDepth->GetNativeTexture(), GetRenderSize(), 0);
+			MainScreenTarget.reset();
+			MainScreenColorTexture->Unload();
+			MainScreenColorTexture->SetSize(GetRenderSize());
+			MainScreenColorTexture->Load();
+			for (char i = 0; i < GB_MAX; ++i) {
+				GeometryBufferTextures[i]->Unload();
+				GeometryBufferTextures[i]->SetSize(GetRenderSize());
+				GeometryBufferTextures[i]->Load();
+			}
+
+			MainScreenTarget = RenderTarget::Create();
+			MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), GetRenderSize());
+			MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
+			MainScreenTarget->Unbind();
+
+			GeometryBufferTarget = RenderTarget::Create();
+			Texture2D * Buffers[4] = {
+				(Texture2D *)GeometryBufferTextures[GB_Normal]->GetTexture(),
+				(Texture2D *)GeometryBufferTextures[GB_Albedo]->GetTexture(),
+				(Texture2D *)GeometryBufferTextures[GB_Metallic]->GetTexture(),
+				(Texture2D *)GeometryBufferTextures[GB_Roughness]->GetTexture(),
+			};
+			int Lods[4] = { 0, 0, 0, 0 };
+			int Attachments[4] = { 0, 1, 2, 3 };
+			GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 4);
+			GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), GetRenderSize(), 0);
 			bNeedResize = false;
 		}
 	}

@@ -58,7 +58,7 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	MovementDirection.y = 0.F;
 	MovementDirection.Normalize();
 	GetGameObject().LocalTransform.Position += MovementDirection * ViewSpeed * Time::GetDeltaTime<Time::Second>() *
-		(!Input::IsKeyDown(Scancode::LSHIFT) ? !Input::IsKeyDown(Scancode::LCTRL) ? 1.F : .1F : 4.F);
+		(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
 

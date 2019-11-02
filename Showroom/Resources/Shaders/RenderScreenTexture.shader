@@ -43,7 +43,7 @@ GLSL:
           float Fog = texture(_DepthTexture, UV0Coords, 0).r;
 
           vec3 Color = Sample.rgb;
-          Color *= pow(AmbientOcclusion, 5.0);
+          Color *= pow(AmbientOcclusion, 7.0);
 
           vec3 BloomColor = SampleBloom.rgb;
           BloomColor = vec3(1.0) - exp(-BloomColor * _Exposure);

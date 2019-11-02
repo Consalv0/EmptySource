@@ -48,7 +48,7 @@ GLSL:
     
         void main() {
         	Matrix.Model = _ModelMatrix;
-        	Matrix.WorldNormal = transpose(inverse(_ViewMatrix * Matrix.Model));
+        	Matrix.WorldNormal = transpose(inverse(Matrix.Model));
     
          	Vertex.Position = vec4(_iVertexPosition, 1.0);
          	Vertex.NormalDirection = normalize(Matrix.WorldNormal * vec4( _iVertexNormal, 1.0 )).xyz; 
@@ -68,9 +68,10 @@ GLSL:
         const float PI = 3.1415926535;
         const float Gamma = 2.2;
         
-        // layout (location = 0) out vec3 GPosition;
         layout (location = 0) out vec3 GNormal;
         layout (location = 1) out vec4 GAlbedo;
+        layout (location = 2) out vec3 GMetallic;
+        layout (location = 3) out vec3 GRoughness;
         
         uniform mat4 _ProjectionMatrix;
         uniform mat4 _ViewMatrix;
@@ -78,6 +79,8 @@ GLSL:
         
         uniform sampler2D _MainTexture;
         uniform sampler2D _NormalTexture;
+        uniform sampler2D _RoughnessTexture;
+        uniform sampler2D _MetallicTexture;
         
         uniform struct MaterialInfo {
           vec4 Color;
@@ -102,12 +105,15 @@ GLSL:
           mat3 TBN = mat3(Vertex.TangentDirection, Vertex.BitangentDirection, Vertex.NormalDirection);
           vec3 VertNormal = normalize(TBN * TangentNormal);
           vec4 Diffuse = texture(_MainTexture, Vertex.UV0);
+          float Metallic = texture(_MetallicTexture, Vertex.UV0).r;
+          float Roughness = texture(_RoughnessTexture, Vertex.UV0).r;
           vec3 DiffuseColor = pow(Diffuse.rgb, vec3(Gamma)) * _Material.Color.xyz;
 
-          // GPosition = Vertex.Position.rgb;
           GNormal.rgb = VertNormal;
           GAlbedo.rgb = DiffuseColor;
           GAlbedo.a = Diffuse.a;
+          GMetallic.r = Metallic;
+          GRoughness.r = Roughness;
           
           if (Diffuse.a > 0.5)
             gl_FragDepth = gl_FragCoord.z;

@@ -257,14 +257,14 @@ namespace ESource {
 		CurrencyUnit = 180,
 		CurrencySubunit = 181,
 
-		LCTRL = 224,
-		LSHIFT = 225,
-		LALT = 226, /**< alt, option */
-		LGUI = 227, /**< windows, command (apple), meta */
-		RCTRL = 228,
-		RSHIFT = 229,
-		RALT = 230, /**< alt gr, option */
-		RGUI = 231, /**< windows, command (apple), meta */
+		LeftCtrl = 224,
+		LeftShift = 225,
+		LeftAlt = 226, /**< alt, option */
+		LeftGui = 227, /**< windows, command (apple), meta */
+		RightCtrl = 228,
+		RightShift = 229,
+		RightAlt = 230, /**< alt gr, option */
+		RightGui = 231, /**< windows, command (apple), meta */
 
 		Mode = 257,    /**< I'm not sure if this is really not covered
 						*   by any of the above, but since there's a

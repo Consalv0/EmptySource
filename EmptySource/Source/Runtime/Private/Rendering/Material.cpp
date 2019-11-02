@@ -90,7 +90,7 @@ namespace ESource {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid() && Text != NULL)
 			if (Text->GetDimension() == ETextureDimension::Texture2D)
-				Program->GetProgram()->SetTexture(UniformName, Text->GetNativeTexture(), Position);
+				Program->GetProgram()->SetTexture(UniformName, Text->GetTexture(), Position);
 			else
 				Program->GetProgram()->SetTexture(UniformName, NULL, Position);
 	}
@@ -99,7 +99,7 @@ namespace ESource {
 		RShaderPtr Program = GetShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			if (Text->GetDimension() == ETextureDimension::Cubemap)
-				Program->GetProgram()->SetTexture(UniformName, Text->GetNativeTexture(), Position);
+				Program->GetProgram()->SetTexture(UniformName, Text->GetTexture(), Position);
 			else
 				Program->GetProgram()->SetTexture(UniformName, NULL, Position);
 	}
