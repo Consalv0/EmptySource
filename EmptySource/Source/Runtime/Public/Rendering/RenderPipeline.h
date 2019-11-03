@@ -10,12 +10,10 @@ namespace ESource {
 
 	enum GBuffers : int {
 		GB_Depth     = 0,
-		GB_Normal    = 1,
-		GB_Albedo    = 2,
-		GB_Metallic  = 3,
-		GB_Roughness = 4,
-		GB_Velocity  = 5,
-		GB_MAX       = 6
+		GB_Normal    = 1, // Using Stereographic Projection Enconding
+		GB_Specular  = 2, // Contains the metalness, roughness
+		GB_Velocity  = 3,
+		GB_MAX       = GB_Velocity + 1
 	};
 
 	class RenderPipeline {

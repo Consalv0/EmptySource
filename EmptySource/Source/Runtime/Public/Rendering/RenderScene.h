@@ -6,7 +6,7 @@ namespace ESource {
 	public:
 		RenderScene();
 
-		using RenderElement = std::tuple<VertexArrayPtr, Subdivision, Matrix4x4>;
+		using RenderElement = std::tuple<RMeshPtr, Subdivision, Matrix4x4>;
 
 		void Clear();
 
@@ -18,13 +18,13 @@ namespace ESource {
 
 		void RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader);
 
-		void Submit(const MaterialPtr & Mat, const VertexArrayPtr& VertexArray, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
+		void Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
 
 		VertexBufferPtr ModelMatrixBuffer;
 
 		Transform EyeTransform;
 
-		Matrix4x4 ViewProjection;
+		Matrix4x4 ProjectionMatrix;
 
 		int LightCount;
 
@@ -40,7 +40,7 @@ namespace ESource {
 		} Lights[2];
 		
 		TArray<MaterialPtr> SortedMaterials;
-		TDictionary<MaterialPtr, TDictionary<VertexArrayPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsByMaterial;
+		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsByMaterial;
 
 	};
 

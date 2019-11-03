@@ -447,6 +447,12 @@
     <ClInclude Include="Source\Runtime\Public\Events\KeyCodes.h">
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Math\Plane.h">
+      <Filter>Runtime\Public\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Physics\Frustrum.h">
+      <Filter>Runtime\Public\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLAPI.cpp">
@@ -668,5 +674,13 @@
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Physics\Frustrum.cpp">
+      <Filter>Runtime\Private\Physics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Runtime\Public\Math\Plane.inl">
+      <Filter>Runtime\Public\Math</Filter>
+    </None>
   </ItemGroup>
 </Project>

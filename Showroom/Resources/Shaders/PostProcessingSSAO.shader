@@ -53,6 +53,18 @@ GLSL:
             float ViewZ = B / (A + NDC_z);
             return ViewZ;
         }
+        
+        vec3 DecodeStereographicProjection (vec2 Encode) {
+          float Scale = 1.7777;
+          vec3 nn =
+              vec3(Encode.xy, 0.0) * vec3(2.0*Scale, 2.0*Scale, 0.0) +
+              vec3(-Scale, -Scale, 1.0);
+          float g = 2.0 / dot(nn.xyz,nn.xyz);
+          vec3 Normal;
+          Normal.xy = g * nn.xy;
+          Normal.z = g - 1.0;
+          return Normal;
+        }
 
         void main() {
 
@@ -61,7 +73,7 @@ GLSL:
           float ViewY = ViewRay.y * ViewZ / _ProjectionMatrix[1][1];
 
           vec3 Position = vec3(ViewX, ViewY, -ViewZ);
-          vec3 Normal = mat3(_ViewMatrix) * normalize(texture(_GNormal, UV0Coords).rgb);
+          vec3 Normal = mat3(_ViewMatrix) * DecodeStereographicProjection(normalize(texture(_GNormal, UV0Coords).rg));
           vec3 RandomVec = normalize(texture(_NoiseTexture, UV0Coords * _NoiseScale).xyz);
           // create TBN change-of-basis matrix: from tangent-space to view-space
           vec3 Tangent = normalize(RandomVec - Normal * dot(RandomVec, Normal));

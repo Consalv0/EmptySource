@@ -53,7 +53,7 @@ GLSL:
           BloomColor = mix(BloomIntensity, BloomColor, 1 / 1.25);
 
           Color = Color + BloomColor * 0.5;
-          Color = mix(Color, vec3(0.97, 0.82, 0.49) * _Gamma, clamp(pow(Fog, 1.0 / 0.004) * 0.9, 0.0, 1.0));
+          Color = mix(Color, vec3(0.92, 0.76, 0.35) * 2, clamp(pow(Fog, 1.0 / 0.004) * 0.9, 0.0, 1.0));
 
           Color = vec3(1.0) - exp(-Color * _Exposure);
           Color = pow(Color, vec3(1.0 / _Gamma));

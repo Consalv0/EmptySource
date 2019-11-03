@@ -29,16 +29,12 @@ namespace ESource {
 		MainScreenColorTexture = TextureMng.CreateTexture2D(L"MainScreenColor",   L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		MainScreenColorTexture->Load();
 		GeometryBufferTextures[GB_Depth    ] = TextureMng.CreateTexture2D(L"GBDepth",     L"", PF_DepthComponent24, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GeometryBufferTextures[GB_Normal   ] = TextureMng.CreateTexture2D(L"GBNormal",    L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GeometryBufferTextures[GB_Albedo   ] = TextureMng.CreateTexture2D(L"GBAlbedo",    L"", PF_RGBA8,  FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GeometryBufferTextures[GB_Metallic ] = TextureMng.CreateTexture2D(L"GBMetallic",  L"", PF_R8,     FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GeometryBufferTextures[GB_Roughness] = TextureMng.CreateTexture2D(L"GBRoughness", L"", PF_R8,     FM_MinMagNearest, SAM_Clamp, GetRenderSize());
-		GeometryBufferTextures[GB_Velocity ] = TextureMng.CreateTexture2D(L"GBVelocity",  L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Normal   ] = TextureMng.CreateTexture2D(L"GBNormal",    L"", PF_RG16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Specular ] = TextureMng.CreateTexture2D(L"GBSpecular",  L"", PF_RGBA8, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Velocity ] = TextureMng.CreateTexture2D(L"GBVelocity",  L"", PF_RG16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		GeometryBufferTextures[GB_Depth    ]->Load();
 		GeometryBufferTextures[GB_Normal   ]->Load();
-		GeometryBufferTextures[GB_Albedo   ]->Load();
-		GeometryBufferTextures[GB_Metallic ]->Load();
-		GeometryBufferTextures[GB_Roughness]->Load();
+		GeometryBufferTextures[GB_Specular ]->Load();
 		GeometryBufferTextures[GB_Velocity ]->Load();
 
 		MainScreenTarget = RenderTarget::Create();
@@ -46,16 +42,14 @@ namespace ESource {
 		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
 
 		GeometryBufferTarget = RenderTarget::Create();
-		Texture2D * Buffers[4] = { 
+		Texture2D * Buffers[2] = { 
 			(Texture2D *)GeometryBufferTextures[GB_Normal]->GetTexture(),
-			(Texture2D *)GeometryBufferTextures[GB_Albedo]->GetTexture(),
-			(Texture2D *)GeometryBufferTextures[GB_Metallic]->GetTexture(),
-			(Texture2D *)GeometryBufferTextures[GB_Roughness]->GetTexture(),
+			(Texture2D *)GeometryBufferTextures[GB_Specular]->GetTexture()
 		};
-		int Lods[4] = { 0, 0, 0, 0 };
-		int Attachments[4] = { 0, 1, 2, 3 };
+		int Lods[2] = { 0, 0 };
+		int Attachments[2] = { 0, 1 };
 		GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), GetRenderSize(), 0);
-		GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 4);
+		GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 2);
 
 		std::uniform_real_distribution<float> RandomFloats(0.0F, 1.0F);
 		std::default_random_engine Generator;
@@ -110,7 +104,7 @@ namespace ESource {
 		if (ModelPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == ModelPointer->GetVertexData().SubdivisionsMap.end()) {
 			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", ModelPointer->GetName().GetDisplayName(), Subdivision); return;
 		}
-		ActiveStage->SubmitVertexArray(ModelPointer->GetVertexArray(), ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix);
+		ActiveStage->SubmitMesh(ModelPointer, ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix);
 	}
 
 	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {
@@ -131,8 +125,8 @@ namespace ESource {
 
 	IntVector2 RenderPipeline::GetRenderSize() const {
 		IntVector2 Size = Application::GetInstance()->GetWindow().GetSize();
-		Size.x = int((float)Size.x * RenderScale);
-		Size.y = int((float)Size.y * RenderScale);
+		Size.X = int((float)Size.X * RenderScale);
+		Size.Y = int((float)Size.Y * RenderScale);
 		return Size;
 	}
 
@@ -186,15 +180,13 @@ namespace ESource {
 			MainScreenTarget->Unbind();
 
 			GeometryBufferTarget = RenderTarget::Create();
-			Texture2D * Buffers[4] = {
+			Texture2D * Buffers[2] = {
 				(Texture2D *)GeometryBufferTextures[GB_Normal]->GetTexture(),
-				(Texture2D *)GeometryBufferTextures[GB_Albedo]->GetTexture(),
-				(Texture2D *)GeometryBufferTextures[GB_Metallic]->GetTexture(),
-				(Texture2D *)GeometryBufferTextures[GB_Roughness]->GetTexture(),
+				(Texture2D *)GeometryBufferTextures[GB_Specular]->GetTexture()
 			};
-			int Lods[4] = { 0, 0, 0, 0 };
-			int Attachments[4] = { 0, 1, 2, 3 };
-			GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 4);
+			int Lods[2] = { 0, 0 };
+			int Attachments[2] = { 0, 1 };
+			GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 2);
 			GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), GetRenderSize(), 0);
 			bNeedResize = false;
 		}

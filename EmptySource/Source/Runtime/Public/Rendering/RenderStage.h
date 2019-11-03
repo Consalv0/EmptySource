@@ -27,7 +27,7 @@ namespace ESource {
 
 		virtual void Begin();
 
-		virtual void SubmitVertexArray(const VertexArrayPtr & VertexArray, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
+		virtual void SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
 
 		virtual void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity);
 

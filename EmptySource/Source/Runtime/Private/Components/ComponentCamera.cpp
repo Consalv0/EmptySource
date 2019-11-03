@@ -16,12 +16,17 @@ namespace ESource {
 		return Matrix4x4::Perspective(
 			ApertureAngle * MathConstants::DegreeToRad,
 			Application::GetInstance()->GetWindow().GetAspectRatio(),
-			CullingPlanes.x, CullingPlanes.y
+			CullingDistances.X, CullingDistances.Y
 		);
 	}
 	
+	Frustrum CCamera::GetFrustrum() const {
+		Matrix4x4 ComboMatrix = GetProjectionMatrix() * GetGameObject().GetWorldTransform().GetGLViewMatrix().Transposed();
+		return Frustrum::FromProjectionViewMatrix(ComboMatrix);
+	}
+
 	CCamera::CCamera(GGameObject & GameObject)
-		: CComponent(L"Camera", GameObject), ApertureAngle(60.F), CullingPlanes(0.03F, 1000.F) {
+		: CComponent(L"Camera", GameObject), ApertureAngle(60.F), CullingDistances(0.03F, 1000.F) {
 	}
 
 	void CCamera::OnRender() {

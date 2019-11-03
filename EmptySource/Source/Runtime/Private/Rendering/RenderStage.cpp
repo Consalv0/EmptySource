@@ -19,9 +19,9 @@ namespace ESource {
 		: Name(Name), Scene(), Pipeline(Pipeline) {
 	}
 
-	void RenderStage::SubmitVertexArray(const VertexArrayPtr & VertexArray, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+	void RenderStage::SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
-		Scene.Submit(Mat, VertexArray, MeshSubdivision, Matrix);
+		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
 	}
 
 	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity) {
@@ -57,7 +57,7 @@ namespace ESource {
 	}
 
 	void RenderStage::SetProjectionMatrix(const Matrix4x4 & Projection) {
-		Scene.ViewProjection = Projection;
+		Scene.ProjectionMatrix = Projection;
 	}
 
 	void RenderStage::SetRenderTarget(const RenderTargetPtr & InTarget) {
@@ -112,7 +112,7 @@ namespace ESource {
 			}
 		}
 		
-		Rendering::SetViewport({ 0, 0, BloomThresholdTexture->GetSize().x, BloomThresholdTexture->GetSize().y });
+		Rendering::SetViewport({ 0, 0, BloomThresholdTexture->GetSize().X, BloomThresholdTexture->GetSize().Y });
 		
 		static RenderTargetPtr BloomThresholdTarget = RenderTarget::Create();
 		BloomThresholdTarget->BindTexture2D((Texture2D *)BloomThresholdTexture->GetTexture(), BloomThresholdTexture->GetSize());
@@ -205,25 +205,25 @@ namespace ESource {
 		
 		RTexturePtr SSAOTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAO", L"", PF_R32F, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOTexture) {
-			if (SSAOTexture->GetSize() != Target->GetSize()) {
+			if (SSAOTexture->GetSize() != Target->GetSize() / IntVector3(2, 2, 1)) {
 				SSAOTexture->Unload();
-				SSAOTexture->SetSize(Target->GetSize());
+				SSAOTexture->SetSize(Target->GetSize() / IntVector3(2, 2, 1));
 				SSAOTexture->Load();
 			}
 		}
 		
 		RTexturePtr SSAOBlurTexture = TextureManager::GetInstance().CreateTexture2D(L"PPSSAOBlur", L"", PF_R8, FM_MinMagNearest, SAM_Repeat);
 		if (SSAOBlurTexture) {
-			if (SSAOBlurTexture->GetSize() != Target->GetSize()) {
+			if (SSAOBlurTexture->GetSize() != Target->GetSize() / IntVector3(2, 2, 1)) {
 				SSAOBlurTexture->Unload();
-				PixelMap WhiteData(Target->GetSize().x, Target->GetSize().y, 1, PF_R8);
+				PixelMap WhiteData(Target->GetSize().X / 2, Target->GetSize().Y / 2, 1, PF_R8);
 				PixelMapUtility::PerPixelOperator(WhiteData, [](unsigned char * Pixel, const unsigned char &) { Pixel[0] = 255; });
 				SSAOBlurTexture->SetPixelData(WhiteData);
 				SSAOBlurTexture->Load();
 			}
 		}
 		
-		Rendering::SetViewport({ 0, 0, (int)SSAOTexture->GetSize().x, (int)SSAOTexture->GetSize().y });
+		Rendering::SetViewport({ 0, 0, (int)SSAOTexture->GetSize().X, (int)SSAOTexture->GetSize().Y });
 		
 		static RenderTargetPtr SSAOTarget = RenderTarget::Create();
 		SSAOTarget->BindTexture2D((Texture2D *)SSAOTexture->GetTexture(), SSAOTexture->GetSize());
@@ -236,7 +236,7 @@ namespace ESource {
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
 			SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
-			SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.ViewProjection.PointerToValue());
+			SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.ProjectionMatrix.PointerToValue());
 			SSAOShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Scene.EyeTransform.GetGLViewMatrix().PointerToValue());
 			SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (SSAOTexture->GetSize().FloatVector3() / 4.0F).PointerToValue());
 			SSAOShader->GetProgram()->SetTexture("_GDepth", Application::GetInstance()->GetRenderPipeline().GetGBufferTexture(GB_Depth)->GetTexture(), 0);
@@ -267,7 +267,7 @@ namespace ESource {
 
 		Target->TransferDepthTo(
 			NULL, PF_ShadowDepth, FM_MinMagNearest,
-			{ 0, 0, Target->GetSize().x, Target->GetSize().y },
+			{ 0, 0, Target->GetSize().X, Target->GetSize().Y },
 			{ Application::GetInstance()->GetWindow().GetViewport() }
 		);
 		Rendering::SetDefaultRender();

@@ -212,6 +212,7 @@
     <ClInclude Include="Source\Runtime\Public\Math\Matrix3x3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl" />
+    <ClInclude Include="Source\Runtime\Public\Math\Plane.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector2.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="Source\Runtime\Public\Math\Vector3.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl" />
+    <ClInclude Include="Source\Runtime\Public\Physics\Frustrum.h" />
     <ClInclude Include="Source\Runtime\Public\Physics\Physics.h" />
     <ClInclude Include="Source\Runtime\Public\Physics\PhysicsWorld.h" />
     <ClInclude Include="Source\Runtime\Public\Physics\Ray.h" />
@@ -306,6 +308,7 @@
     <ClCompile Include="Source\Runtime\Private\Fonts\Text2DGenerator.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Runtime\Private\Physics\Frustrum.cpp" />
     <ClCompile Include="Source\Runtime\Private\Physics\PhysicsWorld.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Material.cpp" />
     <ClCompile Include="Source\Runtime\Private\Rendering\Mesh.cpp" />
@@ -349,6 +352,9 @@
     <ProjectReference Include="External\IMGUI\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Runtime\Public\Math\Plane.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
