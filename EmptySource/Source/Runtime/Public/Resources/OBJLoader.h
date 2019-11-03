@@ -68,7 +68,7 @@ namespace ESource {
 
 }
 
-MAKE_HASHABLE(ESource::Vector2, t.x, t.y)
-MAKE_HASHABLE(ESource::Vector3, t.x, t.y, t.z)
-MAKE_HASHABLE(ESource::Vector4, t.x, t.y, t.z, t.w)
+MAKE_HASHABLE(ESource::Vector2, t.X, t.Y)
+MAKE_HASHABLE(ESource::Vector3, t.X, t.Y, t.Z)
+MAKE_HASHABLE(ESource::Vector4, t.X, t.Y, t.Z, t.W)
 MAKE_HASHABLE(ESource::StaticVertex, t.Position, t.Normal, t.Tangent, t.UV0, t.UV1, t.Color)

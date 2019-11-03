@@ -11,48 +11,48 @@
 namespace ESource {
 
 	FORCEINLINE Vector4::Vector4()
-		: x(0), y(0), z(0), w(0) {
+		: X(0), Y(0), Z(0), W(0) {
 	}
 
 	FORCEINLINE Vector4::Vector4(const Vector4& Vector)
-		: x(Vector.x), y(Vector.y), z(Vector.z), w(Vector.w) {
+		: X(Vector.X), Y(Vector.Y), Z(Vector.Z), W(Vector.W) {
 	};
 
-	FORCEINLINE Vector4::Vector4(const float& x, const float& y, const float& z)
-		: x(x), y(y), z(z), w(0) {
+	FORCEINLINE Vector4::Vector4(const float& X, const float& Y, const float& Z)
+		: X(X), Y(Y), Z(Z), W(0) {
 	}
 
-	FORCEINLINE Vector4::Vector4(const float& x, const float& y, const float& z, const float& w)
-		: x(x), y(y), z(z), w(w) {
+	FORCEINLINE Vector4::Vector4(const float& X, const float& Y, const float& Z, const float& W)
+		: X(X), Y(Y), Z(Z), W(W) {
 	}
 
 	FORCEINLINE Vector4::Vector4(const Vector2 & Vector)
-		: x(Vector.x), y(Vector.y), z(0), w(0) {
+		: X(Vector.X), Y(Vector.Y), Z(0), W(0) {
 	};
 
 	FORCEINLINE Vector4::Vector4(const Vector3 & Vector)
-		: x(Vector.x), y(Vector.y), z(Vector.z), w(0) {
+		: X(Vector.X), Y(Vector.Y), Z(Vector.Z), W(0) {
 	};
 
-	FORCEINLINE Vector4::Vector4(const Vector3 & Vector, const float & w)
-		: x(Vector.x), y(Vector.y), z(Vector.z), w(w) {
+	FORCEINLINE Vector4::Vector4(const Vector3 & Vector, const float & W)
+		: X(Vector.X), Y(Vector.Y), Z(Vector.Z), W(W) {
 	};
 
 	FORCEINLINE Vector4::Vector4(const float& Value)
-		: x(Value), y(Value), z(Value), w(Value) {
+		: X(Value), Y(Value), Z(Value), W(Value) {
 	}
 
 	inline float Vector4::Magnitude() const {
-		return sqrtf(x * x + y * y + z * z + w * w);
+		return sqrtf(X * X + Y * Y + Z * Z + W * W);
 	}
 
 	inline float Vector4::MagnitudeSquared() const {
-		return x * x + y * y + z * z + w * w;
+		return X * X + Y * Y + Z * Z + W * W;
 	}
 
 	inline void Vector4::Normalize() {
 		if (MagnitudeSquared() == 0) {
-			x = 0; y = 0; z = 0; w = 0;
+			X = 0; Y = 0; Z = 0; W = 0;
 		}
 		else {
 			*this /= Magnitude();
@@ -66,23 +66,23 @@ namespace ESource {
 	}
 
 	FORCEINLINE float Vector4::Dot(const Vector4& Other) const {
-		return x * Other.x + y * Other.y + z * Other.z + w * Other.w;
+		return X * Other.X + Y * Other.Y + Z * Other.Z + W * Other.W;
 	}
 
 	FORCEINLINE float Vector4::Dot(const Vector4 & A, const Vector4 & B) {
-		return A.x * B.x + A.y * B.y + A.z * B.z + A.w * B.w;
+		return A.X * B.X + A.Y * B.Y + A.Z * B.Z + A.W * B.W;
 	}
 
 	inline const float * Vector4::PointerToValue() const {
-		return &x;
+		return &X;
 	}
 
 	FORCEINLINE Vector4 Vector4::Lerp(const Vector4 & Start, const Vector4 & End, float t) {
 		return Vector4(
-			(Start.x * (1.0F - t)) + (End.x * t),
-			(Start.y * (1.0F - t)) + (End.y * t),
-			(Start.z * (1.0F - t)) + (End.z * t),
-			(Start.w * (1.0F - t)) + (End.w * t)
+			(Start.X * (1.0F - t)) + (End.X * t),
+			(Start.Y * (1.0F - t)) + (End.Y * t),
+			(Start.Z * (1.0F - t)) + (End.Z * t),
+			(Start.W * (1.0F - t)) + (End.W * t)
 		);
 	}
 
@@ -97,97 +97,97 @@ namespace ESource {
 	}
 
 	FORCEINLINE bool Vector4::operator==(const Vector4& Other) const {
-		return (x == Other.x && y == Other.y && z == Other.z && w == Other.w);
+		return (X == Other.X && Y == Other.Y && Z == Other.Z && W == Other.W);
 	}
 
 	FORCEINLINE bool Vector4::operator!=(const Vector4& Other) const {
-		return (x != Other.x || y != Other.y || z != Other.z || w != Other.w);
+		return (X != Other.X || Y != Other.Y || Z != Other.Z || W != Other.W);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator+(const Vector4& Other) const {
-		return Vector4(x + Other.x, y + Other.y, z + Other.z, w + Other.w);
+		return Vector4(X + Other.X, Y + Other.Y, Z + Other.Z, W + Other.W);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator-(const Vector4& Other) const {
-		return Vector4(x - Other.x, y - Other.y, z - Other.z, w - Other.w);
+		return Vector4(X - Other.X, Y - Other.Y, Z - Other.Z, W - Other.W);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator-(void) const {
-		return Vector4(-x, -y, -z, -w);
+		return Vector4(-X, -Y, -Z, -W);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator*(const float& Value) const {
-		return Vector4(x * Value, y * Value, z * Value, w * Value);
+		return Vector4(X * Value, Y * Value, Z * Value, W * Value);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator/(const float& Value) const {
 		if (Value == 0) return Vector4();
-		return Vector4(x / Value, y / Value, z / Value, w / Value);
+		return Vector4(X / Value, Y / Value, Z / Value, W / Value);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator*(const Vector4 & Other) const {
-		return Vector4(x * Other.x, y * Other.y, z * Other.z, w * Other.w);
+		return Vector4(X * Other.X, Y * Other.Y, Z * Other.Z, W * Other.W);
 	}
 
 	FORCEINLINE Vector4 Vector4::operator/(const Vector4 & Other) const {
-		return Vector4(x / Other.x, y / Other.y, z / Other.z, w / Other.w);
+		return Vector4(X / Other.X, Y / Other.Y, Z / Other.Z, W / Other.W);
 	}
 
 	FORCEINLINE Vector4& Vector4::operator+=(const Vector4& Other) {
-		x += Other.x;
-		y += Other.y;
-		z += Other.z;
-		w += Other.w;
+		X += Other.X;
+		Y += Other.Y;
+		Z += Other.Z;
+		W += Other.W;
 		return *this;
 	}
 
 	FORCEINLINE Vector4& Vector4::operator-=(const Vector4& Other) {
-		x -= Other.x;
-		y -= Other.y;
-		z -= Other.z;
-		w -= Other.w;
+		X -= Other.X;
+		Y -= Other.Y;
+		Z -= Other.Z;
+		W -= Other.W;
 		return *this;
 	}
 
 	FORCEINLINE Vector4 & Vector4::operator*=(const Vector4 & Other) {
-		x *= Other.x;
-		y *= Other.y;
-		z *= Other.z;
-		w *= Other.w;
+		X *= Other.X;
+		Y *= Other.Y;
+		Z *= Other.Z;
+		W *= Other.W;
 		return *this;
 	}
 
 	FORCEINLINE Vector4 & Vector4::operator/=(const Vector4 & Other) {
-		x /= Other.x;
-		y /= Other.y;
-		z /= Other.z;
-		w /= Other.w;
+		X /= Other.X;
+		Y /= Other.Y;
+		Z /= Other.Z;
+		W /= Other.W;
 		return *this;
 	}
 
 	FORCEINLINE Vector4& Vector4::operator*=(const float& Value) {
-		x *= Value;
-		y *= Value;
-		z *= Value;
-		w *= Value;
+		X *= Value;
+		Y *= Value;
+		Z *= Value;
+		W *= Value;
 		return *this;
 	}
 
 	FORCEINLINE Vector4& Vector4::operator/=(const float& Value) {
-		if (Value == 0) x = y = z = w = 0;
-		x /= Value;
-		y /= Value;
-		z /= Value;
-		w /= Value;
+		if (Value == 0) X = Y = Z = W = 0;
+		X /= Value;
+		Y /= Value;
+		Z /= Value;
+		W /= Value;
 		return *this;
 	}
 
 	inline Vector4 operator*(float Value, const Vector4 & Vector) {
-		return Vector4(Value * Vector.x, Value * Vector.y, Value * Vector.z, Value * Vector.w);
+		return Vector4(Value * Vector.X, Value * Vector.Y, Value * Vector.Z, Value * Vector.W);
 	}
 
 	inline Vector4 operator/(float Value, const Vector4 & Vector) {
-		return Vector4(Value / Vector.x, Value / Vector.y, Value / Vector.z, Value / Vector.w);
+		return Vector4(Value / Vector.X, Value / Vector.Y, Value / Vector.Z, Value / Vector.W);
 	}
 
 }

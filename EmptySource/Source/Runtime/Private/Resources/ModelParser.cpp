@@ -170,10 +170,10 @@ namespace ESource {
 		FillNodeInfo(AssimpScene, AssimpScene->mRootNode, Info, NULL);
 		
 		if (Info.bHasAnimations) {
-			for (unsigned int a = 0; a < AssimpScene->mNumAnimations; ++a) {
+			for (unsigned int A = 0; A < AssimpScene->mNumAnimations; ++A) {
 				Info.Animations.push_back(AnimationTrack());
 				AnimationTrack & Animation = Info.Animations.back();
-				aiAnimation * Anim = AssimpScene->mAnimations[a];
+				aiAnimation * Anim = AssimpScene->mAnimations[A];
 				Animation.Name = Anim->mName.C_Str();
 				Animation.Duration = Anim->mDuration;
 				Animation.TicksPerSecond = Anim->mTicksPerSecond;

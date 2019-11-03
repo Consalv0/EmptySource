@@ -240,10 +240,10 @@ namespace ESource {
 	}
 
 	static void PointBounds(Point2 p, float &l, float &b, float &r, float &t) {
-		if (p.x < l) l = p.x;
-		if (p.y < b) b = p.y;
-		if (p.x > r) r = p.x;
-		if (p.y > t) t = p.y;
+		if (p.X < l) l = p.X;
+		if (p.Y < b) b = p.Y;
+		if (p.X > r) r = p.X;
+		if (p.Y > t) t = p.Y;
 	}
 
 	void LinearSegment::GetBounds(float &l, float &b, float &r, float &t) const {
@@ -256,13 +256,13 @@ namespace ESource {
 		PointBounds(p[2], l, b, r, t);
 		Vector2 Bottom = (p[1] - p[0]) - (p[2] - p[1]);
 
-		if (Bottom.x) {
-			float Param = (p[1].x - p[0].x) / Bottom.x;
+		if (Bottom.X) {
+			float Param = (p[1].X - p[0].X) / Bottom.X;
 			if (Param > 0 && Param < 1)
 				PointBounds(PointAt(Param), l, b, r, t);
 		}
-		if (Bottom.y) {
-			float Param = (p[1].y - p[0].y) / Bottom.y;
+		if (Bottom.Y) {
+			float Param = (p[1].Y - p[0].Y) / Bottom.Y;
 			if (Param > 0 && Param < 1)
 				PointBounds(PointAt(Param), l, b, r, t);
 		}
@@ -276,11 +276,11 @@ namespace ESource {
 		Vector2 a2 = p[3] - 3.F*p[2] + 3.F*p[1] - p[0];
 		float Values[2];
 		int Solutions;
-		Solutions = MathEquations::SolveQuadratic(Values, a2.x, a1.x, a0.x);
+		Solutions = MathEquations::SolveQuadratic(Values, a2.X, a1.X, a0.X);
 		for (int i = 0; i < Solutions; ++i)
 			if (Values[i] > 0 && Values[i] < 1)
 				PointBounds(PointAt(Values[i]), l, b, r, t);
-		Solutions = MathEquations::SolveQuadratic(Values, a2.y, a1.y, a0.y);
+		Solutions = MathEquations::SolveQuadratic(Values, a2.Y, a1.Y, a0.Y);
 		for (int i = 0; i < Solutions; ++i)
 			if (Values[i] > 0 && Values[i] < 1)
 				PointBounds(PointAt(Values[i]), l, b, r, t);

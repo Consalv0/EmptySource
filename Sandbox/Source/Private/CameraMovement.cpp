@@ -28,7 +28,7 @@ void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
 void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	if (Input::IsMouseDown(MouseButton::Mouse2)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
-		CameraRotation = Quaternion::EulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.y, -Input::GetMouseX() - -LastCursorPosition.x));
+		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
 	if (Input::IsKeyDown(Scancode::W)) {

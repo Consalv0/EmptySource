@@ -209,9 +209,9 @@ namespace ESource {
 			for (PolygonVertexIndex = 0; PolygonVertexIndex < PolygonVertexSize; ++PolygonVertexIndex) {
 				int ControlPointIndex = pMesh->GetPolygonVertex(PolygonIndex, PolygonVertexIndex);
 
-				Vertex.Position.x = (float)ControlPoints[ControlPointIndex][0];
-				Vertex.Position.y = (float)ControlPoints[ControlPointIndex][1];
-				Vertex.Position.z = (float)ControlPoints[ControlPointIndex][2];
+				Vertex.Position.X = (float)ControlPoints[ControlPointIndex][0];
+				Vertex.Position.Y = (float)ControlPoints[ControlPointIndex][1];
+				Vertex.Position.Z = (float)ControlPoints[ControlPointIndex][2];
 				Vertex.Position = GeometricTransform * Vector4(Vertex.Position, 1.F);
 
 				OutData.Bounding.Add(Vertex.Position);
@@ -357,17 +357,17 @@ namespace ESource {
 				case FbxGeometryElement::eDirect: {
 					Normal = ElementNormal->GetDirectArray().GetAt(ControlPointIndex);
 
-					Vertex.Normal.x = (float)Normal[0];
-					Vertex.Normal.y = (float)Normal[1];
-					Vertex.Normal.z = (float)Normal[2];
+					Vertex.Normal.X = (float)Normal[0];
+					Vertex.Normal.Y = (float)Normal[1];
+					Vertex.Normal.Z = (float)Normal[2];
 				} break;
 				case FbxGeometryElement::eIndexToDirect: {
 					int ID = ElementNormal->GetIndexArray().GetAt(ControlPointIndex);
 					Normal = ElementNormal->GetDirectArray().GetAt(ID);
 
-					Vertex.Normal.x = (float)Normal[0];
-					Vertex.Normal.y = (float)Normal[1];
-					Vertex.Normal.z = (float)Normal[2];
+					Vertex.Normal.X = (float)Normal[0];
+					Vertex.Normal.Y = (float)Normal[1];
+					Vertex.Normal.Z = (float)Normal[2];
 				} break;
 				default:
 					break;
@@ -378,17 +378,17 @@ namespace ESource {
 				case FbxGeometryElement::eDirect: {
 					Normal = ElementNormal->GetDirectArray().GetAt(VertexIndex);
 
-					Vertex.Normal.x = (float)Normal[0];
-					Vertex.Normal.y = (float)Normal[1];
-					Vertex.Normal.z = (float)Normal[2];
+					Vertex.Normal.X = (float)Normal[0];
+					Vertex.Normal.Y = (float)Normal[1];
+					Vertex.Normal.Z = (float)Normal[2];
 				} break;
 				case FbxGeometryElement::eIndexToDirect: {
 					int ID = ElementNormal->GetIndexArray().GetAt(VertexIndex);
 					Normal = ElementNormal->GetDirectArray().GetAt(ID);
 
-					Vertex.Normal.x = (float)Normal[0];
-					Vertex.Normal.y = (float)Normal[1];
-					Vertex.Normal.z = (float)Normal[2];
+					Vertex.Normal.X = (float)Normal[0];
+					Vertex.Normal.Y = (float)Normal[1];
+					Vertex.Normal.Z = (float)Normal[2];
 				} break;
 				default:
 					break;
@@ -411,19 +411,19 @@ namespace ESource {
 				case FbxGeometryElement::eDirect: {
 					Color = ElementColor->GetDirectArray().GetAt(ControlPointIndex);
 
-					Vertex.Color.r = (float)Color.mRed;
-					Vertex.Color.g = (float)Color.mGreen;
-					Vertex.Color.b = (float)Color.mBlue;
-					Vertex.Color.a = (float)Color.mAlpha;
+					Vertex.Color.R = (float)Color.mRed;
+					Vertex.Color.G = (float)Color.mGreen;
+					Vertex.Color.B = (float)Color.mBlue;
+					Vertex.Color.A = (float)Color.mAlpha;
 				} break;
 				case FbxGeometryElement::eIndexToDirect: {
 					int ID = ElementColor->GetIndexArray().GetAt(ControlPointIndex);
 					Color = ElementColor->GetDirectArray().GetAt(ID);
 
-					Vertex.Color.r = (float)Color.mRed;
-					Vertex.Color.g = (float)Color.mGreen;
-					Vertex.Color.b = (float)Color.mBlue;
-					Vertex.Color.a = (float)Color.mAlpha;
+					Vertex.Color.R = (float)Color.mRed;
+					Vertex.Color.G = (float)Color.mGreen;
+					Vertex.Color.B = (float)Color.mBlue;
+					Vertex.Color.A = (float)Color.mAlpha;
 				} break;
 				default:
 					break;
@@ -434,19 +434,19 @@ namespace ESource {
 				case FbxGeometryElement::eDirect: {
 					Color = ElementColor->GetDirectArray().GetAt(VertexIndex);
 
-					Vertex.Color.r = (float)Color.mRed;
-					Vertex.Color.g = (float)Color.mGreen;
-					Vertex.Color.b = (float)Color.mBlue;
-					Vertex.Color.a = (float)Color.mAlpha;
+					Vertex.Color.R = (float)Color.mRed;
+					Vertex.Color.G = (float)Color.mGreen;
+					Vertex.Color.B = (float)Color.mBlue;
+					Vertex.Color.A = (float)Color.mAlpha;
 				} break;
 				case FbxGeometryElement::eIndexToDirect: {
 					int ID = ElementColor->GetIndexArray().GetAt(VertexIndex);
 					Color = ElementColor->GetDirectArray().GetAt(ID);
 
-					Vertex.Color.r = (float)Color.mRed;
-					Vertex.Color.g = (float)Color.mGreen;
-					Vertex.Color.b = (float)Color.mBlue;
-					Vertex.Color.a = (float)Color.mAlpha;
+					Vertex.Color.R = (float)Color.mRed;
+					Vertex.Color.G = (float)Color.mGreen;
+					Vertex.Color.B = (float)Color.mBlue;
+					Vertex.Color.A = (float)Color.mAlpha;
 				} break;
 				default:
 					break;
@@ -484,18 +484,18 @@ namespace ESource {
 				case FbxGeometryElement::eDirect: {
 					Tangent = ElementTangent->GetDirectArray().GetAt(ControlPointIndex);
 
-					Vertex.Tangent.x = (float)Tangent[0];
-					Vertex.Tangent.y = (float)Tangent[1];
-					Vertex.Tangent.z = (float)Tangent[2];
+					Vertex.Tangent.X = (float)Tangent[0];
+					Vertex.Tangent.Y = (float)Tangent[1];
+					Vertex.Tangent.Z = (float)Tangent[2];
 					return true;
 				} break;
 				case FbxGeometryElement::eIndexToDirect: {
 					int ID = ElementTangent->GetIndexArray().GetAt(ControlPointIndex);
 					Tangent = ElementTangent->GetDirectArray().GetAt(ID);
 
-					Vertex.Tangent.x = (float)Tangent[0];
-					Vertex.Tangent.y = (float)Tangent[1];
-					Vertex.Tangent.z = (float)Tangent[2];
+					Vertex.Tangent.X = (float)Tangent[0];
+					Vertex.Tangent.Y = (float)Tangent[1];
+					Vertex.Tangent.Z = (float)Tangent[2];
 					return true;
 				} break;
 				default:
@@ -507,18 +507,18 @@ namespace ESource {
 				case FbxGeometryElement::eDirect: {
 					Tangent = ElementTangent->GetDirectArray().GetAt(VertexIndex);
 
-					Vertex.Tangent.x = (float)Tangent[0];
-					Vertex.Tangent.y = (float)Tangent[1];
-					Vertex.Tangent.z = (float)Tangent[2];
+					Vertex.Tangent.X = (float)Tangent[0];
+					Vertex.Tangent.Y = (float)Tangent[1];
+					Vertex.Tangent.Z = (float)Tangent[2];
 					return true;
 				} break;
 				case FbxGeometryElement::eIndexToDirect: {
 					int ID = ElementTangent->GetIndexArray().GetAt(VertexIndex);
 					Tangent = ElementTangent->GetDirectArray().GetAt(ID);
 
-					Vertex.Tangent.x = (float)Tangent[0];
-					Vertex.Tangent.y = (float)Tangent[1];
-					Vertex.Tangent.z = (float)Tangent[2];
+					Vertex.Tangent.X = (float)Tangent[0];
+					Vertex.Tangent.Y = (float)Tangent[1];
+					Vertex.Tangent.Z = (float)Tangent[2];
 					return true;
 				} break;
 				default:
@@ -562,7 +562,7 @@ namespace ESource {
 		Transformation.Position[0] = (float)RTranslation[0];
 		Transformation.Position[1] = (float)RTranslation[1];
 		Transformation.Position[2] = (float)RTranslation[2];
-		Transformation.Rotation = Quaternion::EulerAngles({ 
+		Transformation.Rotation = Quaternion::FromEulerAngles({ 
 			(float)(RRotation[0]),
 			(float)(RRotation[1]), 
 			(float)(RRotation[2])

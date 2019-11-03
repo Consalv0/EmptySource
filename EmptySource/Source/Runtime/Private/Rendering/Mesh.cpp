@@ -147,13 +147,13 @@ namespace ESource {
 			const Vector2 DeltaUV1 = UVB - UVA;
 			const Vector2 DeltaUV2 = UVC - UVA;
 
-			float r = 1.F / (DeltaUV1.x * DeltaUV2.y - DeltaUV1.y * DeltaUV2.x);
-			r = std::isfinite(r) ? r : 0;
+			float R = 1.F / (DeltaUV1.X * DeltaUV2.Y - DeltaUV1.Y * DeltaUV2.X);
+			R = std::isfinite(R) ? R : 0;
 
 			Vector3 Tangent;
-			Tangent.x = r * (DeltaUV2.y * Edge1.x - DeltaUV1.y * Edge2.x);
-			Tangent.y = r * (DeltaUV2.y * Edge1.y - DeltaUV1.y * Edge2.y);
-			Tangent.z = r * (DeltaUV2.y * Edge1.z - DeltaUV1.y * Edge2.z);
+			Tangent.X = R * (DeltaUV2.Y * Edge1.X - DeltaUV1.Y * Edge2.X);
+			Tangent.Y = R * (DeltaUV2.Y * Edge1.Y - DeltaUV1.Y * Edge2.Y);
+			Tangent.Z = R * (DeltaUV2.Y * Edge1.Z - DeltaUV1.Y * Edge2.Z);
 			Tangent.Normalize();
 
 			StaticVertices[(*Triangle)[0]].Tangent = Tangent;

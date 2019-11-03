@@ -94,7 +94,7 @@ namespace ESource {
 	void OpenGLRenderTarget::BindTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod, int TextureAttachment) {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
-		Size = IntVector3(InSize.x, InSize.y, 1);
+		Size = IntVector3(InSize.X, InSize.Y, 1);
 		Bind();
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
@@ -105,7 +105,7 @@ namespace ESource {
 
 	void OpenGLRenderTarget::BindTextures2D(Texture2D ** Textures, const IntVector2 & InSize, int * Lods, int * TextureAttachments, uint32_t Count) {
 		if (!IsValid()) return;
-		Size = IntVector3(InSize.x, InSize.y, 1);
+		Size = IntVector3(InSize.X, InSize.Y, 1);
 		Bind();
 
 		// Set the list of draw buffers.
@@ -136,7 +136,7 @@ namespace ESource {
 		if (RenderbufferObject == GL_NONE) {
 			glGenRenderbuffers(1, &RenderbufferObject);
 			glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
-			glRenderbufferStorage(GL_RENDERBUFFER, OpenGLPixelFormatInfo[Format].InputFormat, Size.x, Size.y);
+			glRenderbufferStorage(GL_RENDERBUFFER, OpenGLPixelFormatInfo[Format].InputFormat, Size.X, Size.Y);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
 		}
 		Unbind();
@@ -146,7 +146,7 @@ namespace ESource {
 		GLuint FramebufferTarget = Target == NULL ? 0 : ((OpenGLRenderTarget *)(Target))->FramebufferObject;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, FramebufferObject);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FramebufferTarget);
-		glBlitFramebuffer(From.xMin, From.yMin, From.xMax, From.yMax, To.xMin, To.yMin, To.xMax, To.yMax,
+		glBlitFramebuffer(From.MinX, From.MinY, From.MaxX, From.MaxY, To.MinX, To.MinY, To.MaxX, To.MaxY,
 			GL_DEPTH_BUFFER_BIT, OpenGLAPI::FilterModeToBaseType(FilterMode));
 	}
 

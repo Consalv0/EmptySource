@@ -95,7 +95,7 @@ namespace ESource {
 
 		if (bClearColor) {
 			ClearFlags |= GL_COLOR_BUFFER_BIT;
-			glClearColor(Color.r, Color.g, Color.b, Color.a);
+			glClearColor(Color.R, Color.G, Color.B, Color.A);
 		}
 		if (bClearDepth) {
 			ClearFlags |= GL_DEPTH_BUFFER_BIT;
@@ -114,7 +114,7 @@ namespace ESource {
 	}
 
 	void OpenGLAPI::SetViewport(const IntBox2D & Viewport) {
-		glViewport((GLint)Viewport.GetMinPoint().x, (GLint)Viewport.GetMinPoint().y, (GLint)Viewport.GetWidth(), (GLint)Viewport.GetHeight());
+		glViewport((GLint)Viewport.GetMinPoint().X, (GLint)Viewport.GetMinPoint().Y, (GLint)Viewport.GetWidth(), (GLint)Viewport.GetHeight());
 	}
 
 	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer) {

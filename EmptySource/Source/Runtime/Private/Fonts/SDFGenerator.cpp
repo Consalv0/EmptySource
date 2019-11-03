@@ -9,31 +9,31 @@ namespace ESource {
 	SDFGenerator::Pixel * SDFGenerator::Pixels = NULL;
 
 	void SDFGenerator::ComputeEdgeGradients() {
-		for (int y = 1; y < Height - 1; y++) {
-			for (int x = 1; x < Width - 1; x++) {
-				Pixel * p = PixelAt(x, y);
+		for (int Y = 1; Y < Height - 1; Y++) {
+			for (int X = 1; X < Width - 1; X++) {
+				Pixel * p = PixelAt(X, Y);
 				if (p->Alpha > 0.F && p->Alpha < 1.F) {
 					// estimate gradient of edge pixel using surrounding pixels
-					float g =
-						-PixelAt(x - 1, y - 1)->Alpha
-						- PixelAt(x - 1, y + 1)->Alpha
-						+ PixelAt(x + 1, y - 1)->Alpha
-						+ PixelAt(x + 1, y + 1)->Alpha;
-					p->Gradient.x = g + (PixelAt(x + 1, y)->Alpha - PixelAt(x - 1, y)->Alpha) * MathConstants::SquareRoot2;
-					p->Gradient.y = g + (PixelAt(x, y + 1)->Alpha - PixelAt(x, y - 1)->Alpha) * MathConstants::SquareRoot2;
+					float G =
+						- PixelAt(X - 1, Y - 1)->Alpha
+						- PixelAt(X - 1, Y + 1)->Alpha
+						+ PixelAt(X + 1, Y - 1)->Alpha
+						+ PixelAt(X + 1, Y + 1)->Alpha;
+					p->Gradient.X = G + (PixelAt(X + 1, Y)->Alpha - PixelAt(X - 1, Y)->Alpha) * MathConstants::SquareRoot2;
+					p->Gradient.Y = G + (PixelAt(X, Y + 1)->Alpha - PixelAt(X, Y - 1)->Alpha) * MathConstants::SquareRoot2;
 					p->Gradient.Normalize();
 				}
 			}
 		}
 	}
 
-	float SDFGenerator::ApproximateEdgeDelta(float gx, float gy, float a) {
+	float SDFGenerator::ApproximateEdgeDelta(float gx, float gy, float A) {
 		// (gx, gy) can be either the local pixel gradient or the direction to the pixel
 
 		if (gx == 0.F || gy == 0.F) {
 			// linear function is correct if both gx and gy are zero
 			// and still fair if only one of them is zero
-			return 0.5F - a;
+			return 0.5F - A;
 		}
 
 		// normalize (gx, gy)
@@ -53,21 +53,21 @@ namespace ESource {
 
 		// compute delta
 		float a1 = 0.5F * gy / gx;
-		if (a < a1) {
+		if (A < a1) {
 			// 0 <= a < a1
-			return 0.5F * (gx + gy) - sqrtf(2.F * gx * gy * a);
+			return 0.5F * (gx + gy) - sqrtf(2.F * gx * gy * A);
 		}
-		if (a < (1.F - a1)) {
+		if (A < (1.F - a1)) {
 			// a1 <= a <= 1 - a1
-			return (0.5F - a) * gx;
+			return (0.5F - A) * gx;
 		}
 		// 1-a1 < a <= 1
-		return -0.5F * (gx + gy) + sqrtf(2.F * gx * gy * (1.F - a));
+		return -0.5F * (gx + gy) + sqrtf(2.F * gx * gy * (1.F - A));
 	}
 
-	void SDFGenerator::UpdateDistance(Pixel * p, int x, int y, int oX, int oY) {
-		Pixel * neighbor = PixelAt(x + oX, y + oY);
-		Pixel * closest = PixelAt(x + oX - neighbor->Delta.x, y + oY - neighbor->Delta.y);
+	void SDFGenerator::UpdateDistance(Pixel * p, int X, int Y, int oX, int oY) {
+		Pixel * neighbor = PixelAt(X + oX, Y + oY);
+		Pixel * closest = PixelAt(X + oX - neighbor->Delta.X, Y + oY - neighbor->Delta.Y);
 
 		if (closest->Alpha == 0.F /*|| *closest == *p*/) {
 			// neighbor has no closest yet
@@ -75,34 +75,34 @@ namespace ESource {
 			return;
 		}
 
-		int dX = neighbor->Delta.x - oX;
-		int dY = neighbor->Delta.y - oY;
+		int dX = neighbor->Delta.X - oX;
+		int dY = neighbor->Delta.Y - oY;
 		float Distance = sqrtf((float)dX * dX + dY * dY) + ApproximateEdgeDelta((float)dX, (float)dY, closest->Alpha);
 		if (Distance < p->Distance) {
 			p->Distance = Distance;
-			p->Delta.x = dX;
-			p->Delta.y = dY;
+			p->Delta.X = dX;
+			p->Delta.Y = dY;
 		}
 	}
 
 	void SDFGenerator::GenerateDistanceTransform() {
 		// perform anti-aliased Euclidean distance transform
-		int x, y;
+		int X, Y;
 		Pixel * p;
 
 		// initialize distances
-		for (y = 0; y < Height; y++) {
-			for (x = 0; x < Width; x++) {
-				p = PixelAt(x, y);
-				p->Delta.x = 0;
-				p->Delta.y = 0;
+		for (Y = 0; Y < Height; Y++) {
+			for (X = 0; X < Width; X++) {
+				p = PixelAt(X, Y);
+				p->Delta.X = 0;
+				p->Delta.Y = 0;
 				if (p->Alpha <= 0.F) {
 					// outside
 					p->Distance = MathConstants::BigNumber;
 				}
 				else if (p->Alpha < 1.F) {
 					// on the edge
-					p->Distance = ApproximateEdgeDelta(p->Gradient.x, p->Gradient.y, p->Alpha);
+					p->Distance = ApproximateEdgeDelta(p->Gradient.X, p->Gradient.Y, p->Alpha);
 				}
 				else {
 					// inside
@@ -112,78 +112,78 @@ namespace ESource {
 		}
 		// perform 8SSED (eight-points signed sequential Euclidean distance transform)
 		// scan up
-		for (y = 1; y < Height; y++) {
+		for (Y = 1; Y < Height; Y++) {
 			// |P.
 			// |XX
-			p = PixelAt(0, y);
+			p = PixelAt(0, Y);
 			if (p->Distance > 0.F) {
-				UpdateDistance(p, 0, y, 0, -1);
-				UpdateDistance(p, 0, y, 1, -1);
+				UpdateDistance(p, 0, Y, 0, -1);
+				UpdateDistance(p, 0, Y, 1, -1);
 			}
 			// -->
 			// XP.
 			// XXX
-			for (x = 1; x < Width - 1; x++) {
-				p = PixelAt(x, y);
+			for (X = 1; X < Width - 1; X++) {
+				p = PixelAt(X, Y);
 				if (p->Distance > 0.F) {
-					UpdateDistance(p, x, y, -1, 0);
-					UpdateDistance(p, x, y, -1, -1);
-					UpdateDistance(p, x, y, 0, -1);
-					UpdateDistance(p, x, y, 1, -1);
+					UpdateDistance(p, X, Y, -1, 0);
+					UpdateDistance(p, X, Y, -1, -1);
+					UpdateDistance(p, X, Y, 0, -1);
+					UpdateDistance(p, X, Y, 1, -1);
 				}
 			}
 			// XP|
 			// XX|
-			p = PixelAt(Width - 1, y);
+			p = PixelAt(Width - 1, Y);
 			if (p->Distance > 0.F) {
-				UpdateDistance(p, Width - 1, y, -1, 0);
-				UpdateDistance(p, Width - 1, y, -1, -1);
-				UpdateDistance(p, Width - 1, y, 0, -1);
+				UpdateDistance(p, Width - 1, Y, -1, 0);
+				UpdateDistance(p, Width - 1, Y, -1, -1);
+				UpdateDistance(p, Width - 1, Y, 0, -1);
 			}
 			// <--
 			// .PX
-			for (x = Width - 2; x >= 0; x--) {
-				p = PixelAt(x, y);
+			for (X = Width - 2; X >= 0; X--) {
+				p = PixelAt(X, Y);
 				if (p->Distance > 0.F) {
-					UpdateDistance(p, x, y, 1, 0);
+					UpdateDistance(p, X, Y, 1, 0);
 				}
 			}
 		}
 		// scan down
-		for (y = Height - 2; y >= 0; y--) {
+		for (Y = Height - 2; Y >= 0; Y--) {
 			// XX|
 			// .P|
-			p = PixelAt(Width - 1, y);
+			p = PixelAt(Width - 1, Y);
 			if (p->Distance > 0.F) {
-				UpdateDistance(p, Width - 1, y, 0, 1);
-				UpdateDistance(p, Width - 1, y, -1, 1);
+				UpdateDistance(p, Width - 1, Y, 0, 1);
+				UpdateDistance(p, Width - 1, Y, -1, 1);
 			}
 			// <--
 			// XXX
 			// .PX
-			for (x = Width - 2; x > 0; x--) {
-				p = PixelAt(x, y);
+			for (X = Width - 2; X > 0; X--) {
+				p = PixelAt(X, Y);
 				if (p->Distance > 0.F) {
-					UpdateDistance(p, x, y, 1, 0);
-					UpdateDistance(p, x, y, 1, 1);
-					UpdateDistance(p, x, y, 0, 1);
-					UpdateDistance(p, x, y, -1, 1);
+					UpdateDistance(p, X, Y, 1, 0);
+					UpdateDistance(p, X, Y, 1, 1);
+					UpdateDistance(p, X, Y, 0, 1);
+					UpdateDistance(p, X, Y, -1, 1);
 				}
 			}
 			// |XX
 			// |PX
-			p = PixelAt(0, y);
+			p = PixelAt(0, Y);
 			if (p->Distance > 0.F) {
-				UpdateDistance(p, 0, y, 1, 0);
-				UpdateDistance(p, 0, y, 1, 1);
-				UpdateDistance(p, 0, y, 0, 1);
+				UpdateDistance(p, 0, Y, 1, 0);
+				UpdateDistance(p, 0, Y, 1, 1);
+				UpdateDistance(p, 0, Y, 0, 1);
 			}
 			// -->
 			// XP.
-			for (x = 1; x < Width; x++) {
-				p = PixelAt(x, y);
+			for (X = 1; X < Width; X++) {
+				p = PixelAt(X, Y);
 				if (p->Distance > 0.F) {
-					UpdateDistance(p, x, y, -1, 0);
+					UpdateDistance(p, X, Y, -1, 0);
 				}
 			}
 		}
@@ -198,47 +198,47 @@ namespace ESource {
 		if (Pixels != NULL) delete[] Pixels;
 		Pixels = new Pixel[Width * Height];
 
-		int x, y;
+		int X, Y;
 		float Scale;
 		if (MaxInside > 0.F) {
-			for (y = 0; y < Height; y++) {
-				for (x = 0; x < Width; x++) {
-					PixelAt(x, y)->Alpha = 1.F - *PixelMapUtility::GetFloatPixelAt(Output, x, y, 0);
+			for (Y = 0; Y < Height; Y++) {
+				for (X = 0; X < Width; X++) {
+					PixelAt(X, Y)->Alpha = 1.F - *PixelMapUtility::GetFloatPixelAt(Output, X, Y, 0);
 				}
 			}
 			ComputeEdgeGradients();
 			GenerateDistanceTransform();
 			Scale = 1.F / MaxInside;
-			for (y = 0; y < Height; y++) {
-				for (x = 0; x < Width; x++) {
-					float Alpha = Math::Clamp01(PixelAt(x, y)->Distance * Scale);
-					*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) = Alpha;
+			for (Y = 0; Y < Height; Y++) {
+				for (X = 0; X < Width; X++) {
+					float Alpha = Math::Clamp01(PixelAt(X, Y)->Distance * Scale);
+					*PixelMapUtility::GetFloatPixelAt(Output, X, Y, 0) = Alpha;
 				}
 			}
 		}
 		if (MaxOutside > 0.F) {
-			for (y = 0; y < Height; y++) {
-				for (x = 0; x < Width; x++) {
-					PixelAt(x, y)->Alpha = *PixelMapUtility::GetFloatPixelAt(Output, x, y, 0);
+			for (Y = 0; Y < Height; Y++) {
+				for (X = 0; X < Width; X++) {
+					PixelAt(X, Y)->Alpha = *PixelMapUtility::GetFloatPixelAt(Output, X, Y, 0);
 				}
 			}
 			ComputeEdgeGradients();
 			GenerateDistanceTransform();
 			Scale = 1.F / MaxOutside;
 			if (MaxInside > 0.F) {
-				for (y = 0; y < Height; y++) {
-					for (x = 0; x < Width; x++) {
-						float Alpha = 0.5f + (*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) -
-							Math::Clamp01(PixelAt(x, y)->Distance * Scale)) * 0.5f;
-							*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) = Alpha;
+				for (Y = 0; Y < Height; Y++) {
+					for (X = 0; X < Width; X++) {
+						float Alpha = 0.5f + (*PixelMapUtility::GetFloatPixelAt(Output, X, Y, 0) -
+							Math::Clamp01(PixelAt(X, Y)->Distance * Scale)) * 0.5f;
+							*PixelMapUtility::GetFloatPixelAt(Output, X, Y, 0) = Alpha;
 					}
 				}
 			}
 			else {
-				for (y = 0; y < Height; y++) {
-					for (x = 0; x < Width; x++) {
-						float Alpha = Math::Clamp01(1.F - PixelAt(x, y)->Distance * Scale);
-						*PixelMapUtility::GetFloatPixelAt(Output, x, y, 0) = Alpha;
+				for (Y = 0; Y < Height; Y++) {
+					for (X = 0; X < Width; X++) {
+						float Alpha = Math::Clamp01(1.F - PixelAt(X, Y)->Distance * Scale);
+						*PixelMapUtility::GetFloatPixelAt(Output, X, Y, 0) = Alpha;
 					}
 				}
 			}
@@ -258,11 +258,11 @@ namespace ESource {
 		{
 			float * ContourSD = new float[ContourCount];
 
-			for (int y = 0; y < OutHeight; ++y) {
-				int Row = Shape.bInverseYAxis ? OutHeight - y - 1 : y;
-				for (int x = 0; x < OutWidth; ++x) {
+			for (int Y = 0; Y < OutHeight; ++Y) {
+				int Row = Shape.bInverseYAxis ? OutHeight - Y - 1 : Y;
+				for (int X = 0; X < OutWidth; ++X) {
 					float Dummy;
-					Point2 Point = Vector2(x + .5F, y + .5F) / Scale - Translate;
+					Point2 Point = Vector2(X + .5F, Y + .5F) / Scale - Translate;
 					float NegDist = MathConstants::BigNumber;
 					float PosDist = -MathConstants::BigNumber;
 					int Winding = 0;
@@ -301,7 +301,7 @@ namespace ESource {
 						if (Windings[i] != Winding && fabs(ContourSD[i]) < fabs(SignedDist))
 							SignedDist = ContourSD[i];
 
-					*PixelMapUtility::GetFloatPixelAt(Output, x, Row, 0) = float(SignedDist / Range + .5F);
+					*PixelMapUtility::GetFloatPixelAt(Output, X, Row, 0) = float(SignedDist / Range + .5F);
 				}
 			}
 			delete[] ContourSD;

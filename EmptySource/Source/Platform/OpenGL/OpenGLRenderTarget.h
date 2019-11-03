@@ -52,7 +52,7 @@ namespace ESource {
 
 		virtual inline IntVector3 GetSize() const override { return Size; }
 
-		virtual inline IntBox2D GetViewport() const override { return IntBox2D(0, 0, Size.x, Size.y); }
+		virtual inline IntBox2D GetViewport() const override { return IntBox2D(0, 0, Size.X, Size.Y); }
 
 		virtual inline ETextureDimension GetDimension() const override { return Dimension; };
 

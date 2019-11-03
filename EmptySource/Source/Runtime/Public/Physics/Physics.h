@@ -18,10 +18,10 @@ namespace ESource {
 
 		float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-		tmin = ((InverseRay.x > 0 ? MinPoint : MaxPoint).x - CastedRay.Origin.x) * InverseRay.x;
-		tmax = ((InverseRay.x < 0 ? MinPoint : MaxPoint).x - CastedRay.Origin.x) * InverseRay.x;
-		tymin = ((InverseRay.y > 0 ? MinPoint : MaxPoint).y - CastedRay.Origin.y) * InverseRay.y;
-		tymax = ((InverseRay.y < 0 ? MinPoint : MaxPoint).y - CastedRay.Origin.y) * InverseRay.y;
+		tmin = ((InverseRay.X > 0 ? MinPoint : MaxPoint).X - CastedRay.Origin.X) * InverseRay.X;
+		tmax = ((InverseRay.X < 0 ? MinPoint : MaxPoint).X - CastedRay.Origin.X) * InverseRay.X;
+		tymin = ((InverseRay.Y > 0 ? MinPoint : MaxPoint).Y - CastedRay.Origin.Y) * InverseRay.Y;
+		tymax = ((InverseRay.Y < 0 ? MinPoint : MaxPoint).Y - CastedRay.Origin.Y) * InverseRay.Y;
 
 		if ((tmin > tymax) || (tymin > tmax))
 			return false;
@@ -30,8 +30,8 @@ namespace ESource {
 		if (tymax < tmax)
 			tmax = tymax;
 
-		tzmin = ((InverseRay.z > 0 ? MinPoint : MaxPoint).z - CastedRay.Origin.z) * InverseRay.z;
-		tzmax = ((InverseRay.z < 0 ? MinPoint : MaxPoint).z - CastedRay.Origin.z) * InverseRay.z;
+		tzmin = ((InverseRay.Z > 0 ? MinPoint : MaxPoint).Z - CastedRay.Origin.Z) * InverseRay.Z;
+		tzmax = ((InverseRay.Z < 0 ? MinPoint : MaxPoint).Z - CastedRay.Origin.Z) * InverseRay.Z;
 
 		if ((tmin > tzmax) || (tzmin > tmax))
 			return false;

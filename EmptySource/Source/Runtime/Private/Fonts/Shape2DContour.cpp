@@ -48,17 +48,17 @@ namespace ESource {
 			return 0;
 		float Total = 0;
 		if (Edges.size() == 1) {
-			Point2 a = Edges[0]->PointAt(0), b = Edges[0]->PointAt(1 / 3.F), c = Edges[0]->PointAt(2 / 3.F);
-			Total += MathEquations::Shoelace2(a, b);
-			Total += MathEquations::Shoelace2(b, c);
-			Total += MathEquations::Shoelace2(c, a);
+			Point2 A = Edges[0]->PointAt(0), B = Edges[0]->PointAt(1 / 3.F), C = Edges[0]->PointAt(2 / 3.F);
+			Total += MathEquations::Shoelace2(A, B);
+			Total += MathEquations::Shoelace2(B, C);
+			Total += MathEquations::Shoelace2(C, A);
 		}
 		else if (Edges.size() == 2) {
-			Point2 a = Edges[0]->PointAt(0), b = Edges[0]->PointAt(.5F), c = Edges[1]->PointAt(0), d = Edges[1]->PointAt(.5F);
-			Total += MathEquations::Shoelace2(a, b);
-			Total += MathEquations::Shoelace2(b, c);
-			Total += MathEquations::Shoelace2(c, d);
-			Total += MathEquations::Shoelace2(d, a);
+			Point2 A = Edges[0]->PointAt(0), B = Edges[0]->PointAt(.5F), C = Edges[1]->PointAt(0), D = Edges[1]->PointAt(.5F);
+			Total += MathEquations::Shoelace2(A, B);
+			Total += MathEquations::Shoelace2(B, C);
+			Total += MathEquations::Shoelace2(C, D);
+			Total += MathEquations::Shoelace2(D, A);
 		}
 		else {
 			Point2 Previous = Edges[Edges.size() - 1]->PointAt(0);

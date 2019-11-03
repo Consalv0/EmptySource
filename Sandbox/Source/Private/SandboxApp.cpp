@@ -128,7 +128,7 @@ protected:
 
 			MeshPrimitives::Quad.GetVertexArray()->Bind();
 			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetTexture(), EquirectangularTextureHDR->GetSize());
-			Rendering::SetViewport({ 0, 0, EquirectangularTextureHDR->GetSize().x, EquirectangularTextureHDR->GetSize().y });
+			Rendering::SetViewport({ 0, 0, EquirectangularTextureHDR->GetSize().X, EquirectangularTextureHDR->GetSize().Y });
 			Renderer->Clear();
 			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			EquirectangularTextureHDR->GenerateMipMaps();
@@ -142,7 +142,7 @@ protected:
 
 		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") == NULL) {
 			CubemapTexture = TextureManager::GetInstance().CreateCubemap(L"CubemapTexture", L"",
-				PF_RGB32F, FM_MinMagLinear, SAM_Clamp, EquirectangularTexture->GetSize().y / 2);
+				PF_RGB32F, FM_MinMagLinear, SAM_Clamp, EquirectangularTexture->GetSize().Y / 2);
 		}
 		CubemapTexture->Load();
 		CubemapTexture->RenderHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
@@ -400,7 +400,7 @@ protected:
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
-				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().x, TextureSample->GetSize().y });
+				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().X, TextureSample->GetSize().Y });
 				Renderer->Clear();
 				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
@@ -428,7 +428,7 @@ protected:
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
 				Renderer->BindTexture2D((Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
-				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().x, TextureSample->GetSize().y });
+				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().X, TextureSample->GetSize().Y });
 				Renderer->Clear();
 				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
@@ -487,8 +487,8 @@ protected:
 							ImGui::Text("Normals: %s", SelectedMesh.second->GetVertexData().hasNormals ? "true" : "false");
 							ImGui::Text("UVs: %d", SelectedMesh.second->GetVertexData().UVChannels);
 							ImGui::Text("Vertex Color: %s", SelectedMesh.second->GetVertexData().hasVertexColor ? "true" : "false");
-							ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh.second->GetVertexData().Bounding.xMin, 10, ImGuiInputTextFlags_ReadOnly);
-							ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh.second->GetVertexData().Bounding.yMin, 10, ImGuiInputTextFlags_ReadOnly);
+							ImGui::InputFloat3("##BBox0", (float *)&SelectedMesh.second->GetVertexData().Bounding.MinX, 10, ImGuiInputTextFlags_ReadOnly);
+							ImGui::InputFloat3("##BBox1", (float *)&SelectedMesh.second->GetVertexData().Bounding.MinY, 10, ImGuiInputTextFlags_ReadOnly);
 							ImGui::TextUnformatted("Materials:");
 							for (auto & KeyValue : SelectedMesh.second->GetVertexData().MaterialsMap) {
 								ImGui::BulletText("%s : %d", KeyValue.second.c_str(), KeyValue.first);
@@ -1072,7 +1072,7 @@ protected:
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
 			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetTexture(), BRDFLut->GetSize());
-			Rendering::SetViewport({ 0, 0, BRDFLut->GetSize().x, BRDFLut->GetSize().y });
+			Rendering::SetViewport({ 0, 0, BRDFLut->GetSize().X, BRDFLut->GetSize().Y });
 			Renderer->Clear();
 			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
 			Renderer->Unbind();
@@ -1094,7 +1094,7 @@ protected:
 		// 	-1.F,
 		// };
 		// CameraRayDirection = ProjectionMatrix.Inversed() * CameraRayDirection;
-		// CameraRayDirection.z = -1.F;
+		// CameraRayDirection.Z = -1.F;
 		// CameraRayDirection = ViewMatrix.Inversed() * CameraRayDirection;
 		// CameraRayDirection.Normalize();
 		// 
@@ -1201,7 +1201,7 @@ protected:
 		// 				Vector3 ArrowClosestContactPoint = TestArrowTransform.Position;
 		// 				Vector3 ClosestContactPoint = TestRayArrow.PointAt(Hits[0].Stamp);
 		// 
-		// 				if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.x * TestArrowTransform.Scale.x)
+		// 				if ((ArrowClosestContactPoint - ClosestContactPoint).MagnitudeSquared() < TestArrowTransform.Scale.X * TestArrowTransform.Scale.X)
 		// 				{
 		// 					const IntVector3 & Face = SceneModels[MeshCount]->GetMeshData().Faces[Hits[0].TriangleIndex];
 		// 					const Vector3 & N0 = SceneModels[MeshCount]->GetMeshData().Vertices[Face[0]].Normal;
@@ -1389,7 +1389,7 @@ protected:
 				0.F, Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 
 			TextGenerator.GenerateMesh(
-				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.y),
+				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.Y),
 				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
 			);
 			Timer.Stop();
@@ -1416,7 +1416,7 @@ protected:
 			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
 			1.F / Time::GetAverageDelta<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>(),
-			Text::FormatMath(Vector3(LastCursorPosition.y - Input::GetMouseY(), -LastCursorPosition.x - -Input::GetMouseX())).c_str()
+			Text::FormatMath(Vector3(LastCursorPosition.Y - Input::GetMouseY(), -LastCursorPosition.X - -Input::GetMouseX())).c_str()
 		);
 
 		if (Input::IsKeyDown(Scancode::Escape)) {

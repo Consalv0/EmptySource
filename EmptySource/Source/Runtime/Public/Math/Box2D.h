@@ -9,13 +9,13 @@ namespace ESource {
 	public:
 		union {
 			struct { float Left, Bottom, Right, Top; };
-			struct { float xMin, yMin, xMax, yMax; };
+			struct { float MinX, MinY, MaxX, MaxY; };
 		};
 
 		Box2D() = default;
 
-		Box2D(const float & xMin, const float & yMin, const float & xMax, const float & yMax)
-			: xMin(xMin), yMin(yMin), xMax(xMax), yMax(yMax)
+		Box2D(const float & MinX, const float & MinY, const float & MaxX, const float & MaxY)
+			: MinX(MinX), MinY(MinY), MaxX(MaxX), MaxY(MaxY)
 		{ }
 
 		//* Get the lower point of the bounding box
@@ -43,13 +43,13 @@ namespace ESource {
 	public:
 		union {
 			struct { int Left, Bottom, Right, Top; };
-			struct { int xMin, yMin, xMax, yMax; };
+			struct { int MinX, MinY, MaxX, MaxY; };
 		};
 
 		IntBox2D() = default;
 
-		IntBox2D(const int & xMin, const int & yMin, const int & xMax, const int & yMax)
-			: xMin(xMin), yMin(yMin), xMax(xMax), yMax(yMax)
+		IntBox2D(const int & MinX, const int & MinY, const int & MaxX, const int & MaxY)
+			: MinX(MinX), MinY(MinY), MaxX(MaxX), MaxY(MaxY)
 		{ }
 
 		//* Get the lower point of the bounding box

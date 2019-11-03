@@ -10,7 +10,7 @@ namespace ESource {
 	struct Vector2 {
 	public:
 		union {
-			struct { float x, y; };
+			struct { float X, Y; };
 			struct { float u, v; };
 		};
 
@@ -19,7 +19,7 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE Vector2(const Vector3& Vector);
 		HOST_DEVICE FORCEINLINE Vector2(const Vector4& Vector);
 		HOST_DEVICE FORCEINLINE Vector2(const float& Value);
-		HOST_DEVICE FORCEINLINE Vector2(const float& x, const float& y);
+		HOST_DEVICE FORCEINLINE Vector2(const float& X, const float& Y);
 
 		HOST_DEVICE inline float Magnitude() const;
 		HOST_DEVICE inline float MagnitudeSquared() const;

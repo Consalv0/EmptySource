@@ -18,13 +18,13 @@ namespace ESource {
 		static int Width, Height;
 		static Pixel * Pixels;
 
-		static inline Pixel * PixelAt(int x, int y) { return &Pixels[x + Width * y]; };
+		static inline Pixel * PixelAt(int X, int Y) { return &Pixels[X + Width * Y]; };
 
 		static void ComputeEdgeGradients();
 
-		static float ApproximateEdgeDelta(float gx, float gy, float a);
+		static float ApproximateEdgeDelta(float gx, float gy, float A);
 
-		static void UpdateDistance(Pixel * p, int x, int y, int oX, int oY);
+		static void UpdateDistance(Pixel * p, int X, int Y, int oX, int oY);
 
 		static void GenerateDistanceTransform();
 

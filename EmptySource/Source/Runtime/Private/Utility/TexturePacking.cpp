@@ -45,12 +45,12 @@ namespace ESource {
 
 			// --- Decide which way to split
 			if (DeltaWidth > DeltaHeight) {
-				Smaller->BBox = { BBox.xMin,         BBox.yMin + Height, BBox.xMin + Width, BBox.yMax };
-				Bigger->BBox = { BBox.xMin + Width, BBox.yMin,          BBox.xMax,         BBox.yMax };
+				Smaller->BBox = { BBox.MinX,         BBox.MinY + Height, BBox.MinX + Width, BBox.MaxY };
+				Bigger->BBox = { BBox.MinX + Width, BBox.MinY,          BBox.MaxX,         BBox.MaxY };
 			}
 			else {
-				Smaller->BBox = { BBox.xMin + Width, BBox.yMin,          BBox.xMax, BBox.yMin + Height };
-				Bigger->BBox = { BBox.xMin,         BBox.yMin + Height, BBox.xMax, BBox.yMax };
+				Smaller->BBox = { BBox.MinX + Width, BBox.MinY,          BBox.MaxX, BBox.MinY + Height };
+				Bigger->BBox = { BBox.MinX,         BBox.MinY + Height, BBox.MaxX, BBox.MaxY };
 			}
 
 			this->Element = &Element;
@@ -80,7 +80,7 @@ namespace ESource {
 	template<typename T>
 	inline void TexturePacking<T>::CreateTexture(const IntVector2& Dimensions) {
 		PNode = new Node();
-		PNode->BBox = { 0.F, 0.F, (float)Dimensions.x, (float)Dimensions.y };
+		PNode->BBox = { 0.F, 0.F, (float)Dimensions.X, (float)Dimensions.Y };
 	}
 
 	template<typename T>

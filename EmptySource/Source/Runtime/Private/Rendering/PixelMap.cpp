@@ -119,10 +119,10 @@ namespace ESource {
 
 	void PixelMapUtility::PerPixelOperator(PixelMap & Map, std::function<void(unsigned char *, const unsigned char &)> const & Function) {
 		const unsigned char & Channels = (unsigned char)PixelFormats[Map.PixelFormat].Channels;
-		for (uint32_t z = 0; z < Map.Depth; ++z) {
-			for (uint32_t y = 0; y < Map.Height; ++y) {
-				for (uint32_t x = 0; x < Map.Width; ++x) {
-					Function(GetCharPixelAt(Map, x, y, z), Channels);
+		for (uint32_t Z = 0; Z < Map.Depth; ++Z) {
+			for (uint32_t Y = 0; Y < Map.Height; ++Y) {
+				for (uint32_t X = 0; X < Map.Width; ++X) {
+					Function(GetCharPixelAt(Map, X, Y, Z), Channels);
 				}
 			}
 		}
@@ -130,10 +130,10 @@ namespace ESource {
 
 	void PixelMapUtility::PerPixelOperator(PixelMap & Map, std::function<void(float *, const unsigned char &)> const & Function) {
 		const unsigned char & Channels = (unsigned char)PixelFormats[Map.PixelFormat].Channels;
-		for (uint32_t z = 0; z < Map.Depth; ++z) {
-			for (uint32_t y = 0; y < Map.Height; ++y) {
-				for (uint32_t x = 0; x < Map.Width; ++x) {
-					Function(GetFloatPixelAt(Map, x, y, z), Channels);
+		for (uint32_t Z = 0; Z < Map.Depth; ++Z) {
+			for (uint32_t Y = 0; Y < Map.Height; ++Y) {
+				for (uint32_t X = 0; X < Map.Width; ++X) {
+					Function(GetFloatPixelAt(Map, X, Y, Z), Channels);
 				}
 			}
 		}

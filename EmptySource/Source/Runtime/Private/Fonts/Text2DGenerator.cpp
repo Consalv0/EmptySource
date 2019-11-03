@@ -58,18 +58,18 @@ namespace ESource {
 		IntVector3 * TextFacesEnd = &Faces->at(InitialFacesSize);
 		StaticVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
 
-		Vector2 CursorPivot = { Box.xMin, Box.yMax };
+		Vector2 CursorPivot = { Box.MinX, Box.MaxY };
 
 		// --- Iterate through all characters
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
 			if (*(Character) == L'\n' || *(Character) == L'\r') {
-				CursorPivot.x = Box.xMin;
-				CursorPivot.y -= HeightSize;
+				CursorPivot.X = Box.MinX;
+				CursorPivot.Y -= HeightSize;
 				continue;
 			}
 			if (*(Character) == L'	') {
-				float TabModule = fmodf(CursorPivot.x, (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor * 4);
-				CursorPivot.x += TabModule;
+				float TabModule = fmodf(CursorPivot.X, (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor * 4);
+				CursorPivot.X += TabModule;
 				continue;
 			}
 
@@ -83,25 +83,25 @@ namespace ESource {
 				}
 			}
 
-			if (CursorPivot.x + (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor > Box.xMax) {
-				CursorPivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			if (CursorPivot.X + (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor > Box.MaxX) {
+				CursorPivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 				continue;
 			}
-			if (CursorPivot.y < Box.yMin)
+			if (CursorPivot.Y < Box.MinY)
 				break;
 
 			Glyph->GetQuadMesh(CursorPivot, PixelRange, ScaleFactor, 1.F, TextVerticesEnd);
-			TextFacesEnd->z = VertexCount;
-			TextFacesEnd->y = VertexCount + 1;
-			(TextFacesEnd++)->x = VertexCount + 2;
-			TextFacesEnd->x = VertexCount + 3;
-			TextFacesEnd->y = VertexCount;
-			(TextFacesEnd++)->z = VertexCount + 1;
+			TextFacesEnd->Z = VertexCount;
+			TextFacesEnd->Y = VertexCount + 1;
+			(TextFacesEnd++)->X = VertexCount + 2;
+			TextFacesEnd->X = VertexCount + 3;
+			TextFacesEnd->Y = VertexCount;
+			(TextFacesEnd++)->Z = VertexCount + 1;
 
 			VertexCount += 4;
 			TextVerticesEnd += 4;
 
-			CursorPivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			CursorPivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 		}
 
 		// --- The VertexCount was initialized with the initial VertexCount
@@ -119,12 +119,12 @@ namespace ESource {
 		// --- Iterate through all characters
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
 			if (!IsCharacterLoaded(*Character)) {
-				Pivot.x += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
+				Pivot.X += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
 				continue;
 			}
 
 			FontGlyph * Glyph = LoadedCharacters[*Character];
-			Pivot.x += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			Pivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 		}
 
 		return Pivot;
@@ -189,12 +189,12 @@ namespace ESource {
 			}
 
 			// --- Asign the current UV Position
-			Character->UV.xMin = (ResultNode.BBox.xMin) / (float)AtlasSize;
-			Character->UV.xMax = (ResultNode.BBox.xMin + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
-			Character->UV.yMin = (ResultNode.BBox.yMin) / (float)AtlasSize;
-			Character->UV.yMax = (ResultNode.BBox.yMin + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
+			Character->UV.MinX = (ResultNode.BBox.MinX) / (float)AtlasSize;
+			Character->UV.MaxX = (ResultNode.BBox.MinX + Character->SDFResterized.GetWidth()) / (float)AtlasSize;
+			Character->UV.MinY = (ResultNode.BBox.MinY) / (float)AtlasSize;
+			Character->UV.MaxY = (ResultNode.BBox.MinY + Character->SDFResterized.GetHeight()) / (float)AtlasSize;
 
-			int IndexPos = int(ResultNode.BBox.xMin + ResultNode.BBox.yMin * AtlasSize);
+			int IndexPos = int(ResultNode.BBox.MinX + ResultNode.BBox.MinY * AtlasSize);
 
 			// --- Render current character in the current position
 			for (uint32_t i = 0; i < Character->SDFResterized.GetHeight(); ++i) {

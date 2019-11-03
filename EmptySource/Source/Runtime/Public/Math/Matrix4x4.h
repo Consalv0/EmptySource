@@ -11,7 +11,7 @@ namespace ESource {
 	public:
 		union {
 			struct { Vector4 m0, m1, m2, m3; };
-			struct { Vector4 x, y, z, w; };
+			struct { Vector4 X, Y, Z, W; };
 		};
 
 		HOST_DEVICE FORCEINLINE Matrix4x4();

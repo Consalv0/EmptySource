@@ -107,8 +107,8 @@ namespace ESource {
 		Glyph.Advance = FTGlyph->metrics.horiAdvance / 64.F;
 		Glyph.Width = FTGlyph->metrics.width / 64.F;
 		Glyph.Height = FTGlyph->metrics.height / 64.F;
-		Glyph.Bearing.x = (int)FTGlyph->metrics.horiBearingX / 64;
-		Glyph.Bearing.y = (int)FTGlyph->metrics.horiBearingY / 64;
+		Glyph.Bearing.X = (int)FTGlyph->metrics.horiBearingX / 64;
+		Glyph.Bearing.Y = (int)FTGlyph->metrics.horiBearingY / 64;
 		Glyph.bUndefined = GetGlyphIndex(Character) == 0 && Character != 0;
 
 		FT_Context Context = { };

@@ -21,10 +21,10 @@ namespace ESource {
 	}
 
 	FORCEINLINE Matrix4x4::Matrix4x4(const Vector4 & Row0, const Vector4 & Row1, const Vector4 & Row2, const Vector4 Row3) {
-		m0[0] = Row0.x; m0[1] = Row0.y; m0[2] = Row0.z; m0[3] = Row0.w;
-		m1[0] = Row1.x; m1[1] = Row1.y; m1[2] = Row1.z; m1[3] = Row1.w;
-		m2[0] = Row2.x; m2[1] = Row2.y; m2[2] = Row2.z; m2[3] = Row2.w;
-		m3[0] = Row3.x; m3[1] = Row3.y; m3[2] = Row3.z; m3[3] = Row3.w;
+		m0[0] = Row0.X; m0[1] = Row0.Y; m0[2] = Row0.Z; m0[3] = Row0.W;
+		m1[0] = Row1.X; m1[1] = Row1.Y; m1[2] = Row1.Z; m1[3] = Row1.W;
+		m2[0] = Row2.X; m2[1] = Row2.Y; m2[2] = Row2.Z; m2[3] = Row2.W;
+		m3[0] = Row3.X; m3[1] = Row3.Y; m3[2] = Row3.Z; m3[3] = Row3.W;
 	}
 
 	inline Matrix4x4::Matrix4x4(
@@ -80,10 +80,10 @@ namespace ESource {
 		Vector3 const Upper(Side.Cross(Forward));
 
 		return Matrix4x4(
-			Side.x, Side.y, Side.z, 0.F,
-			Upper.x, Upper.y, Upper.z, 0.F,
-			-Forward.x, -Forward.y, -Forward.z, 0.F,
-			Eye.x, Eye.y, Eye.z, 1.F
+			Side.X, Side.Y, Side.Z, 0.F,
+			Upper.X, Upper.Y, Upper.Z, 0.F,
+			-Forward.X, -Forward.Y, -Forward.Z, 0.F,
+			Eye.X, Eye.Y, Eye.Z, 1.F
 		);
 	}
 
@@ -92,15 +92,15 @@ namespace ESource {
 			1.F, 0.F, 0.F, 0.F,
 			0.F, 1.F, 0.F, 0.F,
 			0.F, 0.F, 1.F, 0.F,
-			Vector.x, Vector.y, Vector.z, 1.F
+			Vector.X, Vector.Y, Vector.Z, 1.F
 		);
 	}
 
 	inline Matrix4x4 Matrix4x4::Scaling(const Vector3 & Vector) {
 		return Matrix4x4(
-			Vector.x, 0.F, 0.F, 0.F,
-			0.F, Vector.y, 0.F, 0.F,
-			0.F, 0.F, Vector.z, 0.F,
+			Vector.X, 0.F, 0.F, 0.F,
+			0.F, Vector.Y, 0.F, 0.F,
+			0.F, 0.F, Vector.Z, 0.F,
 			0.F, 0.F, 0.F, 1.F
 		);
 	}
@@ -222,7 +222,7 @@ namespace ESource {
 		// Vector4 Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
 
 		Vector4 Dot0(GetRow(0) * Result.GetColumn(0));
-		float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
+		float Dot1 = (Dot0.X + Dot0.Y) + (Dot0.Z + Dot0.W);
 
 		float OneOverDeterminant = 1.F / Dot1;
 
@@ -250,7 +250,7 @@ namespace ESource {
 	}
 
 	inline HOST_DEVICE Quaternion Matrix4x4::ExtractRotation() const {
-		return Quaternion::LookRotation(GetRow(2), GetRow(1));
+		return Quaternion::FromLookRotation(GetRow(2), GetRow(1));
 	}
 
 	inline HOST_DEVICE Vector3 Matrix4x4::ExtractScale() const {

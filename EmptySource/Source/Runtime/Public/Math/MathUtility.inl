@@ -4,67 +4,68 @@
 namespace ESource {
 
 	namespace MathEquations {
-		int SolveQuadratic(float x[2], float a, float b, float c) {
-			if (fabs(a) < 1e-14F) {
-				if (fabs(b) < 1e-14F) {
-					if (c == 0)
+
+		int SolveQuadratic(float X[2], float A, float B, float C) {
+			if (fabs(A) < 1e-14F) {
+				if (fabs(B) < 1e-14F) {
+					if (C == 0)
 						return -1;
 					return 0;
 				}
-				x[0] = -c / b;
+				X[0] = -C / B;
 				return 1;
 			}
-			float dscr = b * b - 4 * a*c;
+			float dscr = B * B - 4 * A*C;
 			if (dscr > 0) {
 				dscr = sqrtf(dscr);
-				x[0] = (-b + dscr) / (2 * a);
-				x[1] = (-b - dscr) / (2 * a);
+				X[0] = (-B + dscr) / (2 * A);
+				X[1] = (-B - dscr) / (2 * A);
 				return 2;
 			}
 			else if (dscr == 0) {
-				x[0] = -b / (2 * a);
+				X[0] = -B / (2 * A);
 				return 1;
 			}
 			else
 				return 0;
 		}
 
-		int SolveCubicNormed(float * x, float a, float b, float c) {
-			float a2 = a * a;
-			float q = (a2 - 3 * b) / 9;
-			float r = (a*(2 * a2 - 9 * b) + 27 * c) / 54;
-			float r2 = r * r;
-			float q3 = q * q*q;
-			float A, B;
-			if (r2 < q3) {
-				float t = r / sqrtf(q3);
-				if (t < -1) t = -1;
-				if (t > 1) t = 1;
+		int SolveCubicNormed(float * X, float A, float B, float C) {
+			float A2 = A * A;
+			float Q = (A2 - 3.F * B) / 9.F;
+			float R = (A*(2.F * A2 - 9.F * B) + 27.F * C) / 54.F;
+			float R2 = R * R;
+			float Q3 = Q*Q*Q;
+			if (R2 < Q3) {
+				float t = R / sqrtf(Q3);
+				if (t < -1.F) t = -1.F;
+				if (t > 1.F) t = 1.F;
 				t = acosf(t);
-				a /= 3; q = -2 * sqrtf(q);
-				x[0] = q * cosf(t / 3) - a;
-				x[1] = q * cosf((t + 2 * MathConstants::Pi) / 3) - a;
-				x[2] = q * cosf((t - 2 * MathConstants::Pi) / 3) - a;
+				A /= 3.F; Q = -2.F * sqrtf(Q);
+				X[0] = Q * cosf(t / 3.F) - A;
+				X[1] = Q * cosf((t + 2.F * MathConstants::Pi) / 3.F) - A;
+				X[2] = Q * cosf((t - 2.F * MathConstants::Pi) / 3.F) - A;
 				return 3;
 			}
 			else {
-				A = -powf(fabs(r) + sqrtf(r2 - q3), 1 / 3.F);
-				if (r < 0) A = -A;
-				B = A == 0 ? 0 : q / A;
-				a /= 3;
-				x[0] = (A + B) - a;
-				x[1] = -0.5F*(A + B) - a;
-				x[2] = 0.5F*sqrtf(3.F)*(A - B);
-				if (fabs(x[2]) < 1e-14F)
+				float A1, B1;
+				A1 = -powf(fabs(R) + sqrtf(R2 - Q3), 1 / 3.F);
+				if (R < 0) A1 = -A1;
+				B1 = A1 == 0 ? 0 : Q / A1;
+				A /= 3;
+				X[0] = (A1 + B1) - A;
+				X[1] = -0.5F*(A1 + B1) - A;
+				X[2] = 0.5F*sqrtf(3.F)*(A1 - B1);
+				if (fabs(X[2]) < 1e-14F)
 					return 2;
 				return 1;
 			}
 		}
 
-		int SolveCubic(float x[3], float a, float b, float c, float d) {
-			if (fabs(a) < 1e-14F)
-				return SolveQuadratic(x, b, c, d);
-			return SolveCubicNormed(x, b / a, c / a, d / a);
+		int SolveCubic(float X[3], float A, float B, float C, float D) {
+			if (fabs(A) < 1e-14F)
+				return SolveQuadratic(X, B, C, D);
+			return SolveCubicNormed(X, B / A, C / A, D / A);
 		}
 
 		template<typename T>
@@ -80,14 +81,14 @@ namespace ESource {
 		}
 
 		//* Get the next power2 of the value
-		inline int NextPow2(int x) {
-			--x;
-			x |= x >> 1;
-			x |= x >> 2;
-			x |= x >> 4;
-			x |= x >> 8;
-			x |= x >> 16;
-			return ++x;
+		inline int NextPow2(int X) {
+			--X;
+			X |= X >> 1;
+			X |= X >> 2;
+			X |= X >> 4;
+			X |= X >> 8;
+			X |= X >> 16;
+			return ++X;
 		}
 	}
 
@@ -187,9 +188,9 @@ namespace ESource {
 	}
 
 	// Referenced from UE4 implementation
-	float Math::Atan2(float y, float x) {
-		const float absX = Math::Abs(x);
-		const float absY = Math::Abs(y);
+	float Math::Atan2(float Y, float X) {
+		const float absX = Math::Abs(X);
+		const float absY = Math::Abs(Y);
 		const bool yAbsBigger = (absY > absX);
 		float t0 = yAbsBigger ? absY : absX; // Max(absY, absX)
 		float t1 = yAbsBigger ? absX : absY; // Min(absX, absY)
@@ -220,8 +221,8 @@ namespace ESource {
 		t3 = t0 * t3;
 
 		t3 = yAbsBigger ? (0.5F * MathConstants::Pi) - t3 : t3;
-		t3 = (x < 0.0F) ? MathConstants::Pi - t3 : t3;
-		t3 = (y < 0.0F) ? -t3 : t3;
+		t3 = (X < 0.0F) ? MathConstants::Pi - t3 : t3;
+		t3 = (Y < 0.0F) ? -t3 : t3;
 
 		return t3;
 	}

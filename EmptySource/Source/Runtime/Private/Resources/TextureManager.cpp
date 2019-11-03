@@ -97,7 +97,7 @@ namespace ESource {
 		RTexturePtr Texture = GetTexture(Name);
 		if (Texture == NULL) {
 			Texture = RTexturePtr(new RTexture(
-				Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.x, Size.y, 1), GenMipMapsOnLoad
+				Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.X, Size.Y, 1), GenMipMapsOnLoad
 			));
 			AddTexture(Texture);
 		}

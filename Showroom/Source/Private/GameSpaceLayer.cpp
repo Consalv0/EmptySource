@@ -75,7 +75,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 		ImGui::BeginGroup();
 		ImGui::PushID("##Rotation");
 		if (ImGui::DragFloat3("##Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
-			GameObject->LocalTransform.Rotation = Quaternion::EulerAngles(EulerFrameRotation);
+			GameObject->LocalTransform.Rotation = Quaternion::FromEulerAngles(EulerFrameRotation);
 		} ImGui::NextColumn();
 		ImGui::PopID();
 		ImGui::EndGroup();
@@ -112,9 +112,9 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::TextUnformatted("Aperture Angle");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				ImGui::DragFloat("##Angle", &Camera->ApertureAngle, 1.0F, 0.F, 180.F, "%.3F");
-				ImGui::TextUnformatted("Culling Planes");
+				ImGui::TextUnformatted("Culling Distances");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
-				ImGui::DragFloat2("##Culling", &Camera->CullingPlanes[0], 0.1F, 0.001F, 99999.F, "%.5F");
+				ImGui::DragFloat2("##Culling", &Camera->CullingDistances[0], 0.1F, 0.001F, 99999.F, "%.5F");
 				ImGui::TreePop();
 			}
 		}
@@ -292,18 +292,18 @@ void GameSpaceLayer::OnAwake() {
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
-	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::EulerAngles({85.F, 0.F, 0.F}), 1.F));
+	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({85.F, 0.F, 0.F}), 1.F));
 	auto Light0 = LightObj0->CreateComponent<CLight>();
 	Light0->ApertureAngle = 123.F;
 	Light0->Intensity = 2200.F;
-	Light0->CullingPlanes.x = 15.F;
+	Light0->CullingPlanes.X = 15.F;
 	Light0->Color = Vector3(1.F, 0.982F, 0.9F);
 	Light0->bCastShadow = true;
 	Light0->SetShadowMapSize(2048);
 	auto FollowLight0 = LightObj0->CreateComponent<CFollowTarget>();
 	FollowLight0->Target = Camera;
 	FollowLight0->FixedPositionAxisY = true;
-	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, -0.5F, 0.F }, Quaternion(), 1.F));
+	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, -1.5F, 0.F }, Quaternion(), 1.F));
 	auto Light1 = LightObj1->CreateComponent<CLight>();
 	Light1->bCastShadow = false;
 	Light1->Color = Vector3(1.F, 0.982F, 0.9F);
@@ -333,7 +333,7 @@ void GameSpaceLayer::OnAwake() {
 	}
 
 	{
-		auto EgyptianCat = CreateObject<GGameObject>(L"EgyptianCat", Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::EulerAngles({18.F, -16.F, 34.F}), 1.F));
+		auto EgyptianCat = CreateObject<GGameObject>(L"EgyptianCat", Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::FromEulerAngles({18.F, -16.F, 34.F}), 1.F));
 		auto PhysicsBody = EgyptianCat->CreateComponent<CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		auto Renderable = EgyptianCat->CreateComponent<CRenderable>();
@@ -342,7 +342,7 @@ void GameSpaceLayer::OnAwake() {
 	}
 
 	{
-		auto FalloutCar = CreateObject<GGameObject>(L"FalloutCar", Transform(Vector3(10.F, -0.56F, 8.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 1.F));
+		auto FalloutCar = CreateObject<GGameObject>(L"FalloutCar", Transform(Vector3(10.F, -0.56F, 8.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 1.F));
 		auto PhysicsBody = FalloutCar->CreateComponent<CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		auto Renderable = FalloutCar->CreateComponent<CRenderable>();
@@ -351,7 +351,7 @@ void GameSpaceLayer::OnAwake() {
 	}
 
 	{
-		auto Backpack = CreateObject<GGameObject>(L"Backpack", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::EulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
+		auto Backpack = CreateObject<GGameObject>(L"Backpack", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
 		auto PhysicsBody = Backpack->CreateComponent<CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		auto Renderable = Backpack->CreateComponent<CRenderable>();

@@ -83,7 +83,7 @@ namespace ESource {
 		virtual void DistanceToPseudoDistance(SignedDistance &Distance, Point2 Origin, float Param) const;
 
 		//* Adjusts the bounding box to fit the edge segment.
-		virtual void GetBounds(float &l, float &b, float &r, float &t) const = 0;
+		virtual void GetBounds(float &l, float &B, float &R, float &t) const = 0;
 
 		//* Moves the start point of the edge segment.
 		virtual void MoveStartPoint(Point2 To) = 0;
@@ -116,7 +116,7 @@ namespace ESource {
 		SignedDistance GetSignedDistance(Point2 Origin, float &Param) const;
 
 		//* Adjusts the bounding box to fit the edge segment.
-		void GetBounds(float &l, float &b, float &r, float &t) const;
+		void GetBounds(float &l, float &B, float &R, float &t) const;
 
 		//* Moves the start point of the edge segment.
 		void MoveStartPoint(Point2 To);
@@ -150,7 +150,7 @@ namespace ESource {
 		SignedDistance GetSignedDistance(Point2 Origin, float &Value) const;
 
 		//* Adjusts the bounding box to fit the edge segment.
-		void GetBounds(float &l, float &b, float &r, float &t) const;
+		void GetBounds(float &l, float &B, float &R, float &t) const;
 
 		//* Moves the start point of the edge segment.
 		void MoveStartPoint(Point2 To);
@@ -184,7 +184,7 @@ namespace ESource {
 		SignedDistance GetSignedDistance(Point2 Origin, float &Value) const;
 
 		//* Adjusts the bounding box to fit the edge segment.
-		void GetBounds(float &l, float &b, float &r, float &t) const;
+		void GetBounds(float &l, float &B, float &R, float &t) const;
 
 		//* Moves the start point of the edge segment.
 		void MoveStartPoint(Point2 To);

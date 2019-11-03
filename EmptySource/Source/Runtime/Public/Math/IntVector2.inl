@@ -11,55 +11,55 @@
 namespace ESource {
 
 	FORCEINLINE IntVector2::IntVector2()
-		: x(0), y(0) {
+		: X(0), Y(0) {
 	}
 
 	FORCEINLINE IntVector2::IntVector2(const Vector2& Vector)
-		: x((int)Vector.x), y((int)Vector.y) {
+		: X((int)Vector.X), Y((int)Vector.Y) {
 	}
 
 	FORCEINLINE IntVector2::IntVector2(const Vector3 & Vector)
-		: x((int)Vector.x), y((int)Vector.y) {
+		: X((int)Vector.X), Y((int)Vector.Y) {
 	}
 
 	FORCEINLINE IntVector2::IntVector2(const Vector4 & Vector)
-		: x((int)Vector.x), y((int)Vector.y) {
+		: X((int)Vector.X), Y((int)Vector.Y) {
 	}
 
 	FORCEINLINE IntVector2::IntVector2(const IntVector2& Vector)
-		: x(Vector.x), y(Vector.y) {
+		: X(Vector.X), Y(Vector.Y) {
 	}
 
 	FORCEINLINE IntVector2::IntVector2(const IntVector3 & Vector)
-		: x(Vector.x), y(Vector.y) {
+		: X(Vector.X), Y(Vector.Y) {
 	}
 
-	FORCEINLINE IntVector2::IntVector2(const int& x, const int& y)
-		: x(x), y(y) {
+	FORCEINLINE IntVector2::IntVector2(const int& X, const int& Y)
+		: X(X), Y(Y) {
 	}
 
 	FORCEINLINE IntVector2::IntVector2(const int& Value)
-		: x(Value), y(Value) {
+		: X(Value), Y(Value) {
 	}
 
 	inline float IntVector2::Magnitude() const {
-		return sqrtf(x * float(x) + y * float(y));
+		return sqrtf(X * float(X) + Y * float(Y));
 	}
 
 	inline int IntVector2::MagnitudeSquared() const {
-		return x * x + y * y;
+		return X * X + Y * Y;
 	}
 
 	FORCEINLINE int IntVector2::Dot(const IntVector2& Other) const {
-		return (x * Other.x) + (y * Other.y);
+		return (X * Other.X) + (Y * Other.Y);
 	}
 
 	inline Vector2 IntVector2::FloatVector2() const {
-		return Vector2(float(x), float(y));
+		return Vector2(float(X), float(Y));
 	}
 
 	inline const int * IntVector2::PointerToValue() const {
-		return &x;
+		return &X;
 	}
 
 	inline int & IntVector2::operator[](unsigned char i) {
@@ -74,90 +74,90 @@ namespace ESource {
 
 	FORCEINLINE IntVector2 IntVector2::operator * (const IntVector2& Other) const {
 		return IntVector2(
-			x * Other.x,
-			y * Other.y
+			X * Other.X,
+			Y * Other.Y
 		);
 	}
 
 	FORCEINLINE IntVector2 IntVector2::operator/(const IntVector2 & Other) const {
 		return IntVector2(
-			x / Other.x,
-			y / Other.y
+			X / Other.X,
+			Y / Other.Y
 		);
 	}
 
 	FORCEINLINE bool IntVector2::operator==(const IntVector2& Other) {
-		return (x == Other.x && y == Other.y);
+		return (X == Other.X && Y == Other.Y);
 	}
 
 	FORCEINLINE bool IntVector2::operator!=(const IntVector2& Other) {
-		return (x != Other.x || y != Other.y);
+		return (X != Other.X || Y != Other.Y);
 	}
 
 	FORCEINLINE IntVector2 IntVector2::operator+(const IntVector2& Other) const {
-		return IntVector2(x + Other.x, y + Other.y);
+		return IntVector2(X + Other.X, Y + Other.Y);
 	}
 
 	FORCEINLINE IntVector2 IntVector2::operator-(const IntVector2& Other) const {
-		return IntVector2(x - Other.x, y - Other.y);
+		return IntVector2(X - Other.X, Y - Other.Y);
 	}
 
 	FORCEINLINE IntVector2 IntVector2::operator-(void) const {
-		return IntVector2(-x, -y);
+		return IntVector2(-X, -Y);
 	}
 
 	FORCEINLINE IntVector2 IntVector2::operator*(const int& Value) const {
-		return IntVector2(x * Value, y * Value);
+		return IntVector2(X * Value, Y * Value);
 	}
 
 	FORCEINLINE IntVector2 IntVector2::operator/(const int& Value) const {
 		if (Value == 0) IntVector2();
-		return IntVector2(x / Value, y / Value);
+		return IntVector2(X / Value, Y / Value);
 	}
 
 	FORCEINLINE IntVector2& IntVector2::operator+=(const IntVector2& Other) {
-		x += Other.x;
-		y += Other.y;
+		X += Other.X;
+		Y += Other.Y;
 		return *this;
 	}
 
 	FORCEINLINE IntVector2& IntVector2::operator-=(const IntVector2& Other) {
-		x -= Other.x;
-		y -= Other.y;
+		X -= Other.X;
+		Y -= Other.Y;
 		return *this;
 	}
 
 	FORCEINLINE IntVector2 & IntVector2::operator*=(const IntVector2 & Other) {
-		x *= Other.x;
-		y *= Other.y;
+		X *= Other.X;
+		Y *= Other.Y;
 		return *this;
 	}
 
 	FORCEINLINE IntVector2 & IntVector2::operator/=(const IntVector2 & Other) {
-		x /= Other.x;
-		y /= Other.y;
+		X /= Other.X;
+		Y /= Other.Y;
 		return *this;
 	}
 
 	FORCEINLINE IntVector2& IntVector2::operator*=(const int& Value) {
-		x *= Value;
-		y *= Value;
+		X *= Value;
+		Y *= Value;
 		return *this;
 	}
 
 	FORCEINLINE IntVector2& IntVector2::operator/=(const int& Value) {
-		if (Value == 0) x = y = 0;
-		x /= Value;
-		y /= Value;
+		if (Value == 0) X = Y = 0;
+		X /= Value;
+		Y /= Value;
 		return *this;
 	}
 
 	inline IntVector2 operator*(int Value, const IntVector2 & Vector) {
-		return IntVector2(Value * Vector.x, Value * Vector.y);
+		return IntVector2(Value * Vector.X, Value * Vector.Y);
 	}
 
 	inline IntVector2 operator/(int Value, const IntVector2 & Vector) {
-		return IntVector2(Value / Vector.x, Value / Vector.y);
+		return IntVector2(Value / Vector.X, Value / Vector.Y);
 	}
 
 }

@@ -23,9 +23,9 @@ namespace ESource {
 	}
 
 	FORCEINLINE Matrix3x3::Matrix3x3(const Vector3 & Row0, const Vector3 & Row1, const Vector3 & Row2) {
-		m0[0] = Row0.x; m0[1] = Row0.y; m0[2] = Row0.z;
-		m1[0] = Row1.x; m1[1] = Row1.y; m1[2] = Row1.z;
-		m2[0] = Row2.x; m2[1] = Row2.y; m2[2] = Row2.z;
+		m0[0] = Row0.X; m0[1] = Row0.Y; m0[2] = Row0.Z;
+		m1[0] = Row1.X; m1[1] = Row1.Y; m1[2] = Row1.Z;
+		m2[0] = Row2.X; m2[1] = Row2.Y; m2[2] = Row2.Z;
 	}
 
 	inline Matrix3x3 Matrix3x3::Identity() {

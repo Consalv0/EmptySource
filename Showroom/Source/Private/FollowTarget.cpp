@@ -18,17 +18,17 @@ void CFollowTarget::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		ESource::Vector3 TargetPosition = OtherTransform.Position;
 
 		if (ModuleMovement > 0.0F) {
-			TargetPosition.x = ESource::Math::Abs(TargetPosition.x - ThisTransform.Position.x) >= ModuleMovement ?
-				TargetPosition.x - std::fmodf(TargetPosition.x, ModuleMovement) : ThisTransform.Position.x;
-			TargetPosition.y = ESource::Math::Abs(TargetPosition.y - ThisTransform.Position.y) >= ModuleMovement ?
-				TargetPosition.y - std::fmodf(TargetPosition.y, ModuleMovement) : ThisTransform.Position.y;
-			TargetPosition.z = ESource::Math::Abs(TargetPosition.z - ThisTransform.Position.z) >= ModuleMovement ?
-				TargetPosition.z - std::fmodf(TargetPosition.z, ModuleMovement) : ThisTransform.Position.z;
+			TargetPosition.X = ESource::Math::Abs(TargetPosition.X - ThisTransform.Position.X) >= ModuleMovement ?
+				TargetPosition.X - std::fmodf(TargetPosition.X, ModuleMovement) : ThisTransform.Position.X;
+			TargetPosition.Y = ESource::Math::Abs(TargetPosition.Y - ThisTransform.Position.Y) >= ModuleMovement ?
+				TargetPosition.Y - std::fmodf(TargetPosition.Y, ModuleMovement) : ThisTransform.Position.Y;
+			TargetPosition.Z = ESource::Math::Abs(TargetPosition.Z - ThisTransform.Position.Z) >= ModuleMovement ?
+				TargetPosition.Z - std::fmodf(TargetPosition.Z, ModuleMovement) : ThisTransform.Position.Z;
 		}
 
-		if (FixedPositionAxisX) TargetPosition.x = ThisTransform.Position.x;
-		if (FixedPositionAxisY) TargetPosition.y = ThisTransform.Position.y;
-		if (FixedPositionAxisZ) TargetPosition.z = ThisTransform.Position.z;
+		if (FixedPositionAxisX) TargetPosition.X = ThisTransform.Position.X;
+		if (FixedPositionAxisY) TargetPosition.Y = ThisTransform.Position.Y;
+		if (FixedPositionAxisZ) TargetPosition.Z = ThisTransform.Position.Z;
 
 		ThisTransform.Position = ESource::Math::Mix(ThisTransform.Position, TargetPosition, DeltaSpeed);
 	}

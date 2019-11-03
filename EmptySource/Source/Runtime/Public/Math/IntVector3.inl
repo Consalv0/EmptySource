@@ -11,67 +11,67 @@
 namespace ESource {
 
 	FORCEINLINE IntVector3::IntVector3()
-		: x(0), y(0), z(0) {
+		: X(0), Y(0), Z(0) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const Vector2& Vector)
-		: x((int)Vector.x), y((int)Vector.y), z(0) {
+		: X((int)Vector.X), Y((int)Vector.Y), Z(0) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const Vector3 & Vector)
-		: x((int)Vector.x), y((int)Vector.y), z((int)Vector.z) {
+		: X((int)Vector.X), Y((int)Vector.Y), Z((int)Vector.Z) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const IntVector3& Vector)
-		: x(Vector.x), y(Vector.y), z(Vector.z) {
+		: X(Vector.X), Y(Vector.Y), Z(Vector.Z) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const IntVector2 & Vector)
-		: x(Vector.x), y(Vector.y), z(0) {
+		: X(Vector.X), Y(Vector.Y), Z(0) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const Vector4 & Vector)
-		: x((int)Vector.x), y((int)Vector.y), z((int)Vector.z) {
+		: X((int)Vector.X), Y((int)Vector.Y), Z((int)Vector.Z) {
 	}
 
-	FORCEINLINE IntVector3::IntVector3(const int& x, const int& y, const int& z)
-		: x(x), y(y), z(z) {
+	FORCEINLINE IntVector3::IntVector3(const int& X, const int& Y, const int& Z)
+		: X(X), Y(Y), Z(Z) {
 	}
 
-	FORCEINLINE IntVector3::IntVector3(const int& x, const int& y)
-		: x(x), y(y), z(0) {
+	FORCEINLINE IntVector3::IntVector3(const int& X, const int& Y)
+		: X(X), Y(Y), Z(0) {
 	}
 
 	FORCEINLINE IntVector3::IntVector3(const int& Value)
-		: x(Value), y(Value), z(Value) {
+		: X(Value), Y(Value), Z(Value) {
 	}
 
 	inline float IntVector3::Magnitude() const {
-		return sqrtf(x * float(x) + y * float(y) + z * float(z));
+		return sqrtf(X * float(X) + Y * float(Y) + Z * float(Z));
 	}
 
 	inline int IntVector3::MagnitudeSquared() const {
-		return x * x + y * y + z * z;
+		return X * X + Y * Y + Z * Z;
 	}
 
 	FORCEINLINE IntVector3 IntVector3::Cross(const IntVector3& Other) const {
 		return IntVector3(
-			y * Other.z - z * Other.y,
-			z * Other.x - x * Other.z,
-			x * Other.y - y * Other.x
+			Y * Other.Z - Z * Other.Y,
+			Z * Other.X - X * Other.Z,
+			X * Other.Y - Y * Other.X
 		);
 	}
 
 	FORCEINLINE int IntVector3::Dot(const IntVector3& Other) const {
-		return (x * Other.x) + (y * Other.y) + (z * Other.z);
+		return (X * Other.X) + (Y * Other.Y) + (Z * Other.Z);
 	}
 
 	inline Vector3 IntVector3::FloatVector3() const {
-		return Vector3(float(x), float(y), float(z));
+		return Vector3(float(X), float(Y), float(Z));
 	}
 
 	inline const int * IntVector3::PointerToValue() const {
-		return &x;
+		return &X;
 	}
 
 	inline int & IntVector3::operator[](unsigned char i) {
@@ -86,98 +86,98 @@ namespace ESource {
 
 	FORCEINLINE IntVector3 IntVector3::operator * (const IntVector3& Other) const {
 		return IntVector3(
-			x * Other.x,
-			y * Other.y,
-			z * Other.z
+			X * Other.X,
+			Y * Other.Y,
+			Z * Other.Z
 		);
 	}
 
 	FORCEINLINE IntVector3 IntVector3::operator/(const IntVector3 & Other) const {
 		return IntVector3(
-			x / Other.x,
-			y / Other.y,
-			z / Other.z
+			X / Other.X,
+			Y / Other.Y,
+			Z / Other.Z
 		);
 	}
 
 	FORCEINLINE bool IntVector3::operator==(const IntVector3& Other) {
-		return (x == Other.x && y == Other.y && z == Other.z);
+		return (X == Other.X && Y == Other.Y && Z == Other.Z);
 	}
 
 	FORCEINLINE bool IntVector3::operator!=(const IntVector3& Other) {
-		return (x != Other.x || y != Other.y || z != Other.z);
+		return (X != Other.X || Y != Other.Y || Z != Other.Z);
 	}
 
 	FORCEINLINE IntVector3 IntVector3::operator+(const IntVector3& Other) const {
-		return IntVector3(x + Other.x, y + Other.y, z + Other.z);
+		return IntVector3(X + Other.X, Y + Other.Y, Z + Other.Z);
 	}
 
 	FORCEINLINE IntVector3 IntVector3::operator-(const IntVector3& Other) const {
-		return IntVector3(x - Other.x, y - Other.y, z - Other.z);
+		return IntVector3(X - Other.X, Y - Other.Y, Z - Other.Z);
 	}
 
 	FORCEINLINE IntVector3 IntVector3::operator-(void) const {
-		return IntVector3(-x, -y, -z);
+		return IntVector3(-X, -Y, -Z);
 	}
 
 	FORCEINLINE IntVector3 IntVector3::operator*(const int& Value) const {
-		return IntVector3(x * Value, y * Value, z * Value);
+		return IntVector3(X * Value, Y * Value, Z * Value);
 	}
 
 	FORCEINLINE IntVector3 IntVector3::operator/(const int& Value) const {
 		if (Value == 0) return IntVector3();
-		return IntVector3(x / Value, y / Value, z / Value);
+		return IntVector3(X / Value, Y / Value, Z / Value);
 	}
 
 	FORCEINLINE IntVector3& IntVector3::operator+=(const IntVector3& Other) {
-		x += Other.x;
-		y += Other.y;
-		z += Other.z;
+		X += Other.X;
+		Y += Other.Y;
+		Z += Other.Z;
 		return *this;
 	}
 
 	FORCEINLINE IntVector3& IntVector3::operator-=(const IntVector3& Other) {
-		x -= Other.x;
-		y -= Other.y;
-		z -= Other.z;
+		X -= Other.X;
+		Y -= Other.Y;
+		Z -= Other.Z;
 		return *this;
 	}
 
 	FORCEINLINE IntVector3 & IntVector3::operator*=(const IntVector3 & Other) {
-		x *= Other.x;
-		y *= Other.y;
-		z *= Other.z;
+		X *= Other.X;
+		Y *= Other.Y;
+		Z *= Other.Z;
 		return *this;
 	}
 
 	FORCEINLINE IntVector3 & IntVector3::operator/=(const IntVector3 & Other) {
-		x /= Other.x;
-		y /= Other.y;
-		z /= Other.z;
+		X /= Other.X;
+		Y /= Other.Y;
+		Z /= Other.Z;
 		return *this;
 	}
 
 	FORCEINLINE IntVector3& IntVector3::operator*=(const int& Value) {
-		x *= Value;
-		y *= Value;
-		z *= Value;
+		X *= Value;
+		Y *= Value;
+		Z *= Value;
 		return *this;
 	}
 
 	FORCEINLINE IntVector3& IntVector3::operator/=(const int& Value) {
-		if (Value == 0) x = y = z = 0;
-		x /= Value;
-		y /= Value;
-		z /= Value;
+		if (Value == 0) X = Y = Z = 0;
+		X /= Value;
+		Y /= Value;
+		Z /= Value;
 		return *this;
 	}
 
 	inline IntVector3 operator*(int Value, const IntVector3 & Vector) {
-		return IntVector3(Value * Vector.x, Value * Vector.y, Value / Vector.z);
+		return IntVector3(Value * Vector.X, Value * Vector.Y, Value / Vector.Z);
 	}
 
 	inline IntVector3 operator/(int Value, const IntVector3 & Vector) {
-		return IntVector3(Value / Vector.x, Value / Vector.y, Value / Vector.z);
+		return IntVector3(Value / Vector.X, Value / Vector.Y, Value / Vector.Z);
 	}
 
 }

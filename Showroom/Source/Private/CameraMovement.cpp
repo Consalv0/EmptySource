@@ -37,7 +37,7 @@ void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
 void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	if (Input::IsMouseDown(MouseButton::Mouse2)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
-		CameraRotation = Quaternion::EulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.y, -Input::GetMouseX() - -LastCursorPosition.x));
+		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
 	Vector3 MovementDirection = Vector3();
@@ -55,7 +55,7 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
 	}
 
-	MovementDirection.y = 0.F;
+	MovementDirection.Y = 0.F;
 	MovementDirection.Normalize();
 	GetGameObject().LocalTransform.Position += MovementDirection * ViewSpeed * Time::GetDeltaTime<Time::Second>() *
 		(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
@@ -70,7 +70,7 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 			-1.F,
 		};
 		CameraRayDirection = GetGameObject().GetFirstComponent<CCamera>()->GetProjectionMatrix().Inversed() * CameraRayDirection;
-		CameraRayDirection.z = -1.F;
+		CameraRayDirection.Z = -1.F;
 		CameraRayDirection = GetGameObject().LocalTransform.GetGLViewMatrix().Inversed() * CameraRayDirection;
 		CameraRayDirection.Normalize();
 		Ray CameraRay(GetGameObject().GetWorldTransform().Position, CameraRayDirection);

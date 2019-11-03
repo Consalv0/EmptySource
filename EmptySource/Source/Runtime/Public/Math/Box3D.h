@@ -10,47 +10,46 @@ namespace ESource {
 	public:
 		union {
 			struct { float Left, Bottom, Back, Right, Top, Front; };
-			struct { float xMin, yMin, zMin, xMax, yMax, zMax; };
+			struct { float MinX, MinY, MinZ, MaxX, MaxY, MaxZ; };
 		};
 
 		Box3D() {
-			xMin = yMin = zMin = MathConstants::BigNumber;
-			xMax = yMax = zMax = -MathConstants::BigNumber;
+			MinX = MinY = MinZ = MathConstants::BigNumber;
+			MaxX = MaxY = MaxZ = -MathConstants::BigNumber;
 		}
 
-		Box3D(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
-			: xMin(xMin), yMin(yMin), zMin(zMin), xMax(xMax), yMax(yMax), zMax(zMax)
+		Box3D(float MinX, float MinY, float MinZ, float MaxX, float MaxY, float MaxZ)
+			: MinX(MinX), MinY(MinY), MinZ(MinZ), MaxX(MaxX), MaxY(MaxY), MaxZ(MaxZ)
 		{ }
 
 		inline Box3D Transform(const Matrix4x4 & Transformation) const {
-			Vector3 MinN = Transformation.MultiplyPoint(Vector3(xMin, yMin, zMin));
-			Vector3 MaxN = Transformation.MultiplyPoint(Vector3(xMax, yMax, zMax));
-			Vector3 MinZ = Transformation.MultiplyPoint(Vector3(xMin, yMin, zMax));
-			Vector3 MaxZ = Transformation.MultiplyPoint(Vector3(xMax, yMax, zMin));
-			Vector3 MinY = Transformation.MultiplyPoint(Vector3(xMin, yMax, zMin));
-			Vector3 MaxY = Transformation.MultiplyPoint(Vector3(xMax, yMin, zMax));
-			Vector3 MinX = Transformation.MultiplyPoint(Vector3(xMax, yMin, zMin));
-			Vector3 MaxX = Transformation.MultiplyPoint(Vector3(xMin, yMax, zMax));
-
 			Box3D Value;
-			Value.Add(MinN); Value.Add(MaxN);
-			Value.Add(MinX); Value.Add(MaxX);
-			Value.Add(MinZ); Value.Add(MaxZ);
-			Value.Add(MinY); Value.Add(MaxY);
+			// Min-Max N
+			Value.Add(Transformation.MultiplyPoint(Vector3(MinX, MinY, MinZ)));
+			Value.Add(Transformation.MultiplyPoint(Vector3(MaxX, MaxY, MaxZ)));
+			// Min-Max X
+			Value.Add(Transformation.MultiplyPoint(Vector3(MaxX, MinY, MinZ)));
+			Value.Add(Transformation.MultiplyPoint(Vector3(MinX, MaxY, MaxZ)));
+			// Min-Max Y
+			Value.Add(Transformation.MultiplyPoint(Vector3(MinX, MaxY, MinZ)));
+			Value.Add(Transformation.MultiplyPoint(Vector3(MaxX, MinY, MaxZ)));
+			// Min-Max Z
+			Value.Add(Transformation.MultiplyPoint(Vector3(MinX, MinY, MaxZ)));
+			Value.Add(Transformation.MultiplyPoint(Vector3(MaxX, MaxY, MinZ)));
 			return Value;
 		}
 
 		//* Add point to the BondingBox
 		inline void Add(Point3 Point) {
-			xMin = Math::Min(xMin, Point.x); yMin = Math::Min(yMin, Point.y); zMin = Math::Min(zMin, Point.z);
-			xMax = Math::Max(xMax, Point.x); yMax = Math::Max(yMax, Point.y); zMax = Math::Max(zMax, Point.z);
+			MinX = Math::Min(MinX, Point.X); MinY = Math::Min(MinY, Point.Y); MinZ = Math::Min(MinZ, Point.Z);
+			MaxX = Math::Max(MaxX, Point.X); MaxY = Math::Max(MaxY, Point.Y); MaxZ = Math::Max(MaxZ, Point.Z);
 		};
 
 		//* Get the dimensions of the bounding box
 		inline Vector3 GetSize() const { return Vector3(GetWidth(), GetHeight(), GetDepth()); }
 
 		//* Get the center position of the bounding box
-		inline Vector3 GetCenter() const { return Vector3(xMin + xMax, yMin + yMax, zMin + zMax) * .5F; }
+		inline Vector3 GetCenter() const { return Vector3(MinX + MaxX, MinY + MaxY, MinZ + MaxZ) * .5F; }
 
 		//* Get the lower point of the bounding box
 		inline Point3 GetMinPoint() const { return { Math::Min(Left, Right), Math::Min(Top, Bottom), Math::Min(Front, Back) }; }
@@ -72,6 +71,27 @@ namespace ESource {
 
 		//* Get the perimeter of the bounding box
 		inline float GetPerimeter() const { return GetWidth() * 2.F + GetHeight() * 2.F + GetDepth() * 2.F; }
+		
+		// Used in frustrum computations
+		inline Point3 GetPointPositive(const Vector3 & Normal) const {
+			Vector3 MaxPoint = GetMaxPoint();
+			Point3 Result = GetMinPoint();
+			if (Normal.X > 0) Result.X = MaxPoint.X;
+			if (Normal.Y > 0) Result.Y = MaxPoint.Y;
+			if (Normal.Z > 0) Result.Z = MaxPoint.Z;
+			return Result;
+		}
+
+		// Used in frustrum computations
+		inline Point3 GetPointNegative(const Vector3 & Normal) const {
+			Vector3 MaxPoint = GetMaxPoint();
+			Point3 Result = GetMinPoint();
+			if (Normal.X < 0) Result.X = MaxPoint.X;
+			if (Normal.Y < 0) Result.Y = MaxPoint.Y;
+			if (Normal.Z < 0) Result.Z = MaxPoint.Z;
+			return Result;
+		}
+
 	};
 
 	typedef Box3D BoundingBox3D;

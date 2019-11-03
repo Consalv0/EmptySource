@@ -39,9 +39,9 @@ namespace ESource {
 		Vector3 const Upper(Side.Cross(Forward));
 
 		return Matrix4x4(
-			Side.x, Upper.x, -Forward.x, 0,
-			Side.y, Upper.y, -Forward.y, 0,
-			Side.z, Upper.z, -Forward.z, 0,
+			Side.X, Upper.X, -Forward.X, 0,
+			Side.Y, Upper.Y, -Forward.Y, 0,
+			Side.Z, Upper.Z, -Forward.Z, 0,
 			-Side.Dot(Position), -Upper.Dot(Position), Forward.Dot(Position), 1
 		);
 		// return Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::Rotation(Rotation.Conjugated()) * Matrix4x4::Translation(-Position);

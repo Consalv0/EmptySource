@@ -17,21 +17,21 @@ namespace ESource {
 	struct Quaternion {
 	public:
 		union {
-			struct { float w, x, y, z; };
+			struct { float W, X, Y, Z; };
 		};
 
 		HOST_DEVICE FORCEINLINE Quaternion();
 		HOST_DEVICE FORCEINLINE Quaternion(Quaternion const& Other);
 		HOST_DEVICE FORCEINLINE Quaternion(float const& Scalar, Vector3 const& Vector);
-		HOST_DEVICE FORCEINLINE Quaternion(float const& w, float const& x, float const& y, float const& z);
+		HOST_DEVICE FORCEINLINE Quaternion(float const& W, float const& X, float const& Y, float const& Z);
 
 		//* Create a quaternion from euler angles (pitch, yaw, roll).
-		HOST_DEVICE static FORCEINLINE Quaternion EulerAngles(Vector3 const& EulerAngles);
+		HOST_DEVICE static FORCEINLINE Quaternion FromEulerAngles(Vector3 const& EulerAngles);
 		//* Create a quaternion from two normalized axis
 		HOST_DEVICE static FORCEINLINE Quaternion FromToRotation(Vector3 const& From, Vector3 const& To);
-		HOST_DEVICE static FORCEINLINE Quaternion AxisAngle(Vector3 const& Axis, float const& Degrees);
+		HOST_DEVICE static FORCEINLINE Quaternion FromAxisAngle(Vector3 const& Axis, float const& Degrees);
 		//* Ctreate quaternion from two basis vectors
-		HOST_DEVICE static FORCEINLINE Quaternion LookRotation(Vector3 const& Forward, Vector3 const& Up);
+		HOST_DEVICE static FORCEINLINE Quaternion FromLookRotation(Vector3 const& Forward, Vector3 const& Up);
 		HOST_DEVICE static FORCEINLINE Quaternion FromMatrix(Matrix3x3 const & Matrix);
 
 		HOST_DEVICE static void Interpolate(Quaternion& Out, const Quaternion& Start, const Quaternion& End, float Factor);

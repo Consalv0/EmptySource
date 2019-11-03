@@ -76,9 +76,9 @@ namespace ESource {
 	bool ImageConversion::EncodeToFile(const PixelMap& RefBitmap, FileStream * File) {
 		// TArray<unsigned char> Pixels(RefBitmap.GetWidth() * RefBitmap.GetHeight());
 		// TArray<unsigned char>::iterator it = Pixels.begin();
-		// for (int y = RefBitmap.GetHeight() - 1; y >= 0; --y)
-		// 	for (int x = 0; x < RefBitmap.GetWidth(); ++x)
-		// 		*it++ = Math::Clamp(int(RefBitmap(x, y) * 0x100), 0xff);
+		// for (int Y = RefBitmap.GetHeight() - 1; Y >= 0; --Y)
+		// 	for (int X = 0; X < RefBitmap.GetWidth(); ++X)
+		// 		*it++ = Math::Clamp(int(RefBitmap(X, Y) * 0x100), 0xff);
 		// return !lodepng::encode(WStringToString(File->GetPath()), Pixels, RefBitmap.GetWidth(), RefBitmap.GetHeight(), LCT_GREY);
 		return false;
 	}

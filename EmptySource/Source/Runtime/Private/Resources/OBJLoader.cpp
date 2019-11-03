@@ -112,22 +112,22 @@ namespace ESource {
 
 	void OBJLoader::ExtractVector3(const NChar * Text, Vector3* Vector) {
 		NChar* LineState;
-		Vector->x = fast_strtof(Text, &LineState);
-		Vector->y = fast_strtof(LineState, &LineState);
-		Vector->z = fast_strtof(LineState, &LineState);
+		Vector->X = fast_strtof(Text, &LineState);
+		Vector->Y = fast_strtof(LineState, &LineState);
+		Vector->Z = fast_strtof(LineState, &LineState);
 	}
 
 	void OBJLoader::ExtractVector2(const NChar * Text, Vector2* Vector) {
 		NChar* LineState;
-		Vector->x = fast_strtof(Text, &LineState);
-		Vector->y = fast_strtof(LineState, &LineState);
+		Vector->X = fast_strtof(Text, &LineState);
+		Vector->Y = fast_strtof(LineState, &LineState);
 	}
 
 	void OBJLoader::ExtractIntVector3(const NChar * Text, IntVector3 * Vector) {
 		NChar* LineState;
-		Vector->x = (int)fast_strtof(Text, &LineState);
-		Vector->y = (int)fast_strtof(LineState, &LineState);
-		Vector->z = (int)fast_strtof(LineState, NULL);
+		Vector->X = (int)fast_strtof(Text, &LineState);
+		Vector->Y = (int)fast_strtof(LineState, &LineState);
+		Vector->Z = (int)fast_strtof(LineState, NULL);
 	}
 
 	void OBJLoader::ParseVertexPositions(ExtractedData & Data) {

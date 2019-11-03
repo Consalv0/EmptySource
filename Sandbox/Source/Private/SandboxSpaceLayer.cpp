@@ -73,7 +73,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 		ImGui::BeginGroup();
 		ImGui::PushID("##Rotation");
 		if (ImGui::DragFloat3("##Rotation", &EulerFrameRotation[0], 1.F, -180, 180)) {
-			GameObject->LocalTransform.Rotation = Quaternion::EulerAngles(EulerFrameRotation);
+			GameObject->LocalTransform.Rotation = Quaternion::FromEulerAngles(EulerFrameRotation);
 		} ImGui::NextColumn();
 		ImGui::PopID();
 		ImGui::EndGroup();
@@ -110,9 +110,9 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::TextUnformatted("Aperture Angle");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				ImGui::DragFloat("##Angle", &Camera->ApertureAngle, 1.0F, 0.F, 180.F, "%.3F");
-				ImGui::TextUnformatted("Culling Planes");
+				ImGui::TextUnformatted("Culling Distances");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
-				ImGui::DragFloat2("##Culling", &Camera->CullingPlanes[0], 0.1F, 0.001F, 99999.F, "%.5F");
+				ImGui::DragFloat2("##Culling", &Camera->CullingDistances[0], 0.1F, 0.001F, 99999.F, "%.5F");
 				ImGui::TreePop();
 			}
 		}
@@ -290,11 +290,11 @@ void SandboxSpaceLayer::OnAwake() {
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
-	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::EulerAngles({66, 56.F, 180.F}), 1.F));
+	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({66, 56.F, 180.F}), 1.F));
 	auto Light0 = LightObj0->CreateComponent<CLight>();
 	Light0->ApertureAngle = 60.F;
 	Light0->Intensity = 1200.F;
-	Light0->CullingPlanes.x = 10.F;
+	Light0->CullingPlanes.X = 10.F;
 	Light0->bCastShadow = true;
 	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, 0.5F, 0.F }, Quaternion(), 1.F));
 	LightObj1->CreateComponent<CLight>()->bCastShadow = true;

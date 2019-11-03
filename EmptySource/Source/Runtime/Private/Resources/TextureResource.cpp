@@ -54,8 +54,8 @@ namespace ESource {
 						Pixels.GetColorFormat(), Pixels.PointerToValue());
 				break;
 			case ETextureDimension::Cubemap:
-				TexturePointer = Cubemap::Create(Size.x, ColorFormat, FilterMode, AddressMode);
-				Size = { Size.x, Size.x, 6 };
+				TexturePointer = Cubemap::Create(Size.X, ColorFormat, FilterMode, AddressMode);
+				Size = { Size.X, Size.X, 6 };
 				break;
 			case ETextureDimension::Texture1D:
 			case ETextureDimension::Texture3D:
@@ -99,7 +99,7 @@ namespace ESource {
 
 	void RTexture::GenerateMipMaps() {
 		if (IsValid() && MipMapCount <= 1) { 
-			MipMapCount = (uint32_t)log2f((float)Size.x);
+			MipMapCount = (uint32_t)log2f((float)Size.X);
 			TexturePointer->GenerateMipMaps(FilterMode, GetMipMapCount()); 
 		}
 	}
@@ -130,7 +130,7 @@ namespace ESource {
 	}
 
 	float RTexture::GetAspectRatio() const {
-		return (float)Size.x / (float)Size.y;
+		return (float)Size.X / (float)Size.Y;
 	}
 
 	bool RTexture::RenderHDREquirectangular(RTexturePtr Equirectangular, Material * CubemapMaterial, bool bGenerateMipMaps) {
@@ -167,8 +167,8 @@ namespace ESource {
 		
 				MeshPrimitives::Cube.GetVertexArray()->Bind();
 				
-				Renderer->BindCubemapFace((Cubemap *)TexturePointer, Size.x, View.first, Lod);
-				Rendering::SetViewport({ 0, 0, Size.x >> Lod, Size.x >> Lod });
+				Renderer->BindCubemapFace((Cubemap *)TexturePointer, Size.X, View.first, Lod);
+				Rendering::SetViewport({ 0, 0, Size.X >> Lod, Size.X >> Lod });
 				Renderer->Clear();
 
 				Rendering::DrawIndexed(MeshPrimitives::Cube.GetVertexArray());

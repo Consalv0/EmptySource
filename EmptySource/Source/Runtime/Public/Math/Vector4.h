@@ -10,18 +10,18 @@ namespace ESource {
 	struct Vector4 {
 	public:
 		union {
-			struct { float x, y, z, w; };
-			struct { float r, g, b, a; };
+			struct { float X, Y, Z, W; };
+			struct { float R, G, B, A; };
 		};
 
 		HOST_DEVICE FORCEINLINE Vector4();
 		HOST_DEVICE FORCEINLINE Vector4(const Vector2& Vector);
 		HOST_DEVICE FORCEINLINE Vector4(const Vector3& Vector);
-		HOST_DEVICE FORCEINLINE Vector4(const Vector3& Vector, const float& w);
+		HOST_DEVICE FORCEINLINE Vector4(const Vector3& Vector, const float& W);
 		HOST_DEVICE FORCEINLINE Vector4(const Vector4& Vector);
 		HOST_DEVICE FORCEINLINE Vector4(const float& Value);
-		HOST_DEVICE FORCEINLINE Vector4(const float& x, const float& y, const float& z);
-		HOST_DEVICE FORCEINLINE Vector4(const float& x, const float& y, const float& z, const float& w);
+		HOST_DEVICE FORCEINLINE Vector4(const float& X, const float& Y, const float& Z);
+		HOST_DEVICE FORCEINLINE Vector4(const float& X, const float& Y, const float& Z, const float& W);
 
 		HOST_DEVICE inline float Magnitude() const;
 		HOST_DEVICE inline float MagnitudeSquared() const;

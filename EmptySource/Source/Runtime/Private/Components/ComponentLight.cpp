@@ -29,7 +29,7 @@ namespace ESource {
 	void CLight::OnRender() {
 		RenderPipeline & AppRenderPipeline = Application::GetInstance()->GetRenderPipeline();
 		AppRenderPipeline.SubmitSpotLight(GetGameObject().GetWorldTransform(), Color, GetGameObject().GetWorldTransform().Forward(), Intensity,
-			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.x, CullingPlanes.y)
+			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.X, CullingPlanes.Y)
 		);
 		if (bCastShadow) {
 			if (ShadowMap == NULL)

@@ -20,11 +20,11 @@ namespace ESource {
 	}
 
 	namespace MathEquations {
-		inline int SolveQuadratic(float x[2], float a, float b, float c);
+		inline int SolveQuadratic(float X[2], float A, float B, float C);
 
-		inline int SolveCubicNormed(float *x, float a, float b, float c);
+		inline int SolveCubicNormed(float *X, float A, float B, float C);
 
-		inline int SolveCubic(float x[3], float a, float b, float c, float d);
+		inline int SolveCubic(float X[3], float A, float B, float C, float D);
 
 		template <typename T>
 		inline float Shoelace2(const T & A, const T & B);
@@ -84,7 +84,7 @@ namespace ESource {
 		inline float Pow10(int Number);
 
 		//* Error consideration
-		inline float Atan2(float y, float x);
+		inline float Atan2(float Y, float X);
 	}
 
 }

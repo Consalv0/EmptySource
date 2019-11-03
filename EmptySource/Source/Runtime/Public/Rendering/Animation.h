@@ -10,10 +10,10 @@ namespace ESource {
 	};
 
 	struct Vector3Key : KeyFrame, Vector3 { 
-		Vector3Key(AnimationTrackNode & Node, double Time, float x, float y, float z) : KeyFrame(Node, Time), Vector3(x, y, z) {};
+		Vector3Key(AnimationTrackNode & Node, double Time, float X, float Y, float Z) : KeyFrame(Node, Time), Vector3(X, Y, Z) {};
 	};
 	struct QuaternionKey : KeyFrame, Quaternion {
-		QuaternionKey(AnimationTrackNode & Node, double Time, float w, float x, float y, float z) : KeyFrame(Node, Time), Quaternion(w, x, y, z) {};
+		QuaternionKey(AnimationTrackNode & Node, double Time, float W, float X, float Y, float Z) : KeyFrame(Node, Time), Quaternion(W, X, Y, Z) {};
 	};
 
 	class AnimationTrackNode {

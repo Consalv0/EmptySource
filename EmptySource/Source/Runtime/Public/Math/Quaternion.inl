@@ -12,22 +12,22 @@
 namespace ESource {
 
 	FORCEINLINE Quaternion::Quaternion()
-		:w(1), x(0), y(0), z(0)
+		:W(1), X(0), Y(0), Z(0)
 	{ }
 
 	FORCEINLINE Quaternion::Quaternion(Quaternion const & Other)
-		: w(Other.w), x(Other.x), y(Other.y), z(Other.z)
+		: W(Other.W), X(Other.X), Y(Other.Y), Z(Other.Z)
 	{ }
 
 	FORCEINLINE Quaternion::Quaternion(float const & Scale, Vector3 const & Vector)
-		: w(Scale), x(Vector.x), y(Vector.y), z(Vector.z)
+		: W(Scale), X(Vector.X), Y(Vector.Y), Z(Vector.Z)
 	{ }
 
-	FORCEINLINE Quaternion::Quaternion(float const& w, float const& x, float const& y, float const& z)
-		: w(w), x(x), y(y), z(z)
+	FORCEINLINE Quaternion::Quaternion(float const& W, float const& X, float const& Y, float const& Z)
+		: W(W), X(X), Y(Y), Z(Z)
 	{ }
 
-	inline Quaternion Quaternion::EulerAngles(Vector3 const & EulerAngles) {
+	inline Quaternion Quaternion::FromEulerAngles(Vector3 const & EulerAngles) {
 		const float Scale = MathConstants::DegreeToRad * 0.5F;
 		float HalfRoll = EulerAngles[Roll] * Scale;
 		float HalfPitch = EulerAngles[Pitch] * Scale;
@@ -41,10 +41,10 @@ namespace ESource {
 		float CY = std::cos(HalfYaw);
 
 		Quaternion EulerToQuat;
-		EulerToQuat.x = (CY * SP * CR) + (SY * CP * SR);
-		EulerToQuat.y = (SY * CP * CR) - (CY * SP * SR);
-		EulerToQuat.z = (CY * CP * SR) - (SY * SP * CR);
-		EulerToQuat.w = (CY * CP * CR) + (SY * SP * SR);
+		EulerToQuat.X = (CY * SP * CR) + (SY * CP * SR);
+		EulerToQuat.Y = (SY * CP * CR) - (CY * SP * SR);
+		EulerToQuat.Z = (CY * CP * SR) - (SY * SP * CR);
+		EulerToQuat.W = (CY * CP * CR) + (SY * SP * SR);
 		return EulerToQuat;
 	}
 
@@ -54,24 +54,24 @@ namespace ESource {
 
 		return Quaternion(
 			From.Dot(Half),
-			From.y * Half.z - From.z * Half.y,
-			From.z * Half.x - From.x * Half.z,
-			From.x * Half.y - From.y * Half.x
+			From.Y * Half.Z - From.Z * Half.Y,
+			From.Z * Half.X - From.X * Half.Z,
+			From.X * Half.Y - From.Y * Half.X
 		).Normalized();
 	}
 
-	inline Quaternion Quaternion::AxisAngle(Vector3 const & Axis, float const & Radians) {
+	inline Quaternion Quaternion::FromAxisAngle(Vector3 const & Axis, float const & Radians) {
 		float Sine = sinf(Radians * .5F);
 
 		return Quaternion(
 			cosf(Radians * .5F),
-			Axis.x * Sine,
-			Axis.y * Sine,
-			Axis.z * Sine
+			Axis.X * Sine,
+			Axis.Y * Sine,
+			Axis.Z * Sine
 		);
 	}
 
-	inline Quaternion Quaternion::LookRotation(Vector3 const & Forward, Vector3 const & Up) {
+	inline Quaternion Quaternion::FromLookRotation(Vector3 const & Forward, Vector3 const & Up) {
 		const Vector3 Normal = Forward.Normalized();
 		const Vector3 Tangent = Vector3::Cross(Up == Normal ? Up + 0.001F : Up, Normal).Normalized();
 		const Vector3 Bitangent = Vector3::Cross(Normal, Tangent);
@@ -128,16 +128,16 @@ namespace ESource {
 	}
 
 	inline void Quaternion::Interpolate(Quaternion & Out, const Quaternion & Start, const Quaternion & End, float Factor) {
-		float CosTheta = Start.x * End.x + Start.y * End.y + Start.z * End.z + Start.w * End.w;
+		float CosTheta = Start.X * End.X + Start.Y * End.Y + Start.Z * End.Z + Start.W * End.W;
 
 		// Adjust signs (if necessary)
 		Quaternion AdjEnd = End;
 		if (CosTheta < 0.F) {
 			CosTheta = -CosTheta;
-			AdjEnd.x = -AdjEnd.x;   // Reverse all signs
-			AdjEnd.y = -AdjEnd.y;
-			AdjEnd.z = -AdjEnd.z;
-			AdjEnd.w = -AdjEnd.w;
+			AdjEnd.X = -AdjEnd.X;   // Reverse all signs
+			AdjEnd.Y = -AdjEnd.Y;
+			AdjEnd.Z = -AdjEnd.Z;
+			AdjEnd.W = -AdjEnd.W;
 		}
 
 		// Calculate coefficients
@@ -155,23 +155,23 @@ namespace ESource {
 			sclq = Factor;
 		}
 
-		Out.x = sclp * Start.x + sclq * AdjEnd.x;
-		Out.y = sclp * Start.y + sclq * AdjEnd.y;
-		Out.z = sclp * Start.z + sclq * AdjEnd.z;
-		Out.w = sclp * Start.w + sclq * AdjEnd.w;
+		Out.X = sclp * Start.X + sclq * AdjEnd.X;
+		Out.Y = sclp * Start.Y + sclq * AdjEnd.Y;
+		Out.Z = sclp * Start.Z + sclq * AdjEnd.Z;
+		Out.W = sclp * Start.W + sclq * AdjEnd.W;
 	}
 
 	inline float Quaternion::Magnitude() const {
-		return sqrtf(x * x + y * y + z * z + w * w);
+		return sqrtf(X * X + Y * Y + Z * Z + W * W);
 	}
 
 	inline float Quaternion::MagnitudeSquared() const {
-		return x * x + y * y + z * z + w * w;
+		return X * X + Y * Y + Z * Z + W * W;
 	}
 
 	inline void Quaternion::Normalize() {
 		if (MagnitudeSquared() == 0) {
-			w = 1; x = 0; y = 0; z = 0;
+			W = 1; X = 0; Y = 0; Z = 0;
 		}
 		else {
 			*this /= Magnitude();
@@ -203,15 +203,15 @@ namespace ESource {
 
 	inline Matrix4x4 Quaternion::ToMatrix4x4() const {
 		Matrix4x4 Result;
-		float xx(x * x);
-		float yy(y * y);
-		float zz(z * z);
-		float xz(x * z);
-		float xy(x * y);
-		float yz(y * z);
-		float wx(w * x);
-		float wy(w * y);
-		float wz(w * z);
+		float xx(X * X);
+		float yy(Y * Y);
+		float zz(Z * Z);
+		float xz(X * Z);
+		float xy(X * Y);
+		float yz(Y * Z);
+		float wx(W * X);
+		float wy(W * Y);
+		float wz(W * Z);
 
 		Result[0][0] = 1.F - 2.F * (yy + zz);
 		Result[0][1] = 2.F * (xy + wz);
@@ -229,36 +229,36 @@ namespace ESource {
 
 	inline float Quaternion::GetPitch() const {
 		float Pitch;
-		const float SingularityTest = x * y + z * w;
+		const float SingularityTest = X * Y + Z * W;
 		if (Math::Abs(SingularityTest) > 0.499995F) {
 			return 0.F;
 		}
 		else {
-			Pitch = Math::Atan2((2.F * x * w) - (2.F * y * z), 1.F - (2.F * Math::Square(x)) - (2.F * Math::Square(z)));
+			Pitch = Math::Atan2((2.F * X * W) - (2.F * Y * Z), 1.F - (2.F * Math::Square(X)) - (2.F * Math::Square(Z)));
 		}
 		return Pitch * MathConstants::RadToDegree;
 	}
 
 	inline float Quaternion::GetYaw() const {
 		float Yaw;
-		const float SingularityTest = x * y + z * w;
+		const float SingularityTest = X * Y + Z * W;
 		if (SingularityTest > 0.499995F) {
-			Yaw = 2.F * Math::Atan2(x, w);
+			Yaw = 2.F * Math::Atan2(X, W);
 		}
 		else if (SingularityTest < -0.49999F) {
-			Yaw = -2.F * Math::Atan2(x, w);
+			Yaw = -2.F * Math::Atan2(X, W);
 		}
 		else {
-			const float sqy = y * y;
-			const float sqz = z * z;
-			Yaw = Math::Atan2((2.F * y * w) - (2.F * x * z), 1.F - (2.F * sqy) - (2.F * sqz));
+			const float sqy = Y * Y;
+			const float sqz = Z * Z;
+			Yaw = Math::Atan2((2.F * Y * W) - (2.F * X * Z), 1.F - (2.F * sqy) - (2.F * sqz));
 		}
 		return Yaw * MathConstants::RadToDegree;
 	}
 
 	inline float Quaternion::GetRoll() const {
 		float Roll;
-		const float SingularityTest = x * y + z * w;
+		const float SingularityTest = X * Y + Z * W;
 		if (SingularityTest > 0.499995F) {
 			Roll = MathConstants::HalfPi;
 		}
@@ -272,25 +272,25 @@ namespace ESource {
 	}
 
 	inline float Quaternion::GetScalar() const {
-		return w;
+		return W;
 	}
 
 	inline Vector3 Quaternion::GetVector() const {
-		return Vector3(x, y, z);
+		return Vector3(X, Y, Z);
 	}
 
 	inline Vector3 Quaternion::ToEulerAngles() const {
 		Vector3 EulerFromQuat;
 
-		float PitchY = std::asin(2.F * (x * w - y * z));
+		float PitchY = std::asin(2.F * (X * W - Y * Z));
 		float Test = std::cos(PitchY);
 		if (Test > MathConstants::TendencyZero) {
-			EulerFromQuat[Roll]  = Math::Atan2(2.F * (x * y + z * w), 1.F - (2.F * (Math::Square(z) + Math::Square(x)))) * MathConstants::RadToDegree;
+			EulerFromQuat[Roll]  = Math::Atan2(2.F * (X * Y + Z * W), 1.F - (2.F * (Math::Square(Z) + Math::Square(X)))) * MathConstants::RadToDegree;
 			EulerFromQuat[Pitch] = PitchY * MathConstants::RadToDegree;
-			EulerFromQuat[Yaw]   = Math::Atan2(2.F * (z * x + y * w), 1.F - (2.F * (Math::Square(y) + Math::Square(x)))) * MathConstants::RadToDegree;
+			EulerFromQuat[Yaw]   = Math::Atan2(2.F * (Z * X + Y * W), 1.F - (2.F * (Math::Square(Y) + Math::Square(X)))) * MathConstants::RadToDegree;
 		}
 		else {
-			EulerFromQuat[Roll]  = Math::Atan2(-2.F * (x * y - z * w), 1.F - (2.F * (Math::Square(y) + Math::Square(z)))) * MathConstants::RadToDegree;
+			EulerFromQuat[Roll]  = Math::Atan2(-2.F * (X * Y - Z * W), 1.F - (2.F * (Math::Square(Y) + Math::Square(Z)))) * MathConstants::RadToDegree;
 			EulerFromQuat[Pitch] = PitchY * MathConstants::RadToDegree;
 			EulerFromQuat[Yaw]   = 0.F;
 		}
@@ -303,58 +303,58 @@ namespace ESource {
 	}
 
 	FORCEINLINE float Quaternion::Dot(const Quaternion & Other) const {
-		return x * Other.x + y * Other.y + z * Other.z + w * Other.w;
+		return X * Other.X + Y * Other.Y + Z * Other.Z + W * Other.W;
 	}
 
 	inline Quaternion Quaternion::Cross(const Quaternion & Other) const {
 		return Quaternion(
-			w * Other.w - x * Other.x - y * Other.y - z * Other.z,
-			w * Other.x + x * Other.w + y * Other.z - z * Other.y,
-			w * Other.y + y * Other.w + z * Other.x - x * Other.z,
-			w * Other.z + z * Other.w + x * Other.y - y * Other.x
+			W * Other.W - X * Other.X - Y * Other.Y - Z * Other.Z,
+			W * Other.X + X * Other.W + Y * Other.Z - Z * Other.Y,
+			W * Other.Y + Y * Other.W + Z * Other.X - X * Other.Z,
+			W * Other.Z + Z * Other.W + X * Other.Y - Y * Other.X
 		);
 	}
 
 	inline const float * Quaternion::PointerToValue() const {
-		return &w;
+		return &W;
 	}
 
 	inline float & Quaternion::operator[](unsigned char i) {
-		return (&w)[i];
+		return (&W)[i];
 	}
 
 	inline float const & Quaternion::operator[](unsigned char i) const {
-		return (&w)[i];
+		return (&W)[i];
 	}
 
 	FORCEINLINE bool Quaternion::operator==(const Quaternion& Other) const {
-		return (x == Other.x && y == Other.y && z == Other.z && w == Other.w);
+		return (X == Other.X && Y == Other.Y && Z == Other.Z && W == Other.W);
 	}
 
 	FORCEINLINE bool Quaternion::operator!=(const Quaternion& Other) const {
-		return (x != Other.x || y != Other.y || z != Other.z || w != Other.w);
+		return (X != Other.X || Y != Other.Y || Z != Other.Z || W != Other.W);
 	}
 
 	FORCEINLINE Quaternion Quaternion::operator-(void) const {
-		return Quaternion(-w, -x, -y, -z);
+		return Quaternion(-W, -X, -Y, -Z);
 	}
 
 	FORCEINLINE Quaternion Quaternion::operator*(const float& Value) const {
-		return Quaternion(w * Value, x * Value, y * Value, z * Value);
+		return Quaternion(W * Value, X * Value, Y * Value, Z * Value);
 	}
 
 	FORCEINLINE Quaternion Quaternion::operator/(const float& Value) const {
 		if (Value == 0.F) Quaternion();
-		return Quaternion(w / Value, x / Value, y / Value, z / Value);
+		return Quaternion(W / Value, X / Value, Y / Value, Z / Value);
 	}
 
 	FORCEINLINE Quaternion Quaternion::operator*(const Quaternion & Other) const {
 		Quaternion Result;
 
-		Result.x = w * Other.x + x * Other.w + y * Other.z - z * Other.y;
-		Result.y = w * Other.y + y * Other.w + z * Other.x - x * Other.z;
-		Result.z = w * Other.z + z * Other.w + x * Other.y - y * Other.x;
-		Result.w = w * Other.w - x * Other.x - y * Other.y - z * Other.z;
+		Result.X = W * Other.X + X * Other.W + Y * Other.Z - Z * Other.Y;
+		Result.Y = W * Other.Y + Y * Other.W + Z * Other.X - X * Other.Z;
+		Result.Z = W * Other.Z + Z * Other.W + X * Other.Y - Y * Other.X;
+		Result.W = W * Other.W - X * Other.X - Y * Other.Y - Z * Other.Z;
 
 		return Result;
 	}
@@ -364,7 +364,7 @@ namespace ESource {
 		Vector3 const QV(Vector3::Cross(QuatVector, Vector));
 		Vector3 const QQV(Vector3::Cross(QuatVector, QV));
 
-		return Vector + ((QV * w) + QQV) * 2.F;
+		return Vector + ((QV * W) + QQV) * 2.F;
 	}
 
 	FORCEINLINE Quaternion & Quaternion::operator*=(const Quaternion & Other) {
@@ -373,19 +373,19 @@ namespace ESource {
 	}
 
 	FORCEINLINE Quaternion& Quaternion::operator*=(const float& Value) {
-		w *= Value;
-		x *= Value;
-		y *= Value;
-		z *= Value;
+		W *= Value;
+		X *= Value;
+		Y *= Value;
+		Z *= Value;
 		return *this;
 	}
 
 	FORCEINLINE Quaternion& Quaternion::operator/=(const float& Value) {
-		if (Value == 0.F) w = x = y = z = 0;
-		w /= Value;
-		x /= Value;
-		y /= Value;
-		z /= Value;
+		if (Value == 0.F) W = X = Y = Z = 0;
+		W /= Value;
+		X /= Value;
+		Y /= Value;
+		Z /= Value;
 		return *this;
 	}
 

@@ -103,21 +103,21 @@ namespace ESource {
 
 	class MouseMovedEvent : public MouseEvent {
 	public:
-		MouseMovedEvent(float x, float y, float xRelative, float yRelative)
-			: MouseX(x), MouseY(y), MouseXRelative(xRelative), MouseYRelative(yRelative) {}
+		MouseMovedEvent(float X, float Y, float RelativeX, float RelativeY)
+			: MouseX(X), MouseY(Y), MouseRelativeX(RelativeX), MouseRelativeY(RelativeY) {}
 
 		inline float GetX() const { return MouseX; }
 		inline float GetY() const { return MouseY; }
-		inline float GetXRelative() const { return MouseXRelative; }
-		inline float GetYRelative() const { return MouseYRelative; }
+		inline float GetXRelative() const { return MouseRelativeX; }
+		inline float GetYRelative() const { return MouseRelativeY; }
 		inline Point2 GetMousePosition() const { return { MouseX, MouseY }; }
-		inline Point2 GetMouseRelativeMotion() const { return { MouseXRelative, MouseYRelative }; }
+		inline Point2 GetMouseRelativeMotion() const { return { MouseRelativeX, MouseRelativeY }; }
 
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseMoved)
 
 	private:
 		float MouseX, MouseY;
-		float MouseXRelative, MouseYRelative;
+		float MouseRelativeX, MouseRelativeY;
 	};
 
 	class MouseScrolledEvent : public MouseEvent {
