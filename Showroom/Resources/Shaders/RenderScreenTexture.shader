@@ -35,6 +35,25 @@ GLSL:
         uniform float _Exposure;
               
         out vec4 FragColor;
+
+        vec3 GammaCorrection(vec3 Color) {
+        	return pow(Color, vec3(1.0/_Gamma));
+        }
+        
+        vec3 ReinhardTonemap(vec3 Color) {
+          return Color / (Color + vec3(1.0));
+        }
+
+        vec3 Uncharted2Tonemap(vec3 Color) {
+          float A = 0.15;
+        	float B = 0.50;
+        	float C = 0.10;
+        	float D = 0.20;
+        	float E = 0.02;
+        	float F = 0.30;
+
+          return ((Color*(A*Color+C*B)+D*E)/(Color*(A*Color+B)+D*F))-E/F;
+        }
         
         void main() {
           vec4 Sample = texture(_MainTexture, UV0Coords, 0);
@@ -55,12 +74,15 @@ GLSL:
           Color = Color + BloomColor * 0.5;
           Color = mix(Color, vec3(0.92, 0.76, 0.35) * 2, clamp(pow(Fog, 1.0 / 0.004) * 0.9, 0.0, 1.0));
 
-          Color = vec3(1.0) - exp(-Color * _Exposure);
-          Color = pow(Color, vec3(1.0 / _Gamma));
-          Color = clamp(Color, vec3(0.0), vec3(1.0));
+          Color = Uncharted2Tonemap(Color);
 
-          vec3 ColorIntensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
-          Color = mix(ColorIntensity, Color, 1.25);
+          Color = vec3(1.0) - exp(-Color * _Exposure);
+          Color = GammaCorrection(Color);
+
+          // Color = clamp(Color, vec3(0.0), vec3(1.0));
+
+          // vec3 ColorIntensity = vec3(dot(Color, vec3(0.2125, 0.7154, 0.0721)));
+          // Color = mix(ColorIntensity, Color, 1.25);
 
           FragColor = vec4(Color, Sample.a * SampleBloom.a);
         }
