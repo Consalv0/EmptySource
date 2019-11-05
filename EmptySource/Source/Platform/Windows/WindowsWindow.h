@@ -22,7 +22,6 @@ namespace ESource {
 		};
 
 	private:
-
 		EWindowMode Mode;
 
 		void * WindowHandle;
@@ -30,11 +29,6 @@ namespace ESource {
 		std::unique_ptr<GraphicContext> Context;
 
 		void Initialize();
-		
-		// void CreateWindowEvents();
-		// 
-		// //* Initialize inputs in this window
-		// void InitializeInputs();
 
 	public:
 		
@@ -53,8 +47,11 @@ namespace ESource {
 		//* Get mouse position in screen coordinates relative to the upper left position of this window
 		struct Vector2 GetMousePosition(bool Clamp = false);
 
-		// //* Get key pressed
-		// bool GetKeyDown(uint32_t Key);
+		//* Set the window display mode
+		void SetWindowMode(EWindowMode Mode) override;
+
+		//* Get the window display mode
+		EWindowMode GetWindowMode() const override;
 
 		//* Sets the window icon
 		void SetIcon(class PixelMap * Icon);

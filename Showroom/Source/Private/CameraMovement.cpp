@@ -35,34 +35,34 @@ void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
 }
 
 void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
-	if (Input::IsMouseDown(MouseButton::Mouse2)) {
+	if (Input::IsMouseDown(EMouseButton::Mouse2)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
 		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
 	Vector3 MovementDirection = Vector3();
 
-	if (Input::IsKeyDown(Scancode::W)) {
+	if (Input::IsKeyDown(EScancode::W)) {
 		MovementDirection += CameraRotation * Vector3(0, 0, 1.F);
 	}
-	if (Input::IsKeyDown(Scancode::A)) {
+	if (Input::IsKeyDown(EScancode::A)) {
 		MovementDirection += CameraRotation * Vector3(1.F, 0, 0);
 	}
-	if (Input::IsKeyDown(Scancode::S)) {
+	if (Input::IsKeyDown(EScancode::S)) {
 		MovementDirection += CameraRotation * Vector3(0, 0, -1.F);
 	}
-	if (Input::IsKeyDown(Scancode::D)) {
+	if (Input::IsKeyDown(EScancode::D)) {
 		MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
 	}
 
 	MovementDirection.Y = 0.F;
 	MovementDirection.Normalize();
 	GetGameObject().LocalTransform.Position += MovementDirection * ViewSpeed * Time::GetDeltaTime<Time::Second>() *
-		(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
+		(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
 
-	if (Input::IsMousePressed(MouseButton::Mouse0)) {
+	if (Input::IsMousePressed(EMouseButton::Mouse0)) {
 		TArray<RayHit> Hits;
 		Vector3 CameraRayDirection = {
 			(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,

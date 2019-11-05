@@ -2,16 +2,16 @@
 
 namespace ESource {
 
-	enum FrustrumPlanes {
-		FrustrumPlanes_Near   = 0,
-		FrustrumPlanes_Far    = 1,
-		FrustrumPlanes_Top    = 2,
-		FrustrumPlanes_Bottom = 3,
-		FrustrumPlanes_Left   = 4,
-		FrustrumPlanes_Right  = 5
+	enum EFrustrumPlanes {
+		FP_Near   = 0,
+		FP_Far    = 1,
+		FP_Top    = 2,
+		FP_Bottom = 3,
+		FP_Left   = 4,
+		FP_Right  = 5
 	};
 
-	enum class CullingResult {
+	enum class ECullingResult {
 		Outside,
 		Inside,
 		Intersect
@@ -19,7 +19,6 @@ namespace ESource {
 
 	class Frustrum {
 	public:
-		
 		Plane Planes[6];
 
 		Frustrum();
@@ -28,7 +27,7 @@ namespace ESource {
 
 		static Frustrum FromProjectionViewMatrix(const Matrix4x4 & ComboMatrix);
 		
-		CullingResult CheckAABox(const Box3D & AABox);
+		ECullingResult CheckAABox(const Box3D & AABox);
 
 	};
 

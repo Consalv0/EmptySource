@@ -26,30 +26,30 @@ void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
 }
 
 void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
-	if (Input::IsMouseDown(MouseButton::Mouse2)) {
+	if (Input::IsMouseDown(EMouseButton::Mouse2)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
 		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
-	if (Input::IsKeyDown(Scancode::W)) {
+	if (Input::IsKeyDown(EScancode::W)) {
 		Vector3 Forward = CameraRotation * Vector3(0, 0, ViewSpeed);
 		GetGameObject().LocalTransform.Position += Forward * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
+			(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
 	}
-	if (Input::IsKeyDown(Scancode::A)) {
+	if (Input::IsKeyDown(EScancode::A)) {
 		Vector3 Right = CameraRotation * Vector3(ViewSpeed, 0, 0);
 		GetGameObject().LocalTransform.Position += Right * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
+			(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
 	}
-	if (Input::IsKeyDown(Scancode::S)) {
+	if (Input::IsKeyDown(EScancode::S)) {
 		Vector3 Back = CameraRotation * Vector3(0, 0, -ViewSpeed);
 		GetGameObject().LocalTransform.Position += Back * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
+			(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
 	}
-	if (Input::IsKeyDown(Scancode::D)) {
+	if (Input::IsKeyDown(EScancode::D)) {
 		Vector3 Left = CameraRotation * Vector3(-ViewSpeed, 0, 0);
 		GetGameObject().LocalTransform.Position += Left * Time::GetDeltaTime<Time::Second>() *
-			(!Input::IsKeyDown(Scancode::LeftShift) ? !Input::IsKeyDown(Scancode::LeftCtrl) ? 1.F : .1F : 4.F);
+			(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
 	}
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;

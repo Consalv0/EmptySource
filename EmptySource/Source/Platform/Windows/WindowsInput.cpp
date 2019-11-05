@@ -14,13 +14,13 @@ namespace ESource {
 		return static_cast<WindowsInput *>(Input::Instance);
 	}
 
-	bool WindowsInput::IsKeyStateNative(Scancode KeyCode, int State) {
-		if (State == ButtonState_Down) return InputKeyState[KeyCode].FramePressed;
+	bool WindowsInput::IsKeyStateNative(EScancode KeyCode, int State) {
+		if (State == BS_Down) return InputKeyState[KeyCode].FramePressed;
 		return InputKeyState[KeyCode].State & State;
 	}
 
-	bool WindowsInput::IsMouseStateNative(MouseButton Button, int State) {
-		if (State == ButtonState_Down) return MouseButtonState[Button].FramePressed;
+	bool WindowsInput::IsMouseStateNative(EMouseButton Button, int State) {
+		if (State == BS_Down) return MouseButtonState[Button].FramePressed;
 		return MouseButtonState[Button].State & State;
 	}
 

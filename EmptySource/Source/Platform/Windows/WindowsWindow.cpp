@@ -17,8 +17,8 @@
 namespace ESource {
 
 	int OnSDLEvent(void * UserData, SDL_Event * Event) {
-		auto & KeyState = WindowsInput::GetInputInstance()->InputKeyState[(Scancode)Event->key.keysym.scancode];
-		auto & MouseState = WindowsInput::GetInputInstance()->MouseButtonState[(MouseButton)Event->button.button];
+		auto & KeyState = WindowsInput::GetInputInstance()->InputKeyState[(EScancode)Event->key.keysym.scancode];
+		auto & MouseState = WindowsInput::GetInputInstance()->MouseButtonState[(EMouseButton)Event->button.button];
 		WindowsWindow& Data = *(WindowsWindow*)UserData;
 		static int32_t MouseButtonPressedCount[255] = { 
 			(int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, 
@@ -55,9 +55,9 @@ namespace ESource {
 
 		case SDL_KEYDOWN: {
 			if (Event->key.repeat == 0)
-				KeyState.State = ButtonState_Pressed | ButtonState_Typed;
+				KeyState.State = BS_Pressed | BS_Typed;
 			else
-				KeyState.State = ButtonState_Typed;
+				KeyState.State = BS_Typed;
 			KeyState.TypeRepeticions = Event->key.repeat;
 
 			KeyPressedEvent InEvent(
@@ -73,7 +73,7 @@ namespace ESource {
 		}
 
 		case SDL_KEYUP: {
-			KeyState.State = ButtonState_Released;
+			KeyState.State = BS_Released;
 			KeyState.FramePressed = 0;
 			KeyState.TypeRepeticions = 0;
 
@@ -95,7 +95,7 @@ namespace ESource {
 		}
 
 		case SDL_MOUSEBUTTONDOWN: {
-			MouseState.State = ButtonState_Pressed;
+			MouseState.State = BS_Pressed;
 			MouseState.Clicks = Event->button.clicks;
 
 			MouseButtonPressedCount[Event->button.button]++;
@@ -105,7 +105,7 @@ namespace ESource {
 		}
 
 		case SDL_MOUSEBUTTONUP: {
-			MouseState.State = ButtonState_Released;
+			MouseState.State = BS_Released;
 			MouseState.FramePressed = 0;
 			MouseState.Clicks = 0;
 
@@ -135,7 +135,6 @@ namespace ESource {
 	}
 
 	void WindowsWindow::Initialize() {
-
 		if (Context != NULL || WindowHandle != NULL) return;
 
 		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
@@ -166,7 +165,7 @@ namespace ESource {
 		Width = Parameters.Width;
 		Height = Parameters.Height;
 		Name = Parameters.Name;
-		Mode = WM_Windowed;
+		Mode = Parameters.WindowMode;
 		Initialize();
 	}
 
@@ -203,6 +202,15 @@ namespace ESource {
 			MouseY -= WindowY;
 		}
 		return Vector2(float(MouseX), float(MouseY));
+	}
+
+	void WindowsWindow::SetWindowMode(EWindowMode Mode) {
+		this->Mode = Mode;
+		SDL_SetWindowFullscreen((SDL_Window *)(WindowHandle), Mode);
+	}
+
+	EWindowMode WindowsWindow::GetWindowMode() const {
+		return Mode;
 	}
 
 	void WindowsWindow::SetIcon(PixelMap* Icon) {
@@ -245,16 +253,16 @@ namespace ESource {
 	void WindowsWindow::CheckInputState() {
 		auto InputInstance = WindowsInput::GetInputInstance();
 		for (auto & KeyStateIt : InputInstance->InputKeyState) {
-			if (KeyStateIt.second.State & ButtonState_Pressed) {
+			if (KeyStateIt.second.State & BS_Pressed) {
 				KeyStateIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
 			}
-			KeyStateIt.second.State &= ~(ButtonState_Pressed | ButtonState_Released | ButtonState_Typed);
+			KeyStateIt.second.State &= ~(BS_Pressed | BS_Released | BS_Typed);
 		}
 		for (auto & MouseButtonIt : InputInstance->MouseButtonState) {
-			if (MouseButtonIt.second.State & ButtonState_Pressed) {
+			if (MouseButtonIt.second.State & BS_Pressed) {
 				MouseButtonIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
 			}
-			MouseButtonIt.second.State &= ~(ButtonState_Pressed | ButtonState_Released);
+			MouseButtonIt.second.State &= ~(BS_Pressed | BS_Released);
 		}
 	}
 

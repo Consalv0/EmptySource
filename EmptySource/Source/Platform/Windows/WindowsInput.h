@@ -8,14 +8,14 @@ namespace ESource {
 	public:
 		static WindowsInput * GetInputInstance();
 
-		TDictionary<Scancode, InputScancodeState> InputKeyState;
+		TDictionary<EScancode, InputScancodeState> InputKeyState;
 
-		TDictionary<MouseButton, InputMouseButtonState> MouseButtonState;
+		TDictionary<EMouseButton, InputMouseButtonState> MouseButtonState;
 
 	protected:
-		virtual bool IsKeyStateNative(Scancode KeyCode, int State) override;
+		virtual bool IsKeyStateNative(EScancode KeyCode, int State) override;
 
-		virtual bool IsMouseStateNative(MouseButton Button, int State) override;
+		virtual bool IsMouseStateNative(EMouseButton Button, int State) override;
 
 		virtual Vector2 GetMousePositionNative(bool Clamp) override;
 

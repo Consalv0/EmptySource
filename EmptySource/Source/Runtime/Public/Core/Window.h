@@ -21,12 +21,14 @@ namespace ESource {
 		WString Name;
 		uint32_t Width;
 		uint32_t Height;
+		EWindowMode WindowMode;
 
 		WindowProperties(
 			const WString& Title = L"ESource",
 			uint32_t Width = 1280,
-			uint32_t Height = 720)
-			: Name(Title), Width(Width), Height(Height) {
+			uint32_t Height = 720,
+			EWindowMode WindowMode = WM_Windowed)
+			: Name(Title), Width(Width), Height(Height), WindowMode(WindowMode) {
 		}
 
 	};
@@ -47,6 +49,12 @@ namespace ESource {
 
 		//* End of frame functions
 		virtual void EndFrame() = 0;
+
+		//* Set the window display mode
+		virtual void SetWindowMode(EWindowMode Mode) = 0;
+
+		//* Get the window display mode
+		virtual EWindowMode GetWindowMode() const = 0;
 
 		//* Get the window title name
 		virtual WString GetName() const = 0;
