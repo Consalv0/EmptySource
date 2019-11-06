@@ -19,6 +19,7 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE IntVector3();
 		HOST_DEVICE FORCEINLINE IntVector3(const IntVector3& Vector);
 		HOST_DEVICE FORCEINLINE IntVector3(const IntVector2& Vector);
+		HOST_DEVICE FORCEINLINE IntVector3(const IntVector2& Vector, const int & Z);
 		HOST_DEVICE FORCEINLINE IntVector3(const Vector2& Vector);
 		HOST_DEVICE FORCEINLINE IntVector3(const Vector3& Vector);
 		HOST_DEVICE FORCEINLINE IntVector3(const Vector4& Vector);

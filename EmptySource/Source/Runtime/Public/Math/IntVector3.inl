@@ -30,6 +30,10 @@ namespace ESource {
 		: X(Vector.X), Y(Vector.Y), Z(0) {
 	}
 
+	FORCEINLINE IntVector3::IntVector3(const IntVector2 & Vector, const int& Z)
+		: X(Vector.X), Y(Vector.Y), Z(Z) {
+	}
+
 	FORCEINLINE IntVector3::IntVector3(const Vector4 & Vector)
 		: X((int)Vector.X), Y((int)Vector.Y), Z((int)Vector.Z) {
 	}

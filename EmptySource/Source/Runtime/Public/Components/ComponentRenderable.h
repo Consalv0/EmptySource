@@ -8,6 +8,10 @@ namespace ESource {
 	class CRenderable : public CComponent {
 		IMPLEMENT_COMPONENT(CRenderable)
 	public:
+		uint8_t CullingMask;
+
+		bool bGPUInstance;
+
 		virtual void SetMesh(RMeshPtr Value);
 
 		virtual void SetMaterials(TArray<MaterialPtr> & Materials);

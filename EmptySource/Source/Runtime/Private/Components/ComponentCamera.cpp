@@ -26,12 +26,11 @@ namespace ESource {
 	}
 
 	CCamera::CCamera(GGameObject & GameObject)
-		: CComponent(L"Camera", GameObject), ApertureAngle(60.F), CullingDistances(0.03F, 1000.F) {
+		: CComponent(L"Camera", GameObject), ApertureAngle(60.F), CullingDistances(0.03F, 1000.F), RenderingMask(UINT8_MAX) {
 	}
 
 	void CCamera::OnRender() {
-		Application::GetInstance()->GetRenderPipeline().SetEyeTransform(GetGameObject().GetWorldTransform());
-		Application::GetInstance()->GetRenderPipeline().SetProjectionMatrix(GetProjectionMatrix());
+		Application::GetInstance()->GetRenderPipeline().SetCamera(GetGameObject().GetWorldTransform(), GetProjectionMatrix(), RenderingMask);
 	}
 
 	bool CCamera::Initialize() {

@@ -1101,37 +1101,37 @@ protected:
 		// ViewMatrix = Transform(EyePosition, CameraRotation).GetGLViewMatrix();
 		// // ViewMatrix = Matrix4x4::Scaling(Vector3(1, 1, -1)).Inversed() * Matrix4x4::LookAt(EyePosition, EyePosition + FrameRotation * Vector3(0, 0, 1), FrameRotation * Vector3(0, 1)).Inversed();
 
-		if (Input::IsKeyDown(Scancode::Backspace)) {
+		if (Input::IsKeyDown(EScancode::Backspace)) {
 			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
 		}
 
-		if (Input::IsKeyDown(Scancode::Right)) {
+		if (Input::IsKeyDown(EScancode::Right)) {
 			MultiuseValue += Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
-		if (Input::IsKeyDown(Scancode::Left)) {
+		if (Input::IsKeyDown(EScancode::Left)) {
 			MultiuseValue -= Time::GetDeltaTime<Time::Second>() * MultiuseValue;
 		}
 
-		if (Input::IsKeyDown(Scancode::LeftShift)) {
-			if (Input::IsKeyDown(Scancode::I)) {
+		if (Input::IsKeyDown(EScancode::LeftShift)) {
+			if (Input::IsKeyDown(EScancode::I)) {
 				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 
-			if (Input::IsKeyDown(Scancode::K)) {
+			if (Input::IsKeyDown(EScancode::K)) {
 				FontSize -= Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 		}
 		else {
-			if (Input::IsKeyDown(Scancode::I)) {
+			if (Input::IsKeyDown(EScancode::I)) {
 				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 
-			if (Input::IsKeyDown(Scancode::K)) {
+			if (Input::IsKeyDown(EScancode::K)) {
 				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 		}
 
-		if (Input::IsKeyDown(Scancode::V)) {
+		if (Input::IsKeyDown(EScancode::V)) {
 			for (int i = 0; i < 10; i++) {
 				RenderingText[1] += (unsigned long)(rand() % 0x3fff);
 			}
@@ -1419,7 +1419,7 @@ protected:
 			Text::FormatMath(Vector3(LastCursorPosition.Y - Input::GetMouseY(), -LastCursorPosition.X - -Input::GetMouseX())).c_str()
 		);
 
-		if (Input::IsKeyDown(Scancode::Escape)) {
+		if (Input::IsKeyDown(EScancode::Escape)) {
 			Application::GetInstance()->ShouldClose();
 		}
 

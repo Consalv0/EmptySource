@@ -91,9 +91,10 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 		GameObject->GetAllChildren<GGameObject>(GameObjectChildren);
 		for (auto & GameObjectChild : GameObjectChildren)
 			RenderGameObjectRecursive(GameObjectChild, NarrowMaterialNameList, MaterialNameList, NarrowMeshNameList, MeshNameList, AppLayer);
-
-		CCamera * Camera = GameObject->GetFirstComponent<CCamera>();
-		if (Camera != NULL) {
+		
+		TArray<CCamera*> Cameras;
+		GameObject->GetAllComponents<CCamera>(Cameras);
+		for (auto & Camera : Cameras) {
 			bool TreeNode = ImGui::TreeNode(Camera->GetName().GetNarrowInstanceName().c_str());
 			if (ImGui::BeginPopupContextItem("Camera Edit")) {
 				if (ImGui::Button("Delete")) {

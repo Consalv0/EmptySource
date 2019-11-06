@@ -40,7 +40,7 @@ namespace ESource {
 
 		virtual void CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) override;
 		
-		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) override;
+		virtual void TransferBitsTo(RenderTarget * Target, bool Color, bool Stencil, bool Depth, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) override;
 
 		virtual void ReleaseTextures() override;
 

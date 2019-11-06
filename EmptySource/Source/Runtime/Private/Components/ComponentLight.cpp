@@ -13,7 +13,7 @@ namespace ESource {
 	CLight::CLight(GGameObject & GameObject)
 		: CComponent(L"CLight", GameObject), Color(0.9F, 1.0F, 1.0F), Intensity(20.F),
 		bCastShadow(false), ShadowMapBias(0.001F), ShadowMap(NULL), ShadowMapSize(1024),
-		ApertureAngle(120.F), CullingPlanes(0.3F, 1000.F) {
+		ApertureAngle(120.F), CullingPlanes(0.3F, 1000.F), RenderingMask(1) {
 	}
 
 	void CLight::SetShadowMapSize(int Size) {
@@ -29,7 +29,7 @@ namespace ESource {
 	void CLight::OnRender() {
 		RenderPipeline & AppRenderPipeline = Application::GetInstance()->GetRenderPipeline();
 		AppRenderPipeline.SubmitSpotLight(GetGameObject().GetWorldTransform(), Color, GetGameObject().GetWorldTransform().Forward(), Intensity,
-			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.X, CullingPlanes.Y)
+			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.X, CullingPlanes.Y), RenderingMask
 		);
 		if (bCastShadow) {
 			if (ShadowMap == NULL)

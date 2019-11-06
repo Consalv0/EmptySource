@@ -94,8 +94,9 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 		for (auto & GameObjectChild : GameObjectChildren)
 			RenderGameObjectRecursive(GameObjectChild, NarrowMaterialNameList, MaterialNameList, NarrowMeshNameList, MeshNameList, AppLayer);
 
-		CCamera * Camera = GameObject->GetFirstComponent<CCamera>();
-		if (Camera != NULL) {
+		TArray<CCamera*> Cameras;
+		GameObject->GetAllComponents<CCamera>(Cameras);
+		for (auto & Camera : Cameras) {
 			bool TreeNode = ImGui::TreeNode(Camera->GetName().GetNarrowInstanceName().c_str());
 			if (ImGui::BeginPopupContextItem("Camera Edit")) {
 				if (ImGui::Button("Delete")) {
@@ -115,6 +116,9 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::TextUnformatted("Culling Distances");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				ImGui::DragFloat2("##Culling", &Camera->CullingDistances[0], 0.1F, 0.001F, 99999.F, "%.5F");
+				ImGui::TextUnformatted("Rendering Mask");
+				ImGui::SameLine(); ImGui::PushItemWidth(-1);
+				ImGui::InputScalar("##RenderingMask", ImGuiDataType_U8, &Camera->RenderingMask);
 				ImGui::TreePop();
 			}
 		}
@@ -169,6 +173,8 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::PushItemWidth(-1); ImGui::DragFloat("##Angle", &Light->ApertureAngle, 1.0F, 0.F, 180.F, "%.3F"); ImGui::NextColumn();
 				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Culling Planes"); ImGui::NextColumn();
 				ImGui::PushItemWidth(-1); ImGui::DragFloat2("##Culling", &Light->CullingPlanes[0], 0.1F, 0.001F, 99999.F, "%.5F"); ImGui::NextColumn();
+				ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Rendering Mask"); ImGui::NextColumn();
+				ImGui::PushItemWidth(-1); ImGui::InputScalar("##RenderingMask", ImGuiDataType_U8, &Light->RenderingMask);
 				ImGui::PopStyleVar();
 				ImGui::Columns(1);
 				ImGui::PopItemWidth();
@@ -233,6 +239,9 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 						}
 					}
 				}
+				ImGui::TextUnformatted("Culling Mask");
+				ImGui::SameLine(); ImGui::PushItemWidth(-1);
+				ImGui::InputScalar("##RenderingMask", ImGuiDataType_U8, &Renderable->CullingMask);
 				ImGui::TextUnformatted("Mesh");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				if (ImGui::Combo(("##Mesh" + std::to_string(Renderable->GetName().GetInstanceID())).c_str(), &CurrentMeshIndex,
@@ -283,13 +292,15 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 
 void GameSpaceLayer::OnAwake() {
 	Super::OnAwake();
-	Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"MainStage");
+
 	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
-	Camera->CreateComponent<CCamera>();
+	Camera->CreateComponent<CCamera>()->RenderingMask = 1 << 0;
+	Camera->CreateComponent<CCamera>()->RenderingMask = 1 << 1;
 	Camera->CreateComponent<CCameraMovement>();
 	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
 	SkyBox->AttachTo(Camera);
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
+	Renderable->CullingMask = 1 << 0 | 1 << 1;
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
 	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({85.F, 0.F, 0.F}), 1.F));
@@ -317,17 +328,30 @@ void GameSpaceLayer::OnAwake() {
 		Follow->FixedPositionAxisY = true;
 		Follow->ModuleMovement = 6.F;
 		auto TileDesert = ModelMng.GetMesh(L"TileDesertSends:TileDesertSends");
+		auto TileBricks = ModelMng.GetMesh(L"TileDesertSends:TileGroundBricks");
 		const int GridSize = 32;
 		for (int i = 0; i < GridSize; i++) {
 			for (int j = 0; j < GridSize; j++) {
-				auto Tile = CreateObject<GGameObject>(L"Tile");
-				Tile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
-				Tile->AttachTo(Ground);
-				auto PhysicsBody = Tile->CreateComponent<CPhysicBody>();
+				auto SandTile = CreateObject<GGameObject>(L"SandTile");
+				SandTile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
+				SandTile->AttachTo(Ground);
+				auto PhysicsBody = SandTile->CreateComponent<CPhysicBody>();
 				PhysicsBody->SetMesh(TileDesert);
-				auto Renderable = Tile->CreateComponent<CRenderable>();
+				auto Renderable = SandTile->CreateComponent<CRenderable>();
+				Renderable->CullingMask = 1 << 0;
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
+			}
+			for (int j = 0; j < GridSize; j++) {
+				auto BricksTile = CreateObject<GGameObject>(L"BricksTile");
+				BricksTile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
+				BricksTile->AttachTo(Ground);
+				auto PhysicsBody = BricksTile->CreateComponent<CPhysicBody>();
+				PhysicsBody->SetMesh(TileBricks);
+				auto Renderable = BricksTile->CreateComponent<CRenderable>();
+				Renderable->CullingMask = 1 << 1;
+				Renderable->SetMesh(TileBricks);
+				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/GroundBricks"));
 			}
 		}
 	}
@@ -362,7 +386,10 @@ void GameSpaceLayer::OnAwake() {
 }
 
 void GameSpaceLayer::OnRender() {
-	Application::GetInstance()->GetRenderPipeline().BeginStage(L"MainStage");
+	Application::GetInstance()->GetRenderPipeline().BeginStage(L"FirstStage");
+	Super::OnRender();
+	Application::GetInstance()->GetRenderPipeline().EndStage();
+	Application::GetInstance()->GetRenderPipeline().BeginStage(L"SecondStage");
 	Super::OnRender();
 	Application::GetInstance()->GetRenderPipeline().EndStage();
 }

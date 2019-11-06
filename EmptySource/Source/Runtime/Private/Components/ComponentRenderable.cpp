@@ -13,7 +13,7 @@
 
 namespace ESource {
 
-	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Rendererable", GameObject), ActiveMesh() {
+	CRenderable::CRenderable(GGameObject & GameObject) : CComponent(L"Rendererable", GameObject), ActiveMesh(), CullingMask(1) {
 	}
 
 	void CRenderable::OnDelete() {
@@ -55,7 +55,7 @@ namespace ESource {
 		Matrix4x4 GameObjectLWMatrix = GetGameObject().GetWorldMatrix();
 		for (auto& ItMaterial : Materials) {
 			if (ItMaterial.second)
-				Pipeline.SubmitSubmesh(ActiveMesh, ItMaterial.first, ItMaterial.second, GameObjectLWMatrix);
+				Pipeline.SubmitSubmesh(ActiveMesh, ItMaterial.first, ItMaterial.second, GameObjectLWMatrix, CullingMask);
 		}
 	}
 

@@ -42,7 +42,7 @@ namespace ESource {
 		RMeshPtr CubeMesh = ModelManager::GetInstance().GetMesh(L"Cube");
 
 		if (CubeMesh && DebugMaterial)
-			Pipeline.SubmitSubmesh(CubeMesh, 0, DebugMaterial, Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()));
+			Pipeline.SubmitSubmesh(CubeMesh, 0, DebugMaterial, Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()), 1);
 	}
 
 	void CPhysicBody::OnAttach() {

@@ -8,7 +8,7 @@
 
 namespace ESource {
 
-	enum GBuffers : int {
+	enum EGBuffers : int {
 		GB_Depth     = 0,
 		GB_Normal    = 1, // Using Stereographic Projection Enconding
 		GB_Specular  = 2, // Contains the metalness, roughness
@@ -38,22 +38,22 @@ namespace ESource {
 
 		virtual void EndStage();
 
-		virtual void SubmitSubmesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
+		virtual void SubmitSubmesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask);
 
-		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection);
+		virtual void SubmitSubmeshInstance(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask);
+
+		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t CullingMask);
 
 		virtual void SubmitSpotShadowMap(const RTexturePtr & ShadowMap, const float & Bias);
 
-		virtual void SetEyeTransform(const Transform & EyeTransform);
-
-		virtual void SetProjectionMatrix(const Matrix4x4 & Projection);
+		virtual void SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderingMask);
 
 		virtual IntVector2 GetRenderSize() const;
 
 		//* From 0.1 to 1.0
 		virtual void SetRenderScale(float Scale);
 
-		virtual RTexturePtr GetGBufferTexture(GBuffers Buffer) const;
+		virtual RTexturePtr GetGBufferTexture(EGBuffers Buffer) const;
 
 		virtual RTexturePtr GetMainScreenColorTexture() const;
 
@@ -90,7 +90,7 @@ namespace ESource {
 	template<typename T>
 	bool RenderPipeline::CreateStage(const IName & StageName) {
 		if (RenderStages.find(StageName.GetID()) == RenderStages.end()) {
-			RenderStages.insert(std::pair<size_t, T *>(StageName.GetID(), new T(StageName, this)));
+			RenderStages.insert(std::pair<size_t, RenderStage *>(StageName.GetID(), new T(StageName, this)));
 			return true;
 		}
 		return false;

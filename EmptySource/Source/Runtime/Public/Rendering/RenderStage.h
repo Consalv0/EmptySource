@@ -14,9 +14,17 @@ namespace ESource {
 	public:
 		RenderScene Scene;
 
+		uint8_t RenderingMask;
+
 		inline const IName & GetName() const { return Name; };
 
+	private:
+		IName Name;
+
 	protected:
+		RenderTargetPtr Target;
+		RenderTargetPtr GeometryBufferTarget;
+
 		friend class RenderPipeline;
 
 		RenderStage(const IName & Name, RenderPipeline * Pipeline);
@@ -27,27 +35,21 @@ namespace ESource {
 
 		virtual void Begin();
 
-		virtual void SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix);
+		virtual void SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t RenderingMask);
 
-		virtual void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity);
+		virtual void SubmitMeshInstance(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t RenderingMask);
 
-		virtual void SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection);
+		virtual void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, uint8_t RenderingMask);
+
+		virtual void SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t RenderingMask);
 
 		virtual void SubmitSpotShadowMap(const RTexturePtr & Texture, const float & Bias);
 
-		virtual void SetEyeTransform(const Transform & EyeTransform);
-
-		virtual void SetProjectionMatrix(const Matrix4x4 & Projection);
+		virtual void SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderingMask);
 
 		virtual void SetRenderTarget(const RenderTargetPtr & InTarget);
 
 		virtual void SetGeometryBuffer(const RenderTargetPtr & InTarget);
-
-	private:
-		IName Name;
-
-		RenderTargetPtr Target;
-		RenderTargetPtr GeometryBufferTarget;
 	};
 
 }

@@ -142,12 +142,13 @@ namespace ESource {
 		Unbind();
 	}
 
-	void OpenGLRenderTarget::TransferDepthTo(RenderTarget * Target, const EPixelFormat & Value, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) {
+	void OpenGLRenderTarget::TransferBitsTo(RenderTarget * Target, bool Color, bool Stencil, bool Depth, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) {
 		GLuint FramebufferTarget = Target == NULL ? 0 : ((OpenGLRenderTarget *)(Target))->FramebufferObject;
+		GLuint BitMask = Color ? GL_COLOR_BUFFER_BIT : 0 | Stencil ? GL_STENCIL_BUFFER_BIT : 0 | Depth ? GL_DEPTH_BUFFER_BIT : 0;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, FramebufferObject);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FramebufferTarget);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FramebufferTarget); // GL_COLOR_BUFFER_BIT
 		glBlitFramebuffer(From.MinX, From.MinY, From.MaxX, From.MaxY, To.MinX, To.MinY, To.MaxX, To.MaxY,
-			GL_DEPTH_BUFFER_BIT, OpenGLAPI::FilterModeToBaseType(FilterMode));
+			BitMask, OpenGLAPI::FilterModeToBaseType(FilterMode));
 	}
 
 	void OpenGLRenderTarget::ReleaseTextures() {

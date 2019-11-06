@@ -32,7 +32,7 @@ namespace ESource {
 		virtual void CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) = 0;
 
 		//* Copy the depth buffer to another render, if Null it will use the default render
-		virtual void TransferDepthTo(RenderTarget * Target, const EPixelFormat& Value, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) = 0;
+		virtual void TransferBitsTo(RenderTarget * Target, bool Color, bool Stencil, bool Depth, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) = 0;
 
 		//* Returns empty if no texture
 		virtual Texture * GetBindedTexture(int Index) const = 0;

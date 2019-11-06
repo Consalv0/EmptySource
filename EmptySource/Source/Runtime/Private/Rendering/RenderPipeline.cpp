@@ -99,28 +99,27 @@ namespace ESource {
 		ActiveStage = NULL;
 	}
 
-	void RenderPipeline::SubmitSubmesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+	void RenderPipeline::SubmitSubmesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
 		if (ModelPointer == NULL || !ModelPointer->IsValid()) return;
 		if (ModelPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == ModelPointer->GetVertexData().SubdivisionsMap.end()) {
 			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", ModelPointer->GetName().GetDisplayName(), Subdivision); return;
 		}
-		ActiveStage->SubmitMesh(ModelPointer, ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix);
+		ActiveStage->SubmitMesh(ModelPointer, ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix, CullingMask);
 	}
 
-	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {
-		ActiveStage->SubmitSpotLight(Position, Color, Direction, Intensity, Projection);
+	void RenderPipeline::SubmitSubmeshInstance(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
+	}
+
+	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t CullingMask) {
+		ActiveStage->SubmitSpotLight(Position, Color, Direction, Intensity, Projection, CullingMask);
 	}
 
 	void RenderPipeline::SubmitSpotShadowMap(const RTexturePtr & ShadowMap, const float & Bias) {
 		ActiveStage->SubmitSpotShadowMap(ShadowMap, Bias);
 	}
 
-	void RenderPipeline::SetEyeTransform(const Transform & EyeTransform) {
-		ActiveStage->SetEyeTransform(EyeTransform);
-	}
-
-	void RenderPipeline::SetProjectionMatrix(const Matrix4x4 & Projection) {
-		ActiveStage->SetProjectionMatrix(Projection);
+	void RenderPipeline::SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderingMask) {
+		ActiveStage->SetCamera(EyeTransform, Projection, RenderingMask);
 	}
 
 	IntVector2 RenderPipeline::GetRenderSize() const {
@@ -135,7 +134,7 @@ namespace ESource {
 		RenderScale = Math::Clamp01(Scale);
 	}
 
-	RTexturePtr RenderPipeline::GetGBufferTexture(GBuffers Buffer) const {
+	RTexturePtr RenderPipeline::GetGBufferTexture(EGBuffers Buffer) const {
 		return GeometryBufferTextures[Buffer];
 	}
 

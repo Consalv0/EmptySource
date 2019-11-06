@@ -16,6 +16,8 @@ namespace ESource {
 
 		Vector2 CullingDistances;
 
+		uint8_t RenderingMask;
+
 	protected:
 		typedef CComponent Supper;
 		CCamera(GGameObject & GameObject);

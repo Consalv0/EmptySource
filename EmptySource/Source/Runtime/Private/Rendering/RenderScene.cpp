@@ -22,7 +22,11 @@ namespace ESource {
 	void RenderScene::Clear() {
 		RenderElementsByMaterial.clear();
 		SortedMaterials.clear();
+		RenderElementsInstanceByMaterial.clear();
 		LightCount = -1;
+		for (int i = 0; i < 2; ++i) {
+			Lights[i].Color = 0.F;
+		}
 	}
 
 	void RenderScene::ForwardRender() {
@@ -65,7 +69,7 @@ namespace ESource {
 			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
 				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != CullingResult::Outside) {
+					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
 						MatIt->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
 						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
 					}
@@ -110,7 +114,7 @@ namespace ESource {
 			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
 				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != CullingResult::Outside) {
+					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
 						GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
 						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
 					}
@@ -157,7 +161,7 @@ namespace ESource {
 			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
 				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != CullingResult::Outside) {
+					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
 						GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
 						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
 					}
@@ -206,7 +210,7 @@ namespace ESource {
 			for (auto& Element : RenderElementsByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
 				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != CullingResult::Outside) {
+					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
 						Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
 						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
 					}
@@ -223,6 +227,27 @@ namespace ESource {
 	void RenderScene::Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix) {
 		if (Mat == NULL || MeshPtr == NULL) return;
 		RenderElementsByMaterial[Mat][MeshPtr].push_back(std::make_tuple(MeshSubdivision, Matrix));
+		bool Inserted = false;
+		for (TArray<MaterialPtr>::const_iterator MatIt = SortedMaterials.begin(); MatIt != SortedMaterials.end(); ++MatIt) {
+			if (Mat == *MatIt) {
+				Inserted = true;
+				break;
+			}
+			if (*(*MatIt) > *Mat) {
+				SortedMaterials.emplace(MatIt, Mat);
+				Inserted = true;
+				break;
+			}
+		}
+
+		if (!Inserted) {
+			SortedMaterials.push_back(Mat);
+		}
+	}
+
+	void RenderScene::SubmitInstance(const MaterialPtr & Mat, const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix) {
+		if (Mat == NULL || MeshPtr == NULL) return;
+		RenderElementsInstanceByMaterial[Mat][MeshPtr].push_back(std::make_tuple(MeshSubdivision, Matrix));
 		bool Inserted = false;
 		for (TArray<MaterialPtr>::const_iterator MatIt = SortedMaterials.begin(); MatIt != SortedMaterials.end(); ++MatIt) {
 			if (Mat == *MatIt) {

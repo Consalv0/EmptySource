@@ -16,15 +16,23 @@
 namespace ESource {
 	
 	RenderStage::RenderStage(const IName & Name, RenderPipeline * Pipeline) 
-		: Name(Name), Scene(), Pipeline(Pipeline) {
+		: Name(Name), Scene(), RenderingMask(UINT8_MAX), Pipeline(Pipeline) {
 	}
 
-	void RenderStage::SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix) {
+	void RenderStage::SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t InRenderingMask) {
+		if (!(RenderingMask & InRenderingMask)) return;
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
 		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
 	}
 
-	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity) {
+	void RenderStage::SubmitMeshInstance(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t InRenderingMask) {
+		if (!(RenderingMask & InRenderingMask)) return;
+		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
+		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
+	}
+
+	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, uint8_t InRenderingMask) {
+		if (!(RenderingMask & InRenderingMask)) return;
 		Scene.LightCount++;
 		Scene.Lights[Scene.LightCount].Transformation = Transformation;
 		Scene.Lights[Scene.LightCount].Color = Color;
@@ -34,7 +42,8 @@ namespace ESource {
 		Scene.Lights[Scene.LightCount].ShadowMap = NULL;
 	}
 
-	void RenderStage::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection) {
+	void RenderStage::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t InRenderingMask) {
+		if (!(RenderingMask & InRenderingMask)) return;
 		Scene.LightCount++;
 		Scene.Lights[Scene.LightCount].Transformation = Transformation;
 		Scene.Lights[Scene.LightCount].Color = Color;
@@ -52,11 +61,9 @@ namespace ESource {
 		Scene.Lights[Scene.LightCount].CastShadow = true;
 	}
 
-	void RenderStage::SetEyeTransform(const Transform & EyeTransform) {
+	void RenderStage::SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t InRenderingMask) {
+		if (!(RenderingMask & InRenderingMask)) return;
 		Scene.EyeTransform = EyeTransform;
-	}
-
-	void RenderStage::SetProjectionMatrix(const Matrix4x4 & Projection) {
 		Scene.ProjectionMatrix = Projection;
 	}
 
@@ -83,8 +90,8 @@ namespace ESource {
 		GeometryBufferTarget->Clear();
 		Scene.DeferredRenderOpaque();
 		Rendering::Flush();
-		GeometryBufferTarget->TransferDepthTo(
-			&*Target, PF_ShadowDepth, FM_MinMagNearest,
+		GeometryBufferTarget->TransferBitsTo(
+			&*Target, false, true, true, FM_MinMagNearest,
 			Target->GetViewport(), GeometryBufferTarget->GetViewport()
 		);
 		GeometryBufferTarget->Bind();
@@ -265,8 +272,8 @@ namespace ESource {
 		SSAOBlurTarget->Unbind();
 		Rendering::Flush();
 
-		Target->TransferDepthTo(
-			NULL, PF_ShadowDepth, FM_MinMagNearest,
+		Target->TransferBitsTo(
+			NULL, false, true, true, FM_MinMagNearest,
 			{ 0, 0, Target->GetSize().X, Target->GetSize().Y },
 			{ Application::GetInstance()->GetWindow().GetViewport() }
 		);

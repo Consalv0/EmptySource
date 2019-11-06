@@ -20,6 +20,8 @@ namespace ESource {
 
 		void Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
 
+		void SubmitInstance(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
+
 		VertexBufferPtr ModelMatrixBuffer;
 
 		Transform EyeTransform;
@@ -41,6 +43,8 @@ namespace ESource {
 		
 		TArray<MaterialPtr> SortedMaterials;
 		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsByMaterial;
+
+		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsInstanceByMaterial;
 
 	};
 

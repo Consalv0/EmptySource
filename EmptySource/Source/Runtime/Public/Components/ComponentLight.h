@@ -17,6 +17,7 @@ namespace ESource {
 		float ShadowMapBias;
 		float ApertureAngle;
 		Vector2 CullingPlanes;
+		uint8_t RenderingMask;
 
 	protected:
 		typedef CComponent Supper;

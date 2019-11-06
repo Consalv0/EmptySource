@@ -50,6 +50,8 @@
 #include "../External/SDL2/include/SDL_keycode.h"
 
 #include "../Public/GameSpaceLayer.h"
+#include "../Public/RenderStageFirst.h"
+#include "../Public/RenderStageSecond.h"
 
 using namespace ESource;
 
@@ -150,6 +152,11 @@ protected:
 		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
 		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_R.jpg");
 
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_A.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_N.png");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_R.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_AO.jpeg");
+
 		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_A.jpg");
 		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_N.png");
 		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_R.jpg");
@@ -176,8 +183,10 @@ protected:
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
 		// https://sketchfab.com/3d-models/eastern-substances-6eae4e979bc447c99af70284bfc4065a
+		// https://sketchfab.com/3d-models/low-poly-stylized-ground-314529106f6640f4b436408095b0944c
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/TileDesertSends.obj", true);
 		ModelMng.CreateSubModelMesh(L"TileDesertSends", L"TileDesertSends");
+		ModelMng.CreateSubModelMesh(L"TileDesertSends", L"TileGroundBricks");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/EgyptianCat.obj", true);
 		ModelMng.CreateSubModelMesh(L"EgyptianCat", L"Cat_Statue_CatStatue");
 		// https://sketchfab.com/3d-models/fallout-car-2-cf54e5b166644fc7ade7bbaac502a04f
@@ -198,6 +207,12 @@ protected:
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_R") } },
+		});
+		MaterialMng.CreateMaterial(L"Tiles/GroundBricks", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_A") } },
+			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_N") } },
+			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_R") } },
+			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_AO") } },
 		});
 		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_A") } },
@@ -888,7 +903,12 @@ protected:
 	virtual void OnAwake() override {
 		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
 
-		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"TestStage");
+		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageFirst>(L"FirstStage");
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"FirstStage")->RenderingMask = 1 << 1;
+		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageSecond>(L"SecondStage");
+		Application::GetInstance()->GetRenderPipeline().GetStage(L"SecondStage")->RenderingMask = 1 << 0;
+		Application::GetInstance()->GetRenderPipeline().Exposure = 3.5F;
+		SkyboxRoughness = 0.225F;
 
 		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, false, true);
 		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Hololooo.wav"), 0.255F, false, true);
@@ -969,30 +989,30 @@ protected:
 
 	virtual void OnUpdate(Timestamp Stamp) override {
 
-		if (Input::IsKeyPressed(Scancode::Backspace)) {
+		if (Input::IsKeyPressed(EScancode::Insert)) {
 			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
 		}
 
-		if (Input::IsKeyDown(Scancode::LeftShift)) {
-			if (Input::IsKeyDown(Scancode::I)) {
+		if (Input::IsKeyDown(EScancode::LeftShift)) {
+			if (Input::IsKeyDown(EScancode::I)) {
 				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 
-			if (Input::IsKeyDown(Scancode::K)) {
+			if (Input::IsKeyDown(EScancode::K)) {
 				FontSize -= Time::GetDeltaTime<Time::Second>() * FontSize;
 			}
 		}
 		else {
-			if (Input::IsKeyDown(Scancode::I)) {
+			if (Input::IsKeyDown(EScancode::I)) {
 				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 
-			if (Input::IsKeyDown(Scancode::K)) {
+			if (Input::IsKeyDown(EScancode::K)) {
 				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10.F;
 			}
 		}
 
-		if (Input::IsKeyDown(Scancode::V)) {
+		if (Input::IsKeyDown(EScancode::V)) {
 			for (int i = 0; i < 10; i++) {
 				RenderingText[1] += (unsigned long)(rand() % 0x3fff);
 			}
@@ -1007,6 +1027,16 @@ protected:
 				FontMap->GenerateMipMaps();
 			}
 		}
+
+		if (Input::IsKeyPressed(EScancode::F11)) {
+			auto & AppWindow = Application::GetInstance()->GetWindow();
+			AppWindow.SetWindowMode(AppWindow.GetWindowMode() == WM_Windowed ? WM_FullScreen : WM_Windowed);
+		}
+
+		if (Input::IsKeyDown(EScancode::Escape)) {
+			Application::GetInstance()->ShouldClose();
+		}
+
 	}
 
 	virtual void OnRender() override {
@@ -1065,11 +1095,6 @@ protected:
 			1.F / Time::GetAverageDelta<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>()
 		);
-
-		if (Input::IsKeyDown(Scancode::Escape)) {
-			Application::GetInstance()->ShouldClose();
-		}
-
 	}
 
 	virtual void OnDetach() override { }
