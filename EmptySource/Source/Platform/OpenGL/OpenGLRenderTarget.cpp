@@ -78,13 +78,16 @@ namespace ESource {
 		return RenderingTextures[Index];
 	}
 
-	void OpenGLRenderTarget::BindDepthTexture2D(Texture2D * Texture, const IntVector2 & InSize, int Lod) {
+	void OpenGLRenderTarget::BindDepthTexture2D(Texture2D * Texture, EPixelFormat Format, const IntVector2 & InSize, int Lod) {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
 		Size = InSize;
 		Bind();
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER,
+			Format == PF_DepthStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
+			GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
 		if (RenderingTextures.size() <= 1) {
 			glDrawBuffer(GL_NONE);
 		}
@@ -137,7 +140,11 @@ namespace ESource {
 			glGenRenderbuffers(1, &RenderbufferObject);
 			glBindRenderbuffer(GL_RENDERBUFFER, RenderbufferObject);
 			glRenderbufferStorage(GL_RENDERBUFFER, OpenGLPixelFormatInfo[Format].InputFormat, Size.X, Size.Y);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderbufferObject);
+			glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER,
+				Format == PF_DepthStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, RenderbufferObject
+			);
 		}
 		Unbind();
 	}

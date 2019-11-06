@@ -20,19 +20,19 @@ namespace ESource {
 	}
 
 	void RenderStage::SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t InRenderingMask) {
-		if (!(RenderingMask & InRenderingMask)) return;
+		if ((RenderingMask & InRenderingMask) == 0) return;
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
 		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
 	}
 
 	void RenderStage::SubmitMeshInstance(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t InRenderingMask) {
-		if (!(RenderingMask & InRenderingMask)) return;
+		if ((RenderingMask & InRenderingMask) == 0) return;
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
 		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
 	}
 
 	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, uint8_t InRenderingMask) {
-		if (!(RenderingMask & InRenderingMask)) return;
+		if ((RenderingMask & InRenderingMask) == 0) return;
 		Scene.LightCount++;
 		Scene.Lights[Scene.LightCount].Transformation = Transformation;
 		Scene.Lights[Scene.LightCount].Color = Color;
@@ -43,7 +43,7 @@ namespace ESource {
 	}
 
 	void RenderStage::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t InRenderingMask) {
-		if (!(RenderingMask & InRenderingMask)) return;
+		if ((RenderingMask & InRenderingMask) == 0) return;
 		Scene.LightCount++;
 		Scene.Lights[Scene.LightCount].Transformation = Transformation;
 		Scene.Lights[Scene.LightCount].Color = Color;
@@ -62,7 +62,7 @@ namespace ESource {
 	}
 
 	void RenderStage::SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t InRenderingMask) {
-		if (!(RenderingMask & InRenderingMask)) return;
+		if ((RenderingMask & InRenderingMask) == 0) return;
 		Scene.EyeTransform = EyeTransform;
 		Scene.ProjectionMatrix = Projection;
 	}
@@ -127,7 +127,7 @@ namespace ESource {
 		BloomThresholdTarget->Clear();
 		if (BloomThresholdShader && BloomThresholdShader->IsValid()) {
 			BloomThresholdShader->GetProgram()->Bind();
-			Rendering::SetActiveDepthTest(false);
+			Rendering::SetDepthWritting(false);
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
@@ -171,7 +171,7 @@ namespace ESource {
 			BloomHorizontalBlurTarget->BindTexture2D((Texture2D *)BloomHorizontalTexture->GetTexture(), BloomHorizontalTexture->GetSize());
 			BloomHorizontalBlurTarget->Bind();
 			BloomHorizontalBlurTarget->Clear();
-			Rendering::SetActiveDepthTest(false);
+			Rendering::SetDepthWritting(false);
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
@@ -190,7 +190,7 @@ namespace ESource {
 			BloomBlurTarget->BindTexture2D((Texture2D *)BloomTexture->GetTexture(), BloomTexture->GetSize());
 			BloomBlurTarget->Bind();
 			BloomBlurTarget->Clear();
-			Rendering::SetActiveDepthTest(false);
+			Rendering::SetDepthWritting(false);
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
@@ -238,7 +238,7 @@ namespace ESource {
 		SSAOTarget->Clear();
 		if (SSAOShader && SSAOShader->IsValid()) {
 			SSAOShader->GetProgram()->Bind();
-			Rendering::SetActiveDepthTest(false);
+			Rendering::SetDepthWritting(false);
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
@@ -261,7 +261,7 @@ namespace ESource {
 		SSAOBlurTarget->Clear();
 		if (SSAOShaderBlur && SSAOShaderBlur->IsValid()) {
 			SSAOShaderBlur->GetProgram()->Bind();
-			Rendering::SetActiveDepthTest(false);
+			Rendering::SetDepthWritting(false);
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
@@ -283,7 +283,7 @@ namespace ESource {
 
 		if (RenderShader && RenderShader->IsValid()) {
 			RenderShader->GetProgram()->Bind();
-			Rendering::SetActiveDepthTest(false);
+			Rendering::SetDepthWritting(false);
 			Rendering::SetDepthFunction(DF_Always);
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);

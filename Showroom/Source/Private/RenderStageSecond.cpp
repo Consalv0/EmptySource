@@ -21,14 +21,14 @@ RenderStageSecond::RenderStageSecond(const IName & Name, RenderPipeline * Pipeli
 	auto & TextureMng = TextureManager::GetInstance();
 	MainScreenColorTexture = TextureMng.CreateTexture2D(L"MainScreenColor2", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
 	MainScreenColorTexture->Load();
-	GeometryBufferTextures[GB_Depth] = TextureMng.CreateTexture2D(L"GBDepth2", L"", PF_DepthComponent24, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
+	GeometryBufferTextures[GB_Depth] = TextureMng.CreateTexture2D(L"GBDepth2", L"", PF_DepthStencil, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
 	GeometryBufferTextures[GB_Normal] = TextureMng.CreateTexture2D(L"GBNormal2", L"", PF_RG16F, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
 	GeometryBufferTextures[GB_Depth]->Load();
 	GeometryBufferTextures[GB_Normal]->Load();
 
 	MainScreenTarget = RenderTarget::Create();
 	MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), Pipeline->GetRenderSize());
-	MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, Pipeline->GetRenderSize());
+	MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthStencil, Pipeline->GetRenderSize());
 
 	GeometryBufferTarget2 = RenderTarget::Create();
 	Texture2D * Buffers[1] = {
@@ -36,7 +36,7 @@ RenderStageSecond::RenderStageSecond(const IName & Name, RenderPipeline * Pipeli
 	};
 	int Lods[1] = { 0 };
 	int Attachments[1] = { 0 };
-	GeometryBufferTarget2->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), Pipeline->GetRenderSize(), 0);
+	GeometryBufferTarget2->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), PF_DepthStencil, Pipeline->GetRenderSize(), 0);
 	GeometryBufferTarget2->BindTextures2D(Buffers, Pipeline->GetRenderSize(), Lods, Attachments, 1);
 }
 
@@ -92,7 +92,7 @@ void RenderStageSecond::End() {
 	BloomThresholdTarget->Clear();
 	if (BloomThresholdShader && BloomThresholdShader->IsValid()) {
 		BloomThresholdShader->GetProgram()->Bind();
-		Rendering::SetActiveDepthTest(false);
+		Rendering::SetDepthWritting(false);
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
@@ -136,7 +136,7 @@ void RenderStageSecond::End() {
 		BloomHorizontalBlurTarget->BindTexture2D((Texture2D *)BloomHorizontalTexture->GetTexture(), BloomHorizontalTexture->GetSize());
 		BloomHorizontalBlurTarget->Bind();
 		BloomHorizontalBlurTarget->Clear();
-		Rendering::SetActiveDepthTest(false);
+		Rendering::SetDepthWritting(false);
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
@@ -155,7 +155,7 @@ void RenderStageSecond::End() {
 		BloomBlurTarget->BindTexture2D((Texture2D *)BloomTexture->GetTexture(), BloomTexture->GetSize());
 		BloomBlurTarget->Bind();
 		BloomBlurTarget->Clear();
-		Rendering::SetActiveDepthTest(false);
+		Rendering::SetDepthWritting(false);
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
@@ -203,7 +203,7 @@ void RenderStageSecond::End() {
 	SSAOTarget->Clear();
 	if (SSAOShader && SSAOShader->IsValid()) {
 		SSAOShader->GetProgram()->Bind();
-		Rendering::SetActiveDepthTest(false);
+		Rendering::SetDepthWritting(false);
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
@@ -226,7 +226,7 @@ void RenderStageSecond::End() {
 	SSAOBlurTarget->Clear();
 	if (SSAOShaderBlur && SSAOShaderBlur->IsValid()) {
 		SSAOShaderBlur->GetProgram()->Bind();
-		Rendering::SetActiveDepthTest(false);
+		Rendering::SetDepthWritting(false);
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
@@ -247,7 +247,7 @@ void RenderStageSecond::End() {
 
 	if (RenderShader && RenderShader->IsValid()) {
 		RenderShader->GetProgram()->Bind();
-		Rendering::SetActiveDepthTest(false);
+		Rendering::SetDepthWritting(false);
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
@@ -281,7 +281,7 @@ void RenderStageSecond::Begin() {
 
 		MainScreenTarget = RenderTarget::Create();
 		MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), Pipeline->GetRenderSize());
-		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, Pipeline->GetRenderSize());
+		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthStencil, Pipeline->GetRenderSize());
 		MainScreenTarget->Unbind();
 
 		GeometryBufferTarget2 = RenderTarget::Create();
@@ -291,6 +291,6 @@ void RenderStageSecond::Begin() {
 		int Lods[1] = { 0 };
 		int Attachments[1] = { 0 };
 		GeometryBufferTarget2->BindTextures2D(Buffers, Pipeline->GetRenderSize(), Lods, Attachments, 1);
-		GeometryBufferTarget2->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), Pipeline->GetRenderSize(), 0);
+		GeometryBufferTarget2->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), PF_DepthStencil, Pipeline->GetRenderSize(), 0);
 	}
 }

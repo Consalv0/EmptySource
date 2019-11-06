@@ -525,6 +525,19 @@ protected:
 						"Never\0Less\0Equal\0LessEqual\0Greater\0NotEqual\0GreaterEqual\0Always\0");
 					ImGui::NextColumn();
 
+					ImGui::AlignTextToFramePadding(); ImGui::Text("Stencil"); ImGui::NextColumn();
+					ImGui::Combo("Function", (int *)&SelectedMaterial->StencilFunction,
+						"Never\0Less\0Equal\0LessEqual\0Greater\0NotEqual\0GreaterEqual\0Always\0");
+					ImGui::InputScalar("Reference", ImGuiDataType_U8,  &SelectedMaterial->StencilReference);
+					ImGui::InputScalar("Mask", ImGuiDataType_U8, &SelectedMaterial->StencilMask);
+					ImGui::Combo("OnlyPass", (int *)&SelectedMaterial->StencilOnlyPass,
+						"Keep\0Zero\0Replace\0Increment\0IncrementLoop\0Decrement\0DecrementLoop\0Invert\0");
+					ImGui::Combo("OnlyFail", (int *)&SelectedMaterial->StencilOnlyFail,
+						"Keep\0Zero\0Replace\0Increment\0IncrementLoop\0Decrement\0DecrementLoop\0Invert\0");
+					ImGui::Combo("PassFail", (int *)&SelectedMaterial->StencilPassFail,
+						"Keep\0Zero\0Replace\0Increment\0IncrementLoop\0Decrement\0DecrementLoop\0Invert\0");
+					ImGui::NextColumn();
+
 					ImGui::AlignTextToFramePadding(); ImGui::Text("Cull Mode"); ImGui::NextColumn();
 					ImGui::PushItemWidth(-1); ImGui::Combo("##CullMode", (int *)&SelectedMaterial->CullMode,
 						"None\0ClockWise\0CounterClockWise\0");

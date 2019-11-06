@@ -22,6 +22,12 @@ namespace ESource {
 		DepthFunction = DF_LessEqual;
 		FillMode = FM_Solid;
 		CullMode = CM_CounterClockWise;
+		StencilFunction = SF_Always;
+		StencilReference = 1;
+		StencilMask = 0xFF;
+		StencilOnlyPass = SO_Keep;
+		StencilOnlyFail = SO_Keep;
+		StencilPassFail = SO_Keep;
 	}
 
 	void Material::SetShaderProgram(const RShaderPtr & InShader) {
@@ -125,8 +131,10 @@ namespace ESource {
 	}
 
 	void Material::Use() const {
-		Rendering::SetActiveDepthTest(bWriteDepth);
+		Rendering::SetDepthWritting(bWriteDepth);
 		Rendering::SetDepthFunction(DepthFunction);
+		Rendering::SetStencilFunction(StencilFunction, StencilReference, StencilMask);
+		Rendering::SetStencilOperation(StencilOnlyPass, StencilOnlyFail, StencilPassFail);
 		Rendering::SetRasterizerFillMode(FillMode);
 		Rendering::SetCullMode(CullMode);
 

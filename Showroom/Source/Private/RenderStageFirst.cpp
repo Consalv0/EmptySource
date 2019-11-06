@@ -50,12 +50,6 @@ void RenderStageFirst::End() {
 	Scene.ForwardRender();
 	Rendering::Flush();
 	Target->Unbind();
-	Rendering::SetAlphaBlending(BF_None, BF_None);
-
-	Rendering::SetDefaultRender();
-	Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-	Rendering::SetViewport(Application::GetInstance()->GetWindow().GetViewport());
-
 }
 
 void RenderStageFirst::Begin() {

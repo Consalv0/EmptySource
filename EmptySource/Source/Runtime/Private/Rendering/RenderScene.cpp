@@ -179,11 +179,11 @@ namespace ESource {
 
 		static RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
-		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)SelectedLight.ShadowMap->GetTexture(), SelectedLight.ShadowMap->GetSize());
+		ShadowRenderTarget->BindDepthTexture2D((Texture2D *)SelectedLight.ShadowMap->GetTexture(), PF_ShadowDepth, SelectedLight.ShadowMap->GetSize());
 		Rendering::SetViewport({ 0, 0, SelectedLight.ShadowMap->GetSize().X, SelectedLight.ShadowMap->GetSize().Y });
 		ShadowRenderTarget->Clear();
 
-		Rendering::SetActiveDepthTest(true);
+		Rendering::SetDepthWritting(true);
 		Rendering::SetDepthFunction(DF_LessEqual);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);

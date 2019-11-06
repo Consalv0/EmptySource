@@ -22,7 +22,17 @@ namespace ESource {
 
 		virtual void SetActiveDepthTest(bool Option) = 0;
 
+		virtual void SetDepthWritting(bool Option) = 0;
+
 		virtual void SetDepthFunction(EDepthFunction Function) = 0;
+
+		virtual void SetActiveStencilTest(bool Option) = 0;
+
+		virtual void SetStencilMask(uint8_t Mask) = 0;
+
+		virtual void SetStencilFunction(EStencilFunction Function, uint8_t Reference, uint8_t Mask) = 0;
+
+		virtual void SetStencilOperation(EStencilOperation Pass, EStencilOperation Fail, EStencilOperation PassFail) = 0;
 
 		virtual void SetCullMode(ECullMode Mode) = 0;
 

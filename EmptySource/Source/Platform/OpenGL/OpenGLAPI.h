@@ -15,6 +15,8 @@ namespace ESource {
 
 		static uint32_t FilterModeToBaseType(EFilterMode Mode);
 
+		static uint32_t StencilOperationToBaseType(EStencilOperation Operation);
+
 		virtual void ClearCurrentRender(bool bClearColor, const Vector4& Color, bool bClearDepth, float Depth, bool bClearStencil, uint32_t Stencil) override;
 
 		virtual void SetDefaultRender() override;
@@ -29,7 +31,17 @@ namespace ESource {
 
 		virtual void SetActiveDepthTest(bool Option) override;
 
+		virtual void SetDepthWritting(bool Option) override;
+
 		virtual void SetDepthFunction(EDepthFunction Function) override;
+
+		virtual void SetActiveStencilTest(bool Option) override;
+
+		virtual void SetStencilMask(uint8_t Mask) override;
+
+		virtual void SetStencilFunction(EStencilFunction Function, uint8_t Reference, uint8_t Mask) override;
+
+		virtual void SetStencilOperation(EStencilOperation Pass, EStencilOperation Fail, EStencilOperation PassFail) override;
 
 		virtual void SetCullMode(ECullMode Mode) override;
 

@@ -40,8 +40,28 @@ namespace ESource {
 			RendererAppInterface->SetActiveDepthTest(Option);
 		}
 
+		inline static void SetDepthWritting(bool Option) {
+			RendererAppInterface->SetDepthWritting(Option);
+		}
+
 		inline static void SetDepthFunction(EDepthFunction Function) {
 			RendererAppInterface->SetDepthFunction(Function);
+		}
+
+		inline static void SetActiveStencilTest(bool Option) {
+			RendererAppInterface->SetActiveStencilTest(Option);
+		}
+
+		inline static void SetStencilMask(uint8_t Mask) {
+			RendererAppInterface->SetStencilMask(Mask);
+		}
+
+		inline static void SetStencilFunction(EStencilFunction Function, uint8_t Reference, uint8_t Mask) {
+			RendererAppInterface->SetStencilFunction(Function, Reference, Mask);
+		}
+
+		inline static void SetStencilOperation(EStencilOperation Pass, EStencilOperation Fail, EStencilOperation Both) {
+			RendererAppInterface->SetStencilOperation(Pass, Fail, Both);
 		}
 
 		inline static void SetCullMode(ECullMode Mode) {

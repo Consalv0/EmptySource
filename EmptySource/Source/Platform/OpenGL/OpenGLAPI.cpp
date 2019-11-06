@@ -90,6 +90,20 @@ namespace ESource {
 		}
 	}
 
+	uint32_t OpenGLAPI::StencilOperationToBaseType(EStencilOperation Operation) {
+		switch (Operation) {
+		case SO_Keep:          return GL_KEEP;
+		case SO_Zero:          return GL_ZERO;
+		case SO_Replace:       return GL_REPLACE;
+		case SO_Increment:     return GL_INCR;
+		case SO_IncrementLoop: return GL_INCR_WRAP;
+		case SO_Decrement:     return GL_DECR;
+		case SO_DecrementLoop: return GL_DECR_WRAP;
+		case SO_Invert:        return GL_INVERT;
+		default:               return GL_KEEP;
+		}
+	}
+
 	void OpenGLAPI::ClearCurrentRender(bool bClearColor, const Vector4 & Color, bool bClearDepth, float Depth, bool bClearStencil, uint32_t Stencil) {
 		GLbitfield ClearFlags = 0;
 
@@ -149,11 +163,17 @@ namespace ESource {
 	}
 
 	void OpenGLAPI::SetActiveDepthTest(bool Option) {
-		glDepthMask(Option);
+		if (Option)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLAPI::SetDepthWritting(bool Option) {
+		glDepthMask(Option ? GL_TRUE : GL_FALSE);
 	}
 
 	void OpenGLAPI::SetDepthFunction(EDepthFunction Function) {
-		glEnable(GL_DEPTH_TEST);
 		switch (Function) {
 		case DF_Always:       glDepthFunc(GL_ALWAYS); break;
 		case DF_Equal:        glDepthFunc(GL_EQUAL); break;
@@ -164,6 +184,34 @@ namespace ESource {
 		case DF_Never:        glDepthFunc(GL_NEVER); break;
 		case DF_NotEqual:     glDepthFunc(GL_NOTEQUAL); break;
 		}
+	}
+
+	void OpenGLAPI::SetActiveStencilTest(bool Option) {
+		if (Option)
+			glEnable(GL_STENCIL_TEST);
+		else
+			glDisable(GL_STENCIL_TEST);
+	}
+
+	void OpenGLAPI::SetStencilMask(uint8_t Mask) {
+		glStencilMask(Mask);
+	}
+
+	void OpenGLAPI::SetStencilFunction(EStencilFunction Function, uint8_t Reference, uint8_t Mask) {
+		switch (Function) {
+		case SF_Always:       glStencilFunc(GL_ALWAYS, Reference, Mask); break;
+		case SF_Equal:        glStencilFunc(GL_EQUAL, Reference, Mask); break;
+		case SF_Greater:      glStencilFunc(GL_GREATER, Reference, Mask); break;
+		case SF_GreaterEqual: glStencilFunc(GL_GEQUAL, Reference, Mask); break;
+		case SF_Less:         glStencilFunc(GL_LESS, Reference, Mask); break;
+		case SF_LessEqual:    glStencilFunc(GL_LEQUAL, Reference, Mask); break;
+		case SF_Never:        glStencilFunc(GL_NEVER, Reference, Mask); break;
+		case SF_NotEqual:     glStencilFunc(GL_NOTEQUAL, Reference, Mask); break;
+		}
+	}
+
+	void OpenGLAPI::SetStencilOperation(EStencilOperation Pass, EStencilOperation Fail, EStencilOperation PassFail) {
+		glStencilOp(StencilOperationToBaseType(Fail), StencilOperationToBaseType(Pass), StencilOperationToBaseType(PassFail));
 	}
 
 	void OpenGLAPI::SetCullMode(ECullMode Mode) {

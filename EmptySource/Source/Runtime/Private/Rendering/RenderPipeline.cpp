@@ -25,10 +25,13 @@ namespace ESource {
 
 	void RenderPipeline::Initialize() {
 		Rendering::SetAlphaBlending(EBlendFactor::BF_SrcAlpha, EBlendFactor::BF_OneMinusSrcAlpha);
+		Rendering::SetActiveDepthTest(true);
+		Rendering::SetActiveStencilTest(true);
+
 		auto & TextureMng = TextureManager::GetInstance();
 		MainScreenColorTexture = TextureMng.CreateTexture2D(L"MainScreenColor",   L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		MainScreenColorTexture->Load();
-		GeometryBufferTextures[GB_Depth    ] = TextureMng.CreateTexture2D(L"GBDepth",     L"", PF_DepthComponent24, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
+		GeometryBufferTextures[GB_Depth    ] = TextureMng.CreateTexture2D(L"GBDepth",     L"", PF_DepthStencil, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		GeometryBufferTextures[GB_Normal   ] = TextureMng.CreateTexture2D(L"GBNormal",    L"", PF_RG16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		GeometryBufferTextures[GB_Specular ] = TextureMng.CreateTexture2D(L"GBSpecular",  L"", PF_RGBA8, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
 		GeometryBufferTextures[GB_Velocity ] = TextureMng.CreateTexture2D(L"GBVelocity",  L"", PF_RG16F, FM_MinMagNearest, SAM_Clamp, GetRenderSize());
@@ -39,7 +42,7 @@ namespace ESource {
 
 		MainScreenTarget = RenderTarget::Create();
 		MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), GetRenderSize());
-		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
+		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthStencil, GetRenderSize());
 
 		GeometryBufferTarget = RenderTarget::Create();
 		Texture2D * Buffers[2] = { 
@@ -48,7 +51,7 @@ namespace ESource {
 		};
 		int Lods[2] = { 0, 0 };
 		int Attachments[2] = { 0, 1 };
-		GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), GetRenderSize(), 0);
+		GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), PF_DepthStencil, GetRenderSize(), 0);
 		GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 2);
 
 		std::uniform_real_distribution<float> RandomFloats(0.0F, 1.0F);
@@ -175,7 +178,7 @@ namespace ESource {
 
 			MainScreenTarget = RenderTarget::Create();
 			MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), GetRenderSize());
-			MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthComponent24, GetRenderSize());
+			MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthStencil, GetRenderSize());
 			MainScreenTarget->Unbind();
 
 			GeometryBufferTarget = RenderTarget::Create();
@@ -186,7 +189,7 @@ namespace ESource {
 			int Lods[2] = { 0, 0 };
 			int Attachments[2] = { 0, 1 };
 			GeometryBufferTarget->BindTextures2D(Buffers, GetRenderSize(), Lods, Attachments, 2);
-			GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), GetRenderSize(), 0);
+			GeometryBufferTarget->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), PF_DepthStencil, GetRenderSize(), 0);
 			bNeedResize = false;
 		}
 	}

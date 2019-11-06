@@ -103,6 +103,28 @@ namespace ESource {
 		DF_Always
 	};
 
+	enum EStencilFunction {
+		SF_Never,
+		SF_Less,
+		SF_Equal,
+		SF_LessEqual,
+		SF_Greater,
+		SF_NotEqual,
+		SF_GreaterEqual,
+		SF_Always
+	};
+
+	enum EStencilOperation {
+		SO_Keep,
+		SO_Zero,
+		SO_Replace,
+		SO_Increment,
+		SO_IncrementLoop,
+		SO_Decrement,
+		SO_DecrementLoop,
+		SO_Invert
+	};
+
 	enum ECullMode {
 		CM_None,
 		CM_ClockWise,

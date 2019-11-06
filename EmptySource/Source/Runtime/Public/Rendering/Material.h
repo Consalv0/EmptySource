@@ -43,6 +43,12 @@ namespace ESource {
 		bool bCastShadows;
 		uint32_t RenderPriority;
 		EDepthFunction DepthFunction;
+		EStencilFunction StencilFunction;
+		uint8_t StencilReference;
+		uint8_t StencilMask;
+		EStencilOperation StencilOnlyPass;
+		EStencilOperation StencilOnlyFail;
+		EStencilOperation StencilPassFail;
 		ERasterizerFillMode FillMode;
 		ECullMode CullMode;
 
