@@ -14,12 +14,4 @@ protected:
 
 	virtual void Begin();
 
-private:
-	ESource::RenderTargetPtr MainScreenTarget;
-
-	ESource::RenderTargetPtr GeometryBufferTarget2;
-
-	ESource::RTexturePtr MainScreenColorTexture;
-
-	ESource::RTexturePtr GeometryBufferTextures[2];
 };

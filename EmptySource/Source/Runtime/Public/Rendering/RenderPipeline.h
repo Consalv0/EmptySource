@@ -34,17 +34,15 @@ namespace ESource {
 
 		virtual void ContextInterval(int Interval);
 
-		virtual void BeginStage(const IName & StageName);
+		virtual void Begin();
 
-		virtual void EndStage();
+		virtual void End();
 
 		virtual void SubmitSubmesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask);
 
 		virtual void SubmitSubmeshInstance(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask);
 
-		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t CullingMask);
-
-		virtual void SubmitSpotShadowMap(const RTexturePtr & ShadowMap, const float & Bias);
+		virtual void SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & ShadowMap, const float & Bias, uint8_t CullingMask);
 
 		virtual void SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderingMask);
 
@@ -64,8 +62,6 @@ namespace ESource {
 
 		virtual class RenderStage * GetStage(const IName & StageName) const;
 
-		virtual class RenderStage * GetActiveStage() const;
-
 		virtual void BeginFrame();
 
 		virtual void EndOfFrame();
@@ -83,8 +79,6 @@ namespace ESource {
 
 		// Render Scale Target
 		float RenderScale;
-
-		class RenderStage * ActiveStage;
 	};
 
 	template<typename T>

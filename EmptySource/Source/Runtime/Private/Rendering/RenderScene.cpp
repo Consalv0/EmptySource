@@ -20,27 +20,30 @@ namespace ESource {
 	}
 
 	void RenderScene::Clear() {
-		RenderElementsByMaterial.clear();
+		RenderElementsByMeshByMaterial.clear();
 		SortedMaterials.clear();
-		RenderElementsInstanceByMaterial.clear();
+		RenderElementsInstanceByMeshByMaterial.clear();
 		LightCount = -1;
+		CameraCount = -1;
 		for (int i = 0; i < 2; ++i) {
 			Lights[i].Color = 0.F;
+			Lights[i].RenderMask = UINT8_MAX;
+		}
+		for (int i = 0; i < 2; ++i) {
+			Cameras[i].RenderMask = UINT8_MAX;
 		}
 	}
 
-	void RenderScene::ForwardRender() {
-		Frustrum ViewFrustrum = Frustrum::FromProjectionViewMatrix(ProjectionMatrix * EyeTransform.GetGLViewMatrix());
-
+	void RenderScene::ForwardRender(uint8_t CameraIndex) {
 		for (auto & MatIt : SortedMaterials) {
 			RTexturePtr EnviromentCubemap = TextureManager::GetInstance().GetTexture(L"CubemapTexture");
 			float CubemapTextureMipmaps = 0.F;
 			if (EnviromentCubemap)
 				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
 			MatIt->SetParameters({
-				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
-				{ "_ProjectionMatrix",            { ProjectionMatrix }, SPFlags_IsInternal },
-				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
+				{ "_ViewPosition",                { Cameras[CameraIndex].EyeTransform.Position }, SPFlags_IsInternal },
+				{ "_ProjectionMatrix",            { Cameras[CameraIndex].ProjectionMatrix }, SPFlags_IsInternal },
+				{ "_ViewMatrix",                  { Cameras[CameraIndex].EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_Lights[0].Position",          { Lights[0].Transformation.Position }, SPFlags_IsInternal },
 				{ "_Lights[0].ProjectionMatrix",  { Lights[0].ProjectionMatrix }, SPFlags_IsInternal},
 				{ "_Lights[0].ViewMatrix",        { Lights[0].Transformation.GetGLViewMatrix() }, SPFlags_IsInternal },
@@ -66,22 +69,23 @@ namespace ESource {
 				});
 			MatIt->Use();
 
-			for (auto& Element : RenderElementsByMaterial[MatIt]) {
+			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
-				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
-						MatIt->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
-						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
+				for (auto & ElementInstance : Element.second) {
+					if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+						if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+							MatIt->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+						}
 					}
 				}
 			}
 		}
 	}
 
-	void RenderScene::DeferredRenderOpaque() {
+	void RenderScene::DeferredRenderOpaque(uint8_t CameraIndex) {
 		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
 		if (GShader == NULL || !GShader->IsValid()) return;
-		Frustrum ViewFrustrum = Frustrum::FromProjectionViewMatrix(ProjectionMatrix * EyeTransform.GetGLViewMatrix());
 		Material GMat = Material(L"GPass");
 		GMat.SetShaderProgram(GShader);
 
@@ -92,9 +96,9 @@ namespace ESource {
 			if (EnviromentCubemap)
 				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
 			MatIt->SetParameters({
-				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
-				{ "_ProjectionMatrix",            { ProjectionMatrix }, SPFlags_IsInternal },
-				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
+				{ "_ViewPosition",                { Cameras[CameraIndex].EyeTransform.Position }, SPFlags_IsInternal },
+				{ "_ProjectionMatrix",            { Cameras[CameraIndex].ProjectionMatrix }, SPFlags_IsInternal },
+				{ "_ViewMatrix",                  { Cameras[CameraIndex].EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal }
 				});
 			GMat.SetParameters({
@@ -106,27 +110,34 @@ namespace ESource {
 			GMat.DepthFunction = MatIt->DepthFunction;
 			GMat.CullMode = MatIt->CullMode;
 			GMat.FillMode = MatIt->FillMode;
+			GMat.StencilFunction = MatIt->StencilFunction;
+			GMat.StencilReference = MatIt->StencilReference;
+			GMat.StencilMask = MatIt->StencilMask;
+			GMat.StencilOnlyPass =  MatIt->StencilOnlyPass;
+			GMat.StencilOnlyFail =  MatIt->StencilOnlyFail;
+			GMat.StencilPassFail =  MatIt->StencilPassFail;
 
 			if (GMat.bWriteDepth == false) continue;
 
 			GMat.Use();
 
-			for (auto& Element : RenderElementsByMaterial[MatIt]) {
+			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
-				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
-						GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
-						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
+				for (auto & ElementInstance : Element.second) {
+					if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+						if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+							GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+						}
 					}
 				}
 			}
 		}
 	}
 
-	void RenderScene::DeferredRenderTransparent() {
+	void RenderScene::DeferredRenderTransparent(uint8_t CameraIndex) {
 		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
 		if (GShader == NULL || !GShader->IsValid()) return;
-		Frustrum ViewFrustrum = Frustrum::FromProjectionViewMatrix(ProjectionMatrix * EyeTransform.GetGLViewMatrix());
 		Material GMat = Material(L"GPass");
 		GMat.SetShaderProgram(GShader);
 
@@ -137,9 +148,9 @@ namespace ESource {
 			if (EnviromentCubemap)
 				CubemapTextureMipmaps = (float)EnviromentCubemap->GetMipMapCount();
 			MatIt->SetParameters({
-				{ "_ViewPosition",                { EyeTransform.Position }, SPFlags_IsInternal },
-				{ "_ProjectionMatrix",            { ProjectionMatrix }, SPFlags_IsInternal },
-				{ "_ViewMatrix",                  { EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
+				{ "_ViewPosition",                { Cameras[CameraIndex].EyeTransform.Position }, SPFlags_IsInternal },
+				{ "_ProjectionMatrix",            { Cameras[CameraIndex].ProjectionMatrix }, SPFlags_IsInternal },
+				{ "_ViewMatrix",                  { Cameras[CameraIndex].EyeTransform.GetGLViewMatrix() }, SPFlags_IsInternal },
 				{ "_GlobalTime",                  { Time::GetEpochTime<Time::Second>() }, SPFlags_IsInternal }
 			});
 			GMat.SetParameters({
@@ -153,17 +164,25 @@ namespace ESource {
 			GMat.DepthFunction = MatIt->DepthFunction;
 			GMat.CullMode = MatIt->CullMode;
 			GMat.FillMode = MatIt->FillMode;
+			GMat.StencilFunction = MatIt->StencilFunction;
+			GMat.StencilReference = MatIt->StencilReference;
+			GMat.StencilMask = MatIt->StencilMask;
+			GMat.StencilOnlyPass = MatIt->StencilOnlyPass;
+			GMat.StencilOnlyFail = MatIt->StencilOnlyFail;
+			GMat.StencilPassFail = MatIt->StencilPassFail;
 
 			if (GMat.bWriteDepth == false) continue;
 
 			GMat.Use();
 
-			for (auto& Element : RenderElementsByMaterial[MatIt]) {
+			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
-				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
-						GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
-						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
+				for (auto & ElementInstance : Element.second) {
+					if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+						if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+							GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+						}
 					}
 				}
 			}
@@ -175,7 +194,6 @@ namespace ESource {
 		if (!SelectedLight.CastShadow || SelectedLight.ShadowMap == NULL || !Shader->IsValid()) return;
 		SelectedLight.ShadowMap->Load();
 		if (SelectedLight.ShadowMap->GetLoadState() != LS_Loaded) return;
-		Frustrum ViewFrustrum = Frustrum::FromProjectionViewMatrix(SelectedLight.ProjectionMatrix * SelectedLight.Transformation.GetGLViewMatrix());
 
 		static RenderTargetPtr ShadowRenderTarget = RenderTarget::Create();
 		ShadowRenderTarget->Bind();
@@ -186,6 +204,8 @@ namespace ESource {
 		Rendering::SetDepthWritting(true);
 		Rendering::SetDepthFunction(DF_LessEqual);
 		Rendering::SetRasterizerFillMode(FM_Solid);
+		Rendering::SetStencilFunction(SF_Always, 0, 255);
+		Rendering::SetStencilOperation(SO_Keep, SO_Keep, SO_Keep);
 		Rendering::SetCullMode(CM_None);
 
 		RTexturePtr WhiteTexture = TextureManager::GetInstance().GetTexture(L"WhiteTexture");
@@ -207,12 +227,14 @@ namespace ESource {
 				Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
 			}
 
-			for (auto& Element : RenderElementsByMaterial[MatIt]) {
+			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
 				Element.first->GetVertexArray()->Bind();
-				for (auto & SubdivisionInstance : Element.second) {
-					if (ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(std::get<Matrix4x4>(SubdivisionInstance))) != ECullingResult::Outside) {
-						Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", std::get<Matrix4x4>(SubdivisionInstance).PointerToValue());
-						Rendering::DrawIndexed(Element.first->GetVertexArray(), std::get<Subdivision>(SubdivisionInstance));
+				for (auto & ElementInstance : Element.second) {
+					if (Lights[LightIndex].RenderMask & ElementInstance.RenderMask) {
+						if (Lights[LightIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+							Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+						}
 					}
 				}
 			}
@@ -224,9 +246,47 @@ namespace ESource {
 		ShadowRenderTarget->Unbind();
 	}
 
-	void RenderScene::Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix) {
+	void RenderScene::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, const RTexturePtr & Texture, const float & Bias, uint8_t RenderMask) {
+		if (LightCount >= 2) return; 
+		LightCount++;
+		Lights[LightCount].Transformation = Transformation;
+		Lights[LightCount].Color = Color;
+		Lights[LightCount].Direction = 0.F;
+		Lights[LightCount].Intensity = Intensity;
+		Lights[LightCount].ShadowMap = Texture;
+		Lights[LightCount].ShadowBias = Bias;
+		Lights[LightCount].CastShadow = Texture && Texture->IsValid();
+		// Lights[LightCount].ViewFrustrum = Frustrum::FromProjectionViewMatrix(ProjectionMatrix * EyeTransform.GetGLViewMatrix());
+		Lights[LightCount].RenderMask = RenderMask;
+	}
+
+	void RenderScene::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3 & Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & Texture, const float & Bias, uint8_t RenderMask) {
+		if (LightCount >= 2) return;
+		LightCount++;
+		Lights[LightCount].Transformation = Transformation;
+		Lights[LightCount].Color = Color;
+		Lights[LightCount].Direction = Direction;
+		Lights[LightCount].Intensity = Intensity;
+		Lights[LightCount].ProjectionMatrix = Projection;
+		Lights[LightCount].ShadowMap = Texture;
+		Lights[LightCount].ShadowBias = Bias;
+		Lights[LightCount].CastShadow = Texture && Texture->IsValid();
+		Lights[LightCount].ViewFrustrum = Frustrum::FromProjectionViewMatrix(Projection * Transformation.GetGLViewMatrix());
+		Lights[LightCount].RenderMask = RenderMask;
+	}
+
+	void RenderScene::AddCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderMask) {
+		if (CameraCount >= 2) return;
+		CameraCount++;
+		Cameras[CameraCount].EyeTransform = EyeTransform;
+		Cameras[CameraCount].ProjectionMatrix = Projection;
+		Cameras[CameraCount].ViewFrustrum = Frustrum::FromProjectionViewMatrix(Projection * EyeTransform.GetGLViewMatrix());
+		Cameras[CameraCount].RenderMask = RenderMask;
+	}
+
+	void RenderScene::Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix, uint8_t RenderingMask) {
 		if (Mat == NULL || MeshPtr == NULL) return;
-		RenderElementsByMaterial[Mat][MeshPtr].push_back(std::make_tuple(MeshSubdivision, Matrix));
+		RenderElementsByMeshByMaterial[Mat][MeshPtr].push_back({ MeshSubdivision, Matrix, RenderingMask });
 		bool Inserted = false;
 		for (TArray<MaterialPtr>::const_iterator MatIt = SortedMaterials.begin(); MatIt != SortedMaterials.end(); ++MatIt) {
 			if (Mat == *MatIt) {
@@ -245,9 +305,9 @@ namespace ESource {
 		}
 	}
 
-	void RenderScene::SubmitInstance(const MaterialPtr & Mat, const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix) {
+	void RenderScene::SubmitInstance(const MaterialPtr & Mat, const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4 & Matrix, uint8_t RenderingMask) {
 		if (Mat == NULL || MeshPtr == NULL) return;
-		RenderElementsInstanceByMaterial[Mat][MeshPtr].push_back(std::make_tuple(MeshSubdivision, Matrix));
+		RenderElementsInstanceByMeshByMaterial[Mat][MeshPtr].push_back({ MeshSubdivision, Matrix, RenderingMask });
 		bool Inserted = false;
 		for (TArray<MaterialPtr>::const_iterator MatIt = SortedMaterials.begin(); MatIt != SortedMaterials.end(); ++MatIt) {
 			if (Mat == *MatIt) {

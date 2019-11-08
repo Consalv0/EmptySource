@@ -18,58 +18,38 @@
 using namespace ESource;
 
 RenderStageSecond::RenderStageSecond(const IName & Name, RenderPipeline * Pipeline) : RenderStage(Name, Pipeline) {
-	auto & TextureMng = TextureManager::GetInstance();
-	MainScreenColorTexture = TextureMng.CreateTexture2D(L"MainScreenColor2", L"", PF_RGB16F, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
-	MainScreenColorTexture->Load();
-	GeometryBufferTextures[GB_Depth] = TextureMng.CreateTexture2D(L"GBDepth2", L"", PF_DepthStencil, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
-	GeometryBufferTextures[GB_Normal] = TextureMng.CreateTexture2D(L"GBNormal2", L"", PF_RG16F, FM_MinMagNearest, SAM_Clamp, Pipeline->GetRenderSize());
-	GeometryBufferTextures[GB_Depth]->Load();
-	GeometryBufferTextures[GB_Normal]->Load();
-
-	MainScreenTarget = RenderTarget::Create();
-	MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), Pipeline->GetRenderSize());
-	MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthStencil, Pipeline->GetRenderSize());
-
-	GeometryBufferTarget2 = RenderTarget::Create();
-	Texture2D * Buffers[1] = {
-		(Texture2D *)GeometryBufferTextures[GB_Normal]->GetTexture()
-	};
-	int Lods[1] = { 0 };
-	int Attachments[1] = { 0 };
-	GeometryBufferTarget2->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), PF_DepthStencil, Pipeline->GetRenderSize(), 0);
-	GeometryBufferTarget2->BindTextures2D(Buffers, Pipeline->GetRenderSize(), Lods, Attachments, 1);
 }
 
 void RenderStageSecond::End() {
 	if (Target == NULL) return;
-	MainScreenTarget->Bind();
-	MainScreenTarget->Clear();
-	MainScreenTarget->Unbind();
+	Target->Bind();
+	Target->Clear();
+	Target->Unbind();
 
 	Rendering::SetAlphaBlending(BF_None, BF_None);
 	Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 	Scene.RenderLightMap(1, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
 	Rendering::SetAlphaBlending(BF_None, BF_None);
-	Rendering::SetViewport(GeometryBufferTarget2->GetViewport());
-	GeometryBufferTarget2->Bind();
-	GeometryBufferTarget2->Clear();
-	Scene.DeferredRenderOpaque();
+	Rendering::SetViewport(GeometryBufferTarget->GetViewport());
+	GeometryBufferTarget->Bind();
+	GeometryBufferTarget->Clear();
+	Scene.DeferredRenderOpaque(0);
 	Rendering::Flush();
-	GeometryBufferTarget2->TransferBitsTo(
-		&*MainScreenTarget, true, true, true, FM_MinMagNearest,
-		MainScreenTarget->GetViewport(), GeometryBufferTarget2->GetViewport()
+	GeometryBufferTarget->TransferBitsTo(
+		&*Target, false, true, true, FM_MinMagNearest,
+		Target->GetViewport(), GeometryBufferTarget->GetViewport()
 	);
-	GeometryBufferTarget2->Bind();
-	Scene.DeferredRenderTransparent();
-	GeometryBufferTarget2->Unbind();
+	GeometryBufferTarget->Bind();
+	Scene.DeferredRenderTransparent(0);
+	GeometryBufferTarget->Unbind();
 	Rendering::Flush();
 
 	Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-	Rendering::SetViewport(MainScreenTarget->GetViewport());
-	MainScreenTarget->Bind();
-	Scene.ForwardRender();
+	Rendering::SetViewport(Target->GetViewport());
+	Target->Bind();
+	Scene.ForwardRender(0);
 	Rendering::Flush();
-	MainScreenTarget->Unbind();
+	Target->Unbind();
 	Rendering::SetAlphaBlending(BF_None, BF_None);
 
 	RShaderPtr BloomThresholdShader = ShaderManager::GetInstance().GetProgram(L"PostProcessingBloomThreshold");
@@ -96,7 +76,7 @@ void RenderStageSecond::End() {
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
-		BloomThresholdShader->GetProgram()->SetTexture("_MainTexture", MainScreenTarget->GetBindedTexture(0), 0);
+		BloomThresholdShader->GetProgram()->SetTexture("_MainTexture", Target->GetBindedTexture(0), 0);
 		const float Treshold = 1.0F;
 		BloomThresholdShader->GetProgram()->SetFloat1Array("_Threshold", &Treshold);
 		MeshPrimitives::Quad.GetVertexArray()->Bind();
@@ -208,11 +188,11 @@ void RenderStageSecond::End() {
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
 		SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
-		SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.ProjectionMatrix.PointerToValue());
-		SSAOShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Scene.EyeTransform.GetGLViewMatrix().PointerToValue());
+		SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.Cameras[0].ProjectionMatrix.PointerToValue());
+		SSAOShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Scene.Cameras[0].EyeTransform.GetGLViewMatrix().PointerToValue());
 		SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (SSAOTexture->GetSize().FloatVector3() / 4.0F).PointerToValue());
-		SSAOShader->GetProgram()->SetTexture("_GDepth", GeometryBufferTextures[GB_Depth]->GetTexture(), 0);
-		SSAOShader->GetProgram()->SetTexture("_GNormal", GeometryBufferTextures[GB_Normal]->GetTexture(), 1);
+		SSAOShader->GetProgram()->SetTexture("_GDepth", Pipeline->GetGBufferTexture(GB_Depth)->GetTexture(), 0);
+		SSAOShader->GetProgram()->SetTexture("_GNormal", Pipeline->GetGBufferTexture(GB_Normal)->GetTexture(), 1);
 		SSAOShader->GetProgram()->SetTexture("_NoiseTexture", TextureManager::GetInstance().GetTexture(L"SSAONoise")->GetTexture(), 2);
 		MeshPrimitives::Quad.GetVertexArray()->Bind();
 		Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
@@ -237,9 +217,9 @@ void RenderStageSecond::End() {
 	SSAOBlurTarget->Unbind();
 	Rendering::Flush();
 
-	MainScreenTarget->TransferBitsTo(
+	Target->TransferBitsTo(
 		NULL, false, true, true, FM_MinMagNearest,
-		MainScreenTarget->GetViewport(), Application::GetInstance()->GetWindow().GetViewport()
+		Target->GetViewport(), Application::GetInstance()->GetWindow().GetViewport()
 	);
 	Rendering::SetDefaultRender();
 	Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
@@ -252,10 +232,10 @@ void RenderStageSecond::End() {
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
 
-		RenderShader->GetProgram()->SetTexture("_MainTexture", MainScreenTarget->GetBindedTexture(0), 0);
+		RenderShader->GetProgram()->SetTexture("_MainTexture", Target->GetBindedTexture(0), 0);
 		RenderShader->GetProgram()->SetTexture("_BloomTexture", BloomTexture->GetTexture(), 1);
 		RenderShader->GetProgram()->SetTexture("_AOTexture", SSAOBlurTexture->GetTexture(), 2);
-		RenderShader->GetProgram()->SetTexture("_DepthTexture", GeometryBufferTextures[GB_Depth]->GetTexture(), 3);
+		RenderShader->GetProgram()->SetTexture("_DepthTexture", Pipeline->GetGBufferTexture(GB_Depth)->GetTexture(), 3);
 		RenderShader->GetProgram()->SetFloat1Array("_Exposure", &Pipeline->Exposure, 1);
 		RenderShader->GetProgram()->SetFloat1Array("_Gamma", &Pipeline->Gamma, 1);
 
@@ -266,31 +246,5 @@ void RenderStageSecond::End() {
 }
 
 void RenderStageSecond::Begin() {
-	Scene.Clear(); 
-	
-	if (MainScreenTarget->GetSize() != IntVector3(Pipeline->GetRenderSize(), 1)) {
-		MainScreenTarget.reset();
-		MainScreenColorTexture->Unload();
-		MainScreenColorTexture->SetSize(Pipeline->GetRenderSize());
-		MainScreenColorTexture->Load();
-		for (char i = 0; i < 2; ++i) {
-			GeometryBufferTextures[i]->Unload();
-			GeometryBufferTextures[i]->SetSize(Pipeline->GetRenderSize());
-			GeometryBufferTextures[i]->Load();
-		}
-
-		MainScreenTarget = RenderTarget::Create();
-		MainScreenTarget->BindTexture2D((Texture2D *)MainScreenColorTexture->GetTexture(), Pipeline->GetRenderSize());
-		MainScreenTarget->CreateRenderDepthBuffer2D(PF_DepthStencil, Pipeline->GetRenderSize());
-		MainScreenTarget->Unbind();
-
-		GeometryBufferTarget2 = RenderTarget::Create();
-		Texture2D * Buffers[1] = {
-			(Texture2D *)GeometryBufferTextures[GB_Normal]->GetTexture()
-		};
-		int Lods[1] = { 0 };
-		int Attachments[1] = { 0 };
-		GeometryBufferTarget2->BindTextures2D(Buffers, Pipeline->GetRenderSize(), Lods, Attachments, 1);
-		GeometryBufferTarget2->BindDepthTexture2D((Texture2D *)GeometryBufferTextures[GB_Depth]->GetTexture(), PF_DepthStencil, Pipeline->GetRenderSize(), 0);
-	}
+	Scene.Clear();
 }

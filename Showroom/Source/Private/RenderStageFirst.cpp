@@ -21,6 +21,7 @@ RenderStageFirst::RenderStageFirst(const IName & Name, RenderPipeline * Pipeline
 }
 
 void RenderStageFirst::End() {
+	return;
 	if (Target == NULL) return;
 	Target->Bind();
 	Target->Clear();
@@ -33,21 +34,21 @@ void RenderStageFirst::End() {
 	Rendering::SetViewport(GeometryBufferTarget->GetViewport());
 	GeometryBufferTarget->Bind();
 	GeometryBufferTarget->Clear();
-	Scene.DeferredRenderOpaque();
+	Scene.DeferredRenderOpaque(1);
 	Rendering::Flush();
 	GeometryBufferTarget->TransferBitsTo(
 		&*Target, true, true, true, FM_MinMagNearest,
 		Target->GetViewport(), GeometryBufferTarget->GetViewport()
 	);
 	GeometryBufferTarget->Bind();
-	Scene.DeferredRenderTransparent();
+	Scene.DeferredRenderTransparent(1);
 	GeometryBufferTarget->Unbind();
 	Rendering::Flush();
 
 	Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
 	Rendering::SetViewport(Target->GetViewport());
 	Target->Bind();
-	Scene.ForwardRender();
+	Scene.ForwardRender(1);
 	Rendering::Flush();
 	Target->Unbind();
 }

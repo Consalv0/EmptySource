@@ -57,6 +57,11 @@ namespace ESource {
 		virtual inline ETextureDimension GetDimension() const override { return Dimension; };
 
 	private:
+		bool bHasDepth;
+
+		bool bHasStencil;
+
+		bool bHasColor;
 
 		IntVector3 Size;
 

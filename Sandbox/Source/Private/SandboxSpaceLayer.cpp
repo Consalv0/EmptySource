@@ -364,9 +364,9 @@ void SandboxSpaceLayer::OnAwake() {
 }
 
 void SandboxSpaceLayer::OnRender() {
-	Application::GetInstance()->GetRenderPipeline().BeginStage(L"MainStage");
+	Application::GetInstance()->GetRenderPipeline().Begin();
 	Super::OnRender();
-	Application::GetInstance()->GetRenderPipeline().EndStage();
+	Application::GetInstance()->GetRenderPipeline().End();
 }
 
 GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node, GGameObject * NewObject) {

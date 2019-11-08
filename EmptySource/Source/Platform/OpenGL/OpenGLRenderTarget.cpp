@@ -41,6 +41,7 @@ namespace ESource {
 
 	OpenGLRenderTarget::OpenGLRenderTarget()
 		: RenderingTextures(), Dimension(ETextureDimension::None) {
+		bHasColor = bHasDepth = bHasStencil = false;
 		glGenFramebuffers(1, &FramebufferObject);
 		RenderbufferObject = GL_NONE;
 		LOG_CORE_DEBUG(L"Render Target {} Created", FramebufferObject);
@@ -82,11 +83,13 @@ namespace ESource {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
 		Size = InSize;
+		bHasStencil = OpenGLPixelFormatInfo[Format].InputFormat == GL_DEPTH_STENCIL;
+		bHasDepth = OpenGLPixelFormatInfo[Format].InputFormat == GL_DEPTH_STENCIL || OpenGLPixelFormatInfo[Format].InputFormat == GL_DEPTH_COMPONENT;
 		Bind();
 
 		glFramebufferTexture2D(
 			GL_FRAMEBUFFER,
-			Format == PF_DepthStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
+			bHasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
 			GL_TEXTURE_2D, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
 		if (RenderingTextures.size() <= 1) {
 			glDrawBuffer(GL_NONE);
@@ -98,6 +101,7 @@ namespace ESource {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
 		Size = IntVector3(InSize.X, InSize.Y, 1);
+		bHasColor = true;
 		Bind();
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment, (GLuint)(unsigned long long)Texture->GetNativeTexture(), Lod);
@@ -109,6 +113,7 @@ namespace ESource {
 	void OpenGLRenderTarget::BindTextures2D(Texture2D ** Textures, const IntVector2 & InSize, int * Lods, int * TextureAttachments, uint32_t Count) {
 		if (!IsValid()) return;
 		Size = IntVector3(InSize.X, InSize.Y, 1);
+		bHasColor = true;
 		Bind();
 
 		// Set the list of draw buffers.
@@ -128,6 +133,7 @@ namespace ESource {
 		if (!IsValid()) return;
 		RenderingTextures.push_back(Texture);
 		Size = IntVector3(InSize, InSize, 1);
+		bHasColor = true;
 		Bind();
 		
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + TextureAttachment,
@@ -135,6 +141,8 @@ namespace ESource {
 	}
 
 	void OpenGLRenderTarget::CreateRenderDepthBuffer2D(EPixelFormat Format, const IntVector2 & Size) {
+		bHasStencil = OpenGLPixelFormatInfo[Format].InputFormat == GL_DEPTH_STENCIL;
+		bHasDepth = OpenGLPixelFormatInfo[Format].InputFormat == GL_DEPTH_STENCIL || OpenGLPixelFormatInfo[Format].InputFormat == GL_DEPTH_COMPONENT;
 		Bind();
 		if (RenderbufferObject == GL_NONE) {
 			glGenRenderbuffers(1, &RenderbufferObject);
@@ -142,7 +150,7 @@ namespace ESource {
 			glRenderbufferStorage(GL_RENDERBUFFER, OpenGLPixelFormatInfo[Format].InputFormat, Size.X, Size.Y);
 			glFramebufferRenderbuffer(
 				GL_FRAMEBUFFER,
-				Format == PF_DepthStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
+				bHasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
 				GL_RENDERBUFFER, RenderbufferObject
 			);
 		}
@@ -151,7 +159,7 @@ namespace ESource {
 
 	void OpenGLRenderTarget::TransferBitsTo(RenderTarget * Target, bool Color, bool Stencil, bool Depth, const EFilterMode & FilterMode, const IntBox2D & From, const IntBox2D & To) {
 		GLuint FramebufferTarget = Target == NULL ? 0 : ((OpenGLRenderTarget *)(Target))->FramebufferObject;
-		GLuint BitMask = Color ? GL_COLOR_BUFFER_BIT : 0 | Stencil ? GL_STENCIL_BUFFER_BIT : 0 | Depth ? GL_DEPTH_BUFFER_BIT : 0;
+		GLuint BitMask = Color && bHasColor ? GL_COLOR_BUFFER_BIT : 0 | Stencil && bHasStencil ? GL_STENCIL_BUFFER_BIT : 0 | Depth && bHasDepth ? GL_DEPTH_BUFFER_BIT : 0;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, FramebufferObject);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FramebufferTarget); // GL_COLOR_BUFFER_BIT
 		glBlitFramebuffer(From.MinX, From.MinY, From.MaxX, From.MaxY, To.MinX, To.MinY, To.MaxX, To.MaxY,
@@ -163,7 +171,7 @@ namespace ESource {
 	}
 
 	void OpenGLRenderTarget::Clear() const {
-		Rendering::ClearCurrentRender(true, 0, true, 1, false, 0);
+		Rendering::ClearCurrentRender(bHasColor, 0, bHasDepth, 1, bHasStencil, 0);
 	}
 
 	bool OpenGLRenderTarget::IsValid() const {

@@ -146,6 +146,7 @@ namespace ESource {
 			if (!Time::bSkipRender) {
 				GetWindow().BeginFrame();
 				GetRenderPipeline().BeginFrame();
+
 				for (Layer* LayerPointer : AppLayerStack)
 					LayerPointer->OnRender();
 

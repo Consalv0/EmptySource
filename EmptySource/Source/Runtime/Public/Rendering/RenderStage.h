@@ -14,8 +14,6 @@ namespace ESource {
 	public:
 		RenderScene Scene;
 
-		uint8_t RenderingMask;
-
 		inline const IName & GetName() const { return Name; };
 
 	private:
@@ -39,11 +37,9 @@ namespace ESource {
 
 		virtual void SubmitMeshInstance(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t RenderingMask);
 
-		virtual void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, uint8_t RenderingMask);
+		virtual void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, const RTexturePtr & Texture, const float & Bias, uint8_t RenderingMask);
 
-		virtual void SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t RenderingMask);
-
-		virtual void SubmitSpotShadowMap(const RTexturePtr & Texture, const float & Bias);
+		virtual void SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & Texture, const float & Bias, uint8_t RenderingMask);
 
 		virtual void SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderingMask);
 

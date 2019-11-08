@@ -27,20 +27,21 @@ namespace ESource {
 	}
 
 	void CLight::OnRender() {
-		RenderPipeline & AppRenderPipeline = Application::GetInstance()->GetRenderPipeline();
-		AppRenderPipeline.SubmitSpotLight(GetGameObject().GetWorldTransform(), Color, GetGameObject().GetWorldTransform().Forward(), Intensity,
-			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.X, CullingPlanes.Y), RenderingMask
-		);
 		if (bCastShadow) {
 			if (ShadowMap == NULL)
 				ShadowMap = TextureManager::GetInstance().CreateTexture2D(
 					GetName().GetInstanceName() + L"_ShadowMap", L"", PF_ShadowDepth, FM_MinMagLinear, SAM_Clamp, ShadowMapSize
 				);
-			AppRenderPipeline.SubmitSpotShadowMap(ShadowMap, ShadowMapBias);
 		}
 		else if (ShadowMap != NULL) {
 			ShadowMap->Unload();
 		}
+
+		RenderPipeline & AppRenderPipeline = Application::GetInstance()->GetRenderPipeline();
+		AppRenderPipeline.SubmitSpotLight(GetGameObject().GetWorldTransform(), Color, GetGameObject().GetWorldTransform().Forward(), Intensity,
+			Matrix4x4::Perspective(ApertureAngle * MathConstants::DegreeToRad, 1.F, CullingPlanes.X, CullingPlanes.Y),
+			bCastShadow ? ShadowMap : NULL, ShadowMapBias, RenderingMask
+		);
 	}
 	
 	bool CLight::Initialize() {

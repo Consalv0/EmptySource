@@ -1,35 +1,11 @@
 #pragma once
 
+#include "Physics/Frustrum.h"
+
 namespace ESource {
 	
 	class RenderScene {
 	public:
-		RenderScene();
-
-		using RenderElement = std::tuple<RMeshPtr, Subdivision, Matrix4x4>;
-
-		void Clear();
-
-		void ForwardRender();
-
-		void DeferredRenderOpaque();
-
-		void DeferredRenderTransparent();
-
-		void RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader);
-
-		void Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
-
-		void SubmitInstance(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix);
-
-		VertexBufferPtr ModelMatrixBuffer;
-
-		Transform EyeTransform;
-
-		Matrix4x4 ProjectionMatrix;
-
-		int LightCount;
-
 		struct Light {
 			Transform Transformation;
 			Vector3 Color;
@@ -39,12 +15,54 @@ namespace ESource {
 			bool CastShadow;
 			RTexturePtr ShadowMap;
 			float ShadowBias;
+			Frustrum ViewFrustrum;
+			uint8_t RenderMask;
 		} Lights[2];
+
+		struct Camera {
+			Transform EyeTransform;
+			Matrix4x4 ProjectionMatrix; 
+			Frustrum ViewFrustrum;
+			uint8_t RenderMask;
+		} Cameras[2];
+
+		struct RenderElement {
+			Subdivision MeshSubdivision;
+			Matrix4x4 Transformation;
+			uint8_t RenderMask;
+		};
+
+		RenderScene();
+
+		void Clear();
+
+		void ForwardRender(uint8_t CameraIndex);
+
+		void DeferredRenderOpaque(uint8_t CameraIndex);
+
+		void DeferredRenderTransparent(uint8_t CameraIndex);
+
+		void RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader);
+
+		void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, const RTexturePtr & Texture, const float & Bias, uint8_t RenderingMask);
+
+		void SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & Texture, const float & Bias, uint8_t RenderingMask);
+
+		void AddCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderMask);
+
+		void Submit(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix, uint8_t RenderMask);
+
+		void SubmitInstance(const MaterialPtr & Mat, const RMeshPtr& MeshPtr, const Subdivision & MeshSubdivision, const Matrix4x4& Matrix, uint8_t RenderMask);
+
+		VertexBufferPtr ModelMatrixBuffer;
+
+		int LightCount;
+
+		int CameraCount;
 		
 		TArray<MaterialPtr> SortedMaterials;
-		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsByMaterial;
-
-		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<std::tuple<Subdivision, Matrix4x4>>>> RenderElementsInstanceByMaterial;
+		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<RenderElement>>> RenderElementsByMeshByMaterial;
+		TDictionary<MaterialPtr, TDictionary<RMeshPtr, TArray<RenderElement>>> RenderElementsInstanceByMeshByMaterial;
 
 	};
 

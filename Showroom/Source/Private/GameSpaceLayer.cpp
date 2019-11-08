@@ -241,7 +241,7 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				}
 				ImGui::TextUnformatted("Culling Mask");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
-				ImGui::InputScalar("##RenderingMask", ImGuiDataType_U8, &Renderable->CullingMask);
+				ImGui::InputScalar("##RenderingMask", ImGuiDataType_U8, &Renderable->RenderingMask);
 				ImGui::TextUnformatted("Mesh");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				if (ImGui::Combo(("##Mesh" + std::to_string(Renderable->GetName().GetInstanceID())).c_str(), &CurrentMeshIndex,
@@ -300,7 +300,7 @@ void GameSpaceLayer::OnAwake() {
 	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
 	SkyBox->AttachTo(Camera);
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
-	Renderable->CullingMask = 1 << 0 | 1 << 1;
+	Renderable->RenderingMask = 1 << 0 | 1 << 1;
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
 	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
 	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({85.F, 0.F, 0.F}), 1.F));
@@ -338,7 +338,7 @@ void GameSpaceLayer::OnAwake() {
 				auto PhysicsBody = SandTile->CreateComponent<CPhysicBody>();
 				PhysicsBody->SetMesh(TileDesert);
 				auto Renderable = SandTile->CreateComponent<CRenderable>();
-				Renderable->CullingMask = 1 << 0;
+				Renderable->RenderingMask = 1 << 0;
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
 			}
@@ -349,7 +349,7 @@ void GameSpaceLayer::OnAwake() {
 				auto PhysicsBody = BricksTile->CreateComponent<CPhysicBody>();
 				PhysicsBody->SetMesh(TileBricks);
 				auto Renderable = BricksTile->CreateComponent<CRenderable>();
-				Renderable->CullingMask = 1 << 1;
+				Renderable->RenderingMask = 1 << 1;
 				Renderable->SetMesh(TileBricks);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/GroundBricks"));
 			}
@@ -386,12 +386,9 @@ void GameSpaceLayer::OnAwake() {
 }
 
 void GameSpaceLayer::OnRender() {
-	Application::GetInstance()->GetRenderPipeline().BeginStage(L"FirstStage");
+	Application::GetInstance()->GetRenderPipeline().Begin();
 	Super::OnRender();
-	Application::GetInstance()->GetRenderPipeline().EndStage();
-	Application::GetInstance()->GetRenderPipeline().BeginStage(L"SecondStage");
-	Super::OnRender();
-	Application::GetInstance()->GetRenderPipeline().EndStage();
+	Application::GetInstance()->GetRenderPipeline().End();
 }
 
 GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node, GGameObject * NewObject) {

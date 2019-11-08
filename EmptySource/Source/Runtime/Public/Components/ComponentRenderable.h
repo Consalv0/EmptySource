@@ -8,7 +8,7 @@ namespace ESource {
 	class CRenderable : public CComponent {
 		IMPLEMENT_COMPONENT(CRenderable)
 	public:
-		uint8_t CullingMask;
+		uint8_t RenderingMask;
 
 		bool bGPUInstance;
 

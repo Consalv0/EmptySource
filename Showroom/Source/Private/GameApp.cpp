@@ -916,10 +916,7 @@ protected:
 	virtual void OnAwake() override {
 		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
 
-		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageFirst>(L"FirstStage");
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"FirstStage")->RenderingMask = 1 << 1;
-		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageSecond>(L"SecondStage");
-		Application::GetInstance()->GetRenderPipeline().GetStage(L"SecondStage")->RenderingMask = 1 << 0;
+		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"MainStage");
 		Application::GetInstance()->GetRenderPipeline().Exposure = 3.5F;
 		SkyboxRoughness = 0.225F;
 

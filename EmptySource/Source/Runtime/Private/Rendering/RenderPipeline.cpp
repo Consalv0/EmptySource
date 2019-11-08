@@ -85,21 +85,18 @@ namespace ESource {
 		SDL_GL_SetSwapInterval(Interval);
 	}
 
-	void RenderPipeline::BeginStage(const IName & StageName) {
-		ES_CORE_ASSERT(ActiveStage == NULL, "Render Stage '{}' already active. Use EndStage", ActiveStage->GetName().GetNarrowDisplayName().c_str());
-		TDictionary<size_t, RenderStage *>::iterator Stage;
-		if ((Stage = RenderStages.find(StageName.GetID())) != RenderStages.end()) {
-			ActiveStage = Stage->second;
+	void RenderPipeline::Begin() {
+		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage) {
 			Stage->second->SetRenderTarget(MainScreenTarget);
 			Stage->second->SetGeometryBuffer(GeometryBufferTarget);
 			Stage->second->Begin();
 		}
 	}
 
-	void RenderPipeline::EndStage() {
-		ES_CORE_ASSERT(ActiveStage != NULL, "No RenderStage active.");
-		ActiveStage->End();
-		ActiveStage = NULL;
+	void RenderPipeline::End() {
+		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage) {
+			Stage->second->End();
+		}
 	}
 
 	void RenderPipeline::SubmitSubmesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
@@ -107,22 +104,21 @@ namespace ESource {
 		if (ModelPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == ModelPointer->GetVertexData().SubdivisionsMap.end()) {
 			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", ModelPointer->GetName().GetDisplayName(), Subdivision); return;
 		}
-		ActiveStage->SubmitMesh(ModelPointer, ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix, CullingMask);
+		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage)
+			Stage->second->SubmitMesh(ModelPointer, ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix, CullingMask);
 	}
 
 	void RenderPipeline::SubmitSubmeshInstance(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
 	}
 
-	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t CullingMask) {
-		ActiveStage->SubmitSpotLight(Position, Color, Direction, Intensity, Projection, CullingMask);
-	}
-
-	void RenderPipeline::SubmitSpotShadowMap(const RTexturePtr & ShadowMap, const float & Bias) {
-		ActiveStage->SubmitSpotShadowMap(ShadowMap, Bias);
+	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & ShadowMap, const float & Bias, uint8_t CullingMask) {
+		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage)
+		Stage->second->SubmitSpotLight(Position, Color, Direction, Intensity, Projection, ShadowMap, Bias, CullingMask);
 	}
 
 	void RenderPipeline::SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t RenderingMask) {
-		ActiveStage->SetCamera(EyeTransform, Projection, RenderingMask);
+		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage)
+			Stage->second->SetCamera(EyeTransform, Projection, RenderingMask);
 	}
 
 	IntVector2 RenderPipeline::GetRenderSize() const {
@@ -156,10 +152,6 @@ namespace ESource {
 			return RenderStages.find(StageName.GetID())->second;
 		}
 		return NULL;
-	}
-
-	RenderStage * RenderPipeline::GetActiveStage() const {
-		return ActiveStage;
 	}
 
 	void RenderPipeline::BeginFrame() {

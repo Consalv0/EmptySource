@@ -16,55 +16,29 @@
 namespace ESource {
 	
 	RenderStage::RenderStage(const IName & Name, RenderPipeline * Pipeline) 
-		: Name(Name), Scene(), RenderingMask(UINT8_MAX), Pipeline(Pipeline) {
+		: Name(Name), Scene(), Pipeline(Pipeline) {
 	}
 
 	void RenderStage::SubmitMesh(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t InRenderingMask) {
-		if ((RenderingMask & InRenderingMask) == 0) return;
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
-		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
+		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix, InRenderingMask);
 	}
 
 	void RenderStage::SubmitMeshInstance(const RMeshPtr & MeshPtr, const Subdivision & MeshSubdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t InRenderingMask) {
-		if ((RenderingMask & InRenderingMask) == 0) return;
 		if (Mat->GetShaderProgram() == NULL || Mat->GetShaderProgram()->GetLoadState() != LS_Loaded) return;
-		Scene.Submit(Mat, MeshPtr, MeshSubdivision, Matrix);
+		Scene.SubmitInstance(Mat, MeshPtr, MeshSubdivision, Matrix, InRenderingMask);
 	}
 
-	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, uint8_t InRenderingMask) {
-		if ((RenderingMask & InRenderingMask) == 0) return;
-		Scene.LightCount++;
-		Scene.Lights[Scene.LightCount].Transformation = Transformation;
-		Scene.Lights[Scene.LightCount].Color = Color;
-		Scene.Lights[Scene.LightCount].Direction = 0.F;
-		Scene.Lights[Scene.LightCount].Intensity = Intensity;
-		Scene.Lights[Scene.LightCount].CastShadow = false;
-		Scene.Lights[Scene.LightCount].ShadowMap = NULL;
+	void RenderStage::SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, const RTexturePtr & Texture, const float & Bias, uint8_t InRenderingMask) {
+		Scene.SubmitPointLight(Transformation, Color, Intensity, Texture, Bias, InRenderingMask);
 	}
 
-	void RenderStage::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, uint8_t InRenderingMask) {
-		if ((RenderingMask & InRenderingMask) == 0) return;
-		Scene.LightCount++;
-		Scene.Lights[Scene.LightCount].Transformation = Transformation;
-		Scene.Lights[Scene.LightCount].Color = Color;
-		Scene.Lights[Scene.LightCount].Direction = Direction;
-		Scene.Lights[Scene.LightCount].Intensity = Intensity;
-		Scene.Lights[Scene.LightCount].ProjectionMatrix = Projection;
-		Scene.Lights[Scene.LightCount].ShadowMap = NULL;
-		Scene.Lights[Scene.LightCount].CastShadow = false;
-	}
-
-	void RenderStage::SubmitSpotShadowMap(const RTexturePtr & Texture, const float & Bias) {
-		if (Scene.LightCount < 0) return;
-		Scene.Lights[Scene.LightCount].ShadowMap = Texture;
-		Scene.Lights[Scene.LightCount].ShadowBias = Bias;
-		Scene.Lights[Scene.LightCount].CastShadow = true;
+	void RenderStage::SubmitSpotLight(const Transform & Transformation, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & Texture, const float & Bias, uint8_t InRenderingMask) {
+		Scene.SubmitSpotLight(Transformation, Color, Direction, Intensity, Projection, Texture, Bias, InRenderingMask);
 	}
 
 	void RenderStage::SetCamera(const Transform & EyeTransform, const Matrix4x4 & Projection, uint8_t InRenderingMask) {
-		if ((RenderingMask & InRenderingMask) == 0) return;
-		Scene.EyeTransform = EyeTransform;
-		Scene.ProjectionMatrix = Projection;
+		Scene.AddCamera(EyeTransform, Projection, InRenderingMask);
 	}
 
 	void RenderStage::SetRenderTarget(const RenderTargetPtr & InTarget) {
@@ -88,21 +62,21 @@ namespace ESource {
 		Rendering::SetViewport(GeometryBufferTarget->GetViewport());
 		GeometryBufferTarget->Bind();
 		GeometryBufferTarget->Clear();
-		Scene.DeferredRenderOpaque();
+		Scene.DeferredRenderOpaque(0);
 		Rendering::Flush();
 		GeometryBufferTarget->TransferBitsTo(
 			&*Target, false, true, true, FM_MinMagNearest,
 			Target->GetViewport(), GeometryBufferTarget->GetViewport()
 		);
 		GeometryBufferTarget->Bind();
-		Scene.DeferredRenderTransparent();
+		Scene.DeferredRenderTransparent(0);
 		GeometryBufferTarget->Unbind();
 		Rendering::Flush();
 
 		Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
 		Rendering::SetViewport(Target->GetViewport());
 		Target->Bind();
-		Scene.ForwardRender();
+		Scene.ForwardRender(0);
 		Rendering::Flush();
 		Target->Unbind();
 		Rendering::SetAlphaBlending(BF_None, BF_None);
@@ -243,8 +217,8 @@ namespace ESource {
 			Rendering::SetRasterizerFillMode(FM_Solid);
 			Rendering::SetCullMode(CM_None);
 			SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
-			SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.ProjectionMatrix.PointerToValue());
-			SSAOShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Scene.EyeTransform.GetGLViewMatrix().PointerToValue());
+			SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.Cameras[0].ProjectionMatrix.PointerToValue());
+			SSAOShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Scene.Cameras[0].EyeTransform.GetGLViewMatrix().PointerToValue());
 			SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (SSAOTexture->GetSize().FloatVector3() / 4.0F).PointerToValue());
 			SSAOShader->GetProgram()->SetTexture("_GDepth", Application::GetInstance()->GetRenderPipeline().GetGBufferTexture(GB_Depth)->GetTexture(), 0);
 			SSAOShader->GetProgram()->SetTexture("_GNormal", Application::GetInstance()->GetRenderPipeline().GetGBufferTexture(GB_Normal)->GetTexture(), 1);
