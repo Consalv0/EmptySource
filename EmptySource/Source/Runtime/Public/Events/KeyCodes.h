@@ -20,11 +20,46 @@ namespace ESource {
 
 	enum class EMouseButton {
 		Mouse0 = 1,
-		Mouse1 = 2,
-		Mouse2 = 3,
-		Mouse3 = 4,
-		Mouse4 = 5,
-		Mouse5 = 6
+		Mouse1,
+		Mouse2,
+		Mouse3,
+		Mouse4,
+		Mouse5
+	};
+
+	struct InputJoystickState {
+		int State;
+		uint64_t FramePressed;
+	};
+	
+	// Taken from SDL Joystick for easy compatibility
+	enum class EJoystickButton {
+		Invalid = -1,
+		RightPadDown,
+		RightPadRight,
+		RightPadLeft,
+		RightPadUp,
+		Back,
+		Guide,
+		Start,
+		LeftStick,
+		RightStick,
+		LeftShoulder,
+		RightShoulder,
+		LeftPadUp,
+		LeftPadDown,
+		LeftPadLeft,
+		LeftPadRight
+	};
+
+	enum class EJoystickAxis {
+		Invalid = -1,
+		LeftX,
+		LeftY,
+		RightX,
+		RightY,
+		TriggerLeft,
+		TriggerRight
 	};
 
 	struct InputMouseButtonState {
@@ -34,7 +69,7 @@ namespace ESource {
 	};
 
 	/**
-	 *  Taken from SDL Scancodes for compatibility
+	 *  Taken from SDL Scancodes for easy compatibility
 	 *  The values in this enumeration are based on the USB usage page standard:
 	 *  https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
 	 */

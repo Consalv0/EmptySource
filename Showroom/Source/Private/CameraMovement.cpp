@@ -40,6 +40,14 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
+	float AxisY = Input::GetAxis(-1, EJoystickAxis::RightY);
+	float AxisX = Input::GetAxis(-1, EJoystickAxis::RightX);
+	if (Math::Abs(AxisY) < 0.2F) AxisY = 0.F;
+	if (Math::Abs(AxisX) < 0.2F) AxisX = 0.F;
+	CameraRotation = Quaternion::FromEulerAngles(
+		CameraRotation.ToEulerAngles() + Vector3(AxisY * ViewSpeed * 0.5F, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * Time::GetDeltaTime<Time::Second>()
+	);
+
 	Vector3 MovementDirection = Vector3();
 
 	if (Input::IsKeyDown(EScancode::W)) {
@@ -55,14 +63,23 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
 	}
 
+	AxisY = Input::GetAxis(-1, EJoystickAxis::LeftY);
+	AxisX = Input::GetAxis(-1, EJoystickAxis::LeftX);
+	if (Math::Abs(AxisY) < 0.2F) AxisY = 0.F;
+	if (Math::Abs(AxisX) < 0.2F) AxisX = 0.F;
+	MovementDirection += CameraRotation * Vector3(-AxisX, 0, -AxisY);
+
+	float FrameSpeed = ViewSpeed;
+	FrameSpeed *= Math::Clamp01(MovementDirection.Magnitude());
+
 	MovementDirection.Y = 0.F;
 	MovementDirection.Normalize();
-	GetGameObject().LocalTransform.Position += MovementDirection * ViewSpeed * Time::GetDeltaTime<Time::Second>() *
+	GetGameObject().LocalTransform.Position += MovementDirection * FrameSpeed * Time::GetDeltaTime<Time::Second>() *
 		(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
 
-	if (Input::IsMousePressed(EMouseButton::Mouse0)) {
+	if (Input::IsMousePressed(EMouseButton::Mouse0) || Input::IsButtonPressed(-1, EJoystickButton::RightPadDown)) {
 		TArray<RayHit> Hits;
 		Vector3 CameraRayDirection = {
 			(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,

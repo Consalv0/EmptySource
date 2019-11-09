@@ -6,138 +6,22 @@
 
 #include "Utility/TextFormatting.h"
 
-#include "Platform/Windows/WindowsInput.h"
 #include "Platform/Windows/WindowsWindow.h"
 
 /// Remove this in the furture
 #include "Platform/OpenGL/OpenGLContext.h"
 
+#include <SDL_events.h>
+#include "Platform/Windows/WindowsInput.h"
 #include <SDL.h>
 
+
 namespace ESource {
-
-	int OnSDLEvent(void * UserData, SDL_Event * Event) {
-		auto & KeyState = WindowsInput::GetInputInstance()->InputKeyState[(EScancode)Event->key.keysym.scancode];
-		auto & MouseState = WindowsInput::GetInputInstance()->MouseButtonState[(EMouseButton)Event->button.button];
-		WindowsWindow& Data = *(WindowsWindow*)UserData;
-		static int32_t MouseButtonPressedCount[255] = { 
-			(int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, 
-			(int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1, (int32_t)-1
-		};
-		
-		if (Event->type == SDL_WINDOWEVENT) {
-			if (Event->window.windowID != SDL_GetWindowID((SDL_Window*)Data.GetHandle()))
-				return 0;
-		}
-
-		switch (Event->type) {
-		case SDL_WINDOWEVENT: {
-			if (Event->window.event == SDL_WINDOWEVENT_RESIZED || Event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-				Data.Resize(Event->window.data1, Event->window.data2);
-				break;
-			}
-			if (Event->window.event == SDL_WINDOWEVENT_CLOSE) {
-				WindowCloseEvent WinEvent;
-				Data.WindowEventCallback(WinEvent);
-				break;
-			}
-			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
-				WindowGainFocusEvent WinEvent;
-				Data.WindowEventCallback(WinEvent);
-				break;
-			}
-			if (Event->window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
-				WindowLostFocusEvent WinEvent;
-				Data.WindowEventCallback(WinEvent);
-				break;
-			}
-		}
-
-		case SDL_KEYDOWN: {
-			if (Event->key.repeat == 0)
-				KeyState.State = BS_Pressed | BS_Typed;
-			else
-				KeyState.State = BS_Typed;
-			KeyState.TypeRepeticions = Event->key.repeat;
-
-			KeyPressedEvent InEvent(
-				Event->key.keysym.scancode,
-				(SDL_GetModState() & KMOD_SHIFT) != 0,
-				(SDL_GetModState() & KMOD_CTRL) != 0,
-				(SDL_GetModState() & KMOD_ALT) != 0,
-				(SDL_GetModState() & KMOD_GUI) != 0,
-				Event->key.repeat
-			);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-
-		case SDL_KEYUP: {
-			KeyState.State = BS_Released;
-			KeyState.FramePressed = 0;
-			KeyState.TypeRepeticions = 0;
-
-			KeyReleasedEvent InEvent(
-				Event->key.keysym.scancode,
-				(SDL_GetModState() & KMOD_SHIFT) != 0,
-				(SDL_GetModState() & KMOD_CTRL) != 0,
-				(SDL_GetModState() & KMOD_ALT) != 0,
-				(SDL_GetModState() & KMOD_GUI) != 0
-			);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-
-		case SDL_TEXTINPUT: {
-			KeyTypedEvent InEvent(Event->text.text);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-
-		case SDL_MOUSEBUTTONDOWN: {
-			MouseState.State = BS_Pressed;
-			MouseState.Clicks = Event->button.clicks;
-
-			MouseButtonPressedCount[Event->button.button]++;
-			MouseButtonPressedEvent InEvent(Event->button.button, Event->button.clicks == 2, MouseButtonPressedCount[Event->button.button]);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-
-		case SDL_MOUSEBUTTONUP: {
-			MouseState.State = BS_Released;
-			MouseState.FramePressed = 0;
-			MouseState.Clicks = 0;
-
-			MouseButtonPressedCount[Event->button.button] = -1;
-			MouseButtonReleasedEvent InEvent(Event->button.button);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-
-		case SDL_MOUSEMOTION: {
-			MouseMovedEvent InEvent((float)Event->motion.x, (float)Event->motion.y, (float)Event->motion.xrel, (float)Event->motion.yrel);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-
-		case SDL_MOUSEWHEEL: {
-			MouseScrolledEvent InEvent(
-				(float)Event->wheel.x, (float)Event->wheel.y,
-				Event->wheel.direction == SDL_MOUSEWHEEL_FLIPPED
-			);
-			Data.InputEventCallback(InEvent);
-			break;
-		}
-		}
-
-		return 0;
-	}
 
 	void WindowsWindow::Initialize() {
 		if (Context != NULL || WindowHandle != NULL) return;
 
-		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) != 0) {
 			LOG_CORE_CRITICAL(L"Failed to initialize SDL 2.0.9: {0}\n", Text::NarrowToWide(SDL_GetError()));
 			return;
 		}
@@ -154,7 +38,9 @@ namespace ESource {
 
 		Context = std::unique_ptr<OpenGLContext>(new OpenGLContext((SDL_Window *)WindowHandle, 4, 6));
 
-		SDL_AddEventWatch(OnSDLEvent, (void *)this);
+		SDL_AddEventWatch(OnSDLWindowInputEvent, (void *)this);
+
+		WindowsInput::GetInputInstance()->CheckForConnectedJoysticks();
 
 		Context->Initialize();
 	}
@@ -244,7 +130,7 @@ namespace ESource {
 #endif // ES_DEBUG
 			SDL_DestroyWindow((SDL_Window *)(WindowHandle));
 			WindowHandle = NULL;
-			SDL_DelEventWatch(OnSDLEvent, (void *)this);
+			SDL_DelEventWatch(OnSDLWindowInputEvent, (void *)this);
 			Context.reset(NULL);
 			// SDL_DelEventWatch(OnResizeWindow, this);
 		}
@@ -252,17 +138,25 @@ namespace ESource {
 
 	void WindowsWindow::CheckInputState() {
 		auto InputInstance = WindowsInput::GetInputInstance();
-		for (auto & KeyStateIt : InputInstance->InputKeyState) {
+		for (auto & KeyStateIt : InputInstance->KeyboardInputState) {
 			if (KeyStateIt.second.State & BS_Pressed) {
 				KeyStateIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
 			}
 			KeyStateIt.second.State &= ~(BS_Pressed | BS_Released | BS_Typed);
 		}
-		for (auto & MouseButtonIt : InputInstance->MouseButtonState) {
+		for (auto & MouseButtonIt : InputInstance->MouseInputState) {
 			if (MouseButtonIt.second.State & BS_Pressed) {
 				MouseButtonIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
 			}
 			MouseButtonIt.second.State &= ~(BS_Pressed | BS_Released);
+		}
+		for (auto & JoystickIt : InputInstance->JoystickButtonState) {
+			for (auto & JoystickButtonIt : JoystickIt.second) {
+				if (JoystickButtonIt.second.State & BS_Pressed) {
+					JoystickButtonIt.second.FramePressed = Application::GetInstance()->GetWindow().GetFrameCount();
+				}
+				JoystickButtonIt.second.State &= ~(BS_Pressed | BS_Released);
+			}
 		}
 	}
 

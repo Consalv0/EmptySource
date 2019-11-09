@@ -6,7 +6,7 @@ namespace ESource::Text {
 
 	NString WideToNarrow(const WChar *From) {
 		if (From == NULL)
-			return NULL;
+			return "";
 
 		std::mbstate_t State = std::mbstate_t();
 		size_t SizeNeeded = std::wcsrtombs(NULL, &From, 0, &State);
@@ -18,7 +18,7 @@ namespace ESource::Text {
 
 	WString NarrowToWide(const NChar *From) {
 		if (From == NULL)
-			return NULL;
+			return L"";
 
 		std::mbstate_t State = std::mbstate_t();
 		size_t SizeNeeded = std::mbsrtowcs(NULL, &From, 0, &State);
@@ -30,7 +30,7 @@ namespace ESource::Text {
 
 	NString WideToNarrow(const WString &From) {
 		if (From.empty())
-			return std::string();
+			return NString();
 
 		size_t SizeNeeded = std::wcstombs(NULL, &From[0], 0);
 		NString To = NString(SizeNeeded, '\0');
@@ -41,7 +41,7 @@ namespace ESource::Text {
 
 	WString NarrowToWide(const NString &From) {
 		if (From.empty())
-			return std::wstring();
+			return WString();
 
 		size_t SizeNeeded = std::mbstowcs(NULL, &From[0], 0);
 		WString To = WString(SizeNeeded, '\0');

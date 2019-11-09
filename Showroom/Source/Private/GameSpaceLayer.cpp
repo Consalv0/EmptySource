@@ -294,8 +294,7 @@ void GameSpaceLayer::OnAwake() {
 	Super::OnAwake();
 
 	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
-	Camera->CreateComponent<CCamera>()->RenderingMask = 1 << 0;
-	Camera->CreateComponent<CCamera>()->RenderingMask = 1 << 1;
+	Camera->CreateComponent<CCamera>()->RenderingMask = 3;
 	Camera->CreateComponent<CCameraMovement>();
 	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
 	SkyBox->AttachTo(Camera);

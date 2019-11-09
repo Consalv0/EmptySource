@@ -1105,6 +1105,13 @@ protected:
 			1.F / Time::GetAverageDelta<Time::Second>(),
 			Time::GetDeltaTime<Time::Mili>()
 		);
+
+		RenderingText[1] = Text::Formatted(
+			L"JoystickDevice 0: Connected (%ls), Name(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls)",
+			Input::IsJoystickConnected(0) ? L"T" : L"F", Input::GetJoystickState(0).Name.GetInstanceName().c_str(),
+			Input::IsJoystickConnected(1) ? L"T" : L"F", Input::GetJoystickState(1).Name.GetInstanceName().c_str()
+		);
+
 	}
 
 	virtual void OnDetach() override { }

@@ -9,7 +9,7 @@ public:
 	ESource::Quaternion LastCameraRotation;
 	ESource::Vector2 CursorPosition;
 	ESource::Vector2 LastCursorPosition;
-	float ViewSpeed = 3;
+	float ViewSpeed = 5.5F;
 
 protected:
 	typedef ESource::CComponent Supper;

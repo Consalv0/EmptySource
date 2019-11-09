@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/Event.h"
+#include "Events/KeyCodes.h"
 #include "Math/CoreMath.h"
 
 namespace ESource {
@@ -12,14 +13,18 @@ namespace ESource {
 		MouseButtonPressed,
 		MouseButtonReleased,
 		MouseMoved,
-		MouseScrolled
+		MouseScrolled,
+		JoystickConnection,
+		JoystickAxis,
+		JoystickButtonPressed,
+		JoystickButtonReleased,
 	};
 
 	enum EInputEventCategory : char {
 		None = 0u,
 		IEC_Keyboard = 1u << 0,
 		IEC_Mouse    = 1u << 1,
-		IEC_Gamepad  = 1u << 2
+		IEC_Joystick = 1u << 2
 	};
 
 	class InputEvent : public Event {
@@ -167,6 +172,79 @@ namespace ESource {
 			: MouseButtonEvent(Button, false, 0) {}
 		
 		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, MouseButtonReleased)
+	};
+
+	// Joystick Event
+
+	class JoystickEvent : public InputEvent {
+	public:
+		inline int GetJoystickID() const { return JoystickID; }
+
+		IMPLEMENT_EVENT_CATEGORY(IEC_Joystick)
+
+	protected:
+		JoystickEvent(int JoystickID)
+			: JoystickID(JoystickID) {
+		}
+
+		int JoystickID;
+	};
+
+	class JoystickConnectionEvent : public JoystickEvent {
+	public:
+		JoystickConnectionEvent(int JoystickID, int Connected)
+			: JoystickEvent(JoystickID), ConnectionState(Connected) {}
+
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, JoystickConnection)
+
+		bool IsConnected() const { return ConnectionState; };
+
+	protected:
+		int ConnectionState;
+	};
+
+	class JoystickButtonPressedEvent : public JoystickEvent {
+	public:
+		inline EJoystickButton GetButton() const { return ButtonCode; }
+
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, JoystickButtonPressed)
+
+		JoystickButtonPressedEvent(int JoystickID, EJoystickButton ButtonCode)
+			: JoystickEvent(JoystickID), ButtonCode(ButtonCode) {
+		}
+
+	protected:
+		EJoystickButton ButtonCode;
+	};
+
+	class JoystickButtonReleasedEvent : public JoystickEvent {
+	public:
+		inline EJoystickButton GetButton() const { return ButtonCode; }
+
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, JoystickButtonReleased)
+
+		JoystickButtonReleasedEvent(int JoystickID, EJoystickButton ButtonCode)
+			: JoystickEvent(JoystickID), ButtonCode(ButtonCode) {
+		}
+
+	protected:
+		EJoystickButton ButtonCode;
+	};
+
+	class JoystickAxisEvent : public JoystickEvent {
+	public:
+		JoystickAxisEvent(int JoystickID, EJoystickAxis Axis, float Value)
+			: JoystickEvent(JoystickID), Axis(Axis), Value(Value) {}
+
+		IMPLEMENT_EVENT_ENUMTYPE(EInputEventType, JoystickAxis)
+
+		EJoystickAxis GetAxis() const { return Axis; };
+
+		float GetValue() const { return Value; }
+
+	protected:
+		EJoystickAxis Axis;
+		float Value;
 	};
 
 }

@@ -3,7 +3,6 @@
 #include "Core/Application.h"
 #include "Core/GameObject.h"
 #include "Core/Transform.h"
-#include "Core/Input.h"
 
 #include "Resources/ModelResource.h"
 #include "Physics/PhysicsWorld.h"
@@ -39,7 +38,7 @@ namespace ESource {
 		MaterialPtr DebugMaterial = MaterialManager::GetInstance().GetMaterial(L"DebugMaterial");
 		
 		BoundingBox3D ModelSpaceAABox = ActiveMesh->GetVertexData().Bounding.Transform(GameObjectLWMatrix);
-		RMeshPtr CubeMesh = ModelManager::GetInstance().GetMesh(L"Cube");
+		RMeshPtr CubeMesh = ModelManager::GetInstance().GetMesh(IName(L"Cube", 0));
 
 		if (CubeMesh && DebugMaterial)
 			Pipeline.SubmitSubmesh(CubeMesh, 0, DebugMaterial, Matrix4x4::Translation(ModelSpaceAABox.GetCenter()) * Matrix4x4::Scaling(ModelSpaceAABox.GetSize()), 1);

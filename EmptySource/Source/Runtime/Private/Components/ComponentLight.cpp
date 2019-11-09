@@ -28,10 +28,12 @@ namespace ESource {
 
 	void CLight::OnRender() {
 		if (bCastShadow) {
-			if (ShadowMap == NULL)
+			if (ShadowMap == NULL) {
 				ShadowMap = TextureManager::GetInstance().CreateTexture2D(
 					GetName().GetInstanceName() + L"_ShadowMap", L"", PF_ShadowDepth, FM_MinMagLinear, SAM_Clamp, ShadowMapSize
 				);
+				ShadowMap->Load();
+			}
 		}
 		else if (ShadowMap != NULL) {
 			ShadowMap->Unload();
