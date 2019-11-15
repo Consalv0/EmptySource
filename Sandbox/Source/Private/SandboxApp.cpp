@@ -290,6 +290,8 @@ protected:
 		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
 
 		MaterialManager& MaterialMng = MaterialManager::GetInstance();
+		MaterialMng.CreateMaterial(L"Core/ShadowDepth", ShaderMng.GetProgram(L"DepthTestShader"), true, DF_LessEqual, FM_Solid, CM_None, {}
+		)->SetShaderInstancingProgram(ShaderMng.GetProgram(L"DepthTestShader#Instancing"));
 		MaterialMng.CreateMaterial(L"Sponza/Arcs", ShaderMng.GetProgram(L"PBRShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchAlbedoTexture") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Sponza/ArchNormalTexture") } },

@@ -23,6 +23,8 @@ namespace ESource {
 
 		virtual void SetViewport(const IntBox2D& Viewport) override;
 
+		virtual void DrawIndexedInstanced(const VertexArrayPtr& VertexArray, const Subdivision & Offsets, int Count) override;
+
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray) override;
 
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, const Subdivision & Offsets) override;

@@ -1,11 +1,14 @@
 
 #include "CoreMinimal.h"
 #include "Utility/TextFormatting.h"
+#include "Core/Application.h"
+#include "Core/Window.h"
 #include "Rendering/RenderingDefinitions.h"
 #include "Rendering/RenderingBuffers.h"
 #include "Rendering/Shader.h"
 #include "Rendering/RenderingAPI.h"
 
+#include "Platform/OpenGL/CommonShader/Common.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/OpenGL/OpenGLAPI.h"
 
@@ -13,9 +16,12 @@
 
 namespace ESource {
 
-	OpenGLShaderStage::OpenGLShaderStage(const NString & Code, EShaderStageType Type) : StageType(Type) {
+	OpenGLShaderStage::OpenGLShaderStage(const NString & Code, EShaderStageType Type, int LineCountOffset, int Flags) : StageType(Type) {
 		bValid = false;
 		ShaderObject = GL_FALSE;
+
+		NString ProcessedCode = Code;
+		PreprocessShaderStage(ProcessedCode, Type, LineCountOffset, Flags & (int)EShaderCompileFalgs::Instancing);
 
 		switch (Type) {
 		case ST_Vertex:
@@ -35,7 +41,7 @@ namespace ESource {
 			break;
 		}
 
-		const NChar * SourcePointer = Code.c_str();
+		const NChar * SourcePointer = ProcessedCode.c_str();
 		glShaderSource(ShaderObject, 1, &SourcePointer, NULL);
 		glCompileShader(ShaderObject);
 
@@ -53,6 +59,67 @@ namespace ESource {
 	OpenGLShaderStage::~OpenGLShaderStage() {
 		LOG_CORE_INFO(L"Deleting shader stage '{:d}'...", ShaderObject);
 		glDeleteShader(ShaderObject);
+	}
+
+	NString PreprocessShaderCode(const NString & Code, EShaderStageType Type) {
+		NString TokenizedCode = Code;
+		for (int i = 0; i < (int)EShaderToken::Max; i++) {
+			size_t Pos = TokenizedCode.find(GLSLShaderTokens[i].Name);
+			if (Pos != NString::npos) {
+				const size_t TokenSize = std::strlen(GLSLShaderTokens[i].Name);
+				if (!std::isspace(TokenizedCode[Pos + TokenSize])) continue;
+				const NString Replace = PreprocessShaderCode((Type == ST_Vertex ? GLSLShaderTokens[i].VertexCode : GLSLShaderTokens[i].PixelCode), Type);
+				TokenizedCode.replace(Pos, TokenSize, Replace);
+			}
+		}
+		return TokenizedCode;
+	}
+
+	NString PreprocessShaderCode(const NString & Code, EShaderStageType Type, int LineCountOffset, bool Instancing) {
+		NString TokenizedCode = Code;
+		size_t OffsetPos = 0;
+		for (int i = 0; i < (int)EShaderToken::Max; i++) {
+			size_t Pos = Code.find(GLSLShaderTokens[i].Name);
+			if (Pos != NString::npos) {
+				const size_t TokenSize = std::strlen(GLSLShaderTokens[i].Name);
+				if (!std::isspace(Code[Pos + TokenSize])) continue;
+				size_t LineCount = Text::CountLines(Code, Pos);
+				const NString Replace = 
+					PreprocessShaderCode((Type == ST_Vertex ? GLSLShaderTokens[i].VertexCode : GLSLShaderTokens[i].PixelCode), Type)
+					+ fmt::format("\n#line {}\n", LineCountOffset + LineCount - 1);
+				TokenizedCode.replace(Pos + OffsetPos, TokenSize, Replace);
+				OffsetPos += Replace.size() - TokenSize;
+			}
+		}
+		size_t Pos = TokenizedCode.find("ESOURCE_VERTEX_LAYOUT_INSTANCING");
+		if (Pos != NString::npos) {
+			const size_t TokenSize = std::strlen("ESOURCE_VERTEX_LAYOUT_INSTANCING");
+			if (TokenizedCode[Pos + TokenSize] == '(') {
+				size_t NumberPos = TokenizedCode.find(',', Pos);
+				size_t TypePos = TokenizedCode.find(',', NumberPos + 1);
+				size_t NamePos = TokenizedCode.find(')', TypePos + 1);
+				NString NumberStr = TokenizedCode.substr(Pos + TokenSize + 1, NumberPos - Pos - TokenSize - 1);
+				NString TypeStr = TokenizedCode.substr(NumberPos + 1, TypePos - NumberPos - 1);
+				NString NameStr = TokenizedCode.substr(TypePos + 1, NamePos - TypePos - 1);
+				const NString Replace =
+					fmt::format(GLSLShaderTokens[(size_t)EShaderToken::VertexLayoutInstancing].VertexCode + "//", 5 + std::atoi(NumberStr.c_str()), TypeStr, NameStr);
+
+				TokenizedCode.replace(Pos, TokenSize, Instancing ? Replace : "//");
+				if (Instancing) {
+					const NString UniformReplace = fmt::format("uniform {} {}", TypeStr, NameStr);
+					size_t ReplacePos = TokenizedCode.find(UniformReplace);
+					if (ReplacePos != NString::npos) {
+						TokenizedCode.replace(ReplacePos, UniformReplace.size(), "");
+					}
+				}
+			}
+		}
+		return TokenizedCode;
+	}
+
+	void OpenGLShaderStage::PreprocessShaderStage(NString & Code, EShaderStageType Type, int LineCountOffset, bool Instancing) {
+		Code.insert(0, fmt::format("\n#version {}\n#line {}\n", Application::GetInstance()->GetWindow().GetContext()->GetShaderVersion(), LineCountOffset + 2));
+		Code = PreprocessShaderCode(Code, Type, LineCountOffset, Instancing);
 	}
 
 	// Shader Program

@@ -99,16 +99,22 @@ namespace ESource {
 		}
 	}
 
-	void RenderPipeline::SubmitSubmesh(const RMeshPtr & ModelPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
-		if (ModelPointer == NULL || !ModelPointer->IsValid()) return;
-		if (ModelPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == ModelPointer->GetVertexData().SubdivisionsMap.end()) {
-			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", ModelPointer->GetName().GetDisplayName(), Subdivision); return;
+	void RenderPipeline::SubmitSubmesh(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
+		if (MeshPointer == NULL || !MeshPointer->IsValid()) return;
+		if (MeshPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == MeshPointer->GetVertexData().SubdivisionsMap.end()) {
+			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", MeshPointer->GetName().GetDisplayName(), Subdivision); return;
 		}
 		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage)
-			Stage->second->SubmitMesh(ModelPointer, ModelPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix, CullingMask);
+			Stage->second->SubmitMesh(MeshPointer, MeshPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix, CullingMask);
 	}
 
 	void RenderPipeline::SubmitSubmeshInstance(const RMeshPtr & MeshPointer, int Subdivision, const MaterialPtr & Mat, const Matrix4x4 & Matrix, uint8_t CullingMask) {
+		if (MeshPointer == NULL || !MeshPointer->IsValid()) return;
+		if (MeshPointer->GetVertexData().SubdivisionsMap.find(Subdivision) == MeshPointer->GetVertexData().SubdivisionsMap.end()) {
+			LOG_CORE_ERROR(L"Out of bounds mesh division in Mesh: {} WithKey: {}", MeshPointer->GetName().GetDisplayName(), Subdivision); return;
+		}
+		for (TDictionary<size_t, RenderStage *>::iterator Stage = RenderStages.begin(); Stage != RenderStages.end(); ++Stage)
+			Stage->second->SubmitMeshInstance(MeshPointer, MeshPointer->GetVertexData().SubdivisionsMap.at(Subdivision), Mat, Matrix, CullingMask);
 	}
 
 	void RenderPipeline::SubmitSpotLight(const Transform & Position, const Vector3 & Color, const Vector3& Direction, const float & Intensity, const Matrix4x4 & Projection, const RTexturePtr & ShadowMap, const float & Bias, uint8_t CullingMask) {

@@ -89,6 +89,14 @@ namespace ESource {
 		return true;
 	}
 
+	NString OpenGLContext::GetGLVersion() {
+		return std::to_string(VersionMajor) + "." + std::to_string(VersionMinor);
+	}
+
+	NString OpenGLContext::GetShaderVersion() {
+		return std::to_string(VersionMajor) + std::to_string(VersionMinor) + "0";
+	}
+
 	bool OpenGLContext::IsValid() {
 		return GLContext != NULL;
 	}

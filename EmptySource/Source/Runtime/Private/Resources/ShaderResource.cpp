@@ -66,8 +66,8 @@ namespace ESource {
 		Parameters = InProperties;
 	}
 
-	RShader::RShader(const IName & Name, const WString & Origin, const NString& Source)
-		: ResourceHolder(Name, Origin), Parameters(), SourceCode(Source), Stages() {
+	RShader::RShader(const IName & Name, const WString & Origin, const NString& Source, int CompileFlags)
+		: ResourceHolder(Name, Origin), Parameters(), SourceCode(Source), Stages(), CompileFlags(CompileFlags) {
 	}
 
 	bool RShader::LoadFromShaderSource(const NString & FileInfo) {
@@ -96,8 +96,12 @@ namespace ESource {
 					NString Type = Stage["StageType"].as<NString>();
 
 					if (Stage["Code"].IsDefined()) {
-						NString Code = fmt::format("#version {}\n#line {}\n", "410", Stage["Code"].Mark().line + 2) + Stage["Code"].as<NString>();
-						Stages.push_back(ShaderStage::CreateFromText(Code, ShaderManager::StringToStageType(Type)));
+						Stages.push_back( ShaderStage::CreateFromText(
+							Stage["Code"].as<NString>(),
+							ShaderManager::StringToStageType(Type),
+							Stage["Code"].Mark().line,
+							CompileFlags)
+						);
 					}
 				}
 			}

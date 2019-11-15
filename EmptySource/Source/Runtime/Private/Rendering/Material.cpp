@@ -15,6 +15,7 @@ namespace ESource {
 
 	Material::Material(const IName & Name) : Name(Name) {
 		Shader = NULL;
+		ShaderInstancing = NULL;
 		RenderPriority = 1000;
 		bWriteDepth = true;
 		bTransparent = false;
@@ -28,6 +29,8 @@ namespace ESource {
 		StencilOnlyPass = SO_Keep;
 		StencilOnlyFail = SO_Keep;
 		StencilPassFail = SO_Keep;
+		bHasInstancing = false;
+		bIsInstancingActive = false;
 	}
 
 	void Material::SetShaderProgram(const RShaderPtr & InShader) {
@@ -42,8 +45,29 @@ namespace ESource {
 		}
 	}
 
+	void Material::SetShaderInstancingProgram(const RShaderPtr & InShader) {
+		if (InShader != NULL && InShader->IsValid()) {
+			bHasInstancing = true;
+			ShaderInstancing = InShader;
+		}
+		else {
+			LOG_CORE_ERROR(L"Trying to set shader '{}' in '{}' wich is not a valid program",
+				InShader != NULL ? InShader->GetName().GetDisplayName().c_str() : L"NULL", Name.GetDisplayName().c_str());
+			ShaderInstancing.reset();
+			bHasInstancing = false;
+		}
+	}
+
+	RShaderPtr Material::GetCurrentStateShaderProgram() const {
+		return bIsInstancingActive ? ShaderInstancing : Shader;
+	}
+
 	RShaderPtr Material::GetShaderProgram() const {
 		return Shader;
+	}
+
+	RShaderPtr Material::GetInstancingShaderProgram() const {
+		return ShaderInstancing;
 	}
 
 	const IName & Material::GetName() const {
@@ -51,49 +75,49 @@ namespace ESource {
 	}
 
 	void Material::SetAttribMatrix4x4Array(const NChar * AttributeName, int Count, const void * Data, const VertexBufferPtr & Buffer) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetAttribMatrix4x4Array(AttributeName, Count, Data, Buffer);
 	}
 
 	void Material::SetMatrix4x4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetMatrix4x4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat1Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetInt1Array(const NChar * UniformName, const int * Data, const int & Count) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetInt1Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat2Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat2Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat3Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat3Array(UniformName, Data, Count);
 	}
 
 	void Material::SetFloat4Array(const NChar * UniformName, const float * Data, const int & Count) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			Program->GetProgram()->SetFloat4Array(UniformName, Data, Count);
 	}
 
 	void Material::SetTexture2D(const NChar * UniformName, RTexturePtr Text, const uint32_t & Position) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid() && Text != NULL)
 			if (Text->GetDimension() == ETextureDimension::Texture2D)
 				Program->GetProgram()->SetTexture(UniformName, Text->GetTexture(), Position);
@@ -102,7 +126,7 @@ namespace ESource {
 	}
 
 	void Material::SetTextureCubemap(const NChar * UniformName, RTexturePtr Text, const uint32_t & Position) const {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			if (Text->GetDimension() == ETextureDimension::Cubemap)
 				Program->GetProgram()->SetTexture(UniformName, Text->GetTexture(), Position);
@@ -111,7 +135,7 @@ namespace ESource {
 	}
 
 	void Material::SetParameters(const TArray<ShaderParameter>& NewLayout) {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			for (auto& Layout : NewLayout) {
 				if (Program->GetProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
@@ -121,7 +145,7 @@ namespace ESource {
 	}
 
 	void Material::AddParameters(const TArray<ShaderParameter>& NewLayout) {
-		RShaderPtr Program = GetShaderProgram();
+		RShaderPtr Program = GetCurrentStateShaderProgram();
 		if (Program != NULL && Program->IsValid())
 			for (auto& Layout : NewLayout) {
 				if (Program->GetProgram()->GetUniformLocation(Layout.Name.c_str()) != -1) {
@@ -130,7 +154,10 @@ namespace ESource {
 			}
 	}
 
-	void Material::Use() const {
+	void Material::Use(bool Instancing) {
+		if (!bHasInstancing && Instancing)
+			LOG_CORE_ERROR("The material {} does not have instancing", GetName().GetNarrowDisplayName().c_str());
+		bIsInstancingActive = Instancing;
 		Rendering::SetDepthWritting(bWriteDepth);
 		Rendering::SetDepthFunction(DepthFunction);
 		Rendering::SetStencilFunction(StencilFunction, StencilReference, StencilMask);
@@ -138,8 +165,9 @@ namespace ESource {
 		Rendering::SetRasterizerFillMode(FillMode);
 		Rendering::SetCullMode(CullMode);
 
-		if (Shader && Shader->IsValid()) {
-			Shader->GetProgram()->Bind();
+		auto & Program = GetCurrentStateShaderProgram();
+		if (Program && Program->IsValid()) {
+			Program->GetProgram()->Bind();
 			uint32_t i = 0;
 			for (auto& Uniform : ParameterLayout) {
 				switch (Uniform.Value.GetType()) {

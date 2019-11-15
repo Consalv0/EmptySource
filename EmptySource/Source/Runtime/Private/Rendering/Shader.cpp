@@ -11,10 +11,10 @@
 
 namespace ESource {
 
-	ShaderStage * ShaderStage::CreateFromText(const NString & Code, EShaderStageType Type) {
+	ShaderStage * ShaderStage::CreateFromText(const NString & Code, EShaderStageType Type, int LineCountOffset, int Flags) {
 		switch (Rendering::GetAPI()) {
 		case RenderingAPI::API::OpenGL:
-			return new OpenGLShaderStage(Code, Type);
+			return new OpenGLShaderStage(Code, Type, LineCountOffset, Flags);
 		case RenderingAPI::API::None:
 		default:
 			ES_CORE_ASSERT(true, "Rendering API is not valid for this platform, can't create shader stage!");

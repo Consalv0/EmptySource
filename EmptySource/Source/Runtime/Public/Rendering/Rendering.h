@@ -24,6 +24,10 @@ namespace ESource {
 			RendererAppInterface->SetViewport(Viewport);
 		}
 
+		inline static void DrawIndexedInstanced(const VertexArrayPtr& VertexArray, const Subdivision & Offsets, int Count) {
+			RendererAppInterface->DrawIndexedInstanced(VertexArray, Offsets, Count);
+		}
+		
 		inline static void DrawIndexed(const VertexArrayPtr& VertexArray, const Subdivision & Offsets) {
 			RendererAppInterface->DrawIndexed(VertexArray, Offsets);
 		}

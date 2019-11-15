@@ -13,6 +13,9 @@
 
 #include "Physics/Frustrum.h"
 
+#include "Utility/Hasher.h"
+MAKE_HASHABLE(ESource::Subdivision, t.MaterialIndex, t.BaseVertex, t.BaseIndex, t.IndexCount);
+
 namespace ESource {
 
 	RenderScene::RenderScene() {
@@ -67,15 +70,36 @@ namespace ESource {
 				{ "_EnviromentMap",               { ETextureDimension::Cubemap, EnviromentCubemap }, SPFlags_IsInternal },
 				{ "_EnviromentMapLods",           { CubemapTextureMipmaps }, SPFlags_IsInternal }
 				});
-			MatIt->Use();
 
-			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
-				Element.first->GetVertexArray()->Bind();
-				for (auto & ElementInstance : Element.second) {
-					if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
-						if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
-							MatIt->GetShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
-							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+			if (RenderElementsInstanceByMeshByMaterial.find(MatIt) != RenderElementsInstanceByMeshByMaterial.end()) {
+				MatIt->Use(true);
+				for (auto& Element : RenderElementsInstanceByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					TDictionary<Subdivision, TArray<Matrix4x4>> Transforms;
+					for (auto & ElementInstance : Element.second) {
+						if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								Transforms[ElementInstance.MeshSubdivision].push_back(ElementInstance.Transformation);
+							}
+						}
+					}
+
+					for (auto& Transformation : Transforms) {
+						MatIt->GetCurrentStateShaderProgram()->GetProgram()->SetAttribMatrix4x4Array("_ModelMatrix", (int)Transformation.second.size(), Transformation.second[0].PointerToValue(), ModelMatrixBuffer);
+						Rendering::DrawIndexedInstanced(Element.first->GetVertexArray(), Transformation.first, (int)Transformation.second.size());
+					}
+				}
+			}
+			{
+				MatIt->Use(false);
+				for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					for (auto & ElementInstance : Element.second) {
+						if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								MatIt->GetCurrentStateShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+								Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+							}
 						}
 					}
 				}
@@ -85,9 +109,11 @@ namespace ESource {
 
 	void RenderScene::DeferredRenderOpaque(uint8_t CameraIndex) {
 		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
+		RShaderPtr GShaderInstancing = ShaderManager::GetInstance().GetProgram(L"GBufferPass#Instancing");
 		if (GShader == NULL || !GShader->IsValid()) return;
 		Material GMat = Material(L"GPass");
 		GMat.SetShaderProgram(GShader);
+		GMat.SetShaderInstancingProgram(GShaderInstancing);
 
 		for (auto & MatIt : SortedMaterials) {
 			if (MatIt->bTransparent) continue;
@@ -117,17 +143,35 @@ namespace ESource {
 			GMat.StencilOnlyFail =  MatIt->StencilOnlyFail;
 			GMat.StencilPassFail =  MatIt->StencilPassFail;
 
-			if (GMat.bWriteDepth == false) continue;
+			if (RenderElementsInstanceByMeshByMaterial.find(MatIt) != RenderElementsInstanceByMeshByMaterial.end()) {
+				GMat.Use(true);
+				for (auto& Element : RenderElementsInstanceByMeshByMaterial[MatIt]) {
+					TDictionary<Subdivision, TArray<Matrix4x4>> Transforms;
+					for (auto & ElementInstance : Element.second) {
+						if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								Transforms[ElementInstance.MeshSubdivision].push_back(ElementInstance.Transformation);
+							}
+						}
+					}
 
-			GMat.Use();
-
-			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
-				Element.first->GetVertexArray()->Bind();
-				for (auto & ElementInstance : Element.second) {
-					if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
-						if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
-							GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
-							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+					Element.first->GetVertexArray()->Bind();
+					for (auto& Transformation : Transforms) {
+						GMat.GetCurrentStateShaderProgram()->GetProgram()->SetAttribMatrix4x4Array("_ModelMatrix", (int)Transformation.second.size(), Transformation.second[0].PointerToValue(), ModelMatrixBuffer);
+						Rendering::DrawIndexedInstanced(Element.first->GetVertexArray(), Transformation.first, (int)Transformation.second.size());
+					}
+				}
+			}
+			{
+				GMat.Use(false);
+				for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					for (auto & ElementInstance : Element.second) {
+						if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								GMat.GetCurrentStateShaderProgram()->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+								Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+							}
 						}
 					}
 				}
@@ -137,9 +181,11 @@ namespace ESource {
 
 	void RenderScene::DeferredRenderTransparent(uint8_t CameraIndex) {
 		RShaderPtr GShader = ShaderManager::GetInstance().GetProgram(L"GBufferPass");
+		RShaderPtr GShaderInstancing = ShaderManager::GetInstance().GetProgram(L"GBufferPass#Instancing");
 		if (GShader == NULL || !GShader->IsValid()) return;
 		Material GMat = Material(L"GPass");
 		GMat.SetShaderProgram(GShader);
+		GMat.SetShaderInstancingProgram(GShaderInstancing);
 
 		for (auto & MatIt : SortedMaterials) {
 			if (!MatIt->bTransparent) continue;
@@ -171,17 +217,35 @@ namespace ESource {
 			GMat.StencilOnlyFail = MatIt->StencilOnlyFail;
 			GMat.StencilPassFail = MatIt->StencilPassFail;
 
-			if (GMat.bWriteDepth == false) continue;
+			if (RenderElementsInstanceByMeshByMaterial.find(MatIt) != RenderElementsInstanceByMeshByMaterial.end()) {
+				GMat.Use(true);
+				for (auto& Element : RenderElementsInstanceByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					TDictionary<Subdivision, TArray<Matrix4x4>> Transforms;
+					for (auto & ElementInstance : Element.second) {
+						if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								Transforms[ElementInstance.MeshSubdivision].push_back(ElementInstance.Transformation);
+							}
+						}
+					}
 
-			GMat.Use();
-
-			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
-				Element.first->GetVertexArray()->Bind();
-				for (auto & ElementInstance : Element.second) {
-					if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
-						if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
-							GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
-							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+					for (auto& Transformation : Transforms) {
+						GShader->GetProgram()->SetAttribMatrix4x4Array("_ModelMatrix", (int)Transformation.second.size(), Transformation.second[0].PointerToValue(), ModelMatrixBuffer);
+						Rendering::DrawIndexedInstanced(Element.first->GetVertexArray(), Transformation.first, (int)Transformation.second.size());
+					}
+				}
+			}
+			{
+				GMat.Use(false);
+				for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					for (auto & ElementInstance : Element.second) {
+						if (Cameras[CameraIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Cameras[CameraIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								GShader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+								Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+							}
 						}
 					}
 				}
@@ -189,9 +253,9 @@ namespace ESource {
 		}
 	}
 
-	void RenderScene::RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader) {
+	void RenderScene::RenderLightMap(uint32_t LightIndex, MaterialPtr & Material) {
 		RenderScene::Light & SelectedLight = Lights[LightIndex];
-		if (!SelectedLight.CastShadow || SelectedLight.ShadowMap == NULL || !Shader->IsValid()) return;
+		if (!SelectedLight.CastShadow || SelectedLight.ShadowMap == NULL || Material == NULL) return;
 		SelectedLight.ShadowMap->Load();
 		if (SelectedLight.ShadowMap->GetLoadState() != LS_Loaded) return;
 
@@ -210,30 +274,68 @@ namespace ESource {
 
 		RTexturePtr WhiteTexture = TextureManager::GetInstance().GetTexture(L"WhiteTexture");
 
-		Shader->GetProgram()->Bind();
-		Shader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", SelectedLight.ProjectionMatrix.PointerToValue());
-		Shader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", SelectedLight.Transformation.GetGLViewMatrix().PointerToValue());
+
+		auto & Shader = Material->GetShaderProgram();
+		auto & InstancingShader = Material->GetInstancingShaderProgram();
 
 		for (auto & MatIt : SortedMaterials) {
 			if (!MatIt->bCastShadows) continue;
-			ShaderParameter * Parameter = MatIt->GetVariables().GetVariable("_MainTexture");
-			if (Parameter && Parameter->Value.Texture) {
-				Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetTexture(), 0);
-			}
-			else if (WhiteTexture) {
-				Shader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetTexture(), 0);
-			}
-			else {
-				Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
-			}
 
-			for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
-				Element.first->GetVertexArray()->Bind();
-				for (auto & ElementInstance : Element.second) {
-					if (Lights[LightIndex].RenderMask & ElementInstance.RenderMask) {
-						if (Lights[LightIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
-							Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
-							Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+			if (RenderElementsInstanceByMeshByMaterial.find(MatIt) != RenderElementsInstanceByMeshByMaterial.end()) {
+				InstancingShader->GetProgram()->Bind();
+				InstancingShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", SelectedLight.ProjectionMatrix.PointerToValue());
+				InstancingShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", SelectedLight.Transformation.GetGLViewMatrix().PointerToValue());
+				ShaderParameter * Parameter = MatIt->GetVariables().GetVariable("_MainTexture");
+				if (Parameter && Parameter->Value.Texture) {
+					InstancingShader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetTexture(), 0);
+				}
+				else if (WhiteTexture) {
+					InstancingShader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetTexture(), 0);
+				}
+				else {
+					InstancingShader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
+				}
+
+				for (auto& Element : RenderElementsInstanceByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					TDictionary<Subdivision, TArray<Matrix4x4>> Transforms;
+					for (auto & ElementInstance : Element.second) {
+						if (Lights[LightIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Lights[LightIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								Transforms[ElementInstance.MeshSubdivision].push_back(ElementInstance.Transformation);
+							}
+						}
+					}
+
+					for (auto& Transformation : Transforms) {
+						InstancingShader->GetProgram()->SetAttribMatrix4x4Array("_ModelMatrix", (int)Transformation.second.size(), Transformation.second[0].PointerToValue(), ModelMatrixBuffer);
+						Rendering::DrawIndexedInstanced(Element.first->GetVertexArray(), Transformation.first, (int)Transformation.second.size());
+					}
+				}
+			}
+			{
+				Shader->GetProgram()->Bind();
+				Shader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", SelectedLight.ProjectionMatrix.PointerToValue());
+				Shader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", SelectedLight.Transformation.GetGLViewMatrix().PointerToValue());
+				ShaderParameter * Parameter = MatIt->GetVariables().GetVariable("_MainTexture");
+				if (Parameter && Parameter->Value.Texture) {
+					Shader->GetProgram()->SetTexture("_MainTexture", Parameter->Value.Texture->GetTexture(), 0);
+				}
+				else if (WhiteTexture) {
+					Shader->GetProgram()->SetTexture("_MainTexture", WhiteTexture->GetTexture(), 0);
+				}
+				else {
+					Shader->GetProgram()->SetTexture("_MainTexture", NULL, 0);
+				}
+
+				for (auto& Element : RenderElementsByMeshByMaterial[MatIt]) {
+					Element.first->GetVertexArray()->Bind();
+					for (auto & ElementInstance : Element.second) {
+						if (Lights[LightIndex].RenderMask & ElementInstance.RenderMask) {
+							if (Lights[LightIndex].ViewFrustrum.CheckAABox(Element.first->GetVertexData().Bounding.Transform(ElementInstance.Transformation)) != ECullingResult::Outside) {
+								Shader->GetProgram()->SetMatrix4x4Array("_ModelMatrix", ElementInstance.Transformation.PointerToValue());
+								Rendering::DrawIndexed(Element.first->GetVertexArray(), ElementInstance.MeshSubdivision);
+							}
 						}
 					}
 				}

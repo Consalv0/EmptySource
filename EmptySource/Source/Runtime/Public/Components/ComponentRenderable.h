@@ -10,7 +10,7 @@ namespace ESource {
 	public:
 		uint8_t RenderingMask;
 
-		bool bGPUInstance;
+		bool bGPUInstancing;
 
 		virtual void SetMesh(RMeshPtr Value);
 

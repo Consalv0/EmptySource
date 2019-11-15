@@ -30,6 +30,10 @@ namespace ESource {
 
 		virtual bool CreateContext();
 
+		virtual NString GetGLVersion() override;
+
+		virtual NString GetShaderVersion() override;
+
 		uint64_t inline GetFrameCount() const override { return FrameCount; };
 
 		virtual bool IsValid() override;

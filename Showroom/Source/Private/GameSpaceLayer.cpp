@@ -242,6 +242,9 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 				ImGui::TextUnformatted("Culling Mask");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				ImGui::InputScalar("##RenderingMask", ImGuiDataType_U8, &Renderable->RenderingMask);
+				ImGui::TextUnformatted("GPU Instancing");
+				ImGui::SameLine(); ImGui::PushItemWidth(-1);
+				ImGui::Checkbox("##GPUInstancing", &Renderable->bGPUInstancing);
 				ImGui::TextUnformatted("Mesh");
 				ImGui::SameLine(); ImGui::PushItemWidth(-1);
 				if (ImGui::Combo(("##Mesh" + std::to_string(Renderable->GetName().GetInstanceID())).c_str(), &CurrentMeshIndex,
@@ -337,6 +340,7 @@ void GameSpaceLayer::OnAwake() {
 				auto PhysicsBody = SandTile->CreateComponent<CPhysicBody>();
 				PhysicsBody->SetMesh(TileDesert);
 				auto Renderable = SandTile->CreateComponent<CRenderable>();
+				Renderable->bGPUInstancing = true;
 				Renderable->RenderingMask = 1 << 0;
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
@@ -348,6 +352,7 @@ void GameSpaceLayer::OnAwake() {
 				auto PhysicsBody = BricksTile->CreateComponent<CPhysicBody>();
 				PhysicsBody->SetMesh(TileBricks);
 				auto Renderable = BricksTile->CreateComponent<CRenderable>();
+				Renderable->bGPUInstancing = true;
 				Renderable->RenderingMask = 1 << 1;
 				Renderable->SetMesh(TileBricks);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/GroundBricks"));

@@ -42,7 +42,7 @@ namespace ESource {
 
 		void DeferredRenderTransparent(uint8_t CameraIndex);
 
-		void RenderLightMap(uint32_t LightIndex, RShaderPtr & Shader);
+		void RenderLightMap(uint32_t LightIndex, MaterialPtr & Material);
 
 		void SubmitPointLight(const Transform & Transformation, const Vector3 & Color, const float & Intensity, const RTexturePtr & Texture, const float & Bias, uint8_t RenderingMask);
 

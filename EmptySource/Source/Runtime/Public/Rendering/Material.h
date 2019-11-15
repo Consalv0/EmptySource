@@ -57,8 +57,17 @@ namespace ESource {
 		//* Set material shader
 		void SetShaderProgram(const RShaderPtr & Value);
 
+		//* Set instancing shader
+		void SetShaderInstancingProgram(const RShaderPtr & Value);
+
+		//* Get material shader
+		RShaderPtr GetCurrentStateShaderProgram() const;
+
 		//* Get material shader
 		RShaderPtr GetShaderProgram() const;
+
+		//* Get material shader
+		RShaderPtr GetInstancingShaderProgram() const;
 
 		const IName & GetName() const;
 
@@ -96,13 +105,16 @@ namespace ESource {
 		void AddParameters(const TArray<ShaderParameter>& NewLayout);
 
 		//* Use shader program, asign uniform and render mode
-		void Use() const;
+		void Use(bool Instancing = false);
 
 		bool operator>(const Material& Other) const;
 
 	private:
 		IName Name;
 		RShaderPtr Shader;
+		RShaderPtr ShaderInstancing;
+		bool bHasInstancing;
+		bool bIsInstancingActive;
 		MaterialLayout ParameterLayout;
 	};
 

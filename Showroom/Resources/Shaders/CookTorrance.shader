@@ -45,62 +45,15 @@ GLSL:
   Stages:
     - StageType: Vertex
       Code: |
-        layout(location = 0) in vec3 _iVertexPosition;
-        layout(location = 1) in vec3 _iVertexNormal;
-        layout(location = 2) in vec3 _iVertexTangent;
-        layout(location = 3) in vec2 _iVertexUV0;
-        layout(location = 4) in vec2 _iVertexUV1;
-        layout(location = 5) in vec4 _iVertexColor;
-
-        uniform mat4 _ModelMatrix;
-        uniform mat4 _ProjectionMatrix;
-        uniform mat4 _ViewMatrix;
-
-        out struct Matrices {
-          mat4 Model;
-          mat4 WorldNormal;
-        } Matrix;
-    
-        out struct VertexData {
-          vec4 Position;
-          vec4 LightSpacePosition[2];
-          vec3 NormalDirection;
-          vec3 TangentDirection;
-          vec3 BitangentDirection;
-          vec2 UV0;
-          vec4 Color;
-        } Vertex;
-
-        uniform struct LightInfo {
-        	vec3 Position;        // Light Position in camera coords.
-          vec3 Color;           // Light Color
-        	float Intencity;      // Light Intensity
-          vec3 Direction;
-          mat4 ViewMatrix;
-          mat4 ProjectionMatrix;
-          sampler2D ShadowMap;
-          float ShadowBias;
-        } _Lights[2];
+        ESOURCE_VERTEX_LAYOUT_INSTANCING(1,mat4,_ModelMatrix)
+        ESOURCE_COMMON_VERTEX
+        ESOURCE_LIGHTS
     
         void main() {
-        	Matrix.Model = _ModelMatrix;
-        	Matrix.WorldNormal = transpose(inverse(Matrix.Model));
-    
-         	Vertex.Position = vec4(_iVertexPosition, 1.0);
-         	Vertex.NormalDirection = normalize(mat3(Matrix.WorldNormal) * _iVertexNormal); 
-         	Vertex.TangentDirection = normalize(mat3(Matrix.WorldNormal) * _iVertexTangent);
-        	Vertex.TangentDirection = normalize(Vertex.TangentDirection - dot(Vertex.TangentDirection, Vertex.NormalDirection) * Vertex.NormalDirection);
-        	Vertex.BitangentDirection = cross(Vertex.NormalDirection, Vertex.TangentDirection);
-        	Vertex.UV0 = _iVertexUV0; 
-        	Vertex.Color = _iVertexColor;
+          ESource_VertexCompute();
+          ESource_ComputeLights();
 
-          Vertex.Position = Matrix.Model * Vertex.Position;
-          gl_Position = _ProjectionMatrix * _ViewMatrix * Vertex.Position;
-
-          for (int i = 0; i < 2; i++) {
-            Vertex.LightSpacePosition[i] =_Lights[i].ProjectionMatrix * _Lights[i].ViewMatrix * Vertex.Position;
-          }
-
+          gl_Position = Vertex.ScreenPosition;
         }
 
     - StageType: Pixel
@@ -108,52 +61,15 @@ GLSL:
         const float PI = 3.1415926535;
         const float Gamma = 2.2;
         
-        uniform mat4 _ProjectionMatrix;
-        uniform mat4 _ViewMatrix;
-        uniform vec3 _ViewPosition;
-        
-        uniform sampler2D _MainTexture;
-        uniform sampler2D _NormalTexture;
-        uniform sampler2D _RoughnessTexture;
-        uniform sampler2D _MetallicTexture;
-        uniform sampler2D _AOTexture;
-        uniform sampler2D _EmissionTexture;
-        uniform vec3 _EmissionColor;
-        uniform float _EnviromentMapLods;
+        ESOURCE_MATRICES
+        ESOURCE_VERTEX
+        ESOURCE_UNIFORMS
+        ESOURCE_LIGHTS
+        ESOURCE_MATERIAL
+
+        uniform float       _EnviromentMapLods;
         uniform samplerCube _EnviromentMap;
         uniform sampler2D   _BRDFLUT;
-        
-        uniform struct LightInfo {
-        	vec3 Position;        // Light Position in camera coords.
-          vec3 Color;           // Light Color
-        	float Intencity;      // Light Intensity
-          vec3 Direction;
-          mat4 ViewMatrix;
-          mat4 ProjectionMatrix;
-          sampler2D ShadowMap;
-          float ShadowBias;
-        } _Lights[2];
-        
-        uniform struct MaterialInfo {
-          float Roughness;     // Roughness
-          float Metalness;     // Metallic (0) or dielectric (1)
-          vec4 Color;          // Diffuse color for dielectrics, f0 for metallic
-        } _Material;
-
-        in struct Matrices {
-          mat4 Model;
-          mat4 WorldNormal;
-        } Matrix;
-        
-        in struct VertexData {
-          vec4 Position;
-          vec4 LightSpacePosition[2];
-          vec3 NormalDirection;
-          vec3 TangentDirection;
-          vec3 BitangentDirection;
-          vec2 UV0;
-          vec4 Color;
-        } Vertex;
         
         out vec4 FragColor;
       
@@ -186,7 +102,7 @@ GLSL:
         }
         
         float ShadowCalculation(int LightIndex, float NDotL) {
-          vec3 ProjCoords = Vertex.LightSpacePosition[LightIndex].xyz / Vertex.LightSpacePosition[LightIndex].w;
+          vec3 ProjCoords = Lights.LightSpacePosition[LightIndex].xyz / Lights.LightSpacePosition[LightIndex].w;
           vec2 UVCoords;
           UVCoords.x = 0.5 * ProjCoords.x + 0.5;
           UVCoords.y = 0.5 * ProjCoords.y + 0.5;
@@ -303,7 +219,7 @@ GLSL:
             gl_FragDepth = 1.0;
           
           if (FragColor.x == 0.001) {
-            FragColor *= Matrix.Model * vec4(0);
+            FragColor *= Matrices.Model * vec4(0);
           }
         }
       

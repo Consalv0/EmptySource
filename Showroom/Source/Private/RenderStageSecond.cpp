@@ -27,8 +27,8 @@ void RenderStageSecond::End() {
 	Target->Unbind();
 
 	Rendering::SetAlphaBlending(BF_None, BF_None);
-	Scene.RenderLightMap(0, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
-	Scene.RenderLightMap(1, ShaderManager::GetInstance().GetProgram(L"DepthTestShader"));
+	Scene.RenderLightMap(0, MaterialManager::GetInstance().GetMaterial(L"Core/ShadowDepth"));
+	Scene.RenderLightMap(1, MaterialManager::GetInstance().GetMaterial(L"Core/ShadowDepth"));
 	Rendering::SetAlphaBlending(BF_None, BF_None);
 	Rendering::SetViewport(GeometryBufferTarget->GetViewport());
 	GeometryBufferTarget->Bind();

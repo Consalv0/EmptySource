@@ -116,7 +116,13 @@ namespace ESource {
 					YAML::Node ShaderProgramNode = ResourcesNode[i]["ShaderProgram"];
 					WString Name = ShaderProgramNode["Name"].IsDefined() ? Text::NarrowToWide(ShaderProgramNode["Name"].as<NString>()) : L"";
 					WString OriginFile = ShaderProgramNode["OriginFile"].IsDefined() ? Text::NarrowToWide(ShaderProgramNode["OriginFile"].as<NString>()) : L"";
-					CreateProgram(Name, OriginFile)->Load();
+
+					int ShaderFlags = ShaderProgramNode["Instancing"].IsDefined() ?
+						(ShaderProgramNode["Instancing"].as<int>() > 0 ? (int)EShaderCompileFalgs::Instancing : 0) : 0;
+					if (ShaderFlags & (int)EShaderCompileFalgs::Instancing) {
+						CreateProgram(Name + L"#Instancing", OriginFile, "", ShaderFlags)->Load();
+					}
+					CreateProgram(Name, OriginFile, "", 0)->Load();
 				}
 			}
 		}
@@ -152,10 +158,10 @@ namespace ESource {
 		return Stages;
 	}
 
-	RShaderPtr ShaderManager::CreateProgram(const WString & Name, const WString & Origin, const NString& Source) {
+	RShaderPtr ShaderManager::CreateProgram(const WString & Name, const WString & Origin, const NString& Source, int CompileFlags) {
 		RShaderPtr Shader = GetProgram(Name);
 		if (Shader == NULL) {
-			Shader = RShaderPtr(new RShader(Name, Origin, ""));
+			Shader = RShaderPtr(new RShader(Name, Origin, Source, CompileFlags));
 			AddShaderProgram(Shader);
 		}
 		return Shader;

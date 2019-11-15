@@ -11,6 +11,7 @@ Resources:
     ShaderProgram:
       Name: PBRShader
       OriginFile: Resources/Shaders/PBR.shader
+      Instancing: 1
   - GUID: 9336688078605051222
     ShaderProgram:
       Name: UnLitShader
@@ -39,6 +40,7 @@ Resources:
     ShaderProgram:
       Name: DepthTestShader
       OriginFile: Resources/Shaders/DepthTest.shader
+      Instancing: 1
   - GUID: 10653516802362644238
     ShaderProgram:
       Name: RenderScreenTexture
@@ -55,6 +57,7 @@ Resources:
     ShaderProgram:
       Name: GBufferPass
       OriginFile: Resources/Shaders/GBufferPass.shader
+      Instancing: 1
   - GUID: 10653516802362644238
     ShaderProgram:
       Name: PostProcessingSSAO

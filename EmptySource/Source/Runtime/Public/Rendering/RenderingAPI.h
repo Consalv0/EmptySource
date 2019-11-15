@@ -16,6 +16,8 @@ namespace ESource {
 
 		virtual void SetAlphaBlending(EBlendFactor Source, EBlendFactor Destination) = 0;
 
+		virtual void DrawIndexedInstanced(const VertexArrayPtr& VertexArray, const struct Subdivision & Offsets, int Count) = 0;
+
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray) = 0;
 
 		virtual void DrawIndexed(const VertexArrayPtr& VertexArray, const struct Subdivision & Offsets) = 0;

@@ -24,7 +24,7 @@ namespace ESource {
 
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
-		RShaderPtr CreateProgram(const WString& Name, const WString & Origin, const NString& Source = "");
+		RShaderPtr CreateProgram(const WString& Name, const WString & Origin, const NString& Source = "", int CompileFlags = 0);
 
 		static ShaderManager& GetInstance();
 

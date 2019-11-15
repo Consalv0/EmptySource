@@ -56,13 +56,8 @@ GLSL:
     - StageType: Vertex
       Code: |
         const float PI = 3.1415926535;
-
-        layout(location = 0) in vec3 _iVertexPosition;
-        layout(location = 1) in vec3 _iVertexNormal;
-        layout(location = 2) in vec3 _iVertexTangent;
-        layout(location = 3) in vec2 _iVertexUV0;
-        layout(location = 4) in vec2 _iVertexUV1;
-        layout(location = 5) in vec4 _iVertexColor;
+        
+        ESOURCE_VERTEX_LAYOUT
 
         uniform mat4 _ModelMatrix;
         uniform mat4 _ProjectionMatrix;
@@ -103,7 +98,7 @@ GLSL:
         vec4 TaylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
         vec3 Fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
 
-        float Perlin3D(vec3 P){
+        float Perlin3D(vec3 P) {
           vec3 Pi0 = floor(P); // Integer part for indexing
           vec3 Pi1 = Pi0 + vec3(1.0); // Integer part + 1
           Pi0 = mod(Pi0, 289.0);
@@ -176,9 +171,9 @@ GLSL:
         }
 
         vec4 DeformPosition(vec4 Coord) {
-          	vec4 FlowVal = (texture(_FlowMap, Vertex.UV0) * 2.0 - 1.0) * vec4(_Speed, 0.0);
-          	float FlowDiff = sin(_GlobalTime * 0.25);
-          	vec3 DistortedPosition = (Matrix.Model * Coord).xyz - vec3(FlowVal.xy * FlowDiff, 0.0);
+          vec4 FlowVal = (texture(_FlowMap, Vertex.UV0) * 2.0 - 1.0) * vec4(_Speed, 0.0);
+          float FlowDiff = sin(_GlobalTime * 0.25);
+          vec3 DistortedPosition = (Matrix.Model * Coord).xyz - vec3(FlowVal.xy * FlowDiff, 0.0);
         	vec3 CoordV = DistortedPosition - (_Speed * _GlobalTime);
         	float V = (Perlin3D(CoordV * _Scale) + Perlin3D(DistortedPosition * _Scale)) * 0.5;
         	vec3 CoordW = (DistortedPosition + vec3(PI, PI, PI)) - (_BaseSpeed * _GlobalTime);

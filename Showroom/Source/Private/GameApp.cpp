@@ -203,31 +203,33 @@ protected:
 		// MaterialMng.CreateMaterial(L"DebugMaterial", ShaderMng.GetProgram(L"UnLitShader"), true, DF_LessEqual, FM_Wireframe, CM_None, {
 		// 	{ "_Material.Color", { Vector4(1.F, 0.F, 1.F, 1.F) } }
 		// })->bCastShadows = false;
+		MaterialMng.CreateMaterial(L"Core/ShadowDepth", ShaderMng.GetProgram(L"DepthTestShader"), true, DF_LessEqual, FM_Solid, CM_None, {}
+		)->SetShaderInstancingProgram(ShaderMng.GetProgram(L"DepthTestShader#Instancing"));
 		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_R") } },
-		});
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
 		MaterialMng.CreateMaterial(L"Tiles/GroundBricks", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_R") } },
 			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_AO") } },
-		});
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
 		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_R") } },
 			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_M") } },
 			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_AO") } },
-		});
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
 		MaterialMng.CreateMaterial(L"Objects/FalloutCar", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_A") } },
 			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_N") } },
 			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_R") } },
 			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_M") } },
 			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_AO") } },
-		});
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
 		MaterialMng.CreateMaterial(L"Objects/Backpack", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
 			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_A") } },
 			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_N") } },
@@ -235,7 +237,7 @@ protected:
 			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_M") } },
 			{ "_AOTexture",          { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_AO") } },
 			{ "_Material.Roughness", { 1.9F } }
-		});
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
 		MaterialPtr SkyMaterial = MaterialMng.CreateMaterial(L"RenderCubemapMaterial", ShaderMng.GetProgram(L"RenderCubemapShader"), true, DF_Always, FM_Solid, CM_None, {});
 		SkyMaterial->RenderPriority = 1;
 		SkyMaterial->bWriteDepth = false;

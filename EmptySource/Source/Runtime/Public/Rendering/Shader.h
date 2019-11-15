@@ -6,6 +6,10 @@
 
 namespace ESource {
 
+	enum class EShaderCompileFalgs {
+		Instancing = 1
+	};
+
 	class ShaderStage {
 	public:
 		virtual ~ShaderStage() = default;
@@ -20,7 +24,7 @@ namespace ESource {
 		virtual bool IsValid() const = 0;
 
 		//* Create and compile our shader unit
-		static ShaderStage * CreateFromText(const NString & Code, EShaderStageType Type);
+		static ShaderStage * CreateFromText(const NString & Code, EShaderStageType Type, int LineCountOffset, int Flags);
 	};
 
 	class ShaderProgram {

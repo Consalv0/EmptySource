@@ -42,12 +42,14 @@ namespace ESource {
 		//* Set the shader properties
 		void SetParameters(const TArray<ShaderParameter> & Parameters);
 
+		bool IsInstancing() { return CompileFlags & (int)EShaderCompileFalgs::Instancing; }
+
 		inline const NString& GetSourceCode() const { return SourceCode; }
 
 	protected:
 		friend class ShaderManager;
 
-		RShader(const IName & Name, const WString & Origin, const NString& Source);
+		RShader(const IName & Name, const WString & Origin, const NString& Source, int CompileFlags);
 
 		bool LoadFromShaderSource(const NString & Source);
 
@@ -56,6 +58,7 @@ namespace ESource {
 		TArray<ShaderStage *> Stages;
 
 		NString SourceCode;
+		int CompileFlags;
 
 		TArray<ShaderParameter> Parameters;
 	};

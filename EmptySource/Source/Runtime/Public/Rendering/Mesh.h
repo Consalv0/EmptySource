@@ -55,6 +55,13 @@ namespace ESource {
 		uint32_t BaseVertex;
 		uint32_t BaseIndex;
 		uint32_t IndexCount;
+
+		bool operator==(const Subdivision& Other) const {
+			return (MaterialIndex == Other.MaterialIndex
+				&& BaseVertex == Other.BaseVertex
+				&& BaseIndex == Other.BaseIndex
+				&& IndexCount == Other.IndexCount);
+		}
 	};
 
 	using FaceIndex                 = IntVector3;

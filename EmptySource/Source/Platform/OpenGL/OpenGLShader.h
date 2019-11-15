@@ -5,7 +5,7 @@ namespace ESource {
 	class OpenGLShaderStage : public ShaderStage {
 	public:
 
-		OpenGLShaderStage(const NString & Code, EShaderStageType Type);
+		OpenGLShaderStage(const NString & Code, EShaderStageType Type, int LineCountOffset, int Flags);
 
 		virtual ~OpenGLShaderStage() override;
 
@@ -24,6 +24,8 @@ namespace ESource {
 		uint32_t ShaderObject;
 
 		bool bValid;
+
+		void PreprocessShaderStage(NString & Code, EShaderStageType Type, int LineCountOffset, bool Instancing);
 	};
 
 	class OpenGLShaderProgram : public ShaderProgram {

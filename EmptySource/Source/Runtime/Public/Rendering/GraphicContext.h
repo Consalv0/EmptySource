@@ -9,6 +9,10 @@ namespace ESource {
 		virtual bool Initialize() = 0;
 
 		virtual void SwapBuffers() = 0;
+
+		virtual NString GetGLVersion() = 0;
+
+		virtual NString GetShaderVersion() = 0;
 	
 		virtual uint64_t inline GetFrameCount() const = 0;
 

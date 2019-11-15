@@ -131,6 +131,13 @@ namespace ESource {
 		glViewport((GLint)Viewport.GetMinPoint().X, (GLint)Viewport.GetMinPoint().Y, (GLint)Viewport.GetWidth(), (GLint)Viewport.GetHeight());
 	}
 
+	void OpenGLAPI::DrawIndexedInstanced(const VertexArrayPtr & VertexArray, const Subdivision & Offsets, int Count) {
+		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
+		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
+		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
+		glDrawElementsInstancedBaseVertex(GL_TRIANGLES, Offsets.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * Offsets.BaseIndex), Count, Offsets.BaseVertex);
+	}
+
 	void OpenGLAPI::DrawIndexed(const VertexArrayPtr & VertexArrayPointer) {
 		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
 		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");

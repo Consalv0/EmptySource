@@ -77,6 +77,18 @@ namespace ESource {
 			return true;
 		}
 
+		template<class T, class C = T::size_type>
+		inline C CountLines(const T& String, C MaxSize = static_cast<C>(-1)) {
+			C NewLines = 0;
+			const char * Char = &String[0];
+			for (int i = 0; i < MaxSize && i < String.size(); i++) {
+				if (Char[i] == '\n') {
+					NewLines++;
+				}
+			}
+			return NewLines;
+		}
+
 		template<typename ... Arguments>
 		WString Formatted(const WString& Format, Arguments ... Args) {
 			const WChar* FormatBuffer = Format.c_str();
