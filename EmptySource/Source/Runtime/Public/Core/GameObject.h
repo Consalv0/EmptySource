@@ -22,6 +22,8 @@ namespace ESource {
 
 		bool ContainsRecursiveDown(GGameObject * Other) const;
 
+		GGameObject * GetParent() const { return Parent; };
+
 		virtual void DestroyComponent(CComponent * Component);
 
 		inline bool IsRoot() const { return Parent == NULL; };

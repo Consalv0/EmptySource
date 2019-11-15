@@ -132,9 +132,9 @@ namespace ESource {
 	}
 
 	void OpenGLAPI::DrawIndexedInstanced(const VertexArrayPtr & VertexArray, const Subdivision & Offsets, int Count) {
-		ES_CORE_ASSERT(VertexArrayPointer != NULL, "Can't draw VertexArrayObject, is NULL");
-		ES_CORE_ASSERT(VertexArrayPointer->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
-		ES_CORE_ASSERT(VertexArrayPointer->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
+		ES_CORE_ASSERT(VertexArray != NULL, "Can't draw VertexArrayObject, is NULL");
+		ES_CORE_ASSERT(VertexArray->GetNativeObject(), "Can't draw VertexArrayObject, object is empty");
+		ES_CORE_ASSERT(VertexArray->GetIndexBuffer() != NULL, "Can't draw VertexArrayObject, IndexBuffer is missing");
 		glDrawElementsInstancedBaseVertex(GL_TRIANGLES, Offsets.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * Offsets.BaseIndex), Count, Offsets.BaseVertex);
 	}
 

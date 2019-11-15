@@ -127,8 +127,8 @@ protected:
 	}
 
 	virtual void OnAttach() override {
-		AudioManager::GetInstance().LoadAudioFromFile(L"6503.wav", L"Resources/Sounds/6503.wav");
-		AudioManager::GetInstance().LoadAudioFromFile(L"Hololooo.wav", L"Resources/Sounds/Hololooo.wav");
+		AudioManager::GetInstance().LoadAudioFromFile(L"GunShot.wav", L"Resources/Sounds/GunShot.wav");
+		AudioManager::GetInstance().LoadAudioFromFile(L"Kuak.wav", L"Resources/Sounds/Kuak.wav");
 
 		PixelMap WhiteMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
 		PixelMapUtility::PerPixelOperator(WhiteMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 255; Value[1] = 255; Value[2] = 255; });
@@ -147,6 +147,8 @@ protected:
 		auto & NormalTexture = TextureMng.CreateTexture2D(L"NormalTexture", L"", PF_RGB8, FM_MinMagNearest, SAM_Repeat);
 		NormalTexture->SetPixelData(NormlMap);
 		NormalTexture->Load();
+
+		TextureMng.LoadImageFromFile(L"CrossHead", PF_RGBA8, FM_MinMagNearest, SAM_Clamp, true, false, L"Resources/Textures/CrossHead.png");
 
 		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_A.jpg");
 		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
@@ -175,11 +177,36 @@ protected:
 		TextureMng.LoadImageFromFile(L"Objects/Backpack_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_M.jpg");
 		TextureMng.LoadImageFromFile(L"Objects/Backpack_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_AO.jpg");
 
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_AO.png");
+
+		TextureMng.LoadImageFromFile(L"Objects/Neko_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_M", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_M", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_M.png");
+
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderMng.CreateProgram(L"CookTorranceShader", L"Resources/Shaders/CookTorrance.shader");
 		
 		ModelManager& ModelMng = ModelManager::GetInstance();
+		// https://sketchfab.com/3d-models/flare-gun-ca3695b7ecaf4e35a8b3f2e1ffb84c2c
+		ModelMng.LoadFromFile(L"Resources/Models/FlareGun.dae", true);
+		// ModelMng.CreateSubModelMesh(L"FlareGun", L"Flare_Short");
+		// ModelMng.CreateSubModelMesh(L"FlareGun", L"FlareGun_Frame");
+		// ModelMng.CreateSubModelMesh(L"FlareGun", L"FlareGun_Barrel");
+		// ModelMng.CreateSubModelMesh(L"FlareGun", L"FlareGun_Hammer");
+		// ModelMng.CreateSubModelMesh(L"FlareGun", L"FlareGun_Trigger");
+		ModelMng.LoadAsyncFromFile(L"Resources/Models/Neko.obj", true);
+		ModelMng.CreateSubModelMesh(L"Neko", L"Neko");
+		ModelMng.CreateSubModelMesh(L"Neko", L"NekoCollision");
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/SphereUV.obj", true);
 		ModelMng.CreateSubModelMesh(L"SphereUV", L"pSphere1");
 		// https://sketchfab.com/3d-models/eastern-substances-6eae4e979bc447c99af70284bfc4065a
@@ -237,6 +264,28 @@ protected:
 			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_M") } },
 			{ "_AOTexture",          { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_AO") } },
 			{ "_Material.Roughness", { 1.9F } }
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
+		MaterialMng.CreateMaterial(L"Objects/FlareGun", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_A") } },
+			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_N") } },
+			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_R") } },
+			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_M") } },
+			{ "_AOTexture",          { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_AO") } },
+			{ "_Material.Roughness", { 1.0F } }
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
+		MaterialMng.CreateMaterial(L"Objects/Neko", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_A") } },
+			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_N") } },
+			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_R") } },
+			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_M") } },
+			{ "_Material.Roughness", { 1.0F } }
+		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
+		MaterialMng.CreateMaterial(L"Objects/NekoEye", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
+			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_A") } },
+			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_N") } },
+			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_R") } },
+			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_M") } },
+			{ "_Material.Roughness", { 1.0F } }
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
 		MaterialPtr SkyMaterial = MaterialMng.CreateMaterial(L"RenderCubemapMaterial", ShaderMng.GetProgram(L"RenderCubemapShader"), true, DF_Always, FM_Solid, CM_None, {});
 		SkyMaterial->RenderPriority = 1;
@@ -918,12 +967,12 @@ protected:
 	virtual void OnAwake() override {
 		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
 
-		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStage>(L"MainStage");
+		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageSecond>(L"MainStage");
 		Application::GetInstance()->GetRenderPipeline().Exposure = 3.5F;
 		SkyboxRoughness = 0.225F;
 
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"6503.wav"), 0.255F, false, true);
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Hololooo.wav"), 0.255F, false, true);
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"GunShot.wav"), 0.255F, false, true);
+		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Kuak.wav"), 0.255F, false, true);
 
 		ShaderManager& ShaderMng = ShaderManager::GetInstance();
 		RShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
@@ -1097,6 +1146,38 @@ protected:
 			DynamicMesh.GetVertexArray()->Bind();
 			RenderTextMaterial->SetMatrix4x4Array("_ModelMatrix", Matrix4x4().PointerToValue());
 			Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
+		}
+		{
+			auto & MainViewport = Application::GetInstance()->GetWindow().GetViewport();
+			MainViewport.MaxY = MainViewport.MaxY / 2;
+			Rendering::SetViewport(MainViewport);
+			static float SampleLevel = 0.F;
+			static float Gamma = 2.2F;
+			static bool ColorFilter[4] = { true, true, true, true };
+			int bMonochrome = false;
+			int bIsCubemap = false;
+			auto & CrossHead = TextureManager::GetInstance().GetTexture(L"CrossHead");
+			RenderTextureMaterial.Use();
+			RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
+			RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
+			RenderTextureMaterial.SetFloat4Array("_ColorFilter",
+				Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
+				.PointerToValue()
+			);
+			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+			RenderTextureMaterial.SetInt1Array("_IsCubemap", &bIsCubemap);
+			CrossHead->GetTexture()->Bind();
+			RenderTextureMaterial.SetTexture2D("_MainTexture", CrossHead, 0);
+			RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", CrossHead, 1);
+			float LODLevel = SampleLevel * (float)CrossHead->GetMipMapCount();
+			RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
+
+			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Matrix4x4 QuadPosition = Matrix4x4::Scaling((Vector2)CrossHead->GetSize() / Vector2((float)MainViewport.GetWidth(), (float)MainViewport.GetHeight()));
+			RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
+
+			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
+			Rendering::SetViewport(Application::GetInstance()->GetWindow().GetViewport());
 		}
 
 		RenderingText[0] = Text::Formatted(

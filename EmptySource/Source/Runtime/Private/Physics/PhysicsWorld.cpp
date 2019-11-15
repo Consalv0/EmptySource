@@ -60,18 +60,22 @@ namespace ESource {
 				TotalHitCount += Hits.size();
 			
 				if (Hits.size() > 0 && Hits[0].bHit) {
-					IntVector3 Face = ModelData->Faces[Hits[0].TriangleIndex];
-					const Vector3 & N0 = ModelData->StaticVertices[Face[0]].Normal;
-					const Vector3 & N1 = ModelData->StaticVertices[Face[1]].Normal;
-					const Vector3 & N2 = ModelData->StaticVertices[Face[2]].Normal;
-					Vector3 InterpolatedNormal =
-						N0 * Hits[0].BaricenterCoordinates[0] +
-						N1 * Hits[0].BaricenterCoordinates[1] +
-						N2 * Hits[0].BaricenterCoordinates[2];
-			
-					Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
-					Hits[0].Normal.Normalize();
-					Vector3 ReflectedCameraDir = Vector3::Reflect(CastedRay.GetDirection(), Hits[0].Normal);
+					if (Hits[0].TriangleIndex < ModelData->Faces.size()) {
+						IntVector3 Face = ModelData->Faces[Hits[0].TriangleIndex];
+						const Vector3 & N0 = ModelData->StaticVertices[Face[0]].Normal;
+						const Vector3 & N1 = ModelData->StaticVertices[Face[1]].Normal;
+						const Vector3 & N2 = ModelData->StaticVertices[Face[2]].Normal;
+						Vector3 InterpolatedNormal =
+							N0 * Hits[0].BaricenterCoordinates[0] +
+							N1 * Hits[0].BaricenterCoordinates[1] +
+							N2 * Hits[0].BaricenterCoordinates[2];
+
+						Hits[0].Normal = TransformMat.Inversed().Transposed().MultiplyVector(InterpolatedNormal);
+						Hits[0].Normal.Normalize();
+					}
+					else {
+						Hits[0].bHit = false;
+					}
 				}
 			}
 		}

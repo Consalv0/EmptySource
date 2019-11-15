@@ -10,6 +10,9 @@ public:
 	ESource::Vector2 CursorPosition;
 	ESource::Vector2 LastCursorPosition;
 	float ViewSpeed = 5.5F;
+	float UpVelocity = 0.F;
+	float DefaultHeight = 0.F;
+	int InputIndex = -1;
 
 protected:
 	typedef ESource::CComponent Supper;

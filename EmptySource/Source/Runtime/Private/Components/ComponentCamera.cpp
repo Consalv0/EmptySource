@@ -19,7 +19,7 @@ namespace ESource {
 	Matrix4x4 CCamera::GetProjectionMatrix() const {
 		return Matrix4x4::Perspective(
 			ApertureAngle * MathConstants::DegreeToRad,
-			Application::GetInstance()->GetWindow().GetAspectRatio(),
+			Application::GetInstance()->GetWindow().GetAspectRatio() / 0.5F,
 			CullingDistances.X, CullingDistances.Y
 		);
 	}

@@ -9,16 +9,27 @@
 namespace ESource {
 
 	CAnimable::CAnimable(GGameObject & GameObject)
-		: CComponent(L"Animable", GameObject), Track(NULL), CurrentAnimationTime(0.F), AnimationSpeed(1.F) {
+		: CComponent(L"Animable", GameObject), Track(NULL), CurrentAnimationTime(0.F), AnimationSpeed(1.F), EventsCallback(), bLoop(false), bPlaying(true) {
 	}
 
 	void CAnimable::OnUpdate(const Timestamp& Stamp) {
-		if (Track) {
+		if (Track && bPlaying) {
 			CurrentAnimationTime += Stamp.GetDeltaTime<Time::Second>() * AnimationSpeed * Track->TicksPerSecond;
-			if (CurrentAnimationTime > Track->Duration)
-				CurrentAnimationTime = std::fmod(CurrentAnimationTime, Track->Duration);
+			if (CurrentAnimationTime > Track->Duration) {
+				CallEventsOnEndAnimation();
+				if (bLoop)
+					CurrentAnimationTime = std::fmod(CurrentAnimationTime, Track->Duration);
+				else {
+					CurrentAnimationTime = 0.F;
+					bPlaying = false;
+				}
+			}
 			UpdateHierarchy();
 		}
+	}
+
+	void CAnimable::AddEventOnEndAnimation(const NString & Name, const CallbackFunctionPointer & Function) {
+		EventsCallback.insert_or_assign(Name, Function);
 	}
 
 	bool CAnimable::Initialize() {
@@ -26,6 +37,12 @@ namespace ESource {
 	}
 
 	void CAnimable::OnDelete() {
+	}
+
+	void CAnimable::CallEventsOnEndAnimation() {
+		for (auto & Event : EventsCallback) {
+			Event.second();
+		}
 	}
 
 	size_t FindPosition(double AnimationTime, const AnimationTrackNode * NodeAnim) {

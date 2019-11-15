@@ -15,6 +15,8 @@
 
 #include "../Public/GameSpaceLayer.h"
 #include "../Public/CameraMovement.h"
+#include "../Public/GunComponent.h"
+#include "../Public/PropComponent.h"
 #include "../Public/FollowTarget.h"
 #include "../External/IMGUI/imgui.h"
 
@@ -296,11 +298,22 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 void GameSpaceLayer::OnAwake() {
 	Super::OnAwake();
 
-	auto Camera = CreateObject<GGameObject>(L"MainCamera", Transform(Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
-	Camera->CreateComponent<CCamera>()->RenderingMask = 3;
-	Camera->CreateComponent<CCameraMovement>();
+	auto MainCamera = CreateObject<GGameObject>(L"MainCamera", Transform(Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
+	auto PropCameraOffset = CreateObject<GGameObject>(L"PropCamera", Transform(Point3(0.F, 1.0F, 0.F), Quaternion(), 1.F));
+	auto PropCamera = CreateObject<GGameObject>(L"PropCameraOffset", Transform(Point3(0.F, 0.0F, -1.8F), Quaternion(), 1.F));
+	PropCamera->AttachTo(PropCameraOffset);
+	auto CameraComponent1 = MainCamera->CreateComponent<CCamera>();
+	auto CameraComponent2 = PropCamera->CreateComponent<CCamera>();
+	CameraComponent1->RenderingMask = 3;
+	CameraComponent2->RenderingMask = 3;
+	auto MainCameraMovement = MainCamera->CreateComponent<CCameraMovement>();
+	MainCameraMovement->InputIndex = 0;
+	MainCameraMovement->DefaultHeight = 1.8F;
+	auto PropCameraMovement = PropCameraOffset->CreateComponent<CCameraMovement>();
+	PropCameraMovement->InputIndex = 1;
+	PropCameraMovement->DefaultHeight = 0.F;
 	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
-	SkyBox->AttachTo(Camera);
+	SkyBox->AttachTo(MainCamera);
 	auto Renderable = SkyBox->CreateComponent<CRenderable>();
 	Renderable->RenderingMask = 1 << 0 | 1 << 1;
 	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
@@ -314,7 +327,7 @@ void GameSpaceLayer::OnAwake() {
 	Light0->bCastShadow = true;
 	Light0->SetShadowMapSize(2048);
 	auto FollowLight0 = LightObj0->CreateComponent<CFollowTarget>();
-	FollowLight0->Target = Camera;
+	FollowLight0->Target = MainCamera;
 	FollowLight0->FixedPositionAxisY = true;
 	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, -1.5F, 0.F }, Quaternion(), 1.F));
 	auto Light1 = LightObj1->CreateComponent<CLight>();
@@ -326,7 +339,7 @@ void GameSpaceLayer::OnAwake() {
 	{
 		auto Ground = CreateObject<GGameObject>(L"Ground", Transform());
 		CFollowTarget * Follow = Ground->CreateComponent<CFollowTarget>();
-		Follow->Target = Camera;
+		Follow->Target = MainCamera;
 		Follow->FixedPositionAxisY = true;
 		Follow->ModuleMovement = 6.F;
 		auto TileDesert = ModelMng.GetMesh(L"TileDesertSends:TileDesertSends");
@@ -345,18 +358,18 @@ void GameSpaceLayer::OnAwake() {
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
 			}
-			for (int j = 0; j < GridSize; j++) {
-				auto BricksTile = CreateObject<GGameObject>(L"BricksTile");
-				BricksTile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
-				BricksTile->AttachTo(Ground);
-				auto PhysicsBody = BricksTile->CreateComponent<CPhysicBody>();
-				PhysicsBody->SetMesh(TileBricks);
-				auto Renderable = BricksTile->CreateComponent<CRenderable>();
-				Renderable->bGPUInstancing = true;
-				Renderable->RenderingMask = 1 << 1;
-				Renderable->SetMesh(TileBricks);
-				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/GroundBricks"));
-			}
+			// for (int j = 0; j < GridSize; j++) {
+			// 	auto BricksTile = CreateObject<GGameObject>(L"BricksTile");
+			// 	BricksTile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
+			// 	BricksTile->AttachTo(Ground);
+			// 	auto PhysicsBody = BricksTile->CreateComponent<CPhysicBody>();
+			// 	PhysicsBody->SetMesh(TileBricks);
+			// 	auto Renderable = BricksTile->CreateComponent<CRenderable>();
+			// 	Renderable->bGPUInstancing = true;
+			// 	Renderable->RenderingMask = 1 << 1;
+			// 	Renderable->SetMesh(TileBricks);
+			// 	Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/GroundBricks"));
+			// }
 		}
 	}
 
@@ -387,6 +400,49 @@ void GameSpaceLayer::OnAwake() {
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/Backpack"));
 	}
 
+	{
+		auto Prop = CreateObject<GGameObject>(L"Neko", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::FromEulerAngles({ 0, 1.5F, -10.F }), 1.F));
+		auto PhysicsBody = Prop->CreateComponent<CPhysicBody>();
+		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Neko:NekoCollision"));
+		auto Renderable = Prop->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"Neko:Neko"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/NekoEye"));
+		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Objects/Neko"));
+		Prop->AttachTo(PropCameraOffset);
+		Prop->CreateComponent<CProp>();
+	}
+
+	{
+		auto Gun = CreateObject<GGameObject>(L"Gun", Transform(Vector3(-0.1F, -0.04F, 0.175F), Quaternion(), 0.01F));
+		auto FlareGun = CreateObject<GGameObject>(L"FlareGun", Transform());
+		auto Animator = FlareGun->CreateComponent<CAnimable>();
+		Animator->Track = &ModelMng.GetModel(L"FlareGun")->GetAnimations()[0];
+		auto FlareGunFrame = CreateObject<GGameObject>(L"FlareGun_Frame", Transform());
+		Renderable = FlareGunFrame->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Frame"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
+		auto FlareGunBarrel = CreateObject<GGameObject>(L"FlareGun_Barrel", Transform());
+		Renderable = FlareGunBarrel->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Barrel"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
+		auto FlareGunHammer = CreateObject<GGameObject>(L"FlareGun_Hammer", Transform());
+		Renderable = FlareGunHammer->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Hammer"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
+		auto FlareGunTrigger = CreateObject<GGameObject>(L"FlareGun_Trigger", Transform());
+		Renderable = FlareGunTrigger->CreateComponent<CRenderable>();
+		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Trigger"));
+		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
+		FlareGunFrame->AttachTo(FlareGun);
+		FlareGunBarrel->AttachTo(FlareGun);
+		FlareGunHammer->AttachTo(FlareGun);
+		FlareGunTrigger->AttachTo(FlareGun);
+		FlareGun->AttachTo(Gun);
+		Gun->AttachTo(MainCamera);
+
+		auto GunComponent = Gun->CreateComponent<CGun>();
+		GunComponent->SetGunObjects(Gun, Animator, CameraComponent1);
+	}
 }
 
 void GameSpaceLayer::OnRender() {

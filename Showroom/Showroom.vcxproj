@@ -146,6 +146,8 @@
     <ClInclude Include="Source\Public\CameraMovement.h" />
     <ClInclude Include="Source\Public\FollowTarget.h" />
     <ClInclude Include="Source\Public\GameSpaceLayer.h" />
+    <ClInclude Include="Source\Public\GunComponent.h" />
+    <ClInclude Include="Source\Public\PropComponent.h" />
     <ClInclude Include="Source\Public\RenderStageFirst.h" />
     <ClInclude Include="Source\Public\RenderStageSecond.h" />
   </ItemGroup>
@@ -154,6 +156,8 @@
     <ClCompile Include="Source\Private\FollowTarget.cpp" />
     <ClCompile Include="Source\Private\GameApp.cpp" />
     <ClCompile Include="Source\Private\GameSpaceLayer.cpp" />
+    <ClCompile Include="Source\Private\GunComponent.cpp" />
+    <ClCompile Include="Source\Private\PropComponent.cpp" />
     <ClCompile Include="Source\Private\RenderStageFirst.cpp" />
     <ClCompile Include="Source\Private\RenderStageSecond.cpp" />
   </ItemGroup>

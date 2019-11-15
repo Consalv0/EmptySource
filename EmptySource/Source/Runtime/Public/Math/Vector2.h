@@ -6,6 +6,8 @@ namespace ESource {
 
 	struct Vector3;
 	struct Vector4;
+	struct IntVector2;
+	struct IntVector3;
 
 	struct Vector2 {
 	public:
@@ -18,6 +20,8 @@ namespace ESource {
 		HOST_DEVICE FORCEINLINE Vector2(const Vector2& Vector);
 		HOST_DEVICE FORCEINLINE Vector2(const Vector3& Vector);
 		HOST_DEVICE FORCEINLINE Vector2(const Vector4& Vector);
+		HOST_DEVICE FORCEINLINE Vector2(const IntVector2& Vector);
+		HOST_DEVICE FORCEINLINE Vector2(const IntVector3& Vector);
 		HOST_DEVICE FORCEINLINE Vector2(const float& Value);
 		HOST_DEVICE FORCEINLINE Vector2(const float& X, const float& Y);
 

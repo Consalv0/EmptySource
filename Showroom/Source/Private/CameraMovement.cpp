@@ -5,14 +5,6 @@
 #include "Core/Transform.h"
 #include "Core/Input.h"
 
-#include "Resources/ModelResource.h"
-
-#include "Components/ComponentCamera.h"
-#include "Components/ComponentPhysicBody.h"
-
-#include "Physics/PhysicsWorld.h"
-#include "Physics/Ray.h"
-
 #include "../Public/CameraMovement.h"
 
 using namespace ESource;
@@ -40,12 +32,14 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
-	float AxisY = Input::GetAxis(-1, EJoystickAxis::RightY);
-	float AxisX = Input::GetAxis(-1, EJoystickAxis::RightX);
+	float AxisY = Input::GetAxis(InputIndex, EJoystickAxis::RightY);
+	float AxisX = Input::GetAxis(InputIndex, EJoystickAxis::RightX);
 	if (Math::Abs(AxisY) < 0.2F) AxisY = 0.F;
 	if (Math::Abs(AxisX) < 0.2F) AxisX = 0.F;
+	Vector3 EulerAngles = CameraRotation.ToEulerAngles();
+	EulerAngles.Z = 0.F;
 	CameraRotation = Quaternion::FromEulerAngles(
-		CameraRotation.ToEulerAngles() + Vector3(AxisY * ViewSpeed * 0.5F, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * Time::GetDeltaTime<Time::Second>()
+		EulerAngles + Vector3(AxisY * ViewSpeed * 0.5F, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * Time::GetDeltaTime<Time::Second>()
 	);
 
 	Vector3 MovementDirection = Vector3();
@@ -63,8 +57,20 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
 	}
 
-	AxisY = Input::GetAxis(-1, EJoystickAxis::LeftY);
-	AxisX = Input::GetAxis(-1, EJoystickAxis::LeftX);
+	GetGameObject().LocalTransform.Position.Y += UpVelocity * DeltaTime.GetDeltaTime<Time::Second>();
+	UpVelocity -= DeltaTime.GetDeltaTime<Time::Second>() * 15.7F;
+	if (GetGameObject().LocalTransform.Position.Y <= DefaultHeight) {
+		UpVelocity = 0.F;
+		GetGameObject().LocalTransform.Position.Y = DefaultHeight;
+	}
+	if (InputIndex == 1 && Input::IsButtonDown(InputIndex, EJoystickButton::RightPadDown)) {
+		if (DefaultHeight == GetGameObject().LocalTransform.Position.Y) {
+			UpVelocity = 5.F;
+		}
+	}
+
+	AxisY = Input::GetAxis(InputIndex, EJoystickAxis::LeftY);
+	AxisX = Input::GetAxis(InputIndex, EJoystickAxis::LeftX);
 	if (Math::Abs(AxisY) < 0.2F) AxisY = 0.F;
 	if (Math::Abs(AxisX) < 0.2F) AxisX = 0.F;
 	MovementDirection += CameraRotation * Vector3(-AxisX, 0, -AxisY);
@@ -75,27 +81,9 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	MovementDirection.Y = 0.F;
 	MovementDirection.Normalize();
 	GetGameObject().LocalTransform.Position += MovementDirection * FrameSpeed * Time::GetDeltaTime<Time::Second>() *
-		(!Input::IsKeyDown(EScancode::LeftShift) ? !Input::IsKeyDown(EScancode::LeftCtrl) ? 1.F : .1F : 4.F);
+		(Input::IsKeyDown(EScancode::LeftShift) || Input::IsButtonDown(InputIndex, ESource::EJoystickButton::RightPadDown) ? 2.F : 1.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
-
-	if (Input::IsMousePressed(EMouseButton::Mouse0) || Input::IsButtonPressed(-1, EJoystickButton::RightPadDown)) {
-		TArray<RayHit> Hits;
-		Vector3 CameraRayDirection = {
-			(2.F * Input::GetMouseX()) / Application::GetInstance()->GetWindow().GetWidth() - 1.F,
-			1.F - (2.F * Input::GetMouseY()) / Application::GetInstance()->GetWindow().GetHeight(),
-			-1.F,
-		};
-		CameraRayDirection = GetGameObject().GetFirstComponent<CCamera>()->GetProjectionMatrix().Inversed() * CameraRayDirection;
-		CameraRayDirection.Z = -1.F;
-		CameraRayDirection = GetGameObject().LocalTransform.GetGLViewMatrix().Inversed() * CameraRayDirection;
-		CameraRayDirection.Normalize();
-		Ray CameraRay(GetGameObject().GetWorldTransform().Position, CameraRayDirection);
-		Application::GetInstance()->GetPhysicsWorld().RayCast(CameraRay, Hits);
-		for (auto & Hit : Hits) {
-			LOG_CORE_DEBUG(L"Hit with: {}", Hit.PhysicBody->GetGameObject().GetName().GetInstanceName().c_str());
-		}
-	}
 }
 
 void CCameraMovement::OnDelete() { }

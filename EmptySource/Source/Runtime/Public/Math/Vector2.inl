@@ -25,6 +25,14 @@ namespace ESource {
 		: X(Vector.X), Y(Vector.Y) {
 	}
 
+	FORCEINLINE Vector2::Vector2(const IntVector2 & Vector)
+		: X((float)Vector.X), Y((float)Vector.Y) {
+	}
+
+	FORCEINLINE Vector2::Vector2(const IntVector3 & Vector)
+		: X((float)Vector.X), Y((float)Vector.Y) {
+	}
+
 	FORCEINLINE Vector2::Vector2(const float& X, const float& Y)
 		: X(X), Y(Y) {
 	}

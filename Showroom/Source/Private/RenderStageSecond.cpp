@@ -30,10 +30,16 @@ void RenderStageSecond::End() {
 	Scene.RenderLightMap(0, MaterialManager::GetInstance().GetMaterial(L"Core/ShadowDepth"));
 	Scene.RenderLightMap(1, MaterialManager::GetInstance().GetMaterial(L"Core/ShadowDepth"));
 	Rendering::SetAlphaBlending(BF_None, BF_None);
-	Rendering::SetViewport(GeometryBufferTarget->GetViewport());
+	auto & MainViewport = GeometryBufferTarget->GetViewport();
+	MainViewport.MaxY = MainViewport.MaxY / 2;
+	auto & PropViewport = GeometryBufferTarget->GetViewport();
+	PropViewport.MinY = MainViewport.MaxY;
 	GeometryBufferTarget->Bind();
 	GeometryBufferTarget->Clear();
+	Rendering::SetViewport(MainViewport);
 	Scene.DeferredRenderOpaque(0);
+	Rendering::SetViewport(PropViewport);
+	Scene.DeferredRenderOpaque(1);
 	Rendering::Flush();
 	GeometryBufferTarget->TransferBitsTo(
 		&*Target, false, true, true, FM_MinMagNearest,
@@ -45,9 +51,11 @@ void RenderStageSecond::End() {
 	Rendering::Flush();
 
 	Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);
-	Rendering::SetViewport(Target->GetViewport());
 	Target->Bind();
+	Rendering::SetViewport(MainViewport);
 	Scene.ForwardRender(0);
+	Rendering::SetViewport(PropViewport);
+	Scene.ForwardRender(1);
 	Rendering::Flush();
 	Target->Unbind();
 	Rendering::SetAlphaBlending(BF_None, BF_None);
@@ -187,7 +195,7 @@ void RenderStageSecond::End() {
 		Rendering::SetDepthFunction(DF_Always);
 		Rendering::SetRasterizerFillMode(FM_Solid);
 		Rendering::SetCullMode(CM_None);
-		SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Application::GetInstance()->GetRenderPipeline().SSAOKernel[0], 64);
+		SSAOShader->GetProgram()->SetFloat3Array("_Kernel", (float *)&Pipeline->SSAOKernel[0], 64);
 		SSAOShader->GetProgram()->SetMatrix4x4Array("_ProjectionMatrix", Scene.Cameras[0].ProjectionMatrix.PointerToValue());
 		SSAOShader->GetProgram()->SetMatrix4x4Array("_ViewMatrix", Scene.Cameras[0].EyeTransform.GetGLViewMatrix().PointerToValue());
 		SSAOShader->GetProgram()->SetFloat2Array("_NoiseScale", (SSAOTexture->GetSize().FloatVector3() / 4.0F).PointerToValue());
@@ -219,7 +227,8 @@ void RenderStageSecond::End() {
 
 	Target->TransferBitsTo(
 		NULL, false, true, true, FM_MinMagNearest,
-		Target->GetViewport(), Application::GetInstance()->GetWindow().GetViewport()
+		{ 0, 0, Target->GetSize().X, Target->GetSize().Y },
+		{ Application::GetInstance()->GetWindow().GetViewport() }
 	);
 	Rendering::SetDefaultRender();
 	Rendering::SetAlphaBlending(BF_SrcAlpha, BF_OneMinusSrcAlpha);

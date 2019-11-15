@@ -24,6 +24,12 @@
     <ClInclude Include="Source\Public\RenderStageFirst.h">
       <Filter>Public</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\GunComponent.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\PropComponent.h">
+      <Filter>Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Private\CameraMovement.cpp">
@@ -42,6 +48,12 @@
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\RenderStageSecond.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\GunComponent.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Private\PropComponent.cpp">
       <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>
