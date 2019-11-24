@@ -29,6 +29,8 @@ namespace ESource {
 
 		virtual DeviceJoystickState & GetJoystickStateNative(int Index) override;
 
+		virtual void SendHapticImpulseNative(int Index, int Channel, float Amplitude, int Duration) override;
+
 		virtual TArray<int> GetJoysticksConnected() override;
 
 		virtual void CheckForConnectedJoysticks() override;

@@ -49,6 +49,8 @@ void CGun::OnUpdate(const ESource::Timestamp & DeltaTime) {
 				LOG_CORE_DEBUG(L"Hit with: {}", Hits[0].PhysicBody->GetGameObject().GetName().GetInstanceName().c_str());
 				if (Hits[0].PhysicBody->GetGameObject().GetFirstComponent<CProp>() != NULL) {
 					LOG_CORE_CRITICAL(L"Hunted!");
+					ESource::Input::SendHapticImpulse(0, 0, 0.5F, 200);
+					ESource::Input::SendHapticImpulse(1, 0, 0.5F, 200);
 					(++ESource::Application::GetInstance()->GetAudioDevice().begin())->second->Pos = 0;
 					(++ESource::Application::GetInstance()->GetAudioDevice().begin())->second->bPause = false;
 				}

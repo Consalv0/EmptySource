@@ -1190,9 +1190,9 @@ protected:
 		);
 
 		RenderingText[1] = Text::Formatted(
-			L"JoystickDevice 0: Connected (%ls), Name(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls)",
-			Input::IsJoystickConnected(0) ? L"T" : L"F", Input::GetJoystickState(0).Name.GetInstanceName().c_str(),
-			Input::IsJoystickConnected(1) ? L"T" : L"F", Input::GetJoystickState(1).Name.GetInstanceName().c_str()
+			L"JoystickDevice 0: Connected (%ls), Name(%ls), Rumble(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls), Rumble(%ls)",
+			Input::IsJoystickConnected(0) ? L"T" : L"F", Input::GetJoystickState(0).Name.GetInstanceName().c_str(), Input::GetJoystickState(0).bHaptics ? L"T" : L"F",
+			Input::IsJoystickConnected(1) ? L"T" : L"F", Input::GetJoystickState(1).Name.GetInstanceName().c_str(), Input::GetJoystickState(1).bHaptics ? L"T" : L"F"
 		);
 
 	}

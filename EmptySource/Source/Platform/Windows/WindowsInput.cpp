@@ -58,6 +58,18 @@ namespace ESource {
 		return JoystickDeviceState[Index];
 	}
 
+	void WindowsInput::SendHapticImpulseNative(int Index, int Channel, float Amplitude, int Duration) {
+		if (Index == -1) {
+			TArray<int> Indices;
+			Indices = GetJoysticksConnected();
+			if (Indices.empty()) Index = 0;
+			else Index = Indices[0];
+		}
+		DeviceJoystickState & Joystick = GetJoystickStateNative(Index);
+		if (Joystick.HapticDevice != NULL)
+			SDL_HapticRumblePlay((SDL_Haptic *)Joystick.HapticDevice, Amplitude, Duration);
+	}
+
 	TArray<int> WindowsInput::GetJoysticksConnected() {
 		TArray<int> Indices; int Count = 0;
 		for (auto & DeviceState : JoystickDeviceState) {
@@ -94,6 +106,22 @@ namespace ESource {
 				if (JoystickDeviceState == NULL) {
 					DevicesState.push_back(DeviceJoystickState());
 					JoystickDeviceState = &DevicesState[WindowsInput::GetInputInstance()->JoystickDeviceState.size() - 1];
+				}
+
+				SDL_Haptic * ControllerHaptic = SDL_HapticOpenFromJoystick(SDL_GameControllerGetJoystick(GameController));
+				if (ControllerHaptic == NULL) {
+					JoystickDeviceState->bHaptics = false;
+					JoystickDeviceState->HapticDevice = NULL;
+				}
+				else {
+					if (SDL_HapticRumbleInit(ControllerHaptic) == 0) {
+						JoystickDeviceState->bHaptics = true;
+						JoystickDeviceState->HapticDevice = ControllerHaptic;
+					} else {
+						JoystickDeviceState->bHaptics = false;
+						JoystickDeviceState->HapticDevice = NULL;
+						SDL_HapticClose(ControllerHaptic);
+					}
 				}
 				JoystickDeviceState->InstanceID = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(GameController));
 				JoystickDeviceState->Name = DeviceName;
@@ -212,7 +240,21 @@ namespace ESource {
 					DevicesState.push_back(DeviceJoystickState());
 					JoystickDeviceState = &DevicesState[WindowsInput::GetInputInstance()->JoystickDeviceState.size() - 1];
 				}
-				JoystickDeviceState->InstanceID = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(GameController));
+				//Get controller haptic device
+				SDL_Haptic * ControllerHaptic = SDL_HapticOpenFromJoystick(SDL_GameControllerGetJoystick(GameController));
+				if (ControllerHaptic == NULL) {
+					JoystickDeviceState->bHaptics = false;
+					JoystickDeviceState->HapticDevice = NULL;
+				}
+				else {
+					JoystickDeviceState->bHaptics = false;
+					JoystickDeviceState->HapticDevice = NULL;
+					//Get initialize rumble
+					if (SDL_HapticRumbleInit(ControllerHaptic) == 0) {
+						JoystickDeviceState->bHaptics = true;
+						JoystickDeviceState->HapticDevice = ControllerHaptic;
+					}
+				}
 				JoystickDeviceState->Name = DeviceName;
 				JoystickDeviceState->bConnected = true;
 
@@ -250,6 +292,7 @@ namespace ESource {
 				);
 				Data.InputEventCallback(InEvent);
 
+				SDL_HapticClose((SDL_Haptic *)JoystickDeviceState->HapticDevice);
 				SDL_JoystickClose(Joystick);
 			}
 			break;

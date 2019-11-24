@@ -21,7 +21,7 @@ namespace ESource {
 	void WindowsWindow::Initialize() {
 		if (Context != NULL || WindowHandle != NULL) return;
 
-		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) != 0) {
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC) != 0) {
 			LOG_CORE_CRITICAL(L"Failed to initialize SDL 2.0.9: {0}\n", Text::NarrowToWide(SDL_GetError()));
 			return;
 		}

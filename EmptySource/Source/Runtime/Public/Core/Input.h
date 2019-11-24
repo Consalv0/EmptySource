@@ -10,7 +10,9 @@ namespace ESource {
 		IName Name;
 		int InstanceID;
 		bool bConnected;
+		bool bHaptics;
 		int Mapping;
+		void * HapticDevice;
 
 		DeviceJoystickState() : Name(L"", 0), InstanceID(0), bConnected(false), Mapping(0) {};
 	};
@@ -39,6 +41,11 @@ namespace ESource {
 
 		inline static bool IsJoystickConnected(int Index) { return Instance->GetJoystickStateNative(Index).bConnected; };
 
+		inline static bool SendHapticImpulse(int Index, int Channel, float Amplitude, int MiliDuration) {
+			Instance->SendHapticImpulseNative(Index, Channel, Amplitude, MiliDuration);
+			return Instance->GetJoystickStateNative(Index).bHaptics;
+		}
+
 		inline static const DeviceJoystickState & GetJoystickState(int Index) { return Instance->GetJoystickStateNative(Index); };
 		
 		inline static Vector2 GetMousePosition(bool Clamp = false) { return Instance->GetMousePositionNative(Clamp); }
@@ -57,6 +64,8 @@ namespace ESource {
 		virtual float GetAxisNative(int Index, EJoystickAxis Axis) = 0;
 
 		virtual DeviceJoystickState & GetJoystickStateNative(int Index) = 0;
+
+		virtual void SendHapticImpulseNative(int Index, int Channel, float Amplitude, int Duration) = 0;
 
 		virtual TArray<int> GetJoysticksConnected() = 0;
 
