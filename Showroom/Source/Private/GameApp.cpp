@@ -53,73 +53,71 @@
 #include "../Public/RenderStageFirst.h"
 #include "../Public/RenderStageSecond.h"
 
-using namespace ESource;
-
-class GameLayer : public Layer {
+class GameLayer : public ESource::Layer {
 private:
-	Font FontFace;
-	Text2DGenerator TextGenerator;
-	PixelMap FontAtlas;
+	ESource::Font FontFace;
+	ESource::Text2DGenerator TextGenerator;
+	ESource::PixelMap FontAtlas;
 
 	float SkyboxRoughness = 1.F;
 
-	Material RenderTextureMaterial = Material(L"RenderTextureMaterial");
-	Material HDRClampingMaterial = Material(L"HDRClampingMaterial");
-	MaterialPtr RenderTextMaterial = std::make_shared<Material>(L"RenderTextMaterial");
-	Material IntegrateBRDFMaterial = Material(L"IntegrateBRDFMaterial");
+	ESource::Material RenderTextureMaterial = ESource::Material(L"RenderTextureMaterial");
+	ESource::Material HDRClampingMaterial = ESource::Material(L"HDRClampingMaterial");
+	ESource::MaterialPtr RenderTextMaterial = std::make_shared<ESource::Material>(L"RenderTextMaterial");
+	ESource::Material IntegrateBRDFMaterial = ESource::Material(L"IntegrateBRDFMaterial");
 
 	static const int TextCount = 4;
 	float FontSize = 14;
 	float FontBoldness = 0.55F;
-	WString RenderingText[TextCount];
-	Mesh DynamicMesh;
-	Point2 TextPivot;
+	ESource::WString RenderingText[TextCount];
+	ESource::Mesh DynamicMesh;
+	ESource::Point2 TextPivot;
 
-	RTexturePtr EquirectangularTextureHDR;
-	RTexturePtr FontMap;
-	RTexturePtr CubemapTexture;
+	ESource::RTexturePtr EquirectangularTextureHDR;
+	ESource::RTexturePtr FontMap;
+	ESource::RTexturePtr CubemapTexture;
 
 protected:
 
 	void SetSceneSkybox(const WString & Path) {
-		auto File = FileManager::GetFile(Path);
+		auto File = ESource::FileManager::GetFile(Path);
 		if (File == NULL) return;
 
-		RTexturePtr EquirectangularTexture = TextureManager::GetInstance().CreateTexture2D(
-			L"EquirectangularTexture_" + File->GetFileName(), Path, PF_RGB32F, FM_MinMagLinear, SAM_Repeat
+		ESource::RTexturePtr EquirectangularTexture = ESource::TextureManager::GetInstance().CreateTexture2D(
+			L"EquirectangularTexture_" + File->GetFileName(), Path, ESource::PF_RGB32F, ESource::FM_MinMagLinear, ESource::SAM_Repeat
 		); 
 		EquirectangularTexture->Load();
 
-		EquirectangularTextureHDR = TextureManager::GetInstance().CreateTexture2D(
-			L"EquirectangularTextureHDR_" + File->GetFileName(), L"", PF_RGB32F, FM_MinMagLinear, SAM_Repeat,
+		EquirectangularTextureHDR = ESource::TextureManager::GetInstance().CreateTexture2D(
+			L"EquirectangularTextureHDR_" + File->GetFileName(), L"", ESource::PF_RGB32F, ESource::FM_MinMagLinear, ESource::SAM_Repeat,
 			EquirectangularTexture->GetSize()
 		);
 		EquirectangularTextureHDR->Load();
 
 		{
-			static RenderTargetPtr Renderer = RenderTarget::Create();
+			static ESource::RenderTargetPtr Renderer = ESource::RenderTarget::Create();
 			EquirectangularTextureHDR->GetTexture()->Bind();
 			HDRClampingMaterial.Use();
 			HDRClampingMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 			HDRClampingMaterial.SetTexture2D("_EquirectangularMap", EquirectangularTexture, 0);
 
-			MeshPrimitives::Quad.GetVertexArray()->Bind();
-			Renderer->BindTexture2D((Texture2D *)EquirectangularTextureHDR->GetTexture(), EquirectangularTextureHDR->GetSize());
-			Rendering::SetViewport({ 0, 0, EquirectangularTextureHDR->GetSize().X, EquirectangularTextureHDR->GetSize().Y });
+			ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
+			Renderer->BindTexture2D((ESource::Texture2D *)EquirectangularTextureHDR->GetTexture(), EquirectangularTextureHDR->GetSize());
+			ESource::Rendering::SetViewport({ 0, 0, EquirectangularTextureHDR->GetSize().X, EquirectangularTextureHDR->GetSize().Y });
 			Renderer->Clear();
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
+			ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
 			EquirectangularTextureHDR->GenerateMipMaps();
 			Renderer->Unbind();
 		}
 
-		Material EquirectangularToCubemapMaterial = Material(L"EquirectangularToCubemapMaterial");
-		EquirectangularToCubemapMaterial.SetShaderProgram(ShaderManager::GetInstance().GetProgram(L"EquirectangularToCubemap"));
-		EquirectangularToCubemapMaterial.CullMode = CM_None;
-		EquirectangularToCubemapMaterial.CullMode = CM_ClockWise;
+		ESource::Material EquirectangularToCubemapMaterial = ESource::Material(L"EquirectangularToCubemapMaterial");
+		EquirectangularToCubemapMaterial.SetShaderProgram(ESource::ShaderManager::GetInstance().GetProgram(L"EquirectangularToCubemap"));
+		EquirectangularToCubemapMaterial.CullMode = ESource::CM_None;
+		EquirectangularToCubemapMaterial.CullMode = ESource::CM_ClockWise;
 
-		if (TextureManager::GetInstance().GetTexture(L"CubemapTexture") == NULL) {
-			CubemapTexture = TextureManager::GetInstance().CreateCubemap(L"CubemapTexture", L"",
-				PF_RGB32F, FM_MinMagLinear, SAM_Clamp, EquirectangularTexture->GetSize().Y / 2);
+		if (ESource::TextureManager::GetInstance().GetTexture(L"CubemapTexture") == NULL) {
+			CubemapTexture = ESource::TextureManager::GetInstance().CreateCubemap(L"CubemapTexture", L"",
+				ESource::PF_RGB32F, ESource::FM_MinMagLinear, ESource::SAM_Clamp, EquirectangularTexture->GetSize().Y / 2);
 		}
 		CubemapTexture->Load();
 		CubemapTexture->RenderHDREquirectangular(EquirectangularTextureHDR, &EquirectangularToCubemapMaterial, true);
@@ -127,76 +125,76 @@ protected:
 	}
 
 	virtual void OnAttach() override {
-		AudioManager::GetInstance().LoadAudioFromFile(L"GunShot.wav", L"Resources/Sounds/GunShot.wav");
-		AudioManager::GetInstance().LoadAudioFromFile(L"Kuak.wav", L"Resources/Sounds/Kuak.wav");
+		ESource::AudioManager::GetInstance().LoadAudioFromFile(L"GunShot.wav", L"Resources/Sounds/GunShot.wav");
+		ESource::AudioManager::GetInstance().LoadAudioFromFile(L"Kuak.wav", L"Resources/Sounds/Kuak.wav");
 
-		PixelMap WhiteMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
-		PixelMapUtility::PerPixelOperator(WhiteMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 255; Value[1] = 255; Value[2] = 255; });
-		PixelMap BlackMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
-		PixelMapUtility::PerPixelOperator(BlackMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 0; Value[1] = 0; Value[2] = 0; });
-		PixelMap NormlMap = PixelMap(1, 1, 1, EPixelFormat::PF_RGB8);
-		PixelMapUtility::PerPixelOperator(NormlMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 128; Value[1] = 128; Value[2] = 255; });
+		ESource::PixelMap WhiteMap = ESource::PixelMap(1, 1, 1, ESource::PF_RGB8);
+		ESource::PixelMapUtility::PerPixelOperator(WhiteMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 255; Value[1] = 255; Value[2] = 255; });
+		ESource::PixelMap BlackMap = ESource::PixelMap(1, 1, 1, ESource::PF_RGB8);
+		ESource::PixelMapUtility::PerPixelOperator(BlackMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 0; Value[1] = 0; Value[2] = 0; });
+		ESource::PixelMap NormlMap = ESource::PixelMap(1, 1, 1, ESource::PF_RGB8);
+		ESource::PixelMapUtility::PerPixelOperator(NormlMap, [](unsigned char * Value, const unsigned char Channels) { Value[0] = 128; Value[1] = 128; Value[2] = 255; });
 
-		TextureManager& TextureMng = TextureManager::GetInstance();
-		auto & WhiteTexture = TextureMng.CreateTexture2D(L"WhiteTexture", L"", PF_RGB8,  FM_MinMagNearest, SAM_Repeat);
+		ESource::TextureManager& TextureMng = ESource::TextureManager::GetInstance();
+		auto & WhiteTexture = TextureMng.CreateTexture2D(L"WhiteTexture", L"", ESource::PF_RGB8, ESource::FM_MinMagNearest, ESource::SAM_Repeat);
 		WhiteTexture->SetPixelData(WhiteMap);
 		WhiteTexture->Load();
-		auto & BlackTexture = TextureMng.CreateTexture2D(L"BlackTexture", L"", PF_RGB8,  FM_MinMagNearest, SAM_Repeat);
+		auto & BlackTexture = TextureMng.CreateTexture2D(L"BlackTexture", L"", ESource::PF_RGB8, ESource::FM_MinMagNearest, ESource::SAM_Repeat);
 		BlackTexture->SetPixelData(BlackMap);
 		BlackTexture->Load();
-		auto & NormalTexture = TextureMng.CreateTexture2D(L"NormalTexture", L"", PF_RGB8, FM_MinMagNearest, SAM_Repeat);
+		auto & NormalTexture = TextureMng.CreateTexture2D(L"NormalTexture", L"", ESource::PF_RGB8, ESource::FM_MinMagNearest, ESource::SAM_Repeat);
 		NormalTexture->SetPixelData(NormlMap);
 		NormalTexture->Load();
 
-		TextureMng.LoadImageFromFile(L"CrossHead", PF_RGBA8, FM_MinMagNearest, SAM_Clamp, true, false, L"Resources/Textures/CrossHead.png");
+		TextureMng.LoadImageFromFile(L"CrossHead", ESource::PF_RGBA8, ESource::FM_MinMagNearest, ESource::SAM_Clamp, true, false, L"Resources/Textures/CrossHead.png");
 
-		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_A.jpg");
-		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
-		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_R.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_A.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_R.jpg");
 
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_A.jpeg");
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_N.png");
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_R.jpeg");
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_AO.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_A.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_N.png");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_R.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_AO.jpeg");
 
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_A.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_R.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_M.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_AO.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_A.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_R.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_M.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_AO.jpg");
 		
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_M.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_AO.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_AO.png");
 
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_A.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_N.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_R.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_M.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_AO.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_A.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_N.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_R.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_M.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_AO.jpg");
 
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_A",  PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_N",  PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_R",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_M",  PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_M.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_AO", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_AO.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_AO.png");
 
-		TextureMng.LoadImageFromFile(L"Objects/Neko_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/Neko_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/Neko_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/Neko_M", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_M.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_A", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_N", PF_RGB8,  FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_R", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_M", PF_R8,    FM_MinMagLinear, SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_M", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_M", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_M.png");
 
-		ShaderManager& ShaderMng = ShaderManager::GetInstance();
+		ESource::ShaderManager& ShaderMng = ESource::ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
 		ShaderMng.CreateProgram(L"CookTorranceShader", L"Resources/Shaders/CookTorrance.shader");
 		
-		ModelManager& ModelMng = ModelManager::GetInstance();
+		ESource::ModelManager& ModelMng = ESource::ModelManager::GetInstance();
 		// https://sketchfab.com/3d-models/flare-gun-ca3695b7ecaf4e35a8b3f2e1ffb84c2c
 		ModelMng.LoadFromFile(L"Resources/Models/FlareGun.dae", true);
 		// ModelMng.CreateSubModelMesh(L"FlareGun", L"Flare_Short");
@@ -223,83 +221,85 @@ protected:
 		ModelMng.LoadAsyncFromFile(L"Resources/Models/Backpack.dae", true);
 		ModelMng.CreateSubModelMesh(L"Backpack", L"Cylinder025");
 		
-		ModelMng.CreateMesh(MeshPrimitives::CreateQuadMeshData(0.F, 1.F))->Load();
-		ModelMng.CreateMesh(MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
+		ModelMng.CreateMesh(ESource::MeshPrimitives::CreateQuadMeshData(0.F, 1.F))->Load();
+		ModelMng.CreateMesh(ESource::MeshPrimitives::CreateCubeMeshData(0.F, 1.F))->Load();
 		
-		MaterialManager& MaterialMng = MaterialManager::GetInstance();
+		ESource::MaterialManager& MaterialMng = ESource::MaterialManager::GetInstance();
 		// MaterialMng.CreateMaterial(L"DebugMaterial", ShaderMng.GetProgram(L"UnLitShader"), true, DF_LessEqual, FM_Wireframe, CM_None, {
 		// 	{ "_Material.Color", { Vector4(1.F, 0.F, 1.F, 1.F) } }
 		// })->bCastShadows = false;
-		MaterialMng.CreateMaterial(L"Core/ShadowDepth", ShaderMng.GetProgram(L"DepthTestShader"), true, DF_LessEqual, FM_Solid, CM_None, {}
+		MaterialMng.CreateMaterial(L"Core/ShadowDepth", ShaderMng.GetProgram(L"DepthTestShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_None, {}
 		)->SetShaderInstancingProgram(ShaderMng.GetProgram(L"DepthTestShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_R") } },
+		MaterialMng.CreateMaterial(L"Tiles/DesertSends", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_A") } },
+			{ "_NormalTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_N") } },
+			{ "_RoughnessTexture", { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/DesertSends_R") } },
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Tiles/GroundBricks", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_A") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_N") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_R") } },
-			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_AO") } },
+		MaterialMng.CreateMaterial(L"Tiles/GroundBricks", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_A") } },
+			{ "_NormalTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_N") } },
+			{ "_RoughnessTexture", { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_R") } },
+			{ "_AOTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Tiles/GroundBricks_AO") } },
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_A") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_N") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_R") } },
-			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_M") } },
-			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_AO") } },
+		MaterialMng.CreateMaterial(L"Objects/EgyptianCat", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_A") } },
+			{ "_NormalTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_N") } },
+			{ "_RoughnessTexture", { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_R") } },
+			{ "_MetallicTexture",  { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_M") } },
+			{ "_AOTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/EgyptianCat_AO") } },
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Objects/FalloutCar", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_A") } },
-			{ "_NormalTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_N") } },
-			{ "_RoughnessTexture", { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_R") } },
-			{ "_MetallicTexture",  { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_M") } },
-			{ "_AOTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_AO") } },
+		MaterialMng.CreateMaterial(L"Objects/FalloutCar", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_A") } },
+			{ "_NormalTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_N") } },
+			{ "_RoughnessTexture", { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_R") } },
+			{ "_MetallicTexture",  { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_M") } },
+			{ "_AOTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FalloutCar_AO") } },
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Objects/Backpack", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_A") } },
-			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_N") } },
-			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_R") } },
-			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_M") } },
-			{ "_AOTexture",          { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_AO") } },
+		MaterialMng.CreateMaterial(L"Objects/Backpack", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_A") } },
+			{ "_NormalTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_N") } },
+			{ "_RoughnessTexture",   { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_R") } },
+			{ "_MetallicTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_M") } },
+			{ "_AOTexture",          { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Backpack_AO") } },
 			{ "_Material.Roughness", { 1.9F } }
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Objects/FlareGun", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_A") } },
-			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_N") } },
-			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_R") } },
-			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_M") } },
-			{ "_AOTexture",          { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_AO") } },
+		MaterialMng.CreateMaterial(L"Objects/FlareGun", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_A") } },
+			{ "_NormalTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_N") } },
+			{ "_RoughnessTexture",   { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_R") } },
+			{ "_MetallicTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_M") } },
+			{ "_AOTexture",          { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/FlareGun_AO") } },
 			{ "_Material.Roughness", { 1.0F } }
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Objects/Neko", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_A") } },
-			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_N") } },
-			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_R") } },
-			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_M") } },
+		MaterialMng.CreateMaterial(L"Objects/Neko", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_A") } },
+			{ "_NormalTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_N") } },
+			{ "_RoughnessTexture",   { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_R") } },
+			{ "_MetallicTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/Neko_M") } },
 			{ "_Material.Roughness", { 1.0F } }
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialMng.CreateMaterial(L"Objects/NekoEye", ShaderMng.GetProgram(L"CookTorranceShader"), true, DF_LessEqual, FM_Solid, CM_CounterClockWise, {
-			{ "_MainTexture",        { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_A") } },
-			{ "_NormalTexture",      { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_N") } },
-			{ "_RoughnessTexture",   { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_R") } },
-			{ "_MetallicTexture",    { ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_M") } },
+		MaterialMng.CreateMaterial(L"Objects/NekoEye", ShaderMng.GetProgram(L"CookTorranceShader"), true, ESource::DF_LessEqual, ESource::FM_Solid, ESource::CM_CounterClockWise, {
+			{ "_MainTexture",        { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_A") } },
+			{ "_NormalTexture",      { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_N") } },
+			{ "_RoughnessTexture",   { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_R") } },
+			{ "_MetallicTexture",    { ESource::ETextureDimension::Texture2D, TextureMng.GetTexture(L"Objects/NekoEye_M") } },
 			{ "_Material.Roughness", { 1.0F } }
 		})->SetShaderInstancingProgram(ShaderMng.GetProgram(L"CookTorranceShader#Instancing"));
-		MaterialPtr SkyMaterial = MaterialMng.CreateMaterial(L"RenderCubemapMaterial", ShaderMng.GetProgram(L"RenderCubemapShader"), true, DF_Always, FM_Solid, CM_None, {});
+		ESource::MaterialPtr SkyMaterial = 
+			MaterialMng.CreateMaterial(L"RenderCubemapMaterial", ShaderMng.GetProgram(L"RenderCubemapShader"), true, ESource::DF_Always, ESource::FM_Solid, ESource::CM_None, {});
 		SkyMaterial->RenderPriority = 1;
 		SkyMaterial->bWriteDepth = false;
 	}
 
 	virtual void OnImGuiRender() override {
-		static RTexturePtr TextureSample = TextureManager::GetInstance().CreateTexture2D(L"TextureSample", L"", PF_RGBA8, FM_MinMagLinear, SAM_Repeat, IntVector2(1024, 1024));
+		static ESource::RTexturePtr TextureSample = 
+			ESource::TextureManager::GetInstance().CreateTexture2D(L"TextureSample", L"", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, IntVector2(1024, 1024));
 		TextureSample->Load();
 		
-		TArray<WString> TextureNameList = TextureManager::GetInstance().GetResourceNames();
+		TArray<WString> TextureNameList = ESource::TextureManager::GetInstance().GetResourceNames();
 		TArray<NString> NarrowTextureNameList(TextureNameList.size());
 		for (int i = 0; i < NarrowTextureNameList.size(); ++i)
-			NarrowTextureNameList[i] = Text::WideToNarrow((TextureNameList)[i]);
+			NarrowTextureNameList[i] = ESource::Text::WideToNarrow((TextureNameList)[i]);
 		
 		const NChar* SkyBoxes[]{
 			"Resources/Textures/Arches_E_PineTree_3k.hdr",
@@ -323,13 +323,13 @@ protected:
 		static bool ColorFilter[4] = {true, true, true, true};
 		int bMonochrome = (ColorFilter[0] + ColorFilter[1] + ColorFilter[2] + ColorFilter[3]) == 1;
 		
-		RTexturePtr SelectedTexture = TextureManager::GetInstance().GetTexture(
+		ESource::RTexturePtr SelectedTexture = ESource::TextureManager::GetInstance().GetTexture(
 			TextureNameList[Math::Clamp((unsigned long long)CurrentTexture, 0ull, TextureNameList.size() -1)]
 		);
-		if (SelectedTexture && SelectedTexture->GetLoadState() == LS_Loaded) {
+		if (SelectedTexture && SelectedTexture->GetLoadState() == ESource::LS_Loaded) {
 			int bCubemap;
-			if (!(bCubemap = SelectedTexture->GetDimension() == ETextureDimension::Cubemap)) {
-				static RenderTargetPtr Renderer = RenderTarget::Create(); 
+			if (!(bCubemap = SelectedTexture->GetDimension() == ESource::ETextureDimension::Cubemap)) {
+				static ESource::RenderTargetPtr Renderer = ESource::RenderTarget::Create();
 				RenderTextureMaterial.Use();
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -346,18 +346,18 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 		
 				Renderer->Bind();
-				MeshPrimitives::Quad.GetVertexArray()->Bind();
+				ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
-				Renderer->BindTexture2D((Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
-				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().X, TextureSample->GetSize().Y });
+				Renderer->BindTexture2D((ESource::Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
+				ESource::Rendering::SetViewport({ 0, 0, TextureSample->GetSize().X, TextureSample->GetSize().Y });
 				Renderer->Clear();
-				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
+				ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
 			}
 			if (bCubemap) {
-				static RenderTargetPtr Renderer = RenderTarget::Create();
+				static ESource::RenderTargetPtr Renderer = ESource::RenderTarget::Create();
 				RenderTextureMaterial.Use();
 				RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 				RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -374,25 +374,25 @@ protected:
 				RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 		
 				Renderer->Bind();
-				MeshPrimitives::Quad.GetVertexArray()->Bind();
+				ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
 				Matrix4x4 QuadPosition = Matrix4x4::Scaling({ 1, -1, 1 });
 				RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 		
-				Renderer->BindTexture2D((Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
-				Rendering::SetViewport({ 0, 0, TextureSample->GetSize().X, TextureSample->GetSize().Y });
+				Renderer->BindTexture2D((ESource::Texture2D *)TextureSample->GetTexture(), TextureSample->GetSize());
+				ESource::Rendering::SetViewport({ 0, 0, TextureSample->GetSize().X, TextureSample->GetSize().Y });
 				Renderer->Clear();
-				Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
+				ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
 				Renderer->Unbind();
 			}
 		}
 
 		ImGui::Begin("Model", 0, ImVec2(250, 300)); 
 		{
-			TArray<IName> ModelNameList = ModelManager::GetInstance().GetResourceModelNames();
+			TArray<ESource::IName> ModelNameList = ESource::ModelManager::GetInstance().GetResourceModelNames();
 			if (ModelNameList.size() > 0) {
 				TArray<NString> NarrowModelResourcesList(ModelNameList.size());
 				for (int i = 0; i < NarrowModelResourcesList.size(); ++i)
-					NarrowModelResourcesList[i] = Text::WideToNarrow((ModelNameList)[i].GetDisplayName());
+					NarrowModelResourcesList[i] = ESource::Text::WideToNarrow((ModelNameList)[i].GetDisplayName());
 
 				static int Selection = 0;
 				ImGui::ListBox("Model List", &Selection, [](void * Data, int indx, const char ** outText) -> bool {
@@ -401,10 +401,10 @@ protected:
 					return true;
 				}, &NarrowModelResourcesList, (int)NarrowModelResourcesList.size());
 
-				RModelPtr SelectedModel = ModelManager::GetInstance().GetModel(ModelNameList[Selection]);
+				ESource::RModelPtr SelectedModel = ESource::ModelManager::GetInstance().GetModel(ModelNameList[Selection]);
 				ImGui::Selectable(NarrowModelResourcesList[Selection].c_str());
 				if (SelectedModel != NULL && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-					ImGui::SetDragDropPayload("ModelHierarchy", &*SelectedModel, sizeof(RModel));
+					ImGui::SetDragDropPayload("ModelHierarchy", &*SelectedModel, sizeof(ESource::RModel));
 					ImGui::Text(NarrowModelResourcesList[Selection].c_str());
 					ImGui::EndDragDropSource();
 				}
@@ -431,7 +431,7 @@ protected:
 					ImGui::BulletText("Meshes:");
 					ImGui::Indent();
 					for (auto & SelectedMesh : SelectedModel->GetMeshes()) {
-						if (ImGui::TreeNode(Text::WideToNarrow(SelectedMesh.second->GetName().GetDisplayName()).c_str())) {
+						if (ImGui::TreeNode(ESource::Text::WideToNarrow(SelectedMesh.second->GetName().GetDisplayName()).c_str())) {
 							ImGui::Text("Triangle count: %d", SelectedMesh.second->GetVertexData().Faces.size());
 							ImGui::Text("Vertices count: %d", SelectedMesh.second->GetVertexData().StaticVertices.size());
 							ImGui::Text("Tangents: %s", SelectedMesh.second->GetVertexData().hasTangents ? "true" : "false");
@@ -460,7 +460,7 @@ protected:
 			for (unsigned int i = 1; i < 255; i++) {
 				FrameRateHist[i - 1] = FrameRateHist[i];
 			}
-			FrameRateHist[254] = (float)Time::GetDeltaTime<Time::Mili>();
+			FrameRateHist[254] = (float)ESource::Time::GetDeltaTime<ESource::Time::Mili>();
 			ImGui::PushItemWidth(-1); ImGui::PlotLines("##FrameRateHistory",
 				FrameRateHist, 255, NULL, 0, 0.F, 60.F, ImVec2(0, ImGui::GetWindowHeight() - ImGui::GetStyle().ItemInnerSpacing.y * 4)); ImGui::NextColumn();
 		}
@@ -468,7 +468,7 @@ protected:
 
 		ImGui::Begin("Shaders", 0, ImVec2(250, 300)); 
 		{
-			TArray<IName> ShaderNameList = ShaderManager::GetInstance().GetResourceShaderNames();
+			TArray<ESource::IName> ShaderNameList = ESource::ShaderManager::GetInstance().GetResourceShaderNames();
 			TArray<NString> NarrowShaderNameList(ShaderNameList.size());
 			for (int i = 0; i < ShaderNameList.size(); ++i)
 				NarrowShaderNameList[i] = (ShaderNameList)[i].GetNarrowDisplayName();
@@ -481,7 +481,7 @@ protected:
 					return true;
 				}, &NarrowShaderNameList, (int)NarrowShaderNameList.size());
 			
-				RShaderPtr SelectedShader = ShaderManager::GetInstance().GetProgram(ShaderNameList[Selection]);
+				ESource::RShaderPtr SelectedShader = ESource::ShaderManager::GetInstance().GetProgram(ShaderNameList[Selection]);
 				if (SelectedShader) {
 					ImGui::Text("Selected Shader: %s", NarrowShaderNameList[Selection].c_str());
 					if (ImGui::Button("Reload Shader")) {
@@ -503,18 +503,18 @@ protected:
 			ImGui::SameLine();
 			if (ImGui::Button("Create New Material")) {
 				if (strlen(Text) > 0) {
-					MaterialPtr NewMaterial = std::make_shared<Material>(Text::NarrowToWide(NString(Text)));
-					MaterialManager::GetInstance().AddMaterial(NewMaterial);
+					ESource::MaterialPtr NewMaterial = std::make_shared<ESource::Material>(ESource::Text::NarrowToWide(NString(Text)));
+					ESource::MaterialManager::GetInstance().AddMaterial(NewMaterial);
 				}
 				Text[0] = '\0';
 			}
 
-			TArray<IName> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
+			TArray<ESource::IName> MaterialNameList = ESource::MaterialManager::GetInstance().GetResourceNames();
 			TArray<NString> NarrowMaterialNameList(MaterialNameList.size());
 			for (int i = 0; i < MaterialNameList.size(); ++i)
 				NarrowMaterialNameList[i] = (MaterialNameList)[i].GetNarrowDisplayName();
 
-			TArray<IName> ShaderNameList = ShaderManager::GetInstance().GetResourceShaderNames();
+			TArray<ESource::IName> ShaderNameList = ESource::ShaderManager::GetInstance().GetResourceShaderNames();
 			TArray<NString> NarrowShaderNameList(ShaderNameList.size());
 			for (int i = 0; i < ShaderNameList.size(); ++i)
 				NarrowShaderNameList[i] = (ShaderNameList)[i].GetNarrowDisplayName();
@@ -527,7 +527,7 @@ protected:
 					return true;
 				}, &NarrowMaterialNameList, (int)NarrowMaterialNameList.size());
 				ImGui::Text("Selected Material: %s", NarrowMaterialNameList[Selection].c_str());
-				MaterialPtr SelectedMaterial = MaterialManager::GetInstance().GetMaterial(MaterialNameList[Selection]);
+				ESource::MaterialPtr SelectedMaterial = ESource::MaterialManager::GetInstance().GetMaterial(MaterialNameList[Selection]);
 				if (SelectedMaterial) {
 					ImGui::Columns(2);
 					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
@@ -551,7 +551,7 @@ protected:
 						return true;
 					}, &NarrowShaderNameList, (int)NarrowShaderNameList.size())) {
 						if (ShaderSelection >= 0 && ShaderSelection < ShaderNameList.size())
-							SelectedMaterial->SetShaderProgram(ShaderManager::GetInstance().GetProgram(ShaderNameList[ShaderSelection]));
+							SelectedMaterial->SetShaderProgram(ESource::ShaderManager::GetInstance().GetProgram(ShaderNameList[ShaderSelection]));
 					}
 					ImGui::NextColumn();
 
@@ -603,7 +603,7 @@ protected:
 						int i = 0;
 						if (KeyValue.IsInternal()) continue;
 						switch (KeyValue.Value.GetType()) {
-						case EShaderUniformType::Matrix4x4Array:
+						case ESource::EShaderUniformType::Matrix4x4Array:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Matrix4x4Array) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -616,7 +616,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Matrix4x4:
+						case ESource::EShaderUniformType::Matrix4x4:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s", KeyValue.Name.c_str()); ImGui::NextColumn();
 							if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
 								ImGui::PushItemWidth(-1); ImGui::DragFloat4("##Mat0", (float *)&KeyValue.Value.Mat4x4[0], 1.F, -MathConstants::BigNumber, MathConstants::BigNumber);
@@ -627,7 +627,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::FloatArray:
+						case ESource::EShaderUniformType::FloatArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.FloatArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -637,12 +637,12 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float:
+						case ESource::EShaderUniformType::Float:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1); ImGui::DragFloat(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float, .01F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float2DArray:
+						case ESource::EShaderUniformType::Float2DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Float2DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -652,12 +652,12 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float2D:
+						case ESource::EShaderUniformType::Float2D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1); ImGui::DragFloat2(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float2D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float3DArray:
+						case ESource::EShaderUniformType::Float3DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Float3DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -671,7 +671,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float3D:
+						case ESource::EShaderUniformType::Float3D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1);
 							if (KeyValue.IsColor())
@@ -680,7 +680,7 @@ protected:
 								ImGui::DragFloat3(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float3D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float4DArray:
+						case ESource::EShaderUniformType::Float4DArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.Float4DArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -694,7 +694,7 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Float4D:
+						case ESource::EShaderUniformType::Float4D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1);
 							if (KeyValue.IsColor())
@@ -703,7 +703,7 @@ protected:
 								ImGui::DragFloat4(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Float4D[0], .1F, -MathConstants::BigNumber, MathConstants::BigNumber);
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::IntArray:
+						case ESource::EShaderUniformType::IntArray:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							for (auto& Value : KeyValue.Value.IntArray) {
 								if (ImGui::TreeNode((std::to_string(i++) + "##" + KeyValue.Name).c_str())) {
@@ -713,13 +713,13 @@ protected:
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Int:
+						case ESource::EShaderUniformType::Int:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							ImGui::PushItemWidth(-1); ImGui::DragInt(("##" + KeyValue.Name).c_str(), &KeyValue.Value.Int, 1, INT_MIN, INT_MAX);
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::Cubemap:
-						case EShaderUniformType::Texture2D:
+						case ESource::EShaderUniformType::Cubemap:
+						case ESource::EShaderUniformType::Texture2D:
 							ImGui::AlignTextToFramePadding(); ImGui::Text(KeyValue.Name.c_str()); ImGui::NextColumn();
 							i = KeyValue.Value.Texture ? 0 : -1;
 							if (i == 0) {
@@ -736,11 +736,11 @@ protected:
 								return true;
 							}, &NarrowTextureNameList, (int)NarrowTextureNameList.size())) {
 								if (i >= 0 && i < TextureNameList.size())
-									KeyValue.Value.Texture = TextureManager::GetInstance().GetTexture(TextureNameList[i]);
+									KeyValue.Value.Texture = ESource::TextureManager::GetInstance().GetTexture(TextureNameList[i]);
 							}
 							ImGui::NextColumn();
 							break;
-						case EShaderUniformType::None:
+						case ESource::EShaderUniformType::None:
 						default:
 							ImGui::AlignTextToFramePadding(); ImGui::Text("%s[%d]", KeyValue.Name.c_str(), (int)KeyValue.Value.GetType()); ImGui::NextColumn();
 							ImGui::NextColumn();
@@ -762,22 +762,22 @@ protected:
 			ImGui::Separator();
 
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxFrameRate"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &Time::MaxUpdateDeltaMicro, 1.F); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxFrameRate", ImGuiDataType_U64, &ESource::Time::MaxUpdateDeltaMicro, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("MaxRenderFrameRate"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxRenderFrameRate", ImGuiDataType_U64, &Time::MaxRenderDeltaMicro, 1.F); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::DragScalar("##MaxRenderFrameRate", ImGuiDataType_U64, &ESource::Time::MaxRenderDeltaMicro, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Render Scale"); ImGui::NextColumn();
 			static float RenderSize = 1.F;
 			ImGui::DragFloat("##RenderScale", &RenderSize, 0.01F, 0.1F, 1.F); ImGui::SameLine();
-			if (ImGui::Button("Apply")) { Application::GetInstance()->GetRenderPipeline().SetRenderScale(RenderSize); } ImGui::NextColumn();
+			if (ImGui::Button("Apply")) { ESource::Application::GetInstance()->GetRenderPipeline().SetRenderScale(RenderSize); } ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Gamma"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &Application::GetInstance()->GetRenderPipeline().Gamma, 0.F, 4.F); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Gamma", &ESource::Application::GetInstance()->GetRenderPipeline().Gamma, 0.F, 4.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Exposure"); ImGui::NextColumn();
-			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Exposure", &Application::GetInstance()->GetRenderPipeline().Exposure, 0.F, 10.F); ImGui::NextColumn();
+			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Exposure", &ESource::Application::GetInstance()->GetRenderPipeline().Exposure, 0.F, 10.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Roughness"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); ImGui::SliderFloat("##Skybox Roughness", &SkyboxRoughness, 0.F, 1.F); ImGui::NextColumn();
 			ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Skybox Texture"); ImGui::NextColumn();
 			ImGui::PushItemWidth(-1); if (ImGui::Combo("##Skybox Texture", &CurrentSkybox, SkyBoxes, IM_ARRAYSIZE(SkyBoxes))) {
-				SetSceneSkybox(Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
+				SetSceneSkybox(ESource::Text::NarrowToWide(SkyBoxes[CurrentSkybox]));
 			} ImGui::NextColumn();
 			ImGui::PushItemWidth(0);
 
@@ -796,10 +796,10 @@ protected:
 				{
 					AudioChannel1.resize(32768 / (2 * 4) / 2);
 					AudioChannel2.resize(32768 / (2 * 4) / 2);
-					auto& Device = Application::GetInstance()->GetAudioDevice();
-					auto Duration = (Time::Micro::ReturnType)(((32768 * 8u / (Device.SampleSize() * Device.GetChannelCount())) / (float)Device.GetFrecuency()) * Time::Second::GetSizeInMicro());
-					unsigned long long Delta = Time::GetEpochTime<Time::Micro>() - Device.LastAudioUpdate;
-					float * BufferPtr = (float *)&(Application::GetInstance()->GetAudioDevice().CurrentSample[0]);
+					auto& Device = ESource::Application::GetInstance()->GetAudioDevice();
+					auto Duration = (ESource::Time::Micro::ReturnType)(((32768 * 8u / (Device.SampleSize() * Device.GetChannelCount())) / (float)Device.GetFrecuency()) * ESource::Time::Second::GetSizeInMicro());
+					unsigned long long Delta = ESource::Time::GetEpochTime<ESource::Time::Micro>() - Device.LastAudioUpdate;
+					float * BufferPtr = (float *)&(ESource::Application::GetInstance()->GetAudioDevice().CurrentSample[0]);
 					for (unsigned int i = 0; i < 32768 / (2 * 4) / 2; ++i) {
 						for (unsigned int j = i * (2 * 4); j < (i + 1) * (2 * 4) && j < 32768; j += (2 * 4)) {
 							AudioChannel1[i] = *BufferPtr;
@@ -812,8 +812,8 @@ protected:
 				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel1[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 125));
 				ImGui::PushItemWidth(-1); ImGui::PlotLines("##Audio", &AudioChannel2[0], 32768 / (2 * 4) / 2, NULL, 0, -1.F, 1.F, ImVec2(0, 125));
 			}
-			for (auto KeyValue : Application::GetInstance()->GetAudioDevice()) {
-				AudioDevice::SamplePlayInfo * Info = KeyValue.second;
+			for (auto KeyValue : ESource::Application::GetInstance()->GetAudioDevice()) {
+				ESource::AudioDevice::SamplePlayInfo * Info = KeyValue.second;
 
 				if (ImGui::TreeNode(("Audio" + std::to_string(Info->Identifier)).c_str())) {
 					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
@@ -827,7 +827,7 @@ protected:
 					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Paused"); ImGui::NextColumn();
 					ImGui::PushItemWidth(-1); ImGui::Checkbox("##Audio Pused", &Info->bPause); ImGui::NextColumn();
 					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Progress"); ImGui::NextColumn();
-					sprintf(ProgressText, "%.2f", Info->Sample->GetDurationAt<Time::Second>(Info->Pos));
+					sprintf(ProgressText, "%.2f", Info->Sample->GetDurationAt<ESource::Time::Second>(Info->Pos));
 					ImGui::ProgressBar((float)Info->Pos / Info->Sample->GetBufferLength(), ImVec2(-1.F, 0.F), ProgressText); ImGui::NextColumn();
 					ImGui::AlignTextToFramePadding(); ImGui::TextUnformatted("Channel 1"); ImGui::NextColumn();
 
@@ -901,25 +901,25 @@ protected:
 				ImGui::PopStyleVar();
 			
 				if (ImGui::Button("Delete")) {
-					TextureManager::GetInstance().FreeTexture(SelectedTexture->GetName().GetDisplayName());
+					ESource::TextureManager::GetInstance().FreeTexture(SelectedTexture->GetName().GetDisplayName());
 					SelectedTexture = NULL;
 				}
 			
 				if (SelectedTexture)
-					if (SelectedTexture->GetLoadState() == LS_Loaded) {
+					if (SelectedTexture->GetLoadState() == ESource::LS_Loaded) {
 						ImGui::SameLine();
 						if (ImGui::Button("Reload")) 
 							SelectedTexture->Reload();
 						ImGui::SameLine();
 						if (ImGui::Button("Unload")) SelectedTexture->Unload();
-					} else if (SelectedTexture->GetLoadState() == LS_Unloaded) {
+					} else if (SelectedTexture->GetLoadState() == ESource::LS_Unloaded) {
 						ImGui::SameLine();
 						if (ImGui::Button("Load")) SelectedTexture->Load();
 					}
 			}
 			ImGui::Separator();
 			
-			if (SelectedTexture && SelectedTexture->GetLoadState() == LS_Loaded) {
+			if (SelectedTexture && SelectedTexture->GetLoadState() == ESource::LS_Loaded) {
 				ImGui::Checkbox("##RedFilter", &ColorFilter[0]); ImGui::SameLine();
 				ImGui::ColorButton("RedFilter##RefColor", ImColor(ColorFilter[0] ? 1.F : 0.F, 0.F, 0.F, 1.F));
 				ImGui::SameLine(); ImGui::Checkbox("##GreenFilter", &ColorFilter[1]); ImGui::SameLine();
@@ -930,7 +930,7 @@ protected:
 				ImGui::ColorButton("AlphaFilter##RefColor", ImColor(1.F, 1.F, 1.F, ColorFilter[3] ? 1.F : 0.F), ImGuiColorEditFlags_AlphaPreview);
 				ImVec2 ImageSize;
 				ImVec2 MPos = ImGui::GetCursorScreenPos();
-				if (SelectedTexture->GetDimension() == ETextureDimension::Texture2D) {
+				if (SelectedTexture->GetDimension() == ESource::ETextureDimension::Texture2D) {
 					ImageSize.x = Math::Min(
 						ImGui::GetWindowWidth(), (ImGui::GetWindowHeight() - ImGui::GetCursorPosY())
 						* SelectedTexture->GetAspectRatio()
@@ -965,26 +965,26 @@ protected:
 	}
 
 	virtual void OnAwake() override {
-		LOG_DEBUG(L"{0}", FileManager::GetAppDirectory());
+		LOG_DEBUG(L"{0}", ESource::FileManager::GetAppDirectory());
 
-		Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageSecond>(L"MainStage");
-		Application::GetInstance()->GetRenderPipeline().Exposure = 3.5F;
+		ESource::Application::GetInstance()->GetRenderPipeline().CreateStage<RenderStageSecond>(L"MainStage");
+		ESource::Application::GetInstance()->GetRenderPipeline().Exposure = 3.5F;
 		SkyboxRoughness = 0.225F;
 
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"GunShot.wav"), 0.255F, false, true);
-		Application::GetInstance()->GetAudioDevice().AddSample(AudioManager::GetInstance().GetAudioSample(L"Kuak.wav"), 0.255F, false, true);
+		ESource::Application::GetInstance()->GetAudioDevice().AddSample(ESource::AudioManager::GetInstance().GetAudioSample(L"GunShot.wav"), 0.255F, false, true);
+		ESource::Application::GetInstance()->GetAudioDevice().AddSample(ESource::AudioManager::GetInstance().GetAudioSample(L"Kuak.wav"), 0.255F, false, true);
 
-		ShaderManager& ShaderMng = ShaderManager::GetInstance();
-		RShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
-		RShaderPtr HDRClampingShader = ShaderMng.GetProgram(L"HDRClampingShader");
-		RShaderPtr BRDFShader = ShaderMng.GetProgram(L"BRDFShader");
-		RShaderPtr UnlitShader = ShaderMng.GetProgram(L"UnLitShader");
-		RShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
-		RShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
-		RShaderPtr RenderTextShader = ShaderMng.GetProgram(L"RenderTextShader");
-		RShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
+		ESource::ShaderManager& ShaderMng = ESource::ShaderManager::GetInstance();
+		ESource::RShaderPtr EquiToCubemapShader = ShaderMng.GetProgram(L"EquirectangularToCubemap");
+		ESource::RShaderPtr HDRClampingShader = ShaderMng.GetProgram(L"HDRClampingShader");
+		ESource::RShaderPtr BRDFShader = ShaderMng.GetProgram(L"BRDFShader");
+		ESource::RShaderPtr UnlitShader = ShaderMng.GetProgram(L"UnLitShader");
+		ESource::RShaderPtr RenderTextureShader = ShaderMng.GetProgram(L"RenderTextureShader");
+		ESource::RShaderPtr IntegrateBRDFShader = ShaderMng.GetProgram(L"IntegrateBRDFShader");
+		ESource::RShaderPtr RenderTextShader = ShaderMng.GetProgram(L"RenderTextShader");
+		ESource::RShaderPtr RenderCubemapShader = ShaderMng.GetProgram(L"RenderCubemapShader");
 
-		FontFace.Initialize(FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
+		FontFace.Initialize(ESource::FileManager::GetFile(L"Resources/Fonts/ArialUnicode.ttf"));
 
 		TextGenerator.TextFont = &FontFace;
 		TextGenerator.GlyphHeight = 45;
@@ -995,8 +995,8 @@ protected:
 		TextGenerator.PrepareCharacters(0u, 49u);
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 		if (FontMap == NULL) {
-			FontMap = TextureManager::GetInstance().CreateTexture2D(
-				L"FontMap", L"", PF_R8, FM_MinMagLinear, SAM_Border, IntVector2(TextGenerator.AtlasSize)
+			FontMap = ESource::TextureManager::GetInstance().CreateTexture2D(
+				L"FontMap", L"", ESource::PF_R8, ESource::FM_MinMagLinear, ESource::SAM_Border, IntVector2(TextGenerator.AtlasSize)
 			);
 		} else {
 			FontMap->Unload();
@@ -1005,75 +1005,75 @@ protected:
 		FontMap->Load();
 		FontMap->GenerateMipMaps();
 
-		RenderTextureMaterial.DepthFunction = DF_Always;
-		RenderTextureMaterial.CullMode = CM_None;
+		RenderTextureMaterial.DepthFunction = ESource::DF_Always;
+		RenderTextureMaterial.CullMode = ESource::CM_None;
 		RenderTextureMaterial.SetShaderProgram(RenderTextureShader);
 
-		RenderTextMaterial->DepthFunction = DF_Always;
-		RenderTextMaterial->CullMode = CM_None;
+		RenderTextMaterial->DepthFunction = ESource::DF_Always;
+		RenderTextMaterial->CullMode = ESource::CM_None;
 		RenderTextMaterial->SetShaderProgram(RenderTextShader);
-		MaterialManager::GetInstance().AddMaterial(RenderTextMaterial);
+		ESource::MaterialManager::GetInstance().AddMaterial(RenderTextMaterial);
 
-		IntegrateBRDFMaterial.DepthFunction = DF_Always;
-		IntegrateBRDFMaterial.CullMode = CM_None;
+		IntegrateBRDFMaterial.DepthFunction = ESource::DF_Always;
+		IntegrateBRDFMaterial.CullMode = ESource::CM_None;
 		IntegrateBRDFMaterial.SetShaderProgram(IntegrateBRDFShader);
 
-		HDRClampingMaterial.DepthFunction = DF_Always;
-		HDRClampingMaterial.CullMode = CM_None;
+		HDRClampingMaterial.DepthFunction = ESource::DF_Always;
+		HDRClampingMaterial.CullMode = ESource::CM_None;
 		HDRClampingMaterial.SetShaderProgram(HDRClampingShader);
 
-		RTexturePtr BRDFLut = TextureManager::GetInstance().CreateTexture2D(
-			L"BRDFLut", L"", PF_RG16F, FM_MinMagLinear, SAM_Clamp, { 512, 512 }
+		ESource::RTexturePtr BRDFLut = ESource::TextureManager::GetInstance().CreateTexture2D(
+			L"BRDFLut", L"", ESource::PF_RG16F, ESource::FM_MinMagLinear, ESource::SAM_Clamp, { 512, 512 }
 		);
 		BRDFLut->Load();
 		{
-			static RenderTargetPtr Renderer = RenderTarget::Create();
+			static ESource::RenderTargetPtr Renderer = ESource::RenderTarget::Create();
 			IntegrateBRDFMaterial.Use();
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
 
-			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
 			Matrix4x4 QuadPosition = Matrix4x4::Translation({ 0, 0, 0 });
 			IntegrateBRDFMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
-			Renderer->BindTexture2D((Texture2D *)BRDFLut->GetTexture(), BRDFLut->GetSize());
-			Rendering::SetViewport({ 0, 0, BRDFLut->GetSize().X, BRDFLut->GetSize().Y });
+			Renderer->BindTexture2D((ESource::Texture2D *)BRDFLut->GetTexture(), BRDFLut->GetSize());
+			ESource::Rendering::SetViewport({ 0, 0, BRDFLut->GetSize().X, BRDFLut->GetSize().Y });
 			Renderer->Clear();
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
+			ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
 			Renderer->Unbind();
 		}
 
 		SetSceneSkybox(L"Resources/Textures/Arches_E_PineTree_3k.hdr");
 
-		Application::GetInstance()->GetRenderPipeline().Initialize();
-		Application::GetInstance()->GetRenderPipeline().ContextInterval(0);
+		ESource::Application::GetInstance()->GetRenderPipeline().Initialize();
+		ESource::Application::GetInstance()->GetRenderPipeline().ContextInterval(0);
 	}
 
-	virtual void OnUpdate(Timestamp Stamp) override {
+	virtual void OnUpdate(ESource::Timestamp Stamp) override {
 
-		if (Input::IsKeyPressed(EScancode::Insert)) {
-			Application::GetInstance()->SetRenderImGui(!Application::GetInstance()->GetRenderImGui());
+		if (ESource::Input::IsKeyPressed(ESource::EScancode::Insert)) {
+			ESource::Application::GetInstance()->SetRenderImGui(!ESource::Application::GetInstance()->GetRenderImGui());
 		}
 
-		if (Input::IsKeyDown(EScancode::LeftShift)) {
-			if (Input::IsKeyDown(EScancode::I)) {
-				FontSize += Time::GetDeltaTime<Time::Second>() * FontSize;
+		if (ESource::Input::IsKeyDown(ESource::EScancode::LeftShift)) {
+			if (ESource::Input::IsKeyDown(ESource::EScancode::I)) {
+				FontSize += ESource::Time::GetDeltaTime<ESource::Time::Second>() * FontSize;
 			}
 
-			if (Input::IsKeyDown(EScancode::K)) {
-				FontSize -= Time::GetDeltaTime<Time::Second>() * FontSize;
+			if (ESource::Input::IsKeyDown(ESource::EScancode::K)) {
+				FontSize -= ESource::Time::GetDeltaTime<ESource::Time::Second>() * FontSize;
 			}
 		}
 		else {
-			if (Input::IsKeyDown(EScancode::I)) {
-				FontBoldness += Time::GetDeltaTime<Time::Second>() / 10.F;
+			if (ESource::Input::IsKeyDown(ESource::EScancode::I)) {
+				FontBoldness += ESource::Time::GetDeltaTime<ESource::Time::Second>() / 10.F;
 			}
 
-			if (Input::IsKeyDown(EScancode::K)) {
-				FontBoldness -= Time::GetDeltaTime<Time::Second>() / 10.F;
+			if (ESource::Input::IsKeyDown(ESource::EScancode::K)) {
+				FontBoldness -= ESource::Time::GetDeltaTime<ESource::Time::Second>() / 10.F;
 			}
 		}
 
-		if (Input::IsKeyDown(EScancode::V)) {
+		if (ESource::Input::IsKeyDown(ESource::EScancode::V)) {
 			for (int i = 0; i < 10; i++) {
 				RenderingText[1] += (unsigned long)(rand() % 0x3fff);
 			}
@@ -1089,74 +1089,74 @@ protected:
 			}
 		}
 
-		if (Input::IsKeyPressed(EScancode::F11)) {
-			auto & AppWindow = Application::GetInstance()->GetWindow();
-			AppWindow.SetWindowMode(AppWindow.GetWindowMode() == WM_Windowed ? WM_FullScreen : WM_Windowed);
+		if (ESource::Input::IsKeyPressed(ESource::EScancode::F11)) {
+			auto & AppWindow = ESource::Application::GetInstance()->GetWindow();
+			AppWindow.SetWindowMode(AppWindow.GetWindowMode() == ESource::WM_Windowed ? ESource::WM_FullScreen : ESource::WM_Windowed);
 		}
 
-		if (Input::IsKeyDown(EScancode::Escape)) {
-			Application::GetInstance()->ShouldClose();
+		if (ESource::Input::IsKeyDown(ESource::EScancode::Escape)) {
+			ESource::Application::GetInstance()->ShouldClose();
 		}
 
 	}
 
 	virtual void OnRender() override {
-		Timestamp Timer;
+		ESource::Timestamp Timer;
 
 		uint32_t CubemapTextureMipMapCount = CubemapTexture ? CubemapTexture->GetMipMapCount() : 0;
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTextureMipMapCount - 4);
-		MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial")->SetParameters({
-			{ "_Skybox", { ETextureDimension::Cubemap, CubemapTexture } },
+		ESource::MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial")->SetParameters({
+			{ "_Skybox", { ESource::ETextureDimension::Cubemap, CubemapTexture } },
 			{ "_Lod", { float( SkyRoughnessTemp ) } }
 		});
 
-		Rendering::SetViewport({ 0, 0, Application::GetInstance()->GetWindow().GetWidth(), Application::GetInstance()->GetWindow().GetHeight() });
+		ESource::Rendering::SetViewport(ESource::Application::GetInstance()->GetWindow().GetViewport());
 
 		float FontScale = (FontSize / TextGenerator.GlyphHeight);
 		RenderTextMaterial->SetParameters({
-			{ "_MainTextureSize", { FontMap->GetSize().FloatVector3() }, SPFlags_None },
+			{ "_MainTextureSize", { FontMap->GetSize().FloatVector3() }, ESource::SPFlags_None },
 			{ "_ProjectionMatrix", { Matrix4x4::Orthographic(
-				0.F, (float)Application::GetInstance()->GetWindow().GetWidth(),
-				0.F, (float)Application::GetInstance()->GetWindow().GetHeight()
-			) }, SPFlags_None },
-			{ "_MainTexture", { ETextureDimension::Texture2D, FontMap }, SPFlags_None},
-			{ "_TextSize", { FontScale }, SPFlags_None },
-			{ "_TextBold", { FontBoldness }, SPFlags_None }
+				0.F, (float)ESource::Application::GetInstance()->GetWindow().GetWidth(),
+				0.F, (float)ESource::Application::GetInstance()->GetWindow().GetHeight()
+			) }, ESource::SPFlags_None },
+			{ "_MainTexture", { ESource::ETextureDimension::Texture2D, FontMap }, ESource::SPFlags_None},
+			{ "_TextSize", { FontScale }, ESource::SPFlags_None },
+			{ "_TextBold", { FontBoldness }, ESource::SPFlags_None }
 		});
 		RenderTextMaterial->Use();
 
 		double TimeCount = 0;
 		int TotalCharacterSize = 0;
-		MeshData TextMeshData;
+		ESource::MeshData TextMeshData;
 		for (int i = 0; i < TextCount; i++) {
 			Timer.Begin();
 			Vector2 Pivot = TextPivot + Vector2(
-				0.F, Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
+				0.F, ESource::Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 
 			TextGenerator.GenerateMesh(
-				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.Y),
+				ESource::Box2D(0, 0, (float)ESource::Application::GetInstance()->GetWindow().GetWidth(), Pivot.Y),
 				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
 			);
 			Timer.Stop();
-			TimeCount += Timer.GetDeltaTime<Time::Mili>();
+			TimeCount += Timer.GetDeltaTime<ESource::Time::Mili>();
 			TotalCharacterSize += (int)RenderingText[i].size();
 		}
 		DynamicMesh.SwapMeshData(TextMeshData);
 		if (DynamicMesh.SetUpBuffers()) {
 			DynamicMesh.GetVertexArray()->Bind();
 			RenderTextMaterial->SetMatrix4x4Array("_ModelMatrix", Matrix4x4().PointerToValue());
-			Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
+			ESource::Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
 		}
 		{
-			auto & MainViewport = Application::GetInstance()->GetWindow().GetViewport();
+			auto & MainViewport = ESource::Application::GetInstance()->GetWindow().GetViewport();
 			MainViewport.MaxY = MainViewport.MaxY / 2;
-			Rendering::SetViewport(MainViewport);
+			ESource::Rendering::SetViewport(MainViewport);
 			static float SampleLevel = 0.F;
 			static float Gamma = 2.2F;
 			static bool ColorFilter[4] = { true, true, true, true };
 			int bMonochrome = false;
 			int bIsCubemap = false;
-			auto & CrossHead = TextureManager::GetInstance().GetTexture(L"CrossHead");
+			auto & CrossHead = ESource::TextureManager::GetInstance().GetTexture(L"CrossHead");
 			RenderTextureMaterial.Use();
 			RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 			RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -1172,27 +1172,27 @@ protected:
 			float LODLevel = SampleLevel * (float)CrossHead->GetMipMapCount();
 			RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 
-			MeshPrimitives::Quad.GetVertexArray()->Bind();
+			ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
 			Matrix4x4 QuadPosition = Matrix4x4::Scaling((Vector2)CrossHead->GetSize() / Vector2((float)MainViewport.GetWidth(), (float)MainViewport.GetHeight()));
 			RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
-			Rendering::DrawIndexed(MeshPrimitives::Quad.GetVertexArray());
-			Rendering::SetViewport(Application::GetInstance()->GetWindow().GetViewport());
+			ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
+			ESource::Rendering::SetViewport(ESource::Application::GetInstance()->GetWindow().GetViewport());
 		}
 
-		RenderingText[0] = Text::Formatted(
+		RenderingText[0] = ESource::Text::Formatted(
 			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms)",
 			TimeCount / double(TotalCharacterSize) * 1000.0,
 			TotalCharacterSize,
-			Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
-			1.F / Time::GetAverageDelta<Time::Second>(),
-			Time::GetDeltaTime<Time::Mili>()
+			ESource::Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
+			1.F / ESource::Time::GetAverageDelta<ESource::Time::Second>(),
+			ESource::Time::GetDeltaTime<ESource::Time::Mili>()
 		);
 
-		RenderingText[1] = Text::Formatted(
+		RenderingText[1] = ESource::Text::Formatted(
 			L"JoystickDevice 0: Connected (%ls), Name(%ls), Rumble(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls), Rumble(%ls)",
-			Input::IsJoystickConnected(0) ? L"T" : L"F", Input::GetJoystickState(0).Name.GetInstanceName().c_str(), Input::GetJoystickState(0).bHaptics ? L"T" : L"F",
-			Input::IsJoystickConnected(1) ? L"T" : L"F", Input::GetJoystickState(1).Name.GetInstanceName().c_str(), Input::GetJoystickState(1).bHaptics ? L"T" : L"F"
+			ESource::Input::IsJoystickConnected(0) ? L"T" : L"F", ESource::Input::GetJoystickState(0).Name.GetInstanceName().c_str(), ESource::Input::GetJoystickState(0).bHaptics ? L"T" : L"F",
+			ESource::Input::IsJoystickConnected(1) ? L"T" : L"F", ESource::Input::GetJoystickState(1).Name.GetInstanceName().c_str(), ESource::Input::GetJoystickState(1).bHaptics ? L"T" : L"F"
 		);
 
 	}
@@ -1204,9 +1204,9 @@ public:
 	GameLayer() : Layer(L"SandboxApp", 2000) {}
 };
 
-class GameApplication : public Application {
+class GameApplication : public ESource::Application {
 public:
-	GameApplication() : Application() { }
+	GameApplication() : ESource::Application() { }
 
 	void OnInitialize() override {
 		PushLayer(new GameLayer());

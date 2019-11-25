@@ -58,7 +58,7 @@ void CGun::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		}
 	}
 
-	if (ESource::Input::IsMousePressed(ESource::EMouseButton::Mouse0) || ESource::Input::GetAxis(-1, ESource::EJoystickAxis::TriggerRight) > 0.5F) {
+	if (ESource::Input::IsMouseDown(ESource::EMouseButton::Mouse0) || ESource::Input::GetAxis(-1, ESource::EJoystickAxis::TriggerRight) > 0.5F) {
 		if (!bReloading) {
 			bReloading = true;
 			GunAnimable->bPlaying = true;

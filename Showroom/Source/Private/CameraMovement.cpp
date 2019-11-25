@@ -7,72 +7,82 @@
 
 #include "../Public/CameraMovement.h"
 
-using namespace ESource;
-
 CCameraMovement::CCameraMovement(ESource::GGameObject & GameObject)
 	: CComponent(L"CameraMovement", GameObject) {
 }
 
 void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
-	EventDispatcher<InputEvent> Dispatcher(InEvent);
-	Dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent & Event) {
+	ESource::EventDispatcher<ESource::InputEvent> Dispatcher(InEvent);
+	Dispatcher.Dispatch<ESource::MouseMovedEvent>([this](ESource::MouseMovedEvent & Event) {
 		CursorPosition = Event.GetMousePosition();
 	});
-	Dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent & Event) {
+	Dispatcher.Dispatch<ESource::MouseButtonPressedEvent>([this](ESource::MouseButtonPressedEvent & Event) {
 		if (Event.GetMouseButton() == 3 && Event.GetRepeatCount() <= 0) {
-			LastCursorPosition = { Input::GetMouseX(), Input::GetMouseY() };
+			LastCursorPosition = { ESource::Input::GetMouseX(), ESource::Input::GetMouseY() };
 			LastCameraRotation = CameraRotation;
 		}
 	});
 }
 
 void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
-	if (Input::IsMouseDown(EMouseButton::Mouse2)) {
+	const float MinJoystickSensivility = 0.2F;
+	if (InputIndex == 1 && ESource::Input::IsMouseDown(ESource::EMouseButton::Mouse2)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
-		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(Input::GetMouseY() - LastCursorPosition.Y, -Input::GetMouseX() - -LastCursorPosition.X));
+		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(ESource::Input::GetMouseY() - LastCursorPosition.Y, -ESource::Input::GetMouseX() - -LastCursorPosition.X));
 	}
 
-	float AxisY = Input::GetAxis(InputIndex, EJoystickAxis::RightY);
-	float AxisX = Input::GetAxis(InputIndex, EJoystickAxis::RightX);
-	if (Math::Abs(AxisY) < 0.2F) AxisY = 0.F;
-	if (Math::Abs(AxisX) < 0.2F) AxisX = 0.F;
-	Vector3 EulerAngles = CameraRotation.ToEulerAngles();
+	float AxisY = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::RightY);
+	float AxisX = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::RightX);
+	if (Math::Abs(AxisX) < MinJoystickSensivility) AxisX = MinJoystickSensivility;
+	if (Math::Abs(AxisY) < MinJoystickSensivility) AxisY = MinJoystickSensivility;
+	AxisX = Math::Map(Math::Abs(AxisX), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisX);
+	AxisY = Math::Map(Math::Abs(AxisY), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisY);
+	ESource::Vector3 EulerAngles = CameraRotation.ToEulerAngles();
 	EulerAngles.Z = 0.F;
 	CameraRotation = Quaternion::FromEulerAngles(
-		EulerAngles + Vector3(AxisY * ViewSpeed * 0.5F, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * Time::GetDeltaTime<Time::Second>()
+		EulerAngles + Vector3(AxisY * ViewSpeed * 0.35F, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * ESource::Time::GetDeltaTime<ESource::Time::Second>()
 	);
 
 	Vector3 MovementDirection = Vector3();
 
-	if (Input::IsKeyDown(EScancode::W)) {
-		MovementDirection += CameraRotation * Vector3(0, 0, 1.F);
-	}
-	if (Input::IsKeyDown(EScancode::A)) {
-		MovementDirection += CameraRotation * Vector3(1.F, 0, 0);
-	}
-	if (Input::IsKeyDown(EScancode::S)) {
-		MovementDirection += CameraRotation * Vector3(0, 0, -1.F);
-	}
-	if (Input::IsKeyDown(EScancode::D)) {
-		MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
+	if (InputIndex == 1) {
+		if (ESource::Input::IsKeyDown(ESource::EScancode::W)) {
+			MovementDirection += CameraRotation * Vector3(0, 0, 1.F);
+		}
+		if (ESource::Input::IsKeyDown(ESource::EScancode::A)) {
+			MovementDirection += CameraRotation * Vector3(1.F, 0, 0);
+		}
+		if (ESource::Input::IsKeyDown(ESource::EScancode::S)) {
+			MovementDirection += CameraRotation * Vector3(0, 0, -1.F);
+		}
+		if (ESource::Input::IsKeyDown(ESource::EScancode::D)) {
+			MovementDirection += CameraRotation * Vector3(-1.F, 0, 0);
+		}
 	}
 
-	GetGameObject().LocalTransform.Position.Y += UpVelocity * DeltaTime.GetDeltaTime<Time::Second>();
-	UpVelocity -= DeltaTime.GetDeltaTime<Time::Second>() * 15.7F;
+	GetGameObject().LocalTransform.Position.Y += UpVelocity * DeltaTime.GetDeltaTime<ESource::Time::Second>();
+	UpVelocity -= DeltaTime.GetDeltaTime<ESource::Time::Second>() * 15.7F;
 	if (GetGameObject().LocalTransform.Position.Y <= DefaultHeight) {
 		UpVelocity = 0.F;
 		GetGameObject().LocalTransform.Position.Y = DefaultHeight;
 	}
-	if (InputIndex == 1 && Input::IsButtonDown(InputIndex, EJoystickButton::RightPadDown)) {
-		if (DefaultHeight == GetGameObject().LocalTransform.Position.Y) {
-			UpVelocity = 5.F;
+	if (InputIndex == 1) {
+		if (ESource::Input::IsKeyDown(ESource::EScancode::Space) || ESource::Input::IsButtonDown(InputIndex, ESource::EJoystickButton::RightPadDown)) {
+			if (DefaultHeight == GetGameObject().LocalTransform.Position.Y) {
+				UpVelocity = JumpForce;
+				JumpForce -= 1.5F;
+			}
 		}
+		JumpForce += DeltaTime.GetDeltaTime<ESource::Time::Second>() * 2.F; 
+		JumpForce = Math::Clamp(JumpForce, 1.F, 5.F);
 	}
 
-	AxisY = Input::GetAxis(InputIndex, EJoystickAxis::LeftY);
-	AxisX = Input::GetAxis(InputIndex, EJoystickAxis::LeftX);
-	if (Math::Abs(AxisY) < 0.2F) AxisY = 0.F;
-	if (Math::Abs(AxisX) < 0.2F) AxisX = 0.F;
+	AxisY = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::LeftY);
+	AxisX = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::LeftX);
+	if (Math::Abs(AxisX) < MinJoystickSensivility) AxisX = MinJoystickSensivility;
+	if (Math::Abs(AxisY) < MinJoystickSensivility) AxisY = MinJoystickSensivility;
+	AxisX = Math::Map(Math::Abs(AxisX), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisX);
+	AxisY = Math::Map(Math::Abs(AxisY), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisY);
 	MovementDirection += CameraRotation * Vector3(-AxisX, 0, -AxisY);
 
 	float FrameSpeed = ViewSpeed;
@@ -80,8 +90,8 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 
 	MovementDirection.Y = 0.F;
 	MovementDirection.Normalize();
-	GetGameObject().LocalTransform.Position += MovementDirection * FrameSpeed * Time::GetDeltaTime<Time::Second>() *
-		(Input::IsKeyDown(EScancode::LeftShift) || Input::IsButtonDown(InputIndex, ESource::EJoystickButton::RightPadDown) ? 2.F : 1.F);
+	GetGameObject().LocalTransform.Position += MovementDirection * FrameSpeed * ESource::Time::GetDeltaTime<ESource::Time::Second>() *
+		(ESource::Input::IsButtonDown(InputIndex, ESource::EJoystickButton::RightPadDown) ? 2.F : 1.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
 }

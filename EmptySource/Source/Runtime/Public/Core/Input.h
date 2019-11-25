@@ -14,7 +14,7 @@ namespace ESource {
 		int Mapping;
 		void * HapticDevice;
 
-		DeviceJoystickState() : Name(L"", 0), InstanceID(0), bConnected(false), Mapping(0) {};
+		DeviceJoystickState() : Name(L"", 0), InstanceID(-1), bConnected(false), Mapping(0) {};
 	};
 
 	class Input {

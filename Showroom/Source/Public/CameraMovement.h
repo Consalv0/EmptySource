@@ -24,4 +24,7 @@ protected:
 	virtual void OnUpdate(const ESource::Timestamp & DeltaTime) override;
 
 	virtual void OnDelete() override;
+
+private:
+	float JumpForce = 0.F;
 };

@@ -62,16 +62,16 @@ namespace ESource {
 		HOST_DEVICE inline friend Vector3 operator/(float Value, const Vector3 &Vector);
 	};
 
-	namespace Math {
-		//* Get the angles in degrees in the range of (-180, 180) 
-		inline Vector3 NormalizeAngleComponents(Vector3 EulerAngle);
-
-		//* Get the angles in degrees in the range of [0, 360)
-		inline Vector3 ClampAngleComponents(Vector3 EulerAngle);
-	}
-
 	typedef Vector3 Point3;
 
+}
+
+namespace Math {
+	//* Get the angles in degrees in the range of (-180, 180) 
+	inline ESource::Vector3 NormalizeAngleComponents(ESource::Vector3 EulerAngle);
+
+	//* Get the angles in degrees in the range of [0, 360)
+	inline ESource::Vector3 ClampAngleComponents(ESource::Vector3 EulerAngle);
 }
 
 #include "Math/Vector3.inl"

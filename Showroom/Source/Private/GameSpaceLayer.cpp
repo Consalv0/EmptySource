@@ -20,11 +20,10 @@
 #include "../Public/FollowTarget.h"
 #include "../External/IMGUI/imgui.h"
 
-using namespace ESource;
-
-void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &NarrowMaterialNameList,
-	TArray<IName> &MaterialNameList, TArray<NString> &NarrowMeshNameList, TArray<IName> &MeshNameList, GameSpaceLayer * AppLayer)
+void RenderGameObjectRecursive(ESource::GGameObject *& GameObject, ESource::TArray<ESource::NString> &NarrowMaterialNameList,
+	ESource::TArray<ESource::IName> &MaterialNameList, ESource::TArray<ESource::NString> &NarrowMeshNameList, ESource::TArray<ESource::IName> &MeshNameList, GameSpaceLayer * AppLayer)
 {
+	using namespace ESource;
 	bool TreeNode = ImGui::TreeNode(GameObject->GetName().GetNarrowInstanceName().c_str());
 	if (ImGui::BeginPopupContextItem(GameObject->GetName().GetNarrowInstanceName().c_str())) {
 		if (ImGui::Button("Delete")) {
@@ -298,12 +297,12 @@ void RenderGameObjectRecursive(GGameObject *& GameObject, TArray<NString> &Narro
 void GameSpaceLayer::OnAwake() {
 	Super::OnAwake();
 
-	auto MainCamera = CreateObject<GGameObject>(L"MainCamera", Transform(Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
-	auto PropCameraOffset = CreateObject<GGameObject>(L"PropCamera", Transform(Point3(0.F, 1.0F, 0.F), Quaternion(), 1.F));
-	auto PropCamera = CreateObject<GGameObject>(L"PropCameraOffset", Transform(Point3(0.F, 0.0F, -1.8F), Quaternion(), 1.F));
+	auto MainCamera = CreateObject<ESource::GGameObject>(L"MainCamera", ESource::Transform(ESource::Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
+	auto PropCameraOffset = CreateObject<ESource::GGameObject>(L"PropCamera", ESource::Transform(ESource::Point3(0.F, 1.0F, 0.F), Quaternion(), 1.F));
+	auto PropCamera = CreateObject<ESource::GGameObject>(L"PropCameraOffset", ESource::Transform(ESource::Point3(0.F, 0.0F, -1.8F), Quaternion(), 1.F));
 	PropCamera->AttachTo(PropCameraOffset);
-	auto CameraComponent1 = MainCamera->CreateComponent<CCamera>();
-	auto CameraComponent2 = PropCamera->CreateComponent<CCamera>();
+	auto CameraComponent1 = MainCamera->CreateComponent<ESource::CCamera>();
+	auto CameraComponent2 = PropCamera->CreateComponent<ESource::CCamera>();
 	CameraComponent1->RenderingMask = 3;
 	CameraComponent2->RenderingMask = 3;
 	auto MainCameraMovement = MainCamera->CreateComponent<CCameraMovement>();
@@ -312,32 +311,32 @@ void GameSpaceLayer::OnAwake() {
 	auto PropCameraMovement = PropCameraOffset->CreateComponent<CCameraMovement>();
 	PropCameraMovement->InputIndex = 1;
 	PropCameraMovement->DefaultHeight = 0.F;
-	auto SkyBox = CreateObject<GGameObject>(L"SkyBox", Transform(0.F, Quaternion(), 1000.F));
+	auto SkyBox = CreateObject<ESource::GGameObject>(L"SkyBox", ESource::Transform(0.F, Quaternion(), 1000.F));
 	SkyBox->AttachTo(MainCamera);
-	auto Renderable = SkyBox->CreateComponent<CRenderable>();
+	auto Renderable = SkyBox->CreateComponent<ESource::CRenderable>();
 	Renderable->RenderingMask = 1 << 0 | 1 << 1;
-	Renderable->SetMesh(ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
-	Renderable->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
-	auto LightObj0 = CreateObject<GGameObject>(L"Light", Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({85.F, 0.F, 0.F}), 1.F));
-	auto Light0 = LightObj0->CreateComponent<CLight>();
+	Renderable->SetMesh(ESource::ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
+	Renderable->SetMaterialAt(0, ESource::MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
+	auto LightObj0 = CreateObject<ESource::GGameObject>(L"Light", ESource::Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({85.F, 0.F, 0.F}), 1.F));
+	auto Light0 = LightObj0->CreateComponent<ESource::CLight>();
 	Light0->ApertureAngle = 123.F;
 	Light0->Intensity = 2200.F;
 	Light0->CullingPlanes.X = 15.F;
-	Light0->Color = Vector3(1.F, 0.982F, 0.9F);
+	Light0->Color = ESource::Vector3(1.F, 0.982F, 0.9F);
 	Light0->bCastShadow = true;
 	Light0->SetShadowMapSize(2048);
 	auto FollowLight0 = LightObj0->CreateComponent<CFollowTarget>();
 	FollowLight0->Target = MainCamera;
 	FollowLight0->FixedPositionAxisY = true;
-	auto LightObj1 = CreateObject<GGameObject>(L"Light", Transform({ 2.F, -1.5F, 0.F }, Quaternion(), 1.F));
-	auto Light1 = LightObj1->CreateComponent<CLight>();
+	auto LightObj1 = CreateObject<ESource::GGameObject>(L"Light", ESource::Transform({ 2.F, -1.5F, 0.F }, ESource::Quaternion(), 1.F));
+	auto Light1 = LightObj1->CreateComponent<ESource::CLight>();
 	Light1->bCastShadow = false;
-	Light1->Color = Vector3(1.F, 0.982F, 0.9F);
+	Light1->Color = ESource::Vector3(1.F, 0.982F, 0.9F);
 
-	MaterialManager MaterialMng = MaterialManager::GetInstance();
-	ModelManager ModelMng = ModelManager::GetInstance();
+	ESource::MaterialManager MaterialMng = ESource::MaterialManager::GetInstance();
+	ESource::ModelManager ModelMng = ESource::ModelManager::GetInstance();
 	{
-		auto Ground = CreateObject<GGameObject>(L"Ground", Transform());
+		auto Ground = CreateObject<ESource::GGameObject>(L"Ground", ESource::Transform());
 		CFollowTarget * Follow = Ground->CreateComponent<CFollowTarget>();
 		Follow->Target = MainCamera;
 		Follow->FixedPositionAxisY = true;
@@ -347,12 +346,12 @@ void GameSpaceLayer::OnAwake() {
 		const int GridSize = 32;
 		for (int i = 0; i < GridSize; i++) {
 			for (int j = 0; j < GridSize; j++) {
-				auto SandTile = CreateObject<GGameObject>(L"SandTile");
-				SandTile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
+				auto SandTile = CreateObject<ESource::GGameObject>(L"SandTile");
+				SandTile->LocalTransform.Position = (ESource::Vector3(float(i), 0.F, float(j)) * 6.F) - ESource::Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
 				SandTile->AttachTo(Ground);
-				auto PhysicsBody = SandTile->CreateComponent<CPhysicBody>();
+				auto PhysicsBody = SandTile->CreateComponent<ESource::CPhysicBody>();
 				PhysicsBody->SetMesh(TileDesert);
-				auto Renderable = SandTile->CreateComponent<CRenderable>();
+				auto Renderable = SandTile->CreateComponent<ESource::CRenderable>();
 				Renderable->bGPUInstancing = true;
 				Renderable->RenderingMask = 1 << 0;
 				Renderable->SetMesh(TileDesert);
@@ -374,63 +373,65 @@ void GameSpaceLayer::OnAwake() {
 	}
 
 	{
-		auto EgyptianCat = CreateObject<GGameObject>(L"EgyptianCat", Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::FromEulerAngles({18.F, -16.F, 34.F}), 1.F));
-		auto PhysicsBody = EgyptianCat->CreateComponent<CPhysicBody>();
+		auto EgyptianCat = CreateObject<ESource::GGameObject>(
+			L"EgyptianCat", ESource::Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::FromEulerAngles({18.F, -16.F, 34.F}), 1.F)
+		);
+		auto PhysicsBody = EgyptianCat->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
-		auto Renderable = EgyptianCat->CreateComponent<CRenderable>();
+		auto Renderable = EgyptianCat->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/EgyptianCat"));
 	}
 
 	{
-		auto FalloutCar = CreateObject<GGameObject>(L"FalloutCar", Transform(Vector3(10.F, -0.56F, 8.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 1.F));
-		auto PhysicsBody = FalloutCar->CreateComponent<CPhysicBody>();
+		auto FalloutCar = CreateObject<ESource::GGameObject>(L"FalloutCar", ESource::Transform(Vector3(100.F, -0.96F, 8.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 1.F));
+		auto PhysicsBody = FalloutCar->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
-		auto Renderable = FalloutCar->CreateComponent<CRenderable>();
+		auto Renderable = FalloutCar->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FalloutCar"));
 	}
 
 	{
-		auto Backpack = CreateObject<GGameObject>(L"Backpack", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
-		auto PhysicsBody = Backpack->CreateComponent<CPhysicBody>();
+		auto Backpack = CreateObject<ESource::GGameObject>(L"Backpack", ESource::Transform(Vector3(0.F, 0.F, 0.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 0.6F));
+		auto PhysicsBody = Backpack->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
-		auto Renderable = Backpack->CreateComponent<CRenderable>();
+		auto Renderable = Backpack->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/Backpack"));
 	}
 
 	{
-		auto Prop = CreateObject<GGameObject>(L"Neko", Transform(Vector3(0.F, 0.F, 0.F), Quaternion::FromEulerAngles({ 0, 1.5F, -10.F }), 1.F));
-		auto PhysicsBody = Prop->CreateComponent<CPhysicBody>();
+		auto Prop = CreateObject<ESource::GGameObject>(L"Neko", ESource::Transform(Vector3(0.F, 0.F, 0.F), Quaternion::FromEulerAngles({ 0, 1.5F, -10.F }), 1.F));
+		auto PhysicsBody = Prop->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Neko:NekoCollision"));
-		auto Renderable = Prop->CreateComponent<CRenderable>();
+		auto Renderable = Prop->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"Neko:Neko"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/NekoEye"));
 		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Objects/Neko"));
 		Prop->AttachTo(PropCameraOffset);
-		Prop->CreateComponent<CProp>();
+		CProp * PropComponent = Prop->CreateComponent<CProp>();
 	}
 
 	{
-		auto Gun = CreateObject<GGameObject>(L"Gun", Transform(Vector3(-0.1F, -0.04F, 0.175F), Quaternion(), 0.01F));
-		auto FlareGun = CreateObject<GGameObject>(L"FlareGun", Transform());
-		auto Animator = FlareGun->CreateComponent<CAnimable>();
+		auto Gun = CreateObject<ESource::GGameObject>(L"Gun", ESource::Transform(Vector3(-0.1F, -0.04F, 0.175F), Quaternion(), 0.01F));
+		auto FlareGun = CreateObject<ESource::GGameObject>(L"FlareGun", ESource::Transform());
+		auto Animator = FlareGun->CreateComponent<ESource::CAnimable>();
 		Animator->Track = &ModelMng.GetModel(L"FlareGun")->GetAnimations()[0];
-		auto FlareGunFrame = CreateObject<GGameObject>(L"FlareGun_Frame", Transform());
-		Renderable = FlareGunFrame->CreateComponent<CRenderable>();
+		auto FlareGunFrame = CreateObject<ESource::GGameObject>(L"FlareGun_Frame", ESource::Transform());
+		Renderable = FlareGunFrame->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Frame"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
-		auto FlareGunBarrel = CreateObject<GGameObject>(L"FlareGun_Barrel", Transform());
-		Renderable = FlareGunBarrel->CreateComponent<CRenderable>();
+		auto FlareGunBarrel = CreateObject<ESource::GGameObject>(L"FlareGun_Barrel", ESource::Transform());
+		Renderable = FlareGunBarrel->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Barrel"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
-		auto FlareGunHammer = CreateObject<GGameObject>(L"FlareGun_Hammer", Transform());
-		Renderable = FlareGunHammer->CreateComponent<CRenderable>();
+		auto FlareGunHammer = CreateObject<ESource::GGameObject>(L"FlareGun_Hammer", ESource::Transform());
+		Renderable = FlareGunHammer->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Hammer"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
-		auto FlareGunTrigger = CreateObject<GGameObject>(L"FlareGun_Trigger", Transform());
-		Renderable = FlareGunTrigger->CreateComponent<CRenderable>();
+		auto FlareGunTrigger = CreateObject<ESource::GGameObject>(L"FlareGun_Trigger", ESource::Transform());
+		Renderable = FlareGunTrigger->CreateComponent<ESource::CRenderable>();
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Trigger"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
 		FlareGunFrame->AttachTo(FlareGun);
@@ -446,22 +447,22 @@ void GameSpaceLayer::OnAwake() {
 }
 
 void GameSpaceLayer::OnRender() {
-	Application::GetInstance()->GetRenderPipeline().Begin();
+	ESource::Application::GetInstance()->GetRenderPipeline().Begin();
 	Super::OnRender();
-	Application::GetInstance()->GetRenderPipeline().End();
+	ESource::Application::GetInstance()->GetRenderPipeline().End();
 }
 
-GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model, ModelNode * Node, GGameObject * NewObject) {
+ESource::GGameObject * ModelHierarchyToSpaceHierarchy(ESource::SpaceLayer * Space, ESource::RModel *& Model, ESource::ModelNode * Node, ESource::GGameObject * NewObject) {
 	if (NewObject == NULL)
-		NewObject = Space->CreateObject<GGameObject>(Text::NarrowToWide(Node->Name), Node->LocalTransform);
+		NewObject = Space->CreateObject<ESource::GGameObject>(ESource::Text::NarrowToWide(Node->Name), Node->LocalTransform);
 
 	if (Node->bHasMesh) {
-		auto MeshRenderer = NewObject->CreateComponent<CRenderable>();
+		auto MeshRenderer = NewObject->CreateComponent<ESource::CRenderable>();
 		MeshRenderer->SetMesh(Model->GetMeshes().at(Node->MeshKey));
-		MeshRenderer->SetMaterialAt(0, MaterialManager::GetInstance().GetMaterial(L"Sponza/Bricks"));
+		MeshRenderer->SetMaterialAt(0, ESource::MaterialManager::GetInstance().GetMaterial(L"Sponza/Bricks"));
 	}
 	for (auto & Child : Node->Children) {
-		GGameObject * ChildGO = ModelHierarchyToSpaceHierarchy(Space, Model, Child, NULL);
+		ESource::GGameObject * ChildGO = ModelHierarchyToSpaceHierarchy(Space, Model, Child, NULL);
 		ChildGO->AttachTo(NewObject);
 	}
 	return NewObject;
@@ -470,22 +471,22 @@ GGameObject * ModelHierarchyToSpaceHierarchy(SpaceLayer * Space, RModel *& Model
 void GameSpaceLayer::OnImGuiRender() {
 	ImGui::Begin("Sandbox Space");
 
-	TArray<IName> MaterialNameList = MaterialManager::GetInstance().GetResourceNames();
+	TArray<ESource::IName> MaterialNameList = ESource::MaterialManager::GetInstance().GetResourceNames();
 	TArray<NString> NarrowMaterialNameList(MaterialNameList.size());
 	for (int i = 0; i < MaterialNameList.size(); ++i)
 		NarrowMaterialNameList[i] = MaterialNameList[i].GetNarrowDisplayName();
 
-	TArray<IName> MeshNameList = ModelManager::GetInstance().GetResourceMeshNames();
+	TArray<ESource::IName> MeshNameList = ESource::ModelManager::GetInstance().GetResourceMeshNames();
 	TArray<NString> NarrowMeshNameList(MeshNameList.size());
 	for (int i = 0; i < MeshNameList.size(); ++i)
-		NarrowMeshNameList[i] = Text::WideToNarrow((MeshNameList)[i].GetDisplayName());
+		NarrowMeshNameList[i] = ESource::Text::WideToNarrow((MeshNameList)[i].GetDisplayName());
 
 	static NChar Text[20];
 	ImGui::InputText("##Renderer", Text, 20);
 	ImGui::SameLine();
 	if (ImGui::Button("Create GObject")) {
 		if (strlen(Text) > 0) {
-			CreateObject<GGameObject>(Text::NarrowToWide(NString(Text)), Transform(0.F, Quaternion(), 1.F));
+			CreateObject<ESource::GGameObject>(ESource::Text::NarrowToWide(NString(Text)), ESource::Transform(0.F, Quaternion(), 1.F));
 		}
 		Text[0] = '\0';
 	}
@@ -493,16 +494,16 @@ void GameSpaceLayer::OnImGuiRender() {
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("ModelHierarchy")) {
 			ES_ASSERT(Payload->DataSize == sizeof(RModel), "DragDropData is empty");
-			RModel * PayloadModel = *(RModel**)Payload;
+			ESource::RModel * PayloadModel = *(ESource::RModel**)Payload;
 			LOG_CORE_WARN(L"Payload Model {}", PayloadModel->GetName().GetDisplayName());
 
 			if (PayloadModel->GetHierarchyParentNode() != NULL) {
-				GGameObject * NewGO = ModelHierarchyToSpaceHierarchy(
-					this, PayloadModel, PayloadModel->GetHierarchyParentNode(), CreateObject<GGameObject>(PayloadModel->GetName().GetDisplayName())
+				ESource::GGameObject * NewGO = ModelHierarchyToSpaceHierarchy(
+					this, PayloadModel, PayloadModel->GetHierarchyParentNode(), CreateObject<ESource::GGameObject>(PayloadModel->GetName().GetDisplayName())
 				);
 
 				if (PayloadModel->GetAnimations().size() > 0) {
-					CAnimable * Animable = NewGO->CreateComponent<CAnimable>();
+					ESource::CAnimable * Animable = NewGO->CreateComponent<ESource::CAnimable>();
 					Animable->Track = &PayloadModel->GetAnimations()[0];
 				}
 				// TDictionary<size_t, GGameObject *> IndexGObjectMap;
@@ -529,8 +530,8 @@ void GameSpaceLayer::OnImGuiRender() {
 	}
 	ImGui::Separator();
 
-	TArray<GGameObject *> GameObjects;
-	GetAllObjects<GGameObject>(GameObjects);
+	TArray<ESource::GGameObject *> GameObjects;
+	GetAllObjects<ESource::GGameObject>(GameObjects);
 	for (auto & GameObject : GameObjects)
 		if (GameObject->IsRoot()) {
 			RenderGameObjectRecursive(GameObject, NarrowMaterialNameList, MaterialNameList, NarrowMeshNameList, MeshNameList, this);

@@ -22,11 +22,21 @@ namespace ESource {
 	using TList = std::list<T>;
 	template<class T>
 	using TQueue = std::queue<T>;
-
 	template<class K, class T>
 	using TDictionary = std::unordered_map<K, T>; // tsl::robin_map<K, T>;
 
 }
+
+using ESource::NChar;
+using ESource::WChar;
+using ESource::NString;
+using ESource::WString;
+
+using ESource::TArray;
+using ESource::TArrayInitializer;
+using ESource::TList;
+using ESource::TQueue;
+using ESource::TDictionary;
 
 #ifdef ES_PLATFORM_CUDA
 #include <cuda_runtime.h>

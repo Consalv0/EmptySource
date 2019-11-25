@@ -186,20 +186,20 @@ namespace ESource {
 		return Vector3(Value / Vector.X, Value / Vector.Y, Value / Vector.Z);
 	}
 
-	inline Vector3 Math::NormalizeAngleComponents(Vector3 EulerAngle) {
-		EulerAngle.X = NormalizeAngle(EulerAngle.X);
-		EulerAngle.Y = NormalizeAngle(EulerAngle.Y);
-		EulerAngle.Z = NormalizeAngle(EulerAngle.Z);
+}
 
-		return EulerAngle;
-	}
+inline ESource::Vector3 Math::NormalizeAngleComponents(ESource::Vector3 EulerAngle) {
+	EulerAngle.X = NormalizeAngle(EulerAngle.X);
+	EulerAngle.Y = NormalizeAngle(EulerAngle.Y);
+	EulerAngle.Z = NormalizeAngle(EulerAngle.Z);
 
-	inline Vector3 Math::ClampAngleComponents(Vector3 EulerAngle) {
-		EulerAngle.X = ClampAngle(EulerAngle.X);
-		EulerAngle.Y = ClampAngle(EulerAngle.Y);
-		EulerAngle.Z = ClampAngle(EulerAngle.Z);
+	return EulerAngle;
+}
 
-		return EulerAngle;
-	}
+inline ESource::Vector3 Math::ClampAngleComponents(ESource::Vector3 EulerAngle) {
+	EulerAngle.X = ClampAngle(EulerAngle.X);
+	EulerAngle.Y = ClampAngle(EulerAngle.Y);
+	EulerAngle.Z = ClampAngle(EulerAngle.Z);
 
+	return EulerAngle;
 }
