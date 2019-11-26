@@ -15,10 +15,11 @@ namespace ESource {
 		//* OpenGL Version *.°
 		uint32_t VersionMajor;
 		//* OpenGL Version °.*
-		uint32_t VersionMinor;
-		
+		uint32_t VersionMinor;		
 		//* Frame Count
 		uint64_t FrameCount;
+		
+		NString DeviceName;
 
 		SDL_Window * WindowHandle;
 
@@ -30,9 +31,11 @@ namespace ESource {
 
 		virtual bool CreateContext();
 
-		virtual NString GetGLVersion() override;
+		virtual NString GetDeviceName() const override;
 
-		virtual NString GetShaderVersion() override;
+		virtual NString GetGLVersion() const override;
+
+		virtual NString GetShaderVersion() const override;
 
 		uint64_t inline GetFrameCount() const override { return FrameCount; };
 

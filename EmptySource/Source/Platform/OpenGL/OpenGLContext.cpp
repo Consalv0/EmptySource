@@ -89,11 +89,15 @@ namespace ESource {
 		return true;
 	}
 
-	NString OpenGLContext::GetGLVersion() {
+	NString OpenGLContext::GetDeviceName() const {
+		return DeviceName;
+	}
+
+	NString OpenGLContext::GetGLVersion() const {
 		return std::to_string(VersionMajor) + "." + std::to_string(VersionMinor);
 	}
 
-	NString OpenGLContext::GetShaderVersion() {
+	NString OpenGLContext::GetShaderVersion() const {
 		return std::to_string(VersionMajor) + std::to_string(VersionMinor) + "0";
 	}
 
@@ -118,6 +122,9 @@ namespace ESource {
 		// --- Enable all messages, all sources, all levels, and all IDs:
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 #endif
+
+		const GLubyte * Renderer = glGetString(GL_RENDERER);
+		DeviceName = (const NChar*)Renderer;
 
 		Debug::PrintGraphicsInformation();
 
