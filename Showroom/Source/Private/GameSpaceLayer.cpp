@@ -493,7 +493,7 @@ void GameSpaceLayer::OnImGuiRender() {
 
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("ModelHierarchy")) {
-			ES_ASSERT(Payload->DataSize == sizeof(RModel), "DragDropData is empty");
+			ES_ASSERT(Payload->DataSize == sizeof(ESource::RModel), "DragDropData is empty");
 			ESource::RModel * PayloadModel = *(ESource::RModel**)Payload;
 			LOG_CORE_WARN(L"Payload Model {}", PayloadModel->GetName().GetDisplayName());
 

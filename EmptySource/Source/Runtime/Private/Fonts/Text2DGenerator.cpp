@@ -42,7 +42,10 @@ namespace ESource {
 		LOG_CORE_INFO(L"└> Glyphs loaded in {:.3f}s", Timer.GetDeltaTime<Time::Second>());
 	}
 
-	void Text2DGenerator::GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices) {
+	void Text2DGenerator::GenerateMesh(const Box2D & Box, float HeightSize, bool RightHanded, WString InText, MeshFaces * Faces, MeshVertices * Vertices) {
+		if (RightHanded == true) {
+			Text::ReverseByToken(InText, '\n');
+		}
 
 		if (InText.size() == 0) return;
 
@@ -58,18 +61,21 @@ namespace ESource {
 		IntVector3 * TextFacesEnd = &Faces->at(InitialFacesSize);
 		StaticVertex * TextVerticesEnd = &Vertices->at(InitialVerticesSize);
 
-		Vector2 CursorPivot = { Box.MinX, Box.MaxY };
+		Vector2 CursorPivot = { RightHanded ? Box.MaxX : Box.MinX, Box.MaxY };
 
 		// --- Iterate through all characters
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
 			if (*(Character) == L'\n' || *(Character) == L'\r') {
-				CursorPivot.X = Box.MinX;
+				CursorPivot.X = RightHanded ? Box.MaxX : Box.MinX;
 				CursorPivot.Y -= HeightSize;
 				continue;
 			}
 			if (*(Character) == L'	') {
 				float TabModule = fmodf(CursorPivot.X, (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor * 4);
-				CursorPivot.X += TabModule;
+				if (RightHanded)
+					CursorPivot.X -= TabModule;
+				else
+					CursorPivot.X += TabModule;
 				continue;
 			}
 
@@ -83,12 +89,22 @@ namespace ESource {
 				}
 			}
 
-			if (CursorPivot.X + (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor > Box.MaxX) {
-				CursorPivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
-				continue;
+			if (RightHanded) {
+				if (CursorPivot.X - (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor < Box.MinX) {
+					CursorPivot.X -= (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+					continue;
+				}
+			} else {
+				if (CursorPivot.X + (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor > Box.MaxX) {
+					CursorPivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+					continue;
+				}
 			}
 			if (CursorPivot.Y < Box.MinY)
 				break;
+
+			if (RightHanded)
+				CursorPivot.X -= (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 
 			Glyph->GetQuadMesh(CursorPivot, PixelRange, ScaleFactor, 1.F, TextVerticesEnd);
 			TextFacesEnd->Z = VertexCount;
@@ -101,7 +117,8 @@ namespace ESource {
 			VertexCount += 4;
 			TextVerticesEnd += 4;
 
-			CursorPivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			if (!RightHanded)
+				CursorPivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
 		}
 
 		// --- The VertexCount was initialized with the initial VertexCount

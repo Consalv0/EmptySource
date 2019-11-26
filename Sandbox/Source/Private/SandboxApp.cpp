@@ -1391,8 +1391,8 @@ protected:
 				0.F, Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 
 			TextGenerator.GenerateMesh(
-				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth(), Pivot.Y),
-				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
+				Box2D(0, 0, (float)Application::GetInstance()->GetWindow().GetWidth() / 2, Pivot.Y),
+				FontSize, true, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
 			);
 			Timer.Stop();
 			TimeCount += Timer.GetDeltaTime<Time::Mili>();

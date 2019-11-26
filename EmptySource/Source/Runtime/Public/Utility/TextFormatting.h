@@ -23,6 +23,20 @@ namespace ESource {
 			return (A == B);
 		}
 
+		//* Reverse the characters by newline
+		template<class T>
+		inline void ReverseByToken(T& String, const typename T::value_type & Char) {
+			size_t OffsetPos = 0;
+			while (OffsetPos != T::npos)
+			{
+				size_t NewOffsetPos = String.find(Char, OffsetPos);
+				if (NewOffsetPos == T::npos) break;
+				std::reverse(String.begin() + OffsetPos, String.begin() + NewOffsetPos);
+				OffsetPos = NewOffsetPos + 1;
+			}
+			std::reverse(String.begin() + OffsetPos, String.end());
+		}
+
 		//* Replace part of string with another string
 		template<class T, class C, class S>
 		inline bool Replace(T& String, const C& From, const S& To) {

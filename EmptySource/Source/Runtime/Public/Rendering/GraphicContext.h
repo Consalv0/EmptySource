@@ -10,9 +10,11 @@ namespace ESource {
 
 		virtual void SwapBuffers() = 0;
 
-		virtual NString GetGLVersion() = 0;
+		virtual NString GetDeviceName() const = 0;
 
-		virtual NString GetShaderVersion() = 0;
+		virtual NString GetGLVersion() const = 0;
+
+		virtual NString GetShaderVersion() const = 0;
 	
 		virtual uint64_t inline GetFrameCount() const = 0;
 

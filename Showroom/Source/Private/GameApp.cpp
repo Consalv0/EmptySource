@@ -1135,7 +1135,7 @@ protected:
 
 			TextGenerator.GenerateMesh(
 				ESource::Box2D(0, 0, (float)ESource::Application::GetInstance()->GetWindow().GetWidth(), Pivot.Y),
-				FontSize, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
+				FontSize, true, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
 			);
 			Timer.Stop();
 			TimeCount += Timer.GetDeltaTime<ESource::Time::Mili>();
@@ -1181,18 +1181,17 @@ protected:
 		}
 
 		RenderingText[0] = ESource::Text::Formatted(
-			L"Character(%.2f μs, %d), Temp [%.1f°], %.1f FPS (%.2f ms)",
-			TimeCount / double(TotalCharacterSize) * 1000.0,
-			TotalCharacterSize,
+			L"%ls, Temp [%.1f°], %.1f FPS (%.2f ms)",
+			ESource::Text::NarrowToWide(ESource::Application::GetInstance()->GetWindow().GetContext()->GetDeviceName()).c_str(),
 			ESource::Application::GetInstance()->GetDeviceFunctions().GetDeviceTemperature(0),
 			1.F / ESource::Time::GetAverageDelta<ESource::Time::Second>(),
 			ESource::Time::GetDeltaTime<ESource::Time::Mili>()
 		);
 
 		RenderingText[1] = ESource::Text::Formatted(
-			L"JoystickDevice 0: Connected (%ls), Name(%ls), Rumble(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls), Rumble(%ls)",
-			ESource::Input::IsJoystickConnected(0) ? L"T" : L"F", ESource::Input::GetJoystickState(0).Name.GetInstanceName().c_str(), ESource::Input::GetJoystickState(0).bHaptics ? L"T" : L"F",
-			ESource::Input::IsJoystickConnected(1) ? L"T" : L"F", ESource::Input::GetJoystickState(1).Name.GetInstanceName().c_str(), ESource::Input::GetJoystickState(1).bHaptics ? L"T" : L"F"
+			L"JoystickDevice 0: Connected (%ls), Name(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls)",
+			ESource::Input::IsJoystickConnected(0) ? L"T" : L"F", ESource::Input::GetJoystickState(0).Name.GetInstanceName().c_str(),
+			ESource::Input::IsJoystickConnected(1) ? L"T" : L"F", ESource::Input::GetJoystickState(1).Name.GetInstanceName().c_str()
 		);
 
 	}

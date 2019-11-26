@@ -28,7 +28,7 @@ namespace ESource {
 		int PrepareFindedCharacters(const WString & InText);
 
 		//* Generate mesh geometry for rasterization. 
-		void GenerateMesh(const Box2D & Box, float HeightSize, const WString & InText, MeshFaces * Faces, MeshVertices * Vertices);
+		void GenerateMesh(const Box2D & Box, float HeightSize, bool RightHanded, WString InText, MeshFaces * Faces, MeshVertices * Vertices);
 
 		bool IsCharacterLoaded(unsigned long Character) const;
 
