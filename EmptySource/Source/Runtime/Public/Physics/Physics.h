@@ -6,9 +6,23 @@
 namespace ESource {
 
 	namespace Physics {
+		inline static bool IntersectionAxisAlignedBox(const Box3D & AABox1, const Box3D & AABox2);
+		inline static bool IntersectionPointAxisAlignedBox(const Box3D & AABox, const Point3 & Point);
 		inline static bool RaycastAxisAlignedBox(const Ray & CastedRay, const Box3D & AABox);
 		inline static bool RaycastTriangle(const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C, bool DoubleSided);
 		inline static bool RaycastTriangle(RayHit & Hit, const Ray & CastedRay, const Point3 & A, const Point3 & B, const Point3 & C, bool DoubleSided);
+	}
+
+	inline bool Physics::IntersectionAxisAlignedBox(const Box3D & AABox1, const Box3D & AABox2) {
+		return (AABox1.MinX <= AABox2.MaxX && AABox1.MaxX >= AABox2.MinX)
+			&& (AABox1.MinY <= AABox2.MaxY && AABox1.MaxY >= AABox2.MinY)
+			&& (AABox1.MinZ <= AABox2.MaxZ && AABox1.MaxZ >= AABox2.MinZ);
+	}
+
+	inline bool Physics::IntersectionPointAxisAlignedBox(const Box3D & AABox, const Point3 & Point) {
+		return (Point.X >= AABox.MinX && Point.X <= AABox.MaxX)
+			&& (Point.Y >= AABox.MinY && Point.Y <= AABox.MaxY)
+			&& (Point.Z >= AABox.MinZ && Point.Z <= AABox.MaxZ);
 	}
 
 	inline bool Physics::RaycastAxisAlignedBox(const Ray & CastedRay, const Box3D & AABox) {
