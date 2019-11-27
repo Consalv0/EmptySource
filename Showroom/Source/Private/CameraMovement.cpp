@@ -25,7 +25,7 @@ void CCameraMovement::OnInputEvent(ESource::InputEvent & InEvent) {
 }
 
 void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
-	const float MinJoystickSensivility = 0.2F;
+	const float MinJoystickSensivity = 0.1F;
 	if (InputIndex == 1 && ESource::Input::IsMouseDown(ESource::EMouseButton::Mouse2)) {
 		Vector3 EulerAngles = LastCameraRotation.ToEulerAngles();
 		CameraRotation = Quaternion::FromEulerAngles(EulerAngles + Vector3(ESource::Input::GetMouseY() - LastCursorPosition.Y, -ESource::Input::GetMouseX() - -LastCursorPosition.X));
@@ -33,14 +33,14 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 
 	float AxisY = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::RightY);
 	float AxisX = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::RightX);
-	if (Math::Abs(AxisX) < MinJoystickSensivility) AxisX = MinJoystickSensivility;
-	if (Math::Abs(AxisY) < MinJoystickSensivility) AxisY = MinJoystickSensivility;
-	AxisX = Math::Map(Math::Abs(AxisX), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisX);
-	AxisY = Math::Map(Math::Abs(AxisY), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisY);
+	if (Math::Abs(AxisX) < MinJoystickSensivity) AxisX = MinJoystickSensivity;
+	if (Math::Abs(AxisY) < MinJoystickSensivity) AxisY = MinJoystickSensivity;
+	AxisX = Math::Map(Math::Abs(AxisX), MinJoystickSensivity, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisX);
+	AxisY = Math::Map(Math::Abs(AxisY), MinJoystickSensivity, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisY);
 	ESource::Vector3 EulerAngles = CameraRotation.ToEulerAngles();
 	EulerAngles.Z = 0.F;
 	CameraRotation = Quaternion::FromEulerAngles(
-		EulerAngles + Vector3(AxisY * ViewSpeed * 0.35F, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * ESource::Time::GetDeltaTime<ESource::Time::Second>()
+		EulerAngles + Vector3(AxisY * ViewSpeed, -AxisX * ViewSpeed, 0.F) * MathConstants::RadToDegree * ESource::Time::GetDeltaTime<ESource::Time::Second>()
 	);
 
 	Vector3 MovementDirection = Vector3();
@@ -79,10 +79,10 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 
 	AxisY = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::LeftY);
 	AxisX = ESource::Input::GetAxis(InputIndex, ESource::EJoystickAxis::LeftX);
-	if (Math::Abs(AxisX) < MinJoystickSensivility) AxisX = MinJoystickSensivility;
-	if (Math::Abs(AxisY) < MinJoystickSensivility) AxisY = MinJoystickSensivility;
-	AxisX = Math::Map(Math::Abs(AxisX), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisX);
-	AxisY = Math::Map(Math::Abs(AxisY), MinJoystickSensivility, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisY);
+	if (Math::Abs(AxisX) < MinJoystickSensivity) AxisX = MinJoystickSensivity;
+	if (Math::Abs(AxisY) < MinJoystickSensivity) AxisY = MinJoystickSensivity;
+	AxisX = Math::Map(Math::Abs(AxisX), MinJoystickSensivity, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisX);
+	AxisY = Math::Map(Math::Abs(AxisY), MinJoystickSensivity, 1.F, 0.F, 1.F) * Math::NonZeroSign(AxisY);
 	MovementDirection += CameraRotation * Vector3(-AxisX, 0, -AxisY);
 
 	float FrameSpeed = ViewSpeed;
@@ -91,7 +91,7 @@ void CCameraMovement::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	MovementDirection.Y = 0.F;
 	MovementDirection.Normalize();
 	GetGameObject().LocalTransform.Position += MovementDirection * FrameSpeed * ESource::Time::GetDeltaTime<ESource::Time::Second>() *
-		(ESource::Input::IsButtonDown(InputIndex, ESource::EJoystickButton::RightPadDown) ? 2.F : 1.F);
+		(ESource::Input::IsButtonDown(InputIndex, ESource::EJoystickButton::LeftStick) ? 2.F : 1.F);
 
 	GetGameObject().LocalTransform.Rotation = CameraRotation;
 }

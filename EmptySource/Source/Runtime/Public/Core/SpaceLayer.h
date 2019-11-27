@@ -26,6 +26,8 @@ namespace ESource {
 
 		virtual void OnRender() override;
 
+		virtual void OnPostRender() override;
+
 		virtual void OnUpdate(Timestamp Stamp) override;
 
 		virtual void OnImGuiRender() override;

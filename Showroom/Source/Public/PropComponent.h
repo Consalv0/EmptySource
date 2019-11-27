@@ -20,4 +20,5 @@ protected:
 	virtual void OnUpdate(const ESource::Timestamp & DeltaTime) override;
 
 	virtual void OnDelete() override;
+
 };

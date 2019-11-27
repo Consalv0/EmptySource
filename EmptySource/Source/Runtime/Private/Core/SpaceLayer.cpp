@@ -37,6 +37,13 @@ namespace ESource {
 			GameObject->OnRender();
 	}
 
+	void SpaceLayer::OnPostRender() {
+		TArray<GGameObject *> GameObjects;
+		GetAllObjects<GGameObject>(GameObjects);
+		for (auto & GameObject : GameObjects)
+			GameObject->OnPostRender();
+	}
+
 	void SpaceLayer::OnUpdate(Timestamp Stamp) {
 		DeleteOutObjects();
 		TArray<GGameObject *> GameObjects;

@@ -144,6 +144,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\Platform\DeviceFunctions.h" />
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\BasicStructs.h" />
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\BasicUniforms.h" />
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\Common.h" />
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\LightCommon.h" />
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\VertexCommon.h" />
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\VertexLayout.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLBuffers.h" />
     <ClInclude Include="Source\Platform\OpenGL\OpenGLContext.h" />
@@ -198,7 +204,7 @@
     <ClInclude Include="Source\Runtime\Public\Fonts\Shape2D.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\Shape2DContour.h" />
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h" />
-    <ClInclude Include="Source\Runtime\Public\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="Source\Runtime\Public\ImGui\ImGUILayer.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Box3D.h" />
     <ClInclude Include="Source\Runtime\Public\Math\CoreMath.h" />
@@ -213,6 +219,7 @@
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Plane.h" />
+    <ClInclude Include="Source\Runtime\Public\Math\Plane.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h" />
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.inl" />
     <ClInclude Include="Source\Runtime\Public\Math\Vector2.h" />
@@ -352,9 +359,6 @@
     <ProjectReference Include="External\IMGUI\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Source\Runtime\Public\Math\Plane.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

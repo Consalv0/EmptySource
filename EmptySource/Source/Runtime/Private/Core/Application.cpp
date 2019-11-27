@@ -150,6 +150,9 @@ namespace ESource {
 				for (Layer* LayerPointer : AppLayerStack)
 					LayerPointer->OnRender();
 
+				for (Layer* LayerPointer : AppLayerStack)
+					LayerPointer->OnPostRender();
+
 				ImGuiLayerInstance->Begin();
 				if (bRenderImGui) {
 					for (Layer* LayerPointer : AppLayerStack)

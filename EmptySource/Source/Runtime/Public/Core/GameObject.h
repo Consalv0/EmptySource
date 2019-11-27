@@ -73,6 +73,8 @@ namespace ESource {
 
 		virtual void OnRender();
 
+		virtual void OnPostRender();
+
 		virtual void OnUpdate(const Timestamp& Stamp) ;
 
 		virtual void OnImGuiRender();

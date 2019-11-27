@@ -240,21 +240,24 @@ namespace ESource {
 					DevicesState.push_back(DeviceJoystickState());
 					JoystickDeviceState = &DevicesState[WindowsInput::GetInputInstance()->JoystickDeviceState.size() - 1];
 				}
-				//Get controller haptic device
+
 				SDL_Haptic * ControllerHaptic = SDL_HapticOpenFromJoystick(SDL_GameControllerGetJoystick(GameController));
 				if (ControllerHaptic == NULL) {
 					JoystickDeviceState->bHaptics = false;
 					JoystickDeviceState->HapticDevice = NULL;
 				}
 				else {
-					JoystickDeviceState->bHaptics = false;
-					JoystickDeviceState->HapticDevice = NULL;
-					//Get initialize rumble
 					if (SDL_HapticRumbleInit(ControllerHaptic) == 0) {
 						JoystickDeviceState->bHaptics = true;
 						JoystickDeviceState->HapticDevice = ControllerHaptic;
 					}
+					else {
+						JoystickDeviceState->bHaptics = false;
+						JoystickDeviceState->HapticDevice = NULL;
+						SDL_HapticClose(ControllerHaptic);
+					}
 				}
+				JoystickDeviceState->InstanceID = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(GameController));
 				JoystickDeviceState->Name = DeviceName;
 				JoystickDeviceState->bConnected = true;
 
@@ -325,6 +328,12 @@ namespace ESource {
 			}
 			break;
 		}
+		
+		case SDL_JOYHATMOTION: {
+			LOG_CORE_WARN("{}", SDL_NumHaptics());
+			LOG_CORE_INFO("Hat motion {}, {}", Event->jhat.hat, Event->jhat.value);
+			break;
+		}
 
 		case SDL_JOYBUTTONDOWN:
 		case SDL_CONTROLLERBUTTONDOWN: {
@@ -342,8 +351,10 @@ namespace ESource {
 				}
 				if (JoystickDeviceState == NULL) break;
 
-				auto & JoyButtonState = WindowsInput::GetInputInstance()->JoystickButtonState[Index][(EJoystickButton)Event->jbutton.button];
+				auto & JoyButtonState = WindowsInput::GetInputInstance()->JoystickButtonState[Index][(EJoystickButton)Event->cbutton.button];
 				JoyButtonState.State = BS_Pressed;
+
+				LOG_CORE_INFO("{} Button pressed {}", Event->cbutton.which, Event->cbutton.button);
 
 				JoystickButtonPressedEvent InEvent(
 					JoystickDeviceState->InstanceID, (EJoystickButton)Event->cbutton.button

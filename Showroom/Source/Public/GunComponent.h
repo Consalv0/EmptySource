@@ -15,6 +15,7 @@ public:
 protected:
 	typedef ESource::CComponent Supper;
 
+	ESource::Material RenderTextureMaterial;
 	ESource::CCamera * PlayerCamera;
 	ESource::GGameObject * GunObject;
 	ESource::CAnimable * GunAnimable;
@@ -22,6 +23,8 @@ protected:
 	CGun(ESource::GGameObject & GameObject);
 
 	virtual void OnUpdate(const ESource::Timestamp & DeltaTime) override;
+
+	virtual void OnPostRender() override;
 
 	virtual void OnDelete() override;
 };

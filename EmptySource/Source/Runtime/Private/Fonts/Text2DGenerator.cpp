@@ -22,6 +22,25 @@ namespace ESource {
 		}
 	}
 
+	int Text2DGenerator::PrepareCharacters(const WString & InText) {
+		TextFont->SetGlyphHeight(GlyphHeight);
+		int Count = 0;
+		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
+			if (!IsCharacterLoaded(*Character)) {
+				Count++; FontGlyph Glyph;
+				if (TextFont->GetGlyph(Glyph, (uint32_t)*Character)) {
+					if (!Glyph.VectorShape.Validate())
+						LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
+					Glyph.VectorShape.Normalize();
+
+					Glyph.GenerateSDF(PixelRange);
+					AddNewGlyph(Glyph);
+				}
+			}
+		}
+		return Count;
+	}
+
 	void Text2DGenerator::PrepareCharacters(const uint32_t & From, const uint32_t & To) {
 		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From + 1, (WChar)From, From, (WChar)To, To);
 		Timestamp Timer;
@@ -128,7 +147,7 @@ namespace ESource {
 	}
 
 	Vector2 Text2DGenerator::GetLenght(float HeightSize, const WString & InText) {
-		Vector2 Pivot = { 0, HeightSize / GlyphHeight };
+		Vector2 Pivot = { 0, HeightSize };
 		if (InText.size() == 0) return Pivot;
 
 		float ScaleFactor = HeightSize / GlyphHeight;
@@ -145,25 +164,6 @@ namespace ESource {
 		}
 
 		return Pivot;
-	}
-
-	int Text2DGenerator::PrepareFindedCharacters(const WString & InText) {
-		TextFont->SetGlyphHeight(GlyphHeight);
-		int Count = 0;
-		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
-			if (!IsCharacterLoaded(*Character)) {
-				Count++; FontGlyph Glyph;
-				if (TextFont->GetGlyph(Glyph, (uint32_t)*Character)) {
-					if (!Glyph.VectorShape.Validate())
-						LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
-					Glyph.VectorShape.Normalize();
-
-					Glyph.GenerateSDF(PixelRange);
-					AddNewGlyph(Glyph);
-				}
-			}
-		}
-		return Count;
 	}
 
 	void Text2DGenerator::Clear() {

@@ -55,9 +55,6 @@
 
 class GameLayer : public ESource::Layer {
 private:
-	ESource::Font FontFace;
-	ESource::Text2DGenerator TextGenerator;
-	ESource::PixelMap FontAtlas;
 
 	float SkyboxRoughness = 1.F;
 
@@ -67,11 +64,14 @@ private:
 	ESource::Material IntegrateBRDFMaterial = ESource::Material(L"IntegrateBRDFMaterial");
 
 	static const int TextCount = 4;
-	float FontSize = 14;
+	float FontSize = 10;
 	float FontBoldness = 0.55F;
 	ESource::WString RenderingText[TextCount];
 	ESource::Mesh DynamicMesh;
 	ESource::Point2 TextPivot;
+	ESource::Font FontFace;
+	ESource::Text2DGenerator TextGenerator;
+	ESource::PixelMap FontAtlas;
 
 	ESource::RTexturePtr EquirectangularTextureHDR;
 	ESource::RTexturePtr FontMap;
@@ -1080,7 +1080,7 @@ protected:
 		}
 
 		for (int i = 0; i < TextCount; i++) {
-			if (FontMap != NULL && TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
+			if (FontMap != NULL && TextGenerator.PrepareCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
 				FontMap->Unload();
 				FontMap->SetPixelData(FontAtlas);
@@ -1100,9 +1100,7 @@ protected:
 
 	}
 
-	virtual void OnRender() override {
-		ESource::Timestamp Timer;
-
+	virtual void OnPostRender() override {
 		uint32_t CubemapTextureMipMapCount = CubemapTexture ? CubemapTexture->GetMipMapCount() : 0;
 		float SkyRoughnessTemp = (SkyboxRoughness) * (CubemapTextureMipMapCount - 4);
 		ESource::MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial")->SetParameters({
@@ -1129,7 +1127,6 @@ protected:
 		int TotalCharacterSize = 0;
 		ESource::MeshData TextMeshData;
 		for (int i = 0; i < TextCount; i++) {
-			Timer.Begin();
 			Vector2 Pivot = TextPivot + Vector2(
 				0.F, ESource::Application::GetInstance()->GetWindow().GetHeight() - (i + 1) * FontSize + FontSize / TextGenerator.GlyphHeight);
 
@@ -1137,8 +1134,6 @@ protected:
 				ESource::Box2D(0, 0, (float)ESource::Application::GetInstance()->GetWindow().GetWidth(), Pivot.Y),
 				FontSize, true, RenderingText[i], &TextMeshData.Faces, &TextMeshData.StaticVertices
 			);
-			Timer.Stop();
-			TimeCount += Timer.GetDeltaTime<ESource::Time::Mili>();
 			TotalCharacterSize += (int)RenderingText[i].size();
 		}
 		DynamicMesh.SwapMeshData(TextMeshData);
@@ -1146,38 +1141,6 @@ protected:
 			DynamicMesh.GetVertexArray()->Bind();
 			RenderTextMaterial->SetMatrix4x4Array("_ModelMatrix", Matrix4x4().PointerToValue());
 			ESource::Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
-		}
-		{
-			auto & MainViewport = ESource::Application::GetInstance()->GetWindow().GetViewport();
-			MainViewport.MaxY = MainViewport.MaxY / 2;
-			ESource::Rendering::SetViewport(MainViewport);
-			static float SampleLevel = 0.F;
-			static float Gamma = 2.2F;
-			static bool ColorFilter[4] = { true, true, true, true };
-			int bMonochrome = false;
-			int bIsCubemap = false;
-			auto & CrossHead = ESource::TextureManager::GetInstance().GetTexture(L"CrossHead");
-			RenderTextureMaterial.Use();
-			RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
-			RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
-			RenderTextureMaterial.SetFloat4Array("_ColorFilter",
-				Vector4(ColorFilter[0] ? 1.F : 0.F, ColorFilter[1] ? 1.F : 0.F, ColorFilter[2] ? 1.F : 0.F, ColorFilter[3] ? 1.F : 0.F)
-				.PointerToValue()
-			);
-			RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
-			RenderTextureMaterial.SetInt1Array("_IsCubemap", &bIsCubemap);
-			CrossHead->GetTexture()->Bind();
-			RenderTextureMaterial.SetTexture2D("_MainTexture", CrossHead, 0);
-			RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", CrossHead, 1);
-			float LODLevel = SampleLevel * (float)CrossHead->GetMipMapCount();
-			RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
-
-			ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
-			Matrix4x4 QuadPosition = Matrix4x4::Scaling((Vector2)CrossHead->GetSize() / Vector2((float)MainViewport.GetWidth(), (float)MainViewport.GetHeight()));
-			RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
-
-			ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
-			ESource::Rendering::SetViewport(ESource::Application::GetInstance()->GetWindow().GetViewport());
 		}
 
 		RenderingText[0] = ESource::Text::Formatted(
@@ -1189,9 +1152,9 @@ protected:
 		);
 
 		RenderingText[1] = ESource::Text::Formatted(
-			L"JoystickDevice 0: Connected (%ls), Name(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls)",
-			ESource::Input::IsJoystickConnected(0) ? L"T" : L"F", ESource::Input::GetJoystickState(0).Name.GetInstanceName().c_str(),
-			ESource::Input::IsJoystickConnected(1) ? L"T" : L"F", ESource::Input::GetJoystickState(1).Name.GetInstanceName().c_str()
+			L"JoystickDevice 0: Connected (%ls), Name(%ls), Haptics(%ls)\nJoystickDevice 1: Connected (%ls), Name(%ls), Haptics(%ls)",
+			ESource::Input::IsJoystickConnected(0) ? L"T" : L"F", ESource::Input::GetJoystickState(0).Name.GetInstanceName().c_str(), ESource::Input::GetJoystickState(0).bHaptics ? L"T" : L"F",
+			ESource::Input::IsJoystickConnected(1) ? L"T" : L"F", ESource::Input::GetJoystickState(1).Name.GetInstanceName().c_str(), ESource::Input::GetJoystickState(1).bHaptics ? L"T" : L"F"
 		);
 
 	}

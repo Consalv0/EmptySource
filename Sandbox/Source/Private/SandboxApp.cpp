@@ -1146,7 +1146,7 @@ protected:
 		// }
 
 		for (int i = 0; i < TextCount; i++) {
-			if (FontMap != NULL && TextGenerator.PrepareFindedCharacters(RenderingText[i]) > 0) {
+			if (FontMap != NULL && TextGenerator.PrepareCharacters(RenderingText[i]) > 0) {
 				TextGenerator.GenerateGlyphAtlas(FontAtlas);
 				FontMap->Unload();
 				FontMap->SetPixelData(FontAtlas);

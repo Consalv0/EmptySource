@@ -118,6 +118,11 @@ namespace ESource {
 			Component.second->OnRender();
 	}
 
+	void GGameObject::OnPostRender() {
+		for (auto & Component : ComponentsIn)
+			Component.second->OnPostRender();
+	}
+
 	void GGameObject::OnUpdate(const Timestamp & Stamp) {
 		DeleteOutComponents();
 		for (auto & Component : ComponentsIn)

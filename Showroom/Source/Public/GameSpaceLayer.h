@@ -11,6 +11,8 @@ public:
 
 	void OnRender() override;
 
+	void OnPostRender() override;
+
 	void OnImGuiRender() override;
 
 };

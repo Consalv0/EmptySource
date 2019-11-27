@@ -17,6 +17,7 @@
 #include "../Public/CameraMovement.h"
 #include "../Public/GunComponent.h"
 #include "../Public/PropComponent.h"
+#include "../Public/GameStateComponent.h"
 #include "../Public/FollowTarget.h"
 #include "../External/IMGUI/imgui.h"
 
@@ -303,20 +304,30 @@ void GameSpaceLayer::OnAwake() {
 	PropCamera->AttachTo(PropCameraOffset);
 	auto CameraComponent1 = MainCamera->CreateComponent<ESource::CCamera>();
 	auto CameraComponent2 = PropCamera->CreateComponent<ESource::CCamera>();
-	CameraComponent1->RenderingMask = 3;
-	CameraComponent2->RenderingMask = 3;
+	CameraComponent1->RenderingMask = 1 << 0;
+	CameraComponent2->RenderingMask = 1 << 1;
 	auto MainCameraMovement = MainCamera->CreateComponent<CCameraMovement>();
 	MainCameraMovement->InputIndex = 0;
 	MainCameraMovement->DefaultHeight = 1.8F;
 	auto PropCameraMovement = PropCameraOffset->CreateComponent<CCameraMovement>();
 	PropCameraMovement->InputIndex = 1;
 	PropCameraMovement->DefaultHeight = 0.F;
-	auto SkyBox = CreateObject<ESource::GGameObject>(L"SkyBox", ESource::Transform(0.F, Quaternion(), 1000.F));
-	SkyBox->AttachTo(MainCamera);
-	auto Renderable = SkyBox->CreateComponent<ESource::CRenderable>();
-	Renderable->RenderingMask = 1 << 0 | 1 << 1;
-	Renderable->SetMesh(ESource::ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
-	Renderable->SetMaterialAt(0, ESource::MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
+	{
+		auto SkyBox = CreateObject<ESource::GGameObject>(L"SkyBox", ESource::Transform(0.F, Quaternion(), 1000.F));
+		SkyBox->AttachTo(MainCamera);
+		auto Renderable = SkyBox->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0;
+		Renderable->SetMesh(ESource::ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
+		Renderable->SetMaterialAt(0, ESource::MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial")); 
+	}
+	{
+		auto SkyBox = CreateObject<ESource::GGameObject>(L"SkyBox", ESource::Transform(0.F, Quaternion(), 1000.F));
+		SkyBox->AttachTo(PropCamera);
+		auto Renderable = SkyBox->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 1;
+		Renderable->SetMesh(ESource::ModelManager::GetInstance().GetMesh(L"SphereUV:pSphere1"));
+		Renderable->SetMaterialAt(0, ESource::MaterialManager::GetInstance().GetMaterial(L"RenderCubemapMaterial"));
+	}
 	auto LightObj0 = CreateObject<ESource::GGameObject>(L"Light", ESource::Transform({ -11.5F, 34.5F, -5.5F }, Quaternion::FromEulerAngles({85.F, 0.F, 0.F}), 1.F));
 	auto Light0 = LightObj0->CreateComponent<ESource::CLight>();
 	Light0->ApertureAngle = 123.F;
@@ -332,6 +343,11 @@ void GameSpaceLayer::OnAwake() {
 	auto Light1 = LightObj1->CreateComponent<ESource::CLight>();
 	Light1->bCastShadow = false;
 	Light1->Color = ESource::Vector3(1.F, 0.982F, 0.9F);
+
+	{
+		auto GameState = CreateObject<ESource::GGameObject>(L"GameState", ESource::Transform());
+		GameState->CreateComponent<CGameState>();
+	}
 
 	ESource::MaterialManager MaterialMng = ESource::MaterialManager::GetInstance();
 	ESource::ModelManager ModelMng = ESource::ModelManager::GetInstance();
@@ -353,7 +369,7 @@ void GameSpaceLayer::OnAwake() {
 				PhysicsBody->SetMesh(TileDesert);
 				auto Renderable = SandTile->CreateComponent<ESource::CRenderable>();
 				Renderable->bGPUInstancing = true;
-				Renderable->RenderingMask = 1 << 0;
+				Renderable->RenderingMask = 1 << 0 | 1 << 1;
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
 			}
@@ -379,6 +395,7 @@ void GameSpaceLayer::OnAwake() {
 		auto PhysicsBody = EgyptianCat->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		auto Renderable = EgyptianCat->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/EgyptianCat"));
 	}
@@ -388,6 +405,7 @@ void GameSpaceLayer::OnAwake() {
 		auto PhysicsBody = FalloutCar->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		auto Renderable = FalloutCar->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FalloutCar"));
 	}
@@ -397,6 +415,7 @@ void GameSpaceLayer::OnAwake() {
 		auto PhysicsBody = Backpack->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		auto Renderable = Backpack->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/Backpack"));
 	}
@@ -406,6 +425,7 @@ void GameSpaceLayer::OnAwake() {
 		auto PhysicsBody = Prop->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"Neko:NekoCollision"));
 		auto Renderable = Prop->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"Neko:Neko"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/NekoEye"));
 		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Objects/Neko"));
@@ -414,24 +434,28 @@ void GameSpaceLayer::OnAwake() {
 	}
 
 	{
-		auto Gun = CreateObject<ESource::GGameObject>(L"Gun", ESource::Transform(Vector3(-0.1F, -0.04F, 0.175F), Quaternion(), 0.01F));
+		auto Gun = CreateObject<ESource::GGameObject>(L"Gun", ESource::Transform(Vector3(-0.165F, -0.04F, 0.175F), Quaternion(), 0.01F));
 		auto FlareGun = CreateObject<ESource::GGameObject>(L"FlareGun", ESource::Transform());
 		auto Animator = FlareGun->CreateComponent<ESource::CAnimable>();
 		Animator->Track = &ModelMng.GetModel(L"FlareGun")->GetAnimations()[0];
 		auto FlareGunFrame = CreateObject<ESource::GGameObject>(L"FlareGun_Frame", ESource::Transform());
-		Renderable = FlareGunFrame->CreateComponent<ESource::CRenderable>();
+		ESource::CRenderable * Renderable = FlareGunFrame->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Frame"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
 		auto FlareGunBarrel = CreateObject<ESource::GGameObject>(L"FlareGun_Barrel", ESource::Transform());
 		Renderable = FlareGunBarrel->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Barrel"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
 		auto FlareGunHammer = CreateObject<ESource::GGameObject>(L"FlareGun_Hammer", ESource::Transform());
 		Renderable = FlareGunHammer->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Hammer"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
 		auto FlareGunTrigger = CreateObject<ESource::GGameObject>(L"FlareGun_Trigger", ESource::Transform());
 		Renderable = FlareGunTrigger->CreateComponent<ESource::CRenderable>();
+		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"FlareGun:FlareGun_Trigger"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FlareGun"));
 		FlareGunFrame->AttachTo(FlareGun);
@@ -450,6 +474,11 @@ void GameSpaceLayer::OnRender() {
 	ESource::Application::GetInstance()->GetRenderPipeline().Begin();
 	Super::OnRender();
 	ESource::Application::GetInstance()->GetRenderPipeline().End();
+}
+
+void GameSpaceLayer::OnPostRender() {
+	ESource::Rendering::SetViewport(ESource::Application::GetInstance()->GetWindow().GetViewport());
+	Super::OnPostRender();
 }
 
 ESource::GGameObject * ModelHierarchyToSpaceHierarchy(ESource::SpaceLayer * Space, ESource::RModel *& Model, ESource::ModelNode * Node, ESource::GGameObject * NewObject) {

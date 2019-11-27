@@ -7,6 +7,9 @@
     <Filter Include="Platform\OpenGL">
       <UniqueIdentifier>{1E7D2C1D-8A08-9AE1-9319-1DD6FF23F6E1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform\OpenGL\CommonShader">
+      <UniqueIdentifier>{4D7D6746-3938-57F2-E2EF-CF3CCE89A182}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Platform\Windows">
       <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
     </Filter>
@@ -95,6 +98,24 @@
   <ItemGroup>
     <ClInclude Include="Source\Platform\DeviceFunctions.h">
       <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\BasicStructs.h">
+      <Filter>Platform\OpenGL\CommonShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\BasicUniforms.h">
+      <Filter>Platform\OpenGL\CommonShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\Common.h">
+      <Filter>Platform\OpenGL\CommonShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\LightCommon.h">
+      <Filter>Platform\OpenGL\CommonShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\VertexCommon.h">
+      <Filter>Platform\OpenGL\CommonShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\OpenGL\CommonShader\VertexLayout.h">
+      <Filter>Platform\OpenGL\CommonShader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\OpenGL\OpenGLAPI.h">
       <Filter>Platform\OpenGL</Filter>
@@ -213,6 +234,9 @@
     <ClInclude Include="Source\Runtime\Public\Events\InputEvent.h">
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Events\KeyCodes.h">
+      <Filter>Runtime\Public\Events</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Events\Observer.h">
       <Filter>Runtime\Public\Events</Filter>
     </ClInclude>
@@ -255,7 +279,7 @@
     <ClInclude Include="Source\Runtime\Public\Fonts\Text2DGenerator.h">
       <Filter>Runtime\Public\Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\ImGui\ImGuiLayer.h">
+    <ClInclude Include="Source\Runtime\Public\ImGui\ImGUILayer.h">
       <Filter>Runtime\Public\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Box2D.h">
@@ -297,6 +321,12 @@
     <ClInclude Include="Source\Runtime\Public\Math\Matrix4x4.inl">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Math\Plane.h">
+      <Filter>Runtime\Public\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Math\Plane.inl">
+      <Filter>Runtime\Public\Math</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Quaternion.h">
       <Filter>Runtime\Public\Math</Filter>
     </ClInclude>
@@ -320,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Math\Vector4.inl">
       <Filter>Runtime\Public\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\Public\Physics\Frustrum.h">
+      <Filter>Runtime\Public\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Physics\Physics.h">
       <Filter>Runtime\Public\Physics</Filter>
@@ -443,15 +476,6 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\Public\Utility\TexturePacking.h">
       <Filter>Runtime\Public\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Events\KeyCodes.h">
-      <Filter>Runtime\Public\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Math\Plane.h">
-      <Filter>Runtime\Public\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\Public\Physics\Frustrum.h">
-      <Filter>Runtime\Public\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -584,6 +608,9 @@
     <ClCompile Include="Source\Runtime\Private\ImGui\ImGuiLayer.cpp">
       <Filter>Runtime\Private\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Private\Physics\Frustrum.cpp">
+      <Filter>Runtime\Private\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Private\Physics\PhysicsWorld.cpp">
       <Filter>Runtime\Private\Physics</Filter>
     </ClCompile>
@@ -674,13 +701,5 @@
     <ClCompile Include="Source\Runtime\Public\CoreMinimal.cpp">
       <Filter>Runtime\Public</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Private\Physics\Frustrum.cpp">
-      <Filter>Runtime\Private\Physics</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Source\Runtime\Public\Math\Plane.inl">
-      <Filter>Runtime\Public\Math</Filter>
-    </None>
   </ItemGroup>
 </Project>

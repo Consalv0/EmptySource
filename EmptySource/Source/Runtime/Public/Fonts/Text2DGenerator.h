@@ -25,7 +25,7 @@ namespace ESource {
 		void PrepareCharacters(const uint32_t & From, const uint32_t & To);
 
 		//* Update needed characters (returns the number of characters added)
-		int PrepareFindedCharacters(const WString & InText);
+		int PrepareCharacters(const WString & InText);
 
 		//* Generate mesh geometry for rasterization. 
 		void GenerateMesh(const Box2D & Box, float HeightSize, bool RightHanded, WString InText, MeshFaces * Faces, MeshVertices * Vertices);

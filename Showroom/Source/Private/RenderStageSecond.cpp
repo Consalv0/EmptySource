@@ -46,7 +46,10 @@ void RenderStageSecond::End() {
 		Target->GetViewport(), GeometryBufferTarget->GetViewport()
 	);
 	GeometryBufferTarget->Bind();
+	Rendering::SetViewport(MainViewport);
 	Scene.DeferredRenderTransparent(0);
+	Rendering::SetViewport(PropViewport);
+	Scene.DeferredRenderTransparent(1);
 	GeometryBufferTarget->Unbind();
 	Rendering::Flush();
 

@@ -20,6 +20,8 @@ namespace ESource {
 		virtual void OnDetach() {}
 
 		virtual void OnRender() {}
+
+		virtual void OnPostRender() {}
 		
 		virtual void OnUpdate(Timestamp Stamp) {}
 		
