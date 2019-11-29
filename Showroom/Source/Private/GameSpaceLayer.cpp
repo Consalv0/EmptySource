@@ -17,6 +17,7 @@
 #include "../Public/CameraMovement.h"
 #include "../Public/GunComponent.h"
 #include "../Public/PropComponent.h"
+#include "../Public/ScenePropComponent.h"
 #include "../Public/GameStateComponent.h"
 #include "../Public/FollowTarget.h"
 #include "../External/IMGUI/imgui.h"
@@ -299,7 +300,8 @@ void GameSpaceLayer::OnAwake() {
 	Super::OnAwake();
 
 	auto MainCamera = CreateObject<ESource::GGameObject>(L"MainCamera", ESource::Transform(ESource::Point3(0.F, 1.8F, 0.F), Quaternion(), 1.F));
-	auto PropCameraOffset = CreateObject<ESource::GGameObject>(L"PropCamera", ESource::Transform(ESource::Point3(0.F, 1.0F, 0.F), Quaternion(), 1.F));
+	auto PropCameraOffset = CreateObject<ESource::GGameObject>(L"PropCamera",
+		ESource::Transform(ESource::Point3(0.F, 1.0F, 0.F), Quaternion::FromEulerAngles(Vector3(5.F, 140.F, 0.F)), 1.F));
 	auto PropCamera = CreateObject<ESource::GGameObject>(L"PropCameraOffset", ESource::Transform(ESource::Point3(0.F, 0.0F, -1.8F), Quaternion(), 1.F));
 	PropCamera->AttachTo(PropCameraOffset);
 	auto CameraComponent1 = MainCamera->CreateComponent<ESource::CCamera>();
@@ -344,10 +346,10 @@ void GameSpaceLayer::OnAwake() {
 	Light1->bCastShadow = false;
 	Light1->Color = ESource::Vector3(1.F, 0.982F, 0.9F);
 
-	{
-		auto GameState = CreateObject<ESource::GGameObject>(L"GameState", ESource::Transform());
-		GameState->CreateComponent<CGameState>();
-	}
+	auto GameStateObject = CreateObject<ESource::GGameObject>(L"GameState", ESource::Transform());
+	CGameState * GameState = GameStateObject->CreateComponent<CGameState>();
+	PropCameraMovement->GameStateComponent = GameState;
+	MainCameraMovement->GameStateComponent = GameState;
 
 	ESource::MaterialManager MaterialMng = ESource::MaterialManager::GetInstance();
 	ESource::ModelManager ModelMng = ESource::ModelManager::GetInstance();
@@ -373,24 +375,12 @@ void GameSpaceLayer::OnAwake() {
 				Renderable->SetMesh(TileDesert);
 				Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/DesertSends"));
 			}
-			// for (int j = 0; j < GridSize; j++) {
-			// 	auto BricksTile = CreateObject<GGameObject>(L"BricksTile");
-			// 	BricksTile->LocalTransform.Position = (Vector3(float(i), 0.F, float(j)) * 6.F) - Vector3(float(GridSize), 0.F, float(GridSize)) * 3.F;
-			// 	BricksTile->AttachTo(Ground);
-			// 	auto PhysicsBody = BricksTile->CreateComponent<CPhysicBody>();
-			// 	PhysicsBody->SetMesh(TileBricks);
-			// 	auto Renderable = BricksTile->CreateComponent<CRenderable>();
-			// 	Renderable->bGPUInstancing = true;
-			// 	Renderable->RenderingMask = 1 << 1;
-			// 	Renderable->SetMesh(TileBricks);
-			// 	Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Tiles/GroundBricks"));
-			// }
 		}
 	}
 
 	{
 		auto EgyptianCat = CreateObject<ESource::GGameObject>(
-			L"EgyptianCat", ESource::Transform(Vector3(-34.F, 0.F, 90.F), Quaternion::FromEulerAngles({18.F, -16.F, 34.F}), 1.F)
+			L"EgyptianCat", ESource::Transform(Vector3(-34.F, 0.F, 70.F), Quaternion::FromEulerAngles({18.F, -16.F, 34.F}), 5.F)
 		);
 		auto PhysicsBody = EgyptianCat->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
@@ -398,16 +388,18 @@ void GameSpaceLayer::OnAwake() {
 		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"EgyptianCat:Cat_Statue_CatStatue"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/EgyptianCat"));
+		EgyptianCat->CreateComponent<CSceneProp>(0.4F)->GameStateComponent = GameState;
 	}
 
 	{
-		auto FalloutCar = CreateObject<ESource::GGameObject>(L"FalloutCar", ESource::Transform(Vector3(100.F, -0.96F, 8.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 1.F));
+		auto FalloutCar = CreateObject<ESource::GGameObject>(L"FalloutCar", ESource::Transform(Vector3(80.F, -0.96F, 8.F), Quaternion::FromEulerAngles({ -74.F, 6.F, -143.F }), 1.F));
 		auto PhysicsBody = FalloutCar->CreateComponent<ESource::CPhysicBody>();
 		PhysicsBody->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		auto Renderable = FalloutCar->CreateComponent<ESource::CRenderable>();
 		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"FalloutCar:default"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/FalloutCar"));
+		FalloutCar->CreateComponent<CSceneProp>(0.2F)->GameStateComponent = GameState;
 	}
 
 	{
@@ -418,6 +410,7 @@ void GameSpaceLayer::OnAwake() {
 		Renderable->RenderingMask = 1 << 0 | 1 << 1;
 		Renderable->SetMesh(ModelMng.GetMesh(L"Backpack:Cylinder025"));
 		Renderable->SetMaterialAt(0, MaterialMng.GetMaterial(L"Objects/Backpack"));
+		Backpack->CreateComponent<CSceneProp>(1.F)->GameStateComponent = GameState;
 	}
 
 	{
@@ -431,6 +424,9 @@ void GameSpaceLayer::OnAwake() {
 		Renderable->SetMaterialAt(1, MaterialMng.GetMaterial(L"Objects/Neko"));
 		Prop->AttachTo(PropCameraOffset);
 		CProp * PropComponent = Prop->CreateComponent<CProp>();
+		PropComponent->SetPlayerCamera(CameraComponent2);
+		PropComponent->PhysicBody = PhysicsBody;
+		PropComponent->GameStateComponent = GameState;
 	}
 
 	{
@@ -466,6 +462,7 @@ void GameSpaceLayer::OnAwake() {
 		Gun->AttachTo(MainCamera);
 
 		auto GunComponent = Gun->CreateComponent<CGun>();
+		GunComponent->GameStateComponent = GameState;
 		GunComponent->SetGunObjects(Gun, Animator, CameraComponent1);
 	}
 }

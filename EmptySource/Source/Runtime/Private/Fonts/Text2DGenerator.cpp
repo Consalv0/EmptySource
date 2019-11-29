@@ -10,55 +10,42 @@ namespace ESource {
 	void Text2DGenerator::PrepareCharacters(const WChar * Characters, const size_t & Count) {
 		TextFont->SetGlyphHeight(GlyphHeight);
 		for (size_t Character = 0; Character < Count; ++Character) {
-			FontGlyph Glyph;
-			if (TextFont->GetGlyph(Glyph, Characters[Character])) {
-				if (!Glyph.VectorShape.Validate())
-					LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
-				Glyph.VectorShape.Normalize();
-
-				Glyph.GenerateSDF(PixelRange);
-				LoadedCharacters.insert_or_assign(Characters[Character], new FontGlyph(Glyph));
-			}
+			PrepareCharacter(Characters[Character]);
 		}
+		PrepareCharacter(0);
 	}
 
 	int Text2DGenerator::PrepareCharacters(const WString & InText) {
 		TextFont->SetGlyphHeight(GlyphHeight);
 		int Count = 0;
-		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
-			if (!IsCharacterLoaded(*Character)) {
-				Count++; FontGlyph Glyph;
-				if (TextFont->GetGlyph(Glyph, (uint32_t)*Character)) {
-					if (!Glyph.VectorShape.Validate())
-						LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
-					Glyph.VectorShape.Normalize();
-
-					Glyph.GenerateSDF(PixelRange);
-					AddNewGlyph(Glyph);
-				}
-			}
+		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); ++Character) {
+			if (PrepareCharacter(*Character)) Count++;
 		}
+		PrepareCharacter(0);
 		return Count;
 	}
 
 	void Text2DGenerator::PrepareCharacters(const uint32_t & From, const uint32_t & To) {
-		LOG_CORE_INFO(L"Loading {0:d} font glyphs from {1:c}({2:d}) to {3:c}({4:d})", To - From + 1, (WChar)From, From, (WChar)To, To);
-		Timestamp Timer;
-		Timer.Begin();
 		TextFont->SetGlyphHeight(GlyphHeight);
-		for (unsigned long Character = From; Character <= To; Character++) {
+		for (uint32_t Character = From; Character <= To; Character++) {
+			PrepareCharacter(Character);
+		}
+		PrepareCharacter(0);
+	}
+	
+	bool Text2DGenerator::PrepareCharacter(const uint32_t Char) {
+		if (!IsCharacterLoaded(Char)) {
 			FontGlyph Glyph;
-			if (TextFont->GetGlyph(Glyph, (uint32_t)Character)) {
+			if (TextFont->GetGlyph(Glyph, Char)) {
 				if (!Glyph.VectorShape.Validate())
-					LOG_CORE_ERROR(L"├> The geometry of the loaded shape is invalid.");
+					LOG_CORE_ERROR(L"The geometry of the loaded shape is invalid.");
 				Glyph.VectorShape.Normalize();
-
 				Glyph.GenerateSDF(PixelRange);
-				LoadedCharacters.insert_or_assign(Character, new FontGlyph(Glyph));
+				AddNewGlyph(Glyph);
+				return true;
 			}
 		}
-		Timer.Stop();
-		LOG_CORE_INFO(L"└> Glyphs loaded in {:.3f}s", Timer.GetDeltaTime<Time::Second>());
+		return false;
 	}
 
 	void Text2DGenerator::GenerateMesh(const Box2D & Box, float HeightSize, bool RightHanded, WString InText, MeshFaces * Faces, MeshVertices * Vertices) {
@@ -82,7 +69,6 @@ namespace ESource {
 
 		Vector2 CursorPivot = { RightHanded ? Box.MaxX : Box.MinX, Box.MaxY };
 
-		// --- Iterate through all characters
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
 			if (*(Character) == L'\n' || *(Character) == L'\r') {
 				CursorPivot.X = RightHanded ? Box.MaxX : Box.MinX;
@@ -147,23 +133,42 @@ namespace ESource {
 	}
 
 	Vector2 Text2DGenerator::GetLenght(float HeightSize, const WString & InText) {
-		Vector2 Pivot = { 0, HeightSize };
-		if (InText.size() == 0) return Pivot;
+		Vector2 CursorPivot = { 0.F, HeightSize };
+		float LineWidth = CursorPivot.X;
+		if (InText.size() == 0) return CursorPivot;
 
 		float ScaleFactor = HeightSize / GlyphHeight;
 
-		// --- Iterate through all characters
 		for (WString::const_iterator Character = InText.begin(); Character != InText.end(); Character++) {
-			if (!IsCharacterLoaded(*Character)) {
-				Pivot.X += (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor;
+			if (*(Character) == L'\n' || *(Character) == L'\r') {
+				LineWidth = 0.F;
+				CursorPivot.Y -= HeightSize;
+				CursorPivot.X = Math::Max(CursorPivot.X, LineWidth);
+				continue;
+			}
+			if (*(Character) == L'	') {
+				float TabModule = fmodf(CursorPivot.X, (PixelRange * 0.5F + GlyphHeight * 0.5F) * ScaleFactor * 4);
+				LineWidth += TabModule;
+				CursorPivot.X = Math::Max(CursorPivot.X, LineWidth);
 				continue;
 			}
 
-			FontGlyph * Glyph = LoadedCharacters[*Character];
-			Pivot.X += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			FontGlyph * Glyph = NULL;
+			if (!IsCharacterLoaded(*Character)) {
+				Glyph = LoadedCharacters[L'\0'];
+			}
+			else {
+				Glyph = LoadedCharacters[*Character];
+				if (Glyph->bUndefined) {
+					Glyph = LoadedCharacters[L'\0'];
+				}
+			}
+			
+			LineWidth += (PixelRange * 0.5F + Glyph->Advance) * ScaleFactor;
+			CursorPivot.X = Math::Max(CursorPivot.X, LineWidth);
 		}
 
-		return Pivot;
+		return CursorPivot;
 	}
 
 	void Text2DGenerator::Clear() {

@@ -12,11 +12,13 @@ public:
 		WaitStart = 1,
 		Starting = 2,
 		Started = 3,
+		Ending = 4,
+		Restart = 5
 	};
 
 public:
 	ESource::MaterialPtr RenderTextMaterial;
-	float FontSize = 120;
+	float FontSize = 100;
 	float FontBoldness = 0.45F;
 	ESource::Mesh DynamicMesh;
 	ESource::Font FontFace;
@@ -24,6 +26,10 @@ public:
 	ESource::PixelMap FontAtlas;
 	ESource::RTexturePtr FontMap;
 	EGameState GameState = EGameState::WaitStart;
+
+	void SetPlayerWinner(int Player);
+
+	float GetAnimationTime();
 
 protected:
 	typedef ESource::CComponent Supper;

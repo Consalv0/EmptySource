@@ -151,6 +151,7 @@
     <ClInclude Include="Source\Public\PropComponent.h" />
     <ClInclude Include="Source\Public\RenderStageFirst.h" />
     <ClInclude Include="Source\Public\RenderStageSecond.h" />
+    <ClInclude Include="Source\Public\ScenePropComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Private\CameraMovement.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Source\Private\PropComponent.cpp" />
     <ClCompile Include="Source\Private\RenderStageFirst.cpp" />
     <ClCompile Include="Source\Private\RenderStageSecond.cpp" />
+    <ClCompile Include="Source\Private\ScenePropComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EmptySource\EmptySource.vcxproj">

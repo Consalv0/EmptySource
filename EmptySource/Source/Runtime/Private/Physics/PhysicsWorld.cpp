@@ -81,6 +81,27 @@ namespace ESource {
 		}
 	}
 
+	void PhysicsWorld::AABBIntersection(const BoundingBox3D & AABB, TArray<CPhysicBody *>& Intersections) {
+		size_t TotalIntersectionCount = 0;
+		Intersections.clear();
+		for (size_t PhysicsBodyCount = 0; PhysicsBodyCount >= 0 && PhysicsBodyCount < PhysicsBodyArray.size(); ++PhysicsBodyCount) {
+			CPhysicBody * PhysicsBody = PhysicsBodyArray[PhysicsBodyCount];
+			Transform & BodyTransform = PhysicsBody->GetGameObject().GetWorldTransform();
+			const Matrix4x4 TransformMat = BodyTransform.GetLocalToWorldMatrix();
+			const Matrix4x4 InverseTransform = BodyTransform.GetWorldToLocalMatrix();
+
+			const MeshData * ModelData = PhysicsBody->GetMeshData();
+			if (ModelData == NULL) continue;
+
+			BoundingBox3D ModelSpaceAABox = ModelData->Bounding.Transform(TransformMat);
+
+			if (Physics::IntersectionAxisAlignedBox(AABB, ModelSpaceAABox)) {
+				Intersections.push_back(PhysicsBody);
+				TotalIntersectionCount++;
+			}
+		}
+	}
+
 	PhysicsWorld::PhysicsWorld() : PhysicsBodyArray() {
 	}
 

@@ -4,16 +4,25 @@
 #include "Components/ComponentAnimable.h"
 
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentPhysicBody.h"
+
+#include "../Public/GameStateComponent.h"
 
 class CProp : public ESource::CComponent {
 	IMPLEMENT_COMPONENT(CProp)
 public:
-	void SetGunObjects(ESource::GGameObject * GunObject, ESource::CAnimable * GunAnimable, ESource::CCamera * PlayerCamera);
+	ESource::CCamera * PlayerCamera;
+	ESource::CPhysicBody * PhysicBody;
+	CGameState * GameStateComponent;
+
+	void SetPlayerCamera(ESource::CCamera * PlayerCamera);
 
 	bool bReloading;
 
 protected:
 	typedef ESource::CComponent Supper;
+
+	ESource::Transform StartingTransform;
 
 	CProp(ESource::GGameObject & GameObject);
 

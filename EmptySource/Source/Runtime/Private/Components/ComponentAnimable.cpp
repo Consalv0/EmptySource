@@ -94,8 +94,7 @@ namespace ESource {
 		Factor = Math::Clamp01(Factor);
 		const Vector3& Start = NodeAnim->Positions[PositionIndex];
 		const Vector3& End = NodeAnim->Positions[NextPositionIndex];
-		Vector3 Delta = End - Start;
-		return Start + (float)Factor * Delta;
+		return Math::Mix(Start, End, (float)Factor);
 	}
 
 

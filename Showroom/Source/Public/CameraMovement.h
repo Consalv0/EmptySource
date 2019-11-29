@@ -5,6 +5,7 @@
 class CCameraMovement : public ESource::CComponent {
 	IMPLEMENT_COMPONENT(CCameraMovement)
 public:
+	class CGameState * GameStateComponent;
 	ESource::Quaternion CameraRotation;
 	ESource::Quaternion LastCameraRotation;
 	ESource::Vector2 CursorPosition;

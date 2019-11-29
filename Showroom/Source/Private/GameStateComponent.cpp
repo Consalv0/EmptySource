@@ -20,14 +20,14 @@ void CGameState::OnInputEvent(ESource::InputEvent & InEvent) {
 	ESource::EventDispatcher<ESource::InputEvent> Dispatcher(InEvent);
 	Dispatcher.Dispatch<ESource::JoystickButtonPressedEvent>([this](ESource::JoystickButtonPressedEvent & Event) {
 		if (Event.GetButton() == ESource::EJoystickButton::Start && GameState == EGameState::WaitStart) {
-			if (ESource::Input::IsJoystickConnected(0) && ESource::Input::IsJoystickConnected(1)) {
+			if (ESource::Input::IsJoystickConnected(0)) {
 				GameState = EGameState::Starting;
-				CountDown = 5;
+				CountDown = 3.F;
 			}
 		}
 	});
 	Dispatcher.Dispatch<ESource::JoystickConnectionEvent>([this](ESource::JoystickConnectionEvent & Event) {
-		if (!ESource::Input::IsJoystickConnected(0) || !ESource::Input::IsJoystickConnected(1)) {
+		if (!ESource::Input::IsJoystickConnected(0)) {
 			GameState = EGameState::WaitStart;
 		}
 	});
@@ -35,12 +35,12 @@ void CGameState::OnInputEvent(ESource::InputEvent & InEvent) {
 
 void CGameState::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	if (GameState == EGameState::WaitStart) {
-		if (ESource::Input::IsJoystickConnected(0) && ESource::Input::IsJoystickConnected(1)) {
+		if (ESource::Input::IsJoystickConnected(0)) {
 			RenderingText = L"Press Start";
 			FontScaleAnimation = 1.F;
 		}
 		else {
-			RenderingText = L"Connect another gamepad device";
+			RenderingText = L"Connect a gamepad\n       to begin";
 			FontScaleAnimation = 0.5F;
 		}
 	}
@@ -48,7 +48,7 @@ void CGameState::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	if (GameState == EGameState::Starting) {
 		CountDown -= DeltaTime.GetDeltaTime<ESource::Time::Second>();
 		float Mod = std::fmodf(CountDown, 1.F);
-		FontScaleAnimation = Math::Map(Mod * 4.F, 0.F, 4.F, 1.F, 4.F);
+		FontScaleAnimation = Math::Map(Mod * 4.F, 0.F, 4.F, 2.F, 4.F);
 		RenderingText = ESource::Text::Formatted(L"%.0f", CountDown + 0.5F);
 		if (CountDown < 0) {
 			ESource::Input::SendHapticImpulse(0, 0, 1.F, 200);
@@ -62,6 +62,15 @@ void CGameState::OnUpdate(const ESource::Timestamp & DeltaTime) {
 		RenderingText = L"";
 	}
 
+	if (GameState == EGameState::Ending) {
+		CountDown -= DeltaTime.GetDeltaTime<ESource::Time::Second>();;
+		if (CountDown < 0) {
+			ESource::Input::SendHapticImpulse(0, 0, 1.F, 200);
+			ESource::Input::SendHapticImpulse(1, 0, 1.F, 200);
+			GameState = EGameState::WaitStart;
+		}
+	}
+
 	if (FontMap != NULL && TextGenerator.PrepareCharacters(RenderingText) > 0) {
 		TextGenerator.GenerateGlyphAtlas(FontAtlas);
 		FontMap->Unload();
@@ -71,12 +80,24 @@ void CGameState::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	}
 }
 
+void CGameState::SetPlayerWinner(int Player) {
+	if (GameState == EGameState::Started) {
+		CountDown = 5;
+		GameState = EGameState::Ending;
+		RenderingText = ESource::Text::Formatted(L"%ls Wins!!", Player == 0 ? L"Gun" : L"Prop");
+	}
+}
+
+float CGameState::GetAnimationTime() {
+	return CountDown / 3.001F;
+}
+
 void CGameState::OnAwake() {
 	RenderingText = L"Press Start";
 	FontFace.Initialize(ESource::FileManager::GetFile(L"Resources/Fonts/FuturaCondensed.ttf"));
 	TextGenerator.TextFont = &FontFace;
-	TextGenerator.GlyphHeight = 45;
-	TextGenerator.AtlasSize = 1024;
+	TextGenerator.GlyphHeight = 70;
+	TextGenerator.AtlasSize = 512;
 	TextGenerator.PixelRange = 1.5F;
 	TextGenerator.Pivot = 0;
 
