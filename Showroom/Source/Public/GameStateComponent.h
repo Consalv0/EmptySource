@@ -17,6 +17,7 @@ public:
 	};
 
 public:
+	ESource::Material RenderTextureMaterial;
 	ESource::MaterialPtr RenderTextMaterial;
 	float FontSize = 100;
 	float FontBoldness = 0.45F;
@@ -28,6 +29,8 @@ public:
 	EGameState GameState = EGameState::WaitStart;
 
 	void SetPlayerWinner(int Player);
+
+	void SetBarLenght(int Lenght);
 
 	float GetAnimationTime();
 

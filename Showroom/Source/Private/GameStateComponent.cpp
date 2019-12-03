@@ -12,8 +12,13 @@
 
 #include "../Public/GameStateComponent.h"
 
-CGameState::CGameState(ESource::GGameObject & GameObject) : CComponent(L"GameState", GameObject), RenderingText() {
+CGameState::CGameState(ESource::GGameObject & GameObject) 
+	: CComponent(L"GameState", GameObject), RenderTextureMaterial(L"RenderTextureMaterial"), RenderingText()
+{
 	RenderTextMaterial = ESource::MaterialManager::GetInstance().GetMaterial(ESource::IName(L"RenderTextMaterial", 0));
+	RenderTextureMaterial.DepthFunction = ESource::DF_Always;
+	RenderTextureMaterial.CullMode = ESource::CM_None;
+	RenderTextureMaterial.SetShaderProgram(ESource::ShaderManager::GetInstance().GetProgram(L"RenderTextureShader"));
 }
 
 void CGameState::OnInputEvent(ESource::InputEvent & InEvent) {
@@ -58,11 +63,11 @@ void CGameState::OnUpdate(const ESource::Timestamp & DeltaTime) {
 	}
 
 	if (GameState == EGameState::Started) {
-		FontScaleAnimation = 1.F;
-		RenderingText = L"";
+		FontScaleAnimation = 0.25F;
 	}
 
 	if (GameState == EGameState::Ending) {
+		FontScaleAnimation = 1.F;
 		CountDown -= DeltaTime.GetDeltaTime<ESource::Time::Second>();;
 		if (CountDown < 0) {
 			ESource::Input::SendHapticImpulse(0, 0, 1.F, 200);
@@ -85,6 +90,15 @@ void CGameState::SetPlayerWinner(int Player) {
 		CountDown = 5;
 		GameState = EGameState::Ending;
 		RenderingText = ESource::Text::Formatted(L"%ls Wins!!", Player == 0 ? L"Gun" : L"Prop");
+	}
+}
+
+void CGameState::SetBarLenght(int Lenght) {
+	if (GameState == EGameState::Started) {
+		RenderingText = L"";
+		for (int i = 0; i < Lenght; ++i) {
+			RenderingText += L'_';
+		}
 	}
 }
 
@@ -117,38 +131,69 @@ void CGameState::OnAwake() {
 }
 
 void CGameState::OnPostRender() {
-	float FontScale = (GetFontSize() / TextGenerator.GlyphHeight);
-	RenderTextMaterial->SetParameters({
-		{ "_MainTextureSize", { FontMap->GetSize().FloatVector3() }, ESource::SPFlags_None },
-		{ "_ProjectionMatrix", { Matrix4x4::Orthographic(
-			0.F, (float)ESource::Application::GetInstance()->GetWindow().GetWidth(),
-			0.F, (float)ESource::Application::GetInstance()->GetWindow().GetHeight()
-		) }, ESource::SPFlags_None },
-		{ "_MainTexture", { ESource::ETextureDimension::Texture2D, FontMap }, ESource::SPFlags_None},
-		{ "_TextSize", { FontScale }, ESource::SPFlags_None },
-		{ "_TextBold", { FontBoldness }, ESource::SPFlags_None }
-		});
-	RenderTextMaterial->Use();
+	if (!RenderingText.empty() && GameState != EGameState::Started) {
+		static float SampleLevel = 0.F;
+		static float Gamma = 2.2F;
+		int bMonochrome = false;
+		int bIsCubemap = false;
+		auto & TextShadow = ESource::TextureManager::GetInstance().GetTexture(L"TextShadow");
+		RenderTextureMaterial.Use();
+		RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
+		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
+		if (GameState == EGameState::WaitStart || GameState == EGameState::Restart)
+			RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(0.5F).PointerToValue());
+		if (GameState == EGameState::Starting)
+			RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(1.F, 1.F, 1.F, CountDown / 6.0F).PointerToValue());
+		if (GameState == EGameState::Ending)
+			RenderTextureMaterial.SetFloat4Array("_ColorFilter", Vector4(1.F, 1.F, 1.F, CountDown / 10.F + 0.5F).PointerToValue());
+		RenderTextureMaterial.SetMatrix4x4Array("_ProjectionMatrix", Matrix4x4().PointerToValue());
+		RenderTextureMaterial.SetInt1Array("_IsCubemap", &bIsCubemap);
+		TextShadow->GetTexture()->Bind();
+		RenderTextureMaterial.SetTexture2D("_MainTexture", TextShadow, 0);
+		RenderTextureMaterial.SetTextureCubemap("_MainTextureCube", TextShadow, 1);
+		float LODLevel = SampleLevel * (float)TextShadow->GetMipMapCount();
+		RenderTextureMaterial.SetFloat1Array("_Lod", &LODLevel);
 
-	ESource::MeshData TextMeshData;
-	{
-		Vector2 TextLenght = TextGenerator.GetLenght(GetFontSize(), RenderingText);
-		ESource::Box2D Box = ESource::Box2D(
-			(float)ESource::Application::GetInstance()->GetWindow().GetWidth() * 0.5F - TextLenght.X * 0.5F,
-			0.F,
-			(float)ESource::Application::GetInstance()->GetWindow().GetWidth(),
-			(float)ESource::Application::GetInstance()->GetWindow().GetHeight() * 0.5F - TextLenght.Y * 0.35F
-		);
+		ESource::MeshPrimitives::Quad.GetVertexArray()->Bind();
+		Matrix4x4 QuadPosition = Matrix4x4();
+		RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadPosition.PointerToValue());
 
-		TextGenerator.GenerateMesh(
-			Box, GetFontSize(), false, RenderingText, &TextMeshData.Faces, &TextMeshData.StaticVertices
-		);
+		ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
 	}
-	DynamicMesh.SwapMeshData(TextMeshData);
-	if (DynamicMesh.SetUpBuffers()) {
-		DynamicMesh.GetVertexArray()->Bind();
-		RenderTextMaterial->SetMatrix4x4Array("_ModelMatrix", Matrix4x4().PointerToValue());
-		ESource::Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
+	{
+		float FontScale = (GetFontSize() / TextGenerator.GlyphHeight);
+		RenderTextMaterial->SetParameters({
+			{ "_MainTextureSize", { FontMap->GetSize().FloatVector3() }, ESource::SPFlags_None },
+			{ "_ProjectionMatrix", { Matrix4x4::Orthographic(
+				0.F, (float)ESource::Application::GetInstance()->GetWindow().GetWidth(),
+				0.F, (float)ESource::Application::GetInstance()->GetWindow().GetHeight()
+			) }, ESource::SPFlags_None },
+			{ "_MainTexture", { ESource::ETextureDimension::Texture2D, FontMap }, ESource::SPFlags_None},
+			{ "_TextSize", { FontScale }, ESource::SPFlags_None },
+			{ "_TextBold", { FontBoldness }, ESource::SPFlags_None }
+			});
+		RenderTextMaterial->Use();
+
+		ESource::MeshData TextMeshData;
+		{
+			Vector2 TextLenght = TextGenerator.GetLenght(GetFontSize(), RenderingText);
+			ESource::Box2D Box = ESource::Box2D(
+				(float)ESource::Application::GetInstance()->GetWindow().GetWidth() * 0.5F - TextLenght.X * 0.5F,
+				0.F,
+				(float)ESource::Application::GetInstance()->GetWindow().GetWidth(),
+				(float)ESource::Application::GetInstance()->GetWindow().GetHeight() * 0.5F - TextLenght.Y * 0.35F
+			);
+
+			TextGenerator.GenerateMesh(
+				Box, GetFontSize(), false, RenderingText, &TextMeshData.Faces, &TextMeshData.StaticVertices
+			);
+		}
+		DynamicMesh.SwapMeshData(TextMeshData);
+		if (DynamicMesh.SetUpBuffers()) {
+			DynamicMesh.GetVertexArray()->Bind();
+			RenderTextMaterial->SetMatrix4x4Array("_ModelMatrix", Matrix4x4().PointerToValue());
+			ESource::Rendering::DrawIndexed(DynamicMesh.GetVertexArray());
+		}
 	}
 }
 

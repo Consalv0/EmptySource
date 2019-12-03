@@ -29,7 +29,7 @@ namespace ESource {
 
 		void TextureManager::LoadImageFromFile(
 			const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
-			ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath, bool bConservePixels = false
+			ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically = true, bool bConservePixels = false
 		);
 
 		static TextureManager& GetInstance();

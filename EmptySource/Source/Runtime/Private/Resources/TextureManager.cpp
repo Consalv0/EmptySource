@@ -118,7 +118,7 @@ namespace ESource {
 
 	void TextureManager::LoadImageFromFile(
 		const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
-		ESamplerAddressMode AddressMode, bool bFlipVertically, bool bGenMipMaps, const WString & FilePath, bool bConservePixels) {
+		ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically, bool bConservePixels) {
 
 		RTexturePtr LoadedTexture = CreateTexture2D(Name, FilePath, ColorFormat, FilterMode, AddressMode);
 		

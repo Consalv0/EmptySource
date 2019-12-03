@@ -12,6 +12,7 @@ class CProp : public ESource::CComponent {
 	IMPLEMENT_COMPONENT(CProp)
 public:
 	ESource::CCamera * PlayerCamera;
+	ESource::CCamera * HunterCamera;
 	ESource::CPhysicBody * PhysicBody;
 	CGameState * GameStateComponent;
 
@@ -29,5 +30,10 @@ protected:
 	virtual void OnUpdate(const ESource::Timestamp & DeltaTime) override;
 
 	virtual void OnDelete() override;
+
+	virtual void OnPostRender() override;
+
+private:
+	ESource::Material RenderTextureMaterial;
 
 };

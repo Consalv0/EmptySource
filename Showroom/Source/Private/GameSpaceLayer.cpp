@@ -425,6 +425,7 @@ void GameSpaceLayer::OnAwake() {
 		Prop->AttachTo(PropCameraOffset);
 		CProp * PropComponent = Prop->CreateComponent<CProp>();
 		PropComponent->SetPlayerCamera(CameraComponent2);
+		PropComponent->HunterCamera = CameraComponent1;
 		PropComponent->PhysicBody = PhysicsBody;
 		PropComponent->GameStateComponent = GameState;
 	}

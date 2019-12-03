@@ -146,49 +146,51 @@ protected:
 		NormalTexture->SetPixelData(NormlMap);
 		NormalTexture->Load();
 
-		TextureMng.LoadImageFromFile(L"CrossHead", ESource::PF_RGBA8, ESource::FM_MinMagNearest, ESource::SAM_Clamp, true, false, L"Resources/Textures/CrossHead.png");
+		TextureMng.LoadImageFromFile(L"CrossHead",  ESource::PF_RGBA8, ESource::FM_MinMagNearest, ESource::SAM_Clamp, false, L"Resources/Textures/CrossHead.png");
+		TextureMng.LoadImageFromFile(L"UIArrow",    ESource::PF_RGBA8, ESource::FM_MinMagLinear,  ESource::SAM_Clamp, true,  L"Resources/Textures/UIArrow.png");
+		TextureMng.LoadImageFromFile(L"TextShadow", ESource::PF_RGBA8, ESource::FM_MinMagNearest, ESource::SAM_Clamp, true,  L"Resources/Textures/TextShadow.png");
 
-		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_A.jpg");
-		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
-		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/DesertSends_R.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/DesertSends_A.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/DesertSends_N.jpg");
+		TextureMng.LoadImageFromFile(L"Tiles/DesertSends_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/DesertSends_R.jpg");
 
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_A.jpeg");
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_N.png");
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_R.jpeg");
-		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Tiles/GroundBricks_AO.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/GroundBricks_A.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/GroundBricks_N.png");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/GroundBricks_R.jpeg");
+		TextureMng.LoadImageFromFile(L"Tiles/GroundBricks_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Tiles/GroundBricks_AO.jpeg");
 
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_A.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_R.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_M.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/EgyptianCat_AO.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/EgyptianCat_A.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/EgyptianCat_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/EgyptianCat_R.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/EgyptianCat_M.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/EgyptianCat_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/EgyptianCat_AO.jpg");
 		
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_M.png");
-		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FalloutCar_AO.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FalloutCar_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FalloutCar_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FalloutCar_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FalloutCar_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/FalloutCar_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FalloutCar_AO.png");
 
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_A.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_N.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_R.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_M.jpg");
-		TextureMng.LoadImageFromFile(L"Objects/Backpack_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Backpack_AO.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Backpack_A.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Backpack_N.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Backpack_R.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Backpack_M.jpg");
+		TextureMng.LoadImageFromFile(L"Objects/Backpack_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Backpack_AO.jpg");
 
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_M.png");
-		TextureMng.LoadImageFromFile(L"Objects/FlareGun_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/FlareGun_AO.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_A",  ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FlareGun_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_N",  ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FlareGun_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_R",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FlareGun_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_M",  ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FlareGun_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/FlareGun_AO", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/FlareGun_AO.png");
 
-		TextureMng.LoadImageFromFile(L"Objects/Neko_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/Neko_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/Neko_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/Neko_M", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/Neko_M.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_A.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_N.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_R.png");
-		TextureMng.LoadImageFromFile(L"Objects/NekoEye_M", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, true, L"Resources/Textures/Objects/NekoEye_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Neko_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Neko_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Neko_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/Neko_M", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/Neko_M.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_A", ESource::PF_RGBA8, ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/NekoEye_A.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_N", ESource::PF_RGB8,  ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/NekoEye_N.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_R", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/NekoEye_R.png");
+		TextureMng.LoadImageFromFile(L"Objects/NekoEye_M", ESource::PF_R8,    ESource::FM_MinMagLinear, ESource::SAM_Repeat, true, L"Resources/Textures/Objects/NekoEye_M.png");
 
 		ESource::ShaderManager& ShaderMng = ESource::ShaderManager::GetInstance();
 		ShaderMng.LoadResourcesFromFile(L"Resources/Resources.yaml");
