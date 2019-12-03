@@ -18,6 +18,9 @@
     <ClInclude Include="Source\Public\GameSpaceLayer.h">
       <Filter>Public</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\GameStateComponent.h">
+      <Filter>Public</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Public\GunComponent.h">
       <Filter>Public</Filter>
     </ClInclude>
@@ -28,9 +31,6 @@
       <Filter>Public</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\RenderStageSecond.h">
-      <Filter>Public</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Public\GameStateComponent.h">
       <Filter>Public</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\ScenePropComponent.h">
@@ -50,6 +50,9 @@
     <ClCompile Include="Source\Private\GameSpaceLayer.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\GameStateComponent.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Private\GunComponent.cpp">
       <Filter>Private</Filter>
     </ClCompile>
@@ -60,9 +63,6 @@
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\RenderStageSecond.cpp">
-      <Filter>Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Private\GameStateComponent.cpp">
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="Source\Private\ScenePropComponent.cpp">

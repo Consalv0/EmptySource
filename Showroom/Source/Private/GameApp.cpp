@@ -388,7 +388,7 @@ protected:
 			}
 		}
 
-		ImGui::Begin("Model", 0, ImVec2(250, 300)); 
+		ImGui::Begin("Model", 0); 
 		{
 			TArray<ESource::IName> ModelNameList = ESource::ModelManager::GetInstance().GetResourceModelNames();
 			if (ModelNameList.size() > 0) {
@@ -468,7 +468,7 @@ protected:
 		}
 		ImGui::End();
 
-		ImGui::Begin("Shaders", 0, ImVec2(250, 300)); 
+		ImGui::Begin("Shaders", 0); 
 		{
 			TArray<ESource::IName> ShaderNameList = ESource::ShaderManager::GetInstance().GetResourceShaderNames();
 			TArray<NString> NarrowShaderNameList(ShaderNameList.size());
@@ -498,7 +498,7 @@ protected:
 		}
 		ImGui::End();
 		
-		ImGui::Begin("Materials", 0, ImVec2(250, 300));
+		ImGui::Begin("Materials", 0);
 		{
 			static NChar Text[100];
 			ImGui::InputText("##MaterialName", Text, 100);
