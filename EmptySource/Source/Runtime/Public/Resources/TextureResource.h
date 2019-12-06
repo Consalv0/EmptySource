@@ -40,6 +40,10 @@ namespace ESource {
 
 		void SetGenerateMipMapsOnLoad(bool Option);
 
+		void SetFlipVertically(bool Option);
+
+		void SetConservePixelMapOnLoad(bool Option);
+
 		inline IntVector3 GetSize() const { return Size; }
 
 		// Change the size of the texture, this will only be aplied if the texture is not loaded
@@ -62,7 +66,8 @@ namespace ESource {
 
 		RTexture(
 			const IName & Name, const WString & Origin, ETextureDimension Dimension,
-			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3 & Size = 0, bool MipMapsOnLoad = false
+			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3 & Size = 0,
+			bool MipMapsOnLoad = false, bool FlipVerticaly = true
 		);
 
 	private:
@@ -83,6 +88,10 @@ namespace ESource {
 		uint32_t MipMapCount;
 
 		bool bBuildMipMapsOnLoad;
+		bool bConservePixelMapOnLoad;
+
+		bool bFlipVerticaly;
+
 	};
 
 }

@@ -33,13 +33,16 @@ namespace ESource {
 					LoadState = LS_Unloaded;
 					return;
 				}
-				
-				if (!ImageConversion::LoadFromFile(Pixels, TextureFile, ColorFormat)) {
+
+				ImageConversion::PixelMapInfo Info;
+				ImageConversion::ParsingOptions Options = { TextureFile, ColorFormat, bFlipVerticaly };
+				if (!ImageConversion::Load(Info, Options)) {
 					LOG_CORE_ERROR(L"Error reading file for texture: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
 				}
 				else {
+					Pixels = Info.Pixels;
 					Size = Pixels.GetSize();
 				}
 				TextureFile->Close();
@@ -69,10 +72,56 @@ namespace ESource {
 		}
 		LoadState = TexturePointer != NULL ? LS_Loaded : LS_Unloaded;
 		if (bBuildMipMapsOnLoad) GenerateMipMaps();
+		if (!bConservePixelMapOnLoad) ClearPixelData();
 	}
 
 	void RTexture::LoadAsync() {
-		ES_CORE_ASSERT(true, L"Not implemented");
+		if (LoadState == LS_Loaded || LoadState == LS_Loading) return;
+
+		LoadState = LS_Loading;
+		{
+			LOG_CORE_DEBUG(L"Loading Texture '{}'...", Name.GetDisplayName().c_str());
+			if (!Origin.empty()) {
+				FileStream * TextureFile = FileManager::GetFile(Origin);
+				if (TextureFile == NULL) {
+					LOG_CORE_ERROR(L"Error reading file for texture: '{}'", Origin);
+					LoadState = LS_Unloaded;
+					return;
+				}
+
+				ImageConversion::ParsingOptions Options = { TextureFile, ColorFormat, bFlipVerticaly };
+				ImageConversion::LoadAsync(Options, [this](ImageConversion::PixelMapInfo & Info) {
+					Pixels = Info.Pixels;
+					Size = Pixels.GetSize();
+
+					switch (Dimension) {
+					case ETextureDimension::Texture2D:
+						if (Pixels.IsEmpty())
+							TexturePointer = Texture2D::Create(Size, ColorFormat, FilterMode, AddressMode);
+						else
+							TexturePointer = Texture2D::Create(Size, ColorFormat, FilterMode, AddressMode,
+								Pixels.GetColorFormat(), Pixels.PointerToValue());
+						break;
+					case ETextureDimension::Cubemap:
+						TexturePointer = Cubemap::Create(Size.X, ColorFormat, FilterMode, AddressMode);
+						Size = { Size.X, Size.X, 6 };
+						break;
+					case ETextureDimension::Texture1D:
+					case ETextureDimension::Texture3D:
+					default:
+						break;
+					}
+
+					if (Size.MagnitudeSquared() == 0) {
+						LOG_CORE_CRITICAL(L"Assigned Invalid Size in Texture '{}' : {}", Name.GetDisplayName().c_str(), Text::FormatMath(Size).c_str());
+					}
+
+					LoadState = TexturePointer != NULL ? LS_Loaded : LS_Unloaded;
+					if (bBuildMipMapsOnLoad) GenerateMipMaps();
+					if (!bConservePixelMapOnLoad) ClearPixelData();
+				});
+			}
+		}
 	}
 
 	void RTexture::Unload() {
@@ -110,6 +159,14 @@ namespace ESource {
 
 	void RTexture::SetGenerateMipMapsOnLoad(bool Option) {
 		bBuildMipMapsOnLoad = Option;
+	}
+
+	void RTexture::SetFlipVertically(bool Option) {
+		bFlipVerticaly = Option;
+	}
+
+	void RTexture::SetConservePixelMapOnLoad(bool Option) {
+		bConservePixelMapOnLoad = Option;
 	}
 
 	void RTexture::SetSize(const IntVector3 & NewSize) {
@@ -181,9 +238,11 @@ namespace ESource {
 
 	RTexture::RTexture(
 		const IName & Name, const WString & Origin,
-		ETextureDimension Dimension, EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3& Size, bool MipMapsOnLoad
+		ETextureDimension Dimension, EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector3& Size,
+		bool MipMapsOnLoad, bool FlipVertically
 	) 
 		: ResourceHolder(Name, Origin), Dimension(Dimension), FilterMode(FilterMode), AddressMode(AddressMode), ColorFormat(Format), Size(Size) {
+		bFlipVerticaly = FlipVertically;
 		TexturePointer = NULL;
 		MipMapCount = 1; bBuildMipMapsOnLoad = MipMapsOnLoad;
 	}

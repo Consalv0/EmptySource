@@ -22,12 +22,18 @@ namespace ESource {
 		virtual void LoadResourcesFromFile(const WString& FilePath) override;
 
 		RTexturePtr CreateTexture2D(const WString& Name, const WString & Origin,
-			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size = 0, bool bGenMipMapsOnLoad = false);
+			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size = 0,
+			bool bGenMipMapsOnLoad = false, bool bFlipVertically = true);
 
 		RTexturePtr CreateCubemap(const WString& Name, const WString & Origin,
 			EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const int & Size = 0);
 
-		void TextureManager::LoadImageFromFile(
+		void TextureManager::LoadFromFile(
+			const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
+			ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically = true, bool bConservePixels = false
+		);
+
+		void TextureManager::LoadAsyncFromFile(
 			const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
 			ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically = true, bool bConservePixels = false
 		);

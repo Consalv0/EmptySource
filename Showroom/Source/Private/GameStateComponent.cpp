@@ -131,12 +131,12 @@ void CGameState::OnAwake() {
 }
 
 void CGameState::OnPostRender() {
-	if (!RenderingText.empty() && GameState != EGameState::Started) {
+	auto & TextShadow = ESource::TextureManager::GetInstance().GetTexture(L"TextShadow");
+	if (!RenderingText.empty() && GameState != EGameState::Started && TextShadow->GetLoadState() == ESource::LS_Loaded) {
 		static float SampleLevel = 0.F;
 		static float Gamma = 2.2F;
 		int bMonochrome = false;
 		int bIsCubemap = false;
-		auto & TextShadow = ESource::TextureManager::GetInstance().GetTexture(L"TextShadow");
 		RenderTextureMaterial.Use();
 		RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);

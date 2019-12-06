@@ -27,6 +27,7 @@
 #include "Files/FileManager.h"
 
 #include "Resources/ModelParser.h"
+#include "Resources/ImageConversion.h"
 #include "Resources/ShaderManager.h"
 
 #include "Physics/PhysicsWorld.h"
@@ -110,6 +111,8 @@ namespace ESource {
 
 		if (!ModelParser::Initialize())
 			return;
+		if (!ImageConversion::Initialize())
+			return;
 
 		MeshPrimitives::Initialize();
 		Font::InitializeFreeType();
@@ -139,6 +142,7 @@ namespace ESource {
 			Time::Tick();
 
 			ModelParser::UpdateStatus();
+			ImageConversion::UpdateStatus();
 			
 			for (Layer * LayerIt : AppLayerStack)
 				LayerIt->OnUpdate(Time::GetTimeStamp());
@@ -183,6 +187,7 @@ namespace ESource {
 		AppLayerStack.Clear();
 
 		ModelParser::Exit();
+		ImageConversion::Exit();
 
 	}
 

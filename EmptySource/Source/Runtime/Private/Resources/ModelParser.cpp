@@ -20,7 +20,7 @@ namespace ESource {
 	bool ModelParser::_TaskRunning;
 	std::queue<ModelParser::Task*> ModelParser::PendingTasks = std::queue<Task*>();
 	std::future<bool> ModelParser::CurrentFuture;
-	std::mutex QueueLock;
+	std::mutex ModelParserQueueLock;
 
 	static Matrix4x4 aiMatrix4x4ToMatrix4x4(const aiMatrix4x4 &From) {
 		return Matrix4x4(

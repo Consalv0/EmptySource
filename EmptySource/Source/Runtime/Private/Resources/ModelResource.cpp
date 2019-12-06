@@ -63,7 +63,7 @@ namespace ESource {
 			if (!Origin.empty()) {
 				FileStream * ModelFile = FileManager::GetFile(Origin);
 				if (ModelFile == NULL) {
-					LOG_CORE_ERROR(L"Error reading file for shader: '{}'", Origin);
+					LOG_CORE_ERROR(L"Error reading file for model: '{}'", Origin);
 					LoadState = LS_Unloaded;
 					return;
 				}

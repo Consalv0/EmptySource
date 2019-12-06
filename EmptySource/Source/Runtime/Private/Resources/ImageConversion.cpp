@@ -15,24 +15,87 @@
 
 namespace ESource {
 
-	bool ImageConversion::LoadFromFile(PixelMap& RefBitmap, FileStream * File, EPixelFormat Format, bool FlipVertically) {
-		if (File == NULL) return false;
-		int Width, Height, Comp;
-		stbi_set_flip_vertically_on_load(FlipVertically);
-		FILE * FILEFile = fopen(Text::WideToNarrow(File->GetPath()).c_str(), "rb");
-		void * Image = NULL; 
-		if (PixelMapUtility::FormatIsFloat(Format))
-			Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, PixelFormats[Format].Channels);
-		else
-			Image = stbi_load_from_file(FILEFile, &Width, &Height, &Comp, PixelFormats[Format].Channels);
-		fclose(FILEFile);
-		if (Image == NULL) {
-			LOG_CORE_ERROR(L"Texture '{0}' coldn´t be loaded", File->GetFileName().c_str());
+	bool ImageConversion::_TaskRunning;
+	std::queue<ImageConversion::Task*> ImageConversion::PendingTasks = std::queue<ImageConversion::Task*>();
+	std::future<bool> ImageConversion::CurrentFuture;
+	std::mutex ImageConversionQueueLock;
+
+	void ImageConversion::FinishCurrentAsyncTask() {
+		if (!PendingTasks.empty() && CurrentFuture.valid()) {
+			CurrentFuture.get();
+			PendingTasks.front()->FinishFunction(PendingTasks.front()->Info);
+			delete PendingTasks.front();
+			PendingTasks.pop();
+		}
+	}
+
+	bool ImageConversion::Initialize() {
+		if (std::thread::hardware_concurrency() <= 1) {
+			LOG_CORE_WARN(L"The aviable cores ({:d}) are insuficient for asyncronus loaders", std::thread::hardware_concurrency());
 			return false;
 		}
-		RefBitmap.SetData(Width, Height, 1, Format, Image);
+		return true;
+	}
+
+	void ImageConversion::UpdateStatus() {
+		if (!PendingTasks.empty() && CurrentFuture.valid() && !_TaskRunning) {
+			CurrentFuture.get();
+			PendingTasks.front()->FinishFunction(PendingTasks.front()->Info);
+			delete PendingTasks.front();
+			PendingTasks.pop();
+		}
+		if (!PendingTasks.empty() && !CurrentFuture.valid() && !_TaskRunning) {
+			CurrentFuture = PendingTasks.front()->Future(PendingTasks.front()->Info, PendingTasks.front()->Options);
+		}
+	}
+
+	void ImageConversion::FinishAsyncTasks() {
+		do {
+			FinishCurrentAsyncTask();
+			UpdateStatus();
+		} while (!PendingTasks.empty());
+	}
+
+	size_t ImageConversion::GetAsyncTaskCount() {
+		return PendingTasks.size();
+	}
+
+	void ImageConversion::Exit() {
+		if (CurrentFuture.valid())
+			CurrentFuture.get();
+	}
+
+	bool ImageConversion::Load(PixelMapInfo & Data, const ParsingOptions & Options) {
+		if (Options.File == NULL) return false;
+		int Width, Height, Comp;
+		stbi_set_flip_vertically_on_load(Options.FlipVertically);
+		FILE * FILEFile = fopen(Text::WideToNarrow(Options.File->GetPath()).c_str(), "rb");
+		void * Image = NULL; 
+		if (PixelMapUtility::FormatIsFloat(Options.Format))
+			Image = stbi_loadf_from_file(FILEFile, &Width, &Height, &Comp, PixelFormats[Options.Format].Channels);
+		else
+			Image = stbi_load_from_file(FILEFile, &Width, &Height, &Comp, PixelFormats[Options.Format].Channels);
+		fclose(FILEFile);
+		if (Image == NULL) {
+			LOG_CORE_ERROR(L"Texture '{0}' coldn´t be loaded", Options.File->GetFileName().c_str());
+			return false;
+		}
+		Data.Pixels.SetData(Width, Height, 1, Options.Format, Image);
 		stbi_image_free(Image);
 		return true;
+	}
+
+	void ImageConversion::LoadAsync(const ParsingOptions & Options, FinishTaskFunction Then)
+	{
+		if (Options.File == NULL) return;
+
+		PendingTasks.push(
+			new Task{ Options, Then, [](PixelMapInfo & Data, const ParsingOptions & Options) -> std::future<bool> {
+				std::future<bool> Task = std::async(std::launch::async, Load, std::ref(Data), std::ref(Options));
+					return std::move(Task);
+				}
+			}
+		);
 	}
 
 	int ImageConversion::GetChannelCount(FileStream * File) {
@@ -81,6 +144,19 @@ namespace ESource {
 		// 		*it++ = Math::Clamp(int(RefBitmap(X, Y) * 0x100), 0xff);
 		// return !lodepng::encode(WStringToString(File->GetPath()), Pixels, RefBitmap.GetWidth(), RefBitmap.GetHeight(), LCT_GREY);
 		return false;
+	}
+
+	void ImageConversion::PixelMapInfo::Transfer(PixelMapInfo & Other) {
+		Pixels = Other.Pixels;
+		bSuccess = Other.bSuccess;
+	}
+
+	ImageConversion::PixelMapInfo::PixelMapInfo()
+		: Pixels(), bSuccess(false) {
+	}
+
+	ImageConversion::Task::Task(const ParsingOptions & Options, FinishTaskFunction FinishFunction, FutureTask Future) :
+		Info(), Options(Options), FinishFunction(FinishFunction), Future(Future) {
 	}
 
 }

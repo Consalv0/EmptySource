@@ -106,7 +106,8 @@ void CGun::ReduceBullets() {
 }
 
 void CGun::OnPostRender() {
-	{ // Render crosshead
+	auto & CrossHead = ESource::TextureManager::GetInstance().GetTexture(L"CrossHead");
+	if (CrossHead->GetLoadState() == ESource::LS_Loaded) { // Render crosshead
 		auto & MainViewport = ESource::Application::GetInstance()->GetWindow().GetViewport();
 		MainViewport.MaxY = MainViewport.MaxY / 2;
 		ESource::Rendering::SetViewport(MainViewport);
@@ -114,7 +115,6 @@ void CGun::OnPostRender() {
 		static float Gamma = 2.2F;
 		int bMonochrome = false;
 		int bIsCubemap = false;
-		auto & CrossHead = ESource::TextureManager::GetInstance().GetTexture(L"CrossHead");
 		RenderTextureMaterial.Use();
 		RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);

@@ -61,7 +61,8 @@ void CProp::OnPostRender() {
 		QuadPosition.Y /= QuadPosition.Z;
 	}
 
-	{
+	auto & UIArrow = ESource::TextureManager::GetInstance().GetTexture(L"UIArrow");
+	if (UIArrow->GetLoadState() == ESource::LS_Loaded) {
 		ESource::IntBox2D & MainViewport = ESource::Application::GetInstance()->GetWindow().GetViewport();
 		MainViewport.MaxY = MainViewport.MaxY / 2;
 		ESource::Rendering::SetViewport(MainViewport);
@@ -69,7 +70,6 @@ void CProp::OnPostRender() {
 		static float Gamma = 2.2F;
 		int bMonochrome = false;
 		int bIsCubemap = false;
-		auto & UIArrow = ESource::TextureManager::GetInstance().GetTexture(L"UIArrow");
 		RenderTextureMaterial.Use();
 		RenderTextureMaterial.SetFloat1Array("_Gamma", &Gamma);
 		RenderTextureMaterial.SetInt1Array("_Monochrome", &bMonochrome);
@@ -105,7 +105,7 @@ void CProp::OnPostRender() {
 			RenderTextureMaterial.SetMatrix4x4Array("_ModelMatrix", QuadTransformation.PointerToValue());
 			ESource::Rendering::DrawIndexed(ESource::MeshPrimitives::Quad.GetVertexArray());
 		}
-		else if ((HunterCamera->GetGameObject().GetWorldTransform().Position - GetGameObject().GetWorldTransform().Position).MagnitudeSquared() > 100.F) {
+		else if ((HunterCamera->GetGameObject().GetWorldTransform().Position - GetGameObject().GetWorldTransform().Position).MagnitudeSquared() > 300.F) {
 			QuadPosition.X = Math::Clamp(QuadPosition.X, -1.F + ArrowScale.X, 1.F - ArrowScale.X);
 			QuadPosition.Y = Math::Clamp(QuadPosition.Y, -1.F + ArrowScale.Y, 1.F - ArrowScale.Y);
 			Matrix4x4 QuadScale = Matrix4x4::Scaling(ArrowScale * 0.5F);

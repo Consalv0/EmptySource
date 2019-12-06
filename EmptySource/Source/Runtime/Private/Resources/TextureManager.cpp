@@ -93,11 +93,11 @@ namespace ESource {
 	}
 	
 	RTexturePtr TextureManager::CreateTexture2D(const WString & Name, const WString & Origin,
-		EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size, bool GenMipMapsOnLoad) {
+		EPixelFormat Format, EFilterMode FilterMode, ESamplerAddressMode AddressMode, const IntVector2 & Size, bool GenMipMapsOnLoad, bool FlipVertically) {
 		RTexturePtr Texture = GetTexture(Name);
 		if (Texture == NULL) {
 			Texture = RTexturePtr(new RTexture(
-				Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.X, Size.Y, 1), GenMipMapsOnLoad
+				Name, Origin, ETextureDimension::Texture2D, Format, FilterMode, AddressMode, IntVector3(Size.X, Size.Y, 1), GenMipMapsOnLoad, FlipVertically
 			));
 			AddTexture(Texture);
 		}
@@ -116,16 +116,31 @@ namespace ESource {
 		return Texture;
 	}
 
-	void TextureManager::LoadImageFromFile(
+	void TextureManager::LoadFromFile(
 		const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
-		ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically, bool bConservePixels) {
-
+		ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically, bool bConservePixels) 
+	{
 		RTexturePtr LoadedTexture = CreateTexture2D(Name, FilePath, ColorFormat, FilterMode, AddressMode);
 		
 		if (LoadedTexture) {
 			LoadedTexture->SetGenerateMipMapsOnLoad(bGenMipMaps);
+			LoadedTexture->SetFlipVertically(bFlipVertically);
+			LoadedTexture->SetConservePixelMapOnLoad(bConservePixels);
 			LoadedTexture->Load();
-			if (!bConservePixels) LoadedTexture->ClearPixelData();
+		}
+	}
+
+	void TextureManager::LoadAsyncFromFile(
+		const WString& Name, EPixelFormat ColorFormat, EFilterMode FilterMode,
+		ESamplerAddressMode AddressMode, bool bGenMipMaps, const WString & FilePath, bool bFlipVertically, bool bConservePixels) 
+	{
+		RTexturePtr LoadedTexture = CreateTexture2D(Name, FilePath, ColorFormat, FilterMode, AddressMode);
+
+		if (LoadedTexture) {
+			LoadedTexture->SetGenerateMipMapsOnLoad(bGenMipMaps);
+			LoadedTexture->SetFlipVertically(bFlipVertically);
+			LoadedTexture->SetConservePixelMapOnLoad(bConservePixels);
+			LoadedTexture->LoadAsync();
 		}
 	}
 
