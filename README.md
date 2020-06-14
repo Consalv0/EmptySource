@@ -14,6 +14,7 @@ The objective of this proyect is learn: graphics, software arquitecture, events,
 - Assimp ***Model loader***
 - TSL Map ***Replace of std::map***
 
-![PropHunterProyect](images/game.png)
-![Engine](images/engine.png)
+![PropHunterProyect](game.png)
+
+![Engine](engine.png)
 
