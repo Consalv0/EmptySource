@@ -1,7 +1,8 @@
 # EmptySource
-## A game engine specilized in 3D and events systems
+## A game engine specialized in 3D and events systems
 
-The objective of this proyect is learn: graphics, software arquitecture, events, math and 3D animation.
+The objective of this project is learn: graphics, software arquitecture, events, math and 3D animation.
+It was part of my university final project.
 
 ## Using
 - C++ ***Language***
