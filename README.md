@@ -15,6 +15,8 @@ It was part of my university final project.
 - Assimp ***Model loader***
 - TSL Map ***Replace of std::map***
 
+I was able to make a FPS game: A prop hunter game with local multiplayer, where you need to shoot the prop to win.
+
 ![PropHunterProyect](game.png)
 
 ![Engine](engine.png)
